@@ -12,6 +12,18 @@ export default async function SessionsPage() {
   return (
     <>
       <PageHeader title="Sessions & groupes" subtitle={`${d.sessions.length} sessions à venir`} />
+      {d.recentSessions.length > 0 && (
+        <Card title="Commencées ces 3 derniers jours (pointage)" className="mb-6">
+          <ul className="divide-y divide-line text-sm">
+            {d.recentSessions.map((s) => (
+              <li key={s.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
+                <span><span className="text-muted">{adminDate(s.startAt)}</span> · <strong className="text-ink">{d.experiences.get(s.experienceId)?.title.fr}</strong></span>
+                <Link href={`/admin/sessions/${s.id}`} className="font-medium text-plum-900">Participants et pointage</Link>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
       <Card>
         <Table head={["Date", "Expérience", "Mode", "Statut", "Remplissage", "Attente", ""]} caption="Sessions à venir">
           {d.sessions.map((s) => {

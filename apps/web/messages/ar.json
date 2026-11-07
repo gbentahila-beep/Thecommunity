@@ -388,7 +388,9 @@
     "cancelDoneRefund": "تم إلغاء الحجز: سيتم استرجاع {amount}.",
     "releaseCta": "لن أحضر",
     "releaseConfirm": "تحرير هذا المكان؟ سيُقترح على شخص آخر.",
-    "waitlistOfferBanner": "تحرر مكان من أجلك!"
+    "waitlistOfferBanner": "تحرر مكان من أجلك!",
+    "adminCancel": "ألغى الفريق هذا الحجز. تواصل معنا لأي استفسار.",
+    "adminCancelRefund": "ألغى الفريق هذا الحجز: تم استرجاع {amount}."
   },
   "profilePage": {
     "title": "ملفي",

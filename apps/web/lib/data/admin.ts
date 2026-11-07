@@ -24,6 +24,7 @@ export const getAdminData = cache(async function getAdminData() {
   const data = buildAdminData(now);
   return {
     ...data,
+    recentSessions: [] as typeof data.sessions,
     now,
     admin: null,
     isDemo: true,

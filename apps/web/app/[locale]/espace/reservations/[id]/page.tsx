@@ -98,6 +98,16 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </section>
       )}
 
+      {(r.status === "cancelled" || r.status === "refunded") && r.cancellation?.by === "admin" && (
+        <section className="rounded-[var(--radius-card)] border border-line bg-white/70 p-5">
+          <p className="text-sm text-ink">
+            {r.cancellation.refundAmount > 0
+              ? t("adminCancelRefund", { amount: formatMoney({ amount: r.cancellation.refundAmount, currency: r.pricing.currency }, lang) })
+              : t("adminCancel")}
+          </p>
+        </section>
+      )}
+
       {r.status === "refunded" && r.cancellation?.by === "system" && (
         <section className="rounded-[var(--radius-card)] border border-line bg-white/70 p-5">
           <p className="text-sm text-ink">{t("lateRefundText", { amount: formatMoney({ amount: r.cancellation.refundAmount, currency: r.pricing.currency }, lang) })}</p>

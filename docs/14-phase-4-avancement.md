@@ -8,7 +8,7 @@
 | **4a** | Réserver une place, la bloquer 15 min, payer (en test), confirmer ; expiration ; paiement tardif | ✅ |
 | **4a+** | **Participation sur demande** : la personne demande, l'équipe accepte ou refuse, puis paiement sous 24 h | ✅ |
 | **4b** | Annulation par le membre (politique 48 h, remboursement), liste d'attente avec offre automatique | ✅ |
-| 4c | Back-office : réservations réelles, annulation/déplacement par l'équipe, pointage, export des participants | à venir |
+| **4c** | Back-office : annulation par l'équipe, annulation d'une date, déplacement, pointage, export journalisé | ✅ |
 
 ## Étape 4a — Réserver et payer (en mode test) ✅
 
@@ -132,8 +132,38 @@ Une réservation pas encore payée peut être libérée (« Je ne viens plus »)
 
 > Hypothèse retenue (modifiable) : **4 h** pour payer une place proposée depuis la liste d'attente.
 
-### Reste pour la suite de la phase 4
+## Étape 4c — Back-office des réservations ✅
 
-- Back-office branché sur les vraies réservations : liste, annulation, déplacement, pointage, export (4c).
+Tout se fait depuis **Sessions & groupes → une date → Participants** (ou **Réservations → Gérer**). Chaque action est vérifiée par le serveur (rôle admin) et **journalisée** ; la personne concernée reçoit une notification.
+
+| Action | Ce qui se passe |
+|---|---|
+| **Annuler** une réservation | Remboursement au choix : **intégral** (par défaut : quand la plateforme annule, elle rembourse tout — décision D6), selon la politique d'annulation, ou aucun (ex. non-respect de la charte). **Motif obligatoire.** La place libérée est proposée à la liste d'attente. |
+| **Annuler cette date** | La date est fermée ; chaque réservation est annulée et **remboursée intégralement** ; liste d'attente et demandes en cours closes ; tout le monde est prévenu avec le motif. Irréversible. |
+| **Déplacer** | Vers une autre date **de la même expérience** ayant assez de places ; le montant payé est conservé ; l'ancienne place est proposée à la liste d'attente. |
+| **Pointer** | Présent / Absent (ou annuler le pointage), à partir de **3 h avant** le début. Les dates commencées depuis moins de 3 jours restent accessibles (« Commencées ces 3 derniers jours »). Les absences apparaissent dans l'historique vu lors des demandes de participation. |
+| **Exporter** | Liste des participants ou des réservations en CSV (Excel) ; chaque export de données personnelles est **journalisé**. |
+
+Le tableau de bord calcule désormais le chiffre d'affaires et la marge des vraies réservations à partir du modèle économique de chaque expérience (coût par place ou commission).
+
+| Annulation par l'équipe | Pointage |
+|---|---|
+| ![Annulation](captures/bo-1-annulation.jpg) | ![Pointage](captures/bo-2-pointage.jpg) |
+
+### Tests
+
+- 6 tests d'intégration : remboursement intégral même à moins de 48 h, politique ou aucun, refus pour un membre, motif obligatoire ; annulation d'une date (tous remboursés, liste close, plus de réservation possible) ;
+  déplacement (autre expérience refusée, places et verrous transférés, liste d'attente servie, annulation ensuite possible) ; pointage (trop tôt refusé, présent, absent, retour) ; export journalisé.
+- 16 vérifications de bout en bout (`tests/e2e/firebase-backoffice-reservations.e2e.cjs`) dans le vrai back-office.
+- Toutes les suites : 78 tests sur émulateurs, 35 unitaires, 129 vérifications de bout en bout en mode Firebase, 60 en démonstration.
+
+## Bilan de la phase 4
+
+Livrable prévu (docs/08) : **tests de concurrence verts** (50 réservations simultanées → exactement 12 sur 12 places) et **parcours complet avec l'adaptateur de test** — atteints, en ligne sur le projet d'essai.
+
+### Reste pour les phases suivantes
+
 - E-mails de confirmation : phase 7 (pour l'instant, la confirmation s'affiche sur le site et dans « Mes réservations »).
-- Codes promo et frais de service : phase 5.
+- Prestataire de paiement réel (dès le contrat signé), codes promo et frais de service : phase 5.
+- Composition des tables et alerte « tables à revoir » après une annulation sur un dîner déjà composé : phase 6.
+- Rappels J-1 / H-3 et demandes d'avis après l'expérience : phase 7.

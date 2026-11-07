@@ -388,7 +388,9 @@
     "cancelDoneRefund": "Réservation annulée : {amount} vous sont remboursés.",
     "releaseCta": "Je ne viens plus",
     "releaseConfirm": "Libérer cette place ? Elle sera proposée à quelqu'un d'autre.",
-    "waitlistOfferBanner": "Une place s'est libérée pour vous !"
+    "waitlistOfferBanner": "Une place s'est libérée pour vous !",
+    "adminCancel": "Cette réservation a été annulée par l'équipe. Contactez-nous pour toute question.",
+    "adminCancelRefund": "Cette réservation a été annulée par l'équipe : {amount} vous ont été remboursés."
   },
   "profilePage": {
     "title": "Mon profil",

@@ -130,6 +130,8 @@ export type AdminReservation = {
   total: number;
   promoCode?: string;
   createdAt: string;
+  /** Date de la session (copie gardée dans la réservation : reste lisible une fois la session passée). */
+  sessionStartAt: string;
   finance: { gross: number; cost: number; margin: number };
 };
 
@@ -185,7 +187,7 @@ export function buildAdminData(now: Date = new Date()) {
     const total = (unit - discount) * seats;
     const created = new Date(now.getTime() - ((n * 7) % 9 + 1) * 86_400_000 - (n % 24) * 3_600_000).toISOString();
     const id = `res-${String(n).padStart(4, "0")}`;
-    reservations.push({ id, userId, sessionId: s.id, experienceId: exp.id, status, seats, total, promoCode, createdAt: created, finance: financeFor(exp, status === "confirmed" ? total : 0, seats) });
+    reservations.push({ id, userId, sessionId: s.id, experienceId: exp.id, status, seats, total, promoCode, createdAt: created, sessionStartAt: s.startAt, finance: financeFor(exp, status === "confirmed" ? total : 0, seats) });
     if (status === "confirmed" || status === "refunded") {
       payments.push({ id: `pay-${id}`, reservationId: id, userId, type: "payment", provider: "sandbox", amount: total, status: status === "refunded" ? "refunded" : "succeeded", createdAt: created });
     }

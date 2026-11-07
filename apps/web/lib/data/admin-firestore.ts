@@ -16,11 +16,29 @@ function plain<T>(value: unknown): T {
 
 export type Economics = { partnerId?: string; model: "own" | "commission"; costPerSeat?: number; commissionPercent?: number };
 
+/**
+ * Chiffres d'une réservation payée, à partir du modèle économique de l'expérience
+ * (en attendant le figeage comptable au paiement, phase 7) : brut, coût partenaire, marge.
+ */
+function estimateFinance(r: DocumentData, eco: Economics | undefined) {
+  const paid = ["confirmed", "attended", "no_show"].includes(r.status);
+  const gross = paid ? (r.pricing?.total ?? 0) : 0;
+  const seats = r.seats ?? 1;
+  if (!gross) return { gross: 0, cost: 0, margin: 0 };
+  if (eco?.model === "commission") {
+    const margin = Math.round((gross * (eco.commissionPercent ?? 0)) / 100);
+    return { gross, cost: gross - margin, margin };
+  }
+  const cost = Math.min(gross, (eco?.costPerSeat ?? 0) * seats);
+  return { gross, cost, margin: gross - cost };
+}
+
 /** Toutes les données du back-office, lues par le serveur (après vérification du rôle admin). */
 export async function fsAdminData(now: Date) {
   const db = adminDb();
   const [sessionsSnap, expSnap, privSnap, resSnap, paySnap, usersSnap, partnersSnap, promosSnap, groupsSnap, waitSnap, citiesSnap, catSnap] = await Promise.all([
-    db.collection("sessions").where("startAt", ">=", Timestamp.fromDate(now)).orderBy("startAt").limit(500).get(),
+    // Dates à venir + celles des 3 derniers jours (pointage le jour J, annulations de dernière minute).
+    db.collection("sessions").where("startAt", ">=", Timestamp.fromMillis(now.getTime() - 3 * 86_400_000)).orderBy("startAt").limit(500).get(),
     db.collection("experiences").get(),
     db.collectionGroup("private").get(),
     db.collection("reservations").orderBy("createdAt", "desc").limit(2000).get(),
@@ -49,7 +67,9 @@ export async function fsAdminData(now: Date) {
     }
   }
 
-  const sessions = sessionsSnap.docs.map((d) => plain<Session>({ id: d.id, ...d.data() }));
+  const allSessions = sessionsSnap.docs.map((d) => plain<Session>({ id: d.id, ...d.data() }));
+  const sessions = allSessions.filter((x) => new Date(x.startAt).getTime() >= now.getTime());
+  const recentSessions = allSessions.filter((x) => new Date(x.startAt).getTime() < now.getTime()).reverse();
   const experiences = new Map(expSnap.docs.map((d) => [d.id, plain<Experience>({ id: d.id, ...d.data() })]));
   const reservations: AdminReservation[] = resSnap.docs.map((d) => {
     const r = d.data();
@@ -63,7 +83,8 @@ export async function fsAdminData(now: Date) {
       total: r.pricing?.total ?? 0,
       promoCode: r.promoCode ?? undefined,
       createdAt: iso(r.createdAt),
-      finance: finance[d.id] ?? { gross: 0, cost: 0, margin: 0 },
+      sessionStartAt: iso(r.sessionSnapshot?.startAt),
+      finance: finance[d.id] ?? estimateFinance(r, economics[r.experienceId]),
     };
   });
   const payments: AdminPayment[] = paySnap.docs.map((d) => {
@@ -100,7 +121,7 @@ export async function fsAdminData(now: Date) {
   }
   const cities = citiesSnap.docs.map((d) => plain<City>({ id: d.id, ...d.data() }));
   const categories = catSnap.docs.map((d) => plain<Category>({ id: d.id, ...d.data() }));
-  return { sessions, experiences, economics, reservations, payments, users, partners, promos, groups, waitlists, cities, categories };
+  return { sessions, recentSessions, experiences, economics, reservations, payments, users, partners, promos, groups, waitlists, cities, categories };
 }
 
 /** Demandes d'export / suppression (loi 09-08), les plus récentes d'abord. */

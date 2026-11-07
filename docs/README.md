@@ -1,6 +1,6 @@
 # Phase 1 — Analyse et architecture
 
-> Plateforme d'expériences sociales au Maroc · Marque : **The Host Club** · Statut : **phase 4 — site en ligne sur le projet d'essai ; réservation et paiement de test opérationnels (4a) ; annulation, liste d'attente et back-office des réservations à venir**
+> Plateforme d'expériences sociales au Maroc · Marque : **The Host Club** · Statut : **phase 4 terminée — site en ligne sur le projet d'essai : réservations, demandes de participation, paiement de test, annulation, liste d'attente, back-office des réservations ; prochaine étape : phase 5 (prestataire de paiement réel, codes promo)**
 
 ## Sommaire
 
@@ -17,7 +17,7 @@
 | [09 — Démarches avant lancement](09-demarches-lancement.md) | Société, banque, prestataire de paiement, CNDP, marque : feuille de route non technique |
 | [10 — Avancement phase 2](10-phase-2-avancement.md) | Ce qui est livré, vérifié, et ce qui reste |
 | [12 — Avancement phase 3](12-phase-3-avancement.md) | Firebase : règles de sécurité, fonctions serveur, émulateurs, tests |
-| [14 — Avancement phase 4](14-phase-4-avancement.md) | Réservations : transaction, blocage 15 min, paiement de test, concurrence |
+| [14 — Avancement phase 4](14-phase-4-avancement.md) | Réservations, demandes de participation, annulation, liste d'attente, back-office des réservations |
 | [13 — Mise en ligne sur le projet d'essai](13-mise-en-ligne-essai.md) | **À faire par Rita** : clé GitHub, App Hosting, compte super-admin |
 | [11 — Checklist avant lancement](11-checklist-avant-lancement.md) | **À faire par Rita** : société, banque, paiement, CNDP, textes juridiques, marque, comptes, partenaires |
 
