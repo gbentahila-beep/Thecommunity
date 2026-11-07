@@ -36,6 +36,9 @@ export const experienceInputSchema = z
     groupMax: z.coerce.number().int().min(2, "min2").max(20, "tooMany").optional(),
     maxSeatsPerBooking: z.coerce.number().int().min(1, "min1").max(50, "tooMany"),
     admission: z.enum(["direct", "on_request"]).default("direct"),
+    /** Prix membre précis (DH) ; vide = réduction de la formule d'abonnement. */
+    memberPriceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany").optional(),
+    membersOnly: z.boolean().default(false),
     requestMessageRequired: z.boolean().default(false),
     priceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany"),
     durationMinutes: z.coerce.number().int().min(15, "min15").max(1440, "tooMany"),
@@ -68,6 +71,9 @@ export const experienceInputSchema = z
     }
     if (v.bookingMode !== "open" && v.bookingMode !== "private" && v.maxSeatsPerBooking > 2) {
       ctx.addIssue({ code: "custom", path: ["maxSeatsPerBooking"], message: "seatsPerBookingMode" });
+    }
+    if (v.memberPriceDh !== undefined && v.memberPriceDh > v.priceDh) {
+      ctx.addIssue({ code: "custom", path: ["memberPriceDh"], message: "memberAbovePublic" });
     }
     if (v.economicsModel === "own" && v.costPerSeatDh === undefined) {
       ctx.addIssue({ code: "custom", path: ["costPerSeatDh"], message: "required" });

@@ -16,7 +16,8 @@ export async function issueRefund(paymentId: string, amount: number, reason: str
   batch.set(db.collection("payments").doc(), {
     type: "refund",
     parentPaymentId: paymentId,
-    reservationId: p.reservationId,
+    reservationId: p.reservationId ?? null,
+    purpose: p.purpose ?? "reservation",
     userId: p.userId,
     provider: p.provider,
     mode: p.mode ?? null,

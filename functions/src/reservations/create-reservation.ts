@@ -3,11 +3,11 @@ import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth } from "../lib/guards";
+import { membershipRef, membershipTerms, planRef } from "../membership/state";
 import { reservationDoc } from "./reservation-doc";
 
-export const refuse = (reason: string, message: string): never => {
-  throw new HttpsError("failed-precondition", message, { reason });
-};
+import { refuse } from "./refuse";
+export { refuse };
 
 /**
  * Réserve des places (docs/06 §2). Dans UNE transaction Firestore :
@@ -73,11 +73,13 @@ async function runReservationOnce(o: ReservationRun) {
   const requestRef = o.requestId ? db.doc(`bookingRequests/${o.requestId}`) : null;
 
   return db.runTransaction(async (tx) => {
-    const [sess, lock, request, wait] = await Promise.all([
+    const [sess, lock, request, wait, planSnap, memSnap] = await Promise.all([
       tx.get(sessRef),
       tx.get(lockRef),
       requestRef ? tx.get(requestRef) : Promise.resolve(null),
       tx.get(sessRef.collection("waitlist").doc(uid)),
+      tx.get(planRef()),
+      tx.get(membershipRef(uid)),
     ]);
     if (!sess.exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
     const s = sess.data()!;
@@ -86,6 +88,7 @@ async function runReservationOnce(o: ReservationRun) {
     const e = exp.data()!;
     const now = Date.now();
     if (!requestRef && e.admission === "on_request") refuse("approval_required", "Cette expérience est sur demande.");
+    const terms = membershipTerms({ plan: planSnap.data(), membership: memSnap.data(), s, e, now, byTeam: Boolean(requestRef) });
     if (request) {
       const r = request.data();
       if (!r || r.status !== "pending" || r.userId !== uid || r.sessionId !== sessionId) refuse("request_not_pending", "Cette demande a déjà été traitée.");
@@ -129,6 +132,7 @@ async function runReservationOnce(o: ReservationRun) {
       sessionId,
       seats,
       holdUntilMs: Math.min(now + (o.holdMs ?? HOLD_MINUTES * 60_000), bookingClosesAt(view.startAt, e.bookingMode).getTime()),
+      memberUnitAmount: terms.memberUnitAmount,
       extra: requestRef ? { requestId: requestRef.id } : undefined,
     });
     tx.set(resRef, doc);

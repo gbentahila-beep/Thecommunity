@@ -1,9 +1,10 @@
-import { bookingClosesAt, WAITLIST_OFFER_HOURS } from "@thecommunity/shared";
+import { bookingClosesAt, memberUnitPrice, WAITLIST_OFFER_HOURS } from "@thecommunity/shared";
 import { Timestamp, type DocumentData, type DocumentReference, type QueryDocumentSnapshot, type Transaction } from "firebase-admin/firestore";
 import { db, FieldValue } from "../lib/admin";
+import { memberFromDoc, membershipRef, planRef } from "../membership/state";
 import { reservationDoc } from "../reservations/reservation-doc";
 
-export type WaitlistCandidates = { entries: QueryDocumentSnapshot[]; locked: Set<string> };
+export type WaitlistCandidates = { entries: QueryDocumentSnapshot[]; locked: Set<string>; plan: DocumentData | undefined; memberships: Map<string, DocumentData | undefined> };
 
 /**
  * LECTURES (à faire avant toute écriture de la transaction) : les premières personnes en attente
@@ -11,8 +12,17 @@ export type WaitlistCandidates = { entries: QueryDocumentSnapshot[]; locked: Set
  */
 export async function readWaitlist(tx: Transaction, sessRef: DocumentReference): Promise<WaitlistCandidates> {
   const q = await tx.get(sessRef.collection("waitlist").where("status", "==", "waiting").orderBy("createdAt").limit(20));
-  const locks = await Promise.all(q.docs.map((d) => tx.get(sessRef.collection("seatLocks").doc(d.id))));
-  return { entries: q.docs, locked: new Set(locks.filter((l) => l.exists).map((l) => l.id)) };
+  const [locks, mems, plan] = await Promise.all([
+    Promise.all(q.docs.map((d) => tx.get(sessRef.collection("seatLocks").doc(d.id)))),
+    Promise.all(q.docs.map((d) => tx.get(membershipRef(d.id)))),
+    tx.get(planRef()),
+  ]);
+  return {
+    entries: q.docs,
+    locked: new Set(locks.filter((l) => l.exists).map((l) => l.id)),
+    plan: plan.data(),
+    memberships: new Map(mems.map((m) => [m.id, m.data()])),
+  };
 }
 
 const OFFER_NOTE = {
@@ -49,6 +59,12 @@ export function writeOffers(
     }
     const seats = (w.seats as number) ?? 1;
     if (seats > remaining) continue;
+    // Prix membre pour une personne abonnée (l'accès anticipé ne s'applique pas : elle attendait déjà).
+    const member = memberFromDoc(o.candidates.memberships.get(entry.id), new Date(o.now));
+    if (o.e.membersOnly === true && !member) continue;
+    const memberUnitAmount = member
+      ? memberUnitPrice(o.s.price.amount, { discountPercent: Number(o.candidates.plan?.discountPercent ?? 0) }, o.e.memberPrice?.amount ?? null)
+      : undefined;
     const resRef = db.collection("reservations").doc();
     const { doc, free } = reservationDoc({
       s: o.s,
@@ -57,6 +73,7 @@ export function writeOffers(
       sessionId: o.sessRef.id,
       seats,
       holdUntilMs: Math.min(o.now + WAITLIST_OFFER_HOURS * 3_600_000, closesAt),
+      memberUnitAmount,
       extra: { fromWaitlist: true },
     });
     tx.set(resRef, doc);

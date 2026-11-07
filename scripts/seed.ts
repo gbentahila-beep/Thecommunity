@@ -49,6 +49,18 @@ async function main() {
   entries.push(["settings/public", { locales: ["fr", "ar"], activeCities: ["casablanca"] }]);
   entries.push(["settings/cancellationPolicies", { policies: [DEFAULT_CANCELLATION_POLICY] }]);
   entries.push(["settings/payment", { provider: "sandbox", mode: "test" }]);
+  entries.push(["membershipPlans/annual", {
+    name: { fr: "The Host Club Membre", ar: "عضوية The Host Club" },
+    price: { amount: 99000, currency: "MAD" },
+    discountPercent: 15,
+    earlyAccessHours: 48,
+    benefits: [
+      { fr: "-15 % sur toutes les expériences", ar: "خصم 15٪ على جميع التجارب" },
+      { fr: "Accès aux nouvelles dates 48 h avant tout le monde", ar: "الوصول إلى المواعيد الجديدة قبل الجميع بـ48 ساعة" },
+      { fr: "Expériences réservées aux membres", ar: "تجارب مخصصة للأعضاء" },
+    ],
+    isActive: true,
+  }]);
   entries.push(["settings/booking", { holdMinutes: 15, closeHoursBefore: { social_dinner: 12, default: 2 }, minAge: 18, serviceFee: 0 }]);
   for (const c of DEMO_CITIES) entries.push([`cities/${c.id}`, { ...c }]);
   for (const c of DEMO_CATEGORIES) entries.push([`categories/${c.id}`, { ...c }]);

@@ -147,6 +147,22 @@ service cloud.firestore {
       }
     }
 
+    // ---------- Abonnement annuel ----------
+    // Formule : lisible par tous quand elle est proposée ; modifiée par le serveur (back-office).
+    match /membershipPlans/{planId} {
+      allow read: if resource.data.isActive == true || isAdmin();
+      allow write: if false;
+    }
+    // Abonnement d'une personne : elle seule et l'équipe ; activé uniquement par le serveur (paiement, cadeau).
+    match /memberships/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+      match /periods/{id} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if false;
+      }
+    }
+
     // ---------- Alertes « prochaines dates » (créées par le serveur) ----------
     match /experienceAlerts/{alertId} {
       allow read: if (signedIn() && resource.data.userId == request.auth.uid) || isAdmin();

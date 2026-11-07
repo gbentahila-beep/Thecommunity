@@ -5,6 +5,7 @@ import { z } from "zod";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { audit } from "../lib/audit";
 import { invalidArgument, requireAuth, requireRole, roleOf } from "../lib/guards";
+import { memberFromDoc, membershipRef } from "../membership/state";
 import { refuse, requireMemberReady, runReservation } from "../reservations/create-reservation";
 
 const idSchema = z.string().trim().min(1).max(200).regex(/^[A-Za-z0-9_-]+$/);
@@ -27,13 +28,14 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
   const reqRef = db.doc(`bookingRequests/${sessionId}_${uid}`);
   const lockRef = sessRef.collection("seatLocks").doc(uid);
   return db.runTransaction(async (tx) => {
-    const [sess, existing, lock] = await Promise.all([tx.get(sessRef), tx.get(reqRef), tx.get(lockRef)]);
+    const [sess, existing, lock, mem] = await Promise.all([tx.get(sessRef), tx.get(reqRef), tx.get(lockRef), tx.get(membershipRef(uid))]);
     if (!sess.exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
     const s = sess.data()!;
     const exp = await tx.get(db.doc(`experiences/${s.experienceId}`));
     const e = exp.data();
     if (!e || e.status !== "published" || !["published", "full"].includes(s.status)) refuse("not_open", "Date non ouverte.");
     if (e!.admission !== "on_request") refuse("direct_booking", "Cette expérience se réserve directement.");
+    if (e!.membersOnly === true && !memberFromDoc(mem.data())) refuse("members_only", "Expérience réservée aux membres.");
     const startAt = (s.startAt as Timestamp).toDate();
     if (Date.now() >= bookingClosesAt(startAt, e!.bookingMode).getTime()) refuse("closed", "Les inscriptions sont fermées.");
     if (seats > maxSeatsFor(e!)) refuse("too_many_seats", "Trop de places.");

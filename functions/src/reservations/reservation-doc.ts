@@ -13,10 +13,12 @@ export function reservationDoc(o: {
   sessionId: string;
   seats: number;
   holdUntilMs: number;
+  /** Prix membre par place (abonné·e) ; absent = prix public. */
+  memberUnitAmount?: number;
   extra?: Record<string, unknown>;
 }) {
   const { s, e, uid, sessionId, seats } = o;
-  const pricing = computePricing(s.price.amount, seats, s.price.currency);
+  const pricing = computePricing(s.price.amount, seats, s.price.currency, { memberUnitAmount: o.memberUnitAmount });
   const free = pricing.total === 0;
   const snap = s.experienceSnapshot ?? {};
   const venue = e.venue?.revealPolicy === "immediate" ? { name: e.venue.name ?? "", address: e.venue.address ?? "" } : null;

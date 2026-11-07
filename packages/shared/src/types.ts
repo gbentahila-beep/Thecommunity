@@ -90,6 +90,10 @@ export type Experience = {
   bookingMode: BookingMode;
   groupConfig?: GroupConfig;
   maxSeatsPerBooking: number;
+  /** Prix membre précis (centimes) ; à défaut, réduction de la formule d'abonnement. */
+  memberPrice?: Money | null;
+  /** Réservable uniquement par les membres abonnés. */
+  membersOnly?: boolean;
   /** « on_request » : la personne envoie une demande, l'équipe accepte ou refuse avant le paiement. */
   admission?: Admission;
   /** Message de motivation obligatoire avec la demande (sinon facultatif). */
@@ -210,6 +214,8 @@ export type Pricing = {
   unitAmount: number;
   seats: number;
   subtotal: number;
+  /** Réduction accordée aux membres abonnés (centimes). */
+  memberDiscount?: number;
   discount: number;
   fees: number;
   total: number;

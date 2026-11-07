@@ -24,3 +24,4 @@ export { joinWaitlist, leaveWaitlist } from "./waitlist/waitlist";
 export { adminCancelReservation, adminCancelSession, adminMoveReservation, adminCheckIn, adminLogExport } from "./admin/reservations-admin";
 export { submitReview, adminSetReviewStatus, reviewRequests } from "./reviews/reviews";
 export { setExperienceAlert } from "./experiences/alerts";
+export { adminSaveMembershipPlan, startMembershipCheckout, adminGrantMembership, adminRevokeMembership } from "./membership/membership";

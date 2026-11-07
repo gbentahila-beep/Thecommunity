@@ -8,7 +8,8 @@ const open = { bookingMode: "open" as const, maxSeatsPerBooking: 4 };
 
 describe("réservation", () => {
   it("calcule le prix en centimes", () => {
-    expect(computePricing(35000, 3, "MAD")).toEqual({ unitAmount: 35000, seats: 3, subtotal: 105000, discount: 0, fees: 0, total: 105000, currency: "MAD" });
+    expect(computePricing(35000, 3, "MAD")).toEqual({ unitAmount: 35000, seats: 3, subtotal: 105000, memberDiscount: 0, discount: 0, fees: 0, total: 105000, currency: "MAD" });
+    expect(computePricing(30000, 2, "MAD", { memberUnitAmount: 25500 })).toMatchObject({ subtotal: 60000, memberDiscount: 9000, total: 51000 });
   });
   it("ferme les dîners 12 h avant, les autres formats 2 h avant", () => {
     expect(bookingClosesAt(start, "social_dinner").toISOString()).toBe("2026-12-10T07:00:00.000Z");

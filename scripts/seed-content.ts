@@ -39,6 +39,17 @@ async function main() {
   await batch.commit();
   console.log(`✅ Référentiels : ${DEMO_CITIES.length} villes, ${DEMO_CATEGORIES.length} univers, paramètres.`);
 
+  // Formule d'abonnement proposée, NON active : l'équipe règle le prix et l'active dans le back-office.
+  const plan = await db.doc("membershipPlans/annual").create({
+    name: { fr: "The Host Club Membre", ar: "عضوية The Host Club" },
+    price: { amount: 99000, currency: "MAD" },
+    discountPercent: 15,
+    earlyAccessHours: 0,
+    benefits: [{ fr: "-15 % sur toutes les expériences", ar: "خصم 15٪ على جميع التجارب" }],
+    isActive: false,
+  }).then(() => true, () => false);
+  console.log(plan ? "✅ Abonnement : formule créée (inactive, à régler dans le back-office)." : "ℹ️  Formule d'abonnement déjà présente : inchangée.");
+
   if (process.argv.includes("--test-payments")) {
     const created = await db.doc("settings/payment").create({ provider: "sandbox", mode: "test" }).then(() => true, () => false);
     console.log(created ? "✅ Paiement : adaptateur de TEST activé (aucun argent réel)." : "ℹ️  Réglage de paiement déjà présent : inchangé.");

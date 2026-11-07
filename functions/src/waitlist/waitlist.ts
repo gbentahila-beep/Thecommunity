@@ -4,6 +4,7 @@ import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth } from "../lib/guards";
+import { memberFromDoc, membershipRef } from "../membership/state";
 import { refuse, requireMemberReady } from "../reservations/create-reservation";
 
 /**
@@ -22,13 +23,14 @@ export const joinWaitlist = onCall({ region: REGION }, async (req) => {
   const sessRef = db.doc(`sessions/${sessionId}`);
   const entryRef = sessRef.collection("waitlist").doc(uid);
   return db.runTransaction(async (tx) => {
-    const [sess, lock, entry] = await Promise.all([tx.get(sessRef), tx.get(sessRef.collection("seatLocks").doc(uid)), tx.get(entryRef)]);
+    const [sess, lock, entry, mem] = await Promise.all([tx.get(sessRef), tx.get(sessRef.collection("seatLocks").doc(uid)), tx.get(entryRef), tx.get(membershipRef(uid))]);
     if (!sess.exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
     const s = sess.data()!;
     const exp = await tx.get(db.doc(`experiences/${s.experienceId}`));
     const e = exp.data();
     if (!e || e.status !== "published" || !["published", "full"].includes(s.status)) refuse("not_open", "Date non ouverte.");
     if (e!.admission === "on_request") refuse("approval_required", "Expérience sur demande.");
+    if (e!.membersOnly === true && !memberFromDoc(mem.data())) refuse("members_only", "Expérience réservée aux membres.");
     if (Date.now() >= bookingClosesAt((s.startAt as Timestamp).toDate(), e!.bookingMode).getTime()) refuse("closed", "Inscriptions fermées.");
     if (seats > maxSeatsFor(e!)) refuse("too_many_seats", "Trop de places.");
     if (lock.exists) refuse("already_booked", "Vous avez déjà une place pour cette date.");

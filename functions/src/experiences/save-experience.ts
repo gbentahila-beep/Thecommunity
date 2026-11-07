@@ -114,6 +114,8 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     bookingMode: v.bookingMode,
     groupConfig: grouped ? { minSize: v.groupMin, targetSize: v.groupTarget, maxSize: v.groupMax } : null,
     maxSeatsPerBooking: v.maxSeatsPerBooking,
+    memberPrice: v.memberPriceDh !== undefined ? { amount: Math.round(v.memberPriceDh * 100), currency: "MAD" } : null,
+    membersOnly: v.membersOnly,
     admission: v.admission,
     requestMessageRequired: v.admission === "on_request" && v.requestMessageRequired,
     languages: v.languages,

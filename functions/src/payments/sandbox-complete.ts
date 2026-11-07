@@ -40,5 +40,5 @@ export const sandboxCompletePayment = onCall({ region: REGION }, async (req) => 
     providerRef: pay.providerRef ?? undefined,
     failureReason: outcome === "failed" ? "test_declined" : undefined,
   });
-  return { outcome: result.outcome, reservationId: result.reservationId };
+  return { outcome: result.outcome, reservationId: result.reservationId, purpose: result.purpose };
 });

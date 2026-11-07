@@ -62,12 +62,17 @@ export const bookingRequestSchema = z.object({
 });
 export type BookingRequestInput = z.input<typeof bookingRequestSchema>;
 
-/** Prix d'une réservation, en centimes. Codes promo et frais : phase 5. */
-export function computePricing(unitAmount: number, seats: number, currency: CurrencyCode): Pricing {
+/**
+ * Prix d'une réservation, en centimes. `memberUnitAmount` : prix membre par place si la personne est
+ * abonnée (la différence apparaît en « réduction membre »). Codes promo et frais : étape 5d.
+ */
+export function computePricing(unitAmount: number, seats: number, currency: CurrencyCode, opts: { memberUnitAmount?: number } = {}): Pricing {
   const subtotal = unitAmount * seats;
+  const memberUnit = opts.memberUnitAmount;
+  const memberDiscount = memberUnit != null && memberUnit < unitAmount ? (unitAmount - memberUnit) * seats : 0;
   const discount = 0;
   const fees = 0;
-  return { unitAmount, seats, subtotal, discount, fees, total: subtotal - discount + fees, currency };
+  return { unitAmount, seats, subtotal, memberDiscount, discount, fees, total: subtotal - memberDiscount - discount + fees, currency };
 }
 
 export type BookingRefusal = "not_open" | "closed" | "full" | "not_enough_seats" | "too_many_seats";
