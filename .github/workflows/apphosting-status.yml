@@ -1,0 +1,50 @@
+name: Diagnostic — App Hosting (projet d'essai)
+
+# Suit la construction du site par Firebase App Hosting après chaque envoi de code
+# et affiche la fin du journal de build (lecture seule, aucune modification).
+on:
+  push:
+    branches: [claude/dazzling-ramanujan-b80cb8]
+  workflow_dispatch:
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PROJECT: the-community-36766
+      REGION: europe-west4
+      SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
+    steps:
+      - name: Identifiants disponibles ?
+        id: creds
+        run: |
+          if [ -z "$SA_JSON" ]; then echo "ok=false" >> "$GITHUB_OUTPUT"; else echo "ok=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Connexion (lecture)
+        if: steps.creds.outputs.ok == 'true'
+        run: |
+          printf '%s' "$SA_JSON" > "$RUNNER_TEMP/sa.json"
+          gcloud auth activate-service-account --key-file="$RUNNER_TEMP/sa.json" --quiet
+          gcloud config set project "$PROJECT" --quiet
+      - name: Attendre et afficher la dernière construction App Hosting
+        if: steps.creds.outputs.ok == 'true'
+        run: |
+          sleep 60
+          for i in $(seq 1 50); do
+            LINE=$(gcloud builds list --region="$REGION" --limit=1 --sort-by=~createTime --format="value(id,status)" 2>/dev/null || true)
+            ID=$(echo "$LINE" | awk '{print $1}'); STATUS=$(echo "$LINE" | awk '{print $2}')
+            echo "Construction $ID : $STATUS"
+            case "$STATUS" in SUCCESS|FAILURE|TIMEOUT|CANCELLED|INTERNAL_ERROR|EXPIRED) break;; esac
+            sleep 30
+          done
+          if [ -n "$ID" ]; then
+            echo "===== Fin du journal de la construction $ID ====="
+            gcloud builds log "$ID" --region="$REGION" 2>/dev/null | tail -120 || true
+          fi
+          echo "===== Déploiements (rollouts) ====="
+          gcloud firebase apphosting rollouts list --backend=thecommunity-web --location="$REGION" --limit=3 2>/dev/null || \
+            curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+              "https://firebaseapphosting.googleapis.com/v1beta/projects/$PROJECT/locations/$REGION/backends/thecommunity-web/rollouts?pageSize=3" | head -80
+      - name: Suppression de la clé temporaire
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
