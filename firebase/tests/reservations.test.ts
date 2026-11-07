@@ -5,6 +5,7 @@
 import { deleteApp, initializeApp as initAdmin, type App } from "firebase-admin/app";
 import { getAuth as adminAuth } from "firebase-admin/auth";
 import { getFirestore as adminDb, Timestamp } from "firebase-admin/firestore";
+import { getStorage as adminStorage } from "firebase-admin/storage";
 import { deleteApp as deleteClient, initializeApp, type FirebaseApp } from "firebase/app";
 import { connectAuthEmulator, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/functions";
@@ -23,7 +24,7 @@ let seq = 0;
 type Client = { uid: string; call: (name: string, data: unknown) => Promise<Record<string, unknown>> };
 
 /** Crée un compte (e-mail vérifié, profil complété par défaut) et un client connecté. */
-async function member(opts: { verified?: boolean; onboarded?: boolean; role?: "admin" } = {}): Promise<Client> {
+async function member(opts: { verified?: boolean; onboarded?: boolean; role?: "admin" | "superadmin" } = {}): Promise<Client> {
   const n = ++seq; // capturé AVANT les await : chaque client a son propre nom d'application
   const email = `membre.${run}.${n}@example.com`;
   const user = await adminAuth(admin).createUser({ email, password: PASSWORD, emailVerified: opts.verified ?? true });
@@ -864,5 +865,93 @@ describe("abonnement annuel", () => {
     await signIn(clientAuth(app), `curieux.${run}@example.com`, PASSWORD);
     await expect(getDoc(doc(fsdb, `memberships/${u.uid}`))).rejects.toThrow();
     await expect(setDoc(doc(fsdb, `memberships/${other.uid}`), { status: "active", startAt: new Date(), endAt: new Date(Date.now() + 1e10) })).rejects.toThrow();
+  });
+});
+
+describe("factures, avoirs et e-mails (5c)", () => {
+  const invoice = async (id: string) => (await db().doc(`invoices/${id}`).get()).data();
+  const pdfExists = async (path: string) => (await adminStorage(admin).bucket(`${PROJECT}.appspot.com`).file(path).exists())[0];
+  const mailsFor = async (invoiceId: string) => (await db().collection("mail").where("refs.invoiceId", "==", invoiceId).get()).docs.map((d) => d.data());
+
+  it("paiement réussi : reçu de TEST numéroté, PDF privé, e-mail rangé dans la boîte d'envoi", async () => {
+    const sid = await makeSession({ price: 25000 });
+    const u = await member();
+    await db().doc(`users/${u.uid}`).set({ email: `facture.${run}@example.com`, lastName: "Alaoui", locale: "en" }, { merge: true });
+    const { reservationId, paymentId } = await paidReservation(u, sid, 2);
+    const inv = await invoice(`inv_${paymentId}`);
+    expect(inv).toMatchObject({
+      kind: "invoice", series: "TEST-FA", test: true, legal: false, userId: u.uid, reservationId, purpose: "reservation",
+      buyer: { name: "Membre Alaoui", email: `facture.${run}@example.com` },
+      totals: { ttc: 50000, vat: 0, ht: 50000, rate: null }, pdfReady: true,
+    });
+    expect(inv!.number).toMatch(/^TEST-FA-\d{4}-\d{6}$/);
+    expect(inv!.lines).toMatchObject([{ label: "Atelier test", quantity: 2, unitAmount: 25000, amount: 50000 }]);
+    expect(await payment(paymentId)).toMatchObject({ invoiceId: `inv_${paymentId}`, invoiceNumber: inv!.number });
+    expect(await pdfExists(inv!.pdfPath)).toBe(true);
+    const mails = await mailsFor(`inv_${paymentId}`);
+    expect(mails).toHaveLength(1);
+    expect(mails[0]).toMatchObject({ status: "outbox", provider: "outbox", kind: "reservation_invoice", locale: "en", to: `facture.${run}@example.com`, attachments: [{ filename: `${inv!.number}.pdf` }] });
+    expect(mails[0]!.subject).toBe("You're booked: Atelier test");
+    expect(mails[0]!.text).toContain("TEST payment");
+  });
+
+  it("numérotation continue : 4 paiements simultanés reçoivent 4 numéros différents qui se suivent dans le compteur", async () => {
+    const sid = await makeSession({ capacity: 10 });
+    const users = await Promise.all([1, 2, 3, 4].map(() => member()));
+    const pays = await Promise.all(users.map((u) => paidReservation(u, sid)));
+    const invs = await Promise.all(pays.map((p) => invoice(`inv_${p.paymentId}`)));
+    const seqs = invs.map((i) => i!.seq as number);
+    expect(new Set(seqs).size).toBe(4);
+    const counter = (await db().doc(`counters/TEST-FA-${invs[0]!.year}`).get()).data()!;
+    expect(counter.last).toBeGreaterThanOrEqual(Math.max(...seqs));
+  });
+
+  it("annulation remboursée : avoir rattaché à la facture, e-mail de remboursement", async () => {
+    const sid = await makeSession({ startInHours: 96 });
+    const u = await member();
+    const { reservationId, paymentId } = await paidReservation(u, sid);
+    await u.call("cancelReservation", { reservationId });
+    const refund = (await db().collection("payments").where("parentPaymentId", "==", paymentId).get()).docs[0]!;
+    const cn = await invoice(`cn_${refund.id}`);
+    const inv = await invoice(`inv_${paymentId}`);
+    expect(cn).toMatchObject({ kind: "credit_note", series: "TEST-AV", relatedInvoiceId: `inv_${paymentId}`, relatedInvoiceNumber: inv!.number, reasonLabel: "Annulation par le membre", totals: { ttc: 30000 }, pdfReady: true });
+    expect(await pdfExists(cn!.pdfPath)).toBe(true);
+    expect((await mailsFor(`cn_${refund.id}`))[0]).toMatchObject({ kind: "refund", status: "outbox" });
+  });
+
+  it("société : réglée par le super-admin seulement, figée sur les nouveaux documents ; renvoi par e-mail depuis le back-office", async () => {
+    const company = { legalName: "The Host Club SARL", address: "Bd d'Anfa, Casablanca", ice: "001234567000089", if: "12345678", rc: "Casablanca 123456", email: "factures@example.com", vatRate: 20, mailProvider: "outbox", fromName: "The Host Club", fromEmail: "bonjour@example.com" };
+    const adm = await member({ role: "admin" });
+    const sup = await member({ role: "superadmin" });
+    expect(await refusal(adm.call("adminSaveCompanySettings", company))).toBe("permission-denied:");
+    expect(await refusal(sup.call("adminSaveCompanySettings", { ...company, ice: "123" }))).toBe("invalid-argument:");
+    expect(await sup.call("adminSaveCompanySettings", company)).toEqual({ ok: true });
+    try {
+      const sid = await makeSession({ price: 12000 });
+      const u = await member();
+      const { paymentId } = await paidReservation(u, sid);
+      const inv = await invoice(`inv_${paymentId}`);
+      // Paiement de test : toujours une série de TEST, mais avec la société et la TVA (20 %) figées.
+      expect(inv).toMatchObject({ series: "TEST-FA", seller: { legalName: "The Host Club SARL", ice: "001234567000089", vatRate: 20 }, totals: { ttc: 12000, ht: 10000, vat: 2000, rate: 20 } });
+      expect(await refusal(u.call("adminInvoiceAction", { paymentId, action: "resend" }))).toBe("permission-denied:");
+      expect(await adm.call("adminInvoiceAction", { paymentId, action: "resend" })).toMatchObject({ invoiceId: `inv_${paymentId}`, created: false, mailStatus: "outbox" });
+      expect(await mailsFor(`inv_${paymentId}`)).toHaveLength(2);
+      const logs = await db().collection("auditLogs").where("targetId", "==", `inv_${paymentId}`).get();
+      expect(logs.docs.map((d) => d.data().action)).toContain("invoice.resend");
+    } finally {
+      await Promise.all([db().doc("settings/company").delete(), db().doc("settings/email").delete()]);
+    }
+  });
+
+  it("abonnement payé : facture d'abonnement avec la période", async () => {
+    await db().doc("membershipPlans/annual").set({ name: { fr: "Membre annuel" }, price: { amount: 99000, currency: "MAD" }, isActive: true, discountPercent: 15, earlyAccessHours: 0 }, { merge: true });
+    const u = await member();
+    const { paymentId } = await u.call("startMembershipCheckout", {});
+    await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
+    const inv = await invoice(`inv_${paymentId}`);
+    expect(inv).toMatchObject({ purpose: "membership", reservationId: null, totals: { ttc: 99000 } });
+    expect(inv!.lines[0].label).toBe("Abonnement Membre annuel");
+    expect(inv!.lines[0].detail).toMatch(/^Du .+ au .+$/);
+    expect((await mailsFor(`inv_${paymentId}`))[0]).toMatchObject({ kind: "membership_invoice" });
   });
 });

@@ -2,6 +2,7 @@ import { Timestamp, type DocumentSnapshot, type Transaction } from "firebase-adm
 import { logger } from "firebase-functions/v2";
 import { nextMembershipPeriod } from "@thecommunity/shared";
 import { db, FieldValue } from "../lib/admin";
+import { afterPaymentSettled } from "../invoices/issue";
 import { issueRefund } from "./refund";
 
 /** Notification de paiement, déjà authentifiée (signature du prestataire, ou callable de test). */
@@ -109,6 +110,8 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
     return { outcome: "refunded", reservationId: res.id, refund: { amount: ev.amount, reason: "late_payment_no_seat" } };
   });
 
+  // Facture + e-mail de confirmation (5c). En cas de remboursement automatique, la facture est émise avec l'avoir.
+  if (decision.outcome === "confirmed") await afterPaymentSettled({ paymentId: ev.paymentId });
   if (decision.refund) await refundPayment(ev.paymentId, decision.refund.amount, decision.refund.reason);
   return { outcome: decision.outcome, reservationId: decision.reservationId, purpose: decision.purpose ?? "reservation" };
 }

@@ -1,4 +1,5 @@
 import { logger } from "firebase-functions/v2";
+import { afterPaymentSettled } from "../invoices/issue";
 import { db, FieldValue } from "../lib/admin";
 import { providerFor } from "./provider";
 
@@ -13,7 +14,8 @@ export async function issueRefund(paymentId: string, amount: number, reason: str
   const provider = providerFor(p.provider);
   const result = await provider.refund({ paymentId, providerRef: p.providerRef ?? undefined, amount, currency: p.currency });
   const batch = db.batch();
-  batch.set(db.collection("payments").doc(), {
+  const refundRef = db.collection("payments").doc();
+  batch.set(refundRef, {
     type: "refund",
     parentPaymentId: paymentId,
     reservationId: p.reservationId ?? null,
@@ -34,5 +36,7 @@ export async function issueRefund(paymentId: string, amount: number, reason: str
   }
   await batch.commit();
   logger.info("Remboursement", { paymentId, amount, reason, status: result.status });
+  // Avoir + e-mail (5c). Un remboursement encore en cours chez le prestataire aura son avoir à sa confirmation.
+  if (result.status === "succeeded") await afterPaymentSettled({ refundId: refundRef.id });
   return { status: result.status };
 }

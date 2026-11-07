@@ -119,6 +119,20 @@ service cloud.firestore {
       allow read: if (signedIn() && resource.data.userId == request.auth.uid) || isAdmin();
       allow write: if false;
     }
+    // Factures, avoirs et reçus (5c) : émis par le serveur uniquement ; chacun lit les siens, l'équipe lit tout.
+    match /invoices/{invoiceId} {
+      allow read: if (signedIn() && resource.data.userId == request.auth.uid) || isAdmin();
+      allow write: if false;
+    }
+    // Compteurs de numérotation (continue, sans trou) : serveur uniquement.
+    match /counters/{counterId} {
+      allow read, write: if false;
+    }
+    // E-mails envoyés ou rangés dans la boîte d'envoi de test : lus par l'équipe seulement.
+    match /mail/{mailId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
     match /paymentEvents/{eventId} {
       allow read: if isSuperAdmin();
       allow write: if false;

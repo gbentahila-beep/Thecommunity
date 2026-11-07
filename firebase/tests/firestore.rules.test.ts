@@ -172,6 +172,33 @@ describe("administration", () => {
   });
 });
 
+describe("factures et e-mails (5c)", () => {
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, "invoices/inv_p1"), { userId: "salma", number: "TEST-FA-2026-000001", kind: "invoice" });
+      await setDoc(doc(db, "counters/TEST-FA-2026"), { last: 1 });
+      await setDoc(doc(db, "mail/m1"), { to: "salma@example.com", subject: "C'est réservé" });
+    });
+  });
+  it("chacun lit ses factures, personne ne les écrit", async () => {
+    await assertSucceeds(getDoc(doc(salma(), "invoices/inv_p1")));
+    await assertFails(getDoc(doc(karim(), "invoices/inv_p1")));
+    await assertSucceeds(getDocs(query(collection(salma(), "invoices"), where("userId", "==", "salma"))));
+    await assertFails(getDocs(collection(salma(), "invoices")));
+    await assertSucceeds(getDoc(doc(admin(), "invoices/inv_p1")));
+    await assertFails(setDoc(doc(salma(), "invoices/inv_x"), { userId: "salma", number: "FA-2026-000001" }));
+    await assertFails(updateDoc(doc(admin(), "invoices/inv_p1"), { number: "FA-2026-000999" }));
+  });
+  it("compteurs inaccessibles ; boîte d'envoi lue par l'équipe seulement", async () => {
+    await assertFails(getDoc(doc(admin(), "counters/TEST-FA-2026")));
+    await assertFails(setDoc(doc(superadmin(), "counters/FA-2026"), { last: 0 }));
+    await assertFails(getDoc(doc(salma(), "mail/m1")));
+    await assertSucceeds(getDoc(doc(admin(), "mail/m1")));
+    await assertFails(setDoc(doc(admin(), "mail/m2"), { to: "x@example.com" }));
+  });
+});
+
 describe("formulaires publics", () => {
   const msg = { name: "Rita", email: "rita@example.com", message: "Bonjour, une question sur les dîners.", createdAt: serverTimestamp() };
   it("message de contact : création anonyme au bon format, jamais relu par le public", async () => {

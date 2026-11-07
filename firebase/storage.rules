@@ -37,6 +37,10 @@ service firebase.storage {
     }
 
     // Exports : générés par le serveur, distribués par URL signée temporaire.
+    // Factures PDF : jamais lues directement par le navigateur (téléchargement via le site, après contrôle).
+    match /invoices/{all=**} {
+      allow read, write: if false;
+    }
     match /exports/{all=**} {
       allow read, write: if false;
     }

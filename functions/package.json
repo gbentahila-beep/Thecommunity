@@ -2,7 +2,7 @@
   "name": "@thecommunity/functions",
   "version": "0.1.0",
   "private": true,
-  "description": "Cloud Functions for Firebase (v2) \u2014 logique serveur s\u00e9curis\u00e9e de The Host Club",
+  "description": "Cloud Functions for Firebase (v2) — logique serveur sécurisée de The Host Club",
   "main": "lib/index.js",
   "engines": {
     "node": "22"
@@ -19,6 +19,7 @@
   "devDependencies": {
     "esbuild": "0.28.2",
     "typescript": "^5",
-    "zod": "^4.6.7"
+    "zod": "^4.6.7",
+    "pdf-lib": "^1.17.1"
   }
 }
