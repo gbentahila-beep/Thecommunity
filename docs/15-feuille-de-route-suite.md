@@ -3,19 +3,37 @@
 > Demandes de Rita du 7 novembre 2026, intégrées au plan. Chaque étape se termine par une démonstration et sa validation.
 > Les choix marqués **(hypothèse)** sont des propositions : on les change facilement si besoin.
 
-## Ordre proposé
+> **Règle de travail (8 novembre)** : chaque nouvelle demande est d'abord **ajoutée à ce plan**, puis réalisée **étape par étape**, sur « go » de Rita. On ne lance pas une demande dès qu'elle arrive.
+
+## Fait
+
+| Étape | Contenu |
+|---|---|
+| 1 à 4c ✅ | Site, comptes, back-office, réservations, paiement de test, demandes de participation, annulations, liste d'attente |
+| 5a ✅ | Avis, fiches sans date, expériences passées listées, reproposer des dates |
+| 5b ✅ | Abonnement annuel (prix membre, prix public barré, accès anticipé, réservé aux membres) |
+| 5c ✅ | Factures, avoirs et reçus PDF, e-mails (boîte d'envoi de test) |
+| Contenus ✅ | FAQ, centre d'aide, Devenir partenaire, version anglaise, Sécurité / CGU / CGV / Confidentialité, À propos (Aya, avec sa photo) |
+
+## Reste à faire — ordre proposé
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
-| **5a** ✅ | **Avis** sur les expériences vécues + **fiches sans date** (dates ajoutées plus tard), **expériences passées toujours listées**, **reproposer des dates** | rien |
-| **5b** ✅ | **Abonnement annuel** : prix réduits pour les abonnés, prix public barré, réglages par l'admin | paiement de test (fait) |
-| **5c** ✅ | **Factures** (et avoirs pour les remboursements) + **envoi par e-mail** (boîte d'envoi de test) | infos de la société pour des factures légales ; compte Brevo pour l'envoi réel |
-| 5c+ | **Contenus et aide** : FAQ (10 questions), pages Sécurité / CGU / CGV / Confidentialité (projets), informations légales, **version anglaise**, **centre d'aide** (clients / partenaires), nouvelle image d'accueil | infos légales à fournir (docs/16) |
-| 5d | Codes promo, frais de service | rien |
-| 5e | Prestataire de paiement réel (CMI, Payzone, YouCan Pay) | contrat signé (checklist C) |
-| 6 | Composition des tables (dîners) | rien |
-| 7 | Rappels J-1 / H-3, notifications push, statistiques | e-mails (5c) |
-| 8 | Recette, sécurité, mise en production | checklist complète |
+| **5d — prochaine** | **Partenaires dans le back-office** : ajouter, modifier, archiver (pas de suppression d'un partenaire lié à des expériences passées), contacts, modèle (commission ou achat de prestation), rattachement aux expériences ; transformer une **candidature** en partenaire. Nettoyage des mentions « phase 3 » périmées du back-office. | rien |
+| 5e | **Villes et univers** modifiables dans Paramètres (super-admin, journalisé) | rien |
+| 5f | **Codes promo** et frais de service | rien |
+| 5g | **Réservation** : régime alimentaire / allergies et langue(s) de table demandés au moment de réserver, transmis au lieu | rien |
+| 6 | **Composition des tables** (dîners) : algorithme + validation par l'équipe, révélation du groupe, **marque-places** (prénom de chacun), fiche « hôte » (accueil, présentations), plafond de participants | rien |
+| 7 | **Rappels** J-1 / H-3, prévenir les participants d'un changement de date ou de lieu, notifications push, statistiques | e-mails réels (Brevo) |
+| 5h | **Prestataire de paiement réel** (CMI, Payzone, YouCan Pay) | contrat signé |
+| 8 | **Recette, sécurité, mise en production** | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
+
+Idées notées, à valider avant de les planifier :
+
+- **Photo d'accueil réelle** à la place de l'illustration (« une photo comme celle de l'article ») : je ne peux pas fabriquer une vraie photo. Il faut une photo d'une de vos tables (droits clairs), ou votre accord pour une photo de banque d'images libre de droits (accès réseau à ouvrir).
+- Formats **brunch** et **conversation** ; mention « en collaboration avec … » (lieu partenaire) sur la fiche.
+- Après une expérience, **se revoir seulement si les deux le souhaitent** (décision D8 : pas de messagerie au lancement).
+- **Traduction arabe** des textes juridiques et des articles d'aide.
 
 ---
 
@@ -34,7 +52,7 @@ Inspirations à reprendre **à notre façon** (sans copier) :
 | **Langue(s) de la table** choisie(s) à la réservation pour mieux composer les groupes | tunnel + matching (phase 6) | à faire |
 | « Se rencontrer d'abord » : après la table, **contacts échangés seulement si les deux le souhaitent** | espace membre (après phase 6) | idée à valider (décision D8 : pas de messagerie au lancement) |
 | Lien **Instagram d'Aya Snoussi** | pied de page, À propos | ✅ fondatrice |
-| Page **À propos** : Aya Snoussi, créatrice (son parcours, ce qui compte pour elle), d'après l'article CULTIQ, réécrit à notre façon | /a-propos | ✅ texte à valider par Aya ; photo à fournir |
+| Page **À propos** : Aya Snoussi, créatrice (son parcours, ce qui compte pour elle), d'après l'article CULTIQ, réécrit à notre façon | /a-propos | ✅ texte à valider par Aya ; photo recadrée depuis l'article (image 1) |
 
 Idées tirées de l'article CULTIQ sur Aya (8 novembre) — l'esprit de ses rencontres, à traduire dans le produit :
 

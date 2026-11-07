@@ -1,6 +1,7 @@
 import { HeartHandshake, Shapes, Sprout, UsersRound } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { MediaImage as Image } from "@/components/media";
 import { StaticPage } from "@/components/static-page";
 import { PrimaryLink } from "@/components/ui";
 import { AYA_INSTAGRAM } from "@/lib/legal-info";
@@ -26,8 +27,8 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
       <section aria-labelledby="founder" className="rounded-[var(--radius-card)] bg-white p-6 shadow-card sm:p-8">
         <p className="text-sm font-medium uppercase tracking-[0.2em] text-plum-700">{ta("founderEyebrow")}</p>
         <div className="mt-4 flex items-center gap-4">
-          {/* Monogramme en attendant une photo d'Aya dont nous avons les droits (docs/16). */}
-          <span aria-hidden className="grid size-16 shrink-0 place-items-center rounded-full bg-plum-900 font-display text-2xl text-white">AS</span>
+          {/* Photo tirée de l'article CULTIQ (choix de Rita, 8 nov.) : accord de CULTIQ / original en haute définition à obtenir (docs/16). */}
+          <Image src="/images/aya-snoussi.webp" alt={ta("photoAlt")} width={112} height={112} className="size-24 shrink-0 rounded-full object-cover sm:size-28" />
           <div>
             <h2 id="founder" className="font-display text-3xl font-medium text-plum-900">{ta("founderName")}</h2>
             <p className="text-sm text-muted">{ta("founderRole")}</p>
