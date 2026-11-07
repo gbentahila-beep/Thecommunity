@@ -19,9 +19,9 @@ Chaque maillon peut prendre plusieurs semaines. Commencer maintenant permet que 
 | Option | Pour | Contre |
 |---|---|---|
 | **A. Nouvelle SARL (ou SARL AU)** dédiée à The Community | Activité isolée (risques, comptes, valorisation), facile à présenter à des investisseurs, capital ouvrable à des associés | Création à prévoir (quelques semaines avec un comptable) |
-| B. Ajouter l'activité à une société marocaine existante (ex. celle du centre d'appels ou de la distribution de films), par modification de l'objet social | Plus rapide si la société et son compte bancaire existent déjà | Mélange des activités et des risques ; moins lisible pour des investisseurs ; à revoir plus tard |
+| B. Ajouter l'activité à une société marocaine existante, si vous en détenez une, par modification de l'objet social | Plus rapide si la société et son compte bancaire existent déjà | Mélange des activités et des risques ; moins lisible pour des investisseurs ; à revoir plus tard |
 | C. Auto-entrepreneur | Création très rapide | **Déconseillé** : plafonds de chiffre d'affaires, encaissements pour le compte de partenaires, image auprès des banques et prestataires |
-| D. Encaisser via une société française (ex. Stripe France) | Rapide techniquement | **Déconseillé** : service rendu au Maroc à des clients marocains, réglementation des changes, cartes marocaines limitées pour les paiements internationaux |
+| D. Encaisser via une société étrangère (ex. Stripe en France) | Rapide techniquement | **Déconseillé** : service rendu au Maroc à des clients marocains, réglementation des changes, cartes marocaines limitées pour les paiements internationaux |
 
 **Recommandation : option A**, avec option B comme raccourci si une société existante peut porter l'activité sans difficulté (à voir avec votre comptable).
 
@@ -30,7 +30,7 @@ Points à faire préciser par le comptable :
 2. **Modèle d'encaissement** : la société vend-elle l'expérience en son nom (elle achète la prestation au partenaire et revend la place) ou encaisse-t-elle pour le compte du partenaire contre commission ? Le premier modèle est le plus simple au départ ; le second peut relever d'une réglementation spécifique sur l'encaissement pour compte de tiers. La plateforme gère les deux (champ `economics.model`), mais le choix juridique doit être fait.
 3. **TVA** applicable aux places vendues et aux commissions, et mentions obligatoires sur les reçus.
 4. **Activités réglementées** : randonnées, food tours ou excursions peuvent relever de règles propres au tourisme (guides, agences). À vérifier avant de les proposer.
-5. **Associés** : qui détient la société (vous seul, avec Gérald, avec d'autres) ?
+5. **Associés** : qui détient la société et dans quelles proportions ?
 
 ## Étape 2 — Compte bancaire professionnel
 
