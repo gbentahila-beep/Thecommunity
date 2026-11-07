@@ -519,3 +519,108 @@ describe("liste d'attente", () => {
     expect((await entry(sid, waiting.uid))!.status).toBe("offered");
   });
 });
+
+describe("back-office : réservations", () => {
+  let team: Client;
+  beforeAll(async () => {
+    team = await member({ role: "admin" });
+  });
+  const logs = async (targetId: string) => (await db().collection("auditLogs").where("targetId", "==", targetId).get()).docs.map((d) => d.data());
+
+  it("l'équipe annule : remboursement intégral même à moins de 48 h, motif, notification, journal", async () => {
+    const sid = await makeSession({ startInHours: 20 });
+    const u = await member();
+    const { reservationId, paymentId } = await paidReservation(u, sid);
+    expect(await refusal(u.call("adminCancelReservation", { reservationId, reason: "test" }))).toBe("permission-denied:");
+    expect(await refusal(team.call("adminCancelReservation", { reservationId, reason: "" }))).toBe("invalid-argument:");
+    expect(await team.call("adminCancelReservation", { reservationId, reason: "Partenaire fermé" })).toEqual({ ok: true, refundAmount: 30000, refundStatus: "succeeded" });
+    expect(await reservation(reservationId)).toMatchObject({ status: "refunded", cancellation: { by: "admin", actorUid: team.uid, reason: "Partenaire fermé", refundAmount: 30000 } });
+    expect((await payment(paymentId)).status).toBe("refunded");
+    const notes = await db().collection(`users/${u.uid}/notifications`).get();
+    expect(notes.docs.map((d) => d.data().type)).toContain("event_cancelled");
+    expect((await logs(reservationId)).map((l) => l.action)).toEqual(["reservation.cancel"]);
+  });
+
+  it("l'équipe peut aussi annuler selon la politique, ou sans remboursement", async () => {
+    const sid = await makeSession({ startInHours: 20 });
+    const a = await member();
+    const b = await member();
+    const ra = await paidReservation(a, sid);
+    const rb = await paidReservation(b, sid);
+    expect(await team.call("adminCancelReservation", { reservationId: ra.reservationId, refund: "policy", reason: "Demande du membre" })).toMatchObject({ refundAmount: 0 });
+    expect(await team.call("adminCancelReservation", { reservationId: rb.reservationId, refund: "none", reason: "Non-respect de la charte" })).toMatchObject({ refundAmount: 0 });
+    expect((await reservation(rb.reservationId)).status).toBe("cancelled");
+    expect(await session(sid)).toMatchObject({ seatsConfirmed: 0 });
+  });
+
+  it("annuler une date : tout le monde remboursé et prévenu, liste d'attente close, plus de réservation possible", async () => {
+    const sid = await makeSession({ capacity: 2 });
+    const a = await member();
+    const b = await member();
+    const w = await member();
+    const late = await member();
+    await paidReservation(a, sid);
+    const { reservationId: pendingId } = await b.call("createReservation", { sessionId: sid, seats: 1 });
+    await w.call("joinWaitlist", { sessionId: sid, seats: 1 });
+    expect(await team.call("adminCancelSession", { sessionId: sid, reason: "Météo" })).toMatchObject({ ok: true, cancelled: 2, refunded: 30000, failures: [] });
+    expect(await session(sid)).toMatchObject({ status: "cancelled", seatsConfirmed: 0, seatsHeld: 0, waitlistCount: 0 });
+    expect((await reservation(pendingId as string)).status).toBe("cancelled");
+    expect((await db().doc(`sessions/${sid}/waitlist/${w.uid}`).get()).data()!.status).toBe("left");
+    // Personne ne s'est vu proposer de place sur une date annulée.
+    expect((await db().collection("reservations").where("sessionId", "==", sid).where("userId", "==", w.uid).get()).size).toBe(0);
+    expect(await refusal(late.call("createReservation", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:not_open");
+    expect(await refusal(team.call("adminCancelSession", { sessionId: sid, reason: "Météo" }))).toBe("failed-precondition:already_cancelled");
+    expect((await logs(sid)).map((l) => l.action)).toEqual(["session.cancel"]);
+  });
+
+  it("déplacer vers une autre date de la même expérience : places transférées, ancienne place proposée à la liste d'attente", async () => {
+    const from = await makeSession({ capacity: 1 });
+    const fromData = await session(from);
+    const toRef = db().collection("sessions").doc();
+    await toRef.set({ ...fromData, startAt: Timestamp.fromMillis(Date.now() + 96 * 3_600_000), endAt: Timestamp.fromMillis(Date.now() + 98 * 3_600_000), capacity: 2, seatsConfirmed: 0, seatsHeld: 0, waitlistCount: 0, status: "published" });
+    const other = await makeSession();
+    const u = await member();
+    const w = await member();
+    const { reservationId } = await paidReservation(u, from);
+    await w.call("joinWaitlist", { sessionId: from, seats: 1 });
+
+    expect(await refusal(team.call("adminMoveReservation", { reservationId, targetSessionId: other }))).toBe("failed-precondition:different_experience");
+    expect(await team.call("adminMoveReservation", { reservationId, targetSessionId: toRef.id })).toEqual({ ok: true });
+    const r = await reservation(reservationId);
+    expect(r).toMatchObject({ sessionId: toRef.id, status: "confirmed" });
+    expect((r.sessionSnapshot.startAt as Timestamp).toMillis()).toBe(((await session(toRef.id)).startAt as Timestamp).toMillis());
+    expect(await session(toRef.id)).toMatchObject({ seatsConfirmed: 1 });
+    expect((await db().doc(`sessions/${toRef.id}/seatLocks/${u.uid}`).get()).exists).toBe(true);
+    expect((await db().doc(`sessions/${from}/seatLocks/${u.uid}`).get()).exists).toBe(false);
+    expect((await db().doc(`sessions/${from}/waitlist/${w.uid}`).get()).data()!.status).toBe("offered");
+    expect(await session(from)).toMatchObject({ seatsConfirmed: 0, seatsHeld: 1 });
+    const notes = await db().collection(`users/${u.uid}/notifications`).get();
+    expect(notes.docs.map((d) => d.data().type)).toContain("event_updated");
+    expect((await logs(reservationId)).map((l) => l.action)).toEqual(["reservation.move"]);
+    // Le membre peut toujours annuler sa réservation déplacée.
+    expect(await u.call("cancelReservation", { reservationId })).toMatchObject({ ok: true });
+    expect(await session(toRef.id)).toMatchObject({ seatsConfirmed: 0 });
+  });
+
+  it("pointage : ouvert 3 h avant, présent / absent / annuler le pointage", async () => {
+    const later = await makeSession({ startInHours: 30 });
+    const soon = await makeSession({ startInHours: 2.5 });
+    const u = await member();
+    const v = await member();
+    const r1 = await paidReservation(u, later);
+    const r2 = await paidReservation(v, soon);
+    expect(await refusal(team.call("adminCheckIn", { reservationId: r1.reservationId, presence: "attended" }))).toBe("failed-precondition:too_early");
+    await team.call("adminCheckIn", { reservationId: r2.reservationId, presence: "attended" });
+    expect(await reservation(r2.reservationId)).toMatchObject({ status: "attended", checkedInBy: team.uid });
+    await team.call("adminCheckIn", { reservationId: r2.reservationId, presence: "no_show" });
+    expect((await reservation(r2.reservationId)).status).toBe("no_show");
+    await team.call("adminCheckIn", { reservationId: r2.reservationId, presence: "confirmed" });
+    expect(await reservation(r2.reservationId)).toMatchObject({ status: "confirmed", checkedInAt: null });
+    expect(await refusal(u.call("adminCheckIn", { reservationId: r1.reservationId, presence: "attended" }))).toBe("permission-denied:");
+  });
+
+  it("export journalisé", async () => {
+    await team.call("adminLogExport", { kind: "participants", targetId: "session-x", rows: 12 });
+    expect((await logs("session-x")).map((l) => [l.action, l.after.rows])).toEqual([["export.participants", 12]]);
+  });
+});
