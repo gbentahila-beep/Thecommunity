@@ -33,3 +33,14 @@ export function formatLongDate(iso: string, locale: string) {
 export function formatTimeRange(startIso: string, endIso: string, locale: string) {
   return `${formatTime(startIso, locale)} – ${formatTime(endIso, locale)}`;
 }
+
+/** « 12 mai 1994 » — pour une date calendaire AAAA-MM-JJ (sans fuseau). */
+export function formatCalendarDate(date: string, locale: string) {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
+    timeZone: "UTC",
+    numberingSystem: "latn",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(`${date}T12:00:00Z`));
+}

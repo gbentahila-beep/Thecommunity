@@ -31,7 +31,7 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
           </div>
           <LanguageSwitch className="hidden sm:inline-flex" />
           <Link
-            href="/connexion"
+            href="/espace"
             aria-label={t("account")}
             className="grid size-11 place-items-center rounded-full bg-cream-deep text-plum-900 transition hover:bg-sand"
           >

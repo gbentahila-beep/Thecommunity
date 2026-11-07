@@ -20,6 +20,9 @@ export default async function LoginPage({ params }: PageProps<"/[locale]/connexi
           <Link href="/inscription" className="font-semibold text-plum-900 underline underline-offset-4">
             {t("goSignup")}
           </Link>
+          <Link href="/espace" className="mt-3 block font-medium text-plum-900 underline underline-offset-4">
+            {t("demoSpace")}
+          </Link>
         </>
       }
     >

@@ -6,7 +6,7 @@ Stack prévue : Next.js · React · TypeScript · Tailwind CSS · Firebase (Auth
 
 ## État du projet
 
-**Phase 1 — Architecture : validée.** **Phase 2 — Design et frontend : en cours** (site public livré avec données de démonstration, voir [`docs/10-phase-2-avancement.md`](docs/10-phase-2-avancement.md)).
+**Phase 1 — Architecture : validée.** **Phase 2 — Design et frontend : en cours** (site public et espace membre livrés avec données de démonstration, voir [`docs/10-phase-2-avancement.md`](docs/10-phase-2-avancement.md)).
 
 👉 Lire [`docs/README.md`](docs/README.md) pour l'architecture complète et les décisions prises, et [`docs/09-demarches-lancement.md`](docs/09-demarches-lancement.md) pour les démarches administratives.
 

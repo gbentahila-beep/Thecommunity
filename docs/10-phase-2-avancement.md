@@ -27,9 +27,28 @@ Captures : [`captures/`](captures/)
 - Le lien « Mot de passe oublié » est un simple texte jusqu'à la phase 3.
 - `cacheComponents` de Next.js 16 est désactivé : modèle classique pages statiques + revalidation (ISR), plus simple avec la bibliothèque de traduction. À réévaluer en phase 3.
 
-## Étape 2b — Espace utilisateur (à venir)
+## Étape 2b — Espace membre ✅
 
-Questionnaire de profil en 4 écrans, tableau de bord, mes réservations, détail d'une réservation, profil, préférences et « Mes données », notifications, historique. Toujours avec des données de démonstration.
+| Livré | Détail |
+|---|---|
+| Questionnaire `/bienvenue` | 4 écrans (vous · langues et passions · envies · photo et présentation), barre de progression, validation à chaque étape avec les **schémas Zod partagés** (`packages/shared/src/profile.ts`, réutilisés côté serveur en phase 3) : 18 ans minimum, téléphone valide, 1 langue et 3 centres d'intérêt minimum. Genre facultatif (D5). **Brouillon enregistré sur l'appareil** : on reprend là où on s'était arrêté. Mode édition (`?edition=1`) pré-rempli depuis le profil |
+| Tableau de bord `/espace` | Prochaine expérience avec compte à rebours, statut du groupe (« révélé la veille »), autres réservations, avis à donner, recommandations selon les centres d'intérêt |
+| Mes réservations | Onglets à venir / passées / annulées |
+| Détail d'une réservation | Statut, date, lieu (ou « révélé la veille »), **ajout à l'agenda (.ics) fonctionnel**, groupe révélé (prénoms + centres d'intérêt uniquement), reçu, montant remboursable calculé avec la politique 48 h, avis |
+| Profil | Lecture du profil, rappel de ce que voient les autres participants, bouton « Modifier » vers le questionnaire |
+| Préférences | Notifications (enregistrées sur l'appareil en démo), langue, **export de mes données en JSON fonctionnel** (loi 09-08) |
+| Notifications | Liste, non lues, « tout marquer comme lu » |
+| Historique | Expériences vécues, avis publiés ou à donner, **favoris** (ceux ajoutés avec le cœur) |
+| Navigation | Menu de l'espace (latéral sur ordinateur, défilant sur mobile), barre d'onglets mobile reliée à l'espace |
+
+**Vérifications effectuées :** TypeScript et ESLint sans erreur, compilation réussie (80 pages), **17 tests unitaires** (dont 7 sur la validation du profil), **26 vérifications de bout en bout** dans un navigateur mobile (`tests/e2e/espace-membre.e2e.cjs`) : validations du questionnaire, refus des moins de 18 ans, reprise du brouillon, favoris, notifications, fichier agenda, groupe sans données de contact, export JSON, préférences, version arabe. Aucune page ne déborde horizontalement (22 pages contrôlées). Un bug de mise en page mobile a été trouvé par ces tests et corrigé.
+
+### Limites connues de l'étape 2b (levées en phase 3 ou 4)
+
+- L'espace affiche toujours le **membre fictif « Salma »** ; il n'est pas encore protégé par la connexion.
+- Les réponses du questionnaire, les préférences et les favoris restent **sur l'appareil** ; l'envoi de la photo n'est pas actif.
+- **Désactivés avec mention explicite** : annuler une réservation, publier un avis (phase 4), supprimer le compte (phase 3).
+- « Signaler un comportement » n'est pas encore présent (phase 4, avec les avis).
 
 ## Étape 2c — Back-office (à venir)
 

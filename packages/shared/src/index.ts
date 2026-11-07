@@ -4,3 +4,4 @@ export * from "./money";
 export * from "./seats";
 export * from "./cancellation";
 export * from "./time";
+export * from "./profile";

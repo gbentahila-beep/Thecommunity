@@ -129,3 +129,110 @@ export type Review = {
   createdAt: string;
   isDemo?: boolean;
 };
+
+export type Gender = "female" | "male" | "undisclosed";
+export type SpokenLanguage = "fr" | "ar" | "darija" | "en" | "es";
+
+/** Profil privé (users/{uid}) — lisible uniquement par son propriétaire et les admins. */
+export type UserProfile = {
+  uid: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  birthDate: string; // AAAA-MM-JJ
+  gender?: Gender;
+  cityId: string;
+  photoPath?: string;
+  languages: SpokenLanguage[];
+  interests: Interest[];
+  socialGoals: SocialGoal[];
+  profession?: string;
+  bio?: string;
+  locale: Locale;
+  onboardingCompleted: boolean;
+  notificationPrefs: { email: boolean; push: boolean; marketingEmail: boolean };
+  createdAt: string;
+  isDemo?: boolean;
+};
+
+export type ReservationStatus =
+  | "pending_payment"
+  | "confirmed"
+  | "cancelled"
+  | "expired"
+  | "refunded"
+  | "attended"
+  | "no_show";
+
+export type Pricing = {
+  unitAmount: number;
+  seats: number;
+  subtotal: number;
+  discount: number;
+  fees: number;
+  total: number;
+  currency: CurrencyCode;
+};
+
+export type Reservation = {
+  id: string;
+  userId: string;
+  sessionId: string;
+  experienceId: string;
+  status: ReservationStatus;
+  seats: number;
+  pricing: Pricing;
+  promoCode?: string;
+  sessionSnapshot: {
+    title: LocalizedText;
+    slug: string;
+    startAt: string;
+    endAt: string;
+    district: string;
+    coverImagePath: string;
+    categoryId: CategoryKey;
+    bookingMode: BookingMode;
+  };
+  /** Lieu exact : renseigné dès la réservation, ou à la révélation du groupe pour les dîners. */
+  venue?: { name: string; address: string };
+  groupId?: string;
+  paidAt?: string;
+  cancellation?: { at: string; by: "user" | "admin" | "system"; refundAmount: number };
+  reviewId?: string;
+  createdAt: string;
+  isDemo?: boolean;
+};
+
+/** Groupe tel que vu par un participant : uniquement les informations utiles à l'expérience. */
+export type Group = {
+  id: string;
+  sessionId: string;
+  label: string;
+  status: "proposed" | "validated" | "revealed";
+  memberIds: string[];
+  members: { uid: string; firstName: string; photoPath?: string; interests: Interest[] }[];
+  isDemo?: boolean;
+};
+
+export type NotificationType =
+  | "booking_confirmed"
+  | "payment_confirmed"
+  | "reminder"
+  | "group_revealed"
+  | "event_updated"
+  | "event_cancelled"
+  | "waitlist_offer"
+  | "review_request"
+  | "welcome";
+
+export type AppNotification = {
+  id: string;
+  type: NotificationType;
+  title: LocalizedText;
+  body: LocalizedText;
+  link?: string;
+  createdAt: string;
+  readAt?: string;
+  isDemo?: boolean;
+};

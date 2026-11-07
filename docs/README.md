@@ -1,6 +1,6 @@
 # Phase 1 — Analyse et architecture
 
-> Plateforme d'expériences sociales au Maroc · Marque : **The Community** · Statut : **phase 2 en cours — étape 2a (site public) livrée**
+> Plateforme d'expériences sociales au Maroc · Marque : **The Community** · Statut : **phase 2 en cours — étapes 2a (site public) et 2b (espace membre) livrées**
 
 ## Sommaire
 
