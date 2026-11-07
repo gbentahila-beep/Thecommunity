@@ -27,6 +27,35 @@ export const reservationRequestSchema = z.object({
 });
 export type ReservationRequest = z.infer<typeof reservationRequestSchema>;
 
+/** Délai pour payer après l'acceptation d'une demande de participation. */
+export const ACCEPTED_HOLD_HOURS = 24;
+export const REQUEST_MESSAGE_MAX = 500;
+
+/**
+ * Compte Instagram facultatif : « @pseudo », « pseudo » ou lien instagram.com/pseudo.
+ * Renvoie le pseudo seul (sans @), ou null s'il est invalide.
+ */
+export function normalizeInstagram(input: string): string | null {
+  const v = input.trim();
+  if (!v) return null;
+  const m = v.match(/^(?:https?:\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/([A-Za-z0-9._]{1,30})\/?(?:\?.*)?$/i) ?? v.match(/^@?([A-Za-z0-9._]{1,30})$/);
+  return m ? m[1]!.toLowerCase() : null;
+}
+
+/** Demande de participation envoyée par le navigateur. */
+export const bookingRequestSchema = z.object({
+  sessionId: reservationRequestSchema.shape.sessionId,
+  seats: reservationRequestSchema.shape.seats,
+  message: z.string().trim().max(REQUEST_MESSAGE_MAX, "tooLong").default(""),
+  instagram: z
+    .string()
+    .trim()
+    .max(120)
+    .default("")
+    .refine((v) => v === "" || normalizeInstagram(v) !== null, "invalidInstagram"),
+});
+export type BookingRequestInput = z.input<typeof bookingRequestSchema>;
+
 /** Prix d'une réservation, en centimes. Codes promo et frais : phase 5. */
 export function computePricing(unitAmount: number, seats: number, currency: CurrencyCode): Pricing {
   const subtotal = unitAmount * seats;

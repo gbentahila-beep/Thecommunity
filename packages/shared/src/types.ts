@@ -90,6 +90,10 @@ export type Experience = {
   bookingMode: BookingMode;
   groupConfig?: GroupConfig;
   maxSeatsPerBooking: number;
+  /** « on_request » : la personne envoie une demande, l'équipe accepte ou refuse avant le paiement. */
+  admission?: Admission;
+  /** Message de motivation obligatoire avec la demande (sinon facultatif). */
+  requestMessageRequired?: boolean;
   languages: string[];
   alcoholServed?: boolean;
   included: LocalizedText[];
@@ -99,6 +103,26 @@ export type Experience = {
   ratingAvg: number;
   ratingCount: number;
   isDemo?: boolean;
+};
+
+export type Admission = "direct" | "on_request";
+
+export type BookingRequestStatus = "pending" | "accepted" | "declined" | "cancelled";
+
+/** Demande de participation à une date « sur demande ». Lisible par son auteur et l'équipe. */
+export type BookingRequest = {
+  id: string;
+  userId: string;
+  sessionId: string;
+  experienceId: string;
+  seats: number;
+  message: string;
+  instagram?: string;
+  status: BookingRequestStatus;
+  reservationId?: string;
+  sessionSnapshot: Reservation["sessionSnapshot"];
+  createdAt: string;
+  decidedAt?: string;
 };
 
 export type SessionStatus = "draft" | "published" | "full" | "cancelled" | "completed";
@@ -229,6 +253,8 @@ export type NotificationType =
   | "event_cancelled"
   | "waitlist_offer"
   | "review_request"
+  | "request_accepted"
+  | "request_declined"
   | "welcome";
 
 export type AppNotification = {

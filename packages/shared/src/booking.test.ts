@@ -39,3 +39,23 @@ describe("réservation", () => {
     expect(reservationRequestSchema.safeParse({ sessionId: "abc", seats: 1.5 }).success).toBe(false);
   });
 });
+
+describe("demandes de participation", () => {
+  it("reconnaît un compte Instagram sous plusieurs formes", async () => {
+    const { normalizeInstagram } = await import("./booking");
+    expect(normalizeInstagram("@Rita.B")).toBe("rita.b");
+    expect(normalizeInstagram("rita_b")).toBe("rita_b");
+    expect(normalizeInstagram("https://www.instagram.com/rita.b/?hl=fr")).toBe("rita.b");
+    expect(normalizeInstagram("instagram.com/rita.b")).toBe("rita.b");
+    expect(normalizeInstagram("https://evil.com/rita")).toBeNull();
+    expect(normalizeInstagram("rita b")).toBeNull();
+    expect(normalizeInstagram("")).toBeNull();
+  });
+  it("valide la demande : message borné, Instagram facultatif mais valide", async () => {
+    const { bookingRequestSchema } = await import("./booking");
+    expect(bookingRequestSchema.safeParse({ sessionId: "s1", seats: 1 }).success).toBe(true);
+    expect(bookingRequestSchema.safeParse({ sessionId: "s1", seats: 1, message: "Bonjour", instagram: "@rita" }).success).toBe(true);
+    expect(bookingRequestSchema.safeParse({ sessionId: "s1", seats: 1, instagram: "pas valide !" }).success).toBe(false);
+    expect(bookingRequestSchema.safeParse({ sessionId: "s1", seats: 1, message: "x".repeat(501) }).success).toBe(false);
+  });
+});

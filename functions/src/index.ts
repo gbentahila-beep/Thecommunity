@@ -18,3 +18,4 @@ export { createReservation } from "./reservations/create-reservation";
 export { expireHolds } from "./reservations/expire-holds";
 export { startCheckout } from "./payments/start-checkout";
 export { sandboxCompletePayment } from "./payments/sandbox-complete";
+export { requestBooking, cancelBookingRequest, adminDecideRequest } from "./requests/booking-requests";

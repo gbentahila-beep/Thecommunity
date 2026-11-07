@@ -1,10 +1,10 @@
-import { bookingRefusal, computePricing, HOLD_MINUTES, reservationRequestSchema } from "@thecommunity/shared";
+import { bookingClosesAt, bookingRefusal, computePricing, HOLD_MINUTES, reservationRequestSchema } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth } from "../lib/guards";
 
-const refuse = (reason: string, message: string): never => {
+export const refuse = (reason: string, message: string): never => {
   throw new HttpsError("failed-precondition", message, { reason });
 };
 
@@ -28,21 +28,62 @@ export async function reserveSeats(caller: { uid: string; emailVerified: boolean
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { sessionId, seats } = parsed.data;
 
+  await requireMemberReady(uid);
+  return runReservation({ uid, sessionId, seats });
+}
+
+/** Compte actif et questionnaire complété (conditions pour réserver ou demander à participer). */
+export async function requireMemberReady(uid: string) {
   const user = (await db.doc(`users/${uid}`).get()).data();
   if (user?.status === "suspended") throw new HttpsError("permission-denied", "Compte suspendu.", { reason: "suspended" });
   if (user?.onboardingCompleted !== true) refuse("profile_incomplete", "Complétez votre profil pour réserver.");
+}
 
+/**
+ * La transaction de réservation. Deux chemins :
+ * - réservation directe (expérience « direct ») : blocage de 15 minutes ;
+ * - acceptation d'une demande par l'équipe (`requestId`) : la demande passe à « accepted » dans la MÊME
+ *   transaction et la personne a 24 h pour payer (jamais au-delà de la fermeture des réservations).
+ */
+export async function runReservation(o: ReservationRun) {
+  // Très forte affluence sur une même date : Firestore peut abandonner une transaction après ses propres
+  // essais (ABORTED). On relance alors quelques fois, avec une attente aléatoire, plutôt que d'afficher
+  // « réessayez » : la personne obtient une vraie réponse (place ou « complet »).
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await runReservationOnce(o);
+    } catch (e) {
+      const code = (e as { code?: unknown }).code;
+      if ((code === 10 || code === "aborted") && attempt < 4) {
+        await new Promise((r) => setTimeout(r, 50 + Math.random() * 250 * attempt));
+        continue;
+      }
+      throw e;
+    }
+  }
+}
+
+type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string };
+
+async function runReservationOnce(o: ReservationRun) {
+  const { uid, sessionId, seats } = o;
   const sessRef = db.doc(`sessions/${sessionId}`);
   const lockRef = sessRef.collection("seatLocks").doc(uid);
+  const requestRef = o.requestId ? db.doc(`bookingRequests/${o.requestId}`) : null;
 
   return db.runTransaction(async (tx) => {
-    const [sess, lock] = await Promise.all([tx.get(sessRef), tx.get(lockRef)]);
+    const [sess, lock, request] = await Promise.all([tx.get(sessRef), tx.get(lockRef), requestRef ? tx.get(requestRef) : Promise.resolve(null)]);
     if (!sess.exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
     const s = sess.data()!;
     const exp = await tx.get(db.doc(`experiences/${s.experienceId}`));
     if (!exp.exists || exp.data()?.status !== "published") refuse("not_open", "Cette expérience n'est pas ouverte à la réservation.");
     const e = exp.data()!;
     const now = Date.now();
+    if (!requestRef && e.admission === "on_request") refuse("approval_required", "Cette expérience est sur demande.");
+    if (request) {
+      const r = request.data();
+      if (!r || r.status !== "pending" || r.userId !== uid || r.sessionId !== sessionId) refuse("request_not_pending", "Cette demande a déjà été traitée.");
+    }
 
     // Réservation déjà en cours pour cette date ?
     let releasedHold = 0;
@@ -50,11 +91,13 @@ export async function reserveSeats(caller: { uid: string; emailVerified: boolean
       const prevRef = db.doc(`reservations/${lock.data()!.reservationId}`);
       const prev = await tx.get(prevRef);
       const p = prev.data();
-      if (p?.status === "pending_payment" && (p.holdExpiresAt as Timestamp).toMillis() > now) {
+      if (!requestRef && p?.status === "pending_payment" && (p.holdExpiresAt as Timestamp).toMillis() > now) {
         // Même personne, paiement pas encore fait : on reprend la réservation existante.
         return { reservationId: prev.id, status: "pending_payment", resumed: true, total: p.pricing.total };
       }
-      if (p?.status === "confirmed" || p?.status === "attended") refuse("already_booked", "Vous avez déjà une place pour cette date.");
+      if (p?.status === "confirmed" || p?.status === "attended" || (requestRef && p?.status === "pending_payment" && (p.holdExpiresAt as Timestamp).toMillis() > now)) {
+        refuse("already_booked", "Une place est déjà réservée pour cette date.");
+      }
       if (p?.status === "pending_payment") {
         // Blocage dépassé mais pas encore libéré par la tâche planifiée : on le libère ici.
         tx.update(prevRef, { status: "expired", updatedAt: FieldValue.serverTimestamp() });
@@ -85,7 +128,10 @@ export async function reserveSeats(caller: { uid: string; emailVerified: boolean
       categoryId: s.categoryId,
       seats,
       status: free ? "confirmed" : "pending_payment",
-      holdExpiresAt: Timestamp.fromMillis(now + HOLD_MINUTES * 60_000),
+      holdExpiresAt: Timestamp.fromMillis(
+        Math.min(now + (o.holdMs ?? HOLD_MINUTES * 60_000), bookingClosesAt(view.startAt, e.bookingMode).getTime()),
+      ),
+      ...(requestRef ? { requestId: requestRef.id } : {}),
       pricing,
       cancellationPolicyId: e.cancellationPolicyId ?? "standard-48h",
       sessionSnapshot: {
@@ -112,6 +158,15 @@ export async function reserveSeats(caller: { uid: string; emailVerified: boolean
       updatedAt: FieldValue.serverTimestamp(),
     });
     tx.set(lockRef, { reservationId: resRef.id, createdAt: FieldValue.serverTimestamp() });
+    if (requestRef) {
+      tx.update(requestRef, {
+        status: "accepted",
+        reservationId: resRef.id,
+        decidedAt: FieldValue.serverTimestamp(),
+        decidedBy: o.actorUid ?? null,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    }
     return { reservationId: resRef.id, status: free ? "confirmed" : "pending_payment", resumed: false, total: pricing.total };
   }, { maxAttempts: 10 }); // forte affluence sur une même date : on réessaie davantage avant d'abandonner
 }

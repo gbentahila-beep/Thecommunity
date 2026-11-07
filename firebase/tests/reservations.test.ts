@@ -23,11 +23,12 @@ let seq = 0;
 type Client = { uid: string; call: (name: string, data: unknown) => Promise<Record<string, unknown>> };
 
 /** Crée un compte (e-mail vérifié, profil complété par défaut) et un client connecté. */
-async function member(opts: { verified?: boolean; onboarded?: boolean } = {}): Promise<Client> {
+async function member(opts: { verified?: boolean; onboarded?: boolean; role?: "admin" } = {}): Promise<Client> {
   const n = ++seq; // capturé AVANT les await : chaque client a son propre nom d'application
   const email = `membre.${run}.${n}@example.com`;
   const user = await adminAuth(admin).createUser({ email, password: PASSWORD, emailVerified: opts.verified ?? true });
-  await db().doc(`users/${user.uid}`).set({ status: "active", onboardingCompleted: opts.onboarded ?? true, role: "user" }, { merge: true });
+  await db().doc(`users/${user.uid}`).set({ status: "active", onboardingCompleted: opts.onboarded ?? true, role: opts.role ?? "user", firstName: "Membre" }, { merge: true });
+  if (opts.role) await adminAuth(admin).setCustomUserClaims(user.uid, { role: opts.role });
   const app = initializeApp({ projectId: PROJECT, apiKey: "demo-key", authDomain: `${PROJECT}.firebaseapp.com` }, `client-${run}-${n}`);
   clients.push(app);
   connectAuthEmulator(getAuth(app), `http://${process.env.FIREBASE_AUTH_EMULATOR_HOST}`, { disableWarnings: true });
@@ -49,7 +50,7 @@ async function refusal(p: Promise<unknown>) {
   }
 }
 
-async function makeSession(opts: { capacity?: number; price?: number; startInHours?: number; mode?: string; maxSeats?: number } = {}) {
+async function makeSession(opts: { capacity?: number; price?: number; startInHours?: number; mode?: string; maxSeats?: number; onRequest?: boolean; messageRequired?: boolean } = {}) {
   const expRef = db().collection("experiences").doc();
   await expRef.set({
     slug: `test-${expRef.id}`,
@@ -61,6 +62,8 @@ async function makeSession(opts: { capacity?: number; price?: number; startInHou
     venue: { name: "Studio Test", address: "12 rue Test, Casablanca", revealPolicy: "immediate" },
     images: [],
     cancellationPolicyId: "standard-48h",
+    admission: opts.onRequest ? "on_request" : "direct",
+    requestMessageRequired: opts.messageRequired ?? false,
   });
   const start = Date.now() + (opts.startInHours ?? 72) * 3_600_000;
   const sessRef = db().collection("sessions").doc();
@@ -283,4 +286,94 @@ describe("concurrence", () => {
     expect(new Set(results.map((r) => r.reservationId)).size).toBe(1);
     expect(await session(sid)).toMatchObject({ seatsHeld: 1 });
   }, 60_000);
+});
+
+describe("demandes de participation (expériences sur demande)", () => {
+  let adminClient: Client;
+  beforeAll(async () => {
+    adminClient = await member({ role: "admin" });
+  });
+
+  it("une expérience sur demande ne se réserve pas directement ; une expérience directe ne prend pas de demande", async () => {
+    const onRequest = await makeSession({ onRequest: true });
+    const direct = await makeSession();
+    const u = await member();
+    expect(await refusal(u.call("createReservation", { sessionId: onRequest, seats: 1 }))).toBe("failed-precondition:approval_required");
+    expect(await refusal(u.call("requestBooking", { sessionId: direct, seats: 1 }))).toBe("failed-precondition:direct_booking");
+  });
+
+  it("message obligatoire si l'équipe l'a demandé ; Instagram vérifié et normalisé", async () => {
+    const sid = await makeSession({ onRequest: true, messageRequired: true });
+    const u = await member();
+    expect(await refusal(u.call("requestBooking", { sessionId: sid, seats: 1 }))).toBe("invalid-argument:");
+    expect(await refusal(u.call("requestBooking", { sessionId: sid, seats: 1, message: "Bonjour", instagram: "pas valide !" }))).toBe("invalid-argument:");
+    const res = await u.call("requestBooking", { sessionId: sid, seats: 1, message: "J'adore les dîners", instagram: "https://instagram.com/Rita.B" });
+    expect(res).toMatchObject({ status: "pending" });
+    const r = (await db().doc(`bookingRequests/${res.requestId}`).get()).data()!;
+    expect(r).toMatchObject({ userId: u.uid, status: "pending", message: "J'adore les dîners", instagram: "rita.b", seats: 1 });
+    // Aucune place bloquée tant que l'équipe n'a pas accepté.
+    expect(await session(sid)).toMatchObject({ seatsHeld: 0, seatsConfirmed: 0 });
+    expect(await refusal(u.call("requestBooking", { sessionId: sid, seats: 1, message: "Encore" }))).toBe("failed-precondition:already_requested");
+  });
+
+  it("acceptée : place bloquée 24 h, paiement, confirmation, notification et journal", async () => {
+    const sid = await makeSession({ onRequest: true });
+    const u = await member();
+    const { requestId } = await u.call("requestBooking", { sessionId: sid, seats: 1, message: "" });
+    expect(await refusal(u.call("adminDecideRequest", { requestId, decision: "accept" }))).toBe("permission-denied:");
+    const { reservationId } = await adminClient.call("adminDecideRequest", { requestId, decision: "accept" });
+    const req = (await db().doc(`bookingRequests/${requestId}`).get()).data()!;
+    expect(req).toMatchObject({ status: "accepted", reservationId, decidedBy: adminClient.uid });
+    const r = await reservation(reservationId as string);
+    expect(r).toMatchObject({ status: "pending_payment", userId: u.uid, requestId });
+    const hours = ((r.holdExpiresAt as Timestamp).toMillis() - Date.now()) / 3_600_000;
+    expect(hours).toBeGreaterThan(23.9);
+    expect(hours).toBeLessThanOrEqual(24);
+    expect(await session(sid)).toMatchObject({ seatsHeld: 1 });
+    expect(await refusal(adminClient.call("adminDecideRequest", { requestId, decision: "decline" }))).toBe("failed-precondition:request_not_pending");
+
+    const { paymentId } = await u.call("startCheckout", { reservationId });
+    await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
+    expect((await reservation(reservationId as string)).status).toBe("confirmed");
+
+    const notes = await db().collection(`users/${u.uid}/notifications`).get();
+    expect(notes.docs.map((d) => d.data())).toMatchObject([{ type: "request_accepted", link: `/espace/reservations/${reservationId}` }]);
+    const logs = await db().collection("auditLogs").where("targetId", "==", requestId).get();
+    expect(logs.docs.map((d) => d.data().action)).toEqual(["request.accept"]);
+  });
+
+  it("refusée : aucune place prise, la personne est prévenue et ne peut pas redemander cette date", async () => {
+    const sid = await makeSession({ onRequest: true });
+    const u = await member();
+    const { requestId } = await u.call("requestBooking", { sessionId: sid, seats: 1, message: "" });
+    await adminClient.call("adminDecideRequest", { requestId, decision: "decline" });
+    expect((await db().doc(`bookingRequests/${requestId}`).get()).data()).toMatchObject({ status: "declined" });
+    expect(await session(sid)).toMatchObject({ seatsHeld: 0, seatsConfirmed: 0 });
+    const notes = await db().collection(`users/${u.uid}/notifications`).get();
+    expect(notes.docs.map((d) => d.data().type)).toEqual(["request_declined"]);
+    expect(await refusal(u.call("requestBooking", { sessionId: sid, seats: 1, message: "" }))).toBe("failed-precondition:request_declined");
+  });
+
+  it("accepter plus de personnes que de places est impossible", async () => {
+    const sid = await makeSession({ onRequest: true, capacity: 1 });
+    const a = await member();
+    const b = await member();
+    const ra = await a.call("requestBooking", { sessionId: sid, seats: 1, message: "" });
+    const rb = await b.call("requestBooking", { sessionId: sid, seats: 1, message: "" });
+    await adminClient.call("adminDecideRequest", { requestId: ra.requestId, decision: "accept" });
+    expect(await refusal(adminClient.call("adminDecideRequest", { requestId: rb.requestId, decision: "accept" }))).toBe("failed-precondition:full");
+    expect((await db().doc(`bookingRequests/${rb.requestId}`).get()).data()!.status).toBe("pending");
+  });
+
+  it("la personne peut retirer sa demande tant qu'elle n'est pas traitée ; personne d'autre ne le peut", async () => {
+    const sid = await makeSession({ onRequest: true });
+    const u = await member();
+    const other = await member();
+    const { requestId } = await u.call("requestBooking", { sessionId: sid, seats: 1, message: "" });
+    expect(await refusal(other.call("cancelBookingRequest", { requestId }))).toBe("not-found:not_found");
+    expect(await u.call("cancelBookingRequest", { requestId })).toEqual({ ok: true });
+    expect(await refusal(adminClient.call("adminDecideRequest", { requestId, decision: "accept" }))).toBe("failed-precondition:request_not_pending");
+    // Elle peut redemander ensuite.
+    expect(await u.call("requestBooking", { sessionId: sid, seats: 1, message: "" })).toMatchObject({ status: "pending" });
+  });
 });

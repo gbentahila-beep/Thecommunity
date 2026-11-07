@@ -35,6 +35,8 @@ export const experienceInputSchema = z
     groupTarget: z.coerce.number().int().min(2, "min2").max(20, "tooMany").optional(),
     groupMax: z.coerce.number().int().min(2, "min2").max(20, "tooMany").optional(),
     maxSeatsPerBooking: z.coerce.number().int().min(1, "min1").max(50, "tooMany"),
+    admission: z.enum(["direct", "on_request"]).default("direct"),
+    requestMessageRequired: z.boolean().default(false),
     priceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany"),
     durationMinutes: z.coerce.number().int().min(15, "min15").max(1440, "tooMany"),
     languages: z.array(z.enum(SPOKEN_LANGUAGES as [SpokenLanguage, ...SpokenLanguage[]])).min(1, "pickOne"),

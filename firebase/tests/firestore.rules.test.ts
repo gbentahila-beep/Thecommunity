@@ -36,6 +36,7 @@ beforeEach(async () => {
     await setDoc(doc(db, "reservations/r1"), { userId: "salma", sessionId: "s1", status: "confirmed" });
     await setDoc(doc(db, "reservations/r2"), { userId: "karim", sessionId: "s1", status: "confirmed" });
     await setDoc(doc(db, "payments/p1"), { userId: "salma", amount: 16900 });
+    await setDoc(doc(db, "bookingRequests/s1_salma"), { userId: "salma", sessionId: "s1", status: "pending", message: "Bonjour" });
     await setDoc(doc(db, "groups/g1"), { memberIds: ["salma", "karim"], status: "revealed" });
     await setDoc(doc(db, "groups/g2"), { memberIds: ["salma"], status: "validated" });
     await setDoc(doc(db, "promoCodes/BIENVENUE20"), { value: 20 });
@@ -137,6 +138,14 @@ describe("réservations, paiements, groupes", () => {
     await assertFails(setDoc(doc(salma(), "payments/p2"), { userId: "salma", status: "succeeded" }));
     await assertSucceeds(getDoc(doc(salma(), "payments/p1")));
     await assertFails(getDoc(doc(karim(), "payments/p1")));
+  });
+  it("demande de participation : visible par son auteur et l'équipe, jamais écrite par le navigateur", async () => {
+    await assertSucceeds(getDoc(doc(salma(), "bookingRequests/s1_salma")));
+    await assertFails(getDoc(doc(karim(), "bookingRequests/s1_salma")));
+    await assertSucceeds(getDoc(doc(admin(), "bookingRequests/s1_salma")));
+    await assertFails(setDoc(doc(salma(), "bookingRequests/s1_salma2"), { userId: "salma", status: "pending" }));
+    await assertFails(updateDoc(doc(salma(), "bookingRequests/s1_salma"), { status: "accepted" }));
+    await assertFails(updateDoc(doc(admin(), "bookingRequests/s1_salma"), { status: "accepted" }));
   });
   it("groupe visible par ses membres seulement une fois révélé", async () => {
     await assertSucceeds(getDoc(doc(karim(), "groups/g1")));

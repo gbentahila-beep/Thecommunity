@@ -93,6 +93,7 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     categoryId: v.categoryId,
     bookingMode: v.bookingMode,
     district: v.district,
+    admission: v.admission,
   };
 
   const experience = {
@@ -112,6 +113,8 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     bookingMode: v.bookingMode,
     groupConfig: grouped ? { minSize: v.groupMin, targetSize: v.groupTarget, maxSize: v.groupMax } : null,
     maxSeatsPerBooking: v.maxSeatsPerBooking,
+    admission: v.admission,
+    requestMessageRequired: v.admission === "on_request" && v.requestMessageRequired,
     languages: v.languages,
     alcoholServed: v.alcoholServed,
     included: (v.included ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
