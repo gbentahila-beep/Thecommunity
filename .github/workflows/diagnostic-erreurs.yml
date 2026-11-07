@@ -22,16 +22,35 @@ jobs:
           gcloud auth activate-service-account --key-file="$RUNNER_TEMP/sa.json" --quiet
           gcloud config set project "$PROJECT" --quiet
       - name: Index Firestore (état)
-        run: gcloud firestore indexes composite list --format="table(name.basename(),collectionGroup,state,fields[].fieldPath.list())" 2>&1 | tail -40
+        run: |
+          gcloud firestore indexes composite list --format="table(name,state)" 2>&1 | sed -E 's#projects/[^/]+/databases/\(default\)/collectionGroups/##' | tail -40
+          echo "--- Index de champ (exemptions) ---"
+          gcloud firestore indexes fields list --format="table(name,indexConfig.indexes)" 2>&1 | sed -E 's#projects/[^/]+/databases/\(default\)/collectionGroups/##' | grep -v "__default__" | tail -20
       - name: Erreurs des fonctions (24 dernières heures)
         run: |
           gcloud logging read 'severity>=ERROR AND (resource.type="cloud_run_revision" OR resource.type="cloud_function") AND timestamp>="'"$(date -u -d '-24 hours' +%Y-%m-%dT%H:%M:%SZ)"'"' \
-            --limit=40 --format=json 2>/dev/null | python3 -c '
+            --limit=60 --format=json 2>/dev/null | python3 -c '
           import json, sys
           for e in json.load(sys.stdin):
               svc = e.get("resource", {}).get("labels", {}).get("service_name") or e.get("resource", {}).get("labels", {}).get("function_name")
-              msg = e.get("textPayload") or (e.get("jsonPayload") or {}).get("message") or json.dumps(e.get("jsonPayload"))[:300]
-              print(e.get("timestamp"), svc, "|", str(msg)[:600].replace("\n", " "))
+              req = e.get("httpRequest") or {}
+              msg = e.get("textPayload") or (e.get("jsonPayload") or {}).get("message") or (e.get("jsonPayload") and json.dumps(e.get("jsonPayload"))[:400]) or ""
+              where = (req.get("requestMethod", "") + " " + req.get("requestUrl", "").split("?")[0] + " " + str(req.get("status", ""))).strip()
+              print(e.get("timestamp"), svc, "|", where, "|", str(msg)[:900].replace("\n", " "))
+          '
+      - name: Dernières réservations modifiées (statuts seulement)
+        run: |
+          TOKEN=$(gcloud auth print-access-token)
+          curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "content-type: application/json" \
+            "https://firestore.googleapis.com/v1/projects/$PROJECT/databases/(default)/documents:runQuery" \
+            -d '{"structuredQuery":{"from":[{"collectionId":"reservations"}],"orderBy":[{"field":{"fieldPath":"updatedAt"},"direction":"DESCENDING"}],"limit":10}}' | python3 -c '
+          import json, sys
+          for row in json.load(sys.stdin):
+              d = row.get("document")
+              if not d: continue
+              f = d["fields"]
+              c = f.get("cancellation", {}).get("mapValue", {}).get("fields", {})
+              print(d["name"].split("/")[-1], f.get("status", {}).get("stringValue"), f.get("updatedAt", {}).get("timestampValue"), "annulée par:", c.get("by", {}).get("stringValue"))
           '
       - name: Suppression de la clé temporaire
         if: always()
