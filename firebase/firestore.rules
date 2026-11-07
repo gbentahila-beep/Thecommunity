@@ -1,7 +1,7 @@
 rules_version = '2';
 
 // =====================================================================
-// The Community — règles de sécurité Firestore
+// The Host Club — règles de sécurité Firestore
 // Principe : tout est refusé par défaut. Le navigateur lit ce qui lui est
 // destiné et n'écrit presque rien de sensible : places, prix, paiements,
 // rôles et groupes passent par les Cloud Functions (Admin SDK).

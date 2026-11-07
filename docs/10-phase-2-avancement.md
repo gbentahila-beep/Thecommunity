@@ -23,7 +23,7 @@ Captures : [`captures/`](captures/)
 ### Limites connues de l'étape 2a
 
 - **Photos** : extraites de la maquette (basse définition, retouchées). Les réseaux de banques d'images sont bloqués dans l'environnement de développement. À remplacer par de vraies photos des lieux partenaires.
-- **Adresse e-mail de contact** `contact@thecommunity.ma` : hypothèse, le domaine n'est pas encore réservé.
+- **Adresse e-mail de contact** `contact@thehostclub.ma` : hypothèse, le domaine n'est pas encore réservé.
 - Le lien « Mot de passe oublié » est un simple texte jusqu'à la phase 3.
 - `cacheComponents` de Next.js 16 est désactivé : modèle classique pages statiques + revalidation (ISR), plus simple avec la bibliothèque de traduction. À réévaluer en phase 3.
 

@@ -1,6 +1,6 @@
 # Phase 1 — Analyse et architecture
 
-> Plateforme d'expériences sociales au Maroc · Marque : **The Community** · Statut : **phase 4 — site en ligne sur le projet d'essai ; réservation et paiement de test opérationnels (4a) ; annulation, liste d'attente et back-office des réservations à venir**
+> Plateforme d'expériences sociales au Maroc · Marque : **The Host Club** · Statut : **phase 4 — site en ligne sur le projet d'essai ; réservation et paiement de test opérationnels (4a) ; annulation, liste d'attente et back-office des réservations à venir**
 
 ## Sommaire
 
@@ -38,7 +38,7 @@
 
 | # | Décision | Statut |
 |---|---|---|
-| **D1** | Nom de marque | ✅ **The Community** (disponibilité OMPIC et domaine à vérifier, voir [09](09-demarches-lancement.md)) |
+| **D1** | Nom de marque | ✅ **The Host Club** (remplace « The Community » depuis le 7 novembre 2026 ; disponibilité OMPIC et domaine à vérifier, voir [09](09-demarches-lancement.md)) |
 | **D2** | Entité juridique et prestataire de paiement | ⏳ **En cours** : aucune structure ni contrat à ce jour. Feuille de route dans [09](09-demarches-lancement.md). Le développement avance avec l'adaptateur de paiement de test |
 | **D3** | Région des données | ✅ `europe-west1` (Belgique). Formalités CNDP à faire par la société avant l'ouverture au public |
 | **D4** | Séparer Expérience et Session | ✅ Retenu (non contesté) |

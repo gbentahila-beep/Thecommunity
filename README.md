@@ -1,4 +1,4 @@
-# The Community — plateforme d'expériences sociales au Maroc
+# The Host Club — plateforme d'expériences sociales au Maroc
 
 Découvrir des expériences, rencontrer de nouvelles personnes et sortir de sa routine. Lancement à Casablanca, puis Rabat, Marrakech, Tanger, Agadir.
 

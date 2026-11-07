@@ -20,7 +20,7 @@ Classés par impact sur le lancement. **P** = probabilité, **I** = impact (H = 
 | R12 | **Abus** : faux comptes, abus de codes promo, scripts | M | M | App Check, e-mail vérifié pour réserver, limites par utilisateur sur les promos, limitation de fréquence |
 | R13 | **Matching perçu comme discriminant** (âge, genre) | B | M | Critères transparents dans la FAQ, genre facultatif, l'admin garde la main |
 | R14 | **Recherche limitée** dans Firestore | B | B | Suffisant au lancement ; Algolia/Typesense ensuite |
-| R15 | **Nom de marque** « The Community » : expression courante en anglais, donc plus difficile à protéger et à référencer seule | M | M | Vérifier la disponibilité à l'OMPIC (classes 41 et 43) et du nom de domaine ; travailler le SEO sur « The Community Casablanca » et les pages ville/catégorie |
+| R15 | **Nom de marque** « The Host Club » : plus distinctif que l'ancien nom, mais des établissements ou événements peuvent déjà l'utiliser ailleurs | M | M | Vérifier la disponibilité à l'OMPIC (classes 41, 43, 35, 9), du domaine et des comptes réseaux sociaux avant tout investissement d'image ; SEO sur « The Host Club Casablanca » et les pages ville/catégorie |
 | R16 | **Dépendance à Firebase** (verrouillage fournisseur) | B | B | Choix assumé ; logique métier isolée dans des packages purs ; paiement et e-mail derrière des interfaces |
 
 ## Dépendances externes à lancer en parallèle

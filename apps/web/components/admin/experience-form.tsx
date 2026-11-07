@@ -277,7 +277,7 @@ export function ExperienceForm({
       <Section title="4. Partenaire et économie (visible uniquement par l'équipe)">
         <div><Label k="partnerId">Partenaire</Label>
           <select {...field("partnerId")} value={v.partnerId ?? ""} onChange={(e) => set("partnerId", e.target.value)}>
-            <option value="">— Aucun (organisé par The Community)</option>
+            <option value="">— Aucun (organisé par The Host Club)</option>
             {partners.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
           </select>{err("partnerId")}</div>
         <div><Label k="economicsModel">Modèle</Label>

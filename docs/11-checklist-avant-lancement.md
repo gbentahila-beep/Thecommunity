@@ -76,12 +76,12 @@ Les étapes 1 à 4 prennent souvent **plusieurs semaines chacune** : c'est ce qu
 
 ## F. Marque, domaine et e-mail 🟠
 
-- [ ] Vérifier la disponibilité de **« The Community »** auprès de l'**OMPIC**. Classes à étudier avec le conseil : 41 (événements, loisirs), 43 (restauration), 35 (vente / mise en relation), 9 (application).
+- [ ] Vérifier la disponibilité de **« The Host Club »** auprès de l'**OMPIC**. Classes à étudier avec le conseil : 41 (événements, loisirs), 43 (restauration), 35 (vente / mise en relation), 9 (application).
 - [ ] **Déposer la marque** si elle est disponible. Sinon, me prévenir : le nom est facile à changer dans le site.
 - [ ] Réserver le **nom de domaine** : `.ma` (via un bureau d'enregistrement agréé) et idéalement un `.com`.
 - [ ] Créer une **adresse e-mail professionnelle** sur ce domaine (contact@…). Je te donnerai les réglages techniques (SPF, DKIM, DMARC) pour que les e-mails de réservation n'arrivent pas en spam.
 - [ ] Réserver les **comptes réseaux sociaux** (Instagram, TikTok, Facebook) au même nom.
-- [ ] Me communiquer l'adresse de contact définitive (remplace `contact@thecommunity.ma`, actuellement provisoire).
+- [ ] Me communiquer l'adresse de contact définitive (remplace `contact@thehostclub.ma`, actuellement provisoire).
 
 ## G. Comptes techniques à créer 🟠 (avant la phase 3)
 

@@ -216,7 +216,7 @@ export function buildDemoMemberData(now: Date = new Date()) {
     {
       id: "n5",
       type: "welcome",
-      title: { fr: "Bienvenue dans The Community", ar: "مرحباً بك في The Community" },
+      title: { fr: "Bienvenue dans The Host Club", ar: "مرحباً بك في The Host Club" },
       body: { fr: "Votre profil est complet. Il ne reste qu'à choisir votre première expérience !", ar: "ملفك مكتمل. لم يبق إلا اختيار تجربتك الأولى!" },
       link: "/experiences",
       createdAt: ago(60 * DAY),

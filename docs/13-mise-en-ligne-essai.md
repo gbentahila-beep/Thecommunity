@@ -60,7 +60,7 @@ Firebase → **Build → App Hosting → Get started / Create backend** :
 3. **Root directory** (dossier de l'application) : `apps/web`
 4. **Live branch** : `claude/dazzling-ramanujan-b80cb8` · **Automatic rollouts** : activé.
 5. **Backend name** : `thecommunity-web`.
-6. **Firebase web app** : choisir *The Community web*.
+6. **Firebase web app** : choisir *The Host Club web*.
 7. **Finish and deploy**. Le premier build prend environ 10 minutes. App Hosting affiche ensuite l'adresse du site (du type `https://thecommunity-web--the-community-36766.<région>.hosted.app`).
 
 Si le build échoue, ouvrir le déploiement en échec → **View logs** et envoyer une capture : la configuration d'un site en plusieurs dossiers peut demander un ajustement.

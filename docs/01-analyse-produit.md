@@ -91,7 +91,7 @@ La maquette fournie fixe une direction artistique claire, que nous reprenons :
 1. **Onglet « Messages »** dans la barre mobile : la messagerie n'est pas prévue au cahier des charges et implique de la modération (sécurité des participants). Proposition : remplacer par **« Notifications »** au lancement, messagerie de groupe dans une version ultérieure.
 2. **Libellés de catégories** : la maquette affiche « Dîner, Sport & bien-être, Jeux, Ateliers » ; le cahier des charges définit EAT / MOVE / PLAY / CREATE / DISCOVER. Proposition : clés techniques `eat`, `move`, `play`, `create`, `discover` et libellés affichés « Dîners & gastronomie », « Sport & bien-être », « Jeux », « Ateliers », « Sorties ».
 3. **Favoris (cœur)** : non listé au cahier des charges, mais présent sur toutes les cartes. Règle « pas de bouton décoratif » → on l'implémente (sous-collection `favorites`, simple) ou on le retire. Proposition : l'implémenter, coût faible et utile pour le remarketing.
-4. **Nom** : la maquette affiche « CLUB. » ; le nom retenu est **The Community** (décision D1 validée).
+4. **Nom** : la maquette affiche « CLUB. » ; le nom retenu est **The Host Club** (décision D1, nom changé le 7 novembre 2026 ; la maquette « CLUB. » s'y prête bien).
 
 ## 8. Points d'attention produit spécifiques au Maroc
 

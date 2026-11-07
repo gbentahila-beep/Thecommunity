@@ -85,7 +85,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         availability: seatsAvailable(s) > 0 ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
         url: `${SITE_URL}/experiences/${exp.slug}`,
       },
-      organizer: { "@type": "Organization", name: "The Community", url: SITE_URL },
+      organizer: { "@type": "Organization", name: "The Host Club", url: SITE_URL },
     })),
   };
 

@@ -26,7 +26,7 @@ export default async function SettingsAdminPage() {
           <p className="text-sm font-medium">{DEFAULT_CANCELLATION_POLICY.label.fr}</p>
           <ul className="mt-2 list-disc ps-5 text-sm text-muted">
             {DEFAULT_CANCELLATION_POLICY.rules.map((r) => <li key={r.hoursBefore}>{r.hoursBefore > 0 ? `${r.hoursBefore} h ou plus avant` : "Moins de 48 h avant"} : remboursement {r.refundPercent} %</li>)}
-            <li>Annulation par The Community : remboursement 100 %</li>
+            <li>Annulation par The Host Club : remboursement 100 %</li>
           </ul>
         </Card>
         <Card title="Réservations">

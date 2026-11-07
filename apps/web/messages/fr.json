@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteName": "The Community",
-    "defaultTitle": "The Community — Expériences et rencontres à Casablanca",
+    "siteName": "The Host Club",
+    "defaultTitle": "The Host Club — Expériences et rencontres à Casablanca",
     "defaultDescription": "Dîners entre inconnus, sport, jeux, ateliers et sorties : réservez votre place et rencontrez de nouvelles personnes dans la vraie vie."
   },
   "demo": {
@@ -78,7 +78,7 @@
     "title": "Expériences à {city}",
     "subtitle": "Dîners entre inconnus, sport, jeux, ateliers et sorties : tout ce qu'il faut pour rencontrer du monde à {city}.",
     "categoryTitle": "{category} à {city}",
-    "comingSoonTitle": "The Community arrive bientôt à {city}",
+    "comingSoonTitle": "The Host Club arrive bientôt à {city}",
     "comingSoonText": "Nous préparons les premières expériences. En attendant, retrouvez-nous à Casablanca.",
     "backToCasablanca": "Voir les expériences à Casablanca",
     "otherCategories": "Autres univers"
@@ -168,7 +168,7 @@
   "auth": {
     "loginTitle": "Bon retour parmi nous",
     "loginSubtitle": "Connectez-vous pour réserver et retrouver vos expériences.",
-    "signupTitle": "Rejoindre The Community",
+    "signupTitle": "Rejoindre The Host Club",
     "signupSubtitle": "Créez votre compte en une minute.",
     "email": "Adresse e-mail",
     "password": "Mot de passe",
@@ -212,7 +212,7 @@
   "footer": {
     "tagline": "Des expériences à partager, des personnes à découvrir.",
     "explore": "Explorer",
-    "company": "The Community",
+    "company": "The Host Club",
     "legal": "Informations légales",
     "about": "À propos",
     "faq": "FAQ",
@@ -221,16 +221,16 @@
     "sales": "Conditions générales de vente",
     "privacy": "Politique de confidentialité",
     "charter": "Charte de bonne conduite",
-    "rights": "© {year} The Community. Tous droits réservés."
+    "rights": "© {year} The Host Club. Tous droits réservés."
   },
   "pages": {
     "howTitle": "Comment ça marche",
-    "howIntro": "The Community organise des expériences pensées pour rencontrer de nouvelles personnes, sans avoir à organiser quoi que ce soit.",
+    "howIntro": "The Host Club organise des expériences pensées pour rencontrer de nouvelles personnes, sans avoir à organiser quoi que ce soit.",
     "formatsTitle": "Les formats",
     "safetyTitle": "Votre sécurité",
     "safetyText": "Lieux publics et partenaires vérifiés, charte de bonne conduite acceptée par chaque membre, seules les informations utiles (prénom, centres d'intérêt) sont partagées avec votre groupe, et vous pouvez signaler un comportement après chaque expérience.",
     "aboutTitle": "À propos",
-    "aboutText": "Nous croyons qu'on rencontre mieux autour d'une table, d'un tapis de yoga ou d'une énigme qu'à travers un écran. The Community est né à Casablanca pour aider chacun à élargir son cercle, découvrir sa ville et sortir de sa routine.",
+    "aboutText": "Nous croyons qu'on rencontre mieux autour d'une table, d'un tapis de yoga ou d'une énigme qu'à travers un écran. The Host Club est né à Casablanca pour aider chacun à élargir son cercle, découvrir sa ville et sortir de sa routine.",
     "faqTitle": "Questions fréquentes",
     "contactTitle": "Contact",
     "contactText": "Une question, une idée de partenariat ou un lieu à nous faire découvrir ? Écrivez-nous.",
@@ -249,7 +249,7 @@
   },
   "faq": {
     "q1": "Est-ce une application de rencontre amoureuse ?",
-    "a1": "Non. The Community réunit des personnes autour d'expériences pour se faire de nouveaux amis et élargir son cercle.",
+    "a1": "Non. The Host Club réunit des personnes autour d'expériences pour se faire de nouveaux amis et élargir son cercle.",
     "q2": "Puis-je venir seul ?",
     "a2": "Oui, c'est même l'idée : la plupart des membres réservent seuls. Nous composons les tables et les équipes.",
     "q3": "Comment sont composés les groupes ?",
@@ -257,7 +257,7 @@
     "q4": "Puis-je annuler ?",
     "a4": "Oui, gratuitement jusqu'à 48 heures avant l'expérience. Passé ce délai, la place n'est pas remboursée. Si nous annulons, vous êtes intégralement remboursé.",
     "q5": "Quel âge faut-il avoir ?",
-    "a5": "The Community est réservé aux personnes de 18 ans et plus."
+    "a5": "The Host Club est réservé aux personnes de 18 ans et plus."
   },
   "categories": {
     "allExperiences": "Toutes les expériences"
@@ -466,7 +466,7 @@
       "required": "Champ obligatoire.",
       "tooLong": "Trop long.",
       "invalidPhone": "Numéro invalide.",
-      "tooYoung": "The Community est réservé aux 18 ans et plus.",
+      "tooYoung": "The Host Club est réservé aux 18 ans et plus.",
       "invalidDate": "Date invalide.",
       "pickOne": "Choisissez au moins une option.",
       "pickThree": "Choisissez au moins 3 centres d'intérêt."

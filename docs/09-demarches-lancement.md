@@ -19,7 +19,7 @@ Chaque maillon peut prendre plusieurs semaines. Commencer maintenant permet que 
 
 | Option | Pour | Contre |
 |---|---|---|
-| **A. Nouvelle SARL (ou SARL AU)** dédiée à The Community | Activité isolée (risques, comptes, valorisation), facile à présenter à des investisseurs, capital ouvrable à des associés | Création à prévoir (quelques semaines avec un comptable) |
+| **A. Nouvelle SARL (ou SARL AU)** dédiée à The Host Club | Activité isolée (risques, comptes, valorisation), facile à présenter à des investisseurs, capital ouvrable à des associés | Création à prévoir (quelques semaines avec un comptable) |
 | B. Ajouter l'activité à une société marocaine existante, si vous en détenez une, par modification de l'objet social | Plus rapide si la société et son compte bancaire existent déjà | Mélange des activités et des risques ; moins lisible pour des investisseurs ; à revoir plus tard |
 | C. Auto-entrepreneur | Création très rapide | **Déconseillé** : plafonds de chiffre d'affaires, encaissements pour le compte de partenaires, image auprès des banques et prestataires |
 | D. Encaisser via une société étrangère (ex. Stripe en France) | Rapide techniquement | **Déconseillé** : service rendu au Maroc à des clients marocains, réglementation des changes, cartes marocaines limitées pour les paiements internationaux |
@@ -66,8 +66,8 @@ Risque en cas d'oubli : sanctions pénales et amendes prévues par la loi pour u
 
 ## Étape 5 — Le reste
 
-- Dépôt de la marque **The Community** à l'OMPIC (vérifier d'abord la disponibilité, classes 41 et 43 notamment).
-- Nom de domaine (ex. `thecommunity.ma`, `thecommunity-app.com`… à vérifier).
+- Dépôt de la marque **The Host Club** à l'OMPIC (vérifier d'abord la disponibilité, classes 41 et 43 notamment).
+- Nom de domaine (ex. `thehostclub.ma`, `thehostclub.com`… à vérifier).
 - Compte Google Cloud / Firebase au nom de la société, avec moyen de paiement.
 - Assurance responsabilité civile organisateur d'événements.
 - Conventions avec les premiers partenaires (prix, commission, annulation, responsabilités).
