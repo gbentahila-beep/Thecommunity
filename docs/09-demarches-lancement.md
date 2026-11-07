@@ -1,6 +1,7 @@
 # 09 — Démarches administratives avant le lancement commercial
 
 > Feuille de route non technique, à mener **en parallèle** du développement.
+> La liste d'actions à cocher est dans [11 — Checklist avant lancement](11-checklist-avant-lancement.md).
 > Ce document est un cadrage pratique, pas un avis juridique ni fiscal : chaque étape est à valider avec un expert-comptable et, pour la CNDP, un conseil spécialisé.
 
 ## Pourquoi c'est le chemin critique

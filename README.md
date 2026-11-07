@@ -18,4 +18,6 @@ npm run dev        # http://localhost:3000
 npm run test && npm run typecheck && npm run lint && npm run build
 ```
 
+👉 À faire avant la mise en ligne : [`docs/11-checklist-avant-lancement.md`](docs/11-checklist-avant-lancement.md)
+
 Structure : `apps/web` (site Next.js), `packages/shared` (logique métier partagée), `docs/` (architecture et décisions).
