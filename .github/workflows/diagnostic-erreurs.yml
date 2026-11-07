@@ -1,0 +1,38 @@
+name: Diagnostic — erreurs serveur (projet d'essai)
+
+# Lecture seule : affiche les erreurs récentes des fonctions serveur et l'état des index Firestore.
+# Aucune modification. Lancement manuel (Actions → ce workflow → Run workflow) ou à la modification de ce fichier.
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/dazzling-ramanujan-b80cb8]
+    paths: [.github/workflows/diagnostic-erreurs.yml]
+
+jobs:
+  logs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PROJECT: the-community-36766
+      SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
+    steps:
+      - name: Connexion (lecture)
+        run: |
+          printf '%s' "$SA_JSON" > "$RUNNER_TEMP/sa.json"
+          gcloud auth activate-service-account --key-file="$RUNNER_TEMP/sa.json" --quiet
+          gcloud config set project "$PROJECT" --quiet
+      - name: Index Firestore (état)
+        run: gcloud firestore indexes composite list --format="table(name.basename(),collectionGroup,state,fields[].fieldPath.list())" 2>&1 | tail -40
+      - name: Erreurs des fonctions (24 dernières heures)
+        run: |
+          gcloud logging read 'severity>=ERROR AND (resource.type="cloud_run_revision" OR resource.type="cloud_function") AND timestamp>="'"$(date -u -d '-24 hours' +%Y-%m-%dT%H:%M:%SZ)"'"' \
+            --limit=40 --format=json 2>/dev/null | python3 -c '
+          import json, sys
+          for e in json.load(sys.stdin):
+              svc = e.get("resource", {}).get("labels", {}).get("service_name") or e.get("resource", {}).get("labels", {}).get("function_name")
+              msg = e.get("textPayload") or (e.get("jsonPayload") or {}).get("message") or json.dumps(e.get("jsonPayload"))[:300]
+              print(e.get("timestamp"), svc, "|", str(msg)[:600].replace("\n", " "))
+          '
+      - name: Suppression de la clé temporaire
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
