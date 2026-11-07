@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next";
 import { CATEGORY_KEYS } from "@thecommunity/shared";
+import { HELP_ARTICLES } from "@/content/help";
 import { getCities, getPublishedExperiences } from "@/lib/data";
 import { SITE_URL } from "@/lib/site";
 
 // Généré à la demande (jamais pendant la compilation : la base n'y est pas accessible).
 export const dynamic = "force-dynamic";
 
-const STATIC_PATHS = ["", "/experiences", "/comment-ca-marche", "/a-propos", "/faq", "/contact"];
+const STATIC_PATHS = ["", "/experiences", "/comment-ca-marche", "/a-propos", "/faq", "/contact", "/aide", "/aide/partenaires", "/devenir-partenaire", "/securite", "/cgu", "/cgv", "/confidentialite"];
 
 function entry(path: string): MetadataRoute.Sitemap[number] {
   return {
@@ -23,5 +24,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...active.map((c) => entry(`/${c.id}`)),
     ...active.flatMap((c) => CATEGORY_KEYS.map((k) => entry(`/${c.id}/${k}`))),
     ...experiences.map((e) => entry(`/experiences/${e.slug}`)),
+    ...HELP_ARTICLES.map((a) => entry(`/aide/${a.slug}`)),
   ];
 }

@@ -26,6 +26,8 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
 - [ ] **Textes juridiques** (CGU, CGV, Confidentialité, Sécurité) : relecture par un avocat. Les versions en ligne sont des **projets** rédigés à partir du fonctionnement réel du site.
 - [ ] **Durées de conservation** proposées (comptes inactifs 3 ans, journaux 12 mois, comptabilité selon la loi).
 - [ ] **Délai de traitement des signalements** annoncé : 48 h (page Sécurité).
+- [ ] **Centre d'aide** : relire les 23 articles (`/aide`), surtout côté partenaires : les deux modèles de rémunération (achat de prestation ou commission) et ce que vous transmettez aux lieux avant chaque date.
+- [ ] **Candidatures partenaires** : qui les traite et sous quel délai (elles arrivent dans le back-office → Partenaires).
 
 ## Plus tard
 
@@ -33,7 +35,8 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
 - [ ] **Compte Brevo** (envoi des e-mails : confirmations, factures, rappels).
 - [ ] **Contrat de paiement** et accès de test du prestataire (CMI, Payzone, YouCan Pay).
 - [ ] **Domaine** définitif et adresses e-mail.
-- [ ] **Traduction arabe** des textes juridiques (la version française s'affiche en attendant).
+- [ ] **Traduction arabe** des textes juridiques et des articles du centre d'aide (la version française s'affiche en attendant).
+- [ ] **Traduction anglaise des fiches d'expériences** (titre, description) dans le back-office : sinon la version anglaise du site les affiche en français.
 
 ## Rappel CNDP (loi 09-08)
 

@@ -22,6 +22,10 @@ export const experienceInputSchema = z
   .object({
     titleFr: z.string().trim().min(3, "tooShort").max(80, "tooLong"),
     titleAr: z.string().trim().max(80, "tooLong").optional().or(z.literal("")),
+    // Anglais facultatif : sinon le texte français s'affiche sur la version anglaise du site.
+    titleEn: z.string().trim().max(80, "tooLong").optional().or(z.literal("")),
+    summaryEn: z.string().trim().max(160, "tooLong").optional().or(z.literal("")),
+    descriptionEn: z.string().trim().max(3000, "tooLong").optional().or(z.literal("")),
     summaryFr: z.string().trim().min(10, "tooShort").max(160, "tooLong"),
     descriptionFr: z.string().trim().min(30, "tooShort").max(3000, "tooLong"),
     categoryId: z.enum(CATEGORY_KEYS as [CategoryKey, ...CategoryKey[]], { message: "required" }),

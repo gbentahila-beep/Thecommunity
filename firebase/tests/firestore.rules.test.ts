@@ -180,6 +180,27 @@ describe("formulaires publics", () => {
     await assertFails(addDoc(collection(anon(), "contactMessages"), { ...msg, admin: true }));
     await assertFails(getDocs(collection(anon(), "contactMessages")));
   });
+  it("centre d'aide : avis sur un article, anonyme et au bon format", async () => {
+    const fb = { article: "annuler-une-reservation", helpful: true, locale: "fr", createdAt: serverTimestamp() };
+    await assertSucceeds(addDoc(collection(anon(), "helpFeedback"), fb));
+    await assertFails(addDoc(collection(anon(), "helpFeedback"), { ...fb, helpful: "oui" }));
+    await assertFails(addDoc(collection(anon(), "helpFeedback"), { ...fb, article: "<script>" }));
+    await assertFails(addDoc(collection(anon(), "helpFeedback"), { ...fb, email: "x@example.com" }));
+    await assertFails(getDocs(collection(salma(), "helpFeedback")));
+    await assertSucceeds(getDocs(collection(admin(), "helpFeedback")));
+  });
+  it("candidature partenaire : création publique au bon format, lue par l'équipe seulement", async () => {
+    const app = {
+      contactName: "Yasmine", businessName: "Studio Lumière", type: "studio", city: "Casablanca", email: "contact@studio.ma",
+      phone: "", link: "", message: "Nous proposons des cours de yoga en petit groupe à Maarif.", locale: "fr", createdAt: serverTimestamp(),
+    };
+    await assertSucceeds(addDoc(collection(anon(), "partnerApplications"), app));
+    await assertFails(addDoc(collection(anon(), "partnerApplications"), { ...app, type: "casino" }));
+    await assertFails(addDoc(collection(anon(), "partnerApplications"), { ...app, message: "court" }));
+    await assertFails(addDoc(collection(anon(), "partnerApplications"), { ...app, status: "accepted" }));
+    await assertFails(getDocs(collection(anon(), "partnerApplications")));
+    await assertSucceeds(getDocs(collection(admin(), "partnerApplications")));
+  });
   it("demande d'export / suppression : seulement pour soi", async () => {
     await assertSucceeds(addDoc(collection(salma(), "dataRequests"), { userId: "salma", type: "deletion", createdAt: serverTimestamp() }));
     await assertFails(addDoc(collection(salma(), "dataRequests"), { userId: "karim", type: "deletion", createdAt: serverTimestamp() }));

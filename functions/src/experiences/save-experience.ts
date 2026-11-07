@@ -88,7 +88,7 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   const imageDocs = images.map((i) => ({ path: i.path, alt: { fr: i.alt || v.titleFr } }));
   const keepImages = !isCreate && images.length === 0 ? (existing.data()?.images ?? []) : imageDocs;
   const snapshot = {
-    title: { fr: v.titleFr, ...(v.titleAr ? { ar: v.titleAr } : {}) },
+    title: { fr: v.titleFr, ...(v.titleAr ? { ar: v.titleAr } : {}), ...(v.titleEn ? { en: v.titleEn } : {}) },
     slug,
     coverImagePath: keepImages[0]?.path ?? "",
     categoryId: v.categoryId,
@@ -100,8 +100,8 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   const experience = {
     slug,
     title: snapshot.title,
-    summary: { fr: v.summaryFr },
-    description: { fr: v.descriptionFr },
+    summary: { fr: v.summaryFr, ...(v.summaryEn ? { en: v.summaryEn } : {}) },
+    description: { fr: v.descriptionFr, ...(v.descriptionEn ? { en: v.descriptionEn } : {}) },
     categoryId: v.categoryId,
     cityId: v.cityId,
     district: v.district,

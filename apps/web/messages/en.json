@@ -265,7 +265,9 @@
     "privacyContact": "Personal data",
     "safetyContact": "Safety",
     "toComplete": "to be completed",
-    "dataStatement": "The Host Club applies appropriate technical and organisational security measures. You have the right of access, rectification and objection under Law 09-08: {email}."
+    "dataStatement": "The Host Club applies appropriate technical and organisational security measures. You have the right of access, rectification and objection under Law 09-08: {email}.",
+    "help": "Help centre",
+    "partner": "Become a partner"
   },
   "pages": {
     "howTitle": "How it works",
@@ -289,7 +291,8 @@
     "contactMessage": "Your message",
     "contactSend": "Send",
     "contactSent": "Thank you! Your message has been sent, we'll get back to you soon.",
-    "contactError": "Couldn't send. Please check the fields and try again."
+    "contactError": "Couldn't send. Please check the fields and try again.",
+    "faqMore": "More answers in the help centre"
   },
   "faq": {
     "q1": "Is it a dating app?",
@@ -651,5 +654,72 @@
     "missing": "to be completed",
     "toc": "Contents",
     "arabicPending": "النص العربي قيد الترجمة؛ النسخة الفرنسية أدناه هي المرجع."
+  },
+  "help": {
+    "title": "Help centre",
+    "heroTitle": "How can we help?",
+    "heroText": "Bookings, membership, safety, partnerships: all the answers in one place.",
+    "searchLabel": "Search the help centre",
+    "searchPlaceholder": "Cancellation, membership, allergy…",
+    "tabs": "Audience",
+    "tabClients": "Members",
+    "tabPartners": "Partners",
+    "articles": "{count, plural, one {# article} other {# articles}}",
+    "results": "{count, plural, =0 {No results} one {# result} other {# results}} for “{q}”",
+    "noResults": "Try another word, browse the categories or write to us.",
+    "clear": "Clear search",
+    "contactTitle": "Can't find your answer?",
+    "contactText": "Our team replies in French, Arabic or English.",
+    "contactCta": "Write to us",
+    "faqCta": "Frequently asked questions",
+    "partnerTitle": "Would you like to host our groups?",
+    "partnerText": "Restaurants, studios, workshops, venues and organisers: tell us about what you do.",
+    "partnerCta": "Become a partner",
+    "wasHelpful": "Was this article helpful?",
+    "yes": "Yes",
+    "no": "No",
+    "thanksYes": "Thanks for your feedback!",
+    "thanksNo": "Thank you. Tell us what was missing and we'll improve the article.",
+    "feedbackError": "Your feedback couldn't be saved. Please try again later.",
+    "related": "Related articles",
+    "inCategory": "In the same category",
+    "arabicPending": "This article hasn't been translated into Arabic yet: the French version is shown meanwhile.",
+    "missing": "to be completed",
+    "breadcrumb": "Breadcrumb"
+  },
+  "partner": {
+    "title": "Become a partner",
+    "intro": "Do you run a venue or lead an activity in Casablanca? Host our small groups: we take care of sales, payment and putting the groups together.",
+    "why1Title": "A new audience",
+    "why1": "Curious members who come to discover and to meet people.",
+    "why2Title": "Nothing to manage online",
+    "why2": "Bookings, payments, cancellations and refunds: we handle them.",
+    "why3Title": "A tailor-made format",
+    "why3": "Content, times, number of seats and price designed together.",
+    "formTitle": "Your application",
+    "contactName": "Your full name",
+    "businessName": "Venue or activity name",
+    "type": "Type of activity",
+    "types": {
+      "restaurant": "Restaurant or café",
+      "studio": "Sport or wellness studio",
+      "workshop": "Creative workshop",
+      "venue": "Venue (rooftop, gallery, hall…)",
+      "organizer": "Independent organiser",
+      "other": "Other"
+    },
+    "city": "City",
+    "email": "Business email",
+    "phone": "Phone (optional)",
+    "link": "Website or Instagram (optional)",
+    "message": "Tell us about your venue or activity",
+    "messageHint": "Capacity, neighbourhood, what you'd like to offer… (at least 20 characters)",
+    "privacy": "We only use your details to review your application and get back to you (Law No. 09-08, see the privacy policy).",
+    "submit": "Send my application",
+    "sending": "Sending…",
+    "sent": "Thank you! We've received your application. Our team will get back to you soon.",
+    "error": "Sending failed. Check the fields and try again.",
+    "demo": "Demo: the application form works on the live site.",
+    "helpLink": "Partner FAQs"
   }
 }

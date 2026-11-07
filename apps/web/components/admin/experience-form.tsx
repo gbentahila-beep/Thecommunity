@@ -207,6 +207,15 @@ export function ExperienceForm({
         <div className="sm:col-span-2"><Label k="titleAr" hint="Facultatif : sinon le titre français s'affiche sur la version arabe.">Titre (arabe)</Label><input {...field("titleAr")} dir="rtl" lang="ar" value={v.titleAr ?? ""} onChange={(e) => set("titleAr", e.target.value)} />{err("titleAr")}</div>
         <div className="sm:col-span-2"><Label k="summaryFr" hint="Une phrase, affichée sur les cartes.">Accroche</Label><input {...field("summaryFr")} value={v.summaryFr} onChange={(e) => set("summaryFr", e.target.value)} />{err("summaryFr")}</div>
         <div className="sm:col-span-2"><Label k="descriptionFr">Description</Label><textarea {...field("descriptionFr")} rows={5} value={v.descriptionFr} onChange={(e) => set("descriptionFr", e.target.value)} />{err("descriptionFr")}</div>
+        <details className="sm:col-span-2 rounded-xl border border-line p-4" open={Boolean(v.titleEn || v.summaryEn || v.descriptionEn)}>
+          <summary className="cursor-pointer text-sm font-semibold text-ink">Version anglaise (facultatif)</summary>
+          <p className="mt-1 text-xs text-muted">Sinon le texte français s&apos;affiche sur la version anglaise du site.</p>
+          <div className="mt-4 grid gap-4">
+            <div><Label k="titleEn">Title (English)</Label><input {...field("titleEn")} lang="en" value={v.titleEn ?? ""} onChange={(e) => set("titleEn", e.target.value)} />{err("titleEn")}</div>
+            <div><Label k="summaryEn">Summary (English)</Label><input {...field("summaryEn")} lang="en" value={v.summaryEn ?? ""} onChange={(e) => set("summaryEn", e.target.value)} />{err("summaryEn")}</div>
+            <div><Label k="descriptionEn">Description (English)</Label><textarea {...field("descriptionEn")} lang="en" rows={4} value={v.descriptionEn ?? ""} onChange={(e) => set("descriptionEn", e.target.value)} />{err("descriptionEn")}</div>
+          </div>
+        </details>
         <div><Label k="categoryId">Univers</Label>
           <select {...field("categoryId")} value={v.categoryId} onChange={(e) => set("categoryId", e.target.value as ExperienceFormValues["categoryId"])}>
             {categories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}

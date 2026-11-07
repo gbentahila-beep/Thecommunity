@@ -27,14 +27,22 @@ Inspirations à reprendre **à notre façon** (sans copier) :
 |---|---|---|
 | FAQ courte (10 questions max) : prix, langues, régime alimentaire, abonnement, sécurité | /faq | ✅ |
 | Pages **Sécurité**, **Conditions d'utilisation**, **Confidentialité** (et CGV), avec un bloc « Informations légales et contacts » | pied de page, /securite, /cgu, /cgv, /confidentialite | ✅ projets à valider (infos à fournir : docs/16) |
-| Version **anglaise** du site | sélecteur FR · عربي · EN, adresses /en/… ; prix affichés en « MAD » ; fiches d'expériences encore en français tant qu'elles ne sont pas traduites dans le back-office | fait |
-| **Centre d'aide** façon Timeleft : recherche, onglets **Clients / Partenaires**, catégories (Bien démarrer, Abonnement, Expériences et réservations, Compte, Sécurité, Partenariats), articles, « Cet article vous a-t-il aidé ? », articles liés | /aide | en cours |
-| **Programme partenaires** : « Devenir partenaire », nos critères (ambiance propice à la conversation, réputation, emplacement central, lieux indépendants, accueil de petits groupes), formulaire de candidature, aide partenaires (gestion des réservations, signaler un problème : absences, retards, comportement) | /aide (Partenaires) + back-office | à faire |
+| Version **anglaise** du site | sélecteur FR · عربي · EN, adresses /en/… ; prix affichés en « MAD » ; fiches d'expériences encore en français tant qu'elles ne sont pas traduites dans le back-office | ✅ |
+| **Centre d'aide** façon Timeleft : recherche, onglets **Clients / Partenaires**, catégories (Bien démarrer, Abonnement, Expériences et réservations, Compte, Sécurité, Partenariats), articles, « Cet article vous a-t-il aidé ? », articles liés | /aide, /aide/partenaires, /aide/{article} ; retours lus dans le back-office (Centre d'aide) | ✅ 23 articles FR + EN (arabe à traduire) |
+| **Programme partenaires** : « Devenir partenaire », nos critères (ambiance propice à la conversation, réputation, emplacement central, lieux indépendants, accueil de petits groupes), formulaire de candidature, aide partenaires (gestion des réservations, signaler un problème : absences, retards, comportement) | /devenir-partenaire, /aide/partenaires ; candidatures lues dans le back-office (Partenaires) | ✅ candidature + articles ; espace partenaire en ligne : plus tard |
 | **Régime alimentaire / allergies** demandés à la réservation et transmis au lieu | tunnel de réservation | à faire (en attendant : via Contact, FAQ) |
 | **Langue(s) de la table** choisie(s) à la réservation pour mieux composer les groupes | tunnel + matching (phase 6) | à faire |
 | « Se rencontrer d'abord » : après la table, **contacts échangés seulement si les deux le souhaitent** | espace membre (après phase 6) | idée à valider (décision D8 : pas de messagerie au lancement) |
 | Lien **Instagram d'Aya Snoussi** | pied de page | ✅ (rôle à confirmer) |
-| **Image d'accueil** nette | accueil | en cours |
+| **Image d'accueil** nette | accueil | ✅ illustration originale (à remplacer par de vraies photos) |
+
+### Livré (centre d'aide, version anglaise)
+
+- **Version anglaise** complète (`/en/…`) ; sélecteur FR · عربي · EN en haut et en bas de page ; dates en 24 h, prix en « MAD ».
+- **Centre d'aide** (`/aide`) : recherche instantanée (sans accents), onglets **Membres / Partenaires**, 7 catégories, 23 articles rédigés à partir des vraies règles du site (délais de 15 min, 24 h, 4 h, 48 h, 60 jours, renouvellement 30 jours avant). « Cet article vous a-t-il aidé ? » : retour anonyme enregistré, consultable dans le back-office → **Centre d'aide** (les articles jugés peu utiles remontent en premier).
+- **Devenir partenaire** (`/devenir-partenaire`) : formulaire de candidature (type d'activité, ville, contact, présentation) ; les candidatures apparaissent dans le back-office → **Partenaires**.
+- Contenus : `apps/web/content/help.ts` (français de référence, anglais ; arabe à traduire — la version française s'affiche avec une mention).
+- Tests : règles Firestore (2 nouveaux), `tests/e2e/aide.e2e.cjs` (démo) et `tests/e2e/firebase-aide.e2e.cjs` (émulateurs).
 
 ## 5a — Avis, fiches sans date, expériences passées
 
