@@ -16,7 +16,7 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
   return (
     <div className="max-w-3xl">
       <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-plum-900">← Expériences</Link></p>
-      <PageHeader title={e.title.fr} subtitle="Modifiable même après publication : les participants concernés seront prévenus en cas de changement de date ou de lieu (phase 7)." />
+      <PageHeader title={e.title.fr} subtitle="Modifiable même après publication : prévenir automatiquement les participants d'un changement de date ou de lieu arrive à l'étape 7 du plan." />
       <Card title="Dates programmées" className="mb-5">
         <ul className="divide-y divide-line text-sm">
           {sessions.map((s) => (

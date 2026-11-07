@@ -11,7 +11,7 @@ export default async function StatsAdminPage() {
   return (
     <>
       <PageHeader title="Statistiques" subtitle="Casablanca · sessions des 3 prochaines semaines" actions={<CsvExportButton filename="statistiques.csv" rows={csv} />} />
-      <div className="mb-4"><DemoNote>Calculées à partir des données fictives. En phase 7 : agrégats quotidiens (statsDaily) par ville, univers et période.</DemoNote></div>
+      <div className="mb-4"><DemoNote>Calculées à partir des données fictives. Statistiques détaillées par ville, univers et période : étape 7 du plan.</DemoNote></div>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
         <StatTile label="CA brut" value={dh(s.gross)} />
         <StatTile label="Coûts / reversements" value={dh(s.cost)} />

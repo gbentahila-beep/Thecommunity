@@ -21,7 +21,7 @@ export default async function PromosAdminPage() {
             </tr>
           ))}
         </Table>
-        <p className="mt-3 text-xs text-muted">Création de codes et validation côté serveur au moment du paiement : phase 5.</p>
+        <p className="mt-3 text-xs text-muted">Création de codes et application au paiement : étape 5f du plan.</p>
       </Card>
     </>
   );

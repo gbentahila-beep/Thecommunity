@@ -28,7 +28,7 @@ export default async function GroupsPage({ params }: PageProps<"/admin/sessions/
       />
       <div className="mb-4">
         <DemoNote>
-          Proposition provisoire : répartition par âge en serpentin. L&apos;algorithme de matching (langues, intérêts, âges, rencontres passées) arrive en phase 6.
+          Proposition provisoire : répartition par âge en serpentin. L&apos;algorithme de matching (langues, intérêts, âges, rencontres passées) arrive à l&apos;étape 6 du plan.
           Glissez-déposez un participant, ou utilisez la liste « Déplacer vers » (mobile et clavier).
         </DemoNote>
       </div>

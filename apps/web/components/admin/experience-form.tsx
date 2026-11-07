@@ -405,7 +405,7 @@ export function ExperienceForm({
       )}
       {!live && result && preview && (
         <section id="form-result" className="scroll-mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-950">
-          <h2 className="flex items-center gap-2 text-base font-semibold"><CheckCircle2 className="size-5" aria-hidden /> Formulaire valide — voici ce qui sera créé en phase 3</h2>
+          <h2 className="flex items-center gap-2 text-base font-semibold"><CheckCircle2 className="size-5" aria-hidden /> Formulaire valide — voici ce qui serait créé</h2>
           <ul className="mt-3 space-y-1">
             <li><strong>{result.titleFr}</strong> · {result.district} · statut « {result.status === "published" ? "publiée" : "brouillon"} »</li>
             <li>Prix {formatMoney({ amount: preview.price, currency: "MAD" })} · marge estimée {formatMoney({ amount: preview.margin, currency: "MAD" })} par place</li>
@@ -418,7 +418,7 @@ export function ExperienceForm({
               </li>
             ))}
           </ul>
-          <p className="mt-3 flex items-start gap-1.5 text-xs"><Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />Rien n&apos;a été enregistré : la création réelle (Cloud Function sécurisée, journalisée) arrive en phase 3.</p>
+          <p className="mt-3 flex items-start gap-1.5 text-xs"><Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />Démonstration : rien n&apos;a été enregistré. Sur le site en ligne, l&apos;expérience est créée et l&apos;action journalisée.</p>
         </section>
       )}
     </form>

@@ -19,6 +19,8 @@ export type PartnerApplication = {
   message: string;
   locale: string;
   createdAt: string;
+  status: "new" | "converted" | "declined";
+  partnerId?: string;
 };
 export type HelpFeedbackStat = { article: string; yes: number; no: number; last: string };
 
@@ -45,6 +47,8 @@ export async function getPartnerApplications(): Promise<{ applications: PartnerA
         message: s("message"),
         locale: s("locale"),
         createdAt: iso(r.createdAt),
+        status: r.status === "converted" || r.status === "declined" ? r.status : "new",
+        ...(r.partnerId ? { partnerId: String(r.partnerId) } : {}),
       };
     }),
   };

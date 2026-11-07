@@ -14,14 +14,15 @@
 | 5b ✅ | Abonnement annuel (prix membre, prix public barré, accès anticipé, réservé aux membres) |
 | 5c ✅ | Factures, avoirs et reçus PDF, e-mails (boîte d'envoi de test) |
 | Contenus ✅ | FAQ, centre d'aide, Devenir partenaire, version anglaise, Sécurité / CGU / CGV / Confidentialité, À propos (Aya, avec sa photo) |
+| 5d ✅ | Partenaires dans le back-office : ajouter, modifier, archiver / réactiver, supprimer (super-admin, jamais un partenaire utilisé), candidature → partenaire, filtre « Archivés » |
+| 5e ✅ | Paramètres : villes (ajouter, renommer fr / ar / en, ouvrir ou « bientôt », quartiers) et univers (noms, description, ordre, visibilité, mode par défaut), super-admin, journalisé |
+| Accueil ✅ | Vraie photo fournie par Rita (8 novembre) |
 
 ## Reste à faire — ordre proposé
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
-| **5d — prochaine** | **Partenaires dans le back-office** : ajouter, modifier, archiver (pas de suppression d'un partenaire lié à des expériences passées), contacts, modèle (commission ou achat de prestation), rattachement aux expériences ; transformer une **candidature** en partenaire. Nettoyage des mentions « phase 3 » périmées du back-office. | rien |
-| 5e | **Villes et univers** modifiables dans Paramètres (super-admin, journalisé) | rien |
-| 5f | **Codes promo** et frais de service | rien |
+| **5f — prochaine** | **Codes promo** et frais de service | rien |
 | 5g | **Réservation** : régime alimentaire / allergies et langue(s) de table demandés au moment de réserver, transmis au lieu | rien |
 | 6 | **Composition des tables** (dîners) : algorithme + validation par l'équipe, révélation du groupe, **marque-places** (prénom de chacun), fiche « hôte » (accueil, présentations), plafond de participants | rien |
 | 7 | **Rappels** J-1 / H-3, prévenir les participants d'un changement de date ou de lieu, notifications push, statistiques | e-mails réels (Brevo) |
@@ -30,7 +31,6 @@
 
 Idées notées, à valider avant de les planifier :
 
-- **Photo d'accueil réelle** à la place de l'illustration (« une photo comme celle de l'article ») : je ne peux pas fabriquer une vraie photo. Il faut une photo d'une de vos tables (droits clairs), ou votre accord pour une photo de banque d'images libre de droits (accès réseau à ouvrir).
 - Formats **brunch** et **conversation** ; mention « en collaboration avec … » (lieu partenaire) sur la fiche.
 - Après une expérience, **se revoir seulement si les deux le souhaitent** (décision D8 : pas de messagerie au lancement).
 - **Traduction arabe** des textes juridiques et des articles d'aide.

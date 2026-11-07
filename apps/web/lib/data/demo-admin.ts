@@ -90,12 +90,20 @@ export const DEMO_USERS: AdminUser[] = Array.from({ length: 64 }, (_, i) => {
 export type Partner = {
   id: string;
   name: string;
-  type: "restaurant" | "studio" | "venue" | "workshop";
+  type: "restaurant" | "studio" | "venue" | "workshop" | "organizer" | "other";
   district: string;
   contactName: string;
   contactEmail: string;
   defaultCommissionPercent: number;
-  status: "active" | "prospect";
+  status: "active" | "prospect" | "archived";
+  /** Champs ajoutés en 5d (absents des anciens partenaires). */
+  cityId?: string;
+  address?: string;
+  contactPhone?: string;
+  link?: string;
+  model?: "purchase" | "commission";
+  notes?: string;
+  applicationId?: string;
 };
 
 export const DEMO_PARTNERS: Partner[] = [

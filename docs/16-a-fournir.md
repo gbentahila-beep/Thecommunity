@@ -24,7 +24,7 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
 
 - [x] **Aya Snoussi** : créatrice / fondatrice (confirmé le 8 novembre). Page À propos rédigée.
 - [ ] **Aya** : relire et valider son texte sur la page À propos (`/a-propos`). Sa photo est recadrée depuis l'article CULTIQ (votre choix, image 1) : **obtenir l'accord de CULTIQ**, ou envoyer l'original en haute définition.
-- [ ] **Photo d'accueil réelle** : une photo d'une de vos tables (droits clairs), ou votre accord pour une photo de banque d'images libre de droits.
+- [x] **Photo d'accueil** : fournie le 8 novembre. Le minaret visible ressemble à la Koutoubia (Marrakech) : à remplacer plus tard par une photo prise à Casablanca si vous le souhaitez.
 - [ ] **Textes de Sahbi** (que vous m'enverrez) : je m'en inspirerai pour Sécurité / CGU / Confidentialité, sans les copier.
 - [ ] **Abonnement** : rétractation et remboursement (à définir avec l'avocat) ; prix définitif, puis activer dans le back-office.
 - [ ] **Textes juridiques** (CGU, CGV, Confidentialité, Sécurité) : relecture par un avocat. Le site ne l'indique plus (à votre demande) : les pages affichent simplement « Dernière mise à jour : 8 novembre 2026 ». Textes enrichis le 8 novembre en s'inspirant de Sahbi, sans recopier.

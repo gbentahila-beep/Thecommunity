@@ -198,10 +198,10 @@ export function GroupsBoard({
           {groups.length} groupes · {totalWarnings === 0 ? "aucune alerte" : `${totalWarnings} alerte${totalWarnings > 1 ? "s" : ""}`}
         </p>
         <button type="button" disabled className="ms-auto cursor-not-allowed rounded-full bg-plum-900/30 px-5 py-2.5 text-sm font-semibold text-white">
-          Valider et révéler — phase 6
+          Valider et révéler — étape 6
         </button>
         <p className="basis-full text-xs text-muted">
-          Démonstration : les modifications restent à l&apos;écran. L&apos;enregistrement, la révélation aux participants et l&apos;algorithme de matching arrivent en phase 6.
+          Démonstration : les modifications restent à l&apos;écran. L&apos;enregistrement, la révélation aux participants et l&apos;algorithme de matching arrivent à l&apos;étape 6 du plan.
         </p>
       </div>
     </div>
