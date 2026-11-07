@@ -81,7 +81,7 @@ export async function ExperienceCard({
         </p>
         <div className="mt-auto flex items-end justify-between pt-3">
           <p>
-            <PriceTag price={shownPrice} memberAmount={memberAmountFor(plan, shownPrice, experience)} lang={locale as "fr" | "ar"} memberLabel={t("memberShort")} />
+            <PriceTag price={shownPrice} memberAmount={memberAmountFor(plan, shownPrice, experience)} lang={locale as "fr" | "ar" | "en"} memberLabel={t("memberShort")} />
           </p>
           {session ? (
             <p className="flex items-center gap-1.5 text-sm text-ink/80">

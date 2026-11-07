@@ -12,10 +12,11 @@ export function mad(dirhams: number): Money {
 export function formatMoney(money: Money, locale: "fr" | "ar" | "en" = "fr"): string {
   const value = money.amount / 100;
   const hasCents = money.amount % 100 !== 0;
-  const formatted = new Intl.NumberFormat(locale === "ar" ? "ar-MA" : "fr-FR", {
+  const formatted = new Intl.NumberFormat(locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR", {
     minimumFractionDigits: hasCents ? 2 : 0,
     maximumFractionDigits: 2,
     numberingSystem: "latn",
   }).format(value);
-  return locale === "ar" ? `${formatted} درهم` : `${formatted} DH`;
+  if (locale === "ar") return `${formatted} درهم`;
+  return locale === "en" ? `${formatted} MAD` : `${formatted} DH`;
 }

@@ -46,7 +46,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   await connection();
   const sp = await searchParams;
   const [t, plan] = await Promise.all([getTranslations("membership"), getMembershipPlan()]);
-  const lang = locale as "fr" | "ar";
+  const lang = locale as "fr" | "ar" | "en";
   const me = FIREBASE_ENABLED ? await myMembership() : null;
 
   if (!plan) {

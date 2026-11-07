@@ -84,7 +84,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   if (!session) notFound();
   const t = await getTranslations("booking");
   const exp = session.experience;
-  const lang = locale as "fr" | "ar";
+  const lang = locale as "fr" | "ar" | "en";
   const cover = exp.images[0];
   const refusal = bookingRefusal({ ...session, startAt: new Date(session.startAt) }, exp, 1);
   const visitor = FIREBASE_ENABLED ? await visitorState(sessionId) : null;

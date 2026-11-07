@@ -34,7 +34,7 @@ export default async function TestPaymentPage({ params }: PageProps<"/[locale]/p
   if (!pay || pay.userId !== user.uid || pay.provider !== "sandbox" || pay.type !== "payment") notFound();
   // (réservation ou abonnement : traités ci-dessous)
   const t = await getTranslations("testPayment");
-  const lang = locale as "fr" | "ar";
+  const lang = locale as "fr" | "ar" | "en";
   const pending = pay.status === "initiated";
 
   // Abonnement annuel : même « banque » de test, retour sur la page Abonnement.

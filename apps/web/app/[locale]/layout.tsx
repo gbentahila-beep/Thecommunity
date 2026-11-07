@@ -32,10 +32,10 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
     openGraph: {
       type: "website",
       siteName: t("siteName"),
-      locale: locale === "ar" ? "ar_MA" : "fr_MA",
+      locale: locale === "ar" ? "ar_MA" : locale === "en" ? "en_GB" : "fr_MA",
       images: [{ url: "/demo/hero-diner-rooftop.webp", width: 920, height: 700 }],
     },
-    alternates: { languages: { fr: "/", ar: "/ar" } },
+    alternates: { languages: { fr: "/", ar: "/ar", en: "/en" } },
   };
 }
 

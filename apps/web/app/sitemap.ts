@@ -11,7 +11,7 @@ const STATIC_PATHS = ["", "/experiences", "/comment-ca-marche", "/a-propos", "/f
 function entry(path: string): MetadataRoute.Sitemap[number] {
   return {
     url: `${SITE_URL}${path || "/"}`,
-    alternates: { languages: { fr: `${SITE_URL}${path || "/"}`, ar: `${SITE_URL}/ar${path}` } },
+    alternates: { languages: { fr: `${SITE_URL}${path || "/"}`, ar: `${SITE_URL}/ar${path}`, en: `${SITE_URL}/en${path}` } },
   };
 }
 

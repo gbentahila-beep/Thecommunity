@@ -27,7 +27,7 @@ Inspirations à reprendre **à notre façon** (sans copier) :
 |---|---|---|
 | FAQ courte (10 questions max) : prix, langues, régime alimentaire, abonnement, sécurité | /faq | ✅ |
 | Pages **Sécurité**, **Conditions d'utilisation**, **Confidentialité** (et CGV), avec un bloc « Informations légales et contacts » | pied de page, /securite, /cgu, /cgv, /confidentialite | ✅ projets à valider (infos à fournir : docs/16) |
-| Version **anglaise** du site | sélecteur de langue | en cours |
+| Version **anglaise** du site | sélecteur FR · عربي · EN, adresses /en/… ; prix affichés en « MAD » ; fiches d'expériences encore en français tant qu'elles ne sont pas traduites dans le back-office | fait |
 | **Centre d'aide** façon Timeleft : recherche, onglets **Clients / Partenaires**, catégories (Bien démarrer, Abonnement, Expériences et réservations, Compte, Sécurité, Partenariats), articles, « Cet article vous a-t-il aidé ? », articles liés | /aide | en cours |
 | **Programme partenaires** : « Devenir partenaire », nos critères (ambiance propice à la conversation, réputation, emplacement central, lieux indépendants, accueil de petits groupes), formulaire de candidature, aide partenaires (gestion des réservations, signaler un problème : absences, retards, comportement) | /aide (Partenaires) + back-office | à faire |
 | **Régime alimentaire / allergies** demandés à la réservation et transmis au lieu | tunnel de réservation | à faire (en attendant : via Contact, FAQ) |

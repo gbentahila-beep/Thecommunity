@@ -20,7 +20,7 @@ export function PriceTag({
 }: {
   price: Money;
   memberAmount: number | null;
-  lang: "fr" | "ar";
+  lang: "fr" | "ar" | "en";
   memberLabel: string;
   size?: "md" | "lg";
 }) {

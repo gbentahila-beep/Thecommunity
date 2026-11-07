@@ -1,6 +1,6 @@
 import { MOROCCO_TIMEZONE } from "@thecommunity/shared";
 
-const intlLocale = (locale: string) => (locale === "ar" ? "ar-MA" : "fr-FR");
+const intlLocale = (locale: string) => (locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR");
 
 function fmt(iso: string, locale: string, options: Intl.DateTimeFormatOptions) {
   return new Intl.DateTimeFormat(intlLocale(locale), {
@@ -10,7 +10,7 @@ function fmt(iso: string, locale: string, options: Intl.DateTimeFormatOptions) {
   }).format(new Date(iso));
 }
 
-/** « 19h30 » en français, « 19:30 » en arabe. */
+/** « 19h30 » en français, « 19:30 » en arabe et en anglais. */
 export function formatTime(iso: string, locale: string) {
   const t = fmt(iso, locale, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
   return locale === "fr" ? t.replace(":", "h") : t;

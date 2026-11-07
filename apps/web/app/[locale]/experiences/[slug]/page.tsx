@@ -59,7 +59,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     getMembershipPlan(),
   ]);
   const memberAmount = memberAmountFor(plan, exp.price, exp);
-  const lang = locale as "fr" | "ar";
+  const lang = locale as "fr" | "ar" | "en";
   const next = sessions.find((s) => seatsAvailable(s) > 0) ?? sessions[0];
   const hours = Math.floor(exp.durationMinutes / 60);
   const minutes = exp.durationMinutes % 60;

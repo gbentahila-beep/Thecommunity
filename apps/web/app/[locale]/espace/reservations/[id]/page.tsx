@@ -27,7 +27,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   if (!data) notFound();
   const { reservation: r, group, profile, now } = data;
   const [t, tl, locale] = await Promise.all([getTranslations("reservation"), getTranslations("labels.interests"), getLocale()]);
-  const lang = locale as "fr" | "ar";
+  const lang = locale as "fr" | "ar" | "en";
   const s = r.sessionSnapshot;
   const title = tr(s.title, locale);
   const isUpcoming = new Date(s.startAt).getTime() > now.getTime();

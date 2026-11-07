@@ -18,7 +18,7 @@ type Props = {
 /** Choix du nombre de places et lancement de la réservation (le serveur revérifie tout). */
 export function BookingForm({ sessionId, unitAmount, currency, maxSeats }: Props) {
   const t = useTranslations("booking");
-  const lang = useLocale() as "fr" | "ar";
+  const lang = useLocale() as "fr" | "ar" | "en";
   const router = useRouter();
   const [seats, setSeats] = useState(1);
   const [busy, setBusy] = useState(false);

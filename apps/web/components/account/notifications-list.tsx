@@ -36,7 +36,7 @@ export function NotificationsList({ initial, nowIso, uid }: { initial: AppNotifi
       void batch.commit().catch(() => undefined);
     }
   };
-  const rtf = new Intl.RelativeTimeFormat(locale === "ar" ? "ar-MA" : "fr-FR", { numeric: "auto" });
+  const rtf = new Intl.RelativeTimeFormat(locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR", { numeric: "auto" });
   // « Maintenant » vient du serveur : rendu identique côté serveur et navigateur.
   const now = new Date(nowIso).getTime();
   const ago = (iso: string) => {

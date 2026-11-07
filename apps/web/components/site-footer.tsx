@@ -9,6 +9,7 @@ import { Logo } from "./logo";
 
 export async function SiteFooter() {
   const [t, locale, categories] = await Promise.all([getTranslations("footer"), getLocale(), getCategories()]);
+  const sep = locale === "fr" ? " : " : ": "; // espace avant les deux-points en français seulement
   const columns = [
     {
       title: t("explore"),
@@ -65,10 +66,10 @@ export async function SiteFooter() {
         <div className="mx-auto max-w-7xl space-y-2 px-4 py-6 text-xs text-muted sm:px-6 lg:px-8">
           <p className="font-semibold text-ink/80">{t("legalInfoTitle")}</p>
           <p>
-            {t("publisher")} : {LEGAL_INFO.publisher ?? t("toComplete")} · {t("address")} : {LEGAL_INFO.address ?? t("toComplete")} · ICE : {LEGAL_INFO.ice ?? t("toComplete")}
+            {t("publisher")}{sep}{LEGAL_INFO.publisher ?? t("toComplete")} · {t("address")}{sep}{LEGAL_INFO.address ?? t("toComplete")} · ICE{sep}{LEGAL_INFO.ice ?? t("toComplete")}
           </p>
           <p>
-            {t("support")} : {LEGAL_INFO.supportEmail ?? t("toComplete")} · {t("privacyContact")} : {LEGAL_INFO.privacyEmail ?? t("toComplete")} · {t("safetyContact")} : {LEGAL_INFO.safetyEmail ?? t("toComplete")}
+            {t("support")}{sep}{LEGAL_INFO.supportEmail ?? t("toComplete")} · {t("privacyContact")}{sep}{LEGAL_INFO.privacyEmail ?? t("toComplete")} · {t("safetyContact")}{sep}{LEGAL_INFO.safetyEmail ?? t("toComplete")}
           </p>
           <p>{t("dataStatement", { email: LEGAL_INFO.privacyEmail ?? t("toComplete") })}</p>
           <p>{t("rights", { year: new Date().getFullYear() })}</p>
