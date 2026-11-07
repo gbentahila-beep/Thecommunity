@@ -186,6 +186,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 <span className="text-3xl font-bold text-ink">{formatMoney(exp.price, lang)}</span>
                 <span className="text-sm text-muted">{t("perPerson")}</span>
               </p>
+              {exp.admission === "on_request" && <p className="mt-3 rounded-xl bg-plum-50 px-3 py-2 text-sm text-plum-900">{t("onRequestNote")}</p>}
               <h2 className="mt-5 text-sm font-semibold uppercase tracking-wide text-muted">{t("nextDates")}</h2>
               {sessions.length === 0 ? (
                 <p className="mt-3 text-sm text-muted">{t("noDates")}</p>
@@ -224,7 +225,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                   href={`/reserver/${next.id}`}
                   className="mt-5 hidden w-full items-center justify-center rounded-full bg-plum-900 px-6 py-3.5 font-semibold text-white transition hover:bg-plum-800 lg:flex"
                 >
-                  {t("bookCta")}
+                  {exp.admission === "on_request" ? t("requestCta") : t("bookCta")}
                 </Link>
               )}
             </div>
@@ -241,7 +242,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <p className="text-xs text-muted">{formatShortSlot(next.startAt, locale)}</p>
             </div>
             <Link href={`/reserver/${next.id}`} className="rounded-full bg-plum-900 px-6 py-3 font-semibold text-white">
-              {t("bookCta")}
+              {exp.admission === "on_request" ? t("requestCta") : t("bookCta")}
             </Link>
           </div>
         </div>

@@ -111,7 +111,9 @@
     "privateFormat": "Privatisation pour votre groupe",
     "durationHours": "{hours} h",
     "durationHoursMinutes": "{hours} h {minutes}",
-    "durationMinutes": "{minutes} min"
+    "durationMinutes": "{minutes} min",
+    "requestCta": "Demander à participer",
+    "onRequestNote": "Participation sur demande : l'équipe valide chaque inscription."
   },
   "booking": {
     "title": "Réserver ma place",
@@ -162,7 +164,8 @@
       "already_processed": "Ce paiement a déjà été traité.",
       "busy": "Beaucoup de demandes en même temps : réessayez dans quelques secondes.",
       "signin": "Votre session a expiré : reconnectez-vous pour continuer.",
-      "generic": "Une erreur est survenue. Réessayez."
+      "generic": "Une erreur est survenue. Réessayez.",
+      "approval_required": "Cette expérience est sur demande : envoyez une demande de participation."
     }
   },
   "auth": {
@@ -369,7 +372,8 @@
     "expiredText": "Le délai de paiement est dépassé : la place a été remise en vente. Vous pouvez réserver à nouveau s'il reste des places.",
     "lateRefundText": "Votre paiement est arrivé après la remise en vente de la dernière place : {amount} vous ont été remboursés intégralement.",
     "totalDue": "Total à payer",
-    "seatsLabel": "Places"
+    "seatsLabel": "Places",
+    "pendingTextLong": "Votre place vous est réservée jusqu'au {when}. Passé ce délai, elle sera proposée à quelqu'un d'autre."
   },
   "profilePage": {
     "title": "Mon profil",
@@ -485,5 +489,36 @@
     "fail": "Simuler un refus de la banque",
     "alreadyProcessed": "Ce paiement a déjà été traité.",
     "seeReservation": "Voir ma réservation"
+  },
+  "request": {
+    "noteTitle": "Participation sur demande",
+    "noteText": "Pour garder des tables harmonieuses, l'équipe valide chaque inscription. Vous ne payez qu'une fois votre demande acceptée, et vous aurez alors 24 h pour le faire.",
+    "messageLabel": "Pourquoi souhaitez-vous participer ?",
+    "messagePlaceholder": "Quelques mots sur vous et ce qui vous attire dans cette expérience…",
+    "messageRequired": "Un petit message est demandé pour cette expérience.",
+    "instagramLabel": "Votre compte Instagram",
+    "instagramHint": "Il aide l'équipe à faire connaissance. Vu uniquement par l'équipe.",
+    "instagramInvalid": "Compte Instagram invalide : indiquez @pseudo ou le lien de votre profil.",
+    "tooLong": "Texte trop long.",
+    "optional": "facultatif",
+    "submit": "Envoyer ma demande",
+    "noPaymentYet": "Aucun paiement maintenant : vous serez prévenu(e) dès que l'équipe aura répondu.",
+    "pendingTitle": "Demande envoyée",
+    "pendingText": "L'équipe étudie votre demande. Vous serez prévenu(e) dans vos notifications ; si elle est acceptée, vous aurez 24 h pour payer.",
+    "acceptedTitle": "Demande acceptée",
+    "acceptedText": "Votre place vous est réservée : finalisez le paiement pour la confirmer.",
+    "seeReservation": "Voir et payer ma réservation",
+    "declinedTitle": "Demande non retenue",
+    "declinedText": "Votre demande pour cette date n'a pas été retenue. D'autres dates et expériences vous attendent.",
+    "cancel": "Retirer ma demande",
+    "cancelConfirm": "Retirer votre demande pour cette date ?",
+    "listTitle": "Mes demandes de participation",
+    "statusPending": "En attente de réponse",
+    "statusDeclined": "Non retenue",
+    "errors": {
+      "already_requested": "Vous avez déjà envoyé une demande pour cette date.",
+      "request_declined": "Votre demande pour cette date n'a pas été retenue."
+    },
+    "pageTitle": "Demander à participer"
   }
 }

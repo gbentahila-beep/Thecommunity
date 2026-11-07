@@ -59,7 +59,16 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           </h2>
           {paymentFlag === "refuse" && holdOpen && <p role="alert" className="mt-2 text-sm font-medium text-red-800">{t("paymentFailed")}</p>}
           <p className="mt-1 text-sm">
-            {holdOpen ? t("pendingText", { time: formatTime(r.holdExpiresAt!, locale) }) : t("expiredText")}
+            {!holdOpen
+              ? t("expiredText")
+              : new Date(r.holdExpiresAt!).getTime() - now.getTime() > 3_600_000
+                ? t("pendingTextLong", {
+                    when:
+                      locale === "fr"
+                        ? `${formatLongDate(r.holdExpiresAt!, locale).toLowerCase()} à ${formatTime(r.holdExpiresAt!, locale)}`
+                        : `${formatLongDate(r.holdExpiresAt!, locale)} ${formatTime(r.holdExpiresAt!, locale)}`,
+                  })
+                : t("pendingText", { time: formatTime(r.holdExpiresAt!, locale) })}
           </p>
           {holdOpen && (
             <div className="mt-4">

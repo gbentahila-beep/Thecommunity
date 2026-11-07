@@ -1,13 +1,14 @@
 import { seatsAvailable } from "@thecommunity/shared";
-import { AlertTriangle, Clock } from "lucide-react";
+import { AlertTriangle, Clock, Inbox } from "lucide-react";
 import Link from "next/link";
 import { adminDate, BarList, Card, dh, FillBar, PageHeader, pct, StatTile, Table } from "@/components/admin/ui";
 import { computeStats, getAdminData } from "@/lib/data/admin";
+import { countPendingRequests } from "@/lib/data/admin-requests";
 
 export const metadata = { title: "Tableau de bord" };
 
 export default async function AdminDashboard() {
-  const d = await getAdminData();
+  const [d, pendingRequests] = await Promise.all([getAdminData(), countPendingRequests()]);
   const s = computeStats(d);
   const upcoming = d.sessions.slice(0, 8);
   const weekEnd = d.now.getTime() + 7 * 86_400_000;
@@ -23,6 +24,12 @@ export default async function AdminDashboard() {
           </Link>
         }
       />
+      {pendingRequests > 0 && (
+        <Link href="/admin/participations" className="mb-4 flex items-center gap-3 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-950 hover:bg-amber-100">
+          <Inbox className="size-5 shrink-0" aria-hidden />
+          {pendingRequests} demande{pendingRequests > 1 ? "s" : ""} de participation à traiter →
+        </Link>
+      )}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="Chiffre d'affaires brut" value={dh(s.gross)} hint={`${s.bookings} réservations confirmées`} />
         <StatTile label="Marge estimée" value={dh(s.margin)} hint={`${pct(s.gross ? s.margin / s.gross : 0)} du CA`} />

@@ -237,6 +237,17 @@ export function ExperienceForm({
           <select {...field("bookingMode")} value={v.bookingMode} onChange={(e) => set("bookingMode", e.target.value as ExperienceFormValues["bookingMode"])}>
             {MODES.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
           </select></div>
+        <div className="sm:col-span-2"><Label k="admission" hint="Sur demande : chaque personne envoie une demande (message, Instagram facultatif) ; l'équipe accepte ou refuse dans « Demandes de participation », puis la personne acceptée a 24 h pour payer.">Inscription</Label>
+          <select {...field("admission")} value={v.admission} onChange={(e) => set("admission", e.target.value as ExperienceFormValues["admission"])}>
+            <option value="direct">Réservation directe — on réserve et on paie tout de suite</option>
+            <option value="on_request">Sur demande — l&apos;équipe valide chaque participant</option>
+          </select></div>
+        {v.admission === "on_request" && (
+          <label className="flex items-center gap-2 text-sm sm:col-span-2">
+            <input type="checkbox" checked={v.requestMessageRequired} onChange={(e) => set("requestMessageRequired", e.target.checked)} className="size-4 accent-plum-900" />
+            Message de motivation obligatoire (« Pourquoi souhaitez-vous participer ? »)
+          </label>
+        )}
         {grouped && (
           <div className="grid grid-cols-3 gap-3 sm:col-span-2">
             <div><Label k="groupMin">Taille min</Label><input {...field("groupMin")} inputMode="numeric" value={v.groupMin} onChange={(e) => set("groupMin", e.target.value)} />{err("groupMin")}</div>

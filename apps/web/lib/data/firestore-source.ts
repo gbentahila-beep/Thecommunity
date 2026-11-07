@@ -1,6 +1,7 @@
 import "server-only";
 import type {
   AppNotification,
+  BookingRequest,
   Category,
   CategoryKey,
   City,
@@ -98,11 +99,13 @@ async function fsReviewsRaw(experienceId?: string): Promise<Review[]> {
 /** Données de l'espace membre — lues par le serveur pour l'utilisateur authentifié uniquement. */
 export async function fsMemberData(uid: string) {
   const db = adminDb();
-  const [profileSnap, resSnap, notifSnap] = await Promise.all([
+  const [profileSnap, resSnap, notifSnap, reqSnap] = await Promise.all([
     db.doc(`users/${uid}`).get(),
     db.collection("reservations").where("userId", "==", uid).orderBy("createdAt", "desc").limit(100).get(),
     db.collection(`users/${uid}/notifications`).orderBy("createdAt", "desc").limit(50).get(),
+    db.collection("bookingRequests").where("userId", "==", uid).orderBy("createdAt", "desc").limit(50).get(),
   ]);
+  const requests = reqSnap.docs.map((d) => withId<BookingRequest>(d));
   const reservations = resSnap.docs.map((d) => withId<Reservation>(d));
   const groupIds = [...new Set(reservations.map((r) => r.groupId).filter((g): g is string => Boolean(g)))];
   const groupSnaps = groupIds.length ? await db.getAll(...groupIds.map((g) => db.doc(`groups/${g}`))) : [];
@@ -127,7 +130,7 @@ export async function fsMemberData(uid: string) {
     ...p,
   } as UserProfile;
   const notifications = notifSnap.docs.map((d) => withId<AppNotification>(d));
-  return { profile, reservations, groups, notifications };
+  return { profile, reservations, groups, notifications, requests };
 }
 
 export const fsCities = cached(fsCitiesRaw, "fsCities");

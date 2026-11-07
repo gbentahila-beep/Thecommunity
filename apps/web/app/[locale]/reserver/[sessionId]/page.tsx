@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { VerifyEmailBanner } from "@/components/auth/verify-email-banner";
 import { BookingForm } from "@/components/booking/booking-form";
+import { CancelRequestButton, RequestForm } from "@/components/booking/request-form";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAccountState, getSessionUser } from "@/lib/auth/session";
@@ -21,7 +22,7 @@ export const metadata: Metadata = { robots: { index: false } };
 type Visitor = "anonymous" | "unverified" | "incomplete" | "suspended" | "ready";
 
 /** Qui regarde la page ? (lu côté serveur ; le serveur de réservation revérifie de toute façon) */
-async function visitorState(): Promise<{ state: Visitor; testPayments: boolean }> {
+async function visitorState(sessionId: string): Promise<{ state: Visitor; testPayments: boolean; request?: { id: string; status: string; reservationId?: string; createdAt?: string } }> {
   const user = await getSessionUser();
   const settings = (await adminDb().doc("settings/payment").get()).data();
   const testPayments = settings?.provider === "sandbox" && settings?.mode === "test";
@@ -30,7 +31,10 @@ async function visitorState(): Promise<{ state: Visitor; testPayments: boolean }
   if (account.suspended) return { state: "suspended", testPayments };
   if (!record.emailVerified) return { state: "unverified", testPayments };
   if (!account.onboardingCompleted) return { state: "incomplete", testPayments };
-  return { state: "ready", testPayments };
+  const req = await adminDb().doc(`bookingRequests/${sessionId}_${user.uid}`).get();
+  const r = req.data();
+  const request = r ? { id: req.id, status: r.status as string, reservationId: r.reservationId as string | undefined, createdAt: r.createdAt?.toDate().toISOString() as string | undefined } : undefined;
+  return { state: "ready", testPayments, request };
 }
 
 /**
@@ -48,7 +52,9 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   const lang = locale as "fr" | "ar";
   const cover = exp.images[0];
   const refusal = bookingRefusal({ ...session, startAt: new Date(session.startAt) }, exp, 1);
-  const visitor = FIREBASE_ENABLED ? await visitorState() : null;
+  const visitor = FIREBASE_ENABLED ? await visitorState(sessionId) : null;
+  const onRequest = exp.admission === "on_request";
+  const tr2 = await getTranslations("request");
   const here = `/reserver/${sessionId}`;
   const maxSeats = Math.min(maxSeatsFor(exp), Math.max(1, seatsAvailable(session)));
 
@@ -58,7 +64,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         <ArrowLeft className="size-4 rtl:-scale-x-100" aria-hidden />
         {t("back")}
       </Link>
-      <h1 className="mt-4 font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
+      <h1 className="mt-4 font-display text-4xl font-medium text-plum-900">{onRequest ? tr2("pageTitle") : t("title")}</h1>
 
       <section className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card">
         <div className="flex gap-4 p-4">
@@ -98,7 +104,14 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         <p className="mt-1 text-sm text-muted">{tr(DEFAULT_CANCELLATION_POLICY.label, locale)}.</p>
       </section>
 
-      {visitor?.testPayments && refusal === null && (
+      {onRequest && refusal === null && (
+        <section role="note" className="mt-6 rounded-[var(--radius-card)] bg-plum-50 p-4 text-plum-900">
+          <h2 className="font-semibold">{tr2("noteTitle")}</h2>
+          <p className="mt-1 text-sm">{tr2("noteText")}</p>
+        </section>
+      )}
+
+      {visitor?.testPayments && refusal === null && !onRequest && (
         <p role="note" className="mt-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">{t("testModeNote")}</p>
       )}
 
@@ -148,6 +161,35 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         </section>
       ) : visitor.state === "suspended" ? (
         <Notice title={t("unavailableTitle")} text={t("errors.suspended")} />
+      ) : onRequest && visitor.request && visitor.request.status !== "cancelled" ? (
+        <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
+          {visitor.request.status === "pending" && (
+            <>
+              <h2 className="font-semibold text-ink">{tr2("pendingTitle")}</h2>
+              <p className="mt-1 text-sm text-muted">{tr2("pendingText")}</p>
+              <div className="mt-4"><CancelRequestButton requestId={visitor.request.id} /></div>
+            </>
+          )}
+          {visitor.request.status === "accepted" && (
+            <>
+              <h2 className="font-semibold text-emerald-900">{tr2("acceptedTitle")}</h2>
+              <p className="mt-1 text-sm text-muted">{tr2("acceptedText")}</p>
+              {visitor.request.reservationId && (
+                <Link href={`/espace/reservations/${visitor.request.reservationId}`} className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">
+                  {tr2("seeReservation")}
+                </Link>
+              )}
+            </>
+          )}
+          {visitor.request.status === "declined" && (
+            <>
+              <h2 className="font-semibold text-ink">{tr2("declinedTitle")}</h2>
+              <p className="mt-1 text-sm text-muted">{tr2("declinedText")}</p>
+            </>
+          )}
+        </section>
+      ) : onRequest ? (
+        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} />
       ) : (
         <BookingForm sessionId={session.id} unitAmount={session.price.amount} currency={session.price.currency} maxSeats={maxSeats} />
       )}

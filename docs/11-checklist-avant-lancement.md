@@ -68,7 +68,7 @@ Les étapes 1 à 4 prennent souvent **plusieurs semaines chacune** : c'est ce qu
 
 - [ ] Conditions générales d'utilisation (CGU)
 - [ ] Conditions générales de vente (CGV), avec la politique d'annulation 48 h
-- [ ] Politique de confidentialité (loi 09-08)
+- [ ] Politique de confidentialité (loi 09-08) — mentionner les données des demandes de participation (message, compte Instagram facultatif) et leur usage : sélection des participants par l'équipe
 - [ ] Politique cookies
 - [ ] Charte de bonne conduite des participants
 - [ ] Mentions légales (raison sociale, siège, ICE, contact, hébergeur)

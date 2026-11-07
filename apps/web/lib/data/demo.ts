@@ -144,6 +144,8 @@ export const DEMO_EXPERIENCES: Experience[] = [
     bookingMode: "social_dinner",
     groupConfig: { minSize: 5, targetSize: 6, maxSize: 7 },
     maxSeatsPerBooking: 1,
+    admission: "on_request",
+    requestMessageRequired: false,
     languages: ["fr", "darija"],
     alcoholServed: false,
     included: [{ fr: "Menu entrée, plat, dessert" }, { fr: "Boissons sans alcool" }, { fr: "Table composée par notre équipe" }],

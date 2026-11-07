@@ -167,6 +167,9 @@ Lecture : le propriétaire et les admins. Écriture : **jamais depuis le client*
 
 Sous-collection `reservations/{id}/private/finance` 🔒 (admin) : `gross, cost, commission, discount, pspFeesEstimate, margin` figés au moment du paiement (voir [06 §6](06-cloud-functions.md#6-calcul-financier)).
 
+### `bookingRequests/{sessionId}_{uid}` — demande de participation (expériences « sur demande »)
+`userId`, `sessionId`, `experienceId`, `cityId`, `seats`, `message`, `instagram?` (pseudo normalisé), `status: pending | accepted | declined | cancelled`, `reservationId?` (créée à l'acceptation), `sessionSnapshot`, `decidedAt?`, `decidedBy?`, `createdAt`. Lecture : son auteur et l'équipe. Écriture : serveur uniquement (`requestBooking`, `cancelBookingRequest`, `adminDecideRequest`). L'expérience porte `admission: "direct" | "on_request"` et `requestMessageRequired`.
+
 ### `payments/{paymentId}` 🔒
 `reservationId`, `userId`, `type: "payment" | "refund"`, `provider`, `providerRef`, `amount`, `currency`, `status: initiated | succeeded | failed | cancelled | refunded | partially_refunded`, `failureReason?`, `parentPaymentId?` (remboursement), `processedEventIds: string[]`, `createdAt`, `updatedAt`. Le propriétaire peut lire ses paiements ; aucune écriture client.
 

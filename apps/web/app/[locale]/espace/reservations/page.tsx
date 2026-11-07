@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { CancelRequestButton } from "@/components/booking/request-form";
+import { formatLongDate } from "@/lib/format";
+import { tr } from "@/lib/i18n-text";
 import { ReservationCard } from "@/components/account/reservation-card";
 import { Link } from "@/i18n/navigation";
 import { getMemberSpace, type ReservationBucket } from "@/lib/data/member";
@@ -21,13 +24,28 @@ export default async function ReservationsPage({ params, searchParams }: PagePro
   setRequestLocale(locale);
   const sp = await searchParams;
   const current = TABS.find((tab) => tab.param === sp.onglet)?.key ?? "upcoming";
-  const [t, space] = await Promise.all([getTranslations("account"), getMemberSpace()]);
+  const [t, tq, space] = await Promise.all([getTranslations("account"), getTranslations("request"), getMemberSpace()]);
   const labels: Record<ReservationBucket, string> = { upcoming: t("tabUpcoming"), past: t("tabPast"), cancelled: t("tabCancelled") };
   const list = space[current];
 
   return (
     <div className="space-y-6">
       <h1 className="font-display text-4xl font-medium text-plum-900">{t("navBookings")}</h1>
+      {space.openRequests.length > 0 && (
+        <section aria-labelledby="requests-title" className="space-y-3">
+          <h2 id="requests-title" className="font-semibold text-ink">{tq("listTitle")}</h2>
+          {space.openRequests.map((q) => (
+            <article key={q.id} className="rounded-[var(--radius-card)] bg-white p-4 shadow-card">
+              <Link href={`/experiences/${q.sessionSnapshot.slug}`} className="font-semibold text-ink hover:underline">{tr(q.sessionSnapshot.title, locale)}</Link>
+              <p className="text-sm text-muted">{formatLongDate(q.sessionSnapshot.startAt, locale)}</p>
+              <p className={`mt-2 inline-block rounded-full px-2.5 py-1 text-xs font-semibold ${q.status === "pending" ? "bg-amber-100 text-amber-900" : "bg-stone-200 text-stone-700"}`}>
+                {q.status === "pending" ? tq("statusPending") : tq("statusDeclined")}
+              </p>
+              {q.status === "pending" && <div className="mt-3"><CancelRequestButton requestId={q.id} /></div>}
+            </article>
+          ))}
+        </section>
+      )}
       <div role="tablist" aria-label={t("navBookings")} className="flex gap-1 rounded-full bg-white/70 p-1">
         {TABS.map((tab) => (
           <Link

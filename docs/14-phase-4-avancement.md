@@ -6,6 +6,7 @@
 | Étape | Contenu | Statut |
 |---|---|---|
 | **4a** | Réserver une place, la bloquer 15 min, payer (en test), confirmer ; expiration ; paiement tardif | ✅ |
+| **4a+** | **Participation sur demande** : la personne demande, l'équipe accepte ou refuse, puis paiement sous 24 h | ✅ |
 | 4b | Annulation par le membre (politique 48 h, remboursement), liste d'attente | à venir |
 | 4c | Back-office : réservations réelles, annulation/déplacement par l'équipe, pointage, export des participants | à venir |
 
@@ -66,6 +67,38 @@ le reste du code ne change pas.
 | Démarrage du paiement / réponse de test | `functions/src/payments/start-checkout.ts`, `sandbox-complete.ts` |
 | Traitement d'un paiement (commun à tous les prestataires) | `functions/src/payments/apply-event.ts` |
 | Tunnel, page de test, suivi | `apps/web/app/[locale]/reserver/…`, `paiement-test/…`, `espace/reservations/[id]` |
+
+## Participation sur demande (ajout du 7 novembre 2026) ✅
+
+Demandé par Rita : pouvoir **choisir les participants**. Décisions validées :
+au choix **par expérience** ; **paiement après acceptation** (24 h pour payer) ; la demande contient un **message** (facultatif ou obligatoire selon l'expérience) et un **compte Instagram facultatif**.
+
+### Pour l'équipe
+
+1. Back-office → **Expériences** → la fiche → **Inscription : « Sur demande »** (et, si souhaité, « Message de motivation obligatoire ») → Enregistrer.
+2. Les demandes arrivent dans **Demandes de participation** (menu du back-office ; un bandeau les signale sur le tableau de bord).
+   Pour chaque personne : photo, âge, profession, bio, centres d'intérêt, Instagram, message, historique (participations, absences, annulations) et places encore libres sur la date.
+3. **Accepter** : la place est réservée et la personne a **24 h pour payer** (sinon la place se libère automatiquement). **Refuser** : la personne est prévenue, sans détail.
+   Impossible d'accepter plus de personnes que de places. Chaque décision est journalisée.
+
+### Pour le membre
+
+Sur la fiche, le bouton devient **« Demander à participer »**. Il envoie sa demande sans payer, la suit dans **Mes réservations**
+(et peut la retirer tant qu'elle n'est pas traitée), reçoit une **notification** à la décision, puis paie depuis sa réservation.
+Une demande refusée ne peut pas être renvoyée pour la même date.
+
+| Demande | Back-office | Acceptée |
+|---|---|---|
+| ![Demande](captures/demande-1-formulaire.jpg) | ![Back-office](captures/demande-2-back-office.jpg) | ![Acceptée](captures/demande-3-acceptee.jpg) |
+
+### Tests
+
+- 7 tests d'intégration (`firebase/tests/reservations.test.ts`) : réservation directe refusée pour une expérience sur demande (et inversement),
+  message obligatoire, Instagram vérifié, aucune place bloquée avant décision, acceptation → place bloquée 24 h → paiement → confirmé,
+  notification et journal, refus, impossible d'accepter au-delà des places, retrait de la demande ; 1 test de règles de sécurité.
+- 23 vérifications de bout en bout (`tests/e2e/firebase-requests.e2e.cjs`) : deux membres demandent, l'admin accepte l'une et refuse l'autre dans le back-office, paiement de test, refus affiché.
+
+> Le compte Instagram est une donnée personnelle de plus : il est lisible uniquement par la personne et l'équipe, et devra figurer dans la politique de confidentialité (voir docs/11, section E).
 
 ### Reste pour la suite de la phase 4
 

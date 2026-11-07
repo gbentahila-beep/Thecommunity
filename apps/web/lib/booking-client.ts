@@ -19,6 +19,7 @@ export const BOOKING_ERRORS = [
   "not_payable",
   "already_paid",
   "already_processed",
+  "approval_required",
   "busy",
   "signin",
   "generic",

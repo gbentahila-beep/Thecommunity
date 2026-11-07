@@ -11,6 +11,7 @@ import { tr } from "@/lib/i18n-text";
 
 const ICONS: Partial<Record<AppNotification["type"], typeof Bell>> = {
   booking_confirmed: CalendarCheck,
+  request_accepted: CalendarCheck,
   payment_confirmed: CreditCard,
   group_revealed: Users,
   review_request: Star,
