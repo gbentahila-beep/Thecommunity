@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "demo-thecommunity"
+  },
+  "_commentaire": "demo-thecommunity = émulateurs locaux uniquement (aucun compte requis). Les alias « dev » (projet d'essai) et « prod » (projet réel) seront ajoutés quand les projets existeront."
+}

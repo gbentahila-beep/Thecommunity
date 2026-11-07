@@ -1,0 +1,241 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "sessions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "cityId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "startAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "sessions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "cityId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "categoryId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "startAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "sessions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "experienceId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "startAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "sessions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "cityId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isFeatured",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "startAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "experiences",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "cityId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "nextSessionAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "experiences",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "cityId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "categoryId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "nextSessionAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "experiences",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tags",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "cityId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "reservations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "reservations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "sessionId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "reservations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "holdExpiresAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "reservations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "cityId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "payments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "reviews",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "experienceId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "groups",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "sessionId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "label",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

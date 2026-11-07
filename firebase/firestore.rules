@@ -1,0 +1,198 @@
+rules_version = '2';
+
+// =====================================================================
+// The Community — règles de sécurité Firestore
+// Principe : tout est refusé par défaut. Le navigateur lit ce qui lui est
+// destiné et n'écrit presque rien de sensible : places, prix, paiements,
+// rôles et groupes passent par les Cloud Functions (Admin SDK).
+// Spécification : docs/04-roles-et-securite.md · Tests : firebase/tests/
+// =====================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Fonctions utilitaires ----------
+    function signedIn() { return request.auth != null; }
+    function role() { return signedIn() ? request.auth.token.get('role', 'user') : 'anonymous'; }
+    function isAdmin() { return role() in ['admin', 'superadmin']; }
+    function isSuperAdmin() { return role() == 'superadmin'; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function changedKeys() { return request.resource.data.diff(resource.data).affectedKeys(); }
+    function onlyChanges(keys) { return changedKeys().hasOnly(keys); }
+    function isShortString(v, max) { return v is string && v.size() <= max; }
+
+    // ---------- Profils (privés) ----------
+    // Le document est créé par le serveur à l'inscription (trigger Auth).
+    // Le questionnaire complet passe par la callable account-completeProfile (validation Zod).
+    // Le propriétaire peut modifier directement quelques réglages, avec contrôle des types.
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create, delete: if false;
+      allow update: if isOwner(uid)
+        && onlyChanges(['notificationPrefs', 'locale', 'photoPath', 'updatedAt'])
+        && (!('locale' in changedKeys()) || request.resource.data.locale in ['fr', 'ar', 'en'])
+        && (!('photoPath' in changedKeys()) || request.resource.data.photoPath == null
+            || (request.resource.data.photoPath is string
+                && request.resource.data.photoPath.matches('users/' + uid + '/avatar/[A-Za-z0-9._-]{1,80}')))
+        && (!('notificationPrefs' in changedKeys())
+            || (request.resource.data.notificationPrefs.keys().hasOnly(['email', 'push', 'marketingEmail'])
+                && request.resource.data.notificationPrefs.email is bool
+                && request.resource.data.notificationPrefs.push is bool
+                && request.resource.data.notificationPrefs.marketingEmail is bool))
+        && (!('updatedAt' in changedKeys()) || request.resource.data.updatedAt == request.time);
+
+      match /notifications/{id} {
+        allow read: if isOwner(uid);
+        allow update: if isOwner(uid) && onlyChanges(['readAt']) && request.resource.data.readAt == request.time;
+        allow create, delete: if false;
+      }
+      match /favorites/{experienceId} {
+        allow read, delete: if isOwner(uid);
+        allow create: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['createdAt'])
+          && request.resource.data.createdAt == request.time;
+        allow update: if false;
+      }
+      match /devices/{token} {
+        allow read, delete: if isOwner(uid);
+        allow create: if isOwner(uid) && request.resource.data.keys().hasOnly(['platform', 'createdAt'])
+          && isShortString(request.resource.data.platform, 20) && request.resource.data.createdAt == request.time;
+        allow update: if false;
+      }
+    }
+
+    // Données de matching : serveur uniquement, lecture admin.
+    match /userMatching/{uid} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ---------- Référentiels publics ----------
+    match /cities/{cityId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // ---------- Expériences et sessions ----------
+    // Écriture via Cloud Functions (validation complète, journalisation).
+    match /experiences/{experienceId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow write: if false;
+      match /private/{doc} {
+        allow read: if isAdmin();
+        allow write: if false;
+      }
+    }
+
+    match /sessions/{sessionId} {
+      allow read: if resource.data.status in ['published', 'full', 'completed'] || isAdmin();
+      allow write: if false;
+      match /seatLocks/{uid} {
+        allow read: if isAdmin();
+        allow write: if false;
+      }
+      match /waitlist/{uid} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if false;
+      }
+    }
+
+    // ---------- Réservations, paiements (jamais écrits par le navigateur) ----------
+    match /reservations/{reservationId} {
+      allow read: if (signedIn() && resource.data.userId == request.auth.uid) || isAdmin();
+      allow write: if false;
+      match /private/{doc} {
+        allow read: if isAdmin();
+        allow write: if false;
+      }
+    }
+    match /payments/{paymentId} {
+      allow read: if (signedIn() && resource.data.userId == request.auth.uid) || isAdmin();
+      allow write: if false;
+    }
+    match /paymentEvents/{eventId} {
+      allow read: if isSuperAdmin();
+      allow write: if false;
+    }
+
+    // ---------- Groupes ----------
+    // Un membre ne voit son groupe qu'une fois révélé.
+    match /groups/{groupId} {
+      allow read: if isAdmin()
+        || (signedIn() && request.auth.uid in resource.data.memberIds && resource.data.status == 'revealed');
+      allow write: if false;
+      match /private/{doc} {
+        allow read: if isAdmin();
+        allow write: if false;
+      }
+    }
+
+    // ---------- Avis ----------
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'published' || isAdmin()
+        || (signedIn() && resource.data.userId == request.auth.uid);
+      allow write: if false;
+      match /private/{doc} {
+        allow read: if isAdmin();
+        allow write: if false;
+      }
+    }
+
+    // ---------- Administration ----------
+    match /partners/{partnerId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    match /promoCodes/{code} {
+      allow read: if isAdmin();
+      allow write: if false;
+      match /redemptions/{id} {
+        allow read: if isAdmin();
+        allow write: if false;
+      }
+    }
+    match /settings/{docId} {
+      allow read: if docId in ['public', 'cancellationPolicies'] || isAdmin();
+      allow write: if false;
+    }
+    match /auditLogs/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    match /statsDaily/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ---------- Formulaires publics ----------
+    match /contactMessages/{id} {
+      allow read: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(['name', 'email', 'message', 'createdAt'])
+        && isShortString(request.resource.data.name, 80) && request.resource.data.name.size() > 0
+        && isShortString(request.resource.data.email, 120) && request.resource.data.email.matches('[^@ ]+@[^@ ]+[.][^@ ]+')
+        && isShortString(request.resource.data.message, 3000) && request.resource.data.message.size() >= 10
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+    match /dataRequests/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['userId', 'type', 'createdAt'])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.type in ['export', 'deletion']
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+    match /reports/{id} {
+      // Création via callable (vérifie que les deux personnes ont participé à la même session).
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // Tout le reste est refusé (règle implicite de Firestore).
+  }
+}

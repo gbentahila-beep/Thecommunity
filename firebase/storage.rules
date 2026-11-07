@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// The Community — règles Cloud Storage. Tout est refusé par défaut.
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() { return signedIn() && request.auth.token.get('role', 'user') in ['admin', 'superadmin']; }
+    function isImage(maxMb) {
+      return request.resource.size <= maxMb * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+    }
+
+    // Photos d'expériences, villes, catégories, visuels : lecture publique, écriture admin.
+    match /experiences/{experienceId}/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && isImage(8);
+      allow delete: if isAdmin();
+    }
+    match /{folder}/{fileName} {
+      allow read: if folder in ['cities', 'categories', 'promo'];
+      allow write: if folder in ['cities', 'categories', 'promo'] && isAdmin() && isImage(8);
+      allow delete: if folder in ['cities', 'categories', 'promo'] && isAdmin();
+    }
+
+    // Photo de profil : visible des membres connectés (groupes), modifiable par son propriétaire.
+    match /users/{uid}/avatar/{fileName} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.auth.uid == uid && isImage(3);
+      allow delete: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Documents partenaires : admin uniquement.
+    match /partners/{partnerId}/documents/{fileName} {
+      allow read, delete: if isAdmin();
+      allow write: if isAdmin() && request.resource.size <= 10 * 1024 * 1024
+        && request.resource.contentType.matches('application/pdf|image/(jpeg|png|webp)');
+    }
+
+    // Exports : générés par le serveur, distribués par URL signée temporaire.
+    match /exports/{all=**} {
+      allow read, write: if false;
+    }
+  }
+}
