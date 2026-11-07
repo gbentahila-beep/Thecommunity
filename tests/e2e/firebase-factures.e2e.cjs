@@ -46,13 +46,14 @@ async function payOnTestPage(page) {
 
 (async () => {
   // Une date payante dans 5 jours (annulation remboursée), copiée d'une date publiée.
-  const sessions = await fsList('sessions');
+  // Parcourue à l'envers : la suite « abonnement » modifie la première expérience éligible (cache du site).
+  const sessions = (await fsList('sessions')).reverse();
   let model = null;
   for (const s of sessions) {
     if (s.fields.status.stringValue !== 'published') continue;
     if (s.fields.createdAt && Date.now() - new Date(s.fields.createdAt.timestampValue).getTime() < 72 * 3600000) continue;
     const e = await fsGet(`experiences/${s.fields.experienceId.stringValue}`);
-    if (e?.fields.status.stringValue === 'published' && e.fields.admission?.stringValue !== 'on_request' && int(s.fields.price.mapValue.fields.amount) > 0) { model = s; break; }
+    if (e?.fields.status.stringValue === 'published' && e.fields.admission?.stringValue !== 'on_request' && e.fields.membersOnly?.booleanValue !== true && int(s.fields.price.mapValue.fields.amount) > 0) { model = s; break; }
   }
   const sid = `e2e-facture-${Date.now()}`;
   const start = new Date(Date.now() + 5 * 86_400_000);
