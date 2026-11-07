@@ -172,7 +172,10 @@
     "fullTextOnRequest": "Toutes les places sont prises pour cette date. Regardez les autres dates de cette expérience.",
     "seeMyBooking": "Voir ma réservation",
     "pendingPaymentTitle": "Paiement en attente pour cette date",
-    "finishPayment": "Finaliser le paiement"
+    "finishPayment": "Finaliser le paiement",
+    "confirmYesCancel": "Oui, annuler",
+    "confirmKeep": "Non, garder ma place",
+    "confirmKeepRequest": "Non, garder ma demande"
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -536,7 +539,8 @@
       "already_requested": "Vous avez déjà envoyé une demande pour cette date.",
       "request_declined": "Votre demande pour cette date n'a pas été retenue."
     },
-    "pageTitle": "Demander à participer"
+    "pageTitle": "Demander à participer",
+    "cancelYes": "Oui, retirer ma demande"
   },
   "waitlist": {
     "joinTitle": "Liste d'attente",

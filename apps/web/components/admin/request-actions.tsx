@@ -18,8 +18,8 @@ export function RequestActions({ requestId, name }: { requestId: string; name: s
   const router = useRouter();
   const [busy, setBusy] = useState<"accept" | "decline" | null>(null);
   const [error, setError] = useState("");
+  const [askDecline, setAskDecline] = useState(false);
   const decide = async (decision: "accept" | "decline") => {
-    if (decision === "decline" && !window.confirm(`Refuser la demande de ${name} ? La personne sera prévenue.`)) return;
     setBusy(decision);
     setError("");
     try {
@@ -45,11 +45,11 @@ export function RequestActions({ requestId, name }: { requestId: string; name: s
         </button>
         <button
           type="button"
-          onClick={() => decide("decline")}
+          onClick={() => (askDecline ? decide("decline") : setAskDecline(true))}
           disabled={busy !== null}
           className="rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:bg-cream disabled:opacity-60"
         >
-          {busy === "decline" ? "…" : "Refuser"}
+          {busy === "decline" ? "…" : askDecline ? `Confirmer le refus de ${name}` : "Refuser"}
         </button>
       </div>
       {error && <p role="alert" className="text-sm text-red-800">{error}</p>}

@@ -69,7 +69,7 @@ async function bookAndPay(page, sid) {
 
   const b = await chromium.launch();
   const errs = [];
-  const open = async (opts) => { const p = await (await b.newContext(opts)).newPage(); p.on('pageerror', (e) => errs.push(e.message)); p.on('dialog', (d) => d.accept()); return p; };
+  const open = async (opts) => { const p = await (await b.newContext(opts)).newPage(); p.on('pageerror', (e) => errs.push(e.message)); p.on('dialog', (d) => { errs.push('fenêtre système inattendue : ' + d.message()); d.dismiss(); }); return p; };
   const m1 = await makeMember('Karim');
   const m2 = await makeMember('Leila');
   const p1 = await open({ ...devices['iPhone 13'] });

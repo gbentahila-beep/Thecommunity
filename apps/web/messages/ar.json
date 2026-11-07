@@ -172,7 +172,10 @@
     "fullTextOnRequest": "جميع الأماكن محجوزة لهذا الموعد. اطّلع على المواعيد الأخرى لهذه التجربة.",
     "seeMyBooking": "عرض حجزي",
     "pendingPaymentTitle": "دفع قيد الانتظار لهذا الموعد",
-    "finishPayment": "إتمام الدفع"
+    "finishPayment": "إتمام الدفع",
+    "confirmYesCancel": "نعم، ألغِ",
+    "confirmKeep": "لا، احتفظ بمكاني",
+    "confirmKeepRequest": "لا، احتفظ بطلبي"
   },
   "auth": {
     "loginTitle": "مرحباً بعودتك",
@@ -536,7 +539,8 @@
       "already_requested": "لقد أرسلت طلبًا لهذا الموعد من قبل.",
       "request_declined": "لم يتم قبول طلبك لهذا الموعد."
     },
-    "pageTitle": "اطلب المشاركة"
+    "pageTitle": "اطلب المشاركة",
+    "cancelYes": "نعم، اسحب طلبي"
   },
   "waitlist": {
     "joinTitle": "قائمة الانتظار",

@@ -35,7 +35,7 @@ async function login(page, email, password = 'Demo2026!', suite = '/admin') {
     const ctx = await b.newContext({ viewport: { width: 1366, height: 900 } });
     const p = await ctx.newPage();
     p.on('pageerror', (e) => errs.push(e.message));
-    p.on('dialog', (d) => d.accept());
+    p.on('dialog', (d) => { errs.push('fenêtre système inattendue : ' + d.message()); d.dismiss(); });
     globalThis.__page = p;
     return p;
   };
@@ -116,7 +116,8 @@ async function login(page, email, password = 'Demo2026!', suite = '/admin') {
   const victimEmail = victim.fields.email.stringValue;
   await page.goto(`${base}/admin/utilisateurs?q=${encodeURIComponent(victimEmail)}`, { waitUntil: 'load' });
   await page.getByRole('button', { name: 'Suspendre' }).click();
-  assert(await visible(page.getByRole('button', { name: 'Réactiver' })), 'compte suspendu depuis le back-office');
+  await page.getByRole('button', { name: 'Confirmer' }).click();
+  assert(await visible(page.getByRole('button', { name: 'Réactiver' })), 'compte suspendu depuis le back-office (confirmation dans la page)');
   assert((await authLookup(victimEmail)).disabled === true, 'compte désactivé côté authentification');
   const vp = await newPage();
   await login(vp, victimEmail, 'Demo2026!', '/espace');
@@ -126,7 +127,10 @@ async function login(page, email, password = 'Demo2026!', suite = '/admin') {
 
   // 7. Nomination d'un admin par le super-admin
   await page.locator(`select[id^="role-"]`).first().selectOption('admin');
-  assert(await visible(page.getByText('Enregistré')), 'rôle modifié');
+  assert(await visible(page.getByText('Donner le rôle « Admin » à ce compte ?')), 'confirmation du rôle dans la page');
+  await page.getByRole('button', { name: 'Confirmer' }).click();
+  await page.waitForFunction(() => document.querySelector('select[id^="role-"]')?.value === 'admin');
+  await page.waitForTimeout(1500);
   const claims = JSON.parse((await authLookup(victimEmail)).customAttributes ?? '{}');
   assert(claims.role === 'admin', 'custom claim « admin » posé par le serveur');
   const np = await newPage();

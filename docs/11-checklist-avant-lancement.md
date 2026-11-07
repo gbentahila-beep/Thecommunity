@@ -24,7 +24,7 @@ Les étapes 1 à 4 prennent souvent **plusieurs semaines chacune** : c'est ce qu
   - [ ] Quelle forme juridique choisir ? *(Recommandation : SARL ou SARL à associé unique dédiée au projet. Auto-entrepreneur déconseillé.)*
   - [ ] Quel **objet social** prévoir ? *(Organisation d'événements et d'activités de loisirs, vente de places, intermédiation avec des partenaires, édition d'une plateforme numérique.)*
   - [ ] **Modèle d'encaissement** : la société revend-elle les places en son nom (elle achète la prestation au restaurant), ou encaisse-t-elle pour le compte du partenaire contre une commission ? Le second cas peut être réglementé.
-  - [ ] Quelle **TVA** s'applique aux places vendues et aux commissions ? Que doit contenir un reçu ?
+  - [ ] Quelle **TVA** s'applique aux places vendues, aux commissions et à l'**abonnement annuel** ? Que doit contenir une **facture** (mentions obligatoires, numérotation, avoirs) ?
   - [ ] Randonnées, food tours ou excursions relèvent-ils de **règles du tourisme** (guides, agrément) ?
   - [ ] Qui sont les **associés**, et dans quelles proportions ?
 - [ ] **Créer la société** (certificat négatif, statuts, registre du commerce, identifiant fiscal, ICE, taxe professionnelle, CNSS). Le comptable s'en charge généralement.
@@ -67,7 +67,7 @@ Les étapes 1 à 4 prennent souvent **plusieurs semaines chacune** : c'est ce qu
 > Je peux préparer des **projets** de ces textes à partir du fonctionnement réel du site ; ils devront être relus et validés par un avocat.
 
 - [ ] Conditions générales d'utilisation (CGU)
-- [ ] Conditions générales de vente (CGV), avec la politique d'annulation 48 h
+- [ ] Conditions générales de vente (CGV), avec la politique d'annulation 48 h et les conditions de l'**abonnement annuel** (durée, renouvellement, rétractation, remboursement)
 - [ ] Politique de confidentialité (loi 09-08) — mentionner les données des demandes de participation (message, compte Instagram facultatif) et leur usage : sélection des participants par l'équipe
 - [ ] Politique cookies
 - [ ] Charte de bonne conduite des participants

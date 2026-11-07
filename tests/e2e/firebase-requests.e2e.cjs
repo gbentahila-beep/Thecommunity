@@ -57,7 +57,7 @@ async function login(page, who, suite) {
 
   const b = await chromium.launch();
   const errs = [];
-  const open = async (opts) => { const p = await (await b.newContext(opts)).newPage(); p.on('pageerror', (e) => errs.push(e.message)); p.on('dialog', (d) => d.accept()); return p; };
+  const open = async (opts) => { const p = await (await b.newContext(opts)).newPage(); p.on('pageerror', (e) => errs.push(e.message)); p.on('dialog', (d) => { errs.push('fenêtre système inattendue : ' + d.message()); d.dismiss(); }); return p; };
   const member = await open({ ...devices['iPhone 13'] });
   globalThis.__page = member;
   const nadia = await makeMember('Nadia', 'Architecte');
@@ -105,7 +105,8 @@ async function login(page, who, suite) {
   await card('Nadia').getByRole('button', { name: 'Accepter' }).click();
   assert(await card('Nadia').getByRole('button', { name: 'Accepter' }).waitFor({ state: 'detached', timeout: 15000 }).then(() => true, () => false), 'Nadia acceptée');
   await card('Yanis').getByRole('button', { name: 'Refuser' }).click();
-  assert(await card('Yanis').getByRole('button', { name: 'Refuser' }).waitFor({ state: 'detached', timeout: 15000 }).then(() => true, () => false), 'Yanis refusé');
+  await card('Yanis').getByRole('button', { name: 'Confirmer le refus de Yanis' }).click();
+  assert(await card('Yanis').getByRole('button', { name: /Refuser|Confirmer le refus/ }).waitFor({ state: 'detached', timeout: 15000 }).then(() => true, () => false), 'Yanis refusé');
   assert(await visible(admin.getByText('Acceptée')) && await visible(admin.getByText('Refusée')), 'dernières décisions affichées');
 
   // 5. Nadia : notification, place réservée 24 h, paiement

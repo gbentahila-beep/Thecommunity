@@ -106,36 +106,49 @@ export function RequestForm({ sessionId, maxSeats, messageRequired }: { sessionI
   );
 }
 
-/** Retirer sa demande tant que l'équipe ne l'a pas traitée. */
+/** Retirer sa demande tant que l'équipe ne l'a pas traitée (confirmation dans la page, sans fenêtre système). */
 export function CancelRequestButton({ requestId }: { requestId: string }) {
   const t = useTranslations("request");
   const tb = useTranslations("booking");
   const router = useRouter();
+  const [asking, setAsking] = useState(false);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
-  return (
-    <div>
-      <button
-        type="button"
-        disabled={busy}
-        onClick={async () => {
-          if (!window.confirm(t("cancelConfirm"))) return;
-          setBusy(true);
-          setFailed(false);
-          try {
-            await authReady();
-            await httpsCallable(firebase().functions, "cancelBookingRequest")({ requestId });
-          } catch {
-            setFailed(true);
-          }
-          setBusy(false);
-          router.refresh();
-        }}
-        className="rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:bg-cream disabled:opacity-60"
-      >
-        {busy ? tb("working") : t("cancel")}
+  if (!asking) {
+    return (
+      <button type="button" onClick={() => setAsking(true)} className="rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:bg-cream">
+        {t("cancel")}
       </button>
-      {failed && <p role="alert" className="mt-2 text-sm text-red-800">{tb("errors.generic")}</p>}
+    );
+  }
+  return (
+    <div role="alertdialog" aria-label={t("cancelConfirm")} className="space-y-3 rounded-2xl border border-line bg-cream/70 p-4">
+      <p className="text-sm font-medium text-ink">{t("cancelConfirm")}</p>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            setFailed(false);
+            try {
+              await authReady();
+              await httpsCallable(firebase().functions, "cancelBookingRequest")({ requestId });
+            } catch {
+              setFailed(true);
+            }
+            setBusy(false);
+            router.refresh();
+          }}
+          className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+        >
+          {busy ? tb("working") : t("cancelYes")}
+        </button>
+        <button type="button" disabled={busy} onClick={() => setAsking(false)} className="rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink disabled:opacity-60">
+          {tb("confirmKeepRequest")}
+        </button>
+      </div>
+      {failed && <p role="alert" className="text-sm text-red-800">{tb("errors.generic")}</p>}
     </div>
   );
 }

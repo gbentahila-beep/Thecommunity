@@ -61,7 +61,7 @@ async function payOnTestPage(page) {
 
   const b = await chromium.launch();
   const errs = [];
-  const open = async () => { const p = await (await b.newContext({ ...devices['iPhone 13'] })).newPage(); p.on('pageerror', (e) => errs.push(e.message)); p.on('dialog', (d) => d.accept()); return p; };
+  const open = async () => { const p = await (await b.newContext({ ...devices['iPhone 13'] })).newPage(); p.on('pageerror', (e) => errs.push(e.message)); p.on('dialog', (d) => { errs.push('fenêtre système inattendue : ' + d.message()); d.dismiss(); }); return p; };
 
   // 1. Amina prend la dernière place et paie
   const amina = await makeMember('Amina');
@@ -89,6 +89,8 @@ async function payOnTestPage(page) {
   await pa.goto(`${base}/espace/reservations/${aminaRes}`);
   assert(await visible(pa.getByText(/vous serez remboursé de/)), 'montant remboursable annoncé avant d’annuler');
   await pa.getByRole('button', { name: 'Annuler ma réservation' }).click();
+  assert(await visible(pa.getByText(/Annuler cette réservation \? Vous serez remboursé/)), 'confirmation affichée dans la page (sans fenêtre système)');
+  await pa.getByRole('button', { name: 'Oui, annuler' }).click();
   assert(await visible(pa.getByText(/Réservation annulée : .* vous sont remboursés/)), 'annulation confirmée avec remboursement');
   assert(await pa.getByText('Remboursée', { exact: true }).isVisible(), 'badge « Remboursée »');
   const ra = await fsGet(`reservations/${aminaRes}`);
