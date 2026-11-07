@@ -1,0 +1,260 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="1600" height="1200">
+  <!-- Illustration originale The Host Club : une table sur un rooftop de Casablanca au coucher du soleil. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b0f24"/>
+      <stop offset="0.28" stop-color="#5a1f3e"/>
+      <stop offset="0.52" stop-color="#9c3d4e"/>
+      <stop offset="0.7" stop-color="#e0805e"/>
+      <stop offset="0.82" stop-color="#f5b783"/>
+      <stop offset="1" stop-color="#f9d9b1"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff3d6"/>
+      <stop offset="0.35" stop-color="#ffd8a0" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#ffb37a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0a77c"/>
+      <stop offset="1" stop-color="#b8605c"/>
+    </linearGradient>
+    <linearGradient id="city" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6b2a45"/>
+      <stop offset="1" stop-color="#4a1b33"/>
+    </linearGradient>
+    <linearGradient id="minaret" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5c2440"/>
+      <stop offset="0.55" stop-color="#7a3550"/>
+      <stop offset="1" stop-color="#4b1c35"/>
+    </linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9826b"/>
+      <stop offset="1" stop-color="#9e5a4c"/>
+    </linearGradient>
+    <linearGradient id="cloth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbf3ea"/>
+      <stop offset="0.55" stop-color="#f1e1d2"/>
+      <stop offset="1" stop-color="#d9bfae"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.15"/>
+      <stop offset="0.3" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="0.6" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.35"/>
+    </linearGradient>
+    <linearGradient id="tajine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d98a5f"/>
+      <stop offset="0.6" stop-color="#b1583f"/>
+      <stop offset="1" stop-color="#7d3a2c"/>
+    </linearGradient>
+    <radialGradient id="bulb" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fffbe8"/>
+      <stop offset="0.25" stop-color="#ffe6a8"/>
+      <stop offset="1" stop-color="#ffc56b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="flame" cx="0.5" cy="0.6" r="0.5">
+      <stop offset="0" stop-color="#fffbe6"/>
+      <stop offset="0.4" stop-color="#ffd27a"/>
+      <stop offset="1" stop-color="#ff9a3c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="tableGlow" cx="0.5" cy="0.4" r="0.6">
+      <stop offset="0" stop-color="#ffcf8a" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ffcf8a" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur6" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="blur18" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="blur40" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="40"/></filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.05"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+    <g id="wineGlass">
+      <path d="M-22,-110 C-24,-70 -16,-38 0,-30 C16,-38 24,-70 22,-110 Z" fill="url(#glass)" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2"/>
+      <path d="M-18,-76 C-16,-52 -9,-40 0,-37 C9,-40 16,-52 18,-76 Z" fill="#c2414f" fill-opacity="0.82"/>
+      <rect x="-2" y="-31" width="4" height="58" fill="#ffffff" fill-opacity="0.6"/>
+      <ellipse cx="0" cy="28" rx="20" ry="5" fill="#ffffff" fill-opacity="0.55"/>
+      <path d="M-14,-104 C-15,-80 -11,-62 -6,-55" stroke="#ffffff" stroke-opacity="0.8" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="waterGlass">
+      <path d="M-20,-60 L-16,20 L16,20 L20,-60 Z" fill="url(#glass)" stroke="#ffffff" stroke-opacity="0.5" stroke-width="2"/>
+      <path d="M-18,-25 L-16,20 L16,20 L18,-25 Z" fill="#f6d9b8" fill-opacity="0.5"/>
+      <path d="M-12,-52 L-10,10" stroke="#fff" stroke-opacity="0.75" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <g id="lantern">
+      <ellipse cx="0" cy="-40" rx="70" ry="80" fill="url(#flame)" filter="url(#blur18)"/>
+      <path d="M-26,-96 L26,-96 L34,-60 L34,10 L-34,10 L-34,-60 Z" fill="#3a1a2a" fill-opacity="0.9"/>
+      <path d="M-26,-60 L26,-60 L26,4 L-26,4 Z" fill="#ffd690" fill-opacity="0.9"/>
+      <path d="M-26,-60 L-26,4 M-9,-60 L-9,4 M9,-60 L9,4 M26,-60 L26,4 M-26,-38 L26,-38 M-26,-16 L26,-16" stroke="#7a3b2a" stroke-width="3" fill="none"/>
+      <ellipse cx="0" cy="-26" rx="9" ry="16" fill="url(#flame)"/>
+      <path d="M-14,-96 Q0,-130 14,-96 Z" fill="#3a1a2a"/>
+      <circle cx="0" cy="-132" r="5" fill="#3a1a2a"/>
+    </g>
+    <g id="plate">
+      <ellipse cx="0" cy="0" rx="108" ry="30" fill="#ffffff" fill-opacity="0.95"/>
+      <ellipse cx="0" cy="0" rx="108" ry="30" fill="none" stroke="#e7cdb9" stroke-width="3"/>
+      <ellipse cx="0" cy="-2" rx="70" ry="18" fill="none" stroke="#c98b6a" stroke-opacity="0.55" stroke-width="2.5"/>
+    </g>
+  </defs>
+
+  <!-- Ciel -->
+  <rect width="1600" height="1200" fill="url(#sky)"/>
+  <circle cx="900" cy="725" r="260" fill="url(#sun)" filter="url(#blur40)" opacity="0.9"/>
+  <circle cx="900" cy="742" r="70" fill="#fff0cf" opacity="0.95"/>
+  <!-- Nuages doux -->
+  <g fill="#f7b38a" opacity="0.35" filter="url(#blur18)">
+    <ellipse cx="380" cy="430" rx="260" ry="26"/>
+    <ellipse cx="900" cy="520" rx="320" ry="22"/>
+    <ellipse cx="1350" cy="470" rx="220" ry="18"/>
+  </g>
+  <!-- Étoiles -->
+  <g fill="#fff4dc" opacity="0.7">
+    <circle cx="210" cy="120" r="2"/><circle cx="520" cy="80" r="1.6"/><circle cx="760" cy="150" r="1.4"/>
+    <circle cx="1040" cy="90" r="1.8"/><circle cx="1420" cy="140" r="1.6"/><circle cx="1290" cy="60" r="1.2"/>
+  </g>
+
+  <!-- Océan -->
+  <rect x="0" y="760" width="1600" height="80" fill="url(#sea)"/>
+  <g stroke="#ffe0b8" stroke-opacity="0.55" stroke-width="3" stroke-linecap="round">
+    <path d="M810 772 H990 M840 790 H960 M865 808 H935 M880 824 H920"/>
+  </g>
+
+  <!-- Ville -->
+  <g fill="url(#city)">
+    <path d="M0 790 V720 H60 V700 H130 V735 H190 V690 H260 V740 H330 V715 H400 V745 H470 V705 H540 V735 H610 V725 H690 V748 H760 V720 H820 V752 H880 V735 H950 V755 H1010 V790 Z"/>
+    <path d="M1370 790 V742 H1420 V720 H1490 V738 H1540 V728 H1600 V790 Z"/>
+  </g>
+  <g fill="#ffd28a" opacity="0.85">
+    <rect x="78" y="712" width="6" height="8"/><rect x="100" y="722" width="6" height="8"/><rect x="210" y="705" width="6" height="8"/>
+    <rect x="228" y="722" width="6" height="8"/><rect x="420" y="728" width="6" height="8"/><rect x="495" y="716" width="6" height="8"/>
+    <rect x="512" y="732" width="6" height="8"/><rect x="640" y="736" width="6" height="8"/><rect x="785" y="732" width="6" height="8"/>
+    <rect x="905" y="745" width="6" height="8"/><rect x="1440" y="732" width="6" height="8"/><rect x="1510" y="740" width="6" height="8"/>
+  </g>
+
+  <!-- Mosquée Hassan II (silhouette) — décalée pour rester visible en recadrage carré (téléphone) -->
+  <g transform="translate(-250 0)">
+    <path d="M1180 790 V740 H1330 V728 H1520 V790 Z" fill="#4e1d36"/>
+    <path d="M1196 740 Q1205 724 1214 740 M1236 740 Q1245 724 1254 740 M1276 740 Q1285 724 1294 740" stroke="#7d3c58" stroke-width="3" fill="none"/>
+    <rect x="1365" y="372" width="78" height="360" fill="url(#minaret)"/>
+    <g stroke="#a65a72" stroke-opacity="0.75" stroke-width="2.5">
+      <path d="M1365 420 H1443 M1365 470 H1443 M1365 560 H1443 M1365 650 H1443"/>
+    </g>
+    <g fill="#9a4d66" fill-opacity="0.8">
+      <path d="M1380 438 h14 v22 h-14 z M1414 438 h14 v22 h-14 z M1380 590 h14 v40 h-14 z M1414 590 h14 v40 h-14 z"/>
+    </g>
+    <rect x="1355" y="360" width="98" height="16" fill="#5c2440"/>
+    <rect x="1381" y="300" width="46" height="62" fill="url(#minaret)"/>
+    <rect x="1376" y="294" width="56" height="10" fill="#5c2440"/>
+    <path d="M1392 294 Q1404 270 1416 294 Z" fill="#5c2440"/>
+    <g fill="#e7b46d"><circle cx="1404" cy="262" r="6"/><circle cx="1404" cy="247" r="5"/><circle cx="1404" cy="234" r="4"/></g>
+    <rect x="1402" y="214" width="4" height="18" fill="#e7b46d"/>
+    <rect x="1394" y="318" width="20" height="26" fill="#ffd28a" opacity="0.75"/>
+  </g>
+
+  <!-- Guirlande lumineuse -->
+  <g fill="none" stroke="#2a1020" stroke-width="2.5" stroke-opacity="0.85">
+    <path d="M-20 70 Q400 300 820 150 Q1210 20 1620 210"/>
+  </g>
+  <g>
+    <g filter="url(#blur6)">
+      <circle cx="90" cy="118" r="26" fill="url(#bulb)"/><circle cx="230" cy="185" r="26" fill="url(#bulb)"/>
+      <circle cx="370" cy="226" r="26" fill="url(#bulb)"/><circle cx="510" cy="236" r="26" fill="url(#bulb)"/>
+      <circle cx="650" cy="212" r="26" fill="url(#bulb)"/><circle cx="790" cy="162" r="26" fill="url(#bulb)"/>
+      <circle cx="930" cy="114" r="26" fill="url(#bulb)"/><circle cx="1070" cy="90" r="26" fill="url(#bulb)"/>
+      <circle cx="1210" cy="100" r="26" fill="url(#bulb)"/><circle cx="1350" cy="134" r="26" fill="url(#bulb)"/>
+      <circle cx="1490" cy="172" r="26" fill="url(#bulb)"/>
+    </g>
+    <g fill="#fff6dc">
+      <circle cx="90" cy="118" r="6"/><circle cx="230" cy="185" r="6"/><circle cx="370" cy="226" r="6"/><circle cx="510" cy="236" r="6"/>
+      <circle cx="650" cy="212" r="6"/><circle cx="790" cy="162" r="6"/><circle cx="930" cy="114" r="6"/><circle cx="1070" cy="90" r="6"/>
+      <circle cx="1210" cy="100" r="6"/><circle cx="1350" cy="134" r="6"/><circle cx="1490" cy="172" r="6"/>
+    </g>
+  </g>
+
+  <!-- Palmier (silhouette, à gauche) -->
+  <g fill="#2b0f22">
+    <path d="M150 880 C160 780 175 690 205 610 L218 614 C190 694 176 782 168 880 Z"/>
+    <path d="M210 612 C150 560 90 570 40 610 C100 585 160 590 208 622 Z"/>
+    <path d="M212 612 C190 540 140 505 80 500 C140 525 180 560 206 620 Z"/>
+    <path d="M214 610 C240 540 300 510 360 515 C300 535 255 565 222 620 Z"/>
+    <path d="M214 612 C280 580 340 595 390 640 C330 610 275 605 220 624 Z"/>
+    <path d="M212 608 C215 560 240 520 270 490 C250 530 232 565 220 615 Z"/>
+  </g>
+
+  <!-- Parapet de la terrasse -->
+  <rect x="0" y="838" width="1600" height="74" fill="url(#wall)"/>
+  <rect x="0" y="830" width="1600" height="14" fill="#e3a58a"/>
+  <g fill="#b06a58" opacity="0.6">
+    <path d="M60 860 h40 v36 h-40 z M260 860 h40 v36 h-40 z M460 860 h40 v36 h-40 z M660 860 h40 v36 h-40 z M860 860 h40 v36 h-40 z M1060 860 h40 v36 h-40 z M1260 860 h40 v36 h-40 z M1460 860 h40 v36 h-40 z"/>
+  </g>
+  <!-- Plantes en pot -->
+  <g>
+    <path d="M1490 838 L1500 760 L1580 760 L1590 838 Z" fill="#a24f3c"/>
+    <g fill="#2e3b2a">
+      <path d="M1540 762 C1510 700 1470 670 1430 660 C1480 690 1505 720 1530 764 Z"/>
+      <path d="M1542 762 C1550 690 1585 650 1620 640 C1590 680 1570 710 1552 764 Z"/>
+      <path d="M1540 762 C1535 700 1545 650 1560 620 C1560 670 1555 715 1548 764 Z"/>
+    </g>
+  </g>
+
+  <!-- Halo chaud sur la table -->
+  <ellipse cx="800" cy="980" rx="820" ry="260" fill="url(#tableGlow)"/>
+
+  <!-- Table -->
+  <path d="M-40 940 Q800 880 1640 940 L1640 1200 L-40 1200 Z" fill="url(#cloth)"/>
+  <path d="M-40 940 Q800 880 1640 940" stroke="#ffffff" stroke-opacity="0.7" stroke-width="4" fill="none"/>
+  <g fill="none" stroke="#e8d3c2" stroke-width="2" opacity="0.7">
+    <path d="M220 905 L160 1200 M560 892 L540 1200 M1040 892 L1060 1200 M1380 905 L1440 1200"/>
+  </g>
+  <!-- Chemin de table zellige -->
+  <path d="M-40 1010 Q800 960 1640 1010 L1640 1060 Q800 1012 -40 1060 Z" fill="#7a2e4a" opacity="0.88"/>
+  <g fill="#e0a64f" opacity="0.8">
+    <path d="M110 1028 l14 -12 l14 12 l-14 12 z M330 1018 l14 -12 l14 12 l-14 12 z M550 1010 l14 -12 l14 12 l-14 12 z M770 1007 l14 -12 l14 12 l-14 12 z M990 1010 l14 -12 l14 12 l-14 12 z M1210 1016 l14 -12 l14 12 l-14 12 z M1430 1026 l14 -12 l14 12 l-14 12 z"/>
+  </g>
+
+  <!-- Assiettes -->
+  <use href="#plate" x="300" y="1112"/>
+  <use href="#plate" x="1290" y="1112"/>
+  <g>
+    <circle cx="300" cy="1098" r="34" fill="#e58d5c"/><circle cx="286" cy="1092" r="10" fill="#8fa86a"/><circle cx="314" cy="1104" r="9" fill="#f2c063"/>
+    <circle cx="1290" cy="1098" r="34" fill="#d77a52"/><circle cx="1276" cy="1100" r="10" fill="#f2c063"/><circle cx="1304" cy="1090" r="9" fill="#8fa86a"/>
+  </g>
+
+  <!-- Tajine central -->
+  <g transform="translate(800 1030)">
+    <ellipse cx="0" cy="38" rx="160" ry="34" fill="#7d3a2c" opacity="0.35" filter="url(#blur6)"/>
+    <ellipse cx="0" cy="22" rx="150" ry="30" fill="#9b4733"/>
+    <ellipse cx="0" cy="14" rx="140" ry="24" fill="#c86a4b"/>
+    <path d="M-118 12 C-90 -60 -40 -150 0 -175 C40 -150 90 -60 118 12 Z" fill="url(#tajine)"/>
+    <path d="M-70 -20 C-50 -80 -25 -130 -6 -155" stroke="#f3b38a" stroke-opacity="0.6" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <g stroke="#e9b061" stroke-width="3" fill="none" opacity="0.85">
+      <path d="M-104 -6 Q0 -30 104 -6"/><path d="M-80 -54 Q0 -72 80 -54"/>
+    </g>
+    <circle cx="0" cy="-182" r="14" fill="#a24f3c"/>
+  </g>
+
+  <!-- Verres -->
+  <use href="#wineGlass" x="470" y="1060"/>
+  <use href="#wineGlass" x="1120" y="1060"/>
+  <use href="#waterGlass" x="560" y="1090"/>
+  <use href="#waterGlass" x="1035" y="1090"/>
+  <use href="#wineGlass" x="150" y="1000" transform="scale(1)"/>
+  <use href="#wineGlass" x="1450" y="1000"/>
+
+  <!-- Lanternes marocaines -->
+  <use href="#lantern" x="640" y="1004"/>
+  <use href="#lantern" x="965" y="1004"/>
+  <g transform="translate(60 980) scale(0.8)"><use href="#lantern"/></g>
+  <g transform="translate(1545 980) scale(0.8)"><use href="#lantern"/></g>
+
+  <!-- Bokeh au premier plan -->
+  <g filter="url(#blur18)" opacity="0.55">
+    <circle cx="80" cy="1150" r="40" fill="#ffcf8a"/>
+    <circle cx="1530" cy="1160" r="46" fill="#ffcf8a"/>
+    <circle cx="760" cy="1185" r="34" fill="#ffe0b0"/>
+  </g>
+
+  <!-- Grain léger -->
+  <rect width="1600" height="1200" fill="#7a3550" opacity="0.06" filter="url(#grain)"/>
+</svg>

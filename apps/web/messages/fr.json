@@ -29,7 +29,7 @@
     "heroTitle2": "Plus de rencontres.",
     "heroSubtitle": "Des expériences à partager, des personnes à découvrir.",
     "heroCta": "Découvrir les expériences",
-    "heroImageAlt": "Groupe d'amis riant autour d'un dîner sur un rooftop de Casablanca",
+    "heroImageAlt": "Illustration : une table conviviale sur un toit de Casablanca au coucher du soleil, avec le minaret de la mosquée Hassan II à l'horizon",
     "thisWeek": "Cette semaine à {city}",
     "seeAll": "Voir tous les événements",
     "howTitle": "Comment ça marche",
@@ -255,7 +255,17 @@
     "privacy": "Politique de confidentialité",
     "charter": "Charte de bonne conduite",
     "rights": "© {year} The Host Club. Tous droits réservés.",
-    "membership": "Abonnement"
+    "membership": "Abonnement",
+    "safety": "Sécurité",
+    "instagramAya": "Aya Snoussi sur Instagram (@{handle})",
+    "legalInfoTitle": "Informations légales et contacts",
+    "publisher": "Éditeur",
+    "address": "Siège",
+    "support": "Support",
+    "privacyContact": "Données personnelles",
+    "safetyContact": "Sécurité",
+    "toComplete": "à compléter",
+    "dataStatement": "The Host Club applique des mesures de sécurité techniques et organisationnelles adaptées. Vous disposez d'un droit d'accès, de rectification et d'opposition (loi n° 09-08) : {email}."
   },
   "pages": {
     "howTitle": "Comment ça marche",
@@ -291,7 +301,17 @@
     "q4": "Puis-je annuler ?",
     "a4": "Oui, gratuitement jusqu'à 48 heures avant l'expérience. Passé ce délai, la place n'est pas remboursée. Si nous annulons, vous êtes intégralement remboursé.",
     "q5": "Quel âge faut-il avoir ?",
-    "a5": "The Host Club est réservé aux personnes de 18 ans et plus."
+    "a5": "The Host Club est réservé aux personnes de 18 ans et plus.",
+    "q6": "Que comprend le prix ?",
+    "a6": "Votre place et toute l'organisation : le lieu, le groupe, l'accueil. Ce qui est inclus sur place (menu, boissons, matériel, cours) est détaillé sur la fiche de chaque expérience, rubrique « Ce qui est inclus ».",
+    "q7": "Quelles langues sont parlées ?",
+    "a7": "Chaque expérience indique ses langues (français, darija, arabe, anglais…). Les langues que vous parlez, renseignées dans votre profil, nous aident à composer des groupes où chacun peut participer à la conversation.",
+    "q8": "J'ai un régime alimentaire ou une allergie : comment faire ?",
+    "a8": "Écrivez-nous dès votre réservation (page Contact) : nous vérifions avec le lieu partenaire et vous proposons une solution, ou une autre expérience si ce n'est pas possible. Pensez à consulter le menu indiqué sur la fiche.",
+    "q9": "Comment fonctionne l'abonnement ?",
+    "a9": "Pour un prix annuel, vous bénéficiez du prix membre sur les expériences (affiché à côté du prix public) et, selon la formule, d'un accès anticipé aux nouvelles dates et d'expériences réservées aux membres. Il dure 12 mois, sans renouvellement automatique.",
+    "q10": "Et si je ne me sens pas à l'aise ?",
+    "a10": "Vous pouvez partir à tout moment. Parlez-en au personnel du lieu ou à notre équipe, et signalez tout comportement inapproprié : nous traitons chaque signalement. Toutes nos expériences ont lieu dans des lieux publics. Voir la page Sécurité."
   },
   "categories": {
     "allExperiences": "Toutes les expériences"
@@ -626,5 +646,10 @@
       "already_member": "Votre abonnement est déjà actif. Le renouvellement ouvre 30 jours avant l'échéance.",
       "membership_unavailable": "L'abonnement n'est pas proposé pour le moment."
     }
+  },
+  "legal": {
+    "missing": "à compléter",
+    "toc": "Sommaire",
+    "arabicPending": "النص العربي قيد الترجمة؛ النسخة الفرنسية أدناه هي المرجع."
   }
 }

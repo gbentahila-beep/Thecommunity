@@ -19,6 +19,7 @@
 | [12 — Avancement phase 3](12-phase-3-avancement.md) | Firebase : règles de sécurité, fonctions serveur, émulateurs, tests |
 | [14 — Avancement phase 4](14-phase-4-avancement.md) | Réservations, demandes de participation, annulation, liste d'attente, back-office des réservations |
 | [15 — Feuille de route après la phase 4](15-feuille-de-route-suite.md) | Avis, fiches sans date, abonnement annuel, factures et e-mails : ordre et construction proposés |
+| [16 — À me fournir](16-a-fournir.md) | **Rappels pour Rita** : informations légales, contacts, CNDP, rôle d'Aya Snoussi, photos… |
 | [13 — Mise en ligne sur le projet d'essai](13-mise-en-ligne-essai.md) | **À faire par Rita** : clé GitHub, App Hosting, compte super-admin |
 | [11 — Checklist avant lancement](11-checklist-avant-lancement.md) | **À faire par Rita** : société, banque, paiement, CNDP, textes juridiques, marque, comptes, partenaires |
 

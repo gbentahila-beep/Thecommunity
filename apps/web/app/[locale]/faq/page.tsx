@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { StaticPage } from "@/components/static-page";
 
-const KEYS = [1, 2, 3, 4, 5] as const;
+/** 10 questions au maximum (demande de Rita) ; le centre d'aide détaille le reste. */
+const KEYS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/faq">): Promise<Metadata> {
   const { locale } = await params;

@@ -61,6 +61,7 @@ Les étapes 1 à 4 prennent souvent **plusieurs semaines chacune** : c'est ce qu
 - [ ] Valider les **durées de conservation** des données. *(Proposition : comptes inactifs 3 ans, journaux techniques 12 mois, données comptables selon la loi.)*
 - [ ] Désigner la **personne qui traite les demandes** des utilisateurs (accès, suppression de compte).
 - [ ] Conserver les **récépissés** de la CNDP.
+- [ ] ⚠️ Un traitement **ne peut pas être mis en œuvre avant réception du récépissé** (ou de l'autorisation) : le site d'essai reste réservé aux testeurs jusque-là. Me transmettre les numéros (affichés dans la Politique de confidentialité).
 
 ## E. Textes juridiques 🔴
 

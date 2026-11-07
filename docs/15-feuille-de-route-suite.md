@@ -10,6 +10,7 @@
 | **5a** ✅ | **Avis** sur les expériences vécues + **fiches sans date** (dates ajoutées plus tard), **expériences passées toujours listées**, **reproposer des dates** | rien |
 | **5b** ✅ | **Abonnement annuel** : prix réduits pour les abonnés, prix public barré, réglages par l'admin | paiement de test (fait) |
 | **5c** | **Factures** (et avoirs pour les remboursements) + **envoi par e-mail** | infos de la société pour des factures légales ; compte Brevo pour l'envoi réel |
+| 5c+ | **Contenus et aide** : FAQ (10 questions), pages Sécurité / CGU / CGV / Confidentialité (projets), informations légales, **version anglaise**, **centre d'aide** (clients / partenaires), nouvelle image d'accueil | infos légales à fournir (docs/16) |
 | 5d | Codes promo, frais de service | rien |
 | 5e | Prestataire de paiement réel (CMI, Payzone, YouCan Pay) | contrat signé (checklist C) |
 | 6 | Composition des tables (dîners) | rien |
@@ -17,6 +18,23 @@
 | 8 | Recette, sécurité, mise en production | checklist complète |
 
 ---
+
+## Ajouts du 7 novembre (exemples Sahbi et Timeleft)
+
+Inspirations à reprendre **à notre façon** (sans copier) :
+
+| Idée | Où | Statut |
+|---|---|---|
+| FAQ courte (10 questions max) : prix, langues, régime alimentaire, abonnement, sécurité | /faq | ✅ |
+| Pages **Sécurité**, **Conditions d'utilisation**, **Confidentialité** (et CGV), avec un bloc « Informations légales et contacts » | pied de page, /securite, /cgu, /cgv, /confidentialite | ✅ projets à valider (infos à fournir : docs/16) |
+| Version **anglaise** du site | sélecteur de langue | en cours |
+| **Centre d'aide** façon Timeleft : recherche, onglets **Clients / Partenaires**, catégories (Bien démarrer, Abonnement, Expériences et réservations, Compte, Sécurité, Partenariats), articles, « Cet article vous a-t-il aidé ? », articles liés | /aide | en cours |
+| **Programme partenaires** : « Devenir partenaire », nos critères (ambiance propice à la conversation, réputation, emplacement central, lieux indépendants, accueil de petits groupes), formulaire de candidature, aide partenaires (gestion des réservations, signaler un problème : absences, retards, comportement) | /aide (Partenaires) + back-office | à faire |
+| **Régime alimentaire / allergies** demandés à la réservation et transmis au lieu | tunnel de réservation | à faire (en attendant : via Contact, FAQ) |
+| **Langue(s) de la table** choisie(s) à la réservation pour mieux composer les groupes | tunnel + matching (phase 6) | à faire |
+| « Se rencontrer d'abord » : après la table, **contacts échangés seulement si les deux le souhaitent** | espace membre (après phase 6) | idée à valider (décision D8 : pas de messagerie au lancement) |
+| Lien **Instagram d'Aya Snoussi** | pied de page | ✅ (rôle à confirmer) |
+| **Image d'accueil** nette | accueil | en cours |
 
 ## 5a — Avis, fiches sans date, expériences passées
 
