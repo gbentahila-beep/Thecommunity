@@ -13,6 +13,7 @@ import type {
   Session,
   UserProfile,
 } from "@thecommunity/shared";
+import { MEMBERSHIP_PLAN_ID, type Membership, type MembershipPlan } from "@thecommunity/shared";
 import { Timestamp, type DocumentSnapshot } from "firebase-admin/firestore";
 import { unstable_cache } from "next/cache";
 import { adminDb } from "@/lib/firebase/admin";
@@ -105,6 +106,14 @@ async function fsPastSessionsRaw(experienceId: string, now: number): Promise<Ses
     .reverse();
 }
 
+/** Formule d'abonnement proposée (null si inactive). */
+async function fsMembershipPlanRaw(): Promise<MembershipPlan | null> {
+  const snap = await adminDb().doc(`membershipPlans/${MEMBERSHIP_PLAN_ID}`).get();
+  const p = snap.data();
+  if (p?.isActive !== true) return null;
+  return { id: snap.id, name: p.name, price: { amount: p.price?.amount ?? 0, currency: "MAD" }, discountPercent: p.discountPercent ?? 0, earlyAccessHours: p.earlyAccessHours ?? 0, benefits: p.benefits ?? [], isActive: true };
+}
+
 async function fsReviewsRaw(experienceId?: string): Promise<Review[]> {
   let q = adminDb().collection("reviews").where("status", "==", "published") as FirebaseFirestore.Query;
   if (experienceId) q = q.where("experienceId", "==", experienceId);
@@ -121,10 +130,12 @@ export async function fsMemberData(uid: string) {
     db.collection(`users/${uid}/notifications`).orderBy("createdAt", "desc").limit(50).get(),
     db.collection("bookingRequests").where("userId", "==", uid).orderBy("createdAt", "desc").limit(50).get(),
   ]);
-  const [waitSnap, myReviewsSnap] = await Promise.all([
+  const [waitSnap, myReviewsSnap, memSnap] = await Promise.all([
     db.collectionGroup("waitlist").where("userId", "==", uid).limit(50).get(),
     db.collection("reviews").where("userId", "==", uid).limit(100).get(),
+    db.doc(`memberships/${uid}`).get(),
   ]);
+  const membership = memSnap.exists ? withId<Membership>(memSnap) : null;
   const myReviews = myReviewsSnap.docs.map((d) => withId<Review>(d));
   const waitlists = waitSnap.docs.map((d) => withId<WaitlistEntry>(d));
   const requests = reqSnap.docs.map((d) => withId<BookingRequest>(d));
@@ -152,7 +163,7 @@ export async function fsMemberData(uid: string) {
     ...p,
   } as UserProfile;
   const notifications = notifSnap.docs.map((d) => withId<AppNotification>(d));
-  return { profile, reservations, groups, notifications, requests, waitlists, myReviews };
+  return { profile, reservations, groups, notifications, requests, waitlists, myReviews, membership };
 }
 
 export const fsCities = cached(fsCitiesRaw, "fsCities");
@@ -165,3 +176,4 @@ export const fsSession = cached(fsSessionRaw, "fsSession");
 export const fsSessionFresh = fsSessionRaw;
 export const fsReviews = cached(fsReviewsRaw, "fsReviews");
 export const fsPastSessions = cached(fsPastSessionsRaw, "fsPastSessions");
+export const fsMembershipPlan = cached(fsMembershipPlanRaw, "fsMembershipPlan");

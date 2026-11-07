@@ -49,12 +49,15 @@ async function payOnTestPage(page) {
   let model = null;
   for (const s of sessions) {
     if (s.fields.status.stringValue !== 'published') continue;
+    // Pas une date encore en accès anticipé réservé aux membres (créée il y a moins de 48 h).
+    if (s.fields.createdAt && Date.now() - new Date(s.fields.createdAt.timestampValue).getTime() < 72 * 3600000) continue;
     const e = await fsGet(`experiences/${s.fields.experienceId.stringValue}`);
     if (e?.fields.status.stringValue === 'published' && e.fields.admission?.stringValue !== 'on_request' && int(s.fields.price.mapValue.fields.amount) > 0) { model = s; break; }
   }
   const sid = `e2e-complet-${Date.now()}`;
   const start = new Date(Date.now() + 5 * 86_400_000);
-  const fields = { ...model.fields, capacity: { integerValue: '1' }, seatsConfirmed: { integerValue: '0' }, seatsHeld: { integerValue: '0' }, waitlistCount: { integerValue: '0' },
+  const { createdAt: _c, ...modelFields } = model.fields;
+  const fields = { ...modelFields, capacity: { integerValue: '1' }, seatsConfirmed: { integerValue: '0' }, seatsHeld: { integerValue: '0' }, waitlistCount: { integerValue: '0' },
     startAt: { timestampValue: start.toISOString() }, endAt: { timestampValue: new Date(start.getTime() + 7_200_000).toISOString() } };
   await fetch(`${FS}/v1/projects/${PROJECT}/databases/(default)/documents/sessions?documentId=${sid}`, { method: 'POST', headers: { ...OWNER, 'content-type': 'application/json' }, body: JSON.stringify({ fields }) });
   const price = int(model.fields.price.mapValue.fields.amount);

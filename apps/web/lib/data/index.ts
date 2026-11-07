@@ -12,7 +12,7 @@ import {
   type Session,
 } from "@thecommunity/shared";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
-import { buildDemoSessions, DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES, DEMO_REVIEWS } from "./demo";
+import { buildDemoSessions, DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES, DEMO_MEMBERSHIP_PLAN, DEMO_REVIEWS } from "./demo";
 import * as fs from "./firestore-source";
 
 /**
@@ -168,6 +168,12 @@ export async function getExperiencesWithoutUpcoming(filters: { cityId?: string; 
 export async function getPastSessions(experienceId: string) {
   if (FIREBASE_ENABLED) return fs.fsPastSessions(experienceId, Math.floor(Date.now() / 3_600_000) * 3_600_000);
   return [] as Session[];
+}
+
+/** Formule d'abonnement proposée (null si l'équipe ne l'a pas activée). */
+export async function getMembershipPlan() {
+  if (FIREBASE_ENABLED) return fs.fsMembershipPlan();
+  return DEMO_MEMBERSHIP_PLAN;
 }
 
 export async function getReviews(experienceId?: string) {

@@ -1,9 +1,10 @@
-import { formatMoney, LOW_SEATS_THRESHOLD, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
+import { LOW_SEATS_THRESHOLD, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
 import { MapPin, Star, Users } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { getCategory } from "@/lib/data";
+import { getCategory, getMembershipPlan } from "@/lib/data";
+import { memberAmountFor, PriceTag } from "./price-tag";
 import { formatShortSlot } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { FavoriteButton } from "./favorite-button";
@@ -33,7 +34,8 @@ export async function ExperienceCard({
   experience: Experience;
   priority?: boolean;
 }) {
-  const [locale, t, category] = await Promise.all([getLocale(), getTranslations("card"), getCategory(experience.categoryId)]);
+  const [locale, t, category, plan] = await Promise.all([getLocale(), getTranslations("card"), getCategory(experience.categoryId), getMembershipPlan()]);
+  const shownPrice = session?.price ?? experience.price;
   const left = session ? seatsAvailable(session) : 0;
   const full = Boolean(session) && (session!.status === "full" || left === 0);
   const cover = experience.images[0];
@@ -63,6 +65,9 @@ export async function ExperienceCard({
           </span>
         ) : null}
         <FavoriteButton experienceId={experience.id} className="absolute end-3 top-3 z-10" />
+        {experience.membersOnly && (
+          <span className="absolute bottom-3 end-3 rounded-full bg-plum-900 px-3 py-1 text-xs font-semibold text-white">{t("membersOnly")}</span>
+        )}
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         <h3 className="text-[17px] font-semibold leading-snug text-ink">
@@ -75,7 +80,9 @@ export async function ExperienceCard({
           {experience.district} · {session ? formatShortSlot(session.startAt, locale) : t("datesSoon")}
         </p>
         <div className="mt-auto flex items-end justify-between pt-3">
-          <p className="text-lg font-bold text-ink">{formatMoney(session?.price ?? experience.price, locale as "fr" | "ar")}</p>
+          <p>
+            <PriceTag price={shownPrice} memberAmount={memberAmountFor(plan, shownPrice, experience)} lang={locale as "fr" | "ar"} memberLabel={t("memberShort")} />
+          </p>
           {session ? (
             <p className="flex items-center gap-1.5 text-sm text-ink/80">
               <Users className="size-4" aria-hidden />

@@ -17,6 +17,7 @@ export async function SiteFooter() {
       title: t("company"),
       links: [
         { href: "/a-propos", label: t("about") },
+        { href: "/abonnement", label: t("membership") },
         { href: "/comment-ca-marche", label: (await getTranslations("nav"))("how") },
         { href: "/faq", label: t("faq") },
         { href: "/contact", label: t("contact") },

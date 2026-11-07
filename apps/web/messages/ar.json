@@ -58,7 +58,9 @@
     "addFavorite": "أضف إلى المفضلة",
     "removeFavorite": "أزل من المفضلة",
     "from": "ابتداءً من",
-    "datesSoon": "مواعيد قادمة قريبًا"
+    "datesSoon": "مواعيد قادمة قريبًا",
+    "memberShort": "للأعضاء",
+    "membersOnly": "مخصص للأعضاء"
   },
   "filters": {
     "all": "الكل",
@@ -122,7 +124,9 @@
     "alertOnHint": "إشعار فور فتح مواعيد جديدة. المس مرة أخرى للإلغاء.",
     "alertError": "تعذر الإجراء، أعد المحاولة.",
     "pastEditions": "نسخ سابقة",
-    "pastEditionsText": "{count, plural, one {نُظّمت مرة واحدة} two {نُظّمت مرتين} other {نُظّمت # مرات}} · آخر نسخة في {last}."
+    "pastEditionsText": "{count, plural, one {نُظّمت مرة واحدة} two {نُظّمت مرتين} other {نُظّمت # مرات}} · آخر نسخة في {last}.",
+    "membersOnlyNote": "تجربة مخصصة للأعضاء المشتركين.",
+    "becomeMember": "كن عضوًا"
   },
   "booking": {
     "title": "احجز مكاني",
@@ -176,7 +180,9 @@
       "generic": "حدث خطأ. أعد المحاولة.",
       "approval_required": "هذه التجربة بناءً على طلب: أرسل طلب مشاركة.",
       "already_started": "بدأت التجربة: لم يعد الإلغاء ممكنًا.",
-      "not_cancellable": "لم يعد بالإمكان إلغاء هذا الحجز."
+      "not_cancellable": "لم يعد بالإمكان إلغاء هذا الحجز.",
+      "members_only": "تجربة مخصصة للأعضاء المشتركين.",
+      "members_early_access": "هذا الموعد الجديد ما زال في فترة الوصول المبكر للأعضاء."
     },
     "fullTextOnRequest": "جميع الأماكن محجوزة لهذا الموعد. اطّلع على المواعيد الأخرى لهذه التجربة.",
     "seeMyBooking": "عرض حجزي",
@@ -184,7 +190,13 @@
     "finishPayment": "إتمام الدفع",
     "confirmYesCancel": "نعم، ألغِ",
     "confirmKeep": "لا، احتفظ بمكاني",
-    "confirmKeepRequest": "لا، احتفظ بطلبي"
+    "confirmKeepRequest": "لا، احتفظ بطلبي",
+    "publicPriceNote": "تدفع {price}.",
+    "memberPriceApplied": "تم تطبيق سعر العضو.",
+    "membersOnlyTitle": "مخصص للأعضاء",
+    "membersOnlyText": "هذه التجربة متاحة للأعضاء المشتركين فقط.",
+    "earlyAccessTitle": "وصول مبكر للأعضاء",
+    "earlyAccessText": "هذا الموعد الجديد مخصص للأعضاء حتى {date}، ثم يُفتح للجميع."
   },
   "auth": {
     "loginTitle": "مرحباً بعودتك",
@@ -242,7 +254,8 @@
     "sales": "الشروط العامة للبيع",
     "privacy": "سياسة الخصوصية",
     "charter": "ميثاق حسن السلوك",
-    "rights": "© {year} The Host Club. جميع الحقوق محفوظة."
+    "rights": "© {year} The Host Club. جميع الحقوق محفوظة.",
+    "membership": "الاشتراك"
   },
   "pages": {
     "howTitle": "كيف تعمل",
@@ -354,7 +367,8 @@
     "tabPast": "السابقة",
     "tabCancelled": "الملغاة",
     "emptyTab": "لا شيء هنا حالياً.",
-    "seats": "{count, plural, one {مقعد واحد} other {# مقاعد}}"
+    "seats": "{count, plural, one {مقعد واحد} other {# مقاعد}}",
+    "navMembership": "الاشتراك"
   },
   "reservation": {
     "back": "حجوزاتي",
@@ -403,7 +417,9 @@
     "waitlistOfferBanner": "تحرر مكان من أجلك!",
     "adminCancel": "ألغى الفريق هذا الحجز. تواصل معنا لأي استفسار.",
     "adminCancelRefund": "ألغى الفريق هذا الحجز: تم استرجاع {amount}.",
-    "reviewHidden": "شكرًا على رأيك. قام الفريق بإخفائه."
+    "reviewHidden": "شكرًا على رأيك. قام الفريق بإخفائه.",
+    "publicPrice": "السعر العام",
+    "memberDiscount": "خصم العضو"
   },
   "profilePage": {
     "title": "ملفي",
@@ -518,7 +534,9 @@
     "succeed": "محاكاة دفع مقبول",
     "fail": "محاكاة رفض البنك",
     "alreadyProcessed": "تمت معالجة هذا الدفع مسبقًا.",
-    "seeReservation": "عرض حجزي"
+    "seeReservation": "عرض حجزي",
+    "membershipPeriod": "اشتراك سنوي · 12 شهرًا",
+    "seeMembership": "عرض اشتراكي"
   },
   "request": {
     "noteTitle": "المشاركة بناءً على طلب",
@@ -580,6 +598,33 @@
       "already_reviewed": "لقد شاركت رأيك في هذا الحجز من قبل.",
       "not_reviewable": "لم يعد ممكنًا إبداء الرأي في هذا الحجز.",
       "generic": "حدث خطأ. أعد المحاولة."
+    }
+  },
+  "membership": {
+    "metaTitle": "الاشتراك السنوي",
+    "metaDescription": "كن عضوًا في The Host Club: أسعار مخفضة طوال السنة، وصول مبكر إلى المواعيد الجديدة، وتجارب مخصصة.",
+    "title": "الاشتراك",
+    "soon": "الاشتراك قادم قريبًا. عد لزيارتنا!",
+    "eyebrow": "اشتراك سنوي",
+    "perYear": "/ سنة",
+    "become": "كن عضوًا",
+    "activeTitle": "أنت عضو",
+    "activeUntil": "الاشتراك مفعّل حتى {date}.",
+    "savings": "وفّرت بفضل الاشتراك: {amount}.",
+    "benefitsTitle": "مزاياك",
+    "howPriceShows": "على الموقع، يظهر السعر العام مشطوبًا بجانب سعر العضو: هو ما تدفعه بعد الاشتراك.",
+    "subscribe": "كن عضوًا — {price}",
+    "renew": "جدّد لمدة سنة — {price}",
+    "renewNote": "تبدأ السنة الجديدة عند نهاية اشتراكك الحالي.",
+    "noAutoRenew": "12 شهرًا، دون تجديد تلقائي: سنخبرك قبل انتهاء المدة.",
+    "signInToSubscribe": "سجّل الدخول لتصبح عضوًا",
+    "completeProfile": "أكمل ملفك لتصبح عضوًا",
+    "demoNote": "عرض توضيحي: الاشتراك يعمل على الموقع الحقيقي.",
+    "welcome": "مرحبًا بك بين الأعضاء! أسعار الأعضاء تُطبَّق من الآن.",
+    "paymentFailed": "لم تتم عملية الدفع. يمكنك إعادة المحاولة.",
+    "errors": {
+      "already_member": "اشتراكك مفعّل مسبقًا. يُفتح التجديد قبل 30 يومًا من نهاية المدة.",
+      "membership_unavailable": "الاشتراك غير متاح حاليًا."
     }
   }
 }

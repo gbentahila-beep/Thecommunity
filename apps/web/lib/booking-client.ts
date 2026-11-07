@@ -20,6 +20,8 @@ export const BOOKING_ERRORS = [
   "already_paid",
   "already_processed",
   "approval_required",
+  "members_only",
+  "members_early_access",
   "busy",
   "signin",
   "generic",

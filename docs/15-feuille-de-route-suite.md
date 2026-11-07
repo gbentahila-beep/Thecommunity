@@ -8,7 +8,7 @@
 | Étape | Contenu | Dépend de |
 |---|---|---|
 | **5a** ✅ | **Avis** sur les expériences vécues + **fiches sans date** (dates ajoutées plus tard), **expériences passées toujours listées**, **reproposer des dates** | rien |
-| **5b** | **Abonnement annuel** : prix réduits pour les abonnés, prix public barré, réglages par l'admin | paiement de test (fait) |
+| **5b** ✅ | **Abonnement annuel** : prix réduits pour les abonnés, prix public barré, réglages par l'admin | paiement de test (fait) |
 | **5c** | **Factures** (et avoirs pour les remboursements) + **envoi par e-mail** | infos de la société pour des factures légales ; compte Brevo pour l'envoi réel |
 | 5d | Codes promo, frais de service | rien |
 | 5e | Prestataire de paiement réel (CMI, Payzone, YouCan Pay) | contrat signé (checklist C) |
@@ -65,6 +65,24 @@ Proposition de construction (à valider) :
 - **Back-office** : réglages de la formule, liste des abonnés (dates, renouvellements), offrir / retirer un abonnement (journalisé), revenus des abonnements dans les statistiques.
 - Espace membre : **carte de membre** (statut, date d'échéance, économies réalisées).
 - À faire valider par le comptable et l'avocat : CGV de l'abonnement (rétractation, remboursement), TVA.
+
+### Livré (5b) ✅
+
+| Pour qui | Ce qui change |
+|---|---|
+| **Équipe** | Back-office → **Abonnement** : nom, **prix annuel**, **réduction** (%), **accès anticipé** (heures, 0 = aucun), avantages FR/AR, case **« Proposer l'abonnement »** ; membres actifs, revenus, liste des abonnés ; **offrir** un abonnement (1-24 mois) ou le **retirer** (motif journalisé). Fiche expérience : **« Prix membre (DH) »** facultatif (sinon la réduction s'applique) et **« Réservée aux membres abonnés »**. |
+| **Visiteur** | Partout (cartes, fiche, tunnel) : **prix public barré** à côté du **prix membre** (arrondi au dirham), lien « Devenir membre ». Page **Abonnement** (lien dans le pied de page et l'espace membre) : avantages, prix, souscription. |
+| **Membre** | Souscription → paiement (adaptateur de test) → **abonnement actif 12 mois**, notification, carte de membre (échéance, **économies réalisées**). Le **prix membre est appliqué par le serveur** à chaque réservation (aussi pour une place proposée par la liste d'attente) et apparaît sur le reçu (« Réduction membre »). Accès aux expériences **réservées aux membres** et aux **nouvelles dates en avant-première**. Renouvellement en un clic **30 jours avant** l'échéance (la nouvelle année part de l'échéance) ; **pas de prélèvement automatique**. |
+
+| Membre | Reçu | Back-office |
+|---|---|---|
+| ![Membre](captures/abonnement-1-membre.jpg) | ![Reçu](captures/abonnement-2-recu.jpg) | ![Back-office](captures/abonnement-3-back-office.jpg) |
+
+**Sur le projet d'essai, l'abonnement est créé mais pas encore proposé** : back-office → Abonnement → régler le prix → cocher « Proposer l'abonnement » → Enregistrer.
+
+À venir : rappel avant l'échéance (avec les e-mails, 5c/7), remboursement d'un abonnement (au cas par cas pour l'instant).
+
+Tests : 6 tests d'intégration et 4 unitaires (formule, souscription et renouvellement, prix membre, réservé aux membres, accès anticipé, cadeau / retrait, offre de liste d'attente au prix membre, règles de sécurité) ; 24 vérifications de bout en bout (`tests/e2e/firebase-membership.e2e.cjs`). Toutes les suites : 90 sur émulateurs, 41 unitaires, 172 de bout en bout en mode Firebase, 60 en démonstration.
 
 ## 5c — Factures et e-mails
 

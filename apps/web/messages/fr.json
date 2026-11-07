@@ -58,7 +58,9 @@
     "addFavorite": "Ajouter aux favoris",
     "removeFavorite": "Retirer des favoris",
     "from": "dès",
-    "datesSoon": "Prochaines dates bientôt"
+    "datesSoon": "Prochaines dates bientôt",
+    "memberShort": "membres",
+    "membersOnly": "Réservé aux membres"
   },
   "filters": {
     "all": "Tout",
@@ -122,7 +124,9 @@
     "alertOnHint": "Une notification dès que de nouvelles dates sont ouvertes. Touchez à nouveau pour annuler.",
     "alertError": "Action impossible, réessayez.",
     "pastEditions": "Éditions passées",
-    "pastEditionsText": "{count, plural, one {Organisée une fois} other {Organisée # fois}} · dernière édition le {last}."
+    "pastEditionsText": "{count, plural, one {Organisée une fois} other {Organisée # fois}} · dernière édition le {last}.",
+    "membersOnlyNote": "Expérience réservée aux membres abonnés.",
+    "becomeMember": "Devenir membre"
   },
   "booking": {
     "title": "Réserver ma place",
@@ -176,7 +180,9 @@
       "generic": "Une erreur est survenue. Réessayez.",
       "approval_required": "Cette expérience est sur demande : envoyez une demande de participation.",
       "already_started": "L'expérience a déjà commencé : l'annulation n'est plus possible.",
-      "not_cancellable": "Cette réservation ne peut plus être annulée."
+      "not_cancellable": "Cette réservation ne peut plus être annulée.",
+      "members_only": "Expérience réservée aux membres abonnés.",
+      "members_early_access": "Cette nouvelle date est encore en accès anticipé pour les membres."
     },
     "fullTextOnRequest": "Toutes les places sont prises pour cette date. Regardez les autres dates de cette expérience.",
     "seeMyBooking": "Voir ma réservation",
@@ -184,7 +190,13 @@
     "finishPayment": "Finaliser le paiement",
     "confirmYesCancel": "Oui, annuler",
     "confirmKeep": "Non, garder ma place",
-    "confirmKeepRequest": "Non, garder ma demande"
+    "confirmKeepRequest": "Non, garder ma demande",
+    "publicPriceNote": "Vous payez {price}.",
+    "memberPriceApplied": "Votre prix membre est appliqué.",
+    "membersOnlyTitle": "Réservé aux membres",
+    "membersOnlyText": "Cette expérience est proposée uniquement aux membres abonnés.",
+    "earlyAccessTitle": "Accès anticipé des membres",
+    "earlyAccessText": "Cette nouvelle date est réservée aux membres jusqu'au {date}. Elle sera ouverte à tous ensuite."
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -242,7 +254,8 @@
     "sales": "Conditions générales de vente",
     "privacy": "Politique de confidentialité",
     "charter": "Charte de bonne conduite",
-    "rights": "© {year} The Host Club. Tous droits réservés."
+    "rights": "© {year} The Host Club. Tous droits réservés.",
+    "membership": "Abonnement"
   },
   "pages": {
     "howTitle": "Comment ça marche",
@@ -354,7 +367,8 @@
     "tabPast": "Passées",
     "tabCancelled": "Annulées",
     "emptyTab": "Rien ici pour le moment.",
-    "seats": "{count, plural, one {# place} other {# places}}"
+    "seats": "{count, plural, one {# place} other {# places}}",
+    "navMembership": "Abonnement"
   },
   "reservation": {
     "back": "Mes réservations",
@@ -403,7 +417,9 @@
     "waitlistOfferBanner": "Une place s'est libérée pour vous !",
     "adminCancel": "Cette réservation a été annulée par l'équipe. Contactez-nous pour toute question.",
     "adminCancelRefund": "Cette réservation a été annulée par l'équipe : {amount} vous ont été remboursés.",
-    "reviewHidden": "Merci pour votre avis. Il a été masqué par l'équipe."
+    "reviewHidden": "Merci pour votre avis. Il a été masqué par l'équipe.",
+    "publicPrice": "Prix public",
+    "memberDiscount": "Réduction membre"
   },
   "profilePage": {
     "title": "Mon profil",
@@ -518,7 +534,9 @@
     "succeed": "Simuler un paiement accepté",
     "fail": "Simuler un refus de la banque",
     "alreadyProcessed": "Ce paiement a déjà été traité.",
-    "seeReservation": "Voir ma réservation"
+    "seeReservation": "Voir ma réservation",
+    "membershipPeriod": "Abonnement annuel · 12 mois",
+    "seeMembership": "Voir mon abonnement"
   },
   "request": {
     "noteTitle": "Participation sur demande",
@@ -580,6 +598,33 @@
       "already_reviewed": "Vous avez déjà donné votre avis sur cette réservation.",
       "not_reviewable": "Il n'est plus possible de donner un avis sur cette réservation.",
       "generic": "Une erreur est survenue. Réessayez."
+    }
+  },
+  "membership": {
+    "metaTitle": "Abonnement annuel",
+    "metaDescription": "Devenez membre de The Host Club : prix réduits toute l'année, accès anticipé aux nouvelles dates, expériences réservées.",
+    "title": "Abonnement",
+    "soon": "L'abonnement arrive bientôt. Revenez nous voir !",
+    "eyebrow": "Abonnement annuel",
+    "perYear": "/ an",
+    "become": "Devenir membre",
+    "activeTitle": "Vous êtes membre",
+    "activeUntil": "Abonnement actif jusqu'au {date}.",
+    "savings": "Économisé grâce à l'abonnement : {amount}.",
+    "benefitsTitle": "Vos avantages",
+    "howPriceShows": "Sur le site, le prix public est barré à côté du prix membre : c'est celui que vous payez une fois abonné·e.",
+    "subscribe": "Devenir membre — {price}",
+    "renew": "Renouveler pour un an — {price}",
+    "renewNote": "La nouvelle année commence à la fin de votre abonnement actuel.",
+    "noAutoRenew": "12 mois, sans renouvellement automatique : nous vous préviendrons avant l'échéance.",
+    "signInToSubscribe": "Se connecter pour devenir membre",
+    "completeProfile": "Compléter mon profil pour devenir membre",
+    "demoNote": "Démonstration : l'abonnement fonctionne sur le site en ligne.",
+    "welcome": "Bienvenue parmi les membres ! Vos prix membres s'appliquent dès maintenant.",
+    "paymentFailed": "Le paiement n'a pas abouti. Vous pouvez réessayer.",
+    "errors": {
+      "already_member": "Votre abonnement est déjà actif. Le renouvellement ouvre 30 jours avant l'échéance.",
+      "membership_unavailable": "L'abonnement n'est pas proposé pour le moment."
     }
   }
 }

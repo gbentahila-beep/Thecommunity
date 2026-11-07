@@ -1,4 +1,4 @@
-import { bookingRefusal, DEFAULT_CANCELLATION_POLICY, formatMoney, maxSeatsFor, seatsAvailable } from "@thecommunity/shared";
+import { bookingRefusal, DEFAULT_CANCELLATION_POLICY, formatMoney, isMemberActive, maxSeatsFor, seatsAvailable } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -9,13 +9,14 @@ import { VerifyEmailBanner } from "@/components/auth/verify-email-banner";
 import { BookingForm } from "@/components/booking/booking-form";
 import { CancelRequestButton, RequestForm } from "@/components/booking/request-form";
 import { WaitlistBox } from "@/components/booking/waitlist-box";
+import { memberAmountFor, PriceTag } from "@/components/price-tag";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAccountState, getSessionUser } from "@/lib/auth/session";
-import { getSessionForBooking } from "@/lib/data";
+import { getMembershipPlan, getSessionForBooking } from "@/lib/data";
 import { adminAuth, adminDb } from "@/lib/firebase/admin";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
-import { formatLongDate, formatTimeRange } from "@/lib/format";
+import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 
 export const metadata: Metadata = { robots: { index: false } };
@@ -31,13 +32,15 @@ type VisitorInfo = {
   booked?: { id: string; pending: boolean };
   /** Rang sur la liste d'attente (1 = la prochaine place lui sera proposée), ou null. */
   waitPosition: number | null;
+  /** Membre abonné à cet instant. */
+  member: boolean;
 };
 
 async function visitorState(sessionId: string): Promise<VisitorInfo> {
   const user = await getSessionUser();
   const settings = (await adminDb().doc("settings/payment").get()).data();
   const testPayments = settings?.provider === "sandbox" && settings?.mode === "test";
-  const base = { testPayments, waitPosition: null };
+  const base = { testPayments, waitPosition: null, member: false };
   if (!user) return { ...base, state: "anonymous" };
   const [record, account] = await Promise.all([adminAuth().getUser(user.uid), getAccountState(user.uid)]);
   if (account.suspended) return { ...base, state: "suspended" };
@@ -45,11 +48,14 @@ async function visitorState(sessionId: string): Promise<VisitorInfo> {
   if (!account.onboardingCompleted) return { ...base, state: "incomplete" };
   const db = adminDb();
   const sessRef = db.doc(`sessions/${sessionId}`);
-  const [req, lock, entry] = await Promise.all([
+  const [req, lock, entry, mem] = await Promise.all([
     db.doc(`bookingRequests/${sessionId}_${user.uid}`).get(),
     sessRef.collection("seatLocks").doc(user.uid).get(),
     sessRef.collection("waitlist").doc(user.uid).get(),
+    db.doc(`memberships/${user.uid}`).get(),
   ]);
+  const m = mem.data();
+  const member = isMemberActive(m ? { status: m.status, startAt: m.startAt.toDate(), endAt: m.endAt.toDate() } : null);
   const r = req.data();
   const request = r ? { id: req.id, status: r.status as string, reservationId: r.reservationId as string | undefined, createdAt: r.createdAt?.toDate().toISOString() as string | undefined } : undefined;
   let booked: VisitorInfo["booked"];
@@ -63,7 +69,7 @@ async function visitorState(sessionId: string): Promise<VisitorInfo> {
     const ahead = await sessRef.collection("waitlist").where("status", "==", "waiting").where("createdAt", "<", w.createdAt).count().get();
     waitPosition = ahead.data().count + 1;
   }
-  return { state: "ready", testPayments, request, booked, waitPosition };
+  return { state: "ready", testPayments, request, booked, waitPosition, member };
 }
 
 /**
@@ -89,6 +95,14 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   const personal = visitor?.state === "ready" && Boolean((onRequest && visitor.request && visitor.request.status !== "cancelled") || visitor.booked);
   const here = `/reserver/${sessionId}`;
   const maxSeats = Math.min(maxSeatsFor(exp), Math.max(1, seatsAvailable(session)));
+  const [plan, tCard, tm] = await Promise.all([getMembershipPlan(), getTranslations("card"), getTranslations("membership")]);
+  const memberAmount = memberAmountFor(plan, session.price, exp);
+  const isMember = Boolean(visitor?.member);
+  // Accès anticipé : une nouvelle date est réservée aux membres pendant les premières heures.
+  const earlyUntil =
+    plan && plan.earlyAccessHours > 0 && session.createdAt ? new Date(new Date(session.createdAt).getTime() + plan.earlyAccessHours * 3_600_000) : null;
+  const earlyLocked = Boolean(earlyUntil && !isMember && isAfterNow(earlyUntil));
+  const membersLocked = Boolean(exp.membersOnly && !isMember);
 
   return (
     <PageShell className="max-w-3xl py-8">
@@ -120,7 +134,16 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         <dl className="divide-y divide-line border-t border-line px-4 text-[15px]">
           <div className="flex justify-between py-3">
             <dt className="text-muted">{t("unitPrice")}</dt>
-            <dd>{formatMoney(session.price, lang)}</dd>
+            <dd className="text-end">
+              <PriceTag price={session.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} />
+              {memberAmount !== null && !isMember && (
+                <span className="mt-1 block text-xs text-muted">
+                  {t("publicPriceNote", { price: formatMoney(session.price, lang) })}{" "}
+                  <Link href="/abonnement" className="font-semibold text-plum-900 underline">{tm("become")}</Link>
+                </span>
+              )}
+              {isMember && memberAmount !== null && <span className="mt-1 block text-xs font-medium text-emerald-800">{t("memberPriceApplied")}</span>}
+            </dd>
           </div>
           {refusal === null && (
             <div className="flex justify-between py-3">
@@ -228,6 +251,14 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             {visitor.booked.pending ? t("finishPayment") : t("seeMyBooking")}
           </Link>
         </section>
+      ) : membersLocked ? (
+        <MembersOnlyNotice title={t("membersOnlyTitle")} text={t("membersOnlyText")} cta={tm("become")} />
+      ) : earlyLocked ? (
+        <MembersOnlyNotice
+          title={t("earlyAccessTitle")}
+          text={t("earlyAccessText", { date: `${formatLongDate(earlyUntil!.toISOString(), locale)} ${formatTime(earlyUntil!.toISOString(), locale)}` })}
+          cta={tm("become")}
+        />
       ) : refusal === "full" ? (
         <>
           <Notice title={t("fullTitle")} text={t("fullText")} />
@@ -236,9 +267,24 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
       ) : onRequest ? (
         <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} />
       ) : (
-        <BookingForm sessionId={session.id} unitAmount={session.price.amount} currency={session.price.currency} maxSeats={maxSeats} />
+        <BookingForm sessionId={session.id} unitAmount={isMember && memberAmount !== null ? memberAmount : session.price.amount} currency={session.price.currency} maxSeats={maxSeats} />
       )}
     </PageShell>
+  );
+}
+
+/** Hors du rendu (règle de pureté React) : la page est de toute façon rendue à la demande. */
+function isAfterNow(d: Date) {
+  return d.getTime() > Date.now();
+}
+
+function MembersOnlyNotice({ title, text, cta }: { title: string; text: string; cta: string }) {
+  return (
+    <section className="mt-6 rounded-[var(--radius-card)] bg-plum-900 p-5 text-white">
+      <h2 className="font-semibold">{title}</h2>
+      <p className="mt-1 text-sm text-plum-50">{text}</p>
+      <Link href="/abonnement" className="mt-4 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-plum-900">{cta}</Link>
+    </section>
   );
 }
 

@@ -1,6 +1,5 @@
 import {
   DEFAULT_CANCELLATION_POLICY,
-  formatMoney,
   LOW_SEATS_THRESHOLD,
   seatsAvailable,
   type Experience,
@@ -16,7 +15,8 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
-import { getCategory, getExperienceBySlug, getPastSessions, getPublishedExperiences, getReviews, getUpcomingSessions } from "@/lib/data";
+import { memberAmountFor, PriceTag } from "@/components/price-tag";
+import { getCategory, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublishedExperiences, getReviews, getUpcomingSessions } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { SITE_URL } from "@/lib/site";
@@ -49,14 +49,16 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
   setRequestLocale(locale);
   const exp = await getExperienceBySlug(slug);
   if (!exp) notFound();
-  const [t, tCard, category, sessions, reviews, past] = await Promise.all([
+  const [t, tCard, category, sessions, reviews, past, plan] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),
     getCategory(exp.categoryId),
     getUpcomingSessions({ experienceId: exp.id }),
     getReviews(exp.id),
     getPastSessions(exp.id),
+    getMembershipPlan(),
   ]);
+  const memberAmount = memberAmountFor(plan, exp.price, exp);
   const lang = locale as "fr" | "ar";
   const next = sessions.find((s) => seatsAvailable(s) > 0) ?? sessions[0];
   const hours = Math.floor(exp.durationMinutes / 60);
@@ -191,10 +193,16 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
           {/* Colonne réservation */}
           <aside id="dates" className="lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-[var(--radius-card)] bg-white p-5 shadow-float">
-              <p className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-ink">{formatMoney(exp.price, lang)}</span>
+              <p className="flex flex-wrap items-baseline gap-2">
+                <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" />
                 <span className="text-sm text-muted">{t("perPerson")}</span>
               </p>
+              {exp.membersOnly && <p className="mt-2 rounded-xl bg-plum-900 px-3 py-2 text-sm font-medium text-white">{t("membersOnlyNote")}</p>}
+              {plan && (memberAmount !== null || exp.membersOnly) && (
+                <Link href="/abonnement" className="mt-2 inline-block text-sm font-semibold text-plum-900 underline underline-offset-4">
+                  {t("becomeMember")}
+                </Link>
+              )}
               {exp.admission === "on_request" && <p className="mt-3 rounded-xl bg-plum-50 px-3 py-2 text-sm text-plum-900">{t("onRequestNote")}</p>}
               <h2 className="mt-5 text-sm font-semibold uppercase tracking-wide text-muted">{t("nextDates")}</h2>
               {sessions.length === 0 ? (
@@ -250,7 +258,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         <div className="fixed inset-x-0 bottom-[calc(64px+env(safe-area-inset-bottom))] z-20 border-t border-line bg-white/95 px-4 py-3 backdrop-blur-md lg:hidden">
           <div className="mx-auto flex max-w-md items-center justify-between gap-4">
             <div>
-              <p className="text-lg font-bold text-ink">{formatMoney(exp.price, lang)}</p>
+              <p><PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} /></p>
               <p className="text-xs text-muted">{formatShortSlot(next.startAt, locale)}</p>
             </div>
             <Link href={`/reserver/${next.id}`} className="rounded-full bg-plum-900 px-6 py-3 font-semibold text-white">

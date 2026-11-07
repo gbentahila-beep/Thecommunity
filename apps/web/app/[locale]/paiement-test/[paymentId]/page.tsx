@@ -32,24 +32,43 @@ export default async function TestPaymentPage({ params }: PageProps<"/[locale]/p
   if (s?.provider !== "sandbox" || s?.mode !== "test") notFound();
   const pay = paySnap.data();
   if (!pay || pay.userId !== user.uid || pay.provider !== "sandbox" || pay.type !== "payment") notFound();
-  const r = (await db.doc(`reservations/${pay.reservationId}`).get()).data();
-  if (!r) notFound();
-
+  // (réservation ou abonnement : traités ci-dessous)
   const t = await getTranslations("testPayment");
   const lang = locale as "fr" | "ar";
+  const pending = pay.status === "initiated";
+
+  // Abonnement annuel : même « banque » de test, retour sur la page Abonnement.
+  if (pay.purpose === "membership") {
+    const plan = (await db.doc(`membershipPlans/${pay.planId}`).get()).data();
+    return (
+      <PageShell className="max-w-xl py-8">
+        <TestBanner title={t("bannerTitle")} text={t("bannerText")} />
+        <h1 className="mt-6 font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
+        <section className="mt-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
+          <p className="font-semibold text-ink">{plan ? tr(plan.name, locale) : ""}</p>
+          <p className="mt-1 text-sm text-muted">{t("membershipPeriod")}</p>
+          <p className="mt-4 text-3xl font-bold text-plum-900">{formatMoney({ amount: pay.amount, currency: pay.currency }, lang)}</p>
+        </section>
+        {pending ? (
+          <TestPaymentActions paymentId={paymentId} reservationId="" returnTo="/abonnement" />
+        ) : (
+          <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
+            <p className="text-ink">{t("alreadyProcessed")}</p>
+            <Link href="/abonnement" className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">{t("seeMembership")}</Link>
+          </section>
+        )}
+      </PageShell>
+    );
+  }
+
+  const r = (await db.doc(`reservations/${pay.reservationId}`).get()).data();
+  if (!r) notFound();
   const startAt = r.sessionSnapshot.startAt.toDate().toISOString();
   const holdIso = r.holdExpiresAt?.toDate().toISOString();
-  const pending = pay.status === "initiated";
 
   return (
     <PageShell className="max-w-xl py-8">
-      <div role="note" className="flex gap-3 rounded-[var(--radius-card)] border-2 border-dashed border-amber-400 bg-amber-50 p-4 text-amber-950">
-        <FlaskConical className="mt-0.5 size-6 shrink-0" aria-hidden />
-        <div>
-          <p className="font-semibold">{t("bannerTitle")}</p>
-          <p className="mt-1 text-sm">{t("bannerText")}</p>
-        </div>
-      </div>
+      <TestBanner title={t("bannerTitle")} text={t("bannerText")} />
 
       <h1 className="mt-6 font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
       <section className="mt-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
@@ -72,5 +91,17 @@ export default async function TestPaymentPage({ params }: PageProps<"/[locale]/p
         </section>
       )}
     </PageShell>
+  );
+}
+
+function TestBanner({ title, text }: { title: string; text: string }) {
+  return (
+    <div role="note" className="flex gap-3 rounded-[var(--radius-card)] border-2 border-dashed border-amber-400 bg-amber-50 p-4 text-amber-950">
+      <FlaskConical className="mt-0.5 size-6 shrink-0" aria-hidden />
+      <div>
+        <p className="font-semibold">{title}</p>
+        <p className="mt-1 text-sm">{text}</p>
+      </div>
+    </div>
   );
 }

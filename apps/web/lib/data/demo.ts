@@ -10,6 +10,7 @@ import {
   zonedDateTimeToUtc,
   zonedParts,
   type Category,
+  type MembershipPlan,
   type City,
   type Experience,
   type Review,
@@ -435,6 +436,21 @@ export function buildDemoSessions(now: Date = new Date()): Session[] {
   }
   return sessions.sort((a, b) => a.startAt.localeCompare(b.startAt));
 }
+
+/** Formule d'abonnement de démonstration (mode sans Firebase). */
+export const DEMO_MEMBERSHIP_PLAN: MembershipPlan = {
+  id: "annual",
+  name: { fr: "The Host Club Membre", ar: "عضوية The Host Club" },
+  price: { amount: 99000, currency: "MAD" },
+  discountPercent: 15,
+  earlyAccessHours: 48,
+  benefits: [
+    { fr: "-15 % sur toutes les expériences", ar: "خصم 15٪ على جميع التجارب" },
+    { fr: "Accès aux nouvelles dates 48 h avant tout le monde", ar: "الوصول إلى المواعيد الجديدة قبل الجميع بـ48 ساعة" },
+    { fr: "Expériences réservées aux membres", ar: "تجارب مخصصة للأعضاء" },
+  ],
+  isActive: true,
+};
 
 export const DEMO_REVIEWS: Review[] = [
   { id: "r1", experienceId: "exp-diner-inconnus", rating: 5, publicName: "Salma B.", comment: "Je suis venue seule un peu stressée, je suis repartie avec quatre nouveaux contacts et un plan pour le week-end.", createdAt: "2026-10-18T22:00:00Z", isDemo: true },

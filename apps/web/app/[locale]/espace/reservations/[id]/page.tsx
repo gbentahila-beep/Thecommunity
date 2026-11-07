@@ -199,6 +199,18 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
               <dd>{r.seats}</dd>
             </div>
           )}
+          {(r.pricing.memberDiscount ?? 0) > 0 && (
+            <>
+              <div className="flex justify-between py-2.5">
+                <dt className="text-muted">{t("publicPrice")}</dt>
+                <dd>{formatMoney({ amount: r.pricing.subtotal, currency: r.pricing.currency }, lang)}</dd>
+              </div>
+              <div className="flex justify-between py-2.5 text-emerald-800">
+                <dt>{t("memberDiscount")}</dt>
+                <dd>−{formatMoney({ amount: r.pricing.memberDiscount ?? 0, currency: r.pricing.currency }, lang)}</dd>
+              </div>
+            </>
+          )}
           <div className="flex justify-between py-2.5">
             <dt className="text-muted">{r.paidAt ? t("total") : t("totalDue")}</dt>
             <dd className="font-semibold">{total}</dd>

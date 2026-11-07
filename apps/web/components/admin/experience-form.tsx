@@ -20,9 +20,9 @@ import { mediaUrl } from "@/components/media";
 import { firebase } from "@/lib/firebase/client";
 
 type Option = { id: string; label: string; disabled?: boolean };
-export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking"> & {
+export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh"> & {
   groupMin: string; groupTarget: string; groupMax: string; costPerSeatDh: string; commissionPercent: string;
-  priceDh: string; durationMinutes: string; maxSeatsPerBooking: string;
+  priceDh: string; durationMinutes: string; maxSeatsPerBooking: string; memberPriceDh: string;
   sessions: { firstDate: string; time: string; weeks: string; capacity: string };
 };
 
@@ -32,7 +32,7 @@ const MESSAGES: Record<string, string> = {
   pickOne: "Choisissez au moins une langue.", groupOrder: "Il faut min ≤ cible ≤ max.", capacityBelowGroup: "La capacité doit permettre au moins un groupe complet.",
   seatsPerBookingMode: "Plus de 2 places par réservation : seulement en mode libre ou privatisé.", partnerRequired: "Le modèle commission nécessite un partenaire.",
   revealNeedsGroups: "La révélation différée n'est possible qu'avec des groupes (dîner social ou groupe).",
-  inPast: "La première date est déjà passée.", invalidImagePath: "Photo invalide.",
+  inPast: "La première date est déjà passée.", memberAbovePublic: "Le prix membre doit être inférieur ou égal au prix public.", invalidImagePath: "Photo invalide.",
 };
 const LANG_LABELS: Record<string, string> = { fr: "Français", ar: "Arabe", darija: "Darija", en: "Anglais", es: "Espagnol" };
 const MODES: Option[] = [
@@ -125,6 +125,7 @@ export function ExperienceForm({
       groupMax: grouped ? opt(v.groupMax) : undefined,
       costPerSeatDh: v.economicsModel === "own" ? opt(v.costPerSeatDh) : undefined,
       commissionPercent: v.economicsModel === "commission" ? opt(v.commissionPercent) : undefined,
+      memberPriceDh: opt(v.memberPriceDh),
     });
     if (!parsed.success) {
       const next: Record<string, string> = {};
@@ -256,6 +257,11 @@ export function ExperienceForm({
           </div>
         )}
         <div><Label k="priceDh">Prix par place (DH)</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
+        <div><Label k="memberPriceDh" hint="Facultatif. Vide = réduction de l'abonnement (réglée dans « Abonnement »).">Prix membre (DH)</Label><input {...field("memberPriceDh")} inputMode="decimal" value={v.memberPriceDh} onChange={(e) => set("memberPriceDh", e.target.value)} />{err("memberPriceDh")}</div>
+        <label className="flex items-center gap-2 self-end pb-3 text-sm">
+          <input type="checkbox" checked={v.membersOnly} onChange={(e) => set("membersOnly", e.target.checked)} className="size-4 accent-plum-900" />
+          Réservée aux membres abonnés
+        </label>
         <div><Label k="durationMinutes">Durée (minutes)</Label><input {...field("durationMinutes")} inputMode="numeric" value={v.durationMinutes} onChange={(e) => set("durationMinutes", e.target.value)} />{err("durationMinutes")}</div>
         <div><Label k="maxSeatsPerBooking" hint="1 pour une réservation individuelle.">Places max par réservation</Label><input {...field("maxSeatsPerBooking")} inputMode="numeric" value={v.maxSeatsPerBooking} onChange={(e) => set("maxSeatsPerBooking", e.target.value)} />{err("maxSeatsPerBooking")}</div>
         <div><Label k="cancellationPolicyId">Conditions d&apos;annulation</Label>

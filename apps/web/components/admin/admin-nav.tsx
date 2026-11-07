@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BadgeCheck,
   BadgePercent,
   BarChart3,
   CalendarRange,
@@ -25,6 +26,7 @@ export const ADMIN_LINKS = [
   { href: "/admin/participations", label: "Demandes de participation", icon: Inbox },
   { href: "/admin/reservations", label: "Réservations", icon: Ticket },
   { href: "/admin/avis", label: "Avis", icon: Star },
+  { href: "/admin/abonnement", label: "Abonnement", icon: BadgeCheck },
   { href: "/admin/utilisateurs", label: "Utilisateurs", icon: Users },
   { href: "/admin/partenaires", label: "Partenaires", icon: Handshake },
   { href: "/admin/paiements", label: "Paiements", icon: CreditCard },

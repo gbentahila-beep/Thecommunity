@@ -51,13 +51,16 @@ async function bookAndPay(page, sid) {
   let model = null;
   for (const s of await fsList('sessions')) {
     if (s.fields.status.stringValue !== 'published') continue;
+    // Pas une date encore en accès anticipé réservé aux membres (créée il y a moins de 48 h).
+    if (s.fields.createdAt && Date.now() - new Date(s.fields.createdAt.timestampValue).getTime() < 72 * 3600000) continue;
     const e = await fsGet(`experiences/${s.fields.experienceId.stringValue}`);
     // Format qui ferme 2 h avant (pas un dîner social, fermé 12 h avant) : la 3e date commence dans 2 h 30.
     if (e?.fields.status.stringValue === 'published' && e.fields.admission?.stringValue !== 'on_request' && e.fields.bookingMode.stringValue !== 'social_dinner' && int(s.fields.price.mapValue.fields.amount) > 0) { model = s; break; }
   }
   const mk = async (name, hours) => {
     const start = new Date(Date.now() + hours * 3_600_000);
-    const fields = { ...model.fields, capacity: { integerValue: '2' }, seatsConfirmed: { integerValue: '0' }, seatsHeld: { integerValue: '0' }, waitlistCount: { integerValue: '0' },
+    const { createdAt: _c, ...modelFields } = model.fields;
+  const fields = { ...modelFields, capacity: { integerValue: '2' }, seatsConfirmed: { integerValue: '0' }, seatsHeld: { integerValue: '0' }, waitlistCount: { integerValue: '0' },
       startAt: { timestampValue: start.toISOString() }, endAt: { timestampValue: new Date(start.getTime() + 7_200_000).toISOString() } };
     const id = `e2e-${name}-${Date.now()}`;
     await fetch(`${FS}/v1/projects/${PROJECT}/databases/(default)/documents/sessions?documentId=${id}`, { method: 'POST', headers: { ...OWNER, 'content-type': 'application/json' }, body: JSON.stringify({ fields }) });

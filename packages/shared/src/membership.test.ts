@@ -6,7 +6,8 @@ describe("abonnement", () => {
     expect(memberUnitPrice(30000, { discountPercent: 15 })).toBe(25500);
     expect(memberUnitPrice(30000, { discountPercent: 15 }, 20000)).toBe(20000);
     expect(memberUnitPrice(30000, { discountPercent: 15 }, 40000)).toBe(30000);
-    expect(memberUnitPrice(16900, { discountPercent: 15 })).toBe(14365);
+    expect(memberUnitPrice(16900, { discountPercent: 15 })).toBe(14400); // 143,65 DH → arrondi à 144 DH
+    expect(memberUnitPrice(13900, { discountPercent: 15 })).toBe(11800);
     expect(memberUnitPrice(30000, null)).toBe(30000);
   });
   it("membre actif seulement entre le début et l'échéance, et non retiré", () => {

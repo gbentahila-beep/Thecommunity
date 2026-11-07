@@ -40,12 +40,13 @@ export function isMemberActive(m: { status: string; startAt: string | Date; endA
 
 /**
  * Prix membre d'une place, en centimes : le prix membre précis de l'expérience s'il est réglé
- * (jamais au-dessus du prix public de la date), sinon le prix public moins la réduction de la formule.
+ * (jamais au-dessus du prix public de la date), sinon le prix public moins la réduction de la formule,
+ * arrondi au dirham (un prix lisible : 118 DH plutôt que 118,15 DH).
  */
 export function memberUnitPrice(publicAmount: number, plan: Pick<MembershipPlan, "discountPercent"> | null, experienceMemberPrice?: number | null): number {
   if (experienceMemberPrice != null && experienceMemberPrice >= 0) return Math.min(experienceMemberPrice, publicAmount);
   if (!plan) return publicAmount;
-  return Math.round((publicAmount * (100 - plan.discountPercent)) / 100);
+  return Math.min(publicAmount, Math.round((publicAmount * (100 - plan.discountPercent)) / 100 / 100) * 100);
 }
 
 /** Fin d'une nouvelle période : 12 mois à partir de maintenant, ou de l'échéance en cours si on renouvelle en avance. */

@@ -20,6 +20,7 @@ const int = (f) => Number(f?.integerValue ?? f?.doubleValue ?? 0);
   const now = Date.now();
   const sessions = (await fsList('sessions')).filter((d) => {
     const f = d.fields;
+    if (f.createdAt && Date.now() - new Date(f.createdAt.timestampValue).getTime() < 72 * 3600000) return false; // accès anticipé membres
     const free = int(f.capacity) - int(f.seatsConfirmed) - int(f.seatsHeld);
     return f.status.stringValue === 'published' && new Date(f.startAt.timestampValue).getTime() > now + 13 * 3_600_000 && free >= 3;
   });

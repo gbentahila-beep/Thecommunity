@@ -101,6 +101,8 @@ async function login(page, who, suite) {
   // 4. Avis : une réservation « vécue » sur une expérience existante
   const sess = (await fsList('sessions')).find((s) => s.fields.experienceId.stringValue === expId);
   const sid = sess.name.split('/').pop();
+  // Date toute neuve : hors du sujet de ce test, on sort de l'accès anticipé réservé aux membres.
+  await patch(`sessions/${sid}`, { createdAt: { timestampValue: new Date(Date.now() - 4 * 86400000).toISOString() } });
   await m.goto(`${base}/reserver/${sid}`);
   await m.getByRole('button', { name: /Réserver et payer/ }).click();
   await m.waitForURL('**/paiement-test/**', { timeout: 20000 });

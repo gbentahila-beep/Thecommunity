@@ -6,7 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import { authReady, bookingErrorOf, completeTestPayment, type BookingError } from "@/lib/booking-client";
 
 /** Les deux réponses possibles de la « banque » de test. Le serveur refuse hors du mode test. */
-export function TestPaymentActions({ paymentId, reservationId }: { paymentId: string; reservationId: string }) {
+export function TestPaymentActions({ paymentId, reservationId, returnTo }: { paymentId: string; reservationId: string; returnTo?: string }) {
   const t = useTranslations("testPayment");
   const tb = useTranslations("booking");
   const router = useRouter();
@@ -20,7 +20,7 @@ export function TestPaymentActions({ paymentId, reservationId }: { paymentId: st
       await authReady();
       const res = await completeTestPayment(paymentId, outcome);
       const flag = res.outcome === "confirmed" ? "accepte" : res.outcome === "refunded" ? "rembourse" : "refuse";
-      router.replace(`/espace/reservations/${reservationId}?paiement=${flag}`);
+      router.replace(`${returnTo ?? `/espace/reservations/${reservationId}`}?paiement=${flag}`);
     } catch (err) {
       setError(bookingErrorOf(err));
       setBusy(null);

@@ -159,6 +159,8 @@ export type Session = {
   waitlistCount: number;
   status: SessionStatus;
   isFeatured: boolean;
+  /** Date de création (accès anticipé des membres aux nouvelles dates). */
+  createdAt?: string;
   isDemo?: boolean;
 };
 
