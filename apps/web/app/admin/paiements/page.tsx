@@ -1,0 +1,40 @@
+import { Badge, Card, DemoNote, dh, PageHeader, StatTile, Table, adminDate } from "@/components/admin/ui";
+import { getAdminData } from "@/lib/data/admin";
+
+export const metadata = { title: "Paiements" };
+const STATUS = { succeeded: ["Réussi", "green"], initiated: ["En attente", "amber"], failed: ["Échoué", "red"], refunded: ["Remboursé", "gray"] } as const;
+
+export default async function PaymentsAdminPage() {
+  const d = await getAdminData();
+  const pays = [...d.payments].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const sum = (f: (p: (typeof pays)[number]) => boolean) => pays.filter(f).reduce((a, p) => a + p.amount, 0);
+  return (
+    <>
+      <PageHeader title="Paiements et remboursements" />
+      <div className="mb-4"><DemoNote>Transactions fictives (prestataire « sandbox »). Aucun prestataire réel n&apos;est connecté : il sera choisi et intégré en phase 5, après signature du contrat.</DemoNote></div>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatTile label="Encaissé" value={dh(sum((p) => p.type === "payment" && p.status !== "initiated"))} />
+        <StatTile label="Remboursé" value={dh(sum((p) => p.type === "refund"))} />
+        <StatTile label="En attente" value={dh(sum((p) => p.status === "initiated"))} />
+        <StatTile label="Transactions" value={String(pays.length)} />
+      </div>
+      <Card className="mt-6">
+        <Table head={["Date", "Type", "Réservation", "Membre", "Montant", "Statut"]} caption="Transactions">
+          {pays.slice(0, 200).map((p) => {
+            const u = d.usersById.get(p.userId)!;
+            return (
+              <tr key={p.id}>
+                <td className="whitespace-nowrap text-muted">{adminDate(p.createdAt)}</td>
+                <td>{p.type === "payment" ? "Paiement" : "Remboursement"}</td>
+                <td className="font-mono text-xs">{p.reservationId}</td>
+                <td>{u.firstName} {u.lastName}</td>
+                <td className={`tabular-nums ${p.type === "refund" ? "text-red-800" : ""}`}>{p.type === "refund" ? "−" : ""}{dh(p.amount)}</td>
+                <td><Badge tone={STATUS[p.status][1]}>{STATUS[p.status][0]}</Badge></td>
+              </tr>
+            );
+          })}
+        </Table>
+      </Card>
+    </>
+  );
+}

@@ -86,7 +86,7 @@ Chaque phase se termine par une démonstration et **votre validation** avant la 
 | Phase | Contenu | Livrable de validation |
 |---|---|---|
 | **1 — Architecture** ✅ | Analyse, architecture, données, sécurité, pages, functions, risques, plan | Décisions D1–D8 validées (D2 en cours côté administratif) |
-| **2 — Design & frontend** | Monorepo, design system, toutes les pages publiques, inscription/connexion (UI), questionnaire, espace utilisateur, back-office (UI) avec **données de démonstration identifiées** | Site navigable sur mobile et desktop, URL de prévisualisation |
+| **2 — Design & frontend** ✅ | Monorepo, design system, toutes les pages publiques, inscription/connexion (UI), questionnaire, espace utilisateur, back-office (UI) avec **données de démonstration identifiées** | Site navigable sur mobile et desktop, URL de prévisualisation |
 | **3 — Firebase** | Projets dev/prod, Auth, Firestore, Storage, règles + tests, index, émulateurs, seed, App Check, CI | Connexion réelle, profil enregistré, tests de règles verts |
 | **4 — Réservations** | Création d'expériences et sessions (admin), réservation transactionnelle, blocage, annulation, liste d'attente, historique, export | Tests de concurrence verts, parcours complet avec l'adaptateur de test |
 | **5 — Paiements** | Adaptateur du prestataire retenu, webhook, remboursements, codes promo, réconciliation — **en mode test du prestataire** | Paiements et remboursements de test réussis bout en bout |

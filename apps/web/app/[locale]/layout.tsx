@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -8,17 +7,9 @@ import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { dirFor, routing } from "@/i18n/routing";
+import { fontVariables } from "@/lib/fonts";
 import { SITE_URL } from "@/lib/site";
 import "../globals.css";
-
-const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", axes: ["opsz", "SOFT"], display: "swap" });
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const arabic = IBM_Plex_Sans_Arabic({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-arabic",
-  display: "swap",
-});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -57,7 +48,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
     <html
       lang={locale}
       dir={dirFor(locale)}
-      className={`${fraunces.variable} ${inter.variable} ${arabic.variable} antialiased`}
+      className={`${fontVariables} antialiased`}
     >
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider>

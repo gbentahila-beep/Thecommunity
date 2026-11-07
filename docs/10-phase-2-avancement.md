@@ -50,9 +50,38 @@ Captures : [`captures/`](captures/)
 - **Désactivés avec mention explicite** : annuler une réservation, publier un avis (phase 4), supprimer le compte (phase 3).
 - « Signaler un comportement » n'est pas encore présent (phase 4, avec les avis).
 
-## Étape 2c — Back-office (à venir)
+## Étape 2c — Back-office ✅
 
-Dashboard, expériences (liste, création, édition, dates), réservations, participants d'une session, groupes (glisser-déposer), utilisateurs, partenaires, paiements, codes promo, statistiques, paramètres.
+Accessible sous `/admin` (français uniquement). **Non protégé en phase 2** : il n'affiche que des données fictives ; l'accès sera réservé aux rôles admin / superadmin avec double authentification en phase 3.
+
+| Page | Contenu |
+|---|---|
+| Tableau de bord `/admin` | CA brut, marge estimée, taux de remplissage, sessions de la semaine ; prochaines sessions avec jauge de remplissage et liste d'attente ; alertes (paiements en attente, sessions peu remplies) ; CA par univers |
+| Expériences | Liste (univers, mode, prix, modèle économique, nombre de dates, statut), lien vers la fiche publique |
+| Créer / modifier une expérience | Formulaire complet en 6 sections : informations FR/AR, lieu et révélation, mode de réservation et tailles de groupe, prix et durée, langues, partenaire et économie (coût par place ou commission), dates avec **récurrence hebdomadaire**, photos (aperçu). **Validation complète** avec le schéma partagé (`experience-input.ts`, réutilisé côté serveur en phase 3) et règles de cohérence (min ≤ cible ≤ max, capacité suffisante, partenaire obligatoire en commission…). Un récapitulatif montre les dates qui seraient créées et la marge par place |
+| Sessions & groupes | Toutes les dates à venir, remplissage, attente |
+| Participants d'une session | Contacts, tranche d'âge, langues, places, montant, statut, liste d'attente, **export CSV compatible Excel fonctionnel** |
+| Composition des groupes | Proposition provisoire, **glisser-déposer** et liste « Déplacer vers » (mobile / clavier), ajouter, diviser, fusionner, revenir à la proposition ; indicateurs par groupe (âges, F/H, langue commune, intérêts partagés) et alertes |
+| Réservations | Recherche (nom, e-mail, n°, expérience), filtre par statut, export CSV |
+| Utilisateurs | Recherche, âge, centres d'intérêt, nombre de réservations, rôle, statut |
+| Partenaires | Fiches, commission par défaut, expériences liées, ventes à venir |
+| Paiements | Encaissé, remboursé, en attente ; journal des transactions (prestataire « sandbox » fictif) |
+| Codes promo | Remise, conditions, validité, utilisations |
+| Statistiques | CA, coûts, commissions, marge, réservations, remplissage ; par univers (graphiques + tableau) ; export CSV |
+| Paramètres | Villes, univers, politique d'annulation, règles de réservation (lecture seule) |
+
+**Vérifications effectuées :** TypeScript et ESLint sans erreur, compilation réussie (91 pages), **26 tests unitaires** (dont 9 sur le formulaire d'expérience, la récurrence et la marge), **34 vérifications de bout en bout** (`tests/e2e/back-office.e2e.cjs`) : validation du formulaire, saisie sans perte de focus, récurrence, calcul de marge, export CSV, déplacement / glisser-déposer / division / fusion des groupes, filtres, menu mobile, aucune page qui déborde sur mobile. La suite de l'espace membre (26 vérifications) repasse sans régression. Deux défauts repérés sur les captures ont été corrigés (échelle des barres du graphique, homonymes dans les groupes).
+
+### Limites connues de l'étape 2c (levées dans les phases indiquées)
+
+- **Rien n'est enregistré** : créer/modifier une expérience, valider des groupes, annuler/rembourser/déplacer une réservation, changer un rôle, créer un partenaire ou un code promo → phases 3 à 6. Les boutons concernés sont absents ou désactivés avec la phase indiquée.
+- La répartition des groupes est **provisoire** (par âge) : l'algorithme de matching arrive en phase 6.
+- Les photos ajoutées dans le formulaire ne sont pas envoyées (Firebase Storage en phase 3).
+- Export Excel au format CSV (s'ouvre directement dans Excel) ; un vrai `.xlsx` pourra être ajouté si besoin.
+
+## Bilan de la phase 2
+
+Le site complet est navigable avec des données de démonstration : **site public, espace membre et back-office**, en français et en arabe pour la partie publique et membre. Prochaine étape : **phase 3 — Firebase** (comptes, base de données, règles de sécurité, stockage des photos), qui nécessite les comptes Google / Firebase de la section G de la [checklist](11-checklist-avant-lancement.md).
 
 ## Lancer le site en local
 
