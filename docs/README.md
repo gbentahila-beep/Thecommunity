@@ -1,6 +1,6 @@
 # Phase 1 — Analyse et architecture
 
-> Plateforme d'expériences sociales au Maroc · Nom de travail : **CLUB.** · Statut : **en attente de validation — aucun code applicatif n'a été écrit**
+> Plateforme d'expériences sociales au Maroc · Marque : **The Community** · Statut : **architecture validée — phase 2 à démarrer**
 
 ## Sommaire
 
@@ -14,6 +14,7 @@
 | [06 — Cloud Functions](06-cloud-functions.md) | Inventaire des functions, transaction de réservation, paiement, annulation, liste d'attente, matching, finance |
 | [07 — Risques](07-risques.md) | 16 risques et parades, dépendances externes |
 | [08 — Organisation et plan](08-organisation-et-plan.md) | Arborescence, stratégie de test, plan en 8 phases, hypothèses |
+| [09 — Démarches avant lancement](09-demarches-lancement.md) | Société, banque, prestataire de paiement, CNDP, marque : feuille de route non technique |
 
 ## Synthèse en 10 points
 
@@ -28,17 +29,17 @@
 9. **Matching v1 à base de règles et de score**, module isolé et testé, toujours sous contrôle de l'admin.
 10. **Tests à chaque niveau** (unitaires, règles, intégration avec concurrence, E2E mobile) et environnements dev/prod séparés.
 
-## Décisions structurantes à valider
+## Décisions structurantes
 
-| # | Décision | Recommandation |
+| # | Décision | Statut |
 |---|---|---|
-| **D1** | Nom de marque et domaine | « CLUB. » reste un nom de travail. Le nom définitif peut arriver en phase 2 sans impact technique, mais doit être vérifié (OMPIC, domaine) avant les visuels finaux. Quel nom retenez-vous ? |
-| **D2** | Entité juridique et prestataire de paiement | Une société marocaine encaisse en MAD. Lancer **tout de suite** la demande auprès de 2–3 prestataires (CMI via votre banque, Payzone, YouCan Pay) et comparer les offres réelles. Je développe avec l'adaptateur de test en attendant. |
-| **D3** | Région des données | `europe-west1` (Belgique), irréversible pour Firestore. Implique une formalité CNDP de transfert. |
-| **D4** | Séparer Expérience et Session | Oui (voir [03 §2](03-modele-de-donnees.md#2-décision-clé--expérience--session-décision-d4)). |
-| **D5** | Collecter le genre (facultatif) pour équilibrer les tables | Oui, facultatif avec « Je préfère ne pas répondre ». Sinon le matching ignore ce critère. |
-| **D6** | Politique d'annulation par défaut | Remboursement intégral jusqu'à 48 h avant, rien ensuite ; remboursement intégral si la plateforme annule. Personnalisable par expérience. |
-| **D7** | Arabe au lancement ? | Architecture bilingue et RTL dès la phase 2 ; lancement public en français, arabe activé dès que les contenus sont traduits. |
-| **D8** | Onglet « Messages » de la maquette | Retiré au lancement (modération, sécurité), remplacé par « Notifications ». Messagerie de groupe en version ultérieure. |
+| **D1** | Nom de marque | ✅ **The Community** (disponibilité OMPIC et domaine à vérifier, voir [09](09-demarches-lancement.md)) |
+| **D2** | Entité juridique et prestataire de paiement | ⏳ **En cours** : aucune structure ni contrat à ce jour. Feuille de route dans [09](09-demarches-lancement.md). Le développement avance avec l'adaptateur de paiement de test |
+| **D3** | Région des données | ✅ `europe-west1` (Belgique). Formalités CNDP à faire par la société avant l'ouverture au public |
+| **D4** | Séparer Expérience et Session | ✅ Retenu (non contesté) |
+| **D5** | Genre facultatif pour équilibrer les tables | ✅ Oui, avec « Je préfère ne pas répondre » |
+| **D6** | Politique d'annulation par défaut | ✅ 100 % jusqu'à 48 h avant, 0 % ensuite, 100 % si la plateforme annule ; personnalisable par expérience |
+| **D7** | Arabe | ✅ Architecture bilingue et RTL dès la phase 2 ; lancement en français, arabe activé après traduction |
+| **D8** | Messagerie | ✅ Pas au lancement ; onglet « Notifications » à la place |
 
-Une fois ces points validés (ou corrigés), je démarre la **phase 2 : design et frontend** avec des données de démonstration clairement identifiées.
+Prochaine étape : **phase 2 — design et frontend**, avec des données de démonstration clairement identifiées.

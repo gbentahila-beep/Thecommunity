@@ -1,6 +1,6 @@
 # 02 — Architecture technique
 
-> Phase 1 · Document d'architecture · Statut : **en attente de validation**
+> Phase 1 · Document d'architecture · Statut : **validé**
 
 ## 1. Vue d'ensemble
 

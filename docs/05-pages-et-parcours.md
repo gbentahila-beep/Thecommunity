@@ -1,6 +1,6 @@
 # 05 — Pages, parcours et design
 
-> Phase 1 · Document d'architecture · Statut : **en attente de validation**
+> Phase 1 · Document d'architecture · Statut : **validé**
 
 ## 1. Structure des URLs
 

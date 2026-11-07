@@ -1,6 +1,6 @@
 # 06 — Cloud Functions et logique métier
 
-> Phase 1 · Document d'architecture · Statut : **en attente de validation**
+> Phase 1 · Document d'architecture · Statut : **validé**
 
 Toutes les functions sont en **Cloud Functions v2**, TypeScript, Node.js 22, région `europe-west1` (D3). Les callables exigent App Check en production. La logique métier pure (prix, annulation, matching) vit dans `packages/shared` et `packages/matching` pour être testée unitairement sans Firebase.
 

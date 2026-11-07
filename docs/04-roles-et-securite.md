@@ -1,6 +1,6 @@
 # 04 — Rôles, sécurité et conformité
 
-> Phase 1 · Document d'architecture · Statut : **en attente de validation**
+> Phase 1 · Document d'architecture · Statut : **validé**
 
 ## 1. Rôles
 

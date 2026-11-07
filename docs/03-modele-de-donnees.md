@@ -1,6 +1,6 @@
 # 03 — Modèle de données Firestore
 
-> Phase 1 · Document d'architecture · Statut : **en attente de validation**
+> Phase 1 · Document d'architecture · Statut : **validé**
 
 ## 1. Conventions
 

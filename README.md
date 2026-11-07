@@ -6,6 +6,6 @@ Stack prévue : Next.js · React · TypeScript · Tailwind CSS · Firebase (Auth
 
 ## État du projet
 
-**Phase 1 — Analyse et architecture : en attente de validation.** Aucun code applicatif n'a encore été écrit.
+**Phase 1 — Analyse et architecture : validée.** Phase 2 (design et frontend) à démarrer. Aucun code applicatif n'a encore été écrit.
 
-👉 Lire [`docs/README.md`](docs/README.md) pour l'architecture complète et les décisions à valider.
+👉 Lire [`docs/README.md`](docs/README.md) pour l'architecture complète et les décisions prises, et [`docs/09-demarches-lancement.md`](docs/09-demarches-lancement.md) pour les démarches administratives.

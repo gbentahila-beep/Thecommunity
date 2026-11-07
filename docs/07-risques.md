@@ -1,6 +1,6 @@
 # 07 — Risques et dépendances
 
-> Phase 1 · Document d'architecture · Statut : **en attente de validation**
+> Phase 1 · Document d'architecture · Statut : **validé**
 
 Classés par impact sur le lancement. **P** = probabilité, **I** = impact (H = haut, M = moyen, B = bas).
 
@@ -20,7 +20,7 @@ Classés par impact sur le lancement. **P** = probabilité, **I** = impact (H = 
 | R12 | **Abus** : faux comptes, abus de codes promo, scripts | M | M | App Check, e-mail vérifié pour réserver, limites par utilisateur sur les promos, limitation de fréquence |
 | R13 | **Matching perçu comme discriminant** (âge, genre) | B | M | Critères transparents dans la FAQ, genre facultatif, l'admin garde la main |
 | R14 | **Recherche limitée** dans Firestore | B | B | Suffisant au lancement ; Algolia/Typesense ensuite |
-| R15 | **Nom de marque** (« CLUB. » générique, difficile à référencer et à protéger) | M | M | Vérifier OMPIC et nom de domaine avant les visuels définitifs |
+| R15 | **Nom de marque** « The Community » : expression courante en anglais, donc plus difficile à protéger et à référencer seule | M | M | Vérifier la disponibilité à l'OMPIC (classes 41 et 43) et du nom de domaine ; travailler le SEO sur « The Community Casablanca » et les pages ville/catégorie |
 | R16 | **Dépendance à Firebase** (verrouillage fournisseur) | B | B | Choix assumé ; logique métier isolée dans des packages purs ; paiement et e-mail derrière des interfaces |
 
 ## Dépendances externes à lancer en parallèle
