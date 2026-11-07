@@ -34,7 +34,13 @@ export default async function ExperiencesAdminPage() {
                 <td className="text-muted">{MODE_LABELS[e.bookingMode]}</td>
                 <td className="tabular-nums">{dh(e.price.amount)}</td>
                 <td className="text-muted">{eco?.model === "commission" ? `Commission ${eco.commissionPercent} %` : `Coût ${dh(eco?.costPerSeat ?? 0)}`}</td>
-                <td className="tabular-nums">{count}</td>
+                <td className="tabular-nums">
+                  {count > 0 ? count : (
+                    <Link href={`/admin/experiences/${e.id}#dates`} className="text-xs font-semibold text-amber-800 underline">
+                      Aucune — ajouter des dates
+                    </Link>
+                  )}
+                </td>
                 <td><Badge tone={e.status === "published" ? "green" : "gray"}>{e.status === "published" ? "Publiée" : "Brouillon"}</Badge></td>
                 <td className="whitespace-nowrap text-end">
                   <Link href={`/admin/experiences/${e.id}`} className="font-medium text-plum-900">Modifier</Link> ·{" "}

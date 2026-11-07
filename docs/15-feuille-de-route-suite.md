@@ -7,7 +7,7 @@
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
-| **5a** | **Avis** sur les expériences vécues + **fiches sans date** (dates ajoutées plus tard), **expériences passées toujours listées**, **reproposer des dates** | rien |
+| **5a** ✅ | **Avis** sur les expériences vécues + **fiches sans date** (dates ajoutées plus tard), **expériences passées toujours listées**, **reproposer des dates** | rien |
 | **5b** | **Abonnement annuel** : prix réduits pour les abonnés, prix public barré, réglages par l'admin | paiement de test (fait) |
 | **5c** | **Factures** (et avoirs pour les remboursements) + **envoi par e-mail** | infos de la société pour des factures légales ; compte Brevo pour l'envoi réel |
 | 5d | Codes promo, frais de service | rien |
@@ -32,6 +32,22 @@
 - Sur la fiche admin, **« Ajouter des dates »** à tout moment (une date ou une récurrence) ; c'est aussi le moyen de **reproposer** une expérience passée.
 - Le catalogue liste **toutes les expériences publiées** : d'abord celles qui ont une date à venir, puis « **Déjà vécues** » (avec leurs avis et « Dernière édition : 12 octobre »).
 - Sur une fiche sans date à venir : bouton **« Me prévenir des prochaines dates »** ; quand l'équipe ajoute une date, les personnes inscrites reçoivent une notification.
+
+### Livré (5a) ✅
+
+| Pour qui | Ce qui change |
+|---|---|
+| **Équipe** | Fiche expérience : case **« Programmer des dates maintenant »** (décochée = fiche publiée sans date) ; section **« Ajouter des dates (ou reproposer l'expérience) »** sur toute fiche existante. Liste des expériences : **« Aucune — ajouter des dates »** pour celles sans date à venir. Nouvelle page **Avis** : lire, **masquer** / republier (note recalculée, journalisé). |
+| **Visiteur** | Catalogue : section **« Déjà vécues — de nouvelles dates arrivent »** (cartes « Prochaines dates bientôt » avec note moyenne). Fiche sans date : **« Me prévenir des prochaines dates »** ; « Éditions passées » (nombre et dernière date) ; les avis restent affichés. |
+| **Membre** | Le lendemain de l'expérience : notification **« Comment s'est passée votre expérience ? »** ; sur la réservation passée : **note 1 à 5 + avis**, publié sur la fiche avec « Prénom N. ». Tableau de bord : « À noter ». Notification quand une expérience suivie a de nouvelles dates. |
+
+Règles : un avis par réservation ; personnes pointées présentes, ou confirmées une fois l'expérience terminée ; jamais les absents ; dans les **60 jours** (hypothèse). Sur la fiche publique, un nouvel avis apparaît dans les 5 minutes (cache du catalogue) ; l'auteur le voit tout de suite.
+
+| Avis (membre) | Modération (équipe) |
+|---|---|
+| ![Avis](captures/avis-1-formulaire.jpg) | ![Back-office avis](captures/avis-2-back-office.jpg) |
+
+Tests : 6 tests d'intégration (éligibilité, note moyenne exacte, doublon, modération, demande d'avis unique, création sans date, alerte unique) et 20 vérifications de bout en bout (`tests/e2e/firebase-reviews.e2e.cjs`). Toutes les suites : 84 sur émulateurs, 37 unitaires, 150 de bout en bout en mode Firebase, 60 en démonstration.
 
 ## 5b — Abonnement annuel
 

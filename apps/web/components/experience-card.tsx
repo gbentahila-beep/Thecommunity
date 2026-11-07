@@ -1,5 +1,5 @@
 import { formatMoney, LOW_SEATS_THRESHOLD, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
-import { MapPin, Users } from "lucide-react";
+import { MapPin, Star, Users } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -28,13 +28,14 @@ export async function ExperienceCard({
   experience,
   priority = false,
 }: {
-  session: Session;
+  /** Prochaine date ; absente pour une expérience sans date à venir (« Prochaines dates bientôt »). */
+  session?: Session;
   experience: Experience;
   priority?: boolean;
 }) {
   const [locale, t, category] = await Promise.all([getLocale(), getTranslations("card"), getCategory(experience.categoryId)]);
-  const left = seatsAvailable(session);
-  const full = session.status === "full" || left === 0;
+  const left = session ? seatsAvailable(session) : 0;
+  const full = Boolean(session) && (session!.status === "full" || left === 0);
   const cover = experience.images[0];
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-float">
@@ -56,7 +57,7 @@ export async function ExperienceCard({
           <span className="absolute top-3 start-3 rounded-full bg-ink/80 px-3 py-1 text-xs font-medium text-white">
             {t("full")}
           </span>
-        ) : left <= LOW_SEATS_THRESHOLD ? (
+        ) : session && left <= LOW_SEATS_THRESHOLD ? (
           <span className="absolute top-3 start-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-plum-800">
             {t("lastSeats", { count: left })}
           </span>
@@ -71,14 +72,21 @@ export async function ExperienceCard({
         </h3>
         <p className="flex items-center gap-1.5 text-sm text-muted">
           <MapPin className="size-4 shrink-0 text-plum-700" aria-hidden />
-          {experience.district} · {formatShortSlot(session.startAt, locale)}
+          {experience.district} · {session ? formatShortSlot(session.startAt, locale) : t("datesSoon")}
         </p>
         <div className="mt-auto flex items-end justify-between pt-3">
-          <p className="text-lg font-bold text-ink">{formatMoney(session.price, locale as "fr" | "ar")}</p>
-          <p className="flex items-center gap-1.5 text-sm text-ink/80">
-            <Users className="size-4" aria-hidden />
-            {full ? t("waitlist") : await groupLabel(experience, session)}
-          </p>
+          <p className="text-lg font-bold text-ink">{formatMoney(session?.price ?? experience.price, locale as "fr" | "ar")}</p>
+          {session ? (
+            <p className="flex items-center gap-1.5 text-sm text-ink/80">
+              <Users className="size-4" aria-hidden />
+              {full ? t("waitlist") : await groupLabel(experience, session)}
+            </p>
+          ) : experience.ratingCount > 0 ? (
+            <p className="flex items-center gap-1 text-sm font-medium text-ink/80">
+              <Star className="size-4 fill-current text-plum-700" aria-hidden />
+              {experience.ratingAvg.toFixed(1)} <span className="text-muted">({experience.ratingCount})</span>
+            </p>
+          ) : null}
         </div>
       </div>
     </article>

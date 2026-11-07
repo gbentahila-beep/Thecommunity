@@ -5,7 +5,7 @@ import { CategoryChips } from "@/components/category-chips";
 import { ExperienceCard } from "@/components/experience-card";
 import { PageShell, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { getNextSessionPerExperience, type WhenFilter } from "@/lib/data";
+import { getExperiencesWithoutUpcoming, getNextSessionPerExperience, type WhenFilter } from "@/lib/data";
 import { DEFAULT_CITY } from "@/lib/site";
 
 const WHEN_VALUES: WhenFilter[] = ["all", "today", "weekend", "week"];
@@ -33,10 +33,11 @@ export default async function CatalogPage({ params, searchParams }: PageProps<"/
   const rawWhen = typeof sp.quand === "string" ? sp.quand : "all";
   const when = WHEN_VALUES.includes(rawWhen as WhenFilter) ? (rawWhen as WhenFilter) : "all";
 
-  const [t, tc, sessions] = await Promise.all([
+  const [t, tc, sessions, undated] = await Promise.all([
     getTranslations("filters"),
     getTranslations("catalog"),
     getNextSessionPerExperience({ cityId: DEFAULT_CITY, categoryId: category, when }),
+    when === "all" ? getExperiencesWithoutUpcoming({ cityId: DEFAULT_CITY, categoryId: category }) : Promise.resolve([]),
   ]);
   const whenLabels: Record<WhenFilter, string> = {
     all: t("whenAll"),
@@ -69,7 +70,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps<"/
           {t("results", { count: sessions.length })}
         </span>
       </div>
-      {sessions.length > 0 ? (
+      {sessions.length === 0 && undated.length > 0 ? null : sessions.length > 0 ? (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {sessions.map((s, i) => (
             <ExperienceCard key={s.id} session={s} experience={s.experience} priority={i < 2} />
@@ -82,6 +83,19 @@ export default async function CatalogPage({ params, searchParams }: PageProps<"/
             {t("reset")}
           </Link>
         </div>
+      )}
+      {undated.length > 0 && (
+        <section aria-labelledby="undated-title" className="space-y-4 pt-6">
+          <div>
+            <h2 id="undated-title" className="font-display text-2xl font-medium text-plum-900">{tc("undatedTitle")}</h2>
+            <p className="mt-1 text-sm text-muted">{tc("undatedText")}</p>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {undated.map((e) => (
+              <ExperienceCard key={e.id} experience={e} />
+            ))}
+          </div>
+        </section>
       )}
     </PageShell>
   );

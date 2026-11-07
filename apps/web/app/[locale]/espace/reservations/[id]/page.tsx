@@ -1,15 +1,15 @@
-import { DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor } from "@thecommunity/shared";
+import { canReview, DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
+import { ReviewForm } from "@/components/account/review-form";
 import { StatusBadge } from "@/components/account/status-badge";
 import { CancelReservationButton } from "@/components/booking/cancel-reservation-button";
 import { PayNowButton } from "@/components/booking/pay-now-button";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { Stars } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { getReviews } from "@/lib/data";
 import { getMemberReservation } from "@/lib/data/member";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
@@ -33,7 +33,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const isUpcoming = new Date(s.startAt).getTime() > now.getTime();
   const isActive = r.status === "confirmed";
   const refund = refundAmountFor(DEFAULT_CANCELLATION_POLICY, r.pricing.total, new Date(s.startAt), now);
-  const review = r.reviewId ? (await getReviews()).find((x) => x.id === r.reviewId) : undefined;
+  const review = data.review;
   const venueText = r.venue ? `${r.venue.name}, ${r.venue.address}` : `${s.district}, Casablanca`;
   const ics = buildIcs({ uid: r.id, title, startAt: s.startAt, endAt: s.endAt, location: venueText, url: `${SITE_URL}/espace/reservations/${r.id}` });
   const dateFmt = (iso: string) => formatLongDate(iso, locale);
@@ -258,15 +258,17 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </section>
       )}
 
-      {r.status === "attended" && (
+      {(review || canReview(r, now)) && (
         <section id="avis" className="scroll-mt-28 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
           <h2 className="font-display text-2xl font-medium text-plum-900">{t("reviewTitle")}</h2>
           {review ? (
             <div className="mt-3 space-y-2">
               <Stars value={review.rating} />
-              <p className="text-ink/85">{review.comment}</p>
-              <p className="text-sm text-emerald-800">{t("reviewThanks")}</p>
+              {review.comment && <p className="text-ink/85">{review.comment}</p>}
+              <p className="text-sm text-emerald-800">{review.status === "hidden" ? t("reviewHidden") : t("reviewThanks")}</p>
             </div>
+          ) : FIREBASE_ENABLED ? (
+            <ReviewForm reservationId={r.id} />
           ) : (
             <div className="mt-3">
               <div className="flex gap-1 text-plum-200" aria-hidden>

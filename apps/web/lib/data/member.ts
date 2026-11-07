@@ -4,7 +4,7 @@
  * - Mode Firebase : utilisateur authentifié par le cookie de session (vérifié côté serveur) ;
  *   sinon redirection vers la connexion. Les données sont lues par le serveur pour CET utilisateur.
  */
-import type { Reservation } from "@thecommunity/shared";
+import { canReview, type Reservation } from "@thecommunity/shared";
 import { getLocale } from "next-intl/server";
 import { connection } from "next/server";
 import { cache } from "react";
@@ -60,7 +60,7 @@ export const getMemberSpace = cache(async function getMemberSpace() {
     upcoming: sorted.filter((r) => bucketOf(r, now) === "upcoming"),
     past: sorted.filter((r) => bucketOf(r, now) === "past").reverse(),
     cancelled: sorted.filter((r) => bucketOf(r, now) === "cancelled"),
-    toReview: sorted.filter((r) => r.status === "attended" && !r.reviewId),
+    toReview: sorted.filter((r) => !r.reviewId && canReview(r, now)),
     // Listes d'attente en cours (une place proposée devient une réservation « à payer »).
     openWaitlists: data.waitlists.filter((w) => w.status === "waiting" && new Date(w.sessionSnapshot.startAt).getTime() > now.getTime()),
     // Demandes en attente, ou refusées pour une date à venir (les acceptées deviennent des réservations).
@@ -76,5 +76,6 @@ export async function getMemberReservation(id: string) {
   const reservation = space.reservations.find((r) => r.id === id);
   if (!reservation) return null;
   const group = reservation.groupId ? space.groups.find((g) => g.id === reservation.groupId && g.status === "revealed") : undefined;
-  return { reservation, group, profile: space.profile, now: space.now };
+  const review = space.myReviews.find((x) => x.id === reservation.id);
+  return { reservation, group, profile: space.profile, now: space.now, review };
 }

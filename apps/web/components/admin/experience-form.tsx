@@ -52,9 +52,9 @@ function Label({ k, children, hint }: { k: string; children: React.ReactNode; hi
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children, id }: { title: string; children: React.ReactNode; id?: string }) {
   return (
-    <fieldset className="rounded-2xl bg-white p-4 shadow-card sm:p-5">
+    <fieldset id={id} className="scroll-mt-24 rounded-2xl bg-white p-4 shadow-card sm:p-5">
       <legend className="float-left mb-4 w-full text-base font-semibold text-ink">{title}</legend>
       <div className="clear-both grid gap-4 sm:grid-cols-2">{children}</div>
     </fieldset>
@@ -178,11 +178,11 @@ export function ExperienceForm({
 
   const preview = useMemo(() => {
     if (!result) return null;
-    const dates = planSessionDates(result.sessions, result.durationMinutes, MOROCCO_TIMEZONE);
+    const dates = addSessions ? planSessionDates(result.sessions, result.durationMinutes, MOROCCO_TIMEZONE) : [];
     const price = Math.round(result.priceDh * 100);
     const margin = marginPerSeat(price, result.economicsModel, Math.round((result.costPerSeatDh ?? 0) * 100), result.commissionPercent ?? 0);
     return { dates, price, margin };
-  }, [result]);
+  }, [result, addSessions]);
 
   const field = (key: string) => ({
     id: `f-${key}`,
@@ -303,12 +303,17 @@ export function ExperienceForm({
         )}
       </Section>
 
-      <Section title={mode === "create" ? "5. Dates" : "5. Ajouter des dates"}>
-        {mode === "edit" && (
-          <label className="flex items-center gap-2 text-sm sm:col-span-2">
-            <input type="checkbox" checked={addSessions} onChange={(e) => setAddSessions(e.target.checked)} className="size-4 accent-plum-900" />
-            Créer ces nouvelles dates à l&apos;enregistrement
-          </label>
+      <Section id="dates" title={mode === "create" ? "5. Dates" : "5. Ajouter des dates (ou reproposer l'expérience)"}>
+        <label className="flex items-center gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" checked={addSessions} onChange={(e) => setAddSessions(e.target.checked)} className="size-4 accent-plum-900" />
+          {mode === "create" ? "Programmer des dates maintenant" : "Créer ces nouvelles dates à l'enregistrement"}
+        </label>
+        {!addSessions && (
+          <p className="text-sm text-muted sm:col-span-2">
+            {mode === "create"
+              ? "Sans date, la fiche est publiée avec « Prochaines dates bientôt » ; les visiteurs peuvent demander à être prévenus. Vous ajouterez des dates plus tard depuis cette fiche."
+              : "Cochez pour ajouter une ou plusieurs dates : les personnes qui ont demandé à être prévenues recevront une notification."}
+          </p>
         )}
         <div><Label k="sessions.firstDate">Première date</Label><input type="date" {...field("sessions.firstDate")} value={v.sessions.firstDate} onChange={(e) => setSession("firstDate", e.target.value)} />{err("sessions.firstDate")}</div>
         <div><Label k="sessions.time" hint="Heure de Casablanca.">Heure</Label><input type="time" {...field("sessions.time")} value={v.sessions.time} onChange={(e) => setSession("time", e.target.value)} />{err("sessions.time")}</div>
@@ -389,7 +394,7 @@ export function ExperienceForm({
           <ul className="mt-3 space-y-1">
             <li><strong>{result.titleFr}</strong> · {result.district} · statut « {result.status === "published" ? "publiée" : "brouillon"} »</li>
             <li>Prix {formatMoney({ amount: preview.price, currency: "MAD" })} · marge estimée {formatMoney({ amount: preview.margin, currency: "MAD" })} par place</li>
-            <li>{preview.dates.length} date{preview.dates.length > 1 ? "s" : ""} de {result.sessions.capacity} places :</li>
+            <li>{preview.dates.length === 0 ? "Aucune nouvelle date (« Prochaines dates bientôt »)" : `${preview.dates.length} date${preview.dates.length > 1 ? "s" : ""} de ${result.sessions.capacity} places :`}</li>
           </ul>
           <ul className="mt-1 grid gap-1 ps-4 sm:grid-cols-2">
             {preview.dates.map((d) => (

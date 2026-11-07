@@ -90,6 +90,21 @@ async function fsSessionRaw(id: string): Promise<Session | null> {
   return withId<Session>(snap);
 }
 
+/** Dernières dates passées d'une expérience (« éditions passées »), hors dates annulées. */
+async function fsPastSessionsRaw(experienceId: string, now: number): Promise<Session[]> {
+  const snap = await adminDb()
+    .collection("sessions")
+    .where("experienceId", "==", experienceId)
+    .where("startAt", "<", Timestamp.fromMillis(now))
+    .orderBy("startAt")
+    .limitToLast(24)
+    .get();
+  return snap.docs
+    .map((d) => withId<Session>(d))
+    .filter((x) => ["published", "full", "completed"].includes(x.status))
+    .reverse();
+}
+
 async function fsReviewsRaw(experienceId?: string): Promise<Review[]> {
   let q = adminDb().collection("reviews").where("status", "==", "published") as FirebaseFirestore.Query;
   if (experienceId) q = q.where("experienceId", "==", experienceId);
@@ -106,7 +121,11 @@ export async function fsMemberData(uid: string) {
     db.collection(`users/${uid}/notifications`).orderBy("createdAt", "desc").limit(50).get(),
     db.collection("bookingRequests").where("userId", "==", uid).orderBy("createdAt", "desc").limit(50).get(),
   ]);
-  const waitSnap = await db.collectionGroup("waitlist").where("userId", "==", uid).limit(50).get();
+  const [waitSnap, myReviewsSnap] = await Promise.all([
+    db.collectionGroup("waitlist").where("userId", "==", uid).limit(50).get(),
+    db.collection("reviews").where("userId", "==", uid).limit(100).get(),
+  ]);
+  const myReviews = myReviewsSnap.docs.map((d) => withId<Review>(d));
   const waitlists = waitSnap.docs.map((d) => withId<WaitlistEntry>(d));
   const requests = reqSnap.docs.map((d) => withId<BookingRequest>(d));
   const reservations = resSnap.docs.map((d) => withId<Reservation>(d));
@@ -133,7 +152,7 @@ export async function fsMemberData(uid: string) {
     ...p,
   } as UserProfile;
   const notifications = notifSnap.docs.map((d) => withId<AppNotification>(d));
-  return { profile, reservations, groups, notifications, requests, waitlists };
+  return { profile, reservations, groups, notifications, requests, waitlists, myReviews };
 }
 
 export const fsCities = cached(fsCitiesRaw, "fsCities");
@@ -145,3 +164,4 @@ export const fsSession = cached(fsSessionRaw, "fsSession");
 /** Lecture SANS cache : places restantes exactes pour le tunnel de réservation. */
 export const fsSessionFresh = fsSessionRaw;
 export const fsReviews = cached(fsReviewsRaw, "fsReviews");
+export const fsPastSessions = cached(fsPastSessionsRaw, "fsPastSessions");

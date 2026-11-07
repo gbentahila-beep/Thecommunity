@@ -15,7 +15,8 @@ import { PageShell, Stars } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
-import { getCategory, getExperienceBySlug, getPublishedExperiences, getReviews, getUpcomingSessions } from "@/lib/data";
+import { ExperienceAlertButton } from "@/components/experience-alert-button";
+import { getCategory, getExperienceBySlug, getPastSessions, getPublishedExperiences, getReviews, getUpcomingSessions } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { SITE_URL } from "@/lib/site";
@@ -48,12 +49,13 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
   setRequestLocale(locale);
   const exp = await getExperienceBySlug(slug);
   if (!exp) notFound();
-  const [t, tCard, category, sessions, reviews] = await Promise.all([
+  const [t, tCard, category, sessions, reviews, past] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),
     getCategory(exp.categoryId),
     getUpcomingSessions({ experienceId: exp.id }),
     getReviews(exp.id),
+    getPastSessions(exp.id),
   ]);
   const lang = locale as "fr" | "ar";
   const next = sessions.find((s) => seatsAvailable(s) > 0) ?? sessions[0];
@@ -162,6 +164,13 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <p className="text-ink/85">{tr(DEFAULT_CANCELLATION_POLICY.label, locale)}.</p>
             </Section>
 
+            {past.length > 0 && (
+              <Section title={t("pastEditions")}>
+                <p className="text-ink/85">
+                  {t("pastEditionsText", { count: past.length, last: formatLongDate(past[0]!.startAt, locale) })}
+                </p>
+              </Section>
+            )}
             {reviews.length > 0 && (
               <Section title={t("reviews")}>
                 <ul className="space-y-4">
@@ -189,7 +198,10 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               {exp.admission === "on_request" && <p className="mt-3 rounded-xl bg-plum-50 px-3 py-2 text-sm text-plum-900">{t("onRequestNote")}</p>}
               <h2 className="mt-5 text-sm font-semibold uppercase tracking-wide text-muted">{t("nextDates")}</h2>
               {sessions.length === 0 ? (
-                <p className="mt-3 text-sm text-muted">{t("noDates")}</p>
+                <>
+                  <p className="mt-3 text-sm text-muted">{t("noDates")}</p>
+                  {FIREBASE_ENABLED && <ExperienceAlertButton experienceId={exp.id} slug={exp.slug} />}
+                </>
               ) : (
                 <ul className="mt-3 space-y-2.5">
                   {sessions.map((s) => {

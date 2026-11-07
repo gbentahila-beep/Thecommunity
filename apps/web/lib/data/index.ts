@@ -152,6 +152,24 @@ export async function getSessionForBooking(id: string) {
   return e ? { ...s, experience: e } : null;
 }
 
+/**
+ * Expériences publiées SANS date à venir (jamais programmées, ou déjà vécues) : elles restent listées
+ * avec leurs avis, en attendant de nouvelles dates.
+ */
+export async function getExperiencesWithoutUpcoming(filters: { cityId?: string; categoryId?: CategoryKey } = {}) {
+  const [experiences, upcoming] = await Promise.all([getPublishedExperiences(), getUpcomingSessions({ ...filters, limit: undefined })]);
+  const withDates = new Set(upcoming.map((s) => s.experienceId));
+  return experiences
+    .filter((e) => !withDates.has(e.id) && (!filters.cityId || e.cityId === filters.cityId) && (!filters.categoryId || e.categoryId === filters.categoryId))
+    .sort((a, b) => b.ratingCount - a.ratingCount || a.title.fr.localeCompare(b.title.fr));
+}
+
+/** Dates passées d'une expérience (« éditions passées »), la plus récente d'abord. */
+export async function getPastSessions(experienceId: string) {
+  if (FIREBASE_ENABLED) return fs.fsPastSessions(experienceId, Math.floor(Date.now() / 3_600_000) * 3_600_000);
+  return [] as Session[];
+}
+
 export async function getReviews(experienceId?: string) {
   if (FIREBASE_ENABLED) return fs.fsReviews(experienceId);
   return DEMO_REVIEWS.filter((r) => !experienceId || r.experienceId === experienceId);

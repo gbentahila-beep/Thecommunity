@@ -57,7 +57,8 @@
     "waitlist": "Liste d'attente",
     "addFavorite": "Ajouter aux favoris",
     "removeFavorite": "Retirer des favoris",
-    "from": "dès"
+    "from": "dès",
+    "datesSoon": "Prochaines dates bientôt"
   },
   "filters": {
     "all": "Tout",
@@ -72,7 +73,9 @@
   },
   "catalog": {
     "title": "Toutes les expériences",
-    "subtitle": "Réservez votre place, nous nous occupons du reste."
+    "subtitle": "Réservez votre place, nous nous occupons du reste.",
+    "undatedTitle": "Déjà vécues — de nouvelles dates arrivent",
+    "undatedText": "Retrouvez leurs avis et demandez à être prévenu·e dès que de nouvelles dates sont programmées."
   },
   "city": {
     "title": "Expériences à {city}",
@@ -89,7 +92,7 @@
     "selectDate": "Choisir cette date",
     "seatsLeft": "{count, plural, one {# place restante} other {# places restantes}}",
     "joinWaitlist": "Rejoindre la liste d'attente",
-    "noDates": "Aucune date programmée pour le moment.",
+    "noDates": "Pas de date programmée pour le moment.",
     "about": "L'expérience",
     "included": "Inclus",
     "practical": "Infos pratiques",
@@ -113,7 +116,13 @@
     "durationHoursMinutes": "{hours} h {minutes}",
     "durationMinutes": "{minutes} min",
     "requestCta": "Demander à participer",
-    "onRequestNote": "Participation sur demande : l'équipe valide chaque inscription."
+    "onRequestNote": "Participation sur demande : l'équipe valide chaque inscription.",
+    "alertCta": "Me prévenir des prochaines dates",
+    "alertOn": "Vous serez prévenu·e",
+    "alertOnHint": "Une notification dès que de nouvelles dates sont ouvertes. Touchez à nouveau pour annuler.",
+    "alertError": "Action impossible, réessayez.",
+    "pastEditions": "Éditions passées",
+    "pastEditionsText": "{count, plural, one {Organisée une fois} other {Organisée # fois}} · dernière édition le {last}."
   },
   "booking": {
     "title": "Réserver ma place",
@@ -393,7 +402,8 @@
     "releaseConfirm": "Libérer cette place ? Elle sera proposée à quelqu'un d'autre.",
     "waitlistOfferBanner": "Une place s'est libérée pour vous !",
     "adminCancel": "Cette réservation a été annulée par l'équipe. Contactez-nous pour toute question.",
-    "adminCancelRefund": "Cette réservation a été annulée par l'équipe : {amount} vous ont été remboursés."
+    "adminCancelRefund": "Cette réservation a été annulée par l'équipe : {amount} vous ont été remboursés.",
+    "reviewHidden": "Merci pour votre avis. Il a été masqué par l'équipe."
   },
   "profilePage": {
     "title": "Mon profil",
@@ -554,6 +564,22 @@
     "errors": {
       "seats_available": "Des places viennent de se libérer : réservez directement.",
       "already_waiting": "Vous êtes déjà sur la liste d'attente."
+    }
+  },
+  "reviewForm": {
+    "ratingLabel": "Votre note",
+    "stars": "{count, plural, one {# étoile} other {# étoiles}}",
+    "commentLabel": "Votre avis",
+    "optional": "facultatif",
+    "commentPlaceholder": "Ce que vous avez aimé, l'ambiance, l'accueil…",
+    "publicNote": "Publié sur la fiche de l'expérience avec votre prénom et l'initiale de votre nom.",
+    "submit": "Publier mon avis",
+    "sending": "Envoi…",
+    "pickRating": "Choisissez une note de 1 à 5 étoiles.",
+    "errors": {
+      "already_reviewed": "Vous avez déjà donné votre avis sur cette réservation.",
+      "not_reviewable": "Il n'est plus possible de donner un avis sur cette réservation.",
+      "generic": "Une erreur est survenue. Réessayez."
     }
   }
 }
