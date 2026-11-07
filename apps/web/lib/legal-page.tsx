@@ -22,7 +22,7 @@ function fill(text: string, missing: string): ReactNode {
   });
 }
 
-/** Pages juridiques et Sécurité : projets rédigés à partir du fonctionnement réel du site (à valider par un avocat). */
+/** Pages juridiques et Sécurité, rédigées à partir du fonctionnement réel du site. */
 export function legalPage(key: LegalKey) {
   async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const { locale } = await params;

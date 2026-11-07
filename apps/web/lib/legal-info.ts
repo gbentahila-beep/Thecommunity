@@ -16,6 +16,8 @@ export const LEGAL_INFO = {
   supportEmail: null as string | null,
   privacyEmail: null as string | null,
   safetyEmail: null as string | null,
+  /** Signalement de failles de sécurité (divulgation responsable). */
+  securityEmail: null as string | null,
   /** Numéros de récépissé / d'autorisation de la CNDP (déclaration des traitements, transfert hors du Maroc). */
   cndpDeclaration: null as string | null,
   cndpTransfer: null as string | null,

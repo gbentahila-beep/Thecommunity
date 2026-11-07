@@ -26,7 +26,13 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
 - [ ] **Aya** : relire et valider son texte sur la page À propos (`/a-propos`), et fournir **une photo d'elle** dont nous avons les droits (les photos de l'article CULTIQ appartiennent à CULTIQ : ne pas les reprendre sans accord).
 - [ ] **Textes de Sahbi** (que vous m'enverrez) : je m'en inspirerai pour Sécurité / CGU / Confidentialité, sans les copier.
 - [ ] **Abonnement** : rétractation et remboursement (à définir avec l'avocat) ; prix définitif, puis activer dans le back-office.
-- [ ] **Textes juridiques** (CGU, CGV, Confidentialité, Sécurité) : relecture par un avocat. Les versions en ligne sont des **projets** rédigés à partir du fonctionnement réel du site.
+- [ ] **Textes juridiques** (CGU, CGV, Confidentialité, Sécurité) : relecture par un avocat. Le site ne l'indique plus (à votre demande) : les pages affichent simplement « Dernière mise à jour : 8 novembre 2026 ». Textes enrichis le 8 novembre en s'inspirant de Sahbi, sans recopier.
+- [ ] Points précis à faire valider par l'avocat :
+  - **rétractation de l'abonnement** : 7 jours après le paiement, remboursement moins les avantages déjà utilisés (CGV art. 6) ;
+  - **annulations tardives / absences répétées** : restriction ou suspension temporaire après avertissement (CGU art. 7) — pas de barème automatique pour l'instant ;
+  - **signalements et décisions de modération** conservés 3 ans au plus ;
+  - mention d'une possible **vérification d'identité ou d'âge** en cas de doute.
+- [ ] **E-mail sécurité informatique** (ex. security@…) pour le signalement des failles (page Sécurité).
 - [ ] **Durées de conservation** proposées (comptes inactifs 3 ans, journaux 12 mois, comptabilité selon la loi).
 - [ ] **Délai de traitement des signalements** annoncé : 48 h (page Sécurité).
 - [ ] **Centre d'aide** : relire les 23 articles (`/aide`), surtout côté partenaires : les deux modèles de rémunération (achat de prestation ou commission) et ce que vous transmettez aux lieux avant chaque date.
