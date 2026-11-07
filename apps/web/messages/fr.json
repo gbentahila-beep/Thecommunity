@@ -257,7 +257,7 @@
     "rights": "© {year} The Host Club. Tous droits réservés.",
     "membership": "Abonnement",
     "safety": "Sécurité",
-    "instagramAya": "Aya Snoussi sur Instagram (@{handle})",
+    "instagramAya": "Notre fondatrice Aya Snoussi sur Instagram (@{handle})",
     "legalInfoTitle": "Informations légales et contacts",
     "publisher": "Éditeur",
     "address": "Siège",
@@ -721,5 +721,23 @@
     "error": "L'envoi a échoué. Vérifiez les champs et réessayez.",
     "demo": "Démonstration : le formulaire de candidature fonctionne sur le site en ligne.",
     "helpLink": "Questions fréquentes des partenaires"
+  },
+  "aboutPage": {
+    "founderEyebrow": "La créatrice",
+    "founderName": "Aya Snoussi",
+    "founderRole": "Fondatrice et hôtesse de The Host Club",
+    "founderP1": "Après dix ans en France, Aya est rentrée à Casablanca avec une envie simple : retrouver sa place chez elle, parmi des gens qui partagent sa culture, son humour et ses références.",
+    "founderP2": "La ville ne manque pas d'adresses — cafés, salles de sport, restaurants. Ce qui manquait, c'était une façon facile de vraiment rencontrer quelqu'un. Elle a commencé par de petites rencontres ; très vite, les demandes ont dépassé les places disponibles.",
+    "founderP3": "En cherchant sa propre place, elle a créé un endroit où chacun peut trouver la sienne. The Host Club prolonge cette idée.",
+    "valuesTitle": "Ce qui compte pour elle",
+    "value1Title": "Se sentir attendu",
+    "value1": "Votre prénom à votre place, un accueil personnel, des présentations : personne ne reste seul dans son coin.",
+    "value2Title": "Rester à taille humaine",
+    "value2": "Des groupes choisis avec soin et jamais trop grands : la communauté grandit naturellement, sans chercher à devenir énorme.",
+    "value3Title": "Un format pour chaque envie",
+    "value3": "Dîner, brunch, atelier ou simple conversation : chaque rencontre part d'un lieu ou d'un intérêt commun.",
+    "value4Title": "Un vrai lien",
+    "value4": "Une rencontre réussie, c'est repartir avec quelqu'un qu'on aura envie de revoir, en dehors de nos événements.",
+    "followAya": "Suivre Aya sur Instagram"
   }
 }

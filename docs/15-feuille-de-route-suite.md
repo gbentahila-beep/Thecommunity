@@ -33,7 +33,20 @@ Inspirations à reprendre **à notre façon** (sans copier) :
 | **Régime alimentaire / allergies** demandés à la réservation et transmis au lieu | tunnel de réservation | à faire (en attendant : via Contact, FAQ) |
 | **Langue(s) de la table** choisie(s) à la réservation pour mieux composer les groupes | tunnel + matching (phase 6) | à faire |
 | « Se rencontrer d'abord » : après la table, **contacts échangés seulement si les deux le souhaitent** | espace membre (après phase 6) | idée à valider (décision D8 : pas de messagerie au lancement) |
-| Lien **Instagram d'Aya Snoussi** | pied de page | ✅ (rôle à confirmer) |
+| Lien **Instagram d'Aya Snoussi** | pied de page, À propos | ✅ fondatrice |
+| Page **À propos** : Aya Snoussi, créatrice (son parcours, ce qui compte pour elle), d'après l'article CULTIQ, réécrit à notre façon | /a-propos | ✅ texte à valider par Aya ; photo à fournir |
+
+Idées tirées de l'article CULTIQ sur Aya (8 novembre) — l'esprit de ses rencontres, à traduire dans le produit :
+
+| Idée | Où | Statut |
+|---|---|---|
+| **Prénom de chacun à sa place** (marque-place) : imprimer / afficher la liste des prénoms par table pour l'hôte et le lieu | back-office, page de session (export « marque-places ») | à faire (phase 6, avec les groupes) |
+| **Accueil par l'hôtesse et présentations** : fiche « hôte » par date (qui accueille, déroulé, questions pour briser la glace) | back-office, session | à faire |
+| **Formats variés** : dîner, **brunch**, atelier, **conversation** — ajouter « brunch » et « conversation » aux types d'expériences si besoin | catalogue | à valider |
+| **Rester à taille humaine** : plafond de participants par événement (moins de 50) et groupes de table de 5 à 8 | règles de création d'expérience | à valider (capacité max actuelle : 500) |
+| **Un vrai lien** : après l'expérience, proposer de revoir quelqu'un du groupe seulement si les deux le souhaitent (voir « Se rencontrer d'abord ») | espace membre | idée à valider (D8) |
+| **Plus de demandes que de places** : expériences « sur demande » et liste d'attente | /reserver | ✅ déjà en place (demandes, liste d'attente) |
+| Mettre en avant les **collaborations avec des lieux** (ex. brunch dans un restaurant partenaire) sur la fiche : « en collaboration avec … » | fiche expérience | à faire |
 | **Image d'accueil** nette | accueil | ✅ illustration originale (à remplacer par de vraies photos) |
 
 ### Livré (centre d'aide, version anglaise)

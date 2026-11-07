@@ -257,7 +257,7 @@
     "rights": "© {year} The Host Club. All rights reserved.",
     "membership": "Membership",
     "safety": "Safety",
-    "instagramAya": "Aya Snoussi on Instagram (@{handle})",
+    "instagramAya": "Our founder Aya Snoussi on Instagram (@{handle})",
     "legalInfoTitle": "Legal information and contacts",
     "publisher": "Publisher",
     "address": "Registered office",
@@ -721,5 +721,23 @@
     "error": "Sending failed. Check the fields and try again.",
     "demo": "Demo: the application form works on the live site.",
     "helpLink": "Partner FAQs"
+  },
+  "aboutPage": {
+    "founderEyebrow": "The founder",
+    "founderName": "Aya Snoussi",
+    "founderRole": "Founder and host of The Host Club",
+    "founderP1": "After ten years in France, Aya came back to Casablanca with a simple wish: to find her place at home again, among people who share her culture, her humour and her references.",
+    "founderP2": "The city has no shortage of places to go — cafés, gyms, restaurants. What was missing was an easy way to actually meet someone. She started with small meetups; very quickly, requests outnumbered the seats available.",
+    "founderP3": "While looking for her own place, she created one where everyone can find theirs. The Host Club carries that idea forward.",
+    "valuesTitle": "What matters to her",
+    "value1Title": "Feeling expected",
+    "value1": "Your name at your seat, a personal welcome, introductions: nobody is left on their own.",
+    "value2Title": "Staying human-sized",
+    "value2": "Carefully curated groups that never get too big: the community grows naturally rather than just bigger.",
+    "value3Title": "A format for every mood",
+    "value3": "Dinner, brunch, workshop or simply conversation: each gathering starts from a venue or a shared interest.",
+    "value4Title": "A genuine connection",
+    "value4": "A good gathering is one where you leave with someone you'll want to see again, outside our events.",
+    "followAya": "Follow Aya on Instagram"
   }
 }

@@ -21,7 +21,9 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
 
 ## À confirmer
 
-- [ ] **Aya Snoussi** : son rôle (fondatrice ? hôtesse ? ambassadrice ?) pour la présenter correctement. Pour l'instant : lien « Aya Snoussi sur Instagram (@ayagsnoussi) » dans le pied de page.
+- [x] **Aya Snoussi** : créatrice / fondatrice (confirmé le 8 novembre). Page À propos rédigée.
+- [ ] **Aya** : relire et valider son texte sur la page À propos (`/a-propos`), et fournir **une photo d'elle** dont nous avons les droits (les photos de l'article CULTIQ appartiennent à CULTIQ : ne pas les reprendre sans accord).
+- [ ] **Textes de Sahbi** (que vous m'enverrez) : je m'en inspirerai pour Sécurité / CGU / Confidentialité, sans les copier.
 - [ ] **Abonnement** : rétractation et remboursement (à définir avec l'avocat) ; prix définitif, puis activer dans le back-office.
 - [ ] **Textes juridiques** (CGU, CGV, Confidentialité, Sécurité) : relecture par un avocat. Les versions en ligne sont des **projets** rédigés à partir du fonctionnement réel du site.
 - [ ] **Durées de conservation** proposées (comptes inactifs 3 ans, journaux 12 mois, comptabilité selon la loi).
