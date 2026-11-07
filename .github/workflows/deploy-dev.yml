@@ -70,7 +70,7 @@ jobs:
 
       - name: Contenu de départ (villes, univers, expériences de démonstration)
         if: steps.creds.outputs.ok == 'true'
-        run: npx tsx scripts/seed-content.ts --project "$PROJECT" --with-demo-experiences
+        run: npx tsx scripts/seed-content.ts --project "$PROJECT" --with-demo-experiences --test-payments
 
       - name: Super-administrateurs (variable SUPERADMIN_EMAILS)
         if: steps.creds.outputs.ok == 'true' && env.SUPERADMIN_EMAILS != ''

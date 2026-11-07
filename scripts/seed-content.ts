@@ -3,7 +3,9 @@
  * et, en option, les expériences de démonstration (isDemo: true) pour que le site ne soit pas vide.
  * N'écrit JAMAIS de comptes, réservations ou paiements fictifs.
  *
- * Usage : npx tsx scripts/seed-content.ts --project <id> [--with-demo-experiences]
+ * Usage : npx tsx scripts/seed-content.ts --project <id> [--with-demo-experiences] [--test-payments]
+ * --test-payments : active l'adaptateur de paiement de TEST (settings/payment), seulement s'il n'existe
+ *   aucun réglage de paiement. À ne JAMAIS utiliser sur le projet de production.
  * Identifiants : GOOGLE_APPLICATION_CREDENTIALS (GitHub Actions) ou émulateurs.
  */
 import { applicationDefault, initializeApp } from "firebase-admin/app";
@@ -18,7 +20,7 @@ const arg = (name: string) => {
 };
 const project = arg("project");
 if (!project) {
-  console.error("Usage : npx tsx scripts/seed-content.ts --project <id> [--with-demo-experiences]");
+  console.error("Usage : npx tsx scripts/seed-content.ts --project <id> [--with-demo-experiences] [--test-payments]");
   process.exit(1);
 }
 const emulator = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
@@ -36,6 +38,11 @@ async function main() {
   for (const c of DEMO_CATEGORIES) batch.set(db.doc(`categories/${c.id}`), { ...c }, { merge: true });
   await batch.commit();
   console.log(`✅ Référentiels : ${DEMO_CITIES.length} villes, ${DEMO_CATEGORIES.length} univers, paramètres.`);
+
+  if (process.argv.includes("--test-payments")) {
+    const created = await db.doc("settings/payment").create({ provider: "sandbox", mode: "test" }).then(() => true, () => false);
+    console.log(created ? "✅ Paiement : adaptateur de TEST activé (aucun argent réel)." : "ℹ️  Réglage de paiement déjà présent : inchangé.");
+  }
 
   if (!process.argv.includes("--with-demo-experiences")) return;
   const existing = await db.collection("experiences").limit(1).get();

@@ -48,6 +48,7 @@ async function main() {
 
   entries.push(["settings/public", { locales: ["fr", "ar"], activeCities: ["casablanca"] }]);
   entries.push(["settings/cancellationPolicies", { policies: [DEFAULT_CANCELLATION_POLICY] }]);
+  entries.push(["settings/payment", { provider: "sandbox", mode: "test" }]);
   entries.push(["settings/booking", { holdMinutes: 15, closeHoursBefore: { social_dinner: 12, default: 2 }, minAge: 18, serviceFee: 0 }]);
   for (const c of DEMO_CITIES) entries.push([`cities/${c.id}`, { ...c }]);
   for (const c of DEMO_CATEGORIES) entries.push([`categories/${c.id}`, { ...c }]);
