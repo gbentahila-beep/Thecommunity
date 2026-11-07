@@ -377,3 +377,145 @@ describe("demandes de participation (expériences sur demande)", () => {
     expect(await u.call("requestBooking", { sessionId: sid, seats: 1, message: "" })).toMatchObject({ status: "pending" });
   });
 });
+
+/** Réservation payée (adaptateur de test). */
+async function paidReservation(u: Client, sessionId: string, seats = 1) {
+  const { reservationId } = await u.call("createReservation", { sessionId, seats });
+  const { paymentId } = await u.call("startCheckout", { reservationId });
+  await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
+  return { reservationId: reservationId as string, paymentId: paymentId as string };
+}
+
+describe("annulation par le membre", () => {
+  it("plus de 48 h avant : remboursement intégral, place libérée", async () => {
+    const sid = await makeSession({ capacity: 3, startInHours: 72 });
+    const u = await member();
+    const { reservationId, paymentId } = await paidReservation(u, sid, 2);
+    expect(await u.call("cancelReservation", { reservationId })).toEqual({ ok: true, refundAmount: 60000, refundStatus: "succeeded" });
+    const r = await reservation(reservationId);
+    expect(r).toMatchObject({ status: "refunded", cancellation: { by: "user", refundAmount: 60000, refundStatus: "succeeded" } });
+    expect((await payment(paymentId)).status).toBe("refunded");
+    const refunds = await db().collection("payments").where("parentPaymentId", "==", paymentId).get();
+    expect(refunds.docs.map((d) => d.data())).toMatchObject([{ type: "refund", amount: 60000, reason: "member_cancellation", status: "succeeded" }]);
+    expect(await session(sid)).toMatchObject({ seatsConfirmed: 0, seatsHeld: 0, status: "published" });
+    expect((await db().doc(`sessions/${sid}/seatLocks/${u.uid}`).get()).exists).toBe(false);
+    // Elle peut réserver à nouveau ; on ne peut pas annuler deux fois.
+    expect(await refusal(u.call("cancelReservation", { reservationId }))).toBe("failed-precondition:not_cancellable");
+    expect(await u.call("createReservation", { sessionId: sid, seats: 1 })).toMatchObject({ status: "pending_payment" });
+  });
+
+  it("moins de 48 h avant : annulation possible, sans remboursement", async () => {
+    const sid = await makeSession({ startInHours: 30 });
+    const u = await member();
+    const { reservationId, paymentId } = await paidReservation(u, sid);
+    expect(await u.call("cancelReservation", { reservationId })).toEqual({ ok: true, refundAmount: 0, refundStatus: "none" });
+    expect(await reservation(reservationId)).toMatchObject({ status: "cancelled", cancellation: { refundAmount: 0 } });
+    expect((await payment(paymentId)).status).toBe("succeeded");
+    expect(await session(sid)).toMatchObject({ seatsConfirmed: 0 });
+  });
+
+  it("abandon d'une réservation pas encore payée : places rendues, rien à rembourser", async () => {
+    const sid = await makeSession({ capacity: 1 });
+    const u = await member();
+    const { reservationId } = await u.call("createReservation", { sessionId: sid, seats: 1 });
+    expect((await session(sid)).status).toBe("full");
+    expect(await u.call("cancelReservation", { reservationId })).toMatchObject({ refundAmount: 0 });
+    expect(await session(sid)).toMatchObject({ seatsHeld: 0, status: "published" });
+  });
+
+  it("personne d'autre ne peut annuler ; impossible une fois l'expérience commencée", async () => {
+    const sid = await makeSession();
+    const u = await member();
+    const other = await member();
+    const { reservationId } = await paidReservation(u, sid);
+    expect(await refusal(other.call("cancelReservation", { reservationId }))).toBe("not-found:not_found");
+    await db().doc(`sessions/${sid}`).update({ startAt: Timestamp.fromMillis(Date.now() - 60_000) });
+    expect(await refusal(u.call("cancelReservation", { reservationId }))).toBe("failed-precondition:already_started");
+  });
+});
+
+describe("liste d'attente", () => {
+  const entry = async (sid: string, uid: string) => (await db().doc(`sessions/${sid}/waitlist/${uid}`).get()).data();
+
+  it("on ne s'inscrit que si la date est complète ; une seule fois", async () => {
+    const sid = await makeSession({ capacity: 1 });
+    const a = await member();
+    const b = await member();
+    expect(await refusal(b.call("joinWaitlist", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:seats_available");
+    await paidReservation(a, sid);
+    expect(await refusal(a.call("joinWaitlist", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:already_booked");
+    expect(await b.call("joinWaitlist", { sessionId: sid, seats: 1 })).toEqual({ status: "waiting" });
+    expect(await refusal(b.call("joinWaitlist", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:already_waiting");
+    expect(await session(sid)).toMatchObject({ waitlistCount: 1 });
+    expect(await entry(sid, b.uid)).toMatchObject({ userId: b.uid, status: "waiting", seats: 1 });
+    expect(await b.call("leaveWaitlist", { sessionId: sid })).toEqual({ ok: true });
+    expect(await session(sid)).toMatchObject({ waitlistCount: 0 });
+    expect(await refusal(b.call("leaveWaitlist", { sessionId: sid }))).toBe("failed-precondition:not_waiting");
+  });
+
+  it("une annulation propose aussitôt la place à la première personne en attente (4 h pour payer)", async () => {
+    const sid = await makeSession({ capacity: 1, startInHours: 72 });
+    const holder = await member();
+    const first = await member();
+    const second = await member();
+    const walkIn = await member();
+    const { reservationId } = await paidReservation(holder, sid);
+    await first.call("joinWaitlist", { sessionId: sid, seats: 1 });
+    await second.call("joinWaitlist", { sessionId: sid, seats: 1 });
+
+    await holder.call("cancelReservation", { reservationId });
+    const offer = await entry(sid, first.uid);
+    expect(offer).toMatchObject({ status: "offered" });
+    const offered = await reservation(offer!.reservationId);
+    expect(offered).toMatchObject({ userId: first.uid, status: "pending_payment", fromWaitlist: true });
+    const hours = ((offered.holdExpiresAt as Timestamp).toMillis() - Date.now()) / 3_600_000;
+    expect(hours).toBeGreaterThan(3.9);
+    expect(hours).toBeLessThanOrEqual(4);
+    expect(await session(sid)).toMatchObject({ seatsHeld: 1, seatsConfirmed: 0, waitlistCount: 1, status: "full" });
+    expect((await entry(sid, second.uid))!.status).toBe("waiting");
+    const notes = await db().collection(`users/${first.uid}/notifications`).get();
+    expect(notes.docs.map((d) => d.data())).toMatchObject([{ type: "waitlist_offer", link: `/espace/reservations/${offer!.reservationId}` }]);
+    // La place est réservée à la personne en attente : impossible de la prendre en passant.
+    expect(await refusal(walkIn.call("createReservation", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:full");
+
+    // Offre non payée à temps → la place passe à la suivante.
+    await expireHold(offer!.reservationId);
+    await expireDueHolds();
+    expect((await entry(sid, first.uid))!.status).toBe("expired");
+    const next = await entry(sid, second.uid);
+    expect(next).toMatchObject({ status: "offered" });
+    expect(await session(sid)).toMatchObject({ seatsHeld: 1, waitlistCount: 0, status: "full" });
+
+    // La seconde paie : confirmée.
+    const { paymentId } = await second.call("startCheckout", { reservationId: next!.reservationId });
+    await second.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
+    expect((await reservation(next!.reservationId)).status).toBe("confirmed");
+    expect(await session(sid)).toMatchObject({ seatsConfirmed: 1, seatsHeld: 0 });
+  });
+
+  it("une demande trop grande pour les places libérées est sautée, pas perdue", async () => {
+    const sid = await makeSession({ capacity: 2, maxSeats: 2 });
+    const holder = await member();
+    const holder2 = await member();
+    const big = await member();
+    const small = await member();
+    const r1 = await paidReservation(holder, sid);
+    await paidReservation(holder2, sid);
+    await big.call("joinWaitlist", { sessionId: sid, seats: 2 });
+    await small.call("joinWaitlist", { sessionId: sid, seats: 1 });
+    await holder.call("cancelReservation", { reservationId: r1.reservationId });
+    expect((await entry(sid, big.uid))!.status).toBe("waiting");
+    expect((await entry(sid, small.uid))!.status).toBe("offered");
+  });
+
+  it("une place libérée par un blocage expiré va aussi à la liste d'attente", async () => {
+    const sid = await makeSession({ capacity: 1 });
+    const slow = await member();
+    const waiting = await member();
+    const { reservationId } = await slow.call("createReservation", { sessionId: sid, seats: 1 });
+    await waiting.call("joinWaitlist", { sessionId: sid, seats: 1 });
+    await expireHold(reservationId as string);
+    await expireDueHolds();
+    expect((await entry(sid, waiting.uid))!.status).toBe("offered");
+  });
+});

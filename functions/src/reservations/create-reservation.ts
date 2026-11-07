@@ -1,8 +1,9 @@
-import { bookingClosesAt, bookingRefusal, computePricing, HOLD_MINUTES, reservationRequestSchema } from "@thecommunity/shared";
+import { bookingClosesAt, bookingRefusal, HOLD_MINUTES, reservationRequestSchema } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth } from "../lib/guards";
+import { reservationDoc } from "./reservation-doc";
 
 export const refuse = (reason: string, message: string): never => {
   throw new HttpsError("failed-precondition", message, { reason });
@@ -72,7 +73,12 @@ async function runReservationOnce(o: ReservationRun) {
   const requestRef = o.requestId ? db.doc(`bookingRequests/${o.requestId}`) : null;
 
   return db.runTransaction(async (tx) => {
-    const [sess, lock, request] = await Promise.all([tx.get(sessRef), tx.get(lockRef), requestRef ? tx.get(requestRef) : Promise.resolve(null)]);
+    const [sess, lock, request, wait] = await Promise.all([
+      tx.get(sessRef),
+      tx.get(lockRef),
+      requestRef ? tx.get(requestRef) : Promise.resolve(null),
+      tx.get(sessRef.collection("waitlist").doc(uid)),
+    ]);
     if (!sess.exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
     const s = sess.data()!;
     const exp = await tx.get(db.doc(`experiences/${s.experienceId}`));
@@ -115,45 +121,27 @@ async function runReservationOnce(o: ReservationRun) {
     const refusal = bookingRefusal(view, { bookingMode: e.bookingMode, maxSeatsPerBooking: e.maxSeatsPerBooking }, seats, new Date(now));
     if (refusal) refuse(refusal, "Réservation impossible pour cette date.");
 
-    const pricing = computePricing(s.price.amount, seats, s.price.currency);
-    const free = pricing.total === 0;
     const resRef = db.collection("reservations").doc();
-    const snap = s.experienceSnapshot ?? {};
-    const venue = e.venue?.revealPolicy === "immediate" ? { name: e.venue.name ?? "", address: e.venue.address ?? "" } : null;
-    tx.set(resRef, {
-      userId: uid,
+    const { doc, pricing, free } = reservationDoc({
+      s,
+      e,
+      uid,
       sessionId,
-      experienceId: s.experienceId,
-      cityId: s.cityId,
-      categoryId: s.categoryId,
       seats,
-      status: free ? "confirmed" : "pending_payment",
-      holdExpiresAt: Timestamp.fromMillis(
-        Math.min(now + (o.holdMs ?? HOLD_MINUTES * 60_000), bookingClosesAt(view.startAt, e.bookingMode).getTime()),
-      ),
-      ...(requestRef ? { requestId: requestRef.id } : {}),
-      pricing,
-      cancellationPolicyId: e.cancellationPolicyId ?? "standard-48h",
-      sessionSnapshot: {
-        title: snap.title ?? e.title,
-        slug: snap.slug ?? e.slug,
-        startAt: s.startAt,
-        endAt: s.endAt,
-        district: snap.district ?? e.district ?? "",
-        coverImagePath: snap.coverImagePath ?? e.images?.[0]?.path ?? "",
-        categoryId: s.categoryId,
-        bookingMode: e.bookingMode,
-      },
-      ...(free && venue ? { venue } : {}),
-      ...(free ? { paidAt: FieldValue.serverTimestamp() } : {}),
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
+      holdUntilMs: Math.min(now + (o.holdMs ?? HOLD_MINUTES * 60_000), bookingClosesAt(view.startAt, e.bookingMode).getTime()),
+      extra: requestRef ? { requestId: requestRef.id } : undefined,
     });
+    tx.set(resRef, doc);
+    // Inscrit(e) sur la liste d'attente de cette date ? Sa réservation directe l'en retire.
+    if (wait?.exists && wait.data()?.status === "waiting") {
+      tx.update(wait.ref, { status: "converted", reservationId: resRef.id, updatedAt: FieldValue.serverTimestamp() });
+    }
     const heldAfter = view.seatsHeld + (free ? 0 : seats);
     const confirmedAfter = view.seatsConfirmed + (free ? seats : 0);
     tx.update(sessRef, {
       seatsHeld: FieldValue.increment((free ? 0 : seats) - releasedHold),
       seatsConfirmed: FieldValue.increment(free ? seats : 0),
+      ...(wait?.exists && wait.data()?.status === "waiting" ? { waitlistCount: FieldValue.increment(-1) } : {}),
       status: view.capacity - confirmedAfter - heldAfter <= 0 ? "full" : "published",
       updatedAt: FieldValue.serverTimestamp(),
     });

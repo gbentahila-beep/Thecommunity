@@ -73,7 +73,7 @@ async function main() {
     }]);
   }
   for (const [sessionId, uids] of Object.entries(admin.waitlists)) {
-    uids.forEach((uid, i) => entries.push([`sessions/${sessionId}/waitlist/${uid}`, { seats: 1, status: "waiting", createdAt: Timestamp.fromMillis(now.getTime() - (uids.length - i) * 3_600_000) }]));
+    uids.forEach((uid, i) => entries.push([`sessions/${sessionId}/waitlist/${uid}`, { userId: uid, sessionId, seats: 1, status: "waiting", createdAt: Timestamp.fromMillis(now.getTime() - (uids.length - i) * 3_600_000) }]));
   }
   for (const r of admin.reservations) {
     const s = admin.sessions.find((x) => x.id === r.sessionId)!;

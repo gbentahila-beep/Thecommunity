@@ -27,6 +27,12 @@ export const reservationRequestSchema = z.object({
 });
 export type ReservationRequest = z.infer<typeof reservationRequestSchema>;
 
+/**
+ * Place libérée proposée à la première personne de la liste d'attente : elle lui est réservée pendant
+ * ce délai (hypothèse : 4 h, jamais au-delà de la fermeture des réservations), puis passe à la suivante.
+ */
+export const WAITLIST_OFFER_HOURS = 4;
+
 /** Délai pour payer après l'acceptation d'une demande de participation. */
 export const ACCEPTED_HOLD_HOURS = 24;
 export const REQUEST_MESSAGE_MAX = 500;

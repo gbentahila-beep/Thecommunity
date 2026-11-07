@@ -125,6 +125,20 @@ export type BookingRequest = {
   decidedAt?: string;
 };
 
+export type WaitlistStatus = "waiting" | "offered" | "expired" | "converted" | "left";
+
+/** Inscription sur la liste d'attente d'une date complète (sessions/{id}/waitlist/{uid}). */
+export type WaitlistEntry = {
+  id: string; // uid
+  userId: string;
+  sessionId: string;
+  seats: number;
+  status: WaitlistStatus;
+  reservationId?: string;
+  sessionSnapshot: Reservation["sessionSnapshot"];
+  createdAt: string;
+};
+
 export type SessionStatus = "draft" | "published" | "full" | "cancelled" | "completed";
 
 export type Session = {
@@ -225,6 +239,8 @@ export type Reservation = {
   /** Fin du blocage des places pendant le paiement (réservation « pending_payment »). */
   holdExpiresAt?: string;
   paymentId?: string;
+  /** Place proposée automatiquement depuis la liste d'attente. */
+  fromWaitlist?: boolean;
   /** Paiement arrivé après l'expiration du blocage, place reprise. */
   latePayment?: boolean;
   cancellation?: { at: string; by: "user" | "admin" | "system"; refundAmount: number; reason?: string };

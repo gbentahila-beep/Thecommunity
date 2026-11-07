@@ -1,7 +1,7 @@
 import { Timestamp, type DocumentSnapshot, type Transaction } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
 import { db, FieldValue } from "../lib/admin";
-import { providerFor } from "./provider";
+import { issueRefund } from "./refund";
 
 /** Notification de paiement, déjà authentifiée (signature du prestataire, ou callable de test). */
 export type PaymentEvent = {
@@ -113,41 +113,18 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
 
 /** Rembourse un paiement réussi et clôt la réservation correspondante si elle n'a pas de place. */
 export async function refundPayment(paymentId: string, amount: number, reason: string) {
-  const payRef = db.doc(`payments/${paymentId}`);
-  const p = (await payRef.get()).data()!;
-  const provider = providerFor(p.provider);
-  const result = await provider.refund({ paymentId, providerRef: p.providerRef ?? undefined, amount, currency: p.currency });
-  const refundRef = db.collection("payments").doc();
-  const batch = db.batch();
-  batch.set(refundRef, {
-    type: "refund",
-    parentPaymentId: paymentId,
-    reservationId: p.reservationId,
-    userId: p.userId,
-    provider: p.provider,
-    mode: p.mode ?? null,
-    providerRef: result.providerRef ?? null,
-    amount,
-    currency: p.currency,
-    reason,
-    status: result.status === "succeeded" ? "succeeded" : "initiated",
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
-  });
-  if (result.status === "succeeded") {
-    batch.update(payRef, { status: amount >= p.amount ? "refunded" : "partially_refunded", updatedAt: FieldValue.serverTimestamp() });
-  }
+  const p = (await db.doc(`payments/${paymentId}`).get()).data()!;
+  const result = await issueRefund(paymentId, amount, reason);
   const resRef = db.doc(`reservations/${p.reservationId}`);
   const r = (await resRef.get()).data();
   // Seule une réservation expirée (paiement tardif sans place) est close ici. Une réservation confirmée par un
   // autre paiement (doublon) ou encore en attente (montant erroné : la personne peut repayer) n'est pas touchée.
   if (r && r.status === "expired") {
-    batch.update(resRef, {
+    await resRef.update({
       status: result.status === "succeeded" ? "refunded" : r.status,
       cancellation: { at: Timestamp.now(), by: "system", reason, refundAmount: amount },
       updatedAt: FieldValue.serverTimestamp(),
     });
   }
-  await batch.commit();
   logger.warn("Remboursement automatique", { paymentId, amount, reason });
 }
