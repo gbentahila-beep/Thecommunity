@@ -10,7 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@thecommunity/shared": "*",
+    "@thecommunity/shared": "file:../../packages/shared",
     "firebase": "^13.2.0",
     "firebase-admin": "^14.5.0",
     "lucide-react": "^1.70.0",

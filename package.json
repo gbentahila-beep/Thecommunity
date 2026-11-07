@@ -14,7 +14,8 @@
     "test": "npm run test --workspaces --if-present",
     "emulators": "npm run build -w @thecommunity/functions && firebase emulators:start --project demo-thecommunity",
     "seed": "tsx scripts/seed.ts",
-    "test:rules": "npm run build -w @thecommunity/functions && firebase emulators:exec --project demo-thecommunity --only auth,firestore,storage,functions \"vitest run --config firebase/tests/vitest.config.ts\""
+    "test:rules": "npm run build -w @thecommunity/functions && firebase emulators:exec --project demo-thecommunity --only auth,firestore,storage,functions \"vitest run --config firebase/tests/vitest.config.ts\"",
+    "lock:web": "bash scripts/update-web-lock.sh"
   },
   "engines": {
     "node": ">=22"

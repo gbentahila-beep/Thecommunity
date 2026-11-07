@@ -73,6 +73,10 @@ Firebase → **Authentication → Settings → Authorized domains → Add domain
 2. GitHub → Actions → **Re-run all jobs** sur la dernière exécution du déploiement (le script te nomme super-admin).
 3. Sur le site : **se déconnecter puis se reconnecter**, puis ouvrir `/admin`.
 
+## Note technique : organisation en plusieurs dossiers
+
+App Hosting installe le site depuis `apps/web` et exige un fichier de dépendances à cet endroit. `apps/web` a donc son propre `package-lock.json` et référence le code partagé par chemin (`file:../../packages/shared`, copié à l'installation grâce à `apps/web/.npmrc`). Après tout changement de dépendances du site : `npm run lock:web`.
+
 ## Bon à savoir
 
 - Le bandeau « version de démonstration » reste affiché ; les expériences de départ sont fictives (`isDemo`). Elles pourront être supprimées ou remplacées depuis le back-office.
