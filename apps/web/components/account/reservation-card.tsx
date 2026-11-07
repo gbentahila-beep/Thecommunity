@@ -1,6 +1,6 @@
 import type { Reservation } from "@thecommunity/shared";
 import { CalendarDays, MapPin } from "lucide-react";
-import Image from "next/image";
+import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { formatLongDate, formatTimeRange } from "@/lib/format";

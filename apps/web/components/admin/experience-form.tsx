@@ -10,8 +10,14 @@ import {
   SPOKEN_LANGUAGES,
   type ExperienceInput,
 } from "@thecommunity/shared";
+import { collection, doc } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
+import { ref, uploadBytes } from "firebase/storage";
 import { CheckCircle2, ImagePlus, Info, X } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { mediaUrl } from "@/components/media";
+import { firebase } from "@/lib/firebase/client";
 
 type Option = { id: string; label: string; disabled?: boolean };
 export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking"> & {
@@ -26,6 +32,7 @@ const MESSAGES: Record<string, string> = {
   pickOne: "Choisissez au moins une langue.", groupOrder: "Il faut min ≤ cible ≤ max.", capacityBelowGroup: "La capacité doit permettre au moins un groupe complet.",
   seatsPerBookingMode: "Plus de 2 places par réservation : seulement en mode libre ou privatisé.", partnerRequired: "Le modèle commission nécessite un partenaire.",
   revealNeedsGroups: "La révélation différée n'est possible qu'avec des groupes (dîner social ou groupe).",
+  inPast: "La première date est déjà passée.", invalidImagePath: "Photo invalide.",
 };
 const LANG_LABELS: Record<string, string> = { fr: "Français", ar: "Arabe", darija: "Darija", en: "Anglais", es: "Espagnol" };
 const MODES: Option[] = [
@@ -68,6 +75,9 @@ export function ExperienceForm({
   partners,
   policies,
   mode,
+  experienceId,
+  existingImages = [],
+  live = false,
 }: {
   initial: ExperienceFormValues;
   categories: Option[];
@@ -75,11 +85,19 @@ export function ExperienceForm({
   partners: Option[];
   policies: Option[];
   mode: "create" | "edit";
+  experienceId?: string;
+  existingImages?: { path: string }[];
+  /** Mode Firebase : l'expérience est réellement enregistrée (Cloud Function adminSaveExperience). */
+  live?: boolean;
 }) {
   const [v, setV] = useState(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [result, setResult] = useState<ExperienceInput | null>(null);
-  const [images, setImages] = useState<{ url: string; name: string }[]>([]);
+  const [images, setImages] = useState<{ url: string; name: string; file: File }[]>([]);
+  const [addSessions, setAddSessions] = useState(mode === "create");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState<{ experienceId: string; slug: string; sessionsCreated: number; status: string } | null>(null);
+  const [serverError, setServerError] = useState("");
   const [imageError, setImageError] = useState("");
 
   useEffect(() => () => images.forEach((i) => URL.revokeObjectURL(i.url)), [images]);
@@ -96,8 +114,10 @@ export function ExperienceForm({
   const grouped = v.bookingMode === "group" || v.bookingMode === "social_dinner";
   const opt = (s: string) => (s === "" ? undefined : s);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaved(null);
+    setServerError("");
     const parsed = experienceInputSchema.safeParse({
       ...v,
       groupMin: grouped ? opt(v.groupMin) : undefined,
@@ -119,7 +139,41 @@ export function ExperienceForm({
     }
     setErrors({});
     setResult(parsed.data);
-    requestAnimationFrame(() => document.getElementById("form-result")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    if (!live) {
+      requestAnimationFrame(() => document.getElementById("form-result")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+      return;
+    }
+    // Enregistrement réel : photos d'abord (dans le dossier de l'expérience), puis la fonction serveur.
+    setSaving(true);
+    try {
+      const { db, storage, functions } = firebase();
+      const id = experienceId ?? doc(collection(db, "experiences")).id;
+      const uploaded: { path: string; alt: string }[] = [];
+      for (const [i, img] of images.entries()) {
+        const ext = img.file.type === "image/png" ? "png" : img.file.type === "image/webp" ? "webp" : "jpg";
+        const path = `experiences/${id}/${Date.now()}-${i}.${ext}`;
+        await uploadBytes(ref(storage, path), img.file, { contentType: img.file.type });
+        uploaded.push({ path, alt: parsed.data.titleFr });
+      }
+      const res = await httpsCallable(functions, "adminSaveExperience")({
+        ...(experienceId ? { experienceId } : { newId: id }),
+        data: JSON.parse(JSON.stringify(parsed.data)), // retire les champs vides (undefined)
+        addSessions,
+        images: uploaded,
+      });
+      setSaved({ ...(res.data as { experienceId: string; slug: string; sessionsCreated: number }), status: parsed.data.status });
+      setImages([]);
+      await fetch("/api/admin/revalidate", { method: "POST" }).catch(() => undefined);
+    } catch (err) {
+      const issues = (err as { details?: { issues?: { path: string; message: string }[] } }).details?.issues ?? [];
+      const next: Record<string, string> = {};
+      for (const i of issues) next[i.path] = MESSAGES[i.message] ?? i.message;
+      setErrors(next);
+      setServerError((err as { message?: string }).message ?? "Enregistrement impossible.");
+    } finally {
+      setSaving(false);
+      requestAnimationFrame(() => document.getElementById("form-result")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    }
   };
 
   const preview = useMemo(() => {
@@ -239,6 +293,12 @@ export function ExperienceForm({
       </Section>
 
       <Section title={mode === "create" ? "5. Dates" : "5. Ajouter des dates"}>
+        {mode === "edit" && (
+          <label className="flex items-center gap-2 text-sm sm:col-span-2">
+            <input type="checkbox" checked={addSessions} onChange={(e) => setAddSessions(e.target.checked)} className="size-4 accent-plum-900" />
+            Créer ces nouvelles dates à l&apos;enregistrement
+          </label>
+        )}
         <div><Label k="sessions.firstDate">Première date</Label><input type="date" {...field("sessions.firstDate")} value={v.sessions.firstDate} onChange={(e) => setSession("firstDate", e.target.value)} />{err("sessions.firstDate")}</div>
         <div><Label k="sessions.time" hint="Heure de Casablanca.">Heure</Label><input type="time" {...field("sessions.time")} value={v.sessions.time} onChange={(e) => setSession("time", e.target.value)} />{err("sessions.time")}</div>
         <div><Label k="sessions.weeks" hint={`1 = date unique ; jusqu'à ${RECURRENCE_MAX_WEEKS} semaines.`}>Répéter chaque semaine pendant</Label><input {...field("sessions.weeks")} inputMode="numeric" value={v.sessions.weeks} onChange={(e) => setSession("weeks", e.target.value)} />{err("sessions.weeks")}</div>
@@ -248,6 +308,17 @@ export function ExperienceForm({
       <fieldset className="rounded-2xl bg-white p-4 shadow-card sm:p-5">
         <legend className="float-left mb-3 w-full text-base font-semibold text-ink">6. Photos</legend>
         <div className="clear-both">
+          {existingImages.length > 0 && images.length === 0 && (
+            <div className="mb-3 flex flex-wrap gap-3">
+              {existingImages.map((img) => (
+                <div key={img.path} className="relative size-24 overflow-hidden rounded-xl ring-2 ring-plum-100">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- miniature d'une photo existante */}
+                  <img src={mediaUrl(img.path)} alt="" className="size-full object-cover" />
+                </div>
+              ))}
+              <p className="basis-full text-xs text-muted">Photos actuelles. En ajouter de nouvelles les remplacera.</p>
+            </div>
+          )}
           <div className="flex flex-wrap gap-3">
             {images.map((img) => (
               <div key={img.url} className="relative size-24 overflow-hidden rounded-xl">
@@ -265,22 +336,43 @@ export function ExperienceForm({
                 const files = [...(e.target.files ?? [])];
                 const ok = files.filter((f) => f.size <= 8 * 1024 * 1024 && /image\/(jpeg|png|webp)/.test(f.type));
                 setImageError(ok.length < files.length ? "Certaines images ont été ignorées (8 Mo max, JPG/PNG/WebP)." : "");
-                setImages((xs) => [...xs, ...ok.map((f) => ({ url: URL.createObjectURL(f), name: f.name }))]);
+                setImages((xs) => [...xs, ...ok.map((f) => ({ url: URL.createObjectURL(f), name: f.name, file: f }))]);
                 e.target.value = "";
               }} />
             </label>
           </div>
           {imageError && <p className="mt-2 text-xs text-red-700">{imageError}</p>}
-          <p className="mt-2 text-xs text-muted">La première photo sert de couverture. Envoi vers Firebase Storage (redimensionnement, suppression des données GPS) en phase 3.</p>
+          <p className="mt-2 text-xs text-muted">La première photo sert de couverture. Format paysage conseillé, 8 Mo maximum par photo.</p>
         </div>
       </fieldset>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" className="rounded-full bg-plum-900 px-6 py-3 font-semibold text-white hover:bg-plum-800">Vérifier le formulaire</button>
-        <span className="text-xs text-muted">L&apos;enregistrement en base sera activé en phase 3.</span>
+        <button type="submit" disabled={saving} className="rounded-full bg-plum-900 px-6 py-3 font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+          {live ? (saving ? "Enregistrement…" : "Enregistrer") : "Vérifier le formulaire"}
+        </button>
+        {!live && <span className="text-xs text-muted">Mode démonstration : rien n&apos;est enregistré.</span>}
       </div>
 
-      {result && preview && (
+      {live && saved && (
+        <section id="form-result" role="status" className="scroll-mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-950">
+          <h2 className="flex items-center gap-2 text-base font-semibold"><CheckCircle2 className="size-5" aria-hidden /> Expérience enregistrée</h2>
+          <p className="mt-2">
+            {saved.sessionsCreated > 0 ? `${saved.sessionsCreated} date${saved.sessionsCreated > 1 ? "s" : ""} créée${saved.sessionsCreated > 1 ? "s" : ""}. ` : ""}
+            {saved.status === "published" ? "Elle est visible sur le site." : "Elle reste en brouillon (invisible du public)."}
+          </p>
+          <p className="mt-3 flex flex-wrap gap-4 font-medium">
+            {saved.status === "published" && <Link href={`/experiences/${saved.slug}`} className="underline">Voir sur le site</Link>}
+            <Link href="/admin/experiences" className="underline">Retour aux expériences</Link>
+            {mode === "create" && <Link href={`/admin/experiences/${saved.experienceId}`} className="underline">Continuer à modifier</Link>}
+          </p>
+        </section>
+      )}
+      {live && serverError && (
+        <section id="form-result" role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-900">
+          {serverError}
+        </section>
+      )}
+      {!live && result && preview && (
         <section id="form-result" className="scroll-mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-950">
           <h2 className="flex items-center gap-2 text-base font-semibold"><CheckCircle2 className="size-5" aria-hidden /> Formulaire valide — voici ce qui sera créé en phase 3</h2>
           <ul className="mt-3 space-y-1">

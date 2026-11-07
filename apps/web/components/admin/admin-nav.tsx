@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Settings,
   Sparkles,
+  ShieldCheck,
   Ticket,
   Users,
 } from "lucide-react";
@@ -25,6 +26,7 @@ export const ADMIN_LINKS = [
   { href: "/admin/paiements", label: "Paiements", icon: CreditCard },
   { href: "/admin/promos", label: "Codes promo", icon: BadgePercent },
   { href: "/admin/statistiques", label: "Statistiques", icon: BarChart3 },
+  { href: "/admin/demandes", label: "Demandes 09-08", icon: ShieldCheck },
   { href: "/admin/parametres", label: "Paramètres", icon: Settings },
 ];
 

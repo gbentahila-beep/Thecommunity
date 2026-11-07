@@ -2,8 +2,11 @@ import { ShieldAlert } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { AdminLogout } from "@/components/admin/admin-logout";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { MobileAdminMenu } from "@/components/admin/mobile-admin-menu";
+import { requireAdmin } from "@/lib/auth/admin";
+import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { fontVariables } from "@/lib/fonts";
 import "../globals.css";
 
@@ -14,17 +17,28 @@ export const metadata: Metadata = {
 
 /**
  * Back-office (français uniquement, hors routage par langue).
- * Phase 3 : accès réservé aux rôles admin / superadmin (custom claims vérifiés côté serveur),
- * double authentification obligatoire. En phase 2, il n'est PAS protégé : données fictives uniquement.
+ * Mode Firebase : accès réservé aux rôles admin / superadmin (custom claims vérifiés côté serveur).
+ * Mode démonstration : données fictives, rien n'est enregistré.
  */
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+  // Mode Firebase : réservé aux rôles admin / superadmin (vérifié côté serveur à chaque page).
+  const admin = FIREBASE_ENABLED ? await requireAdmin() : null;
   return (
     <html lang="fr" className={`${fontVariables} antialiased`}>
       <body className="min-h-dvh bg-cream">
-        <div role="note" className="flex items-center justify-center gap-2 bg-plum-900 px-4 py-1.5 text-center text-xs text-plum-50">
-          <ShieldAlert className="size-3.5 shrink-0" aria-hidden />
-          Back-office de démonstration : données fictives, accès non protégé avant la phase 3.
-        </div>
+        {admin ? (
+          <div className="flex items-center justify-end gap-3 border-b border-line bg-white/60 px-4 py-1.5 text-xs text-muted">
+            <span>
+              Connecté : <strong className="text-ink">{admin.email}</strong> · {admin.role === "superadmin" ? "super-admin" : "admin"}
+            </span>
+            <AdminLogout />
+          </div>
+        ) : (
+          <div role="note" className="flex items-center justify-center gap-2 bg-plum-900 px-4 py-1.5 text-center text-xs text-plum-50">
+            <ShieldAlert className="size-3.5 shrink-0" aria-hidden />
+            Back-office de démonstration : données fictives, rien n&apos;est enregistré.
+          </div>
+        )}
         <header className="relative z-30 flex h-16 items-center gap-3 border-b border-line bg-cream/95 px-4 backdrop-blur lg:hidden">
           <MobileAdminMenu />
           <Link href="/admin" className="font-display text-xl font-semibold text-plum-900">

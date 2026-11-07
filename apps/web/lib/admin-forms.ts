@@ -1,20 +1,18 @@
 import { DEFAULT_CANCELLATION_POLICY, type Experience } from "@thecommunity/shared";
 import type { ExperienceFormValues } from "@/components/admin/experience-form";
-import { DEMO_CATEGORIES, DEMO_CITIES } from "@/lib/data/demo";
-import { DEMO_ECONOMICS, DEMO_PARTNERS } from "@/lib/data/demo-admin";
+import type { AdminData } from "@/lib/data/admin";
 
-export function formOptions() {
+export function formOptions(d: Pick<AdminData, "categories" | "cities" | "partners">) {
   return {
-    categories: DEMO_CATEGORIES.map((c) => ({ id: c.id, label: c.name.fr })),
-    cities: DEMO_CITIES.map((c) => ({ id: c.id, label: c.isActive ? c.name.fr : `${c.name.fr} (bientôt)`, disabled: !c.isActive })),
-    partners: DEMO_PARTNERS.map((p) => ({ id: p.id, label: p.name })),
+    categories: d.categories.map((c) => ({ id: c.id, label: c.name.fr })),
+    cities: d.cities.map((c) => ({ id: c.id, label: c.isActive ? c.name.fr : `${c.name.fr} (bientôt)`, disabled: !c.isActive })),
+    partners: d.partners.map((p) => ({ id: p.id, label: p.name })),
     policies: [{ id: DEFAULT_CANCELLATION_POLICY.id, label: DEFAULT_CANCELLATION_POLICY.label.fr }],
   };
 }
 
 function nextWeekDate(now: Date) {
-  const d = new Date(now.getTime() + 7 * 86_400_000);
-  return d.toISOString().slice(0, 10);
+  return new Date(now.getTime() + 7 * 86_400_000).toISOString().slice(0, 10);
 }
 
 export function emptyExperienceValues(now: Date): ExperienceFormValues {
@@ -31,8 +29,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
   };
 }
 
-export function experienceToValues(e: Experience, now: Date): ExperienceFormValues {
-  const eco = DEMO_ECONOMICS[e.id];
+export function experienceToValues(e: Experience, eco: AdminData["economics"][string] | undefined, now: Date): ExperienceFormValues {
   return {
     ...emptyExperienceValues(now),
     titleFr: e.title.fr, titleAr: e.title.ar ?? "", summaryFr: e.summary.fr, descriptionFr: e.description.fr,
@@ -41,10 +38,10 @@ export function experienceToValues(e: Experience, now: Date): ExperienceFormValu
     groupMin: String(e.groupConfig?.minSize ?? 5), groupTarget: String(e.groupConfig?.targetSize ?? 6), groupMax: String(e.groupConfig?.maxSize ?? 7),
     maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String(e.price.amount / 100), durationMinutes: String(e.durationMinutes),
     languages: e.languages.filter((l): l is ExperienceFormValues["languages"][number] => ["fr", "ar", "darija", "en", "es"].includes(l)),
-    alcoholServed: Boolean(e.alcoholServed), included: e.included.map((i) => i.fr).join("\n"), practicalInfo: e.practicalInfo.fr,
+    alcoholServed: Boolean(e.alcoholServed), included: (e.included ?? []).map((i) => i.fr).join("\n"), practicalInfo: e.practicalInfo?.fr ?? "",
     partnerId: eco?.partnerId ?? "", economicsModel: eco?.model ?? "own",
-    costPerSeatDh: eco?.costPerSeat !== undefined ? String(eco.costPerSeat / 100) : "",
-    commissionPercent: eco?.commissionPercent !== undefined ? String(eco.commissionPercent) : "",
+    costPerSeatDh: eco?.costPerSeat != null ? String(eco.costPerSeat / 100) : "",
+    commissionPercent: eco?.commissionPercent != null ? String(eco.commissionPercent) : "",
     status: e.status === "published" ? "published" : "draft",
   };
 }

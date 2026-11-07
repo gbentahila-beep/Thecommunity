@@ -1,6 +1,6 @@
 import { DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, Info, MapPin, Star } from "lucide-react";
-import Image from "next/image";
+import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { StatusBadge } from "@/components/account/status-badge";

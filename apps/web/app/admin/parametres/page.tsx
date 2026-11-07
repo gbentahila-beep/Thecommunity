@@ -1,24 +1,25 @@
 import { DEFAULT_CANCELLATION_POLICY } from "@thecommunity/shared";
 import { Badge, Card, PageHeader, Table } from "@/components/admin/ui";
-import { DEMO_CATEGORIES, DEMO_CITIES } from "@/lib/data/demo";
+import { getAdminData } from "@/lib/data/admin";
 
 export const metadata = { title: "Paramètres" };
 
-export default function SettingsAdminPage() {
+export default async function SettingsAdminPage() {
+  const { cities, categories } = await getAdminData();
   return (
     <>
       <PageHeader title="Paramètres" subtitle="Lecture seule en phase 2 · modification réservée aux super-admins en phase 3, journalisée." />
       <div className="grid gap-6 xl:grid-cols-2">
         <Card title="Villes">
           <Table head={["Ville", "Fuseau", "Devise", "Statut"]} caption="Villes">
-            {DEMO_CITIES.map((c) => (
+            {cities.map((c) => (
               <tr key={c.id}><td className="font-medium">{c.name.fr} <span className="text-muted" lang="ar">· {c.name.ar}</span></td><td className="text-muted">{c.timezone}</td><td>{c.currency}</td><td><Badge tone={c.isActive ? "green" : "amber"}>{c.isActive ? "Ouverte" : "Bientôt"}</Badge></td></tr>
             ))}
           </Table>
         </Card>
         <Card title="Univers (catégories)">
           <Table head={["Clé", "Nom", "Mode par défaut"]} caption="Univers">
-            {DEMO_CATEGORIES.map((c) => (<tr key={c.id}><td className="font-mono text-xs">{c.id}</td><td>{c.name.fr}</td><td className="text-muted">{c.defaultBookingMode}</td></tr>))}
+            {categories.map((c) => (<tr key={c.id}><td className="font-mono text-xs">{c.id}</td><td>{c.name.fr}</td><td className="text-muted">{c.defaultBookingMode}</td></tr>))}
           </Table>
         </Card>
         <Card title="Politique d'annulation par défaut">

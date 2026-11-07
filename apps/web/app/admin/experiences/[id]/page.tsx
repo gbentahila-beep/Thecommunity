@@ -28,7 +28,14 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
           ))}
         </ul>
       </Card>
-      <ExperienceForm mode="edit" initial={experienceToValues(e, d.now)} {...formOptions()} />
+      <ExperienceForm
+        mode="edit"
+        live={!d.isDemo}
+        experienceId={e.id}
+        existingImages={e.images ?? []}
+        initial={experienceToValues(e, d.economics[e.id], d.now)}
+        {...formOptions(d)}
+      />
     </div>
   );
 }

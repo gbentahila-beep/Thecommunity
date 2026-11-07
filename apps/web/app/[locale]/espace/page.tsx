@@ -1,5 +1,5 @@
 import { ArrowRight, Star, Users } from "lucide-react";
-import Image from "next/image";
+import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { ExperienceCard } from "@/components/experience-card";
 import { ReservationCard } from "@/components/account/reservation-card";

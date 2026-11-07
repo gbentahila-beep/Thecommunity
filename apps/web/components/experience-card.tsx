@@ -1,6 +1,6 @@
 import { formatMoney, LOW_SEATS_THRESHOLD, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
 import { MapPin, Users } from "lucide-react";
-import Image from "next/image";
+import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCategory } from "@/lib/data";

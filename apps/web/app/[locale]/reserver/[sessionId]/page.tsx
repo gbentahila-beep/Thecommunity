@@ -1,7 +1,7 @@
 import { DEFAULT_CANCELLATION_POLICY, formatMoney, seatsAvailable } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
+import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PageShell } from "@/components/ui";

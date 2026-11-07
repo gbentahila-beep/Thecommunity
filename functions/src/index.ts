@@ -12,3 +12,5 @@ export { onUserCreated } from "./account/on-user-created";
 export { completeProfile } from "./account/complete-profile";
 export { acceptTerms } from "./account/accept-terms";
 export { setUserRole } from "./admin/set-user-role";
+export { adminSetUserStatus } from "./admin/set-user-status";
+export { adminSaveExperience } from "./experiences/save-experience";

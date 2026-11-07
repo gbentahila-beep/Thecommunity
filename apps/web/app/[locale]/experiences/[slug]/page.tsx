@@ -7,7 +7,7 @@ import {
 } from "@thecommunity/shared";
 import { CalendarDays, Clock, Languages, Leaf, MapPin, Users } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
+import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoriteButton } from "@/components/favorite-button";

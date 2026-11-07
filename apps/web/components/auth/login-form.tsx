@@ -27,7 +27,10 @@ export function LoginForm() {
         try {
           const cred = await signInWithEmailAndPassword(firebase().auth, String(form.get("email")).trim(), String(form.get("password")));
           await startServerSession(cred.user);
-          router.replace(safeNext(params.get("suite")));
+          const next = safeNext(params.get("suite"));
+          // Le back-office n'est pas sous une langue : navigation complète.
+          if (next.startsWith("/admin")) return window.location.assign(next);
+          router.replace(next);
           router.refresh();
         } catch (err) {
           setError(authErrorKey(err));

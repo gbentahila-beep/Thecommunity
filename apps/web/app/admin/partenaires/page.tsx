@@ -1,6 +1,5 @@
 import { Badge, Card, dh, PageHeader } from "@/components/admin/ui";
 import { getAdminData } from "@/lib/data/admin";
-import { DEMO_ECONOMICS } from "@/lib/data/demo-admin";
 
 export const metadata = { title: "Partenaires" };
 const TYPES = { restaurant: "Restaurant", studio: "Studio", venue: "Lieu", workshop: "Atelier" } as const;
@@ -12,7 +11,7 @@ export default async function PartnersAdminPage() {
       <PageHeader title="Partenaires" subtitle={`${d.partners.length} partenaires`} />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {d.partners.map((p) => {
-          const exps = Object.entries(DEMO_ECONOMICS).filter(([, eco]) => eco.partnerId === p.id).map(([id]) => d.experiences.get(id)!);
+          const exps = Object.entries(d.economics).filter(([, eco]) => eco.partnerId === p.id).flatMap(([id]) => (d.experiences.has(id) ? [d.experiences.get(id)!] : []));
           const revenue = d.reservations.filter((r) => r.status === "confirmed" && exps.some((e) => e.id === r.experienceId)).reduce((a, r) => a + r.total, 0);
           return (
             <Card key={p.id}>

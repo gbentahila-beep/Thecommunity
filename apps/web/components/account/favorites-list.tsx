@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart } from "lucide-react";
-import Image from "next/image";
+import { MediaImage as Image } from "@/components/media";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { toggleFavorite, useFavorites } from "@/lib/favorites";

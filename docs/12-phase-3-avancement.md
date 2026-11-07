@@ -77,10 +77,34 @@ Bug trouvé et corrigé par ces tests : un questionnaire sans genre (champ facul
 - **App Check** (protection anti-robots) : nécessite un vrai projet et une clé reCAPTCHA → 3d.
 - Réservation et paiement : phases 4 et 5.
 
-## Prochaines étapes
+## Étape 3c — Le back-office branché ✅
 
-- **3c — Brancher le back-office** : accès réservé aux rôles admin, création/modification d'expériences et de dates, envoi des photos, gestion des rôles, demandes de suppression.
-- **3d — Mise en ligne sur le projet d'essai** : quand tu me le diras (voir [checklist, section G](11-checklist-avant-lancement.md)).
+| Livré | Détail |
+|---|---|
+| Accès réservé | `/admin` exige une connexion avec le rôle **admin** ou **super-admin** (vérifié côté serveur à chaque page) ; un membre reçoit une page introuvable ; le compte connecté et un bouton de déconnexion sont affichés |
+| Données réelles | Tableau de bord, sessions, participants, réservations, utilisateurs, partenaires, paiements, codes promo, statistiques et paramètres lus depuis Firestore |
+| Créer / modifier une expérience | Bouton **« Enregistrer »** : photos envoyées dans Storage (dossier de l'expérience), puis fonction serveur `adminSaveExperience` qui revalide tout, génère l'adresse de la fiche (unique), crée l'expérience, son modèle économique et ses dates en une seule opération, et journalise. Modification possible après publication (sans toucher aux places déjà vendues) ; ajout de nouvelles dates à la demande. Les pages publiques sont rafraîchies immédiatement |
+| Comptes | **Suspendre / réactiver** (le compte suspendu ne peut plus se connecter ; un admin ne peut pas suspendre un membre de l'équipe) ; **changer un rôle** (super-admin uniquement) |
+| Demandes 09-08 | Nouvelle page listant les demandes de suppression / export |
+| Journal | Création, modification, suspension et changement de rôle enregistrés dans `auditLogs` |
+
+### Tests
+
+- **27 vérifications de bout en bout du back-office sur émulateurs** (`tests/e2e/firebase-admin.e2e.cjs`) : redirection sans session, refus d'un membre, connexion admin, création d'une expérience avec photo et 2 dates, fiche et photo visibles sur le site, catalogue rafraîchi, modification du prix sans doublon de dates, suspension (connexion refusée) puis réactivation, nomination d'un admin (claim posé, accès accordé, pas de choix des rôles pour un simple admin), journal, page 09-08.
+- **41 tests de règles et de fonctions** (+7), **25 vérifications** de l'espace membre sur Firebase, **27 tests unitaires**, **60 vérifications** du mode démonstration : tout passe.
+
+Bug trouvé et corrigé : comme pour le genre, les champs facultatifs vides du formulaire (ex. commission inutilisée) étaient transmis comme « null » et refusés ; le site ne les envoie plus et le serveur les ignore.
+
+### Limites connues
+
+- Les photos ne sont pas encore redimensionnées automatiquement (prévoir des photos de taille raisonnable, 8 Mo maximum).
+- Partenaires et codes promo : consultation seulement (création en phases 4–5).
+- Groupes : composition à l'écran, enregistrement en phase 6. Annulation/remboursement : phase 4.
+- Traitement automatique des demandes de suppression : à venir.
+
+## Prochaine étape
+
+- **3d — Mise en ligne sur le projet d'essai** : quand tu me le diras (voir [checklist, section G](11-checklist-avant-lancement.md)). Le site, les règles, les index et les fonctions y seront publiés tels quels.
 
 ## Lancer en local
 

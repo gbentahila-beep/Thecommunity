@@ -128,3 +128,101 @@ describe("rôles", () => {
     expect(await errorCode(call("setUserRole")({ uid: me, role: "user" }))).toBe("functions/failed-precondition");
   });
 });
+
+describe("back-office : expériences et comptes", () => {
+  const future = new Date(Date.now() + 10 * 86_400_000).toISOString().slice(0, 10);
+  const experience = {
+    titleFr: "Dîner des créatifs",
+    summaryFr: "Un dîner pour rencontrer des créatifs de Casablanca.",
+    descriptionFr: "Une grande table réunit graphistes, photographes et architectes autour d'un menu de saison.",
+    categoryId: "eat",
+    cityId: "casablanca",
+    district: "Racine",
+    venueName: "Restaurant partenaire",
+    address: "Boulevard Racine, Casablanca",
+    revealPolicy: "on_group_reveal",
+    bookingMode: "social_dinner",
+    groupMin: 5, groupTarget: 6, groupMax: 7,
+    maxSeatsPerBooking: 1,
+    priceDh: 169,
+    durationMinutes: 150,
+    languages: ["fr"],
+    alcoholServed: false,
+    included: "Entrée, plat, dessert\nBoissons sans alcool",
+    practicalInfo: "",
+    cancellationPolicyId: "standard-48h",
+    partnerId: "",
+    economicsModel: "own",
+    costPerSeatDh: 95,
+    status: "published",
+    sessions: { firstDate: future, time: "19:30", weeks: 3, capacity: 24 },
+  };
+  let adminEmail = "";
+
+  beforeAll(async () => {
+    await adminDb(admin).doc("categories/eat").set({ isActive: true, order: 1 });
+    adminEmail = `ada.${Date.now()}@example.com`;
+    const ada = await adminAuth(admin).createUser({ email: adminEmail, password: "MotDePasse!123" });
+    await adminAuth(admin).setCustomUserClaims(ada.uid, { role: "admin" });
+  });
+
+  it("un membre ne peut pas créer d'expérience", async () => {
+    await createUserWithEmailAndPassword(auth(), `m.${Date.now()}@example.com`, "MotDePasse!123");
+    expect(await errorCode(call("adminSaveExperience")({ data: experience, addSessions: true, images: [] }))).toBe("functions/permission-denied");
+  });
+
+  it("un admin crée une expérience, son économie et 3 dates ; c'est journalisé", async () => {
+    await signInWithEmailAndPassword(auth(), adminEmail, "MotDePasse!123");
+    const res = (await call("adminSaveExperience")({ newId: "exp-test-createur", data: experience, addSessions: true, images: [{ path: "experiences/exp-test-createur/cover.webp", alt: "" }] })).data as { experienceId: string; slug: string; sessionsCreated: number };
+    expect(res).toMatchObject({ experienceId: "exp-test-createur", slug: "diner-des-creatifs-casablanca", sessionsCreated: 3 });
+    const db = adminDb(admin);
+    const exp = (await db.doc("experiences/exp-test-createur").get()).data();
+    expect(exp).toMatchObject({ status: "published", price: { amount: 16900, currency: "MAD" }, groupConfig: { minSize: 5, targetSize: 6, maxSize: 7 } });
+    expect(exp?.included).toEqual([{ fr: "Entrée, plat, dessert" }, { fr: "Boissons sans alcool" }]);
+    expect((await db.doc("experiences/exp-test-createur/private/economics").get()).data()).toMatchObject({ model: "own", costPerSeat: 9500 });
+    const sessions = await db.collection("sessions").where("experienceId", "==", "exp-test-createur").get();
+    expect(sessions.size).toBe(3);
+    expect(sessions.docs.every((s) => s.data().seatsConfirmed === 0 && s.data().capacity === 24 && s.data().status === "published")).toBe(true);
+    const logs = await db.collection("auditLogs").where("targetId", "==", "exp-test-createur").get();
+    expect(logs.docs[0]?.data().action).toBe("experience.create");
+  });
+
+  it("les champs facultatifs vides (null) sont acceptés", async () => {
+    const res = (await call("adminSaveExperience")({ data: { ...experience, bookingMode: "individual", revealPolicy: "immediate", groupMin: null, groupTarget: null, groupMax: null, commissionPercent: null, titleAr: null, partnerId: null, sessions: { ...experience.sessions, weeks: 1 } }, addSessions: true, images: [] })).data as { sessionsCreated: number };
+    expect(res.sessionsCreated).toBe(1);
+  });
+  it("le même titre donne une adresse différente", async () => {
+    const res = (await call("adminSaveExperience")({ data: experience, addSessions: true, images: [] })).data as { slug: string };
+    expect(res.slug).toBe("diner-des-creatifs-casablanca-3");
+  });
+
+  it("modification : brouillon → les dates sans inscrits repassent en brouillon, sans toucher aux places", async () => {
+    await call("adminSaveExperience")({ experienceId: "exp-test-createur", data: { ...experience, status: "draft", titleFr: "Dîner des créatifs (v2)" }, addSessions: false, images: [] });
+    const db = adminDb(admin);
+    const exp = (await db.doc("experiences/exp-test-createur").get()).data();
+    expect(exp?.title.fr).toBe("Dîner des créatifs (v2)");
+    expect(exp?.slug).toBe("diner-des-creatifs-casablanca");
+    expect(exp?.images).toEqual([{ path: "experiences/exp-test-createur/cover.webp", alt: { fr: "Dîner des créatifs" } }]);
+    const sessions = await db.collection("sessions").where("experienceId", "==", "exp-test-createur").get();
+    expect(sessions.docs.every((s) => s.data().status === "draft" && s.data().experienceSnapshot.title.fr === "Dîner des créatifs (v2)")).toBe(true);
+  });
+
+  it("refuse une photo hors du dossier de l'expérience, une date passée et des données incohérentes", async () => {
+    expect(await errorCode(call("adminSaveExperience")({ data: experience, addSessions: true, images: [{ path: "users/x/avatar/a.webp", alt: "" }] }))).toBe("functions/invalid-argument");
+    expect(await errorCode(call("adminSaveExperience")({ data: { ...experience, sessions: { ...experience.sessions, firstDate: "2020-01-01" } }, addSessions: true, images: [] }))).toBe("functions/invalid-argument");
+    expect(await errorCode(call("adminSaveExperience")({ data: { ...experience, groupMin: 9 }, addSessions: true, images: [] }))).toBe("functions/invalid-argument");
+    expect(await errorCode(call("adminSaveExperience")({ data: { ...experience, cityId: "rabat" }, addSessions: true, images: [] }))).toBe("functions/invalid-argument");
+  });
+
+  it("un admin suspend un membre : il ne peut plus se connecter ; un admin ne peut pas suspendre l'équipe", async () => {
+    const memberEmail = `suspendu.${Date.now()}@example.com`;
+    const member = await adminAuth(admin).createUser({ email: memberEmail, password: "MotDePasse!123" });
+    const colleague = await adminAuth(admin).createUser({ email: `collegue.${Date.now()}@example.com`, password: "MotDePasse!123" });
+    await adminAuth(admin).setCustomUserClaims(colleague.uid, { role: "admin" });
+    expect((await call("adminSetUserStatus")({ uid: member.uid, status: "suspended" })).data).toEqual({ ok: true, status: "suspended" });
+    expect((await adminAuth(admin).getUser(member.uid)).disabled).toBe(true);
+    expect(await errorCode(call("adminSetUserStatus")({ uid: colleague.uid, status: "suspended" }))).toBe("functions/permission-denied");
+    await signOut(auth());
+    expect(await errorCode(signInWithEmailAndPassword(auth(), memberEmail, "MotDePasse!123"))).toBe("auth/user-disabled");
+  });
+});
