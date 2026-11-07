@@ -1,7 +1,9 @@
 import { Mail } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ContactForm } from "@/components/contact-form";
 import { StaticPage } from "@/components/static-page";
+import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/contact">): Promise<Metadata> {
@@ -28,7 +30,7 @@ export default async function ContactPage({ params }: PageProps<"/[locale]/conta
           <span className="font-semibold text-ink" dir="ltr">{CONTACT_EMAIL}</span>
         </span>
       </a>
-      <p className="text-sm text-muted">{t("contactDemo")}</p>
+      {FIREBASE_ENABLED ? <ContactForm /> : <p className="text-sm text-muted">{t("contactDemo")}</p>}
     </StaticPage>
   );
 }

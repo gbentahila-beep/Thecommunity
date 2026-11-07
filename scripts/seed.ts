@@ -11,7 +11,7 @@ import { Timestamp, getFirestore, type WriteBatch } from "firebase-admin/firesto
 import { DEFAULT_CANCELLATION_POLICY } from "@thecommunity/shared";
 import { DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES, DEMO_REVIEWS } from "../apps/web/lib/data/demo";
 import { buildAdminData, DEMO_ECONOMICS } from "../apps/web/lib/data/demo-admin";
-import { DEMO_MEMBER } from "../apps/web/lib/data/demo-member";
+import { buildDemoMemberData, DEMO_MEMBER } from "../apps/web/lib/data/demo-member";
 
 const PROJECT = process.env.GCLOUD_PROJECT ?? "demo-thecommunity";
 if (!process.env.FIRESTORE_EMULATOR_HOST || !process.env.FIREBASE_AUTH_EMULATOR_HOST || !PROJECT.startsWith("demo-")) {
@@ -121,6 +121,29 @@ async function main() {
       : a.uid === DEMO_MEMBER.uid
         ? { ...DEMO_MEMBER, email: a.email, role: "user", status: "active", createdAt: ts(DEMO_MEMBER.createdAt) }
         : { firstName: "Admin", lastName: "Démo", email: a.email, role: "superadmin", status: "active", onboardingCompleted: true, locale: "fr", createdAt: Timestamp.fromDate(now) }]);
+  }
+
+  // Historique du membre de démonstration « Salma » (réservations, groupe révélé, notifications).
+  const member = buildDemoMemberData(now);
+  for (const r of member.reservations) {
+    const { id, ...rest } = r;
+    entries.push([`reservations/${id}`, {
+      ...rest,
+      cityId: "casablanca",
+      categoryId: r.sessionSnapshot.categoryId,
+      createdAt: ts(r.createdAt),
+      paidAt: r.paidAt ? ts(r.paidAt) : null,
+      sessionSnapshot: { ...r.sessionSnapshot, startAt: ts(r.sessionSnapshot.startAt), endAt: ts(r.sessionSnapshot.endAt) },
+      cancellation: r.cancellation ? { ...r.cancellation, at: ts(r.cancellation.at) } : null,
+    }]);
+  }
+  for (const g of member.groups) {
+    const { id, ...rest } = g;
+    entries.push([`groups/${id}`, { ...rest }]);
+  }
+  for (const n of member.notifications) {
+    const { id, ...rest } = n;
+    entries.push([`users/${DEMO_MEMBER.uid}/notifications/${id}`, { ...rest, createdAt: ts(n.createdAt), readAt: n.readAt ? ts(n.readAt) : null }]);
   }
 
   const count = await writeAll(entries);

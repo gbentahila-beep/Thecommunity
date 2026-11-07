@@ -49,7 +49,8 @@ export const profileIdentitySchema = z.object({
     .refine((v) => ageOn(v) >= MIN_AGE, "tooYoung")
     .refine((v) => ageOn(v) <= 100, "invalidDate"),
   cityId: z.string().min(1, "required"),
-  gender: z.enum(["female", "male", "undisclosed"]).optional(),
+  // Facultatif (décision D5). « null » accepté : les appels Firebase transforment undefined en null.
+  gender: z.enum(["female", "male", "undisclosed"]).nullish(),
 });
 
 export const profileInterestsSchema = z.object({

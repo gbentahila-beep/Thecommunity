@@ -16,7 +16,7 @@ export function AuthCard({
 }: {
   title: string;
   subtitle: string;
-  notice: string;
+  notice?: string;
   footer: ReactNode;
   children: ReactNode;
 }) {
@@ -30,10 +30,12 @@ export function AuthCard({
         <h1 className="font-display text-4xl font-medium text-plum-900">{title}</h1>
         <p className="mt-2 text-muted">{subtitle}</p>
         <div className="mt-8 space-y-4">{children}</div>
-        <p role="note" className="mt-5 flex gap-2.5 rounded-2xl bg-plum-50 p-3.5 text-sm text-plum-900">
-          <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
-          {notice}
-        </p>
+        {notice && (
+          <p role="note" className="mt-5 flex gap-2.5 rounded-2xl bg-plum-50 p-3.5 text-sm text-plum-900">
+            <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
+            {notice}
+          </p>
+        )}
         <div className="mt-6 text-center text-sm text-muted">{footer}</div>
       </div>
     </div>

@@ -2,7 +2,9 @@
 
 import type { UserProfile } from "@thecommunity/shared";
 import { useTranslations } from "next-intl";
+import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { firebase } from "@/lib/firebase/client";
 
 type Prefs = UserProfile["notificationPrefs"];
 const KEY = "tc:demo-preferences";
@@ -24,11 +26,13 @@ function Toggle({ label, hint, checked, disabled, onChange }: { label: string; h
 }
 
 /** Préférences de notification. Phase 2 : enregistrées sur l'appareil ; phase 3 : dans users/{uid}.notificationPrefs. */
-export function PreferencesForm({ initial }: { initial: Prefs }) {
+export function PreferencesForm({ initial, uid }: { initial: Prefs; uid?: string }) {
   const t = useTranslations("preferences");
   const [prefs, setPrefs] = useState<Prefs>(initial);
+  const [status, setStatus] = useState<"" | "saved" | "error">("");
 
   useEffect(() => {
+    if (uid) return; // mode Firebase : la valeur initiale vient du compte
     try {
       const saved = window.localStorage.getItem(KEY);
       // eslint-disable-next-line react-hooks/set-state-in-effect -- lecture unique d'une valeur stockée côté navigateur
@@ -36,11 +40,21 @@ export function PreferencesForm({ initial }: { initial: Prefs }) {
     } catch {
       /* ignore */
     }
-  }, [initial]);
+  }, [initial, uid]);
 
-  const update = (patch: Partial<Prefs>) => {
+  const update = async (patch: Partial<Prefs>) => {
     const next = { ...prefs, ...patch };
     setPrefs(next);
+    if (uid) {
+      try {
+        await updateDoc(doc(firebase().db, "users", uid), { notificationPrefs: next, updatedAt: serverTimestamp() });
+        setStatus("saved");
+      } catch {
+        setPrefs(prefs);
+        setStatus("error");
+      }
+      return;
+    }
     try {
       window.localStorage.setItem(KEY, JSON.stringify(next));
     } catch {
@@ -55,7 +69,9 @@ export function PreferencesForm({ initial }: { initial: Prefs }) {
         <Toggle label={t("pushNotif")} hint={t("pushNotifHint")} checked={false} disabled onChange={() => {}} />
         <Toggle label={t("marketing")} hint={t("marketingHint")} checked={prefs.marketingEmail} onChange={(v) => update({ marketingEmail: v })} />
       </div>
-      <p className="mt-2 text-xs text-muted">{t("savedLocally")}</p>
+      <p className="mt-2 text-xs text-muted" role="status" aria-live="polite">
+        {uid ? (status === "saved" ? t("saved") : status === "error" ? t("saveError") : t("savedAccount")) : t("savedLocally")}
+      </p>
     </div>
   );
 }

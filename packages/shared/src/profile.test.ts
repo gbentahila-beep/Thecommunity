@@ -22,6 +22,10 @@ describe("questionnaire", () => {
     expect(profileIdentitySchema.safeParse(identity).success).toBe(true);
     expect(profileIdentitySchema.safeParse({ ...identity, phone: "+212 6 12 34 56 78", gender: "undisclosed" }).success).toBe(true);
   });
+  it("accepte un genre absent ou null (champ facultatif)", () => {
+    expect(profileIdentitySchema.safeParse({ ...identity, gender: null }).success).toBe(true);
+    expect(profileIdentitySchema.safeParse({ ...identity, gender: "autre" }).success).toBe(false);
+  });
   it("refuse les moins de 18 ans", () => {
     const r = profileIdentitySchema.safeParse({ ...identity, birthDate: "2015-01-01" });
     expect(r.success).toBe(false);

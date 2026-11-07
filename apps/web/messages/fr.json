@@ -145,7 +145,31 @@
     "consent": "J'accepte les conditions générales, la politique de confidentialité et la charte de bonne conduite.",
     "demoNotice": "Démonstration : la connexion sera activée lors de la phase 3 (Firebase Authentication).",
     "demoSpace": "Voir l'espace membre de démonstration",
-    "demoOnboarding": "Essayer le questionnaire de profil (démo)"
+    "demoOnboarding": "Essayer le questionnaire de profil (démo)",
+    "errors": {
+      "invalidCredentials": "E-mail ou mot de passe incorrect.",
+      "emailInUse": "Un compte existe déjà avec cet e-mail.",
+      "weakPassword": "Mot de passe trop faible : 8 caractères minimum.",
+      "invalidEmail": "Adresse e-mail invalide.",
+      "tooManyRequests": "Trop de tentatives. Réessayez dans quelques minutes.",
+      "network": "Connexion impossible. Vérifiez votre réseau.",
+      "generic": "Une erreur est survenue. Réessayez.",
+      "consentRequired": "Merci d'accepter les conditions pour continuer.",
+      "suspended": "Ce compte est suspendu. Contactez-nous si vous pensez qu'il s'agit d'une erreur."
+    },
+    "loading": "Un instant…",
+    "forgotTitle": "Mot de passe oublié",
+    "forgotSubtitle": "Indiquez votre e-mail : nous vous envoyons un lien pour le réinitialiser.",
+    "forgotCta": "Envoyer le lien",
+    "forgotSent": "Si un compte existe pour cette adresse, un e-mail vient de vous être envoyé.",
+    "backToLogin": "Retour à la connexion",
+    "verifyBanner": "Confirmez votre adresse e-mail : c'est nécessaire pour réserver.",
+    "resend": "Renvoyer l'e-mail",
+    "resent": "E-mail envoyé.",
+    "iVerified": "J'ai confirmé",
+    "logout": "Se déconnecter",
+    "passwordHint": "8 caractères minimum.",
+    "marketingOptIn": "Je souhaite recevoir les nouveautés et offres par e-mail (facultatif)."
   },
   "footer": {
     "tagline": "Des expériences à partager, des personnes à découvrir.",
@@ -177,7 +201,13 @@
     "legalDraft": "Document en cours de rédaction avec notre conseil juridique (loi 09-08 et exigences de la CNDP). Il sera publié avant l'ouverture des réservations.",
     "notFoundTitle": "Page introuvable",
     "notFoundText": "Cette page n'existe pas ou n'est plus disponible.",
-    "notFoundCta": "Retour à l'accueil"
+    "notFoundCta": "Retour à l'accueil",
+    "contactName": "Votre prénom",
+    "contactEmail": "Votre e-mail",
+    "contactMessage": "Votre message",
+    "contactSend": "Envoyer",
+    "contactSent": "Merci ! Votre message a bien été envoyé, nous vous répondons rapidement.",
+    "contactError": "Envoi impossible. Vérifiez les champs et réessayez."
   },
   "faq": {
     "q1": "Est-ce une application de rencontre amoureuse ?",
@@ -326,7 +356,14 @@
     "myDataText": "Conformément à la loi 09-08, vous pouvez télécharger vos données ou demander la suppression de votre compte.",
     "export": "Télécharger mes données (JSON)",
     "delete": "Supprimer mon compte",
-    "deleteNote": "La suppression sera disponible en phase 3 : profil, photo et notifications supprimés, réservations anonymisées pour la comptabilité."
+    "deleteNote": "La suppression sera disponible en phase 3 : profil, photo et notifications supprimés, réservations anonymisées pour la comptabilité.",
+    "saved": "Enregistré.",
+    "savedAccount": "Vos choix sont enregistrés dans votre compte.",
+    "deleteConfirm": "Confirmer la demande de suppression",
+    "deleteRequested": "Demande de suppression enregistrée. Notre équipe la traite et vous confirme par e-mail.",
+    "deleteExplain": "Votre profil, votre photo et vos notifications seront supprimés ; vos réservations seront anonymisées pour la comptabilité.",
+    "cancel": "Annuler",
+    "saveError": "Enregistrement impossible, réessayez."
   },
   "notificationsPage": {
     "title": "Notifications",
@@ -364,7 +401,7 @@
     "goals": "Ce que vous recherchez",
     "goalsHint": "Plusieurs choix possibles.",
     "photo": "Photo de profil (facultatif)",
-    "photoHint": "JPG, PNG ou WebP, 3 Mo maximum. L'envoi sera activé en phase 3.",
+    "photoHint": "JPG, PNG ou WebP, 3 Mo maximum.",
     "photoTooBig": "Image trop lourde (3 Mo maximum).",
     "photoType": "Format non accepté.",
     "choosePhoto": "Choisir une photo",
@@ -385,6 +422,9 @@
       "invalidDate": "Date invalide.",
       "pickOne": "Choisissez au moins une option.",
       "pickThree": "Choisissez au moins 3 centres d'intérêt."
-    }
+    },
+    "saving": "Enregistrement…",
+    "saveError": "Enregistrement impossible. Vérifiez les informations et réessayez.",
+    "photoUploadError": "La photo n'a pas pu être envoyée ; votre profil est tout de même enregistré."
   }
 }

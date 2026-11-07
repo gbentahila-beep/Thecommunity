@@ -11,35 +11,47 @@ import {
   type Experience,
   type Session,
 } from "@thecommunity/shared";
+import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { buildDemoSessions, DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES, DEMO_REVIEWS } from "./demo";
+import * as fs from "./firestore-source";
 
-export const IS_DEMO = true;
+/**
+ * Bandeau « démonstration » : toujours affiché sans Firebase ; avec Firebase, affiché tant que
+ * NEXT_PUBLIC_DEMO_BANNER n'est pas explicitement mis à "false" (au lancement).
+ */
+export const IS_DEMO = !FIREBASE_ENABLED || process.env.NEXT_PUBLIC_DEMO_BANNER !== "false";
 
 export type SessionWithExperience = Session & { experience: Experience };
 
 export type WhenFilter = "all" | "today" | "weekend" | "week";
 
 export async function getCities() {
+  if (FIREBASE_ENABLED) return fs.fsCities();
   return [...DEMO_CITIES].sort((a, b) => a.order - b.order);
 }
 
 export async function getCity(id: string) {
+  if (FIREBASE_ENABLED) return (await fs.fsCities()).find((c) => c.id === id) ?? null;
   return DEMO_CITIES.find((c) => c.id === id) ?? null;
 }
 
 export async function getCategories() {
+  if (FIREBASE_ENABLED) return fs.fsCategories();
   return DEMO_CATEGORIES.filter((c) => c.isActive).sort((a, b) => a.order - b.order);
 }
 
 export async function getCategory(id: string) {
+  if (FIREBASE_ENABLED) return (await fs.fsCategories()).find((c) => c.id === id) ?? null;
   return DEMO_CATEGORIES.find((c) => c.id === id) ?? null;
 }
 
 export async function getExperienceBySlug(slug: string) {
+  if (FIREBASE_ENABLED) return fs.fsExperienceBySlug(slug);
   return DEMO_EXPERIENCES.find((e) => e.slug === slug && e.status === "published") ?? null;
 }
 
 export async function getPublishedExperiences() {
+  if (FIREBASE_ENABLED) return fs.fsPublishedExperiences();
   return DEMO_EXPERIENCES.filter((e) => e.status === "published");
 }
 
@@ -87,6 +99,12 @@ export async function getUpcomingSessions(filters: {
 } = {}): Promise<SessionWithExperience[]> {
   const now = filters.now ?? new Date();
   const [from, to] = windowFor(filters.when ?? "all", now);
+  if (FIREBASE_ENABLED) {
+    const sessions = await fs.fsUpcomingSessions({ cityId: filters.cityId, categoryId: filters.categoryId, experienceId: filters.experienceId, from, to });
+    const exps = await fs.fsExperiencesByIds(sessions.map((s) => s.experienceId));
+    const joined = sessions.flatMap((s) => (exps.has(s.experienceId) ? [{ ...s, experience: exps.get(s.experienceId)! }] : []));
+    return filters.limit ? joined.slice(0, filters.limit) : joined;
+  }
   const result = withExperience(buildDemoSessions(now)).filter((s) => {
     const t = new Date(s.startAt).getTime();
     return (
@@ -114,10 +132,17 @@ export async function getNextSessionPerExperience(filters: Parameters<typeof get
 }
 
 export async function getSession(id: string) {
+  if (FIREBASE_ENABLED) {
+    const s = await fs.fsSession(id);
+    if (!s) return null;
+    const e = (await fs.fsExperiencesByIds([s.experienceId])).get(s.experienceId);
+    return e ? { ...s, experience: e } : null;
+  }
   const [session] = withExperience(buildDemoSessions().filter((s) => s.id === id));
   return session ?? null;
 }
 
 export async function getReviews(experienceId?: string) {
+  if (FIREBASE_ENABLED) return fs.fsReviews(experienceId);
   return DEMO_REVIEWS.filter((r) => !experienceId || r.experienceId === experienceId);
 }

@@ -14,14 +14,18 @@ import {
 import { Camera, Check, Info, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
+import { ref, uploadBytes } from "firebase/storage";
 import type { ZodType } from "zod";
+import { firebase } from "@/lib/firebase/client";
 import { useRouter } from "@/i18n/navigation";
 
 export type CityOption = { id: string; name: string; isActive: boolean };
 type Values = Omit<ProfileInput, "gender"> & { gender?: ProfileInput["gender"] };
 type Errors = Partial<Record<keyof Values, string>>;
 
-const DRAFT_KEY = "tc:onboarding-draft";
+const DRAFT_PREFIX = "tc:onboarding-draft";
 const PHOTO_MAX = 3 * 1024 * 1024;
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const STEPS: ZodType[] = [profileIdentitySchema, profileInterestsSchema, profileGoalsSchema, profileAboutSchema];
@@ -43,16 +47,31 @@ const EMPTY: Values = {
 const inputClass =
   "w-full rounded-2xl border bg-white px-4 py-3.5 text-[16px] text-ink outline-none transition focus:border-plum-700 focus:ring-2 focus:ring-plum-100";
 
-export function Questionnaire({ cities, initial, editing }: { cities: CityOption[]; initial?: Partial<Values>; editing: boolean }) {
+export function Questionnaire({
+  cities,
+  initial,
+  editing,
+  uid,
+}: {
+  cities: CityOption[];
+  initial?: Partial<Values>;
+  editing: boolean;
+  /** Présent en mode Firebase : les réponses sont enregistrées dans le compte. */
+  uid?: string;
+}) {
   const t = useTranslations("onboarding");
   const tl = useTranslations("labels");
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<Values>({ ...EMPTY, ...initial });
   const [errors, setErrors] = useState<Errors>({});
-  const [photo, setPhoto] = useState<{ url: string; error?: string } | null>(null);
+  const [photo, setPhoto] = useState<{ url: string; error?: string; file?: File } | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [draftRestored, setDraftRestored] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  // Brouillon propre à chaque compte (plusieurs personnes peuvent partager un appareil).
+  const DRAFT_KEY = `${DRAFT_PREFIX}:${uid ?? "demo"}`;
 
   // Reprise d'un brouillon enregistré sur l'appareil (pas en mode édition du profil).
   useEffect(() => {
@@ -69,7 +88,7 @@ export function Questionnaire({ cities, initial, editing }: { cities: CityOption
     } catch {
       /* ignore */
     }
-  }, [editing]);
+  }, [editing, DRAFT_KEY]);
 
   useEffect(() => () => { if (photo?.url) URL.revokeObjectURL(photo.url); }, [photo]);
 
@@ -115,16 +134,52 @@ export function Questionnaire({ cities, initial, editing }: { cities: CityOption
     requestAnimationFrame(() => headingRef.current?.focus());
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
     if (step < STEPS.length - 1) return go(step + 1);
+    if (!uid) {
+      // Mode démonstration : réponses gardées sur l'appareil.
+      try {
+        window.localStorage.setItem(DRAFT_KEY, JSON.stringify({ values, step, completed: true }));
+      } catch {
+        /* ignore */
+      }
+      router.push("/espace");
+      return;
+    }
+    setSaving(true);
+    setSaveError("");
+    const { functions, storage, db } = firebase();
     try {
-      window.localStorage.setItem(DRAFT_KEY, JSON.stringify({ values, step, completed: true }));
+      // Le serveur revalide tout avec le même schéma (âge, valeurs autorisées, ville ouverte).
+      await httpsCallable(functions, "completeProfile")(values);
+    } catch (err) {
+      const issues = (err as { details?: { issues?: { path: string; message: string }[] } }).details?.issues ?? [];
+      const next: Errors = {};
+      for (const i of issues) next[i.path as keyof Values] = i.message;
+      setErrors(next);
+      setSaveError(t("saveError"));
+      setSaving(false);
+      return;
+    }
+    if (photo?.file) {
+      try {
+        const ext = photo.file.type === "image/png" ? "png" : photo.file.type === "image/webp" ? "webp" : "jpg";
+        const path = `users/${uid}/avatar/photo-${Date.now()}.${ext}`;
+        await uploadBytes(ref(storage, path), photo.file, { contentType: photo.file.type });
+        await updateDoc(doc(db, "users", uid), { photoPath: path, updatedAt: serverTimestamp() });
+      } catch {
+        setSaveError(t("photoUploadError"));
+      }
+    }
+    try {
+      window.localStorage.removeItem(DRAFT_KEY);
     } catch {
       /* ignore */
     }
-    router.push("/espace");
+    router.replace("/espace");
+    router.refresh();
   };
 
   const err = (key: keyof Values) =>
@@ -270,7 +325,7 @@ export function Questionnaire({ cities, initial, editing }: { cities: CityOption
                       if (!file) return;
                       if (!PHOTO_TYPES.includes(file.type)) return setPhoto({ url: "", error: t("photoType") });
                       if (file.size > PHOTO_MAX) return setPhoto({ url: "", error: t("photoTooBig") });
-                      setPhoto({ url: URL.createObjectURL(file) });
+                      setPhoto({ url: URL.createObjectURL(file), file });
                     }}
                   />
                 </label>
@@ -306,21 +361,24 @@ export function Questionnaire({ cities, initial, editing }: { cities: CityOption
             />
             {err("bio")}
           </div>
-          <p className="flex items-start gap-2 rounded-2xl bg-plum-50 p-3.5 text-sm text-plum-900">
-            <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
-            {t("finishNote")}
-          </p>
+          {!uid && (
+            <p className="flex items-start gap-2 rounded-2xl bg-plum-50 p-3.5 text-sm text-plum-900">
+              <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
+              {t("finishNote")}
+            </p>
+          )}
         </div>
       )}
 
+      {saveError && <p role="alert" className="mt-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">{saveError}</p>}
       <div className="mt-10 flex items-center gap-3">
         {step > 0 && (
           <button type="button" onClick={() => go(step - 1)} className="rounded-full px-5 py-3.5 font-semibold text-plum-900 hover:bg-white">
             {t("back")}
           </button>
         )}
-        <button type="submit" className="ms-auto rounded-full bg-plum-900 px-8 py-3.5 font-semibold text-white shadow-float transition hover:bg-plum-800 active:scale-[0.98]">
-          {step < STEPS.length - 1 ? t("next") : t("finish")}
+        <button type="submit" disabled={saving} className="ms-auto rounded-full bg-plum-900 px-8 py-3.5 font-semibold text-white shadow-float transition hover:bg-plum-800 active:scale-[0.98] disabled:opacity-60">
+          {saving ? t("saving") : step < STEPS.length - 1 ? t("next") : t("finish")}
         </button>
       </div>
     </form>

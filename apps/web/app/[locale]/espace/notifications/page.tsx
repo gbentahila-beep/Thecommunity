@@ -16,7 +16,7 @@ export default async function NotificationsPage({ params }: PageProps<"/[locale]
   return (
     <div className="space-y-2">
       <h1 className="font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
-      <NotificationsList initial={sorted} nowIso={space.now.toISOString()} />
+      <NotificationsList initial={sorted} nowIso={space.now.toISOString()} uid={space.session?.uid} />
     </div>
   );
 }

@@ -10,4 +10,5 @@ setGlobalOptions({ region: REGION, maxInstances: 10 });
 
 export { onUserCreated } from "./account/on-user-created";
 export { completeProfile } from "./account/complete-profile";
+export { acceptTerms } from "./account/accept-terms";
 export { setUserRole } from "./admin/set-user-role";

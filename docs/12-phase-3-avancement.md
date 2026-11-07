@@ -24,7 +24,7 @@
 - **Storage (3)** : formats, tailles et propriétaires des fichiers.
 - **Fonctions (8)** : profil créé à l'inscription ; questionnaire enregistré ; moins de 18 ans, ville fermée et champs non prévus (`role: superadmin`) refusés ou ignorés par le serveur ; un membre ne peut pas nommer un admin ; un super-admin le peut, l'action est journalisée ; il ne peut pas se retirer ses propres droits.
 
-S'y ajoutent les 26 tests unitaires du module partagé et les 60 vérifications de bout en bout des phases 2b et 2c.
+S'y ajoutent les tests unitaires du module partagé et les vérifications de bout en bout des phases 2b et 2c.
 
 ### Écart avec le document 04
 
@@ -39,10 +39,47 @@ Les expériences et sessions ne sont **plus modifiables directement par un admin
 
 Mot de passe : `Demo2026!`. Ces comptes n'existent que dans les émulateurs locaux, jamais sur un vrai projet.
 
+## Étape 3b — Le site branché sur Firebase ✅
+
+Le site fonctionne désormais en **deux modes**, choisis par la configuration (aucun changement de code) :
+
+| Mode | Quand | Comportement |
+|---|---|---|
+| Démonstration | `NEXT_PUBLIC_FIREBASE_PROJECT_ID` absent (ex. intégration continue) | Données fictives de la phase 2, aucun compte |
+| Firebase | Configuration présente (émulateurs, projet d'essai, puis projet réel) | Vrais comptes, vraie base de données, vraies photos |
+
+| Livré | Détail |
+|---|---|
+| Inscription | Prénom, e-mail, mot de passe (8 caractères min.), **consentements obligatoires** (CGU, confidentialité, charte) et prospection facultative, **horodatés par le serveur** avec la version des textes (fonction `acceptTerms`) ; e-mail de confirmation envoyé |
+| Connexion / déconnexion | Messages d'erreur clairs ; **cookie de session httpOnly** créé et vérifié côté serveur (révocation contrôlée) ; la déconnexion révoque les sessions ; protection contre les redirections externes |
+| Mot de passe oublié | Lien de réinitialisation par e-mail, sans révéler si un compte existe |
+| Confirmation d'e-mail | Bandeau dans l'espace membre, renvoi de l'e-mail, prise en compte immédiate |
+| Questionnaire | Enregistré par le serveur (revalidation complète), **photo de profil envoyée dans Storage**, brouillon propre à chaque compte |
+| Espace membre | Accessible seulement connecté (sinon redirection), questionnaire obligatoire avant d'y entrer, compte suspendu bloqué ; réservations, groupe révélé, notifications lues depuis Firestore **uniquement pour l'utilisateur connecté** |
+| Préférences, notifications, favoris | Enregistrés dans le compte (favoris synchronisés entre appareils) |
+| Mes données (loi 09-08) | Export JSON de toutes ses données ; demande de suppression enregistrée |
+| Catalogue public | Villes, univers, expériences, dates et avis lus depuis Firestore |
+| Contact | Formulaire enregistré dans Firestore (format contrôlé par les règles) |
+
+### Tests
+
+- **25 vérifications de bout en bout sur les émulateurs** (`tests/e2e/firebase-auth.e2e.cjs`) : catalogue Firestore, espace protégé, mauvais mot de passe, consentement obligatoire, inscription, questionnaire et photo enregistrés, consentements horodatés, confirmation d'e-mail, préférences, favoris, déconnexion, connexion d'un membre existant, groupe révélé, **réservation d'un autre membre introuvable**, notifications, export limité à ses propres données, demande de suppression, jeton de session falsifié refusé, mot de passe oublié, contact.
+- **34 tests de règles et de fonctions** (+2 : consentements ; genre facultatif).
+- **27 tests unitaires**, et les **60 vérifications du mode démonstration** repassent sans régression.
+
+Bug trouvé et corrigé par ces tests : un questionnaire sans genre (champ facultatif) était refusé par le serveur, car Firebase transmet un champ vide comme « null ».
+
+### Limites connues (traitées ensuite)
+
+- **Back-office** : toujours en données fictives et non protégé → étape 3c.
+- **E-mails** (confirmation, mot de passe) : modèles par défaut de Firebase → à traduire / personnaliser dans la console au branchement du projet réel.
+- **Demandes de suppression** : enregistrées ; leur traitement automatique viendra plus tard, une liste dans le back-office arrive en 3c.
+- **App Check** (protection anti-robots) : nécessite un vrai projet et une clé reCAPTCHA → 3d.
+- Réservation et paiement : phases 4 et 5.
+
 ## Prochaines étapes
 
-- **3b — Brancher le site** : inscription, connexion, mot de passe oublié, vérification d'e-mail, questionnaire enregistré, espace membre et catalogue lus depuis Firestore, cookie de session côté serveur.
-- **3c — Brancher le back-office** : accès réservé aux rôles admin, création/modification d'expériences et de dates, envoi des photos, gestion des rôles.
+- **3c — Brancher le back-office** : accès réservé aux rôles admin, création/modification d'expériences et de dates, envoi des photos, gestion des rôles, demandes de suppression.
 - **3d — Mise en ligne sur le projet d'essai** : quand tu me le diras (voir [checklist, section G](11-checklist-avant-lancement.md)).
 
 ## Lancer en local
@@ -51,8 +88,12 @@ Mot de passe : `Demo2026!`. Ces comptes n'existent que dans les émulateurs loca
 npm install
 npm run emulators      # terminal 1 — interface des émulateurs : http://localhost:4000
 npm run seed           # terminal 2 — données de démonstration
+cp apps/web/.env.example apps/web/.env.local   # puis décommenter le bloc « Émulateurs locaux »
+npm run dev            # terminal 3 — site branché sur les émulateurs : http://localhost:3000
 npm run test:rules     # tests des règles et des fonctions (lance ses propres émulateurs)
 ```
+
+Les e-mails (confirmation, mot de passe oublié) ne partent pas réellement avec les émulateurs : les liens apparaissent dans l'interface des émulateurs (onglet Authentication).
 
 Prérequis : Node.js 22 et Java 21.
 

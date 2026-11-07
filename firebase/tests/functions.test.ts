@@ -77,12 +77,25 @@ describe("inscription et profil", () => {
     const data = (await adminDb(admin).doc(`users/${uid}`).get()).data();
     expect(data).toMatchObject({ firstName: "Rita", onboardingCompleted: true, role: "user", interests: ["gastronomy", "art", "music"] });
   });
+  it("le genre est facultatif : absent ou null accepté", async () => {
+    expect((await call("completeProfile")({ ...profile, gender: null })).data).toEqual({ ok: true });
+    expect((await call("completeProfile")({ ...profile, gender: undefined })).data).toEqual({ ok: true });
+  });
   it("le serveur refuse les moins de 18 ans et ignore les champs non prévus", async () => {
     expect(await errorCode(call("completeProfile")({ ...profile, birthDate: "2015-01-01" }))).toBe("functions/invalid-argument");
     await call("completeProfile")({ ...profile, role: "superadmin", status: "vip" });
     const data = (await adminDb(admin).doc(`users/${uid}`).get()).data();
     expect(data?.role).toBe("user");
     expect(data?.status).toBe("active");
+  });
+  it("l'acceptation des conditions est horodatée par le serveur, prospection décochée par défaut", async () => {
+    expect(await errorCode(call("acceptTerms")({ terms: true, privacy: false, codeOfConduct: true, marketing: false }))).toBe("functions/invalid-argument");
+    const res = await call("acceptTerms")({ terms: true, privacy: true, codeOfConduct: true, marketing: false });
+    expect(res.data).toMatchObject({ ok: true });
+    const data = (await adminDb(admin).doc(`users/${uid}`).get()).data();
+    expect(data?.consents?.version).toBe("2026-11");
+    expect(data?.consents?.terms?.toDate()).toBeInstanceOf(Date);
+    expect(data?.notificationPrefs?.marketingEmail).toBe(false);
   });
   it("le serveur refuse une ville non ouverte", async () => {
     expect(await errorCode(call("completeProfile")({ ...profile, cityId: "atlantis" }))).toBe("functions/invalid-argument");
