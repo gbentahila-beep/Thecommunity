@@ -6,7 +6,7 @@ export function formOptions(d: Pick<AdminData, "categories" | "cities" | "partne
   return {
     categories: d.categories.map((c) => ({ id: c.id, label: c.name.fr })),
     cities: d.cities.map((c) => ({ id: c.id, label: c.isActive ? c.name.fr : `${c.name.fr} (bientôt)`, disabled: !c.isActive })),
-    partners: d.partners.map((p) => ({ id: p.id, label: p.name })),
+    partners: d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, label: p.name })),
     policies: [{ id: DEFAULT_CANCELLATION_POLICY.id, label: DEFAULT_CANCELLATION_POLICY.label.fr }],
   };
 }

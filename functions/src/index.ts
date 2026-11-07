@@ -26,3 +26,5 @@ export { submitReview, adminSetReviewStatus, reviewRequests } from "./reviews/re
 export { setExperienceAlert } from "./experiences/alerts";
 export { adminSaveMembershipPlan, startMembershipCheckout, adminGrantMembership, adminRevokeMembership } from "./membership/membership";
 export { adminInvoiceAction, adminSaveCompanySettings } from "./invoices/admin";
+export { adminSavePartner, adminPartnerAction, adminPartnerApplicationAction } from "./catalog/partners";
+export { adminSaveCity, adminSaveCategory } from "./catalog/places";

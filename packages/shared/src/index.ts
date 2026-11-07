@@ -9,3 +9,4 @@ export * from "./experience-input";
 export * from "./booking";
 export * from "./membership";
 export * from "./invoice";
+export * from "./admin-catalog";

@@ -120,7 +120,7 @@ describe("catalogue", () => {
   it("villes : lecture publique, modification super-admin", async () => {
     await assertSucceeds(getDoc(doc(anon(), "cities/casablanca")));
     await assertFails(setDoc(doc(admin(), "cities/rabat"), { isActive: true }));
-    await assertSucceeds(setDoc(doc(superadmin(), "cities/rabat"), { isActive: false }));
+    await assertFails(setDoc(doc(superadmin(), "cities/rabat"), { isActive: false })); // uniquement via le back-office (journalisé)
   });
 });
 

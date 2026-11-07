@@ -70,11 +70,11 @@ service cloud.firestore {
     // ---------- Référentiels publics ----------
     match /cities/{cityId} {
       allow read: if true;
-      allow write: if isSuperAdmin();
+      allow write: if false; // via le back-office (Cloud Functions, super-admin, journalisé)
     }
     match /categories/{categoryId} {
       allow read: if true;
-      allow write: if isSuperAdmin();
+      allow write: if false; // via le back-office (Cloud Functions, super-admin, journalisé)
     }
 
     // ---------- Expériences et sessions ----------

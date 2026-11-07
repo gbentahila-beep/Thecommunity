@@ -955,3 +955,79 @@ describe("factures, avoirs et e-mails (5c)", () => {
     expect((await mailsFor(`inv_${paymentId}`))[0]).toMatchObject({ kind: "membership_invoice" });
   });
 });
+
+describe("back-office : partenaires, villes, univers (5d, 5e)", () => {
+  const partner = {
+    name: "Studio Lumière", type: "studio", status: "prospect", cityId: "casablanca", district: "Maarif", address: "12 rue Test", contactName: "Yasmine",
+    contactEmail: "contact@studio.ma", contactPhone: "+212 6 00 00 00 00", link: "instagram.com/studio", model: "commission", defaultCommissionPercent: 20, notes: "",
+  };
+  const auditActions = async (targetId: string) => (await db().collection("auditLogs").where("targetId", "==", targetId).get()).docs.map((d) => d.data().action);
+
+  it("ajouter, modifier, archiver un partenaire ; réservé à l'équipe ; journalisé", async () => {
+    const adm = await member({ role: "admin" });
+    const u = await member();
+    expect(await refusal(u.call("adminSavePartner", { data: partner }))).toBe("permission-denied:");
+    expect(await refusal(adm.call("adminSavePartner", { data: { ...partner, model: "commission", defaultCommissionPercent: 0 } }))).toBe("invalid-argument:");
+    expect(await refusal(adm.call("adminSavePartner", { data: { ...partner, cityId: "ville-inconnue" } }))).toBe("invalid-argument:");
+    const { id } = (await adm.call("adminSavePartner", { data: partner })) as { id: string };
+    expect((await db().doc(`partners/${id}`).get()).data()).toMatchObject({ name: "Studio Lumière", status: "prospect", model: "commission", defaultCommissionPercent: 20, createdBy: adm.uid });
+    await adm.call("adminSavePartner", { id, data: { ...partner, name: "Studio Lumière Maarif", status: "active", model: "purchase", defaultCommissionPercent: 20 } });
+    expect((await db().doc(`partners/${id}`).get()).data()).toMatchObject({ name: "Studio Lumière Maarif", status: "active", model: "purchase", defaultCommissionPercent: 0 });
+    await adm.call("adminPartnerAction", { id, action: "archive" });
+    expect((await db().doc(`partners/${id}`).get()).data()!.status).toBe("archived");
+    expect(await auditActions(id)).toEqual(expect.arrayContaining(["partner.create", "partner.update", "partner.archive"]));
+  });
+
+  it("suppression : super-admin seulement, et jamais pour un partenaire utilisé par une expérience", async () => {
+    const adm = await member({ role: "admin" });
+    const sup = await member({ role: "superadmin" });
+    const { id: linked } = (await adm.call("adminSavePartner", { data: partner })) as { id: string };
+    const exp = db().collection("experiences").doc();
+    await exp.set({ title: { fr: "Atelier lié" }, status: "draft" });
+    await db().doc(`experiences/${exp.id}/private/economics`).set({ partnerId: linked, model: "commission", commissionPercent: 20 });
+    expect(await refusal(adm.call("adminPartnerAction", { id: linked, action: "delete" }))).toBe("permission-denied:superadmin_only");
+    expect(await refusal(sup.call("adminPartnerAction", { id: linked, action: "delete" }))).toBe("failed-precondition:linked");
+    const { id: free } = (await adm.call("adminSavePartner", { data: { ...partner, name: "Lieu sans expérience" } })) as { id: string };
+    expect(await sup.call("adminPartnerAction", { id: free, action: "delete" })).toEqual({ ok: true });
+    expect((await db().doc(`partners/${free}`).get()).exists).toBe(false);
+  });
+
+  it("candidature → partenaire « prospect » avec ses coordonnées (une seule fois) ; écarter / remettre à traiter", async () => {
+    const adm = await member({ role: "admin" });
+    const app = await db().collection("partnerApplications").add({
+      contactName: "Omar", businessName: `Café ${run}`, type: "restaurant", city: "Casablanca", email: "omar@cafe.ma", phone: "", link: "", message: "Un café calme à Gauthier, 20 places.", locale: "fr", createdAt: Timestamp.now(),
+    });
+    const r1 = (await adm.call("adminPartnerApplicationAction", { applicationId: app.id, action: "convert" })) as { partnerId: string };
+    const r2 = (await adm.call("adminPartnerApplicationAction", { applicationId: app.id, action: "convert" })) as { partnerId: string };
+    expect(r2.partnerId).toBe(r1.partnerId);
+    expect((await db().doc(`partners/${r1.partnerId}`).get()).data()).toMatchObject({ name: `Café ${run}`, type: "restaurant", status: "prospect", cityId: "casablanca", contactEmail: "omar@cafe.ma", applicationId: app.id });
+    expect((await app.get()).data()).toMatchObject({ status: "converted", partnerId: r1.partnerId });
+    const other = await db().collection("partnerApplications").add({ contactName: "X", businessName: "Y", type: "other", city: "Rabat", email: "x@y.ma", phone: "", link: "", message: "Bonjour, une proposition.", locale: "fr", createdAt: Timestamp.now() });
+    await adm.call("adminPartnerApplicationAction", { applicationId: other.id, action: "decline" });
+    expect((await other.get()).data()!.status).toBe("declined");
+  });
+
+  it("villes et univers : super-admin seulement, journalisé ; un univers inconnu est refusé", async () => {
+    const adm = await member({ role: "admin" });
+    const sup = await member({ role: "superadmin" });
+    const city = { id: `ville-${run}`, nameFr: "Rabat", nameAr: "الرباط", nameEn: "", isActive: false, isComingSoon: true, order: 5, districts: ["Agdal", "Hassan"] };
+    expect(await refusal(adm.call("adminSaveCity", city))).toBe("permission-denied:");
+    expect(await sup.call("adminSaveCity", city)).toEqual({ id: city.id, created: true });
+    expect((await db().doc(`cities/${city.id}`).get()).data()).toMatchObject({ name: { fr: "Rabat", ar: "الرباط" }, isActive: false, isComingSoon: true, timezone: "Africa/Casablanca", currency: "MAD", districts: ["Agdal", "Hassan"] });
+    await sup.call("adminSaveCity", { ...city, nameAr: "", isActive: true });
+    const c = (await db().doc(`cities/${city.id}`).get()).data()!;
+    expect(c).toMatchObject({ isActive: true, isComingSoon: false });
+    expect(c.name).toEqual({ fr: "Rabat" });
+    const cat = { id: "create", name: { fr: "Ateliers créatifs", ar: "", en: "Creative workshops" }, shortName: { fr: "Ateliers", ar: "", en: "Workshops" }, description: { fr: "Poterie, peinture, cuisine…", ar: "", en: "" }, order: 4, isActive: true, defaultBookingMode: "individual" };
+    expect(await refusal(adm.call("adminSaveCategory", cat))).toBe("permission-denied:");
+    expect(await refusal(sup.call("adminSaveCategory", { ...cat, id: "casino" }))).toBe("invalid-argument:unknown_category");
+    const before = (await db().doc("categories/create").get()).data();
+    try {
+      await sup.call("adminSaveCategory", cat);
+      expect((await db().doc("categories/create").get()).data()).toMatchObject({ name: { fr: "Ateliers créatifs", en: "Creative workshops" }, order: 4 });
+      expect(await auditActions("create")).toContain("category.update");
+    } finally {
+      if (before) await db().doc("categories/create").set(before);
+    }
+  });
+});
