@@ -45,6 +45,23 @@ jobs:
           gcloud firebase apphosting rollouts list --backend=thecommunity-web --location="$REGION" --limit=3 2>/dev/null || \
             curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" \
               "https://firebaseapphosting.googleapis.com/v1beta/projects/$PROJECT/locations/$REGION/backends/thecommunity-web/rollouts?pageSize=3" | head -80
+      - name: Vérification des pages publiques (lecture seule)
+        if: steps.creds.outputs.ok == 'true'
+        run: |
+          # Après la mise en ligne, les pages principales doivent répondre sans erreur serveur.
+          SITE="https://thecommunity-web--$PROJECT.$REGION.hosted.app"
+          sleep 90
+          FAIL=0
+          check() { CODE=$(curl -s -o /dev/null -w '%{http_code}' "$SITE$1"); echo "$CODE $1"; if [ "$CODE" -ge 500 ]; then FAIL=1; fi; }
+          check /
+          check /experiences
+          check /abonnement
+          check /connexion
+          for P in $(curl -s "$SITE/experiences" | grep -o 'href="/experiences/[a-z0-9-]*"' | cut -d'"' -f2 | sort -u | head -5); do check "$P"; done
+          for P in $(curl -s "$SITE/experiences" | grep -o 'href="/experiences/[a-z0-9-]*"' | cut -d'"' -f2 | sort -u | head -1); do
+            for R in $(curl -s "$SITE$P" | grep -o '/reserver/[A-Za-z0-9_-]*' | sort -u | head -2); do check "$R"; done
+          done
+          if [ "$FAIL" = 1 ]; then echo "::error::Au moins une page publique répond par une erreur serveur."; exit 1; fi
       - name: Suppression de la clé temporaire
         if: always()
         run: rm -f "$RUNNER_TEMP/sa.json"

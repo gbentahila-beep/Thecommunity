@@ -91,22 +91,26 @@ async function fsSessionRaw(id: string): Promise<Session | null> {
   return withId<Session>(snap);
 }
 
-/** Dernières dates passées d'une expérience (« éditions passées »), hors dates annulées. */
+/**
+ * Dernières dates passées d'une expérience (« éditions passées »), hors dates annulées.
+ * Section secondaire : en cas d'erreur (ex. index en cours de construction), la fiche s'affiche sans elle.
+ */
 async function fsPastSessionsRaw(experienceId: string, now: number): Promise<Session[]> {
-  const snap = await adminDb()
-    .collection("sessions")
-    .where("experienceId", "==", experienceId)
-    .where("startAt", "<", Timestamp.fromMillis(now))
-    .orderBy("startAt")
-    .limitToLast(24)
-    .get();
-  return snap.docs
-    .map((d) => withId<Session>(d))
-    .filter((x) => ["published", "full", "completed"].includes(x.status))
-    .reverse();
+  try {
+    const snap = await adminDb()
+      .collection("sessions")
+      .where("experienceId", "==", experienceId)
+      .where("startAt", "<", Timestamp.fromMillis(now))
+      .orderBy("startAt", "desc")
+      .limit(24)
+      .get();
+    return snap.docs.map((d) => withId<Session>(d)).filter((x) => ["published", "full", "completed"].includes(x.status));
+  } catch (e) {
+    console.error("Éditions passées indisponibles", experienceId, e);
+    return [];
+  }
 }
 
-/** Formule d'abonnement proposée (null si inactive). */
 async function fsMembershipPlanRaw(): Promise<MembershipPlan | null> {
   const snap = await adminDb().doc(`membershipPlans/${MEMBERSHIP_PLAN_ID}`).get();
   const p = snap.data();
