@@ -136,4 +136,6 @@ export const fsPublishedExperiences = cached(fsPublishedExperiencesRaw, "fsPubli
 export const fsExperienceBySlug = cached(fsExperienceBySlugRaw, "fsExperienceBySlug");
 export const fsUpcomingSessions = cached(fsUpcomingSessionsRaw, "fsUpcomingSessions");
 export const fsSession = cached(fsSessionRaw, "fsSession");
+/** Lecture SANS cache : places restantes exactes pour le tunnel de réservation. */
+export const fsSessionFresh = fsSessionRaw;
 export const fsReviews = cached(fsReviewsRaw, "fsReviews");

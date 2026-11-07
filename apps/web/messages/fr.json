@@ -125,7 +125,45 @@
     "payCta": "Paiement bientôt disponible",
     "back": "Retour à l'expérience",
     "fullTitle": "Cette date est complète",
-    "fullText": "Vous pourrez bientôt rejoindre la liste d'attente et être prévenu dès qu'une place se libère."
+    "fullText": "Vous pourrez bientôt rejoindre la liste d'attente et être prévenu dès qu'une place se libère.",
+    "seatsLeft": "Places restantes",
+    "seatsLabel": "Nombre de places",
+    "fewer": "Une place de moins",
+    "more": "Une place de plus",
+    "payCtaAmount": "Réserver et payer {amount}",
+    "freeCta": "Réserver ma place (gratuit)",
+    "working": "Un instant…",
+    "holdNote": "Votre place est bloquée 15 minutes le temps du paiement.",
+    "testModeNote": "Paiement en mode test : aucune carte n'est demandée et aucun argent n'est débité.",
+    "unavailableTitle": "Réservation impossible",
+    "signInTitle": "Connectez-vous pour réserver",
+    "signInText": "Un compte permet de retrouver vos réservations et de recevoir les informations pratiques.",
+    "signInCta": "Se connecter",
+    "signUpCta": "Créer un compte",
+    "verifyTitle": "Confirmez votre adresse e-mail pour réserver",
+    "profileTitle": "Complétez votre profil",
+    "profileText": "Quelques questions rapides nous aident à composer des groupes qui vous ressemblent.",
+    "profileCta": "Compléter mon profil",
+    "seeMyBookings": "Voir mes réservations",
+    "errors": {
+      "email_not_verified": "Confirmez d'abord votre adresse e-mail (lien reçu par e-mail), puis réessayez.",
+      "profile_incomplete": "Complétez votre profil avant de réserver.",
+      "suspended": "Votre compte est suspendu. Contactez-nous si vous pensez qu'il s'agit d'une erreur.",
+      "not_open": "Cette date n'est pas ouverte à la réservation.",
+      "closed": "Les réservations sont fermées pour cette date.",
+      "full": "Cette date vient d'être complète.",
+      "not_enough_seats": "Il ne reste pas assez de places pour ce nombre de personnes.",
+      "too_many_seats": "Ce nombre de places dépasse la limite par réservation.",
+      "already_booked": "Vous avez déjà une place pour cette date.",
+      "payments_unavailable": "Le paiement en ligne est momentanément indisponible. Réessayez plus tard.",
+      "hold_expired": "Le délai de 15 minutes est dépassé : la place a été remise en vente.",
+      "not_payable": "Cette réservation n'est plus à payer.",
+      "already_paid": "Cette réservation est déjà payée.",
+      "already_processed": "Ce paiement a déjà été traité.",
+      "busy": "Beaucoup de demandes en même temps : réessayez dans quelques secondes.",
+      "signin": "Votre session a expiré : reconnectez-vous pour continuer.",
+      "generic": "Une erreur est survenue. Réessayez."
+    }
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -321,7 +359,17 @@
     "reportLink": "Signaler un comportement",
     "paidLabel": "Payé le",
     "cancelledLabel": "Annulée le",
-    "refundedLabel": "Remboursé"
+    "refundedLabel": "Remboursé",
+    "confirmedBanner": "C'est réservé ! Votre place est confirmée.",
+    "pendingTitle": "Paiement en attente",
+    "pendingExpiredTitle": "Délai de paiement dépassé",
+    "pendingText": "Votre place est bloquée jusqu'à {time}. Passé ce délai, elle sera remise en vente.",
+    "payNow": "Payer {amount}",
+    "paymentFailed": "Le paiement n'a pas abouti. Vous pouvez réessayer tant que votre place est bloquée.",
+    "expiredText": "Le délai de paiement est dépassé : la place a été remise en vente. Vous pouvez réserver à nouveau s'il reste des places.",
+    "lateRefundText": "Votre paiement est arrivé après la remise en vente de la dernière place : {amount} vous ont été remboursés intégralement.",
+    "totalDue": "Total à payer",
+    "seatsLabel": "Places"
   },
   "profilePage": {
     "title": "Mon profil",
@@ -426,5 +474,16 @@
     "saving": "Enregistrement…",
     "saveError": "Enregistrement impossible. Vérifiez les informations et réessayez.",
     "photoUploadError": "La photo n'a pas pu être envoyée ; votre profil est tout de même enregistré."
+  },
+  "testPayment": {
+    "bannerTitle": "Paiement de TEST",
+    "bannerText": "Aucune carte n'est demandée et aucun argent n'est débité. Cette page remplace celle de la banque tant que le contrat de paiement n'est pas signé.",
+    "title": "Paiement",
+    "seats": "{count, plural, one {# place} other {# places}}",
+    "holdUntil": "Place bloquée jusqu'à {time}",
+    "succeed": "Simuler un paiement accepté",
+    "fail": "Simuler un refus de la banque",
+    "alreadyProcessed": "Ce paiement a déjà été traité.",
+    "seeReservation": "Voir ma réservation"
   }
 }

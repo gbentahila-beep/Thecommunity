@@ -94,6 +94,10 @@ Les étapes 1 à 4 prennent souvent **plusieurs semaines chacune** : c'est ce qu
 - [ ] Relier le dépôt GitHub à **Firebase App Hosting** (dans la console Firebase).
 - [ ] Créer un compte chez le **service d'envoi d'e-mails** (proposition : Brevo).
 - [ ] Activer la **double authentification** sur les comptes Google, GitHub et Brevo.
+- [ ] **Ménage du projet d'essai** (depuis un ordinateur, sans urgence) :
+  - [ ] Firebase → **Realtime Database → Règles** : `{ "rules": { ".read": false, ".write": false } }` → **Publier** (base inutilisée).
+  - [ ] Firebase → **Authentication** : supprimer les comptes `test-claude-…@example.com` (comptes de test de Claude).
+  - [ ] Firestore → collection `users` : supprimer les fiches de ces mêmes comptes.
 
 ## H. Contenu et partenaires 🔴
 

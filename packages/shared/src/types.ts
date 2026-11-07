@@ -198,7 +198,12 @@ export type Reservation = {
   venue?: { name: string; address: string };
   groupId?: string;
   paidAt?: string;
-  cancellation?: { at: string; by: "user" | "admin" | "system"; refundAmount: number };
+  /** Fin du blocage des places pendant le paiement (réservation « pending_payment »). */
+  holdExpiresAt?: string;
+  paymentId?: string;
+  /** Paiement arrivé après l'expiration du blocage, place reprise. */
+  latePayment?: boolean;
+  cancellation?: { at: string; by: "user" | "admin" | "system"; refundAmount: number; reason?: string };
   reviewId?: string;
   createdAt: string;
   isDemo?: boolean;

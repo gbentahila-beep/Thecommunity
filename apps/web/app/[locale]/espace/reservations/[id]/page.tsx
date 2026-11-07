@@ -1,20 +1,24 @@
 import { DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor } from "@thecommunity/shared";
-import { ArrowLeft, CalendarDays, CalendarPlus, Info, MapPin, Star } from "lucide-react";
+import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { StatusBadge } from "@/components/account/status-badge";
+import { PayNowButton } from "@/components/booking/pay-now-button";
 import { Stars } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getReviews } from "@/lib/data";
 import { getMemberReservation } from "@/lib/data/member";
-import { formatLongDate, formatTimeRange } from "@/lib/format";
+import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { buildIcs, icsDataUri } from "@/lib/ics";
 import { SITE_URL } from "@/lib/site";
 
-export default async function ReservationDetailPage({ params }: PageProps<"/[locale]/espace/reservations/[id]">) {
+export default async function ReservationDetailPage({ params, searchParams }: PageProps<"/[locale]/espace/reservations/[id]">) {
   const { locale: localeParam, id } = await params;
+  const sp = await searchParams;
+  const paymentFlag = typeof sp.paiement === "string" ? sp.paiement : undefined;
+  const justBooked = sp.reservation === "confirmee";
   setRequestLocale(localeParam);
   const data = await getMemberReservation(id);
   if (!data) notFound();
@@ -30,6 +34,8 @@ export default async function ReservationDetailPage({ params }: PageProps<"/[loc
   const venueText = r.venue ? `${r.venue.name}, ${r.venue.address}` : `${s.district}, Casablanca`;
   const ics = buildIcs({ uid: r.id, title, startAt: s.startAt, endAt: s.endAt, location: venueText, url: `${SITE_URL}/espace/reservations/${r.id}` });
   const dateFmt = (iso: string) => formatLongDate(iso, locale);
+  const holdOpen = r.status === "pending_payment" && r.holdExpiresAt !== undefined && new Date(r.holdExpiresAt).getTime() > now.getTime();
+  const total = formatMoney({ amount: r.pricing.total, currency: r.pricing.currency }, lang);
 
   return (
     <div className="space-y-6">
@@ -37,6 +43,43 @@ export default async function ReservationDetailPage({ params }: PageProps<"/[loc
         <ArrowLeft className="size-4 rtl:-scale-x-100" aria-hidden />
         {t("back")}
       </Link>
+
+      {r.status === "confirmed" && (paymentFlag === "accepte" || justBooked) && (
+        <p role="status" className="flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900">
+          <CheckCircle2 className="size-5 shrink-0" aria-hidden />
+          {t("confirmedBanner")}
+        </p>
+      )}
+
+      {r.status === "pending_payment" && (
+        <section className="rounded-[var(--radius-card)] border border-amber-300 bg-amber-50 p-5 text-amber-950">
+          <h2 className="flex items-center gap-2 font-semibold">
+            <Clock className="size-5 shrink-0" aria-hidden />
+            {holdOpen ? t("pendingTitle") : t("pendingExpiredTitle")}
+          </h2>
+          {paymentFlag === "refuse" && holdOpen && <p role="alert" className="mt-2 text-sm font-medium text-red-800">{t("paymentFailed")}</p>}
+          <p className="mt-1 text-sm">
+            {holdOpen ? t("pendingText", { time: formatTime(r.holdExpiresAt!, locale) }) : t("expiredText")}
+          </p>
+          {holdOpen && (
+            <div className="mt-4">
+              <PayNowButton reservationId={r.id} label={t("payNow", { amount: total })} />
+            </div>
+          )}
+        </section>
+      )}
+
+      {r.status === "expired" && (
+        <section className="rounded-[var(--radius-card)] border border-line bg-white/70 p-5">
+          <p className="text-sm text-ink">{t("expiredText")}</p>
+        </section>
+      )}
+
+      {r.status === "refunded" && r.cancellation?.by === "system" && (
+        <section className="rounded-[var(--radius-card)] border border-line bg-white/70 p-5">
+          <p className="text-sm text-ink">{t("lateRefundText", { amount: formatMoney({ amount: r.cancellation.refundAmount, currency: r.pricing.currency }, lang) })}</p>
+        </section>
+      )}
 
       <article className="overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card">
         <div className="relative h-44 sm:h-56">
@@ -117,9 +160,15 @@ export default async function ReservationDetailPage({ params }: PageProps<"/[loc
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
         <h2 className="font-display text-2xl font-medium text-plum-900">{t("receipt")}</h2>
         <dl className="mt-3 divide-y divide-line text-[15px]">
+          {r.seats > 1 && (
+            <div className="flex justify-between py-2.5">
+              <dt className="text-muted">{t("seatsLabel")}</dt>
+              <dd>{r.seats}</dd>
+            </div>
+          )}
           <div className="flex justify-between py-2.5">
-            <dt className="text-muted">{t("total")}</dt>
-            <dd className="font-semibold">{formatMoney({ amount: r.pricing.total, currency: r.pricing.currency }, lang)}</dd>
+            <dt className="text-muted">{r.paidAt ? t("total") : t("totalDue")}</dt>
+            <dd className="font-semibold">{total}</dd>
           </div>
           {r.paidAt && (
             <div className="flex justify-between py-2.5">

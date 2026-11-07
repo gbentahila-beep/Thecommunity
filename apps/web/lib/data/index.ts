@@ -143,6 +143,15 @@ export async function getSession(id: string) {
   return session ?? null;
 }
 
+/** Comme getSession, mais avec les places restantes à jour (pas de cache) : tunnel de réservation. */
+export async function getSessionForBooking(id: string) {
+  if (!FIREBASE_ENABLED) return getSession(id);
+  const s = await fs.fsSessionFresh(id);
+  if (!s) return null;
+  const e = (await fs.fsExperiencesByIds([s.experienceId])).get(s.experienceId);
+  return e ? { ...s, experience: e } : null;
+}
+
 export async function getReviews(experienceId?: string) {
   if (FIREBASE_ENABLED) return fs.fsReviews(experienceId);
   return DEMO_REVIEWS.filter((r) => !experienceId || r.experienceId === experienceId);
