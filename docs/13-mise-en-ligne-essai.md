@@ -28,8 +28,10 @@ La configuration reçue contient une adresse `…firebasedatabase.app` : une **R
 1. Ouvrir **console.cloud.google.com**, sélectionner le projet **the-community-36766** (en haut).
 2. Menu **IAM & Admin → Service Accounts → + Create service account**.
    - Nom : `github-deploy` → **Create and continue**.
-   - Rôle : **Basic → Editor** (« Éditeur ») → **Continue** → **Done**.
+   - Rôle : **Basic → Editor** (« Éditeur »), puis **+ Add another role → Cloud Run Admin** → **Continue** → **Done**.
    > Rôle large mais acceptable pour un projet d'essai aux données fictives. Le projet réel aura des droits réduits au strict nécessaire.
+   > « Cloud Run Admin » est indispensable : sans lui, les fonctions serveur sont déployées mais le site ne peut pas les appeler (questionnaire : « Enregistrement impossible »).
+   > Compte déjà créé sans ce rôle : **IAM & Admin → IAM** → crayon ✏️ sur la ligne `github-deploy@…` → **+ Add another role → Cloud Run Admin → Save**.
 3. Cliquer sur `github-deploy@…` → onglet **Keys** → **Add key → Create new key → JSON → Create**. Un fichier `.json` se télécharge.
 4. Sur **GitHub** : dépôt **Thecommunity → Settings → Secrets and variables → Actions → New repository secret**.
    - Name : `FIREBASE_SERVICE_ACCOUNT_DEV`

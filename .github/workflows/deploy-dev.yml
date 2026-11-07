@@ -64,6 +64,10 @@ jobs:
         if: steps.creds.outputs.ok == 'true'
         run: npx firebase deploy --project dev --only functions --non-interactive --force
 
+      - name: Fonctions appelables depuis le site (droit Cloud Run Invoker)
+        if: steps.creds.outputs.ok == 'true'
+        run: npx tsx scripts/ensure-public-callables.ts --project "$PROJECT"
+
       - name: Contenu de départ (villes, univers, expériences de démonstration)
         if: steps.creds.outputs.ok == 'true'
         run: npx tsx scripts/seed-content.ts --project "$PROJECT" --with-demo-experiences
