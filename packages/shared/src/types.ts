@@ -159,11 +159,14 @@ export type Session = {
 };
 
 export type Review = {
-  id: string;
+  id: string; // = identifiant de la réservation (un avis par réservation)
   experienceId: string;
+  sessionId?: string;
+  userId?: string;
   rating: number;
   comment: string;
   publicName: string;
+  status?: "published" | "hidden";
   createdAt: string;
   isDemo?: boolean;
 };
@@ -269,6 +272,7 @@ export type NotificationType =
   | "event_cancelled"
   | "waitlist_offer"
   | "review_request"
+  | "new_dates"
   | "request_accepted"
   | "request_declined"
   | "welcome";

@@ -624,3 +624,125 @@ describe("back-office : réservations", () => {
     expect((await logs("session-x")).map((l) => [l.action, l.after.rows])).toEqual([["export.participants", 12]]);
   });
 });
+
+describe("avis", () => {
+  let team: Client;
+  beforeAll(async () => {
+    team = await member({ role: "admin" });
+  });
+
+  /** Réservation payée puis expérience « terminée » (dates déplacées dans le passé). */
+  async function pastReservation(u: Client, opts: { checkIn?: "attended" | "no_show" } = {}) {
+    const sid = await makeSession({ startInHours: 72 });
+    const { reservationId } = await paidReservation(u, sid);
+    const start = Timestamp.fromMillis(Date.now() - 5 * 3_600_000);
+    const end = Timestamp.fromMillis(Date.now() - 3 * 3_600_000);
+    await db().doc(`reservations/${reservationId}`).update({ "sessionSnapshot.startAt": start, "sessionSnapshot.endAt": end, ...(opts.checkIn ? { status: opts.checkIn } : {}) });
+    await db().doc(`sessions/${sid}`).update({ startAt: start, endAt: end });
+    const r = await reservation(reservationId);
+    return { reservationId, experienceId: r.experienceId as string, sid };
+  }
+
+  it("présent·e : avis publié sur l'expérience, note moyenne exacte, un seul avis par réservation", async () => {
+    const a = await member();
+    const b = await member();
+    await db().doc(`users/${a.uid}`).update({ firstName: "Sara", lastName: "benali" });
+    const ra = await pastReservation(a, { checkIn: "attended" });
+    expect(await a.call("submitReview", { reservationId: ra.reservationId, rating: 5, comment: "Super soirée !" })).toEqual({ ok: true, reviewId: ra.reservationId });
+    const rv = (await db().doc(`reviews/${ra.reservationId}`).get()).data()!;
+    expect(rv).toMatchObject({ userId: a.uid, experienceId: ra.experienceId, rating: 5, comment: "Super soirée !", publicName: "Sara B.", status: "published" });
+    expect((await reservation(ra.reservationId)).reviewId).toBe(ra.reservationId);
+    expect(await refusal(a.call("submitReview", { reservationId: ra.reservationId, rating: 4 }))).toBe("failed-precondition:already_reviewed");
+    // Deuxième avis sur la même expérience (autre date) : moyenne 4,5.
+    const sid2 = await makeSession({ startInHours: 72 });
+    await db().doc(`sessions/${sid2}`).update({ experienceId: ra.experienceId });
+    const { reservationId: rb } = await paidReservation(b, sid2);
+    await db().doc(`reservations/${rb}`).update({ "sessionSnapshot.endAt": Timestamp.fromMillis(Date.now() - 3_600_000), experienceId: ra.experienceId });
+    await b.call("submitReview", { reservationId: rb, rating: 4 });
+    expect((await db().doc(`experiences/${ra.experienceId}`).get()).data()).toMatchObject({ ratingCount: 2, ratingSum: 9, ratingAvg: 4.5 });
+  });
+
+  it("refusé : absent·e, expérience pas terminée, réservation d'autrui, note invalide", async () => {
+    const u = await member();
+    const other = await member();
+    const absent = await pastReservation(u, { checkIn: "no_show" });
+    expect(await refusal(u.call("submitReview", { reservationId: absent.reservationId, rating: 5 }))).toBe("failed-precondition:not_reviewable");
+    const sid = await makeSession({ startInHours: 72 });
+    const { reservationId } = await paidReservation(u, sid);
+    expect(await refusal(u.call("submitReview", { reservationId, rating: 5 }))).toBe("failed-precondition:not_reviewable");
+    const done = await pastReservation(u);
+    expect(await refusal(other.call("submitReview", { reservationId: done.reservationId, rating: 5 }))).toBe("not-found:not_found");
+    expect(await refusal(u.call("submitReview", { reservationId: done.reservationId, rating: 6 }))).toBe("invalid-argument:");
+  });
+
+  it("modération : un avis masqué sort de la note moyenne, puis peut être republié", async () => {
+    const u = await member();
+    const r = await pastReservation(u);
+    await u.call("submitReview", { reservationId: r.reservationId, rating: 2, comment: "Bof" });
+    expect(await refusal(u.call("adminSetReviewStatus", { reviewId: r.reservationId, status: "hidden" }))).toBe("permission-denied:");
+    await team.call("adminSetReviewStatus", { reviewId: r.reservationId, status: "hidden" });
+    expect((await db().doc(`reviews/${r.reservationId}`).get()).data()!.status).toBe("hidden");
+    expect((await db().doc(`experiences/${r.experienceId}`).get()).data()).toMatchObject({ ratingCount: 0, ratingAvg: 0 });
+    await team.call("adminSetReviewStatus", { reviewId: r.reservationId, status: "published" });
+    expect((await db().doc(`experiences/${r.experienceId}`).get()).data()).toMatchObject({ ratingCount: 1, ratingAvg: 2 });
+  });
+
+  it("le lendemain : une demande d'avis, une seule fois", async () => {
+    const { sendReviewRequests } = await import("../../functions/src/reviews/reviews");
+    const u = await member();
+    const r = await pastReservation(u);
+    await sendReviewRequests();
+    await sendReviewRequests();
+    const notes = await db().collection(`users/${u.uid}/notifications`).where("type", "==", "review_request").get();
+    expect(notes.docs.map((d) => d.data().link)).toEqual([`/espace/reservations/${r.reservationId}#avis`]);
+  });
+});
+
+describe("expériences sans date et alerte « prochaines dates »", () => {
+  let team: Client;
+  beforeAll(async () => {
+    team = await member({ role: "admin" });
+    await db().doc("categories/create").set({ isActive: true }, { merge: true });
+  });
+  const baseInput = {
+    titleFr: "Atelier poterie sans date",
+    summaryFr: "Un atelier pour modeler l'argile en petit groupe.",
+    descriptionFr: "Description suffisamment longue pour passer la validation du formulaire admin.",
+    categoryId: "create", cityId: "casablanca", district: "Maarif", venueName: "Atelier Terre", address: "10 rue de la Terre, Casablanca",
+    revealPolicy: "immediate", bookingMode: "individual", maxSeatsPerBooking: 1, admission: "direct", requestMessageRequired: false,
+    priceDh: 250, durationMinutes: 120, languages: ["fr"], alcoholServed: false, cancellationPolicyId: "standard-48h",
+    economicsModel: "own", costPerSeatDh: 100, status: "published",
+  };
+  const plan = (days: number) => {
+    const d = new Date(Date.now() + days * 86_400_000);
+    return { firstDate: d.toISOString().slice(0, 10), time: "18:00", weeks: 1, capacity: 8 };
+  };
+
+  it("créée sans date, puis des dates ajoutées : les personnes inscrites à l'alerte sont prévenues une fois", async () => {
+    const created = await team.call("adminSaveExperience", { data: { ...baseInput, sessions: plan(10) }, addSessions: false, images: [] });
+    const expId = created.experienceId as string;
+    expect(created).toMatchObject({ ok: true, sessionsCreated: 0 });
+    expect((await db().collection("sessions").where("experienceId", "==", expId).get()).size).toBe(0);
+
+    const fan = await member();
+    expect(await fan.call("setExperienceAlert", { experienceId: expId, on: true })).toEqual({ ok: true, on: true });
+    expect((await db().doc(`experienceAlerts/${expId}_${fan.uid}`).get()).exists).toBe(true);
+
+    expect(await team.call("adminSaveExperience", { experienceId: expId, data: { ...baseInput, sessions: plan(12) }, addSessions: true, images: [] })).toMatchObject({ sessionsCreated: 1 });
+    const notes = await db().collection(`users/${fan.uid}/notifications`).where("type", "==", "new_dates").get();
+    expect(notes.size).toBe(1);
+    expect((await db().doc(`experienceAlerts/${expId}_${fan.uid}`).get()).exists).toBe(false);
+    // Reproposer d'autres dates plus tard ne renvoie rien à quelqu'un qui n'a plus d'alerte.
+    await team.call("adminSaveExperience", { experienceId: expId, data: { ...baseInput, sessions: plan(20) }, addSessions: true, images: [] });
+    expect((await db().collection(`users/${fan.uid}/notifications`).where("type", "==", "new_dates").get()).size).toBe(1);
+  });
+
+  it("on peut retirer son alerte ; pas d'alerte sur une expérience inconnue", async () => {
+    const created = await team.call("adminSaveExperience", { data: { ...baseInput, titleFr: "Atelier bougies sans date", sessions: plan(10) }, addSessions: false, images: [] });
+    const u = await member();
+    await u.call("setExperienceAlert", { experienceId: created.experienceId, on: true });
+    await u.call("setExperienceAlert", { experienceId: created.experienceId, on: false });
+    expect((await db().doc(`experienceAlerts/${created.experienceId}_${u.uid}`).get()).exists).toBe(false);
+    expect(await refusal(u.call("setExperienceAlert", { experienceId: "inconnue", on: true }))).toBe("not-found:not_found");
+  });
+});

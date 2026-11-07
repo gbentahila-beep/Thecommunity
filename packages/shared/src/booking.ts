@@ -94,3 +94,28 @@ export function bookingRefusal(
 export function maxSeatsFor(experience: { maxSeatsPerBooking?: number }): number {
   return Math.min(Math.max(1, experience.maxSeatsPerBooking ?? 1), MAX_SEATS_PER_BOOKING);
 }
+
+/** Avis : délai pour noter après la fin de l'expérience (hypothèse : 60 jours). */
+export const REVIEW_WINDOW_DAYS = 60;
+export const REVIEW_COMMENT_MAX = 1000;
+
+export const reviewInputSchema = z.object({
+  reservationId: reservationRequestSchema.shape.sessionId,
+  rating: z.number().int().min(1, "rating").max(5, "rating"),
+  comment: z.string().trim().max(REVIEW_COMMENT_MAX, "tooLong").default(""),
+});
+
+/** Peut-on laisser un avis sur cette réservation à `now` ? (présent·e, ou confirmé·e et expérience terminée) */
+export function canReview(r: { status: string; sessionSnapshot: { endAt: string } }, now: Date = new Date()): boolean {
+  const end = new Date(r.sessionSnapshot.endAt).getTime();
+  if (now.getTime() > end + REVIEW_WINDOW_DAYS * 86_400_000) return false;
+  if (r.status === "attended") return true;
+  return r.status === "confirmed" && now.getTime() >= end;
+}
+
+/** Nom public d'un avis : prénom + initiale du nom (« Sara B. »). */
+export function publicNameOf(firstName?: string, lastName?: string): string {
+  const f = (firstName ?? "").trim() || "Membre";
+  const l = (lastName ?? "").trim();
+  return l ? `${f} ${l.charAt(0).toUpperCase()}.` : f;
+}

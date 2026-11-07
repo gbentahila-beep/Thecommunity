@@ -4,6 +4,7 @@ import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { audit } from "../lib/audit";
+import { notifyNewDates } from "./alerts";
 import { invalidArgument, requireRole, roleOf } from "../lib/guards";
 
 const ID = /^[A-Za-z0-9_-]{6,40}$/;
@@ -64,7 +65,7 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   const existing = await ref.get();
   if (isCreate && existing.exists) throw new HttpsError("already-exists", "Cette expérience existe déjà.");
   if (!isCreate && !existing.exists) throw new HttpsError("not-found", "Expérience introuvable.");
-  if (isCreate && !addSessions) invalidArgument([{ path: ["sessions"], message: "required" }]);
+  // Une expérience peut être créée SANS date : « Prochaines dates bientôt », dates ajoutées plus tard.
 
   // Les photos doivent avoir été envoyées dans le dossier de CETTE expérience.
   for (const img of images) {
@@ -170,6 +171,8 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     updatedAt: FieldValue.serverTimestamp(),
   });
   await batch.commit();
-  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: isCreate ? "experience.create" : "experience.update", targetType: "experience", targetId: id, after: { title: v.titleFr, status: v.status, sessionsAdded: planned.length } });
+  // Nouvelles dates publiées : prévenir les personnes qui l'avaient demandé.
+  const alerted = planned.length > 0 && v.status === "published" ? await notifyNewDates(id, v.titleFr, slug, planned.length) : 0;
+  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: isCreate ? "experience.create" : "experience.update", targetType: "experience", targetId: id, after: { title: v.titleFr, status: v.status, sessionsAdded: planned.length, alerted } });
   return { ok: true, experienceId: id, slug, sessionsCreated: planned.length };
 });

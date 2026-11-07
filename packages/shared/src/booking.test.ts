@@ -59,3 +59,23 @@ describe("demandes de participation", () => {
     expect(bookingRequestSchema.safeParse({ sessionId: "s1", seats: 1, message: "x".repeat(501) }).success).toBe(false);
   });
 });
+
+describe("avis", () => {
+  it("présent·e ou confirmé·e après la fin, dans les 60 jours ; jamais absent·e", async () => {
+    const { canReview } = await import("./booking");
+    const end = "2026-11-10T21:00:00Z";
+    const at = (iso: string) => new Date(iso);
+    expect(canReview({ status: "attended", sessionSnapshot: { endAt: end } }, at("2026-11-10T20:00:00Z"))).toBe(true);
+    expect(canReview({ status: "confirmed", sessionSnapshot: { endAt: end } }, at("2026-11-10T20:00:00Z"))).toBe(false);
+    expect(canReview({ status: "confirmed", sessionSnapshot: { endAt: end } }, at("2026-11-11T09:00:00Z"))).toBe(true);
+    expect(canReview({ status: "no_show", sessionSnapshot: { endAt: end } }, at("2026-11-11T09:00:00Z"))).toBe(false);
+    expect(canReview({ status: "cancelled", sessionSnapshot: { endAt: end } }, at("2026-11-11T09:00:00Z"))).toBe(false);
+    expect(canReview({ status: "attended", sessionSnapshot: { endAt: end } }, at("2027-01-20T09:00:00Z"))).toBe(false);
+  });
+  it("nom public : prénom + initiale", async () => {
+    const { publicNameOf } = await import("./booking");
+    expect(publicNameOf("Sara", "benali")).toBe("Sara B.");
+    expect(publicNameOf("Sara", "")).toBe("Sara");
+    expect(publicNameOf("", "")).toBe("Membre");
+  });
+});
