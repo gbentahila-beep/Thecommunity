@@ -1,12 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { adminAuth } from "@/lib/firebase/admin";
+import { isSameOrigin as sameOrigin } from "@/lib/http/same-origin";
 import { FIREBASE_ENABLED, SESSION_COOKIE, SESSION_DAYS, USE_EMULATORS } from "@/lib/firebase/config";
 
-/** Refuse les appels venant d'un autre site (protection CSRF en plus du cookie SameSite=Lax). */
-function sameOrigin(req: NextRequest) {
-  const origin = req.headers.get("origin");
-  return !origin || origin === req.nextUrl.origin;
-}
 
 /** Échange un jeton d'identification Firebase récent contre un cookie de session httpOnly. */
 export async function POST(req: NextRequest) {
