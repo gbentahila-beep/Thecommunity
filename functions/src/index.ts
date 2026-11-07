@@ -28,3 +28,4 @@ export { adminSaveMembershipPlan, startMembershipCheckout, adminGrantMembership,
 export { adminInvoiceAction, adminSaveCompanySettings } from "./invoices/admin";
 export { adminSavePartner, adminPartnerAction, adminPartnerApplicationAction } from "./catalog/partners";
 export { adminSaveCity, adminSaveCategory } from "./catalog/places";
+export { previewPricing, updateReservationPreferences, adminSavePromo, adminSaveBookingSettings } from "./pricing/pricing";

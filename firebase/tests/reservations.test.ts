@@ -1031,3 +1031,118 @@ describe("back-office : partenaires, villes, univers (5d, 5e)", () => {
     }
   });
 });
+
+describe("codes promo et frais de service (5f)", () => {
+  const promoInput = (code: string, extra: Record<string, unknown> = {}) => ({
+    code, type: "percent", value: 20, validFrom: "", validTo: "2099-12-31", maxRedemptions: 5, firstBookingOnly: false, isActive: true, description: "", ...extra,
+  });
+  const promo = async (code: string) => (await db().doc(`promoCodes/${code}`).get()).data()!;
+
+  it("code créé par l'équipe ; appliqué au prix, compté au paiement, une fois par personne", async () => {
+    const adm = await member({ role: "admin" });
+    const code = `AMIS${run}`.toUpperCase().slice(0, 20);
+    expect(await refusal((await member()).call("adminSavePromo", { create: true, data: promoInput(code) }))).toBe("permission-denied:");
+    expect(await adm.call("adminSavePromo", { create: true, data: promoInput(code.toLowerCase()) })).toEqual({ code });
+    expect(await refusal(adm.call("adminSavePromo", { create: true, data: promoInput(code) }))).toBe("failed-precondition:promo_exists");
+    const sid = await makeSession({ price: 16900 });
+    const u = await member();
+    expect(await u.call("previewPricing", { sessionId: sid, seats: 1, promoCode: code.toLowerCase() })).toMatchObject({ pricing: { subtotal: 16900, discount: 3400, promoCode: code, total: 13500 } });
+    const { reservationId } = await u.call("createReservation", { sessionId: sid, seats: 1, promoCode: code });
+    expect((await reservation(reservationId as string)).pricing).toMatchObject({ discount: 3400, promoCode: code, total: 13500 });
+    expect((await promo(code)).redemptionsCount).toBe(0); // pas encore payé
+    const { paymentId } = await u.call("startCheckout", { reservationId });
+    expect((await payment(paymentId as string)).amount).toBe(13500);
+    await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
+    expect((await promo(code)).redemptionsCount).toBe(1);
+    expect((await db().doc(`promoCodes/${code}/redemptions/${u.uid}`).get()).exists).toBe(true);
+    const inv = (await db().doc(`invoices/inv_${paymentId}`).get()).data()!;
+    expect(inv.lines.map((l: { label: string }) => l.label)).toContain(`Code promo ${code}`);
+    const sid2 = await makeSession({ price: 16900 });
+    expect(await refusal(u.call("createReservation", { sessionId: sid2, seats: 1, promoCode: code }))).toBe("failed-precondition:promo_already_used");
+  });
+
+  it("codes inconnus, inactifs, expirés, épuisés, réservés à une première réservation", async () => {
+    const adm = await member({ role: "admin" });
+    const sid = await makeSession();
+    const u = await member();
+    const c = (s: string) => `${s}${run}`.toUpperCase().slice(0, 20);
+    expect(await refusal(u.call("createReservation", { sessionId: sid, seats: 1, promoCode: c("INCONNU") }))).toBe("failed-precondition:promo_unknown");
+    await adm.call("adminSavePromo", { create: true, data: promoInput(c("OFF"), { isActive: false }) });
+    expect(await refusal(u.call("previewPricing", { sessionId: sid, seats: 1, promoCode: c("OFF") }))).toBe("failed-precondition:promo_inactive");
+    await adm.call("adminSavePromo", { create: true, data: promoInput(c("OLD"), { validTo: "2020-01-01" }) });
+    expect(await refusal(u.call("createReservation", { sessionId: sid, seats: 1, promoCode: c("OLD") }))).toBe("failed-precondition:promo_expired");
+    await adm.call("adminSavePromo", { create: true, data: promoInput(c("FULL"), { maxRedemptions: 1 }) });
+    await db().doc(`promoCodes/${c("FULL")}`).update({ redemptionsCount: 1 });
+    expect(await refusal(u.call("createReservation", { sessionId: sid, seats: 1, promoCode: c("FULL") }))).toBe("failed-precondition:promo_exhausted");
+    await adm.call("adminSavePromo", { create: true, data: promoInput(c("FIRST"), { firstBookingOnly: true }) });
+    await paidReservation(u, await makeSession());
+    expect(await refusal(u.call("createReservation", { sessionId: sid, seats: 1, promoCode: c("FIRST") }))).toBe("failed-precondition:promo_first_booking_only");
+    expect(await refusal(u.call("createReservation", { sessionId: sid, seats: 1, promoCode: "a b" }))).toBe("invalid-argument:");
+  });
+
+  it("code de 100 % : place confirmée tout de suite et comptée ; changer de code reprend une nouvelle réservation", async () => {
+    const adm = await member({ role: "admin" });
+    const full = `OFFERT${run}`.toUpperCase().slice(0, 20);
+    const half = `MOITIE${run}`.toUpperCase().slice(0, 20);
+    await adm.call("adminSavePromo", { create: true, data: promoInput(full, { value: 100 }) });
+    await adm.call("adminSavePromo", { create: true, data: promoInput(half, { value: 50 }) });
+    const sid = await makeSession({ price: 20000, capacity: 5 });
+    const u = await member();
+    const first = await u.call("createReservation", { sessionId: sid, seats: 1, promoCode: half });
+    expect(first).toMatchObject({ status: "pending_payment", total: 10000 });
+    const second = await u.call("createReservation", { sessionId: sid, seats: 1, promoCode: full });
+    expect(second).toMatchObject({ status: "confirmed", total: 0, resumed: false });
+    expect((await reservation(first.reservationId as string)).status).toBe("expired");
+    expect(await session(sid)).toMatchObject({ seatsConfirmed: 1, seatsHeld: 0 });
+    expect((await promo(full)).redemptionsCount).toBe(1);
+  });
+
+  it("frais de service : réglés par le super-admin, ajoutés aux réservations payantes, remboursés avec la place", async () => {
+    const adm = await member({ role: "admin" });
+    const sup = await member({ role: "superadmin" });
+    expect(await refusal(adm.call("adminSaveBookingSettings", { mode: "per_seat", amountDh: 10, percent: 0 }))).toBe("permission-denied:");
+    expect(await refusal(sup.call("adminSaveBookingSettings", { mode: "per_seat", amountDh: 0, percent: 0 }))).toBe("invalid-argument:");
+    await sup.call("adminSaveBookingSettings", { mode: "per_seat", amountDh: 10, percent: 0 });
+    try {
+      const sid = await makeSession({ price: 15000, startInHours: 96 });
+      const u = await member();
+      expect(await u.call("previewPricing", { sessionId: sid, seats: 2 })).toMatchObject({ pricing: { subtotal: 30000, fees: 2000, total: 32000 } });
+      const { reservationId, paymentId } = await paidReservation(u, sid, 2);
+      expect((await reservation(reservationId)).pricing).toMatchObject({ fees: 2000, total: 32000 });
+      expect((await db().doc(`invoices/inv_${paymentId}`).get()).data()!.lines.map((l: { label: string }) => l.label)).toContain("Frais de service");
+      expect(await u.call("cancelReservation", { reservationId })).toMatchObject({ refundAmount: 32000 });
+      // Gratuit : jamais de frais.
+      const free = await makeSession({ price: 0 });
+      expect(await u.call("createReservation", { sessionId: free, seats: 1 })).toMatchObject({ status: "confirmed", total: 0 });
+    } finally {
+      await sup.call("adminSaveBookingSettings", { mode: "none", amountDh: 0, percent: 0 });
+    }
+  });
+});
+
+describe("régime, allergies, langues de table (5g)", () => {
+  const prefs = { diet: "vegetarian", allergies: "Arachides", languages: ["fr", "darija"], consent: true };
+
+  it("à la réservation : accord obligatoire, enregistré et daté ; modifiable par la personne seulement, avant le début", async () => {
+    const sid = await makeSession();
+    const u = await member();
+    expect(await refusal(u.call("createReservation", { sessionId: sid, seats: 1, preferences: { ...prefs, consent: false } }))).toBe("invalid-argument:");
+    const { reservationId } = await u.call("createReservation", { sessionId: sid, seats: 1, preferences: prefs });
+    const r = await reservation(reservationId as string);
+    expect(r.preferences).toMatchObject({ diet: "vegetarian", allergies: "Arachides", languages: ["fr", "darija"], shareWithVenue: true });
+    expect(r.preferences.consentAt).toBeDefined();
+    await u.call("updateReservationPreferences", { reservationId, preferences: { diet: "none", allergies: "", languages: ["en"], consent: false } });
+    expect((await reservation(reservationId as string)).preferences).toMatchObject({ diet: "none", allergies: "", languages: ["en"], shareWithVenue: false });
+    const other = await member();
+    expect(await refusal(other.call("updateReservationPreferences", { reservationId, preferences: prefs }))).toBe("not-found:not_found");
+  });
+
+  it("sur une demande de participation : reprises sur la réservation quand l'équipe accepte", async () => {
+    const sid = await makeSession({ onRequest: true });
+    const u = await member();
+    const adm = await member({ role: "admin" });
+    const { requestId } = await u.call("requestBooking", { sessionId: sid, seats: 1, message: "", preferences: prefs });
+    const { reservationId } = await adm.call("adminDecideRequest", { requestId, decision: "accept" });
+    expect((await reservation(reservationId as string)).preferences).toMatchObject({ diet: "vegetarian", allergies: "Arachides", shareWithVenue: true });
+  });
+});

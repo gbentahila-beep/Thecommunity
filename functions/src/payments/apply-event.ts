@@ -4,6 +4,7 @@ import { nextMembershipPeriod } from "@thecommunity/shared";
 import { db, FieldValue } from "../lib/admin";
 import { afterPaymentSettled } from "../invoices/issue";
 import { issueRefund } from "./refund";
+import { redeemPromo } from "../reservations/create-reservation";
 
 /** Notification de paiement, déjà authentifiée (signature du prestataire, ou callable de test). */
 export type PaymentEvent = {
@@ -59,7 +60,17 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
     const r = res.data()!;
     const sessRef = db.doc(`sessions/${r.sessionId}`);
     const lockRef = sessRef.collection("seatLocks").doc(r.userId);
-    const [sess, lock, exp] = await Promise.all([tx.get(sessRef), tx.get(lockRef), tx.get(db.doc(`experiences/${r.experienceId}`))]);
+    const promoCode = r.pricing?.promoCode as string | undefined;
+    const [sess, lock, exp, redemption] = await Promise.all([
+      tx.get(sessRef),
+      tx.get(lockRef),
+      tx.get(db.doc(`experiences/${r.experienceId}`)),
+      promoCode ? tx.get(db.doc(`promoCodes/${promoCode}/redemptions/${r.userId}`)) : Promise.resolve(null),
+    ]);
+    // Code promo : compté une seule fois par personne, au moment où la place est confirmée.
+    const countPromo = () => {
+      if (promoCode && !redemption?.exists) redeemPromo(tx, promoCode, r.userId, res.id);
+    };
 
     const logged = Object.fromEntries(Object.entries(ev).filter(([, v]) => v !== undefined));
     tx.set(evRef, { ...logged, receivedAt: FieldValue.serverTimestamp() });
@@ -87,6 +98,7 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
       // Les places sont encore bloquées pour cette réservation : elles deviennent confirmées.
       tx.update(sessRef, { seatsHeld: FieldValue.increment(-n), seatsConfirmed: FieldValue.increment(n), updatedAt: FieldValue.serverTimestamp() });
       tx.update(resRef, confirmFields(exp, pay.id));
+      countPromo();
       return { outcome: "confirmed", reservationId: res.id };
     }
 
@@ -103,6 +115,7 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
         });
         tx.set(lockRef, { reservationId: res.id, createdAt: FieldValue.serverTimestamp() });
         tx.update(resRef, { ...confirmFields(exp, pay.id), latePayment: true });
+        countPromo();
         return { outcome: "confirmed", reservationId: res.id };
       }
     }

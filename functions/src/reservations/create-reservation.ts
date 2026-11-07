@@ -1,4 +1,4 @@
-import { bookingClosesAt, bookingRefusal, HOLD_MINUTES, reservationRequestSchema } from "@thecommunity/shared";
+import { bookingClosesAt, bookingRefusal, HOLD_MINUTES, promoRefusal, readServiceFee, reservationRequestSchema, type BookingPreferences } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db, FieldValue, REGION } from "../lib/admin";
@@ -27,10 +27,10 @@ export async function reserveSeats(caller: { uid: string; emailVerified: boolean
   if (!caller.emailVerified) refuse("email_not_verified", "Confirmez votre adresse e-mail pour réserver.");
   const parsed = reservationRequestSchema.safeParse(data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats } = parsed.data;
+  const { sessionId, seats, promoCode, preferences } = parsed.data;
 
   await requireMemberReady(uid);
-  return runReservation({ uid, sessionId, seats });
+  return runReservation({ uid, sessionId, seats, promoCode, preferences });
 }
 
 /** Compte actif et questionnaire complété (conditions pour réserver ou demander à participer). */
@@ -64,22 +64,28 @@ export async function runReservation(o: ReservationRun) {
   }
 }
 
-type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string };
+type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences };
 
 async function runReservationOnce(o: ReservationRun) {
   const { uid, sessionId, seats } = o;
   const sessRef = db.doc(`sessions/${sessionId}`);
   const lockRef = sessRef.collection("seatLocks").doc(uid);
   const requestRef = o.requestId ? db.doc(`bookingRequests/${o.requestId}`) : null;
+  // Code promo : réservation directe uniquement (hypothèse 5f).
+  const promoRef = o.promoCode && !requestRef ? db.doc(`promoCodes/${o.promoCode}`) : null;
 
   return db.runTransaction(async (tx) => {
-    const [sess, lock, request, wait, planSnap, memSnap] = await Promise.all([
+    const [sess, lock, request, wait, planSnap, memSnap, bookingSettings, promoSnap, redemption, pastBookings] = await Promise.all([
       tx.get(sessRef),
       tx.get(lockRef),
       requestRef ? tx.get(requestRef) : Promise.resolve(null),
       tx.get(sessRef.collection("waitlist").doc(uid)),
       tx.get(planRef()),
       tx.get(membershipRef(uid)),
+      tx.get(db.doc("settings/booking")),
+      promoRef ? tx.get(promoRef) : Promise.resolve(null),
+      promoRef ? tx.get(promoRef.collection("redemptions").doc(uid)) : Promise.resolve(null),
+      promoRef ? tx.get(db.collection("reservations").where("userId", "==", uid).where("status", "in", ["confirmed", "attended"]).limit(1)) : Promise.resolve(null),
     ]);
     if (!sess.exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
     const s = sess.data()!;
@@ -93,6 +99,16 @@ async function runReservationOnce(o: ReservationRun) {
       const r = request.data();
       if (!r || r.status !== "pending" || r.userId !== uid || r.sessionId !== sessionId) refuse("request_not_pending", "Cette demande a déjà été traitée.");
     }
+    let promo: { code: string; type: "percent" | "fixed"; value: number } | undefined;
+    if (promoRef) {
+      const pd = promoSnap?.data();
+      const why = promoRefusal(
+        pd ? { ...pd, validFrom: pd.validFrom ? (pd.validFrom as Timestamp).toDate() : null, validTo: (pd.validTo as Timestamp).toDate() } as Parameters<typeof promoRefusal>[0] : null,
+        { now: new Date(now), alreadyUsedByUser: Boolean(redemption?.exists), hasPastBooking: Boolean(pastBookings && !pastBookings.empty) },
+      );
+      if (why) refuse(why, "Ce code promo n'est pas utilisable.");
+      promo = { code: promoRef.id, type: pd!.type, value: pd!.value };
+    }
 
     // Réservation déjà en cours pour cette date ?
     let releasedHold = 0;
@@ -100,7 +116,8 @@ async function runReservationOnce(o: ReservationRun) {
       const prevRef = db.doc(`reservations/${lock.data()!.reservationId}`);
       const prev = await tx.get(prevRef);
       const p = prev.data();
-      if (!requestRef && p?.status === "pending_payment" && (p.holdExpiresAt as Timestamp).toMillis() > now) {
+      const samePromo = (p?.pricing?.promoCode ?? undefined) === (promo?.code ?? undefined) || !o.promoCode;
+      if (!requestRef && p?.status === "pending_payment" && (p.holdExpiresAt as Timestamp).toMillis() > now && samePromo) {
         // Même personne, paiement pas encore fait : on reprend la réservation existante.
         return { reservationId: prev.id, status: "pending_payment", resumed: true, total: p.pricing.total };
       }
@@ -133,9 +150,14 @@ async function runReservationOnce(o: ReservationRun) {
       seats,
       holdUntilMs: Math.min(now + (o.holdMs ?? HOLD_MINUTES * 60_000), bookingClosesAt(view.startAt, e.bookingMode).getTime()),
       memberUnitAmount: terms.memberUnitAmount,
+      promo,
+      serviceFee: readServiceFee(bookingSettings.data()?.serviceFee),
+      preferences: o.preferences ?? (request?.data()?.preferences ? storedPreferences(request.data()!.preferences) : undefined),
       extra: requestRef ? { requestId: requestRef.id } : undefined,
     });
     tx.set(resRef, doc);
+    // Gratuite grâce au code : utilisée tout de suite (sinon, comptée au paiement).
+    if (free && pricing.promoCode && promoRef) redeemPromo(tx, promoRef.id, uid, resRef.id);
     // Inscrit(e) sur la liste d'attente de cette date ? Sa réservation directe l'en retire.
     if (wait?.exists && wait.data()?.status === "waiting") {
       tx.update(wait.ref, { status: "converted", reservationId: resRef.id, updatedAt: FieldValue.serverTimestamp() });
@@ -161,4 +183,16 @@ async function runReservationOnce(o: ReservationRun) {
     }
     return { reservationId: resRef.id, status: free ? "confirmed" : "pending_payment", resumed: false, total: pricing.total };
   }, { maxAttempts: 10 }); // forte affluence sur une même date : on réessaie davantage avant d'abandonner
+}
+
+/** Préférences déjà enregistrées (demande) → mêmes préférences sur la réservation. */
+function storedPreferences(p: { diet?: string; allergies?: string; languages?: string[]; shareWithVenue?: boolean }): BookingPreferences {
+  return { diet: (p.diet ?? "none") as BookingPreferences["diet"], allergies: p.allergies ?? "", languages: (p.languages ?? []) as BookingPreferences["languages"], consent: p.shareWithVenue === true };
+}
+
+/** Compte l'utilisation d'un code (une fois par personne). À appeler après les lectures de la transaction. */
+export function redeemPromo(tx: FirebaseFirestore.Transaction, code: string, uid: string, reservationId: string) {
+  const ref = db.doc(`promoCodes/${code}`);
+  tx.set(ref.collection("redemptions").doc(uid), { reservationId, at: FieldValue.serverTimestamp() });
+  tx.update(ref, { redemptionsCount: FieldValue.increment(1) });
 }

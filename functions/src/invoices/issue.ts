@@ -92,7 +92,10 @@ export async function ensureInvoice(paymentId: string): Promise<{ id: string; cr
       const start = r?.sessionSnapshot?.startAt instanceof Timestamp ? dateTimeFr(r.sessionSnapshot.startAt.toDate()) : "";
       const detail = [start, r?.sessionSnapshot?.district].filter(Boolean).join(" · ");
       lines = r?.pricing
-        ? reservationLines({ title, dateLabel: detail, seats: r.seats ?? 1, unitAmount: r.pricing.unitAmount, memberDiscount: r.pricing.memberDiscount ?? 0 })
+        ? reservationLines({
+            title, dateLabel: detail, seats: r.seats ?? 1, unitAmount: r.pricing.unitAmount, memberDiscount: r.pricing.memberDiscount ?? 0,
+            discount: r.pricing.discount ?? 0, promoCode: r.pricing.promoCode, fees: r.pricing.fees ?? 0,
+          })
         : [];
       if (linesTotal(lines) !== p.amount) lines = [{ label: title, detail, quantity: 1, unitAmount: p.amount, amount: p.amount }];
     } else {

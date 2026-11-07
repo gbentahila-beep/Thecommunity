@@ -1,3 +1,4 @@
+import { preferencesDoc } from "../reservations/reservation-doc";
 import { ACCEPTED_HOLD_HOURS, bookingClosesAt, bookingRequestSchema, maxSeatsFor, normalizeInstagram } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -21,7 +22,7 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
   if (token.email_verified !== true) refuse("email_not_verified", "Confirmez votre adresse e-mail.");
   const parsed = bookingRequestSchema.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats, message, instagram } = parsed.data;
+  const { sessionId, seats, message, instagram, preferences } = parsed.data;
   await requireMemberReady(uid);
 
   const sessRef = db.doc(`sessions/${sessionId}`);
@@ -53,6 +54,7 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
       seats,
       message,
       instagram: instagram ? normalizeInstagram(instagram) : null,
+      ...(preferences ? { preferences: preferencesDoc(preferences) } : {}),
       status: "pending",
       sessionSnapshot: {
         title: snap.title ?? e!.title,

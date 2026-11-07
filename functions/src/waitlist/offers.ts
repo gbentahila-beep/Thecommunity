@@ -1,10 +1,10 @@
-import { bookingClosesAt, memberUnitPrice, WAITLIST_OFFER_HOURS } from "@thecommunity/shared";
+import { bookingClosesAt, memberUnitPrice, readServiceFee, WAITLIST_OFFER_HOURS, type ServiceFee } from "@thecommunity/shared";
 import { Timestamp, type DocumentData, type DocumentReference, type QueryDocumentSnapshot, type Transaction } from "firebase-admin/firestore";
 import { db, FieldValue } from "../lib/admin";
 import { memberFromDoc, membershipRef, planRef } from "../membership/state";
 import { reservationDoc } from "../reservations/reservation-doc";
 
-export type WaitlistCandidates = { entries: QueryDocumentSnapshot[]; locked: Set<string>; plan: DocumentData | undefined; memberships: Map<string, DocumentData | undefined> };
+export type WaitlistCandidates = { entries: QueryDocumentSnapshot[]; locked: Set<string>; plan: DocumentData | undefined; memberships: Map<string, DocumentData | undefined>; serviceFee: ServiceFee };
 
 /**
  * LECTURES (à faire avant toute écriture de la transaction) : les premières personnes en attente
@@ -12,16 +12,18 @@ export type WaitlistCandidates = { entries: QueryDocumentSnapshot[]; locked: Set
  */
 export async function readWaitlist(tx: Transaction, sessRef: DocumentReference): Promise<WaitlistCandidates> {
   const q = await tx.get(sessRef.collection("waitlist").where("status", "==", "waiting").orderBy("createdAt").limit(20));
-  const [locks, mems, plan] = await Promise.all([
+  const [locks, mems, plan, booking] = await Promise.all([
     Promise.all(q.docs.map((d) => tx.get(sessRef.collection("seatLocks").doc(d.id)))),
     Promise.all(q.docs.map((d) => tx.get(membershipRef(d.id)))),
     tx.get(planRef()),
+    tx.get(db.doc("settings/booking")),
   ]);
   return {
     entries: q.docs,
     locked: new Set(locks.filter((l) => l.exists).map((l) => l.id)),
     plan: plan.data(),
     memberships: new Map(mems.map((m) => [m.id, m.data()])),
+    serviceFee: readServiceFee(booking.data()?.serviceFee),
   };
 }
 
@@ -74,6 +76,7 @@ export function writeOffers(
       seats,
       holdUntilMs: Math.min(o.now + WAITLIST_OFFER_HOURS * 3_600_000, closesAt),
       memberUnitAmount,
+      serviceFee: o.candidates.serviceFee,
       extra: { fromWaitlist: true },
     });
     tx.set(resRef, doc);

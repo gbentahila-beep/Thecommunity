@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { bookingPreferencesSchema, promoCodeSchema, promoDiscount, serviceFeeAmount, type PromoRule, type ServiceFee } from "./promo";
 import { seatsAvailable } from "./seats";
 import type { BookingMode, CurrencyCode, Pricing } from "./types";
 
@@ -24,6 +25,10 @@ export function bookingClosesAt(startAt: Date, mode: BookingMode): Date {
 export const reservationRequestSchema = z.object({
   sessionId: z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/),
   seats: z.number().int().min(1).max(MAX_SEATS_PER_BOOKING),
+  /** Code promo saisi (facultatif) : validé par le serveur. */
+  promoCode: promoCodeSchema.optional(),
+  /** Régime, allergies, langues de table (5g, facultatif). */
+  preferences: bookingPreferencesSchema.optional(),
 });
 export type ReservationRequest = z.infer<typeof reservationRequestSchema>;
 
@@ -53,6 +58,7 @@ export const bookingRequestSchema = z.object({
   sessionId: reservationRequestSchema.shape.sessionId,
   seats: reservationRequestSchema.shape.seats,
   message: z.string().trim().max(REQUEST_MESSAGE_MAX, "tooLong").default(""),
+  preferences: bookingPreferencesSchema.optional(),
   instagram: z
     .string()
     .trim()
@@ -66,13 +72,26 @@ export type BookingRequestInput = z.input<typeof bookingRequestSchema>;
  * Prix d'une réservation, en centimes. `memberUnitAmount` : prix membre par place si la personne est
  * abonnée (la différence apparaît en « réduction membre »). Codes promo et frais : étape 5d.
  */
-export function computePricing(unitAmount: number, seats: number, currency: CurrencyCode, opts: { memberUnitAmount?: number } = {}): Pricing {
+/**
+ * Prix d'une réservation : places au prix public − remise membre − code promo + frais de service.
+ * Le code promo s'applique après le prix membre ; les frais ne s'ajoutent qu'à une réservation payante.
+ */
+export function computePricing(
+  unitAmount: number,
+  seats: number,
+  currency: CurrencyCode,
+  opts: { memberUnitAmount?: number; promo?: PromoRule & { code: string }; serviceFee?: ServiceFee } = {},
+): Pricing {
   const subtotal = unitAmount * seats;
   const memberUnit = opts.memberUnitAmount;
   const memberDiscount = memberUnit != null && memberUnit < unitAmount ? (unitAmount - memberUnit) * seats : 0;
-  const discount = 0;
-  const fees = 0;
-  return { unitAmount, seats, subtotal, memberDiscount, discount, fees, total: subtotal - memberDiscount - discount + fees, currency };
+  const afterMember = subtotal - memberDiscount;
+  const discount = opts.promo ? promoDiscount(opts.promo, afterMember) : 0;
+  const net = afterMember - discount;
+  const fees = net > 0 && opts.serviceFee ? serviceFeeAmount(opts.serviceFee, net, seats) : 0;
+  return {
+    unitAmount, seats, subtotal, memberDiscount, discount, ...(opts.promo && discount > 0 ? { promoCode: opts.promo.code } : {}), fees, total: net + fees, currency,
+  };
 }
 
 export type BookingRefusal = "not_open" | "closed" | "full" | "not_enough_seats" | "too_many_seats";

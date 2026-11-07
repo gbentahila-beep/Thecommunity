@@ -1,4 +1,4 @@
-import { computePricing } from "@thecommunity/shared";
+import { computePricing, NO_SERVICE_FEE, type BookingPreferences, type PromoRule, type ServiceFee } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { FieldValue } from "../lib/admin";
 
@@ -15,10 +15,19 @@ export function reservationDoc(o: {
   holdUntilMs: number;
   /** Prix membre par place (abonné·e) ; absent = prix public. */
   memberUnitAmount?: number;
+  /** Code promo validé (5f) et frais de service en vigueur. */
+  promo?: PromoRule & { code: string };
+  serviceFee?: ServiceFee;
+  /** Régime, allergies, langues (5g). */
+  preferences?: BookingPreferences;
   extra?: Record<string, unknown>;
 }) {
   const { s, e, uid, sessionId, seats } = o;
-  const pricing = computePricing(s.price.amount, seats, s.price.currency, { memberUnitAmount: o.memberUnitAmount });
+  const pricing = computePricing(s.price.amount, seats, s.price.currency, {
+    memberUnitAmount: o.memberUnitAmount,
+    promo: o.promo,
+    serviceFee: o.serviceFee ?? NO_SERVICE_FEE,
+  });
   const free = pricing.total === 0;
   const snap = s.experienceSnapshot ?? {};
   const venue = e.venue?.revealPolicy === "immediate" ? { name: e.venue.name ?? "", address: e.venue.address ?? "" } : null;
@@ -45,9 +54,21 @@ export function reservationDoc(o: {
     },
     ...(free && venue ? { venue } : {}),
     ...(free ? { paidAt: FieldValue.serverTimestamp() } : {}),
+    ...(o.preferences ? { preferences: preferencesDoc(o.preferences) } : {}),
     ...(o.extra ?? {}),
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
   };
   return { doc, pricing, free };
+}
+
+/** Préférences enregistrées : l'accord de transmission au lieu est daté (donnée de santé pour les allergies). */
+export function preferencesDoc(p: BookingPreferences) {
+  return {
+    diet: p.diet,
+    allergies: p.allergies,
+    languages: p.languages,
+    shareWithVenue: p.consent,
+    ...(p.consent ? { consentAt: Timestamp.now() } : {}),
+  };
 }

@@ -32,5 +32,8 @@ describe("factures", () => {
     const lines = reservationLines({ title: "Dîner", dateLabel: "jeudi 12 novembre", seats: 2, unitAmount: 16900, memberDiscount: 5000 });
     expect(lines).toHaveLength(2);
     expect(linesTotal(lines)).toBe(28800);
+    const withPromo = reservationLines({ title: "Dîner", dateLabel: "", seats: 1, unitAmount: 16900, memberDiscount: 0, discount: 3400, promoCode: "AMIS", fees: 1000 });
+    expect(withPromo.map((l) => l.label)).toEqual(["Dîner", "Code promo AMIS", "Frais de service"]);
+    expect(linesTotal(withPromo)).toBe(14500);
   });
 });

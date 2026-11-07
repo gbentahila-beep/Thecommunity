@@ -218,7 +218,10 @@ export type Pricing = {
   subtotal: number;
   /** Réduction accordée aux membres abonnés (centimes). */
   memberDiscount?: number;
+  /** Remise du code promo (centimes) et code appliqué. */
   discount: number;
+  promoCode?: string;
+  /** Frais de service (centimes). */
   fees: number;
   total: number;
   currency: CurrencyCode;
