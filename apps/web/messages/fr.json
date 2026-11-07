@@ -391,7 +391,8 @@
     "tabCancelled": "Annulées",
     "emptyTab": "Rien ici pour le moment.",
     "seats": "{count, plural, one {# place} other {# places}}",
-    "navMembership": "Abonnement"
+    "navMembership": "Abonnement",
+    "navInvoices": "Mes factures"
   },
   "reservation": {
     "back": "Mes réservations",
@@ -739,5 +740,23 @@
     "value4Title": "Un vrai lien",
     "value4": "Une rencontre réussie, c'est repartir avec quelqu'un qu'on aura envie de revoir, en dehors de nos événements.",
     "followAya": "Suivre Aya sur Instagram"
+  },
+  "invoices": {
+    "title": "Mes factures",
+    "intro": "Une facture pour chaque paiement, un avoir pour chaque remboursement. Chaque document vous est aussi envoyé par e-mail.",
+    "empty": "Aucun document pour l'instant : il apparaîtra ici après votre premier paiement.",
+    "demo": "Démonstration : les factures sont générées sur le site en ligne, après un paiement.",
+    "invoice": "Facture",
+    "creditNote": "Avoir",
+    "receipt": "Reçu",
+    "test": "Test",
+    "testNote": "Documents de test : aucun paiement réel n'a eu lieu.",
+    "download": "Télécharger (PDF)",
+    "downloadLabel": "Télécharger {number} en PDF",
+    "pending": "PDF en préparation",
+    "reservationDocs": "Facture et documents",
+    "seeAll": "Toutes mes factures",
+    "total": "Montant",
+    "refundReceipt": "Reçu de remboursement"
   }
 }

@@ -9,7 +9,7 @@
 |---|---|---|
 | **5a** ✅ | **Avis** sur les expériences vécues + **fiches sans date** (dates ajoutées plus tard), **expériences passées toujours listées**, **reproposer des dates** | rien |
 | **5b** ✅ | **Abonnement annuel** : prix réduits pour les abonnés, prix public barré, réglages par l'admin | paiement de test (fait) |
-| **5c** | **Factures** (et avoirs pour les remboursements) + **envoi par e-mail** | infos de la société pour des factures légales ; compte Brevo pour l'envoi réel |
+| **5c** ✅ | **Factures** (et avoirs pour les remboursements) + **envoi par e-mail** (boîte d'envoi de test) | infos de la société pour des factures légales ; compte Brevo pour l'envoi réel |
 | 5c+ | **Contenus et aide** : FAQ (10 questions), pages Sécurité / CGU / CGV / Confidentialité (projets), informations légales, **version anglaise**, **centre d'aide** (clients / partenaires), nouvelle image d'accueil | infos légales à fournir (docs/16) |
 | 5d | Codes promo, frais de service | rien |
 | 5e | Prestataire de paiement réel (CMI, Payzone, YouCan Pay) | contrat signé (checklist C) |
@@ -124,6 +124,30 @@ Proposition de construction (à valider) :
 Tests : 6 tests d'intégration et 4 unitaires (formule, souscription et renouvellement, prix membre, réservé aux membres, accès anticipé, cadeau / retrait, offre de liste d'attente au prix membre, règles de sécurité) ; 24 vérifications de bout en bout (`tests/e2e/firebase-membership.e2e.cjs`). Toutes les suites : 90 sur émulateurs, 41 unitaires, 172 de bout en bout en mode Firebase, 60 en démonstration.
 
 ## 5c — Factures et e-mails
+
+### Livré (8 novembre)
+
+- **Un document pour chaque paiement** (réservation, abonnement) et **un avoir pour chaque remboursement**, émis automatiquement par le serveur, une seule fois, avec un **numéro continu sans trou** attribué dans la même transaction que le document.
+- **Trois séries**, jamais mélangées :
+  - `TEST-FA-2026-000001` / `TEST-AV-…` : paiements de test (c'est le cas aujourd'hui) — « Reçu de TEST, aucun paiement réel » ;
+  - `RE-…` / `RA-…` : vrai paiement mais société pas encore renseignée — « Reçu, projet d'essai, sans valeur de facture » ;
+  - `FA-2026-000123` / `AV-…` : vraies factures et avoirs (vrai paiement **et** société renseignée).
+- **PDF** (A4) : émetteur (raison sociale, siège, ICE, IF, RC), client, détail (places, date, remise membre), total HT / TVA / TTC, date de paiement, mentions. Rangé dans un espace privé ; téléchargeable uniquement par la personne concernée et l'équipe.
+- **Membre** : rubrique **« Mes factures »** dans l'espace, et « Facture et documents » sur chaque réservation.
+- **E-mails** (français, anglais ou arabe selon la langue du compte) : confirmation de réservation + facture, abonnement + facture, remboursement + avoir, PDF en pièce jointe.
+  Tant que Brevo n'est pas branché, ils sont rangés dans la **boîte d'envoi de test** du back-office (aperçu exact de ce que le membre recevra) ; **personne ne les reçoit**.
+- **Back-office** :
+  - **Paiements** : numéro du document, téléchargement, « Renvoyer par e-mail » ou « Émettre le document » pour un paiement antérieur (journalisé).
+  - **Boîte d'envoi** : tous les e-mails, avec aperçu.
+  - **Paramètres → Société et envoi des e-mails** (super-admin) : raison sociale, siège, ICE (15 chiffres), IF, RC, e-mail, taux de TVA, expéditeur, choix « boîte d'envoi de test » / « Brevo ». Les informations sont figées sur chaque nouveau document ; un document émis ne change jamais.
+- **Sécurité** : documents, compteurs et e-mails écrits par le serveur seulement ; compteurs illisibles ; boîte d'envoi lisible par l'équipe seulement ; PDF jamais lisibles directement dans Storage.
+- Tests : 6 unitaires (numérotation, séries, TVA, lignes), 7 sur émulateurs (règles, émission, numéros simultanés, avoir, société, abonnement), 23 vérifications de bout en bout (`tests/e2e/firebase-factures.e2e.cjs`).
+
+**Brancher Brevo** (le jour venu, sans changer le code de l'envoi) : créer le compte et vérifier le domaine d'envoi → enregistrer la clé comme secret Cloud `BREVO_API_KEY` (jamais dans le chat ni dans le code) → l'ajouter aux fonctions qui envoient (une ligne de configuration, je m'en charge) → choisir « Brevo » dans Paramètres.
+
+À faire valider par le comptable : mentions obligatoires, taux de TVA (places, abonnement ; cas des commissions), conservation des documents.
+
+### Plan initial
 
 - **Une facture pour chaque paiement** (réservation, abonnement) et un **avoir** pour chaque remboursement, avec une **numérotation continue sans trou** (ex. `FA-2026-000123`, `AV-2026-000012`), attribuée par le serveur.
 - Contenu : identité de la société (raison sociale, siège, ICE, IF, RC — saisis par le super-admin dans **Paramètres → Société**), client, détail, montants HT / TVA / TTC, moyen de paiement.

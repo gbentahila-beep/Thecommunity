@@ -89,7 +89,11 @@ export async function fsAdminData(now: Date) {
   });
   const payments: AdminPayment[] = paySnap.docs.map((d) => {
     const p = d.data();
-    return { id: d.id, reservationId: p.reservationId, userId: p.userId, type: p.type, provider: p.provider, amount: p.amount, status: p.status, createdAt: iso(p.createdAt) };
+    return {
+      id: d.id, reservationId: p.reservationId, userId: p.userId, type: p.type, provider: p.provider, amount: p.amount,
+      status: p.status === "partially_refunded" ? "refunded" : p.status, createdAt: iso(p.createdAt),
+      ...(p.invoiceId ? { invoiceId: p.invoiceId, invoiceNumber: p.invoiceNumber ?? "" } : {}),
+    };
   });
   const users: AdminUser[] = usersSnap.docs.map((d) => {
     const u: DocumentData = d.data();

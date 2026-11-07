@@ -2,6 +2,7 @@ import "server-only";
 import { getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
+import { getStorage } from "firebase-admin/storage";
 import { firebaseConfig } from "./config";
 
 /**
@@ -15,3 +16,4 @@ function app() {
 
 export const adminAuth = () => getAuth(app());
 export const adminDb = () => getFirestore(app());
+export const adminStorage = () => getStorage(app());

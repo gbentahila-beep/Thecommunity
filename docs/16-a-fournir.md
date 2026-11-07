@@ -14,6 +14,7 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
 - [ ] **E-mail support** (ex. support@…)
 - [ ] **E-mail données personnelles** (ex. privacy@…)
 - [ ] **E-mail sécurité** (ex. safety@…)
+- [ ] **IF** (identifiant fiscal) et **taux de TVA** à appliquer — à saisir vous-même dans le back-office → Paramètres → Société (super-admin). Tant que la raison sociale, le siège et l'ICE manquent, les documents restent des « reçus » sans valeur de facture.
 - [ ] **CNDP** : numéro de récépissé de la déclaration des traitements
 - [ ] **CNDP** : numéro d'autorisation (ou de récépissé) pour le transfert des données hors du Maroc (hébergement en Belgique / Pays-Bas)
 
@@ -34,7 +35,8 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
 ## Plus tard
 
 - [ ] **Vraies photos** des lieux et des expériences (droits d'utilisation + accord des personnes reconnaissables).
-- [ ] **Compte Brevo** (envoi des e-mails : confirmations, factures, rappels).
+- [ ] **Compte Brevo** (envoi des e-mails : confirmations, factures, rappels) + domaine d'envoi vérifié. La clé se range comme secret Cloud `BREVO_API_KEY` — ne me l'envoyez jamais dans le chat.
+- [ ] **Expert-comptable** : valider le modèle de facture (mentions, TVA des places et de l'abonnement, conservation).
 - [ ] **Contrat de paiement** et accès de test du prestataire (CMI, Payzone, YouCan Pay).
 - [ ] **Domaine** définitif et adresses e-mail.
 - [ ] **Traduction arabe** des textes juridiques et des articles du centre d'aide (la version française s'affiche en attendant).

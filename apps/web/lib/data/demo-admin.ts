@@ -144,6 +144,9 @@ export type AdminPayment = {
   amount: number;
   status: "succeeded" | "initiated" | "failed" | "refunded";
   createdAt: string;
+  /** Document émis (5c) : facture, avoir ou reçu. */
+  invoiceId?: string;
+  invoiceNumber?: string;
 };
 
 export type AdminGroup = { id: string; sessionId: string; label: string; memberIds: string[] };

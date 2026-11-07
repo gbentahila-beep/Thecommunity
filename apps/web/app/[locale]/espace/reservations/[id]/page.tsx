@@ -10,7 +10,9 @@ import { PayNowButton } from "@/components/booking/pay-now-button";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { Stars } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { getMemberReservation } from "@/lib/data/member";
+import { getReservationInvoices } from "@/lib/data/invoices";
+import { getMemberReservation, getMemberSpace } from "@/lib/data/member";
+import { InvoiceList } from "@/components/account/invoice-list";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { buildIcs, icsDataUri } from "@/lib/ics";
@@ -26,7 +28,14 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const data = await getMemberReservation(id);
   if (!data) notFound();
   const { reservation: r, group, profile, now } = data;
-  const [t, tl, locale] = await Promise.all([getTranslations("reservation"), getTranslations("labels.interests"), getLocale()]);
+  const space = await getMemberSpace();
+  const [t, tl, ti, locale, invoices] = await Promise.all([
+    getTranslations("reservation"),
+    getTranslations("labels.interests"),
+    getTranslations("invoices"),
+    getLocale(),
+    space.session ? getReservationInvoices(space.session.uid, id) : Promise.resolve([]),
+  ]);
   const lang = locale as "fr" | "ar" | "en";
   const s = r.sessionSnapshot;
   const title = tr(s.title, locale);
@@ -237,6 +246,16 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           )}
         </dl>
       </section>
+
+      {invoices.length > 0 && (
+        <section aria-labelledby="documents" className="space-y-3">
+          <div className="flex items-baseline justify-between gap-3">
+            <h2 id="documents" className="font-display text-2xl font-medium text-plum-900">{ti("reservationDocs")}</h2>
+            <Link href="/espace/factures" className="text-sm font-medium text-plum-900 underline-offset-4 hover:underline">{ti("seeAll")}</Link>
+          </div>
+          <InvoiceList invoices={invoices} />
+        </section>
+      )}
 
       {isActive && isUpcoming && (
         <section className="rounded-[var(--radius-card)] border border-line bg-white/70 p-5">

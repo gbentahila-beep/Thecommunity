@@ -391,7 +391,8 @@
     "tabCancelled": "Cancelled",
     "emptyTab": "Nothing here for now.",
     "seats": "{count, plural, one {# spot} other {# spots}}",
-    "navMembership": "Membership"
+    "navMembership": "Membership",
+    "navInvoices": "My invoices"
   },
   "reservation": {
     "back": "My bookings",
@@ -739,5 +740,23 @@
     "value4Title": "A genuine connection",
     "value4": "A good gathering is one where you leave with someone you'll want to see again, outside our events.",
     "followAya": "Follow Aya on Instagram"
+  },
+  "invoices": {
+    "title": "My invoices",
+    "intro": "An invoice for every payment, a credit note for every refund. Each document is also sent to you by email.",
+    "empty": "No documents yet: they'll appear here after your first payment.",
+    "demo": "Demo: invoices are generated on the live site after a payment.",
+    "invoice": "Invoice",
+    "creditNote": "Credit note",
+    "receipt": "Receipt",
+    "test": "Test",
+    "testNote": "Test documents: no real payment took place.",
+    "download": "Download (PDF)",
+    "downloadLabel": "Download {number} as PDF",
+    "pending": "PDF being prepared",
+    "reservationDocs": "Invoice and documents",
+    "seeAll": "All my invoices",
+    "total": "Amount",
+    "refundReceipt": "Refund receipt"
   }
 }
