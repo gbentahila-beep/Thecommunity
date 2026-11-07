@@ -38,6 +38,18 @@ jobs:
               where = (req.get("requestMethod", "") + " " + req.get("requestUrl", "").split("?")[0] + " " + str(req.get("status", ""))).strip()
               print(e.get("timestamp"), svc, "|", where, "|", str(msg)[:900].replace("\n", " "))
           '
+      - name: Appels récents à l'annulation et aux pages de réservation (3 dernières heures, tous niveaux)
+        run: |
+          SINCE=$(date -u -d '-3 hours' +%Y-%m-%dT%H:%M:%SZ)
+          gcloud logging read 'timestamp>="'"$SINCE"'" AND resource.type="cloud_run_revision" AND (resource.labels.service_name="cancelreservation" OR httpRequest.requestUrl:"/espace/reservations")' \
+            --limit=60 --format=json 2>/dev/null | python3 -c '
+          import json, sys
+          for e in json.load(sys.stdin):
+              svc = e.get("resource", {}).get("labels", {}).get("service_name")
+              req = e.get("httpRequest") or {}
+              msg = e.get("textPayload") or (e.get("jsonPayload") or {}).get("message") or ""
+              print(e.get("timestamp"), e.get("severity"), svc, "|", req.get("requestMethod", ""), req.get("requestUrl", "").split("?")[0].split(".app")[-1], req.get("status", ""), "|", str(msg)[:300].replace("\n", " "))
+          '
       - name: Dernières réservations modifiées (statuts seulement)
         run: |
           TOKEN=$(gcloud auth print-access-token)
