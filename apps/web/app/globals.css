@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+/*
+ * Charte The Community — issue de la maquette de référence (docs/assets/maquette-reference.png).
+ * Univers crème / prune, serif éditorial pour les titres, sans-serif pour le texte.
+ */
+@theme {
+  --color-cream: #f8efe8;
+  --color-cream-deep: #f3e6dc;
+  --color-sand: #eedfd3;
+  --color-line: #e6d4c8;
+  --color-plum-50: #f7ebed;
+  --color-plum-100: #f0dade;
+  --color-plum-200: #e0b9c0;
+  --color-plum-500: #8e3a4c;
+  --color-plum-700: #722637;
+  --color-plum-800: #63202f;
+  --color-plum-900: #561a29;
+  --color-ink: #2a1d1f;
+  --color-muted: #75625e;
+  --color-badge: #f6dfcf;
+
+  --color-cat-eat: #b5563a;
+  --color-cat-move: #5f7f5e;
+  --color-cat-play: #b07a1f;
+  --color-cat-create: #a8616c;
+  --color-cat-discover: #2f3e5c;
+
+  --font-sans: var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), var(--font-arabic), ui-serif, Georgia, serif;
+
+  --radius-card: 1.25rem;
+  --shadow-card: 0 1px 2px rgb(86 26 41 / 0.04), 0 8px 24px -12px rgb(86 26 41 / 0.18);
+  --shadow-float: 0 12px 40px -12px rgb(86 26 41 / 0.35);
+
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* En arabe, la serif latine n'a pas de glyphes : on bascule toute la typo sur la police arabe. */
+  :lang(ar) {
+    --font-display: var(--font-arabic), ui-serif, serif;
+    --font-sans: var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-plum-700);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-plum-100);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

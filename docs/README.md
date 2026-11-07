@@ -1,6 +1,6 @@
 # Phase 1 — Analyse et architecture
 
-> Plateforme d'expériences sociales au Maroc · Marque : **The Community** · Statut : **architecture validée — phase 2 à démarrer**
+> Plateforme d'expériences sociales au Maroc · Marque : **The Community** · Statut : **phase 2 en cours — étape 2a (site public) livrée**
 
 ## Sommaire
 
@@ -15,6 +15,7 @@
 | [07 — Risques](07-risques.md) | 16 risques et parades, dépendances externes |
 | [08 — Organisation et plan](08-organisation-et-plan.md) | Arborescence, stratégie de test, plan en 8 phases, hypothèses |
 | [09 — Démarches avant lancement](09-demarches-lancement.md) | Société, banque, prestataire de paiement, CNDP, marque : feuille de route non technique |
+| [10 — Avancement phase 2](10-phase-2-avancement.md) | Ce qui est livré, vérifié, et ce qui reste |
 
 ## Synthèse en 10 points
 
@@ -42,4 +43,4 @@
 | **D7** | Arabe | ✅ Architecture bilingue et RTL dès la phase 2 ; lancement en français, arabe activé après traduction |
 | **D8** | Messagerie | ✅ Pas au lancement ; onglet « Notifications » à la place |
 
-Prochaine étape : **phase 2 — design et frontend**, avec des données de démonstration clairement identifiées.
+Phase 2 en cours : voir [10 — Avancement](10-phase-2-avancement.md).

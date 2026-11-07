@@ -6,6 +6,16 @@ Stack prévue : Next.js · React · TypeScript · Tailwind CSS · Firebase (Auth
 
 ## État du projet
 
-**Phase 1 — Analyse et architecture : validée.** Phase 2 (design et frontend) à démarrer. Aucun code applicatif n'a encore été écrit.
+**Phase 1 — Architecture : validée.** **Phase 2 — Design et frontend : en cours** (site public livré avec données de démonstration, voir [`docs/10-phase-2-avancement.md`](docs/10-phase-2-avancement.md)).
 
 👉 Lire [`docs/README.md`](docs/README.md) pour l'architecture complète et les décisions prises, et [`docs/09-demarches-lancement.md`](docs/09-demarches-lancement.md) pour les démarches administratives.
+
+## Développement
+
+```bash
+npm install
+npm run dev        # http://localhost:3000
+npm run test && npm run typecheck && npm run lint && npm run build
+```
+
+Structure : `apps/web` (site Next.js), `packages/shared` (logique métier partagée), `docs/` (architecture et décisions).
