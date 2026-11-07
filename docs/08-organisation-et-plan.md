@@ -88,7 +88,7 @@ Chaque phase se termine par une démonstration et **votre validation** avant la 
 | **1 — Architecture** ✅ | Analyse, architecture, données, sécurité, pages, functions, risques, plan | Décisions D1–D8 validées (D2 en cours côté administratif) |
 | **2 — Design & frontend** ✅ | Monorepo, design system, toutes les pages publiques, inscription/connexion (UI), questionnaire, espace utilisateur, back-office (UI) avec **données de démonstration identifiées** | Site navigable sur mobile et desktop, URL de prévisualisation |
 | **3 — Firebase** ✅ | Projets dev/prod, Auth, Firestore, Storage, règles + tests, index, émulateurs, seed, App Check, CI | Connexion réelle, profil enregistré, tests de règles verts |
-| **4 — Réservations** (en cours : 4a ✅) | Création d'expériences et sessions (admin), réservation transactionnelle, blocage, annulation, liste d'attente, historique, export | Tests de concurrence verts, parcours complet avec l'adaptateur de test |
+| **4 — Réservations** (en cours : 4a ✅, demandes ✅, 4b ✅) | Création d'expériences et sessions (admin), réservation transactionnelle, blocage, annulation, liste d'attente, historique, export | Tests de concurrence verts, parcours complet avec l'adaptateur de test |
 | **5 — Paiements** | Adaptateur du prestataire retenu, webhook, remboursements, codes promo, réconciliation — **en mode test du prestataire** | Paiements et remboursements de test réussis bout en bout |
 | **6 — Matching** | Algorithme v1, écran groupes (glisser-déposer, scores, alertes), révélation | Constitution des tables d'un dîner de démonstration |
 | **7 — Notifications & statistiques** | E-mails transactionnels FR/AR, in-app, rappels, push, agrégats, tableau de bord financier, SEO complet | Rappel J-1 reçu, tableau de bord chiffré |
@@ -100,7 +100,7 @@ Chaque phase se termine par une démonstration et **votre validation** avant la 
 
 - Gestion de paquets : npm workspaces ; Node.js 22.
 - Service e-mail : Brevo (via une interface remplaçable).
-- Durée de blocage d'une place pendant le paiement : 15 minutes.
+- Durée de blocage d'une place pendant le paiement : 15 minutes ; 24 h après acceptation d'une demande ; 4 h pour une place proposée depuis la liste d'attente.
 - Fermeture des réservations : 12 h avant pour les dîners, 2 h pour les autres formats (paramétrable).
 - Âge minimum : 18 ans.
 - Favoris implémentés (présents sur la maquette).

@@ -116,12 +116,12 @@ const int = (f) => Number(f?.integerValue ?? f?.doubleValue ?? 0);
   await page.goto(`${base}/espace/reservations`);
   assert(await visible(page.getByRole('link', { name: new RegExp(target.exp.fields.title.mapValue.fields.fr.stringValue) })), 'réservation visible dans « Mes réservations »');
   await page.goto(`${base}/reserver/${sid}`);
-  await page.getByRole('button', { name: /Réserver et payer/ }).click();
-  assert(await visible(page.getByText('Vous avez déjà une place pour cette date.')), 'deuxième réservation sur la même date refusée');
+  assert(await visible(page.getByRole('heading', { name: 'Vous avez déjà une place pour cette date.' })), 'déjà réservé : annoncé sur la page de réservation');
+  assert(await page.getByRole('button', { name: /Réserver et payer/ }).count() === 0 && await page.getByRole('link', { name: 'Voir ma réservation' }).isVisible(), 'pas de second achat possible, lien vers la réservation');
 
   // 7. Version arabe
   await page.goto(`${base}/ar/reserver/${sid}`);
-  assert(await page.locator('html[dir=rtl]').count() === 1 && await visible(page.getByRole('button', { name: /احجز وادفع/ })), 'tunnel disponible en arabe (RTL)');
+  assert(await page.locator('html[dir=rtl]').count() === 1 && await visible(page.getByRole('link', { name: 'عرض حجزي' })), 'tunnel disponible en arabe (RTL)');
 
   assert(errs.length === 0, 'aucune erreur JavaScript' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();

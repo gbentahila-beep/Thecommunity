@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CancelRequestButton } from "@/components/booking/request-form";
+import { LeaveWaitlistButton } from "@/components/booking/waitlist-box";
 import { formatLongDate } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { ReservationCard } from "@/components/account/reservation-card";
@@ -24,7 +25,7 @@ export default async function ReservationsPage({ params, searchParams }: PagePro
   setRequestLocale(locale);
   const sp = await searchParams;
   const current = TABS.find((tab) => tab.param === sp.onglet)?.key ?? "upcoming";
-  const [t, tq, space] = await Promise.all([getTranslations("account"), getTranslations("request"), getMemberSpace()]);
+  const [t, tq, tw, space] = await Promise.all([getTranslations("account"), getTranslations("request"), getTranslations("waitlist"), getMemberSpace()]);
   const labels: Record<ReservationBucket, string> = { upcoming: t("tabUpcoming"), past: t("tabPast"), cancelled: t("tabCancelled") };
   const list = space[current];
 
@@ -42,6 +43,19 @@ export default async function ReservationsPage({ params, searchParams }: PagePro
                 {q.status === "pending" ? tq("statusPending") : tq("statusDeclined")}
               </p>
               {q.status === "pending" && <div className="mt-3"><CancelRequestButton requestId={q.id} /></div>}
+            </article>
+          ))}
+        </section>
+      )}
+      {space.openWaitlists.length > 0 && (
+        <section aria-labelledby="waitlists-title" className="space-y-3">
+          <h2 id="waitlists-title" className="font-semibold text-ink">{tw("listTitle")}</h2>
+          {space.openWaitlists.map((w) => (
+            <article key={`${w.sessionId}-${w.id}`} className="rounded-[var(--radius-card)] bg-white p-4 shadow-card">
+              <Link href={`/reserver/${w.sessionId}`} className="font-semibold text-ink hover:underline">{tr(w.sessionSnapshot.title, locale)}</Link>
+              <p className="text-sm text-muted">{formatLongDate(w.sessionSnapshot.startAt, locale)}</p>
+              <p className="mt-2 text-sm text-muted">{tw("listText")}</p>
+              <div className="mt-3"><LeaveWaitlistButton sessionId={w.sessionId} /></div>
             </article>
           ))}
         </section>

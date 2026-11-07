@@ -4,7 +4,9 @@ import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { StatusBadge } from "@/components/account/status-badge";
+import { CancelReservationButton } from "@/components/booking/cancel-reservation-button";
 import { PayNowButton } from "@/components/booking/pay-now-button";
+import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { Stars } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getReviews } from "@/lib/data";
@@ -19,6 +21,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const sp = await searchParams;
   const paymentFlag = typeof sp.paiement === "string" ? sp.paiement : undefined;
   const justBooked = sp.reservation === "confirmee";
+  const justCancelled = sp.annulation === "ok";
   setRequestLocale(localeParam);
   const data = await getMemberReservation(id);
   if (!data) notFound();
@@ -51,8 +54,18 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </p>
       )}
 
+      {justCancelled && (r.status === "cancelled" || r.status === "refunded") && (
+        <p role="status" className="flex items-center gap-2 rounded-xl bg-stone-100 px-4 py-3 text-sm font-medium text-ink">
+          <CheckCircle2 className="size-5 shrink-0" aria-hidden />
+          {r.cancellation && r.cancellation.refundAmount > 0
+            ? t("cancelDoneRefund", { amount: formatMoney({ amount: r.cancellation.refundAmount, currency: r.pricing.currency }, lang) })
+            : t("cancelDone")}
+        </p>
+      )}
+
       {r.status === "pending_payment" && (
         <section className="rounded-[var(--radius-card)] border border-amber-300 bg-amber-50 p-5 text-amber-950">
+          {r.fromWaitlist && holdOpen && <p className="mb-2 font-semibold">{t("waitlistOfferBanner")}</p>}
           <h2 className="flex items-center gap-2 font-semibold">
             <Clock className="size-5 shrink-0" aria-hidden />
             {holdOpen ? t("pendingTitle") : t("pendingExpiredTitle")}
@@ -71,8 +84,9 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                 : t("pendingText", { time: formatTime(r.holdExpiresAt!, locale) })}
           </p>
           {holdOpen && (
-            <div className="mt-4">
+            <div className="mt-4 flex flex-wrap items-center gap-4">
               <PayNowButton reservationId={r.id} label={t("payNow", { amount: total })} />
+              {FIREBASE_ENABLED && <CancelReservationButton reservationId={r.id} label={t("releaseCta")} confirmText={t("releaseConfirm")} variant="quiet" />}
             </div>
           )}
         </section>
@@ -191,10 +205,12 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                 <dt className="text-muted">{t("cancelledLabel")}</dt>
                 <dd>{dateFmt(r.cancellation.at)}</dd>
               </div>
-              <div className="flex justify-between py-2.5 text-emerald-800">
-                <dt>{t("refundedLabel")}</dt>
-                <dd className="font-semibold">{formatMoney({ amount: r.cancellation.refundAmount, currency: r.pricing.currency }, lang)}</dd>
-              </div>
+              {r.cancellation.refundAmount > 0 && (
+                <div className="flex justify-between py-2.5 text-emerald-800">
+                  <dt>{t("refundedLabel")}</dt>
+                  <dd className="font-semibold">{formatMoney({ amount: r.cancellation.refundAmount, currency: r.pricing.currency }, lang)}</dd>
+                </div>
+              )}
             </>
           )}
         </dl>
@@ -204,15 +220,31 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         <section className="rounded-[var(--radius-card)] border border-line bg-white/70 p-5">
           <h2 className="font-semibold text-ink">{t("cancelTitle")}</h2>
           <p className="mt-1 text-sm text-muted">
-            {refund > 0 ? t("cancelRefund", { amount: formatMoney({ amount: refund, currency: r.pricing.currency }, lang) }) : t("cancelNoRefund")}
+            {r.pricing.total === 0
+              ? t("cancelFree")
+              : refund > 0
+                ? t("cancelRefund", { amount: formatMoney({ amount: refund, currency: r.pricing.currency }, lang) })
+                : t("cancelNoRefund")}
           </p>
-          <button type="button" disabled className="mt-4 cursor-not-allowed rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-muted">
-            {t("cancelCta")}
-          </button>
-          <p className="mt-2 flex items-start gap-2 text-xs text-muted">
-            <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-            {t("cancelNote")}
-          </p>
+          {FIREBASE_ENABLED ? (
+            <div className="mt-4">
+              <CancelReservationButton
+                reservationId={r.id}
+                label={t("cancelCta")}
+                confirmText={r.pricing.total === 0 ? t("cancelConfirmFree") : refund > 0 ? t("cancelConfirmRefund", { amount: formatMoney({ amount: refund, currency: r.pricing.currency }, lang) }) : t("cancelConfirmNoRefund")}
+              />
+            </div>
+          ) : (
+            <>
+              <button type="button" disabled className="mt-4 cursor-not-allowed rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-muted">
+                {t("cancelCta")}
+              </button>
+              <p className="mt-2 flex items-start gap-2 text-xs text-muted">
+                <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+                {t("cancelNote")}
+              </p>
+            </>
+          )}
         </section>
       )}
 

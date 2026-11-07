@@ -2,6 +2,7 @@ import "server-only";
 import type {
   AppNotification,
   BookingRequest,
+  WaitlistEntry,
   Category,
   CategoryKey,
   City,
@@ -105,6 +106,8 @@ export async function fsMemberData(uid: string) {
     db.collection(`users/${uid}/notifications`).orderBy("createdAt", "desc").limit(50).get(),
     db.collection("bookingRequests").where("userId", "==", uid).orderBy("createdAt", "desc").limit(50).get(),
   ]);
+  const waitSnap = await db.collectionGroup("waitlist").where("userId", "==", uid).limit(50).get();
+  const waitlists = waitSnap.docs.map((d) => withId<WaitlistEntry>(d));
   const requests = reqSnap.docs.map((d) => withId<BookingRequest>(d));
   const reservations = resSnap.docs.map((d) => withId<Reservation>(d));
   const groupIds = [...new Set(reservations.map((r) => r.groupId).filter((g): g is string => Boolean(g)))];
@@ -130,7 +133,7 @@ export async function fsMemberData(uid: string) {
     ...p,
   } as UserProfile;
   const notifications = notifSnap.docs.map((d) => withId<AppNotification>(d));
-  return { profile, reservations, groups, notifications, requests };
+  return { profile, reservations, groups, notifications, requests, waitlists };
 }
 
 export const fsCities = cached(fsCitiesRaw, "fsCities");

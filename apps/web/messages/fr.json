@@ -127,7 +127,7 @@
     "payCta": "Paiement bientôt disponible",
     "back": "Retour à l'expérience",
     "fullTitle": "Cette date est complète",
-    "fullText": "Vous pourrez bientôt rejoindre la liste d'attente et être prévenu dès qu'une place se libère.",
+    "fullText": "Toutes les places sont prises. Inscrivez-vous sur la liste d'attente : si une place se libère, elle vous sera proposée automatiquement.",
     "seatsLeft": "Places restantes",
     "seatsLabel": "Nombre de places",
     "fewer": "Une place de moins",
@@ -165,8 +165,14 @@
       "busy": "Beaucoup de demandes en même temps : réessayez dans quelques secondes.",
       "signin": "Votre session a expiré : reconnectez-vous pour continuer.",
       "generic": "Une erreur est survenue. Réessayez.",
-      "approval_required": "Cette expérience est sur demande : envoyez une demande de participation."
-    }
+      "approval_required": "Cette expérience est sur demande : envoyez une demande de participation.",
+      "already_started": "L'expérience a déjà commencé : l'annulation n'est plus possible.",
+      "not_cancellable": "Cette réservation ne peut plus être annulée."
+    },
+    "fullTextOnRequest": "Toutes les places sont prises pour cette date. Regardez les autres dates de cette expérience.",
+    "seeMyBooking": "Voir ma réservation",
+    "pendingPaymentTitle": "Paiement en attente pour cette date",
+    "finishPayment": "Finaliser le paiement"
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -354,10 +360,10 @@
     "cancelTitle": "Annuler ma réservation",
     "cancelRefund": "Si vous annulez maintenant, vous serez remboursé de {amount}.",
     "cancelNoRefund": "Moins de 48 h avant le début : l'annulation n'est plus remboursée.",
-    "cancelCta": "Annulation disponible en phase 4",
-    "cancelNote": "Démonstration : l'annulation et le remboursement seront actifs avec le système de réservation.",
+    "cancelCta": "Annuler ma réservation",
+    "cancelNote": "Démonstration : l'annulation fonctionne sur le site en ligne.",
     "reviewTitle": "Votre avis",
-    "reviewCta": "Avis disponible en phase 4",
+    "reviewCta": "Avis bientôt disponible",
     "reviewThanks": "Merci, votre avis a été publié.",
     "reportLink": "Signaler un comportement",
     "paidLabel": "Payé le",
@@ -373,7 +379,16 @@
     "lateRefundText": "Votre paiement est arrivé après la remise en vente de la dernière place : {amount} vous ont été remboursés intégralement.",
     "totalDue": "Total à payer",
     "seatsLabel": "Places",
-    "pendingTextLong": "Votre place vous est réservée jusqu'au {when}. Passé ce délai, elle sera proposée à quelqu'un d'autre."
+    "pendingTextLong": "Votre place vous est réservée jusqu'au {when}. Passé ce délai, elle sera proposée à quelqu'un d'autre.",
+    "cancelFree": "Expérience gratuite : annulez si vous ne pouvez plus venir, la place sera proposée à quelqu'un d'autre.",
+    "cancelConfirmRefund": "Annuler cette réservation ? Vous serez remboursé(e) de {amount}.",
+    "cancelConfirmNoRefund": "Annuler cette réservation ? Moins de 48 h avant le début : aucun remboursement.",
+    "cancelConfirmFree": "Annuler cette réservation ? Votre place sera proposée à quelqu'un d'autre.",
+    "cancelDone": "Réservation annulée.",
+    "cancelDoneRefund": "Réservation annulée : {amount} vous sont remboursés.",
+    "releaseCta": "Je ne viens plus",
+    "releaseConfirm": "Libérer cette place ? Elle sera proposée à quelqu'un d'autre.",
+    "waitlistOfferBanner": "Une place s'est libérée pour vous !"
   },
   "profilePage": {
     "title": "Mon profil",
@@ -520,5 +535,19 @@
       "request_declined": "Votre demande pour cette date n'a pas été retenue."
     },
     "pageTitle": "Demander à participer"
+  },
+  "waitlist": {
+    "joinTitle": "Liste d'attente",
+    "joinText": "Aucun paiement maintenant. Si une place se libère, elle vous est réservée pendant 4 h et vous êtes prévenu(e) dans vos notifications.",
+    "join": "Rejoindre la liste d'attente",
+    "onListTitle": "Vous êtes sur la liste d'attente",
+    "onListText": "{position, plural, =1 {Vous êtes en tête : la prochaine place libérée sera pour vous.} other {Position : #. Vous serez prévenu(e) dès qu'une place vous est proposée.}}",
+    "leave": "Quitter la liste d'attente",
+    "listTitle": "Mes listes d'attente",
+    "listText": "Si une place se libère, elle vous sera réservée pendant 4 h.",
+    "errors": {
+      "seats_available": "Des places viennent de se libérer : réservez directement.",
+      "already_waiting": "Vous êtes déjà sur la liste d'attente."
+    }
   }
 }

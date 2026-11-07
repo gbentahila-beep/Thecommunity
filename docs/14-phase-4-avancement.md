@@ -7,7 +7,7 @@
 |---|---|---|
 | **4a** | Réserver une place, la bloquer 15 min, payer (en test), confirmer ; expiration ; paiement tardif | ✅ |
 | **4a+** | **Participation sur demande** : la personne demande, l'équipe accepte ou refuse, puis paiement sous 24 h | ✅ |
-| 4b | Annulation par le membre (politique 48 h, remboursement), liste d'attente | à venir |
+| **4b** | Annulation par le membre (politique 48 h, remboursement), liste d'attente avec offre automatique | ✅ |
 | 4c | Back-office : réservations réelles, annulation/déplacement par l'équipe, pointage, export des participants | à venir |
 
 ## Étape 4a — Réserver et payer (en mode test) ✅
@@ -100,9 +100,40 @@ Une demande refusée ne peut pas être renvoyée pour la même date.
 
 > Le compte Instagram est une donnée personnelle de plus : il est lisible uniquement par la personne et l'équipe, et devra figurer dans la politique de confidentialité (voir docs/11, section E).
 
+## Étape 4b — Annulation et liste d'attente ✅
+
+### Annuler
+
+Dans **Mes réservations** → la réservation → **Annuler ma réservation**. Le montant remboursé est annoncé **avant** de confirmer :
+100 % jusqu'à 48 h avant le début, rien ensuite (politique de l'expérience, recalculée par le serveur au moment de l'annulation).
+Le remboursement passe par le prestataire (en test : immédiat) ; la réservation devient **Remboursée**.
+Une réservation pas encore payée peut être libérée (« Je ne viens plus »). Impossible d'annuler une fois l'expérience commencée.
+
+### Liste d'attente
+
+- Sur une date **complète**, le membre voit **Rejoindre la liste d'attente** (aucun paiement), puis sa **position**. Il peut la quitter à tout moment.
+- Dès qu'une place se libère (annulation, ou paiement non fait à temps), elle est **proposée automatiquement à la première personne** de la liste,
+  dans la même opération : la place lui est **réservée 4 h** (jamais au-delà de la fermeture des réservations), elle reçoit une notification et paie depuis sa réservation.
+  Personne d'autre ne peut prendre cette place entre-temps.
+- Pas payé à temps → la place passe à la suivante. Une demande de 2 places quand 1 seule se libère est sautée, pas perdue.
+- Pour les expériences **sur demande**, la liste d'attente n'existe pas : la demande joue ce rôle.
+
+| Sur la liste | Annulation remboursée | Place proposée |
+|---|---|---|
+| ![Liste d'attente](captures/attente-1-inscrit.jpg) | ![Annulée](captures/attente-2-annulee.jpg) | ![Offre](captures/attente-3-offre.jpg) |
+
+### Tests
+
+- 9 tests d'intégration : remboursement intégral à plus de 48 h, aucun à moins de 48 h, abandon d'une réservation non payée, refus pour autrui et après le début ;
+  inscription seulement si complet, une seule fois, départ ; offre à la première personne (4 h, notification, place inaccessible aux autres),
+  passage à la suivante après expiration, demande trop grande sautée, offre après un blocage expiré.
+- 16 vérifications de bout en bout (`tests/e2e/firebase-cancel-waitlist.e2e.cjs`) : A prend la dernière place, B rejoint la liste, A annule (remboursé), B est prévenu et paie.
+- Toutes les suites repassent : 72 tests sur émulateurs, 35 unitaires, 113 vérifications de bout en bout en mode Firebase, 60 en démonstration.
+
+> Hypothèse retenue (modifiable) : **4 h** pour payer une place proposée depuis la liste d'attente.
+
 ### Reste pour la suite de la phase 4
 
-- Annulation par le membre avec remboursement selon la politique 48 h, liste d'attente (4b).
 - Back-office branché sur les vraies réservations : liste, annulation, déplacement, pointage, export (4c).
 - E-mails de confirmation : phase 7 (pour l'instant, la confirmation s'affiche sur le site et dans « Mes réservations »).
 - Codes promo et frais de service : phase 5.

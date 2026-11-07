@@ -8,6 +8,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { VerifyEmailBanner } from "@/components/auth/verify-email-banner";
 import { BookingForm } from "@/components/booking/booking-form";
 import { CancelRequestButton, RequestForm } from "@/components/booking/request-form";
+import { WaitlistBox } from "@/components/booking/waitlist-box";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAccountState, getSessionUser } from "@/lib/auth/session";
@@ -22,19 +23,47 @@ export const metadata: Metadata = { robots: { index: false } };
 type Visitor = "anonymous" | "unverified" | "incomplete" | "suspended" | "ready";
 
 /** Qui regarde la page ? (lu côté serveur ; le serveur de réservation revérifie de toute façon) */
-async function visitorState(sessionId: string): Promise<{ state: Visitor; testPayments: boolean; request?: { id: string; status: string; reservationId?: string; createdAt?: string } }> {
+type VisitorInfo = {
+  state: Visitor;
+  testPayments: boolean;
+  request?: { id: string; status: string; reservationId?: string; createdAt?: string };
+  /** Réservation active de cette personne sur cette date. */
+  booked?: { id: string; pending: boolean };
+  /** Rang sur la liste d'attente (1 = la prochaine place lui sera proposée), ou null. */
+  waitPosition: number | null;
+};
+
+async function visitorState(sessionId: string): Promise<VisitorInfo> {
   const user = await getSessionUser();
   const settings = (await adminDb().doc("settings/payment").get()).data();
   const testPayments = settings?.provider === "sandbox" && settings?.mode === "test";
-  if (!user) return { state: "anonymous", testPayments };
+  const base = { testPayments, waitPosition: null };
+  if (!user) return { ...base, state: "anonymous" };
   const [record, account] = await Promise.all([adminAuth().getUser(user.uid), getAccountState(user.uid)]);
-  if (account.suspended) return { state: "suspended", testPayments };
-  if (!record.emailVerified) return { state: "unverified", testPayments };
-  if (!account.onboardingCompleted) return { state: "incomplete", testPayments };
-  const req = await adminDb().doc(`bookingRequests/${sessionId}_${user.uid}`).get();
+  if (account.suspended) return { ...base, state: "suspended" };
+  if (!record.emailVerified) return { ...base, state: "unverified" };
+  if (!account.onboardingCompleted) return { ...base, state: "incomplete" };
+  const db = adminDb();
+  const sessRef = db.doc(`sessions/${sessionId}`);
+  const [req, lock, entry] = await Promise.all([
+    db.doc(`bookingRequests/${sessionId}_${user.uid}`).get(),
+    sessRef.collection("seatLocks").doc(user.uid).get(),
+    sessRef.collection("waitlist").doc(user.uid).get(),
+  ]);
   const r = req.data();
   const request = r ? { id: req.id, status: r.status as string, reservationId: r.reservationId as string | undefined, createdAt: r.createdAt?.toDate().toISOString() as string | undefined } : undefined;
-  return { state: "ready", testPayments, request };
+  let booked: VisitorInfo["booked"];
+  if (lock.exists) {
+    const res = (await db.doc(`reservations/${lock.data()!.reservationId}`).get()).data();
+    if (res && ["confirmed", "pending_payment", "attended"].includes(res.status)) booked = { id: lock.data()!.reservationId, pending: res.status === "pending_payment" };
+  }
+  let waitPosition: number | null = null;
+  const w = entry.data();
+  if (w?.status === "waiting") {
+    const ahead = await sessRef.collection("waitlist").where("status", "==", "waiting").where("createdAt", "<", w.createdAt).count().get();
+    waitPosition = ahead.data().count + 1;
+  }
+  return { state: "ready", testPayments, request, booked, waitPosition };
 }
 
 /**
@@ -55,6 +84,9 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   const visitor = FIREBASE_ENABLED ? await visitorState(sessionId) : null;
   const onRequest = exp.admission === "on_request";
   const tr2 = await getTranslations("request");
+  // Cette personne a déjà une demande ou une place sur cette date : on lui montre d'abord SA situation,
+  // même si la date est désormais complète ou fermée.
+  const personal = visitor?.state === "ready" && Boolean((onRequest && visitor.request && visitor.request.status !== "cancelled") || visitor.booked);
   const here = `/reserver/${sessionId}`;
   const maxSeats = Math.min(maxSeatsFor(exp), Math.max(1, seatsAvailable(session)));
 
@@ -123,12 +155,13 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             {t("payCta")}
           </button>
         </>
-      ) : refusal === "full" ? (
-        <Notice title={t("fullTitle")} text={t("fullText")} />
-      ) : refusal ? (
+      ) : !personal && refusal === "full" && onRequest ? (
+        <Notice title={t("fullTitle")} text={t("fullTextOnRequest")} />
+      ) : !personal && refusal && refusal !== "full" ? (
         <Notice title={t("unavailableTitle")} text={t(`errors.${refusal}`)} />
       ) : visitor.state === "anonymous" ? (
         <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
+          {refusal === "full" && <p className="mb-3 text-sm font-medium text-plum-900">{t("fullText")}</p>}
           <h2 className="flex items-center gap-2 font-semibold text-ink">
             <UserRound className="size-5 text-plum-700" aria-hidden />
             {t("signInTitle")}
@@ -188,6 +221,18 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             </>
           )}
         </section>
+      ) : visitor.booked ? (
+        <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
+          <h2 className="font-semibold text-ink">{visitor.booked.pending ? t("pendingPaymentTitle") : t("errors.already_booked")}</h2>
+          <Link href={`/espace/reservations/${visitor.booked.id}`} className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">
+            {visitor.booked.pending ? t("finishPayment") : t("seeMyBooking")}
+          </Link>
+        </section>
+      ) : refusal === "full" ? (
+        <>
+          <Notice title={t("fullTitle")} text={t("fullText")} />
+          <WaitlistBox sessionId={session.id} maxSeats={maxSeatsFor(exp)} position={visitor.waitPosition} />
+        </>
       ) : onRequest ? (
         <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} />
       ) : (

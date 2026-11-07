@@ -2,7 +2,7 @@
  * ⚠️ DONNÉES DE DÉMONSTRATION — membre fictif « Salma » et son historique.
  * Remplacées en phase 3 par les données du compte connecté (Firestore + règles de sécurité).
  */
-import type { AppNotification, BookingRequest, Experience, Group, Reservation, Session, UserProfile } from "@thecommunity/shared";
+import type { AppNotification, BookingRequest, WaitlistEntry, Experience, Group, Reservation, Session, UserProfile } from "@thecommunity/shared";
 import { buildDemoSessions, DEMO_EXPERIENCES } from "./demo";
 
 export const DEMO_MEMBER: UserProfile = {
@@ -225,5 +225,5 @@ export function buildDemoMemberData(now: Date = new Date()) {
     },
   ];
 
-  return { profile: DEMO_MEMBER, reservations, groups, notifications, requests: [] as BookingRequest[] };
+  return { profile: DEMO_MEMBER, reservations, groups, notifications, requests: [] as BookingRequest[], waitlists: [] as WaitlistEntry[] };
 }

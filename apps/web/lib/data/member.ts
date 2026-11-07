@@ -61,6 +61,8 @@ export const getMemberSpace = cache(async function getMemberSpace() {
     past: sorted.filter((r) => bucketOf(r, now) === "past").reverse(),
     cancelled: sorted.filter((r) => bucketOf(r, now) === "cancelled"),
     toReview: sorted.filter((r) => r.status === "attended" && !r.reviewId),
+    // Listes d'attente en cours (une place proposée devient une réservation « à payer »).
+    openWaitlists: data.waitlists.filter((w) => w.status === "waiting" && new Date(w.sessionSnapshot.startAt).getTime() > now.getTime()),
     // Demandes en attente, ou refusées pour une date à venir (les acceptées deviennent des réservations).
     openRequests: data.requests.filter(
       (q) => q.status === "pending" || (q.status === "declined" && new Date(q.sessionSnapshot.startAt).getTime() > now.getTime()),
