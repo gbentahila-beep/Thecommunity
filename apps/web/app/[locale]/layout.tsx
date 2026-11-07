@@ -11,6 +11,12 @@ import { fontVariables } from "@/lib/fonts";
 import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
+/**
+ * Pages rendues à la visite (jamais pendant la compilation : en mode Firebase, la machine de build
+ * n'a pas accès à la base). Le catalogue est mis en cache au niveau des données (5 min).
+ */
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }

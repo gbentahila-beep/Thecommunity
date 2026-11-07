@@ -12,6 +12,7 @@ import type {
   UserProfile,
 } from "@thecommunity/shared";
 import { Timestamp, type DocumentSnapshot } from "firebase-admin/firestore";
+import { unstable_cache } from "next/cache";
 import { adminDb } from "@/lib/firebase/admin";
 
 /** Convertit les Timestamp Firestore en chaînes ISO (format utilisé par toute l'interface). */
@@ -25,36 +26,50 @@ function plain<T>(value: unknown): T {
 }
 const withId = <T>(snap: DocumentSnapshot) => plain<T>({ id: snap.id, ...snap.data() });
 
-export async function fsCities(): Promise<City[]> {
+/**
+ * Données publiques du catalogue mises en cache 5 minutes (étiquette « catalog ») pour limiter
+ * les lectures Firestore ; le back-office vide ce cache à chaque modification (/api/admin/revalidate).
+ * Les données personnelles (espace membre) et le back-office ne sont JAMAIS mis en cache.
+ */
+export const CATALOG_TAG = "catalog";
+const cached = <A extends unknown[], R>(fn: (...args: A) => Promise<R>, key: string) =>
+  unstable_cache(fn, [key], { tags: [CATALOG_TAG], revalidate: 300 });
+
+async function fsCitiesRaw(): Promise<City[]> {
   const snap = await adminDb().collection("cities").orderBy("order").get();
   return snap.docs.map((d) => withId<City>(d));
 }
 
-export async function fsCategories(): Promise<Category[]> {
+async function fsCategoriesRaw(): Promise<Category[]> {
   // Tri en mémoire (5 documents) : évite un index composite inutile.
   const snap = await adminDb().collection("categories").orderBy("order").get();
   return snap.docs.map((d) => withId<Category>(d)).filter((c) => c.isActive);
 }
 
-export async function fsPublishedExperiences(): Promise<Experience[]> {
+async function fsPublishedExperiencesRaw(): Promise<Experience[]> {
   const snap = await adminDb().collection("experiences").where("status", "==", "published").get();
   return snap.docs.map((d) => withId<Experience>(d));
 }
 
-export async function fsExperienceBySlug(slug: string): Promise<Experience | null> {
+async function fsExperienceBySlugRaw(slug: string): Promise<Experience | null> {
   const snap = await adminDb().collection("experiences").where("slug", "==", slug).where("status", "==", "published").limit(1).get();
   return snap.docs[0] ? withId<Experience>(snap.docs[0]) : null;
 }
 
-export async function fsExperiencesByIds(ids: string[]): Promise<Map<string, Experience>> {
-  const unique = [...new Set(ids)];
-  if (unique.length === 0) return new Map();
+async function fsExperiencesListRaw(sortedIds: string[]): Promise<Experience[]> {
+  if (sortedIds.length === 0) return [];
   const db = adminDb();
-  const snaps = await db.getAll(...unique.map((id) => db.doc(`experiences/${id}`)));
-  return new Map(snaps.filter((s) => s.exists && s.data()?.status === "published").map((s) => [s.id, withId<Experience>(s)]));
+  const snaps = await db.getAll(...sortedIds.map((id) => db.doc(`experiences/${id}`)));
+  return snaps.filter((s) => s.exists && s.data()?.status === "published").map((s) => withId<Experience>(s));
+}
+const fsExperiencesList = cached(fsExperiencesListRaw, "fsExperiencesList");
+
+export async function fsExperiencesByIds(ids: string[]): Promise<Map<string, Experience>> {
+  const list = await fsExperiencesList([...new Set(ids)].sort());
+  return new Map(list.map((e) => [e.id, e]));
 }
 
-export async function fsUpcomingSessions(f: { cityId?: string; categoryId?: CategoryKey; experienceId?: string; from: number; to: number }): Promise<Session[]> {
+async function fsUpcomingSessionsRaw(f: { cityId?: string; categoryId?: CategoryKey; experienceId?: string; from: number; to: number }): Promise<Session[]> {
   let q = adminDb().collection("sessions").where("status", "in", ["published", "full"]) as FirebaseFirestore.Query;
   if (f.experienceId) q = q.where("experienceId", "==", f.experienceId);
   else {
@@ -67,13 +82,13 @@ export async function fsUpcomingSessions(f: { cityId?: string; categoryId?: Cate
   return snap.docs.map((d) => withId<Session>(d));
 }
 
-export async function fsSession(id: string): Promise<Session | null> {
+async function fsSessionRaw(id: string): Promise<Session | null> {
   const snap = await adminDb().doc(`sessions/${id}`).get();
   if (!snap.exists || !["published", "full"].includes(snap.data()?.status)) return null;
   return withId<Session>(snap);
 }
 
-export async function fsReviews(experienceId?: string): Promise<Review[]> {
+async function fsReviewsRaw(experienceId?: string): Promise<Review[]> {
   let q = adminDb().collection("reviews").where("status", "==", "published") as FirebaseFirestore.Query;
   if (experienceId) q = q.where("experienceId", "==", experienceId);
   const snap = await q.orderBy("createdAt", "desc").limit(20).get();
@@ -114,3 +129,11 @@ export async function fsMemberData(uid: string) {
   const notifications = notifSnap.docs.map((d) => withId<AppNotification>(d));
   return { profile, reservations, groups, notifications };
 }
+
+export const fsCities = cached(fsCitiesRaw, "fsCities");
+export const fsCategories = cached(fsCategoriesRaw, "fsCategories");
+export const fsPublishedExperiences = cached(fsPublishedExperiencesRaw, "fsPublishedExperiences");
+export const fsExperienceBySlug = cached(fsExperienceBySlugRaw, "fsExperienceBySlug");
+export const fsUpcomingSessions = cached(fsUpcomingSessionsRaw, "fsUpcomingSessions");
+export const fsSession = cached(fsSessionRaw, "fsSession");
+export const fsReviews = cached(fsReviewsRaw, "fsReviews");

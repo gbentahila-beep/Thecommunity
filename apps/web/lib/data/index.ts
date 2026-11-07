@@ -100,7 +100,8 @@ export async function getUpcomingSessions(filters: {
   const now = filters.now ?? new Date();
   const [from, to] = windowFor(filters.when ?? "all", now);
   if (FIREBASE_ENABLED) {
-    const sessions = await fs.fsUpcomingSessions({ cityId: filters.cityId, categoryId: filters.categoryId, experienceId: filters.experienceId, from, to });
+    // Début de fenêtre arrondi à la minute : la clé du cache reste stable entre deux visites.
+    const sessions = await fs.fsUpcomingSessions({ cityId: filters.cityId, categoryId: filters.categoryId, experienceId: filters.experienceId, from: Math.floor(from / 60_000) * 60_000, to });
     const exps = await fs.fsExperiencesByIds(sessions.map((s) => s.experienceId));
     const joined = sessions.flatMap((s) => (exps.has(s.experienceId) ? [{ ...s, experience: exps.get(s.experienceId)! }] : []));
     return filters.limit ? joined.slice(0, filters.limit) : joined;

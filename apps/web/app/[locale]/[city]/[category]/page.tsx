@@ -7,13 +7,14 @@ import { ExperienceCard } from "@/components/experience-card";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { getCategory, getCities, getCity, getNextSessionPerExperience } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
 
 export const revalidate = 3600;
-export const dynamicParams = false;
 
 export async function generateStaticParams() {
+  if (FIREBASE_ENABLED) return []; // mode Firebase : pages rendues à la visite
   const cities = (await getCities()).filter((c) => c.isActive);
   return routing.locales.flatMap((locale) =>
     cities.flatMap((c) => CATEGORY_KEYS.map((category) => ({ locale, city: c.id, category }))),

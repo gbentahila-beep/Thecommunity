@@ -5,13 +5,14 @@ import { CategoryChips } from "@/components/category-chips";
 import { ExperienceCard } from "@/components/experience-card";
 import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
 import { routing } from "@/i18n/routing";
+import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { getCategories, getCities, getCity, getNextSessionPerExperience } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
 
 export const revalidate = 3600;
-export const dynamicParams = false;
 
 export async function generateStaticParams() {
+  if (FIREBASE_ENABLED) return []; // mode Firebase : pages rendues à la visite
   const cities = await getCities();
   return routing.locales.flatMap((locale) => cities.map((c) => ({ locale, city: c.id })));
 }

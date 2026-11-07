@@ -1,0 +1,77 @@
+name: Déploiement — projet d'essai
+
+# Publie sur le projet Firebase d'ESSAI (the-community-36766) :
+# règles de sécurité, index, fonctions serveur, contenu de départ, super-admins.
+# Le site lui-même est publié par Firebase App Hosting (branché sur GitHub depuis la console).
+# Ne fait rien tant que le secret FIREBASE_SERVICE_ACCOUNT_DEV n'existe pas.
+on:
+  push:
+    branches: [claude/dazzling-ramanujan-b80cb8]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Règles, index, fonctions, contenu
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PROJECT: the-community-36766
+      SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
+      SUPERADMIN_EMAILS: ${{ vars.SUPERADMIN_EMAILS }}
+    steps:
+      - name: Identifiants disponibles ?
+        id: creds
+        run: |
+          if [ -z "$SA_JSON" ]; then
+            echo "::notice::Secret FIREBASE_SERVICE_ACCOUNT_DEV absent : déploiement ignoré."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.creds.outputs.ok == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.creds.outputs.ok == 'true'
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Clé de service (fichier temporaire, jamais affiché)
+        if: steps.creds.outputs.ok == 'true'
+        run: |
+          printf '%s' "$SA_JSON" > "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+
+      - name: Installation
+        if: steps.creds.outputs.ok == 'true'
+        run: npm ci
+
+      - name: Compilation des fonctions
+        if: steps.creds.outputs.ok == 'true'
+        run: npm run build -w @thecommunity/functions
+
+      - name: Règles de sécurité et index
+        if: steps.creds.outputs.ok == 'true'
+        run: npx firebase deploy --project dev --only firestore:rules,firestore:indexes,storage --non-interactive --force
+
+      - name: Fonctions serveur
+        if: steps.creds.outputs.ok == 'true'
+        run: npx firebase deploy --project dev --only functions --non-interactive --force
+
+      - name: Contenu de départ (villes, univers, expériences de démonstration)
+        if: steps.creds.outputs.ok == 'true'
+        run: npx tsx scripts/seed-content.ts --project "$PROJECT" --with-demo-experiences
+
+      - name: Super-administrateurs (variable SUPERADMIN_EMAILS)
+        if: steps.creds.outputs.ok == 'true' && env.SUPERADMIN_EMAILS != ''
+        run: npx tsx scripts/bootstrap-superadmin.ts --project "$PROJECT" --email "$SUPERADMIN_EMAILS" --confirm --skip-missing
+
+      - name: Suppression de la clé temporaire
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"

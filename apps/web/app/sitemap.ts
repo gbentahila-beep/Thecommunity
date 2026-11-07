@@ -3,7 +3,8 @@ import { CATEGORY_KEYS } from "@thecommunity/shared";
 import { getCities, getPublishedExperiences } from "@/lib/data";
 import { SITE_URL } from "@/lib/site";
 
-export const revalidate = 3600;
+// Généré à la demande (jamais pendant la compilation : la base n'y est pas accessible).
+export const dynamic = "force-dynamic";
 
 const STATIC_PATHS = ["", "/experiences", "/comment-ca-marche", "/a-propos", "/faq", "/contact"];
 

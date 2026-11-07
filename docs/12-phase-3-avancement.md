@@ -102,9 +102,16 @@ Bug trouvé et corrigé : comme pour le genre, les champs facultatifs vides du f
 - Groupes : composition à l'écran, enregistrement en phase 6. Annulation/remboursement : phase 4.
 - Traitement automatique des demandes de suppression : à venir.
 
-## Prochaine étape
+## Étape 3d — Mise en ligne sur le projet d'essai (en cours)
 
-- **3d — Mise en ligne sur le projet d'essai** : quand tu me le diras (voir [checklist, section G](11-checklist-avant-lancement.md)). Le site, les règles, les index et les fonctions y seront publiés tels quels.
+Préparé côté code :
+- alias `dev` → `the-community-36766` (`.firebaserc`) et configuration App Hosting (`apps/web/apphosting.yaml`) ;
+- workflow **« Déploiement — projet d'essai »** (`.github/workflows/deploy-dev.yml`) : règles, index, fonctions, contenu de départ (`scripts/seed-content.ts`, jamais de comptes ni de réservations fictifs) et super-admins (variable `SUPERADMIN_EMAILS`) ; inactif tant que la clé n'est pas enregistrée ;
+- le site ne lit plus la base pendant sa compilation (la machine de build n'y a pas accès) : pages rendues à la visite, **catalogue mis en cache 5 minutes** (lectures Firestore limitées) et vidé à chaque modification dans le back-office.
+
+Vérifié : compilation en mode Firebase **sans aucun accès à la base**, puis 52 vérifications sur émulateurs, 60 en mode démonstration, 27 tests unitaires.
+
+Reste à faire par Rita : [13 — Mise en ligne sur le projet d'essai](13-mise-en-ligne-essai.md).
 
 ## Lancer en local
 

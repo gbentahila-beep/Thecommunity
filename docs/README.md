@@ -17,6 +17,7 @@
 | [09 — Démarches avant lancement](09-demarches-lancement.md) | Société, banque, prestataire de paiement, CNDP, marque : feuille de route non technique |
 | [10 — Avancement phase 2](10-phase-2-avancement.md) | Ce qui est livré, vérifié, et ce qui reste |
 | [12 — Avancement phase 3](12-phase-3-avancement.md) | Firebase : règles de sécurité, fonctions serveur, émulateurs, tests |
+| [13 — Mise en ligne sur le projet d'essai](13-mise-en-ligne-essai.md) | **À faire par Rita** : clé GitHub, App Hosting, compte super-admin |
 | [11 — Checklist avant lancement](11-checklist-avant-lancement.md) | **À faire par Rita** : société, banque, paiement, CNDP, textes juridiques, marque, comptes, partenaires |
 
 ## Synthèse en 10 points

@@ -14,6 +14,7 @@ import { FavoriteButton } from "@/components/favorite-button";
 import { PageShell, Stars } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { getCategory, getExperienceBySlug, getPublishedExperiences, getReviews, getUpcomingSessions } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
@@ -22,6 +23,7 @@ import { SITE_URL } from "@/lib/site";
 export const revalidate = 300;
 
 export async function generateStaticParams() {
+  if (FIREBASE_ENABLED) return []; // mode Firebase : pages rendues à la visite
   const experiences = await getPublishedExperiences();
   return routing.locales.flatMap((locale) => experiences.map((e) => ({ locale, slug: e.slug })));
 }
