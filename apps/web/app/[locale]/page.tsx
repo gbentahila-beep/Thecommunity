@@ -60,7 +60,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
               fill
               priority
               sizes="(min-width: 1024px) 55vw, 100vw"
-              className="object-cover lg:rounded-b-[2rem]"
+              className="object-cover object-[45%_center] lg:rounded-b-[2rem]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-cream via-cream/0 to-transparent lg:bg-gradient-to-r lg:from-cream lg:via-cream/10 rtl:lg:bg-gradient-to-l" />
           </div>
