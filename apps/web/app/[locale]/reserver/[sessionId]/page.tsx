@@ -1,4 +1,4 @@
-import { bookingRefusal, DEFAULT_CANCELLATION_POLICY, formatMoney, isMemberActive, maxSeatsFor, seatsAvailable, SPOKEN_LANGUAGES, type SpokenLanguage } from "@thecommunity/shared";
+import { bookingRefusal, DEFAULT_CANCELLATION_POLICY, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, SPOKEN_LANGUAGES, type SpokenLanguage } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -99,7 +99,8 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   const personal = visitor?.state === "ready" && Boolean((onRequest && visitor.request && visitor.request.status !== "cancelled") || visitor.booked);
   const here = `/reserver/${sessionId}`;
   const maxSeats = Math.min(maxSeatsFor(exp), Math.max(1, seatsAvailable(session)));
-  const [plan, tCard, tm] = await Promise.all([getMembershipPlan(), getTranslations("card"), getTranslations("membership")]);
+  const [plan, tCard, tm, t2] = await Promise.all([getMembershipPlan(), getTranslations("card"), getTranslations("membership"), getTranslations("twoPart")]);
+  const twoPart = pricingOf(exp);
   const memberAmount = memberAmountFor(plan, session.price, exp);
   const isMember = Boolean(visitor?.member);
   // Accès anticipé : une nouvelle date est réservée aux membres pendant les premières heures.
@@ -139,7 +140,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           <div className="flex justify-between py-3">
             <dt className="text-muted">{t("unitPrice")}</dt>
             <dd className="text-end">
-              <PriceTag price={session.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} />
+              <PriceTag price={session.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} />
               {memberAmount !== null && !isMember && (
                 <span className="mt-1 block text-xs text-muted">
                   {t("publicPriceNote", { price: formatMoney(session.price, lang) })}{" "}
@@ -275,6 +276,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           sessionId={session.id}
           unitAmount={isMember && memberAmount !== null ? memberAmount : session.price.amount}
           currency={session.price.currency}
+          onSite={twoPart.partner ? { unit: twoPart.partner.price?.amount ?? null, partner: exp.venue.revealPolicy === "immediate" ? twoPart.partner.name : "", description: twoPart.partner.description } : null}
           maxSeats={maxSeats}
           defaultLanguages={profileLanguages(visitor.languages)}
         />

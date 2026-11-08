@@ -73,6 +73,22 @@ export async function storeInvoicePdf(invoiceId: string): Promise<string> {
 }
 
 /**
+ * Étape 11 : part réglée sur place au partenaire, jamais encaissée par The Host Club.
+ * Texte court pour la facture (hors total) et l'e-mail de confirmation ; null pour « tout en ligne ».
+ */
+export function onSiteText(r: FirebaseFirestore.DocumentData | undefined, locale = "fr"): string | null {
+  const snap = r?.partnerSnapshot;
+  if (!snap || r?.partnerPaymentStatus === "not_applicable") return null;
+  const l = locale === "ar" || locale === "en" ? locale : "fr";
+  const who = r?.venue ? snap.name : null;
+  const amount = typeof r?.onSiteAmount === "number" ? money(r.onSiteAmount, r?.pricing?.currency ?? "MAD") : null;
+  const what = snap.description ? ` (${snap.description})` : "";
+  if (l === "en") return `${amount ? `${amount} to pay` : "What you order is paid"} directly to ${who ?? "the partner venue"}, on site${what}. Not collected by The Host Club.`;
+  if (l === "ar") return `${amount ? `${amount} تُدفع` : "استهلاكك يُدفع"} مباشرة إلى ${who ?? "المكان الشريك"} في عين المكان${what}. لا تحصّله The Host Club.`;
+  return `${amount ? `${amount} à régler` : "Votre consommation est à régler"} directement ${who ? `à ${who}` : "au lieu partenaire"}, sur place${what}. Montant non encaissé par The Host Club.`;
+}
+
+/**
  * Facture (ou reçu) d'un paiement encaissé. Idempotent : un paiement = un document (invoices/inv_{paymentId}).
  * Renvoie l'identifiant du document, et s'il vient d'être créé.
  */
@@ -86,8 +102,10 @@ export async function ensureInvoice(paymentId: string): Promise<{ id: string; cr
     const user = (await tx.get(db.doc(`users/${p.userId}`))).data() ?? {};
     const purpose: "reservation" | "membership" = p.purpose === "membership" ? "membership" : "reservation";
     let lines: InvoiceLine[];
+    let onSiteNote: string | null = null;
     if (purpose === "reservation") {
       const r = (await tx.get(db.doc(`reservations/${p.reservationId}`))).data();
+      onSiteNote = onSiteText(r);
       const title = r?.sessionSnapshot?.title?.fr ?? "Expérience The Host Club";
       const start = r?.sessionSnapshot?.startAt instanceof Timestamp ? dateTimeFr(r.sessionSnapshot.startAt.toDate()) : "";
       const detail = [start, r?.sessionSnapshot?.district].filter(Boolean).join(" · ");
@@ -126,6 +144,7 @@ export async function ensureInvoice(paymentId: string): Promise<{ id: string; cr
       seller: info,
       buyer: { name: [user.firstName, user.lastName].filter(Boolean).join(" "), email: user.email ?? "" },
       lines,
+      onSiteNote,
       totals: splitVat(p.amount, vatRate),
       currency: p.currency ?? "MAD",
       payment: { provider: p.provider ?? "", mode: p.mode ?? "", at: p.updatedAt ?? Timestamp.fromDate(now) },
@@ -217,7 +236,7 @@ export async function emailInvoice(invoiceId: string): Promise<{ id: string; sta
     const r = (await db.doc(`reservations/${inv.reservationId}`).get()).data();
     const title = r?.sessionSnapshot?.title?.[locale] ?? r?.sessionSnapshot?.title?.fr ?? inv.lines[0]?.label ?? "";
     const when = r?.sessionSnapshot?.startAt instanceof Timestamp ? dateTimeFor(r.sessionSnapshot.startAt.toDate(), locale) : "";
-    mail = reservationConfirmedMail({ locale, firstName, title, when, seats: r?.seats ?? 1, total, number: inv.number, reservationId: inv.reservationId, test: inv.test });
+    mail = reservationConfirmedMail({ locale, firstName, title, when, seats: r?.seats ?? 1, total, number: inv.number, reservationId: inv.reservationId, test: inv.test, onSite: onSiteText(r, locale) });
   }
   const sent = await sendMail({
     to,

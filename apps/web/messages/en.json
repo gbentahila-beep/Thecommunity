@@ -900,5 +900,25 @@
     "otherCity": "Pick another city",
     "usefulAlso": "Also useful",
     "themesLabel": "Themes"
+  },
+  "twoPart": {
+    "now": "{amount} now",
+    "onSite": "{amount} on site",
+    "plusConsumption": "+ what you order",
+    "consumptionOnSite": "what you order paid on site",
+    "onSiteTitle": "To pay on site",
+    "onSiteTo": "Paid directly to {partner}, on site.",
+    "onSiteVariable": "Depending on what you order",
+    "whatOnSite": "On site: {description}",
+    "discountNote": "Discounts (membership, member price, promo codes) only apply to the part paid online.",
+    "payNowLine": "To pay now",
+    "paidOnline": "Paid online",
+    "dueOnline": "To pay online",
+    "paidOnSite": "Paid on site",
+    "sectionTitle": "How you pay for this experience",
+    "sectionOnline": "Online, when you book: {amount} per person.",
+    "sectionFixed": "On site, to the partner: {amount} per person.",
+    "sectionVariable": "On site, to the partner: whatever you order.",
+    "onSiteToVenue": "Paid directly to the partner venue, on site."
   }
 }

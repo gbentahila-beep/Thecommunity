@@ -21,6 +21,8 @@ export type InvoiceDoc = {
   seller: CompanyInfo | null;
   buyer: { name: string; email: string };
   lines: InvoiceLine[];
+  /** Étape 11 : part réglée sur place au partenaire (hors facture, jamais encaissée). */
+  onSiteNote?: string | null;
   totals: { ht: number; vat: number; ttc: number; rate: number | null };
   currency: string;
   payment: { provider: string; mode: string; at: string };

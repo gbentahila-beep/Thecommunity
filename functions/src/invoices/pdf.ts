@@ -137,6 +137,7 @@ export async function renderInvoicePdf(inv: InvoiceDoc): Promise<Uint8Array> {
   text(payLine, M, y);
   y -= 22;
   const notes: string[] = [];
+  if (inv.onSiteNote) notes.push(`Hors facture — ${inv.onSiteNote}`);
   if (inv.test) notes.push("Document de TEST : aucun paiement réel n'a eu lieu. Ce document n'a aucune valeur comptable.");
   else if (!inv.legal) notes.push("Ce reçu n'a pas valeur de facture : les informations de la société ne sont pas encore renseignées.");
   if (inv.totals.rate == null) notes.push("TVA : taux et mentions à confirmer avec l'expert-comptable.");

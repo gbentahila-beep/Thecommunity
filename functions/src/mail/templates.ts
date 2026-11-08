@@ -35,7 +35,7 @@ const TEST_NOTE: Record<L, string> = {
   ar: "دفع تجريبي: لم يُقتطع أي مبلغ.",
 };
 
-export function reservationConfirmedMail(o: { locale: string; firstName: string; title: string; when: string; seats: number; total: string; number: string; reservationId: string; test: boolean }) {
+export function reservationConfirmedMail(o: { locale: string; firstName: string; title: string; when: string; seats: number; total: string; number: string; reservationId: string; test: boolean; onSite?: string | null }) {
   const l = lang(o.locale);
   const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
   const t = {
@@ -43,7 +43,7 @@ export function reservationConfirmedMail(o: { locale: string; firstName: string;
     en: { subject: `You're booked: ${o.title}`, heading: `See you soon${o.firstName ? `, ${o.firstName}` : ""}!`, p: [`Your seat is confirmed for “${o.title}”, ${o.when}.`, `${o.seats} seat(s) · ${o.total} · document ${o.number}.`], cta: "View my booking" },
     ar: { subject: `تم الحجز: ${o.title}`, heading: `إلى اللقاء قريبًا${o.firstName ? ` ${o.firstName}` : ""}!`, p: [`تم تأكيد مقعدك في « ${o.title} »، ${o.when}.`, `${o.seats} مقعد · ${o.total} · الوثيقة ${o.number}.`], cta: "عرض حجزي" },
   }[l];
-  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: [...t.p, ...(o.test ? [TEST_NOTE[l]] : [])], cta: { label: t.cta, href }, footer: FOOTER[l] }) };
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: [...t.p, ...(o.onSite ? [o.onSite] : []), ...(o.test ? [TEST_NOTE[l]] : [])], cta: { label: t.cta, href }, footer: FOOTER[l] }) };
 }
 
 export function membershipMail(o: { locale: string; firstName: string; planName: string; until: string; total: string; number: string; test: boolean }) {

@@ -14,6 +14,9 @@ type Props = {
   unitAmount: number;
   currency: CurrencyCode;
   maxSeats: number;
+  /** Part réglée sur place au partenaire (étape 11) : prix fixe par place, ou null pour une consommation libre. Absent = tout en ligne.
+   *  `partner` vide quand le lieu n'est révélé que la veille (on ne le dévoile pas avant). */
+  onSite?: { unit: number | null; partner: string; description: string } | null;
   /** Langues du profil, proposées par défaut comme langues de table. */
   defaultLanguages?: BookingPreferences["languages"];
 };
@@ -22,8 +25,9 @@ type Props = {
  * Choix du nombre de places, code promo, préférences pour l'accueil, puis réservation.
  * Le prix affiché vient du serveur (prix membre, code, frais) ; la réservation le recalcule.
  */
-export function BookingForm({ sessionId, unitAmount, currency, maxSeats, defaultLanguages = [] }: Props) {
+export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite = null, defaultLanguages = [] }: Props) {
   const t = useTranslations("booking");
+  const t2 = useTranslations("twoPart");
   const tp = useTranslations("prefs");
   const lang = useLocale() as "fr" | "ar" | "en";
   const router = useRouter();
@@ -136,9 +140,24 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, default
           {pricing.memberDiscount ? <div className="flex justify-between text-emerald-800"><dt>{t("memberDiscountLine")}</dt><dd className="tabular-nums">−{money(pricing.memberDiscount)}</dd></div> : null}
           {pricing.discount ? <div className="flex justify-between text-emerald-800"><dt>{t("promoLine", { code: pricing.promoCode ?? "" })}</dt><dd className="tabular-nums">−{money(pricing.discount)}</dd></div> : null}
           {pricing.fees ? <div className="flex justify-between"><dt>{t("feesLine")}</dt><dd className="tabular-nums">{money(pricing.fees)}</dd></div> : null}
-          <div className="flex justify-between border-t border-line pt-1.5 font-semibold"><dt>{t("totalLine")}</dt><dd className="tabular-nums">{money(pricing.total)}</dd></div>
+          <div className="flex justify-between border-t border-line pt-1.5 font-semibold"><dt>{onSite ? t2("payNowLine") : t("totalLine")}</dt><dd className="tabular-nums">{money(pricing.total)}</dd></div>
         </dl>
       ) : null}
+
+      {onSite && (
+        <section aria-label={t2("onSiteTitle")} className="rounded-[var(--radius-card)] bg-white p-4 text-sm shadow-card" data-testid="on-site">
+          <div className="flex justify-between gap-3 font-semibold text-ink">
+            <span>{t2("onSiteTitle")}</span>
+            <span className="tabular-nums">{onSite.unit != null ? money(onSite.unit * seats) : t2("onSiteVariable")}</span>
+          </div>
+          {onSite.unit != null && seats > 1 && <p className="text-end text-xs text-muted tabular-nums">{money(onSite.unit)} × {seats}</p>}
+          <p className="mt-1 text-xs text-muted">
+            {onSite.partner ? t2("onSiteTo", { partner: onSite.partner }) : t2("onSiteToVenue")}
+            {onSite.description ? ` ${t2("whatOnSite", { description: onSite.description })}` : ""}
+          </p>
+          <p className="mt-1 text-xs text-muted">{t2("discountNote")}</p>
+        </section>
+      )}
 
       <div className="rounded-[var(--radius-card)] bg-white p-4 shadow-card">
         {promo ? (

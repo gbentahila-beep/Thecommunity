@@ -264,11 +264,17 @@ export const DEMO_EXPERIENCES: Experience[] = [
     ],
     durationMinutes: 150,
     price: mad(120),
+    // Étape 11 : entrée et mocktail de bienvenue payés en ligne, le reste à la carte sur place.
+    pricing: {
+      model: "variable_consumption",
+      currency: "MAD",
+      partner: { name: "Rooftop partenaire", paymentMode: "on_site", pricingType: "consumption", price: null, description: "Boissons et planches supplémentaires, à la carte" },
+    },
     bookingMode: "open",
     maxSeatsPerBooking: 4,
     languages: ["fr", "darija", "en"],
     alcoholServed: false,
-    included: [{ fr: "Deux mocktails" }, { fr: "Planche à partager" }],
+    included: [{ fr: "Un mocktail de bienvenue" }, { fr: "Présentations par nos hôtes" }],
     practicalInfo: { fr: "Accès par ascenseur. Pièce d'identité demandée à l'entrée." },
     cancellationPolicyId: policy,
     status: "published",
@@ -291,7 +297,13 @@ export const DEMO_EXPERIENCES: Experience[] = [
     venue: { name: "Café partenaire (révélé la veille)", address: "Racine, Casablanca", revealPolicy: "on_group_reveal" },
     images: [{ path: "/demo/restaurant-lanternes.webp", alt: { fr: "Café chaleureux aux lanternes tressées" } }],
     durationMinutes: 120,
-    price: mad(139),
+    price: mad(59),
+    // Étape 11 : part organisation en ligne, brunch réglé au café sur place (139 DH au total).
+    pricing: {
+      model: "fixed_partner",
+      currency: "MAD",
+      partner: { name: "Restaurant partenaire Gauthier", paymentMode: "on_site", pricingType: "fixed", price: mad(80), description: "Brunch complet, boisson chaude et jus pressé" },
+    },
     bookingMode: "social_dinner",
     groupConfig: { minSize: 5, targetSize: 6, maxSize: 7 },
     maxSeatsPerBooking: 1,

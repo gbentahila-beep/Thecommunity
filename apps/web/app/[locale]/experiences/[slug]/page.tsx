@@ -1,6 +1,8 @@
 import {
   DEFAULT_CANCELLATION_POLICY,
   LOW_SEATS_THRESHOLD,
+  formatMoney,
+  pricingOf,
   seatsAvailable,
   type CategoryKey,
   type Experience,
@@ -86,9 +88,10 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     if (!retired) notFound();
     return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} />;
   }
-  const [t, tCard, category, sessions, reviews, past, plan] = await Promise.all([
+  const [t, tCard, t2, category, sessions, reviews, past, plan] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),
+    getTranslations("twoPart"),
     getCategory(exp.categoryId),
     getUpcomingSessions({ experienceId: exp.id }),
     getReviews(exp.id),
@@ -96,6 +99,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     getMembershipPlan(),
   ]);
   const memberAmount = memberAmountFor(plan, exp.price, exp);
+  const twoPart = pricingOf(exp);
   const lang = locale as "fr" | "ar" | "en";
   const next = sessions.find((s) => seatsAvailable(s) > 0) ?? sessions[0];
   const hours = Math.floor(exp.durationMinutes / 60);
@@ -231,10 +235,21 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
           <aside id="dates" className="lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-[var(--radius-card)] bg-white p-5 shadow-float">
               <p className="flex flex-wrap items-baseline gap-2">
-                <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" />
+                <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" pricing={twoPart} t2={t2} />
                 <span className="text-sm text-muted">{t("perPerson")}</span>
               </p>
               {exp.membersOnly && <p className="mt-2 rounded-xl bg-plum-900 px-3 py-2 text-sm font-medium text-white">{t("membersOnlyNote")}</p>}
+              {twoPart.partner && (
+                <div className="mt-3 rounded-xl bg-cream px-3 py-2.5 text-sm text-ink" data-testid="two-part">
+                  <p className="font-semibold">{t2("sectionTitle")}</p>
+                  <ul className="mt-1 space-y-0.5">
+                    <li>{t2("sectionOnline", { amount: formatMoney(exp.price, lang) })}</li>
+                    <li>{twoPart.partner.price ? t2("sectionFixed", { amount: formatMoney(twoPart.partner.price, lang) }) : t2("sectionVariable")}</li>
+                  </ul>
+                  {twoPart.partner.description && <p className="mt-1 text-muted">{t2("whatOnSite", { description: twoPart.partner.description })}</p>}
+                  <p className="mt-1 text-xs text-muted">{t2("discountNote")}</p>
+                </div>
+              )}
               {plan && (memberAmount !== null || exp.membersOnly) && (
                 <Link href="/abonnement" className="mt-2 inline-block text-sm font-semibold text-plum-900 underline underline-offset-4">
                   {t("becomeMember")}
@@ -295,7 +310,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         <div className="fixed inset-x-0 bottom-[calc(64px+env(safe-area-inset-bottom))] z-20 border-t border-line bg-white/95 px-4 py-3 backdrop-blur-md lg:hidden">
           <div className="mx-auto flex max-w-md items-center justify-between gap-4">
             <div>
-              <p><PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} /></p>
+              <p><PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} detail={false} /></p>
               <p className="text-xs text-muted">{formatShortSlot(next.startAt, locale)}</p>
             </div>
             <Link href={`/reserver/${next.id}`} className="rounded-full bg-plum-900 px-6 py-3 font-semibold text-white">

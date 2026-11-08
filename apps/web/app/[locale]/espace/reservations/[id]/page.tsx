@@ -30,12 +30,13 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   if (!data) notFound();
   const { reservation: r, group, profile, now } = data;
   const space = await getMemberSpace();
-  const [t, tl, ti, tb, tp, locale, invoices] = await Promise.all([
+  const [t, tl, ti, tb, tp, t2, locale, invoices] = await Promise.all([
     getTranslations("reservation"),
     getTranslations("labels.interests"),
     getTranslations("invoices"),
     getTranslations("booking"),
     getTranslations("prefs"),
+    getTranslations("twoPart"),
     getLocale(),
     space.session ? getReservationInvoices(space.session.uid, id) : Promise.resolve([]),
   ]);
@@ -236,9 +237,24 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
             </div>
           )}
           <div className="flex justify-between py-2.5">
-            <dt className="text-muted">{r.paidAt ? t("total") : t("totalDue")}</dt>
+            <dt className="text-muted">{r.partnerSnapshot ? (r.paidAt ? t2("paidOnline") : t2("dueOnline")) : r.paidAt ? t("total") : t("totalDue")}</dt>
             <dd className="font-semibold">{total}</dd>
           </div>
+          {r.partnerSnapshot && ["pending_payment", "confirmed", "attended"].includes(r.status) && (
+            <div className="py-2.5" data-testid="on-site">
+              <div className="flex justify-between gap-3">
+                <dt className="text-muted">{r.partnerPaymentStatus === "paid_on_site" ? t2("paidOnSite") : t2("onSiteTitle")}</dt>
+                <dd className="font-semibold">
+                  {r.onSiteAmount != null ? formatMoney({ amount: r.onSiteAmount, currency: r.pricing.currency }, lang) : t2("onSiteVariable")}
+                  {r.partnerPaymentStatus === "paid_on_site" && <CheckCircle2 className="ms-1 inline size-4 text-emerald-700" aria-hidden />}
+                </dd>
+              </div>
+              <p className="mt-1 text-xs text-muted">
+                {r.venue ? t2("onSiteTo", { partner: r.partnerSnapshot.name }) : t2("onSiteToVenue")}
+                {r.partnerSnapshot.description ? ` ${t2("whatOnSite", { description: r.partnerSnapshot.description })}` : ""}
+              </p>
+            </div>
+          )}
           {r.paidAt && (
             <div className="flex justify-between py-2.5">
               <dt className="text-muted">{t("paidLabel")}</dt>

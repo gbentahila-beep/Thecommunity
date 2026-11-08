@@ -1,4 +1,4 @@
-import { LOW_SEATS_THRESHOLD, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
+import { LOW_SEATS_THRESHOLD, pricingOf, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
 import { MapPin, Star, Users } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -34,7 +34,7 @@ export async function ExperienceCard({
   experience: Experience;
   priority?: boolean;
 }) {
-  const [locale, t, category, plan] = await Promise.all([getLocale(), getTranslations("card"), getCategory(experience.categoryId), getMembershipPlan()]);
+  const [locale, t, t2, category, plan] = await Promise.all([getLocale(), getTranslations("card"), getTranslations("twoPart"), getCategory(experience.categoryId), getMembershipPlan()]);
   const shownPrice = session?.price ?? experience.price;
   const left = session ? seatsAvailable(session) : 0;
   const full = Boolean(session) && (session!.status === "full" || left === 0);
@@ -81,7 +81,7 @@ export async function ExperienceCard({
         </p>
         <div className="mt-auto flex items-end justify-between pt-3">
           <p>
-            <PriceTag price={shownPrice} memberAmount={memberAmountFor(plan, shownPrice, experience)} lang={locale as "fr" | "ar" | "en"} memberLabel={t("memberShort")} />
+            <PriceTag price={shownPrice} memberAmount={memberAmountFor(plan, shownPrice, experience)} lang={locale as "fr" | "ar" | "en"} memberLabel={t("memberShort")} pricing={pricingOf(experience)} t2={t2} />
           </p>
           {session ? (
             <p className="flex items-center gap-1.5 text-sm text-ink/80">
