@@ -488,7 +488,7 @@
     "title": "Preferences",
     "notifications": "Notifications",
     "emailNotif": "Emails about my bookings",
-    "emailNotifHint": "Confirmations, invoices, group reveal. Essential for things to run smoothly.",
+    "emailNotifHint": "Confirmations, reminders (the day before and 3 hours before), invoices, group reveal. Essential for things to run smoothly.",
     "pushNotif": "Push notifications",
     "pushNotifHint": "Coming soon.",
     "marketing": "News and offers by email",

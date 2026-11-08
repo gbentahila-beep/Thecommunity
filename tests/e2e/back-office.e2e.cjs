@@ -71,7 +71,8 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   const t1Before = await sections.nth(0).locator('li').count();
   await firstSelect.selectOption({ label: 'Table 2' });
   assert(await sections.nth(0).locator('li').count() === t1Before - 1, 'déplacement d’un participant (liste « Déplacer vers »)');
-  // glisser-déposer
+  // glisser-déposer (fenêtre assez haute pour voir les deux tables : le glisser simulé ne fait pas défiler)
+  await page.setViewportSize({ width: 1366, height: 1600 });
   const t3 = sections.nth(2); const t4 = sections.nth(3);
   const t4Before = await t4.locator('li').count();
   await t3.locator('li').first().dragTo(t4);
@@ -82,7 +83,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.locator('#merge-b').selectOption({ label: 'Table 5' });
   await page.getByRole('button', { name: 'Fusionner', exact: true }).click();
   assert(await sections.count() === 4, 'fusionner deux tables');
-  await page.getByRole('button', { name: 'Revenir à la proposition' }).click();
+  await page.getByRole('button', { name: 'Annuler mes changements' }).click();
   assert(await sections.nth(0).locator('li').count() === t1Before, 'retour à la proposition initiale');
   assert(await page.getByRole('button', { name: /Valider et révéler/ }).isDisabled(), 'validation désactivée (phase 6)');
 

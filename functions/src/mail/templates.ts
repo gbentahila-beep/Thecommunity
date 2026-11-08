@@ -84,3 +84,42 @@ const NOTICE_FOOTER: Record<L, string> = {
   en: "You're receiving this email because you have a booking on The Host Club.",
   ar: "تتوصل بهذه الرسالة لأن لديك حجزًا على The Host Club.",
 };
+
+export function reminderMail(o: { locale: string; kind: "d1" | "h3"; firstName: string; title: string; when: string; where: string; reservationId: string }) {
+  const l = lang(o.locale);
+  const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
+  const d1 = o.kind === "d1";
+  const t = {
+    fr: {
+      subject: d1 ? `C'est demain : ${o.title}` : `Dans 3 heures : ${o.title}`,
+      heading: d1 ? `${o.firstName ? `${o.firstName}, c` : "C"}'est demain !` : "À tout à l'heure !",
+      p: [`« ${o.title} », ${o.when}.`, `Lieu : ${o.where}.`, d1 ? "Un empêchement ? Prévenez-nous depuis votre réservation pour libérer votre place (l'annulation n'est plus remboursée à moins de 48 h)." : "Pensez à arriver quelques minutes en avance : votre prénom vous attend."],
+      cta: "Voir ma réservation",
+    },
+    en: {
+      subject: d1 ? `Tomorrow: ${o.title}` : `In 3 hours: ${o.title}`,
+      heading: d1 ? `${o.firstName ? `${o.firstName}, i` : "I"}t's tomorrow!` : "See you soon!",
+      p: [`“${o.title}”, ${o.when}.`, `Venue: ${o.where}.`, d1 ? "Can't make it? Let us know from your booking to free up your spot (cancellations within 48 hours aren't refunded)." : "Try to arrive a few minutes early: your name is waiting for you."],
+      cta: "View my booking",
+    },
+    ar: {
+      subject: d1 ? `غدًا: ${o.title}` : `بعد 3 ساعات: ${o.title}`,
+      heading: d1 ? "الموعد غدًا!" : "إلى اللقاء قريبًا!",
+      p: [`« ${o.title} »، ${o.when}.`, `المكان: ${o.where}.`, d1 ? "طرأ لك مانع؟ أخبرنا من صفحة حجزك لتحرير مكانك (الإلغاء قبل أقل من 48 ساعة غير قابل للاسترداد)." : "احرص على الحضور قبل الموعد بدقائق: اسمك في انتظارك."],
+      cta: "عرض حجزي",
+    },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
+}
+
+export function changeMail(o: { locale: string; kind: "date" | "venue"; firstName: string; title: string; when: string; where: string; reservationId: string }) {
+  const l = lang(o.locale);
+  const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
+  const date = o.kind === "date";
+  const t = {
+    fr: { subject: date ? `Nouvelle date : ${o.title}` : `Nouveau lieu : ${o.title}`, heading: date ? "Votre réservation a changé de date" : "Le lieu a changé", p: [`« ${o.title} » : ${o.when}.`, `Lieu : ${o.where}.`, "La nouvelle date ne vous convient pas ? Écrivez-nous : nous annulons votre place avec remboursement intégral."], cta: "Voir ma réservation" },
+    en: { subject: date ? `New date: ${o.title}` : `New venue: ${o.title}`, heading: date ? "Your booking has a new date" : "The venue has changed", p: [`“${o.title}”: ${o.when}.`, `Venue: ${o.where}.`, "Doesn't suit you? Write to us: we'll cancel your spot with a full refund."], cta: "View my booking" },
+    ar: { subject: date ? `موعد جديد: ${o.title}` : `مكان جديد: ${o.title}`, heading: date ? "تغيّر موعد حجزك" : "تغيّر المكان", p: [`« ${o.title} »: ${o.when}.`, `المكان: ${o.where}.`, "لا يناسبك؟ راسلنا: نلغي مقعدك مع استرداد كامل."], cta: "عرض حجزي" },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
+}

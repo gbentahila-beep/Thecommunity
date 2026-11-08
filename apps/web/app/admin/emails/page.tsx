@@ -7,6 +7,11 @@ const KINDS: Record<string, string> = {
   reservation_invoice: "Réservation confirmée + facture",
   membership_invoice: "Abonnement + facture",
   refund: "Remboursement + avoir",
+  group_revealed: "Table révélée",
+  reminder_d1: "Rappel la veille",
+  reminder_h3: "Rappel 3 h avant",
+  change_date: "Changement de date",
+  change_venue: "Changement de lieu",
 };
 const STATUS = { outbox: ["Boîte d'envoi (test)", "amber"], sent: ["Envoyé", "green"], failed: ["Échec", "red"] } as const;
 

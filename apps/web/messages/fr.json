@@ -488,7 +488,7 @@
     "title": "Préférences",
     "notifications": "Notifications",
     "emailNotif": "E-mails liés à mes réservations",
-    "emailNotifHint": "Confirmations, factures, révélation du groupe. Indispensables au bon déroulement.",
+    "emailNotifHint": "Confirmations, rappels (la veille et 3 h avant), factures, révélation du groupe. Indispensables au bon déroulement.",
     "pushNotif": "Notifications push",
     "pushNotifHint": "Disponibles prochainement.",
     "marketing": "Nouveautés et offres par e-mail",

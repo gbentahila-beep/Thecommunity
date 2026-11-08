@@ -12,6 +12,7 @@ import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { reserveSeats } from "../../functions/src/reservations/create-reservation";
 import { expireDueHolds } from "../../functions/src/reservations/expire-holds";
+import { sendDueReminders } from "../../functions/src/notify/reminders";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -1215,5 +1216,56 @@ describe("composition des tables (6)", () => {
     const { sessionPlanSchema } = await import("../../packages/shared/src/experience-input");
     expect(sessionPlanSchema.safeParse({ firstDate: "2027-01-10", time: "19:30", weeks: 1, capacity: 51 }).success).toBe(false);
     expect(sessionPlanSchema.safeParse({ firstDate: "2027-01-10", time: "19:30", weeks: 1, capacity: 50 }).success).toBe(true);
+  });
+});
+
+describe("rappels et changements (7)", () => {
+  const mailsFor = async (reservationId: string) => (await db().collection("mail").where("refs.reservationId", "==", reservationId).get()).docs.map((d) => d.data());
+  const notes = async (uid: string, type: string) => (await db().collection(`users/${uid}/notifications`).where("type", "==", type).get()).size;
+
+  it("la veille puis 3 h avant, une seule fois chacun ; pas d'e-mail si la personne les a coupés", async () => {
+    const sid = await makeSession({ startInHours: 20 });
+    const u = await member();
+    await db().doc(`users/${u.uid}`).set({ email: `rappel.${run}@example.com`, locale: "fr" }, { merge: true });
+    const { reservationId } = await paidReservation(u, sid);
+    const quiet = await member();
+    await db().doc(`users/${quiet.uid}`).set({ email: `calme.${run}@example.com`, notificationPrefs: { email: false } }, { merge: true });
+    const other = await paidReservation(quiet, sid);
+    await sendDueReminders();
+    expect((await reservation(reservationId)).reminders?.d1At).toBeDefined();
+    expect((await mailsFor(reservationId)).map((m) => m.kind)).toContain("reminder_d1");
+    expect((await mailsFor(other.reservationId)).filter((m) => m.kind.startsWith("reminder"))).toHaveLength(0);
+    expect(await notes(quiet.uid, "reminder")).toBe(1);
+    await sendDueReminders();
+    expect((await mailsFor(reservationId)).filter((m) => m.kind === "reminder_d1")).toHaveLength(1);
+    // 3 h avant (on avance l'horloge de 18 h).
+    await sendDueReminders(Date.now() + 18 * 3_600_000);
+    expect((await mailsFor(reservationId)).filter((m) => m.kind === "reminder_h3")).toHaveLength(1);
+    expect(await notes(u.uid, "reminder")).toBe(2);
+    await sendDueReminders(Date.now() + 18 * 3_600_000);
+    expect(await notes(u.uid, "reminder")).toBe(2);
+  });
+
+  it("réservée moins de 3 h avant : un seul rappel", async () => {
+    const sid = await makeSession({ startInHours: 2.5 });
+    const u = await member();
+    await db().doc(`users/${u.uid}`).set({ email: `tard.${run}@example.com` }, { merge: true });
+    const { reservationId } = await paidReservation(u, sid);
+    await sendDueReminders();
+    await sendDueReminders();
+    expect((await mailsFor(reservationId)).filter((m) => m.kind.startsWith("reminder")).map((m) => m.kind)).toEqual(["reminder_h3"]);
+  });
+
+  it("déplacement par l'équipe : e-mail « nouvelle date »", async () => {
+    const from = await makeSession({ startInHours: 96 });
+    const expId = (await session(from)).experienceId as string;
+    const toRef = db().collection("sessions").doc();
+    await toRef.set({ ...(await session(from)), startAt: Timestamp.fromMillis(Date.now() + 200 * 3_600_000), endAt: Timestamp.fromMillis(Date.now() + 202 * 3_600_000), seatsConfirmed: 0, seatsHeld: 0, experienceId: expId });
+    const u = await member();
+    await db().doc(`users/${u.uid}`).set({ email: `deplace.${run}@example.com` }, { merge: true });
+    const { reservationId } = await paidReservation(u, from);
+    const adm = await member({ role: "admin" });
+    await adm.call("adminMoveReservation", { reservationId, targetSessionId: toRef.id });
+    expect((await mailsFor(reservationId)).map((m) => m.kind)).toContain("change_date");
   });
 });

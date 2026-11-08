@@ -4,6 +4,7 @@ import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { audit } from "../lib/audit";
+import { notifyReservationChange } from "../notify/reminders";
 import { notifyNewDates } from "./alerts";
 import { invalidArgument, requireRole, roleOf } from "../lib/guards";
 
@@ -173,6 +174,18 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     updatedAt: FieldValue.serverTimestamp(),
   });
   await batch.commit();
+
+  // Lieu modifié : les personnes à qui il avait déjà été communiqué reçoivent le nouveau (notification + e-mail).
+  const before = existing.data()?.venue;
+  if (!isCreate && before && (before.name !== v.venueName || before.address !== v.address)) {
+    const affected = await db.collection("reservations").where("experienceId", "==", id).where("sessionSnapshot.startAt", ">=", Timestamp.fromMillis(now)).get();
+    for (const r of affected.docs) {
+      const d = r.data();
+      if (!["confirmed", "pending_payment"].includes(d.status) || !d.venue) continue;
+      await r.ref.update({ venue: { name: v.venueName, address: v.address }, updatedAt: FieldValue.serverTimestamp() });
+      await notifyReservationChange(r.id, "venue").catch(() => undefined);
+    }
+  }
   // Nouvelles dates publiées : prévenir les personnes qui l'avaient demandé.
   const alerted = planned.length > 0 && v.status === "published" ? await notifyNewDates(id, v.titleFr, slug, planned.length) : 0;
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: isCreate ? "experience.create" : "experience.update", targetType: "experience", targetId: id, after: { title: v.titleFr, status: v.status, sessionsAdded: planned.length, alerted } });

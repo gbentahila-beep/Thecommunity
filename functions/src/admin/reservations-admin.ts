@@ -3,6 +3,7 @@ import { HttpsError, onCall, type CallableRequest } from "firebase-functions/v2/
 import { z } from "zod";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { audit } from "../lib/audit";
+import { notifyReservationChange } from "../notify/reminders";
 import { invalidArgument, requireRole, roleOf } from "../lib/guards";
 import { cancelReservationCore, idSchema } from "../reservations/cancel-reservation";
 import { refuse } from "../reservations/create-reservation";
@@ -169,6 +170,7 @@ export const adminMoveReservation = onCall({ region: REGION }, async (req) => {
   const when = moved.startAt.toLocaleString("fr-FR", { timeZone: "Africa/Casablanca", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   const whenAr = moved.startAt.toLocaleString("ar-MA", { timeZone: "Africa/Casablanca", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   await notify(moved.userId, "event_updated", { fr: "Votre réservation a changé de date", ar: "تغيّر موعد حجزك" }, { fr: `Nouvelle date : ${when}.`, ar: `الموعد الجديد: ${whenAr}.` }, `/espace/reservations/${reservationId}`);
+  await notifyReservationChange(reservationId, "date").catch(() => undefined);
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "reservation.move", targetType: "reservation", targetId: reservationId, before: { sessionId: moved.from }, after: { sessionId: targetSessionId } });
   return { ok: true };
 });

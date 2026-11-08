@@ -45,6 +45,7 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
 
 - [ ] **Vraies photos** des lieux et des expériences (droits d'utilisation + accord des personnes reconnaissables).
 - [ ] **Compte Brevo** (envoi des e-mails : confirmations, factures, rappels) + domaine d'envoi vérifié. La clé se range comme secret Cloud `BREVO_API_KEY` — ne me l'envoyez jamais dans le chat.
+- [ ] **Notifications push** (étape 7) : générer la clé « Web Push » dans la console Firebase (Paramètres du projet → Cloud Messaging → Certificats Web Push) et me dire quand c'est fait ; je branche ensuite l'autorisation et l'envoi.
 - [ ] **Expert-comptable** : valider le modèle de facture (mentions, TVA des places et de l'abonnement, conservation).
 - [ ] **Contrat de paiement** et accès de test du prestataire (CMI, Payzone, YouCan Pay).
 - [ ] **Domaine** définitif et adresses e-mail.

@@ -19,14 +19,14 @@
 | Accueil ✅ | Vraie photo fournie par Rita (8 novembre) |
 | 5f ✅ | **Codes promo** (back-office : créer, modifier, désactiver ; % ou montant, période, plafond, première réservation ; une fois par personne, comptés au paiement) et **frais de service** (Paramètres : aucun, par place ou % ; affichés avant le paiement, jamais sur une place gratuite, remboursés avec la place). Prix détaillé au tunnel, sur la réservation et sur la facture |
 | 5g ✅ | **Régime, allergies, langue(s) de table** à la réservation et sur les demandes (reprises à l'acceptation), modifiables jusqu'au début ; accord explicite et daté pour transmettre au lieu ; colonne « Accueil » des participants, export CSV, **fiche pour le lieu** imprimable (prénoms pour les marque-places, régimes, allergies, sans coordonnées) |
+| 6 ✅ | **Composition des tables** : algorithme (taille, langue commune, pas de personnes déjà attablées ensemble, âges, équilibre F / H, intérêts ; réservations à plusieurs places gardées ensemble) → corrections à la main → enregistrement → **révélation** (table, prénoms et intérêts du groupe, lieu s'il était gardé secret, notification + e-mail) ; alerte « à revoir » si une réservation change ; **fiche hôte** (hôte, déroulé, 10 questions pour briser la glace, **marque-places** par table, imprimable) ; **plafond de 50 places** par date |
+| 7 ✅ | **Rappels** la veille et 3 h avant (notification + e-mail, une seule fois, e-mails coupables dans les préférences) ; **changement de date ou de lieu** : notification + e-mail ; **statistiques** par période (à venir, 30 j, 90 j, depuis le début) : CA, marge, remplissage, fidélité, note moyenne, annulations, absences, codes promo, par univers et par mois. Notifications push : en attente de la clé Web Push (docs/16) |
 
 ## Reste à faire — ordre proposé
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
-| **6 — prochaine** | **Composition des tables** (dîners) : algorithme + validation par l'équipe, révélation du groupe, **marque-places** (prénom de chacun), fiche « hôte » (accueil, présentations), plafond de participants | rien |
-| 7 | **Rappels** J-1 / H-3, prévenir les participants d'un changement de date ou de lieu, notifications push, statistiques | e-mails réels (Brevo) |
-| 8 | **Refonte demandée le 8 novembre** (document « the_host », détail dans docs/17) : 8a accueil (accroche « Your people are out there. », cartes décalées, univers en alternance photo / texte, « Pourquoi venir », FAQ + centre d'aide), 8b menu (Découvrir déroulant, À propos, Comment ça marche, Blog), 8c blog (City guide Casablanca, Conversation, Amitié, Comment fonctionne The Host Club), 8d consignes de sécurité enrichies, 8e page À propos (en-tête photo, créatrice, outils défilants, galerie) | photos reçues ✅ |
+| **8 — prochaine** | **Refonte demandée le 8 novembre** (document « the_host », détail dans docs/17) : 8a accueil (accroche « Your people are out there. », cartes décalées, univers en alternance photo / texte, « Pourquoi venir », FAQ + centre d'aide), 8b menu (Découvrir déroulant, À propos, Comment ça marche, Blog), 8c blog (City guide Casablanca, Conversation, Amitié, Comment fonctionne The Host Club), 8d consignes de sécurité enrichies, 8e page À propos (en-tête photo, créatrice, outils défilants, galerie) | photos reçues ✅ |
 | 5h | **Prestataire de paiement réel** (CMI, Payzone, YouCan Pay) | contrat signé |
 | 9 | **Recette, sécurité, mise en production** | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 
