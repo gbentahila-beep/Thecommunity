@@ -13,7 +13,10 @@ Point de départ : l'identité **déjà en place sur le site** (prune / crème, 
 - Maquettes demandées pour tous les éléments ; validation étape par étape.
 - 10a livrée sous forme de planches : `docs/marque/brand-book.html` (publiée comme page partageable).
 - **10b livrée** : logotype redessiné (vectoriel, Fraunces affiche, terminaisons adoucies, crénage, point rond prune clair), versions horizontale / empilée / crème / encre, zone de protection, taille minimale ; **trois pistes de monogramme** (A « h. », B « la table », C « le fil ») avec maquettes (icône d'application, onglet, Instagram, autocollant, marque-place). Fichiers : `docs/marque/logo/`. **Choix de Rita : piste A « h. »** (B et C écartées).
-- **10c livrée** : trois motifs raccordables (« le fil » recommandé, « les convives », « zellige doux »), en prune et en crème, avec maquettes (bandeau du site, sac, story, carte de bienvenue). Fichiers : `docs/marque/motif/`. **En attente : choix du motif.**
+- **10c livrée** : trois motifs raccordables (« le fil » recommandé, « les convives », « zellige doux »), en prune et en crème, avec maquettes (bandeau du site, sac, story, carte de bienvenue). Fichiers : `docs/marque/motif/`. **Choix de Rita : « le fil »** (les deux autres écartés).
+- **10d livrée** : papeterie (carte de visite, en-tête, enveloppe, facture, signature, e-mail), à table (marque-place, numéro de table, carte de bienvenue, chevalet « Réservé » avec QR), affichage (panneau 4×3, abribus, affiches A3 FR / AR, post, story), objets (sac, autocollants, kit de bienvenue, badge d'hôte, vitrophanie « Lieu partenaire »).
+- **10e livrée** : brand book version 1 complet (sommaire, fichiers, règles d'or) — `docs/marque/brand-book.html`.
+- **10f planifiée** : application au site (voir docs/15).
 
 ## Les 9 éléments
 
