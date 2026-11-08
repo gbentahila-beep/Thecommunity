@@ -1,6 +1,6 @@
-# 19 — Tarification en deux parts et paiement (plan, 8 novembre 2026)
+# 19 — Tarification en deux parts et paiement (8 novembre 2026 — étape 11 livrée, paiement 5h à venir)
 
-Demande de Rita : séparer **ce que le client paie en ligne** (part organisation) de **ce qu'il paie sur place au partenaire** (prix fixe ou consommation libre). Les réductions (abonnement, codes promo) ne portent **que sur la part organisation**. Texte de travail rédigé avec ChatGPT : on en garde le principe, adapté à l'architecture réelle. Rien n'est codé avant le « go ».
+Demande de Rita : séparer **ce que le client paie en ligne** (part organisation) de **ce qu'il paie sur place au partenaire** (prix fixe ou consommation libre). Les réductions (abonnement, codes promo) ne portent **que sur la part organisation**. Texte de travail rédigé avec ChatGPT : on en garde le principe, adapté à l'architecture réelle. Les 4 adaptations du § 3 ont été validées par Rita (« Ok pour les 4 ») ; l'étape 11 est livrée (§ 8).
 
 ## 1. Ce qui existe aujourd'hui (audit)
 
@@ -81,3 +81,41 @@ Règles Firestore : inchangées dans le principe (écriture uniquement par le se
 ## 7. Autre demande notée
 
 - **Page « Comment ça marche »** : l'afficher comme la section de l'accueil (cartes décalées, icônes des univers, photos), au lieu de la mise en page actuelle.
+
+## 8. Livré — étape 11 (8 novembre)
+
+### Ce que voit chacun
+| Qui | Où | Ce qui change |
+|---|---|---|
+| Équipe | Formulaire d'expérience | « 3. Format » garde le format ; **« 5. Tarification et paiement client »** (après « 4. Partenaire et économie », inchangée) : tout en ligne / prix fixe chez le partenaire / consommation libre ; prix organisation et prix membre (en ligne), prix partenaire (prix fixe), « ce qui est réglé sur place » ; **aperçu client en direct** ; formules sur place grisées sans partenaire ; avertissement « N places déjà réservées : leur prix est figé ». Dates → 6, photos → 7 |
+| Client | Cartes, fiche, tunnel | Prix fixe : **« 139 DH »** puis « 59 DH maintenant · 80 DH sur place » ; consommation : **« 120 DH + consommation »** (jamais de faux total) ; prix membre barré sur la seule part en ligne ; encadré « Comment se règle cette expérience » ; bloc « À régler sur place » dans le tunnel. Le nom du partenaire n'est pas affiché tant que le lieu est secret (« au lieu partenaire ») |
+| Client | Réservation, e-mail, facture | « Payé en ligne » + « À régler sur place » (puis « Réglé sur place ») ; **billet avec QR code** et code court ; e-mail de confirmation : part sur place + « Voir mon billet » ; facture : mention **« Hors facture — … Montant non encaissé par The Host Club »**, total = montant payé en ligne |
+| Client | CGV, article 2 (FR / EN / AR) | Paragraphe sur les deux parts : part sur place jamais encaissée, non due si la réservation est annulée ; réductions et frais sur la part en ligne seulement |
+| Équipe | **Billets (scan)** | Le QR ouvre `/admin/billets/{réservation}` (connexion équipe requise) : « Billet valide / déjà pointé / non valable », alerte si ce n'est pas le bon jour, **Marquer présent** (3 h avant), **Part partenaire réglée**. Secours : recherche par code, nom ou e-mail |
+| Équipe | Page d'une date | Colonne « Sur place » (montant ou « Conso. », à régler / réglée), bouton « Part partenaire réglée », résumé « X DH attendus · n / m réglées », export CSV enrichi |
+| Équipe | **En ligne / sur place** | Encaissé en ligne (net des remboursements), sur place attendu (prix fixe uniquement), sur place réglé, présents / absents / annulations ; une ligne par date ; filtres expérience, organisateur (partenaire ou The Host Club), période ; export CSV journalisé |
+
+### Données (Firestore)
+- `experiences/{id}.pricing` : `{ model, currency, partner: { name, paymentMode: "on_site", pricingType, price | null, description } | null }`. Absent = « tout en ligne » (aucune migration à lancer : lecture rétrocompatible).
+- `reservations/{id}` : `partnerSnapshot` (copie figée), `onSiteAmount` (centimes ou `null`), `partnerPaymentStatus` (`not_applicable` | `due_on_site` | `paid_on_site`), `partnerPaidAt`, `partnerPaidMarkedBy`.
+- `invoices/{id}.onSiteNote` (texte « hors facture »).
+- Nouvelle fonction `adminSetPartnerPayment` (équipe, journalisée) ; `adminLogExport` accepte `two_part`.
+- **Règles de sécurité : inchangées** (ces champs ne sont écrits que par le serveur ; tests ajoutés).
+
+### Tests
+- Unitaires : 72 (dont calcul des deux parts, totaux du tableau de bord, billet).
+- Émulateurs : 122 (prix fixe, consommation, tout en ligne, copie figée après changement de prix, **prix membre + code promo sur la seule part en ligne**, part partenaire réglée par l'équipe uniquement).
+- De bout en bout sur émulateurs : `tests/e2e/firebase-tarification.e2e.cjs` (30 vérifications : fiche → tunnel → paiement → billet QR → facture → scan équipe → part réglée → tableau de bord → formulaire).
+- Démo : blog-accueil, aide, back-office, espace-membre (234 vérifications).
+
+### Fichiers
+`packages/shared/src/{two-part,ticket,experience-input,types,index}.ts` (+ tests) · `functions/src/{experiences/save-experience, reservations/reservation-doc, admin/reservations-admin, invoices/{issue,pdf,types}, mail/templates, index}.ts` · `apps/web/components/{price-tag, experience-card, booking/booking-form, admin/{experience-form, reservation-admin-actions, ticket-actions, admin-nav, csv-export}}.tsx` · `apps/web/app/[locale]/{experiences/[slug], reserver/[sessionId], espace/reservations/[id]}/page.tsx` · `apps/web/app/admin/{billets, billets/[id], encaissements, sessions/[id], experiences/[id]}/page.tsx` · `apps/web/lib/{admin-forms, data/demo, data/demo-admin, data/admin-firestore}.ts` · `apps/web/messages/{fr,en,ar}.json` · `apps/web/content/{legal,legal-ar}.ts` · `firebase/tests/reservations.test.ts` · `tests/e2e/firebase-tarification.e2e.cjs`.
+
+### Démonstration
+« Brunch entre inconnus » : 59 DH en ligne + 80 DH sur place (139 DH) ; « Rooftop au coucher du soleil » : 120 DH + consommation.
+
+### Actions manuelles (Rita)
+- Rien à migrer : les expériences existantes restent « tout en ligne ».
+- Pour chaque expérience avec un partenaire : choisir la formule dans la section 5 et décrire ce qui est réglé sur place.
+- Une commission sur la part payée sur place (si prévue au contrat) se **facture au partenaire**, hors site.
+- Sur le téléphone de l'équipe : se connecter une fois au back-office ; le scan se fait avec l'appareil photo.

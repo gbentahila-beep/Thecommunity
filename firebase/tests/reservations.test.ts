@@ -1368,6 +1368,24 @@ describe("tarification en deux parts (11)", () => {
     expect(o.partnerPaymentStatus).toBe("not_applicable");
   });
 
+  it("abonnement et code promo ne réduisent que la part organisation, jamais la part sur place", async () => {
+    const team = await member({ role: "admin" });
+    const code = `DEUX${run}`.toUpperCase().slice(0, 20);
+    await team.call("adminSavePromo", { create: true, data: { code, type: "percent", value: 20, validFrom: "", validTo: "2099-12-31", maxRedemptions: 5, firstBookingOnly: false, isActive: true, description: "" } });
+    const u = await member();
+    await team.call("adminGrantMembership", { uid: u.uid, months: 3, reason: "test 11" });
+    const sid = await makeSession({ price: 25000, memberPrice: 20000 });
+    await withPricing(sid, fixed);
+    const { pricing } = (await u.call("previewPricing", { sessionId: sid, seats: 1, promoCode: code })) as { pricing: { subtotal: number; memberDiscount: number; discount: number; total: number } };
+    expect(pricing.subtotal).toBe(25000);
+    expect(pricing.memberDiscount).toBe(5000); // 250 → 200 DH (prix membre, part en ligne)
+    expect(pricing.discount).toBe(4000); // 20 % de 200 DH, jamais des 200 DH du partenaire
+    const { reservationId } = await u.call("createReservation", { sessionId: sid, seats: 1, promoCode: code });
+    const r = await reservation(reservationId as string);
+    expect(r.pricing.total).toBe(16000 + (r.pricing.fees ?? 0));
+    expect(r.onSiteAmount).toBe(20000); // la part sur place reste entière
+  });
+
   it("part partenaire marquée réglée par l'équipe (jamais pour « tout en ligne »)", async () => {
     const team = await member({ role: "admin" });
     const sid = await makeSession({ price: 25000 });

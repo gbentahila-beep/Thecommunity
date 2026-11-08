@@ -36,17 +36,17 @@
 | 5j ✅ | **Ordre des listes de l'espace membre** : annulées de la plus récente à la plus ancienne ; demandes et listes d'attente par date de l'expérience (la plus proche d'abord) ; favoris : date à venir (avec la date), puis sans date, puis **archivées en dernier** (« N'est plus proposée », grisées) |
 | 10 ✅ | **Identité de marque** (docs/18) : ton & ambiance, typographie, couleurs ; logotype redessiné ; monogramme **« h. »** ; motif **« le fil »** ; papeterie, accueil des tables, affichage, objets ; **brand book version 1** (`docs/marque/brand-book.html`, fichiers SVG dans `docs/marque/`) |
 | 10f ✅ | **Identité sur le site** : logo vectoriel (en-tête, menu mobile, pied de page, back-office) ; icônes « h. » (onglet, application, manifeste) ; image de partage 1200×630 ; motif « le fil » sur le bandeau des villes et l'appel du blog ; fiche hôte : marque-places au monogramme, **numéros de table**, **cartes de bienvenue** (3 questions par table) ; **chevalet « Réservé » avec QR** par partenaire ; **e-mails** avec bandeau prune, logo et motif ; **factures PDF** avec le logo vectoriel. Reste en option : page « Kit presse » |
+| 11 ✅ | **Tarification en deux parts** (détail docs/19, § 8) : formulaire — section 5 « Tarification et paiement client » (tout en ligne / prix fixe sur place / consommation sur place), aperçu client en direct, avertissement « prix figé » ; fiche, cartes, tunnel, réservation : « 139 DH par personne · 59 DH maintenant · 80 DH sur place » ou « 120 DH + consommation » ; e-mail, facture (« hors facture », jamais encaissé) et CGV (FR / EN / AR) ; **billet avec QR code** ; page équipe **Billets** (scan avec l'appareil photo, code court, présence, part partenaire réglée) ; tableau de bord **En ligne / sur place** (filtres expérience, organisateur, période ; export CSV) |
 | 12 ✅ | **Page « Comment ça marche »** présentée comme la section de l'accueil (trois cartes décalées : univers, bouton vers les expériences, photos), puis les formats et la sécurité (bandeau au motif « le fil ») |
 
 ## Reste à faire — ordre proposé
 
 > 8a–8c : l'accroche « Your people are out there. » reste **en anglais dans les trois langues** (confirmé par Rita le 8 novembre). Les articles du blog citent des lieux connus de Casablanca sans adresse ni horaire (à vérifier avant de les mettre en avant). Proposition : un menu « hamburger » sur mobile pour Blog / À propos (aujourd'hui dans le pied de page) — à valider.
 
-> Ordre proposé : **11** (tarification en deux parts), puis **10f** (identité sur le site), 12 (page « Comment ça marche »), 5h phase 1 (virement), 9 (mise en production).
+> Ordre proposé : **5h phase 1** (virement — RIB à demander à Rita), puis **9** (mise en production).
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
-| **11 — proposée (analyse faite)** | **Tarification en deux parts** : part organisation payée en ligne (seule concernée par l'abonnement, le prix membre, les codes promo et les frais) + part partenaire payée sur place (prix fixe ou consommation libre), ou tout en ligne ; section 4 « Partenaire et économie » conservée ; nouvelle section 5 « Tarification et paiement client » avec aperçu ; affichage fiche / tunnel / billet ; QR code et scan ; suivi des paiements sur place (détail docs/19) | go de Rita |
 | 5h | **Paiement** — phase 1 **virement bancaire** (référence unique, validation manuelle, QR code après confirmation, 0 DH de frais ; RIB à fournir) → phase 2 formaliser l'encaissement (compte pro, modèle validé, contrats partenaires) → phase 3 **ChariPay** (carte, confirmation automatique) (détail docs/19) | RIB ; compte pro ; contrat ChariPay |
 | 9 | **Recette, sécurité, mise en production** (dont : **effacement automatique** du régime et des allergies 30 jours après l'expérience, annoncé dans la politique de confidentialité) | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 
