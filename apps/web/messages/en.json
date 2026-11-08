@@ -321,7 +321,8 @@
     "dataStatement": "The Host Club applies appropriate technical and organisational security measures. You have the right of access, rectification and objection under Law 09-08: {email}.",
     "help": "Help centre",
     "partner": "Become a partner",
-    "blog": "Blog"
+    "blog": "Blog",
+    "press": "Press"
   },
   "pages": {
     "howTitle": "How it works",
@@ -810,7 +811,7 @@
     "tool1Title": "Arrive as strangers",
     "tool1": "No profiles to scroll, no online chat to start. Our tool puts balanced tables together (languages, ages, interests), our team reviews them, and you meet in person.",
     "tool2Title": "Book in a few clicks",
-    "tool2": "Pick a universe and a date, pay securely online and get your confirmation right away.",
+    "tool2": "Pick a world and a date, pay securely (by bank transfer, card coming soon) and get your ticket as soon as it's confirmed.",
     "tool3Title": "On-request experiences",
     "tool3": "For some formats, you send a request: the team puts the group together, and you only pay once your spot is accepted.",
     "tool4Title": "The waitlist",

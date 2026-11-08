@@ -25,6 +25,7 @@ export async function SiteFooter() {
         { href: "/aide", label: t("help") },
         { href: "/faq", label: t("faq") },
         { href: "/devenir-partenaire", label: t("partner") },
+        { href: "/presse", label: t("press") },
         { href: "/contact", label: t("contact") },
       ],
     },

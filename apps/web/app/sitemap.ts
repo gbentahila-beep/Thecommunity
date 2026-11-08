@@ -8,7 +8,7 @@ import { SITE_URL } from "@/lib/site";
 // Généré à la demande (jamais pendant la compilation : la base n'y est pas accessible).
 export const dynamic = "force-dynamic";
 
-const STATIC_PATHS = ["", "/experiences", "/comment-ca-marche", "/a-propos", "/faq", "/contact", "/aide", "/aide/partenaires", "/blog", "/devenir-partenaire", "/securite", "/cgu", "/cgv", "/confidentialite"];
+const STATIC_PATHS = ["", "/experiences", "/comment-ca-marche", "/a-propos", "/faq", "/contact", "/aide", "/aide/partenaires", "/blog", "/devenir-partenaire", "/presse", "/securite", "/cgu", "/cgv", "/confidentialite"];
 
 function entry(path: string): MetadataRoute.Sitemap[number] {
   return {

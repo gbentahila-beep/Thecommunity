@@ -63,3 +63,8 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
 
 Les traitements « ordinaires » demandent une **déclaration préalable** à la CNDP, certains traitements une **autorisation**, et les **transferts hors du Maroc** sont encadrés. La CNDP précise qu'un traitement **ne peut pas être mis en œuvre avant réception du récépissé** ou de l'autorisation.
 Conséquence pratique : le site d'essai reste réservé à des **testeurs** (données de test) ; **pas d'ouverture au public ni de collecte de vraies données clients avant les récépissés** (checklist, section D).
+
+## Kit presse (8 novembre)
+- [ ] **Adresse e-mail presse** (ex. presse@…) : pour l'instant, la page renvoie vers le formulaire de contact.
+- [ ] **Photos** : confirmer que The Host Club détient les droits des photos du site ; pour la presse, n'envoyer des photos où des participants sont reconnaissables qu'avec leur accord. Le kit ne propose que 2 photos sans visage.
+- [ ] **Portrait d'Aya** en haute définition (sans la photo CULTIQ tant que l'accord n'est pas obtenu).

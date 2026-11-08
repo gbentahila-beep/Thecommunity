@@ -321,7 +321,8 @@
     "dataStatement": "The Host Club applique des mesures de sécurité techniques et organisationnelles adaptées. Vous disposez d'un droit d'accès, de rectification et d'opposition (loi n° 09-08) : {email}.",
     "help": "Centre d'aide",
     "partner": "Devenir partenaire",
-    "blog": "Blog"
+    "blog": "Blog",
+    "press": "Presse"
   },
   "pages": {
     "howTitle": "Comment ça marche",
@@ -810,7 +811,7 @@
     "tool1Title": "Arriver en inconnus",
     "tool1": "Pas de profil à faire défiler, pas de conversation à lancer en ligne. Notre outil compose des tables équilibrées (langues, âges, centres d'intérêt), notre équipe les relit, et on se découvre en vrai.",
     "tool2Title": "Réserver en quelques clics",
-    "tool2": "Choisissez un univers et une date, payez en ligne en toute sécurité et recevez votre confirmation dans la foulée.",
+    "tool2": "Choisissez un univers et une date, réglez en toute sécurité (par virement, bientôt par carte) et recevez votre billet dès la confirmation.",
     "tool3Title": "Les expériences sur demande",
     "tool3": "Pour certains formats, vous envoyez une demande : l'équipe compose le groupe, et vous ne payez qu'une fois votre place acceptée.",
     "tool4Title": "La liste d'attente",
