@@ -66,3 +66,38 @@ export function initialPartnerStatus(p: ExperiencePricing): PartnerPaymentStatus
 export function partnerSnapshotOf(p: ExperiencePricing): PartnerSnapshot | null {
   return p.model === "online_only" || !p.partner ? null : { ...p.partner, model: p.model };
 }
+
+/** Ligne de suivi (11e) : une réservation, vue du tableau de bord en ligne / sur place. */
+export type TwoPartLedgerRow = {
+  status: string;
+  seats: number;
+  /** Encaissé en ligne (centimes, paiements réussis, avant remboursement). */
+  paidOnline: number;
+  /** Remboursé (centimes). */
+  refunded: number;
+  /** Part sur place attendue (prix fixe × places) ; null = consommation libre ou sans objet. */
+  onSiteAmount: number | null;
+  partnerStatus: "due_on_site" | "paid_on_site" | null;
+};
+
+/**
+ * Totaux du tableau de bord. La part sur place attendue ne compte que les prix fixes des réservations
+ * valables (confirmées ou présentes) : jamais de montant inventé pour une consommation libre.
+ */
+export function summarizeLedger(rows: TwoPartLedgerRow[]) {
+  const valid = rows.filter((r) => r.status === "confirmed" || r.status === "attended");
+  const fixed = valid.filter((r) => r.onSiteAmount != null);
+  return {
+    reservations: valid.length,
+    seats: valid.reduce((a, r) => a + r.seats, 0),
+    present: rows.filter((r) => r.status === "attended").reduce((a, r) => a + r.seats, 0),
+    noShow: rows.filter((r) => r.status === "no_show").reduce((a, r) => a + r.seats, 0),
+    cancelled: rows.filter((r) => r.status === "cancelled" || r.status === "refunded").length,
+    paidOnline: rows.reduce((a, r) => a + r.paidOnline, 0),
+    refunded: rows.reduce((a, r) => a + r.refunded, 0),
+    netOnline: rows.reduce((a, r) => a + r.paidOnline - r.refunded, 0),
+    onSiteExpected: fixed.reduce((a, r) => a + (r.onSiteAmount ?? 0), 0),
+    onSitePaid: fixed.filter((r) => r.partnerStatus === "paid_on_site").reduce((a, r) => a + (r.onSiteAmount ?? 0), 0),
+    consumptionBookings: valid.filter((r) => r.partnerStatus && r.onSiteAmount == null).length,
+  };
+}

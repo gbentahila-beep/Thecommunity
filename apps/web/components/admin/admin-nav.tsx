@@ -18,6 +18,7 @@ import {
   Ticket,
   ScanLine,
   Users,
+  Wallet,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -35,6 +36,7 @@ export const ADMIN_LINKS = [
   { href: "/admin/partenaires", label: "Partenaires", icon: Handshake },
   { href: "/admin/aide", label: "Centre d'aide", icon: LifeBuoy },
   { href: "/admin/paiements", label: "Paiements", icon: CreditCard },
+  { href: "/admin/encaissements", label: "En ligne / sur place", icon: Wallet },
   { href: "/admin/emails", label: "Boîte d'envoi", icon: Mail },
   { href: "/admin/promos", label: "Codes promo", icon: BadgePercent },
   { href: "/admin/statistiques", label: "Statistiques", icon: BarChart3 },

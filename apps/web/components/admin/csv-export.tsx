@@ -26,7 +26,7 @@ export function CsvExportButton({
   rows: (string | number)[][];
   label?: string;
   /** Mode Firebase : l'export est journalisé (auditLogs) avant le téléchargement. */
-  log?: { kind: "participants" | "reservations" | "users"; targetId?: string };
+  log?: { kind: "participants" | "reservations" | "users" | "two_part"; targetId?: string };
 }) {
   return (
     <button

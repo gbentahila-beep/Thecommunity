@@ -33,3 +33,20 @@ describe("tarification en deux parts (11)", () => {
     expect(old.success && old.data.pricingModel).toBe("online_only");
   });
 });
+
+describe("tableau de bord en ligne / sur place (11e)", () => {
+  it("additionne l'encaissé, les remboursements et la part fixe attendue, jamais la consommation", async () => {
+    const { summarizeLedger } = await import("./two-part");
+    const s = summarizeLedger([
+      { status: "attended", seats: 2, paidOnline: 50000, refunded: 0, onSiteAmount: 40000, partnerStatus: "paid_on_site" },
+      { status: "confirmed", seats: 1, paidOnline: 25000, refunded: 0, onSiteAmount: 20000, partnerStatus: "due_on_site" },
+      { status: "confirmed", seats: 1, paidOnline: 15000, refunded: 0, onSiteAmount: null, partnerStatus: "due_on_site" },
+      { status: "refunded", seats: 1, paidOnline: 25000, refunded: 25000, onSiteAmount: 20000, partnerStatus: "due_on_site" },
+      { status: "no_show", seats: 1, paidOnline: 25000, refunded: 0, onSiteAmount: 20000, partnerStatus: "due_on_site" },
+    ]);
+    expect(s).toMatchObject({ reservations: 3, seats: 4, present: 2, noShow: 1, cancelled: 1, paidOnline: 140000, refunded: 25000, netOnline: 115000 });
+    expect(s.onSiteExpected).toBe(60000); // annulée et absente exclues, consommation jamais chiffrée
+    expect(s.onSitePaid).toBe(40000);
+    expect(s.consumptionBookings).toBe(1);
+  });
+});

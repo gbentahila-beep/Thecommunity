@@ -230,7 +230,7 @@ export const adminSetPartnerPayment = onCall({ region: REGION }, async (req) => 
 /** Journalise un export de données personnelles (liste de participants, réservations) avant son téléchargement. */
 export const adminLogExport = onCall({ region: REGION }, async (req) => {
   const actor = requireTeam(req);
-  const parsed = z.object({ kind: z.enum(["participants", "reservations", "users"]), targetId: z.string().max(128).default(""), rows: z.number().int().min(0).max(100_000) }).safeParse(req.data);
+  const parsed = z.object({ kind: z.enum(["participants", "reservations", "users", "two_part"]), targetId: z.string().max(128).default(""), rows: z.number().int().min(0).max(100_000) }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: `export.${parsed.data.kind}`, targetType: "export", targetId: parsed.data.targetId || parsed.data.kind, after: { rows: parsed.data.rows } });
   return { ok: true };
