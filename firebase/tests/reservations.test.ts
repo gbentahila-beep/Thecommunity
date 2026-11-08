@@ -12,6 +12,8 @@ import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { reserveSeats } from "../../functions/src/reservations/create-reservation";
 import { expireDueHolds } from "../../functions/src/reservations/expire-holds";
+import { purgeExpiredPreferences } from "../../functions/src/maintenance/purge-preferences";
+import { sendTransferReminders } from "../../functions/src/payments/transfer-reminders";
 import { sendDueReminders } from "../../functions/src/notify/reminders";
 
 const PROJECT = "demo-thecommunity";
@@ -1514,6 +1516,35 @@ describe("virement bancaire (5h)", () => {
     }
   });
 
+  it("rappel 12 h avant l'échéance, une seule fois ; rien si la réservation est déjà payée (B)", async () => {
+    await useTransfer();
+    try {
+      const sid = await makeSession({ startInHours: 240 });
+      const u = await member();
+      const { reservationId } = await u.call("createReservation", { sessionId: sid, seats: 1 });
+      const { paymentId } = (await u.call("startCheckout", { reservationId })) as { paymentId: string };
+      const H = 3_600_000;
+      await db().doc(`payments/${paymentId}`).update({ transferDeadline: Timestamp.fromMillis(Date.now() + 6 * H), createdAt: Timestamp.fromMillis(Date.now() - 40 * H) });
+      expect(await sendTransferReminders()).toBeGreaterThanOrEqual(1);
+      expect((await payment(paymentId)).reminderSentAt).toBeDefined();
+      expect((await mails("refs.paymentId", paymentId)).map((m) => m.kind)).toContain("transfer_reminder");
+      const before = (await mails("refs.paymentId", paymentId)).length;
+      await sendTransferReminders();
+      expect((await mails("refs.paymentId", paymentId)).length).toBe(before); // jamais deux rappels
+      // Virement reçu entre-temps : aucun rappel.
+      const v = await member();
+      const sid2 = await makeSession({ startInHours: 240 });
+      const { reservationId: r2 } = await v.call("createReservation", { sessionId: sid2, seats: 1 });
+      const { paymentId: p2 } = (await v.call("startCheckout", { reservationId: r2 })) as { paymentId: string };
+      await (await member({ role: "admin" })).call("adminConfirmTransfer", { paymentId: p2 });
+      await db().doc(`payments/${p2}`).update({ transferDeadline: Timestamp.fromMillis(Date.now() + 6 * H), createdAt: Timestamp.fromMillis(Date.now() - 40 * H) });
+      await sendTransferReminders();
+      expect((await mails("refs.paymentId", p2)).map((m) => m.kind)).not.toContain("transfer_reminder");
+    } finally {
+      await useSandbox();
+    }
+  });
+
   it("réglage du paiement : super-admin seulement, RIB de 24 chiffres exigé pour activer le virement", async () => {
     try {
       const adm = await member({ role: "admin" });
@@ -1529,5 +1560,22 @@ describe("virement bancaire (5h)", () => {
     } finally {
       await useSandbox();
     }
+  });
+});
+
+describe("effacement du régime et des allergies (A)", () => {
+  it("30 jours après l'expérience, régime et allergies sont effacés ; les réservations récentes les gardent", async () => {
+    const prefs = { diet: "vegetarian", allergies: "arachides", languages: ["fr"], shareWithVenue: true };
+    const day = 86_400_000;
+    const old = await db().collection("reservations").add({ userId: "u-purge", status: "attended", preferences: prefs, sessionSnapshot: { startAt: Timestamp.fromMillis(Date.now() - 31 * day) } });
+    const recent = await db().collection("reservations").add({ userId: "u-purge", status: "confirmed", preferences: prefs, sessionSnapshot: { startAt: Timestamp.fromMillis(Date.now() - 10 * day) } });
+    const req = await db().collection("bookingRequests").add({ userId: "u-purge", status: "declined", preferences: prefs, sessionSnapshot: { startAt: Timestamp.fromMillis(Date.now() - 40 * day) } });
+    expect(await purgeExpiredPreferences()).toBeGreaterThanOrEqual(2);
+    const o = (await old.get()).data()!;
+    expect(o.preferences).toBeUndefined();
+    expect(o.preferencesPurgedAt).toBeDefined();
+    expect(o.status).toBe("attended");
+    expect((await recent.get()).data()!.preferences).toMatchObject({ allergies: "arachides" });
+    expect((await req.get()).data()!.preferences).toBeUndefined();
   });
 });

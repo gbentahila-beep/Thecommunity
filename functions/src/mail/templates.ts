@@ -129,6 +129,8 @@ export function changeMail(o: { locale: string; kind: "date" | "venue"; firstNam
 export function transferInstructionsMail(o: {
   locale: string; firstName: string; what: string; amount: string; reference: string; deadline: string | null;
   holder: string; bank: string; rib: string; iban: string; swift: string; paymentId: string;
+  /** Rappel envoyé environ 12 h avant l'échéance (B). */
+  reminder?: boolean;
 }) {
   const l = lang(o.locale);
   const href = `${SITE_URL}${prefix(l)}/paiement/virement/${o.paymentId}`;
@@ -172,6 +174,14 @@ export function transferInstructionsMail(o: {
       cta: "عرض التعليمات",
     },
   }[l];
+  if (o.reminder) {
+    const r = {
+      fr: { subject: `Rappel : virement ${o.reference} à faire${o.deadline ? ` avant le ${o.deadline}` : ""}`, heading: "Petit rappel pour votre virement" },
+      en: { subject: `Reminder: transfer ${o.reference}${o.deadline ? ` due before ${o.deadline}` : ""}`, heading: "A quick reminder about your transfer" },
+      ar: { subject: `تذكير: التحويل ${o.reference}${o.deadline ? ` قبل ${o.deadline}` : ""}`, heading: "تذكير بخصوص تحويلك" },
+    }[l];
+    return { subject: r.subject, ...layout(l, { heading: r.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
+  }
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
 }
 
