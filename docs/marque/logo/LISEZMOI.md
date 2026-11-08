@@ -8,8 +8,6 @@ Logotype redessiné à partir de Fraunces (licence OFL, libre d'usage commercial
 | `the-host-club-horizontal-creme.svg` | Sur prune ou sur photo sombre |
 | `the-host-club-horizontal-encre.svg` | Une seule couleur (impression noir) |
 | `the-host-club-empile-prune.svg` / `-creme.svg` | Formats carrés |
-| `monogramme-a-h-point.svg` | Piste A « h. » |
-| `monogramme-b-table.svg` | Piste B « la table » |
-| `monogramme-c-fil.svg` | Piste C « le fil » |
+| `monogramme-a-h-point.svg` | **Monogramme retenu** « h. » (choix de Rita, 8 novembre) |
 
-Régénérer : `pip install fonttools brotli`, puis `python3 final.py` dans ce dossier (police variable Fraunces du site copiée sous `fraunces-var.woff2`). Les pistes de monogramme non retenues seront retirées après le choix de Rita.
+Régénérer : `pip install fonttools brotli`, puis `python3 final.py` dans ce dossier (police variable Fraunces du site copiée sous `fraunces-var.woff2`). Pistes B et C écartées le 8 novembre.

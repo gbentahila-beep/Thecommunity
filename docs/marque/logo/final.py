@@ -44,20 +44,5 @@ bw = cx + r - x0; bh = y1 - y0
 res["mono-a"] = write("monogramme-a-h-point.svg", bw + 120, bh + 120, x0 - 60, -y1 - 60, mono_a(PLUM, PLUMLIGHT), "The Host Club — monogramme h.")
 json.dump({"a": {"path": hpath, "cx": cx, "cy": cy, "r": r, "vb": [x0 - 60, -y1 - 60, bw + 120, bh + 120]}}, open("mono-a.json", "w"))
 
-# Monogramme B : la table (cercle) et six convives (points), dont un en couleur d'accent
-def mono_b(fg, accent):
-    s = f'<circle cx="0" cy="0" r="210" fill="none" stroke="{fg}" stroke-width="64"/>'
-    for i in range(6):
-        a = -math.pi / 2 + i * math.pi / 3
-        s += f'<circle cx="{380*math.cos(a):.1f}" cy="{380*math.sin(a):.1f}" r="62" fill="{accent if i == 0 else fg}"/>'
-    return s
-res["mono-b"] = write("monogramme-b-table.svg", 1000, 1000, -500, -500, mono_b(PLUM, PLUMLIGHT), "The Host Club — monogramme table")
-
-# Monogramme C : le fil — une ligne continue qui relie deux points (deux inconnus) en dessinant un « h »
-FIL = "M -230 -330 L -230 250 M -230 40 C -230 -140 230 -140 230 40 L 230 250"
-def mono_c(fg, accent):
-    return (f'<path d="M -230 -360 C -230 -360 -230 120 -230 250 M -230 60 C -230 -170 230 -170 230 60 C 230 140 230 200 230 250" fill="none" stroke="{fg}" stroke-width="78" stroke-linecap="round"/>'
-            f'<circle cx="-230" cy="-452" r="70" fill="{accent}"/><circle cx="230" cy="350" r="70" fill="{accent}"/>')
-res["mono-c"] = write("monogramme-c-fil.svg", 1000, 1000, -500, -520, mono_c(PLUM, PLUMLIGHT), "The Host Club — monogramme le fil")
 json.dump({k: v for k, v in res.items()}, open("svgs.json", "w"))
 print("ok", list(res))
