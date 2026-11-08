@@ -35,6 +35,8 @@ Enrichir la page Sécurité en s'inspirant (sans copier) des consignes Timeleft 
 avant (prévenir un proche, prévoir le retour, signaler un besoin d'accessibilité tôt, réserver uniquement par le site officiel, ne jamais payer en dehors), pendant (tout est facultatif, garder verre et affaires en vue, modérer l'alcool, protéger ses coordonnées, vérifier les allergènes avec le personnel), activités en extérieur (visibilité, une oreille libre, eau et téléphone chargé, son rythme, météo, rester groupés, veiller les uns sur les autres), danger (secours d'abord, puis nous ; dans le doute, prévenir), après (garder le contact à son rythme, **ne jamais envoyer d'argent**, rentrer en sécurité), numéros (19, 177, 15 au Maroc ; 112 depuis un mobile).
 Adapter à notre fonctionnement : pas de discussion de groupe ni de messagerie au lancement (décision D8).
 
+L'accroche de l'accueil reste en anglais dans les trois langues (confirmé par Rita).
+
 ## 8e — Page À propos
 
 1. Grande photo d'en-tête (`a-propos-hero`) avec un titre fort, mise en page du modèle 24.
@@ -42,3 +44,55 @@ Adapter à notre fonctionnement : pas de discussion de groupe ni de messagerie a
 3. **Ce qui compte pour elle** (existant).
 4. Bandeau défilant (vers la droite, puis dans les deux sens) : **« Nos outils pour créer du lien — Le digital au service des rencontres et des amitiés dans la vraie vie »** (réf. 25, 26) : composition des groupes, demandes, liste d'attente, abonnement, centre d'aide…
 5. Galerie : **« Des rencontres qui valent mille images — Des sourires, de nouvelles rencontres et de belles connexions. Découvrez ces instants où des inconnus se retrouvent et partagent de vrais moments. »** (réf. 27 à 29) avec les photos `galerie-01..08` (et d'autres à venir).
+
+
+---
+
+# Ajouts du 8 novembre (2e message) — textes de référence Timeleft
+
+Rita a transmis trois textes de Timeleft (*Community Guidelines*, *Privacy*, *Terms & Conditions*) : **s'en inspirer, ne pas copier**. Seule la structure est notée ici ; tout sera rédigé par nous, adapté au Maroc et à notre fonctionnement.
+
+## 8f — Règles de la communauté (page `/charte`)
+
+Aujourd'hui `/charte` affiche la page Sécurité. En faire une vraie page « Règles de la communauté », reliée depuis Sécurité, CGU, l'inscription et le pied de page.
+
+Structure envisagée :
+1. **Pourquoi ces règles** : des inconnus réunis autour d'une expérience ; ça ne marche que si chacun se sent en sécurité.
+2. **Où elles s'appliquent** : pendant l'expérience, avant / après (trajet, suite de soirée), et en dehors quand un membre est contacté contre son gré.
+3. **Nous joindre / signaler** : depuis la réservation (signalement existant) ou le contact ; on peut signaler ce qu'on a vécu ou vu ; chaque signalement est lu par une personne.
+4. **Votre compte** : 18 ans et plus (vérification possible), prénom réellement utilisé, coordonnées confirmées, une personne = un compte.
+5. **Présence** : venir ou annuler à temps (renvoi aux règles d'annulation) ; amis : uniquement via les places de la réservation, la personne qui réserve répond de ses invités (**adaptation** : chez nous les invités n'ont pas besoin de compte).
+6. **Vie privée des autres** : demander avant de publier une photo ; ne jamais rechercher quelqu'un (domicile, travail, réseaux) ; un silence est une réponse ; respecter les limites physiques et de conversation.
+7. **Lignes rouges → exclusion immédiate** : violences physiques ou sexuelles, verre ou nourriture trafiqués, vol, menaces, images intimes sans accord, arnaques et demandes d'argent, exploitation de mineurs, nouveau compte après exclusion ; signalement aux autorités si nécessaire.
+8. **Pas de discrimination** : propos haineux, mise à l'écart volontaire, remarques dégradantes répétées.
+9. **Harcèlement et attention non désirée** : insister après un « non » est une violation.
+10. **Usage loyal** : pas de vente / prospection / recrutement, pas de fausse identité, pas de spam, régler sa part si l'addition est partagée sur place, pas d'abus des codes promo.
+11. **Sujets difficiles** : bienvenus avec bienveillance ; pas de promotion de l'automutilation ; si quelqu'un va mal, bienveillance d'abord et prévenir l'équipe.
+12. **Lieux** : signaler un problème de lieu (sécurité, personnel, allergie non respectée) sans conséquence pour le compte ; respecter le personnel et le règlement du lieu.
+13. **Signalements** : discrets (la personne signalée ne sait pas qui), signaler des violations et pas des désaccords, faux signalements sanctionnés.
+14. **Sanctions graduées** : avertissement pédagogique → avertissement formel → exclusion (ou exclusion directe si grave) ; on indique la règle concernée.
+15. **Recours** : examiné par une personne qui n'a pas pris la première décision ; réponse motivée.
+16. **Mises à jour** datées.
+
+Hypothèses : pas de photo de profil obligatoire (nous n'en demandons pas) ; pas de blocage entre membres ni de messagerie (D8) ; recours par e-mail / contact. **Option à valider** : dans le back-office, consigner les avertissements sur un compte (aujourd'hui : suspension seulement).
+
+## 8g — CGU revues
+
+Points à reprendre à notre façon (sans copier) :
+- **Ce que le service fait et ne fait pas** : nous organisons la rencontre ; le lieu prépare et sert. Régime : nous transmettons, sans garantie absolue ; **allergies : vérifier aussi auprès du personnel** ; ce qui est inclus est indiqué sur chaque fiche, le reste est à la charge du membre.
+- **Lieu** : communiqué selon la fiche (parfois révélé avant l'expérience) ; peut changer pour raison de sécurité, qualité ou capacité (avec notification — déjà en place à l'étape 7).
+- **Pas de garantie** sur le nombre exact de participants, la répartition femmes / hommes ou les âges ; on peut recroiser une personne déjà rencontrée (nous l'évitons quand c'est possible).
+- **Conditions pour s'inscrire** : majeur, à titre personnel (pas professionnel), pas exclu auparavant ; suspension notifiée par e-mail, **recours sous 7 jours** (hypothèse).
+- **Interdits** : renvoi aux Règles de la communauté (8f) + liste courte (comptes multiples, prospection, contenus illicites, nuire au service).
+- **Droit à l'image** : **uniquement avec accord** (case à cocher facultative, retrait à tout moment) — on ne reprend pas l'accord automatique de Timeleft.
+- **Litiges** : loi marocaine (loi 31-08 sur la protection du consommateur), réclamation amiable d'abord, puis tribunaux compétents (Casablanca, hypothèse).
+- **À ne pas reprendre** : renouvellement automatique (notre abonnement n'en a pas), frais d'absence de 35 % (nous n'en facturons pas), messagerie, test de personnalité, médiateur français.
+
+## 8h — Confidentialité revue
+
+- Présentation en **tableau** : finalité → base légale (contrat, intérêt légitime, obligation légale, accord) → durée de conservation.
+- **Données** : identité et contact, profil (langues, intérêts, âge), réservations et paiements (sans données bancaires chez nous), régime / allergies (accord explicite), navigation et sécurité.
+- **Sous-traitants** listés : Google (Firebase : hébergement, authentification, base de données), Brevo (e-mails), prestataire de paiement (5h) ; transferts hors du Maroc avec garanties (autorisation CNDP si nécessaire).
+- **Droits** (loi 09-08) : accès, rectification, opposition, suppression, retrait de l'accord ; réponse sous 30 jours (hypothèse) ; plainte auprès de la **CNDP**.
+- **Mineurs** : service réservé aux 18 ans et plus ; tolérance zéro pour toute exploitation de mineurs, signalement aux autorités.
+- Durées : reprendre celles de docs/16 (à faire valider).

@@ -27,12 +27,17 @@
 
 ## Reste à faire — ordre proposé
 
-> Hypothèses 8a–8c : l'accroche « Your people are out there. » reste **en anglais dans les trois langues** (comme sur la maquette) ; à traduire si Rita préfère. Les articles du blog citent des lieux connus de Casablanca sans adresse ni horaire (à vérifier avant de les mettre en avant). Proposition : un menu « hamburger » sur mobile pour Blog / À propos (aujourd'hui dans le pied de page) — à valider.
+> 8a–8c : l'accroche « Your people are out there. » reste **en anglais dans les trois langues** (confirmé par Rita le 8 novembre). Les articles du blog citent des lieux connus de Casablanca sans adresse ni horaire (à vérifier avant de les mettre en avant). Proposition : un menu « hamburger » sur mobile pour Blog / À propos (aujourd'hui dans le pied de page) — à valider.
+
+> Ordre proposé : **8d, 8f, 8g, 8h ensemble** (les quatre textes se renvoient les uns aux autres : Sécurité ↔ Règles de la communauté ↔ CGU ↔ Confidentialité), puis 8e.
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
 | **8d — prochaine** | **Consignes de sécurité enrichies** (avant / pendant / après, urgences au Maroc), inspirées de Timeleft et réécrites (docs/17) | — |
 | 8e | **Page À propos** : en-tête photo, la créatrice (texte à droite, photo à gauche), ce qui compte pour elle, « Nos outils pour créer du lien » défilant, galerie « Des rencontres qui valent mille images » (docs/17) | photos reçues ✅ |
+| 8f | **Règles de la communauté** (page dédiée `/charte`, aujourd'hui alias de Sécurité), inspirées des *Community Guidelines* de Timeleft, réécrites et adaptées (détail docs/17) | — |
+| 8g | **CGU revues** en s'inspirant des *Terms* de Timeleft, sans copier : ce que le service fait et ne fait pas, lieux et allergies, conditions pour s'inscrire, interdits, sanctions et recours, droit à l'image (avec accord), litiges au Maroc (détail docs/17) | avocat pour validation (docs/16) |
+| 8h | **Confidentialité revue** en s'inspirant de la *Privacy* de Timeleft, sans copier : tableau finalité / base légale / durée, sous-traitants, droits (loi 09-08, CNDP), protection des mineurs (détail docs/17) | avocat + récépissé CNDP (docs/16) |
 | 5h | **Prestataire de paiement réel** (CMI, Payzone, YouCan Pay) | contrat signé |
 | 9 | **Recette, sécurité, mise en production** | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 
