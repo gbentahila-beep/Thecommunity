@@ -182,7 +182,8 @@
       "already_started": "The experience has already started: it can no longer be cancelled.",
       "not_cancellable": "This booking can no longer be cancelled.",
       "members_only": "This experience is for members only.",
-      "members_early_access": "This new date is still in members' early access."
+      "members_early_access": "This new date is still in members' early access.",
+      "not_editable": "This booking can no longer be changed."
     },
     "fullTextOnRequest": "All spots are taken for this date. Have a look at the other dates for this experience.",
     "seeMyBooking": "See my booking",
@@ -196,7 +197,27 @@
     "membersOnlyTitle": "Members only",
     "membersOnlyText": "This experience is only open to members.",
     "earlyAccessTitle": "Members' early access",
-    "earlyAccessText": "This new date is reserved for members until {date}. It will then open to everyone."
+    "earlyAccessText": "This new date is reserved for members until {date}. It will then open to everyone.",
+    "subtotal": "Spots",
+    "memberDiscountLine": "Member discount",
+    "promoLine": "Code {code}",
+    "feesLine": "Service fee",
+    "totalLine": "Total to pay",
+    "promoToggle": "Got a promo code?",
+    "promoLabel": "Promo code",
+    "promoApply": "Apply",
+    "promoRemove": "Remove",
+    "promoApplied": "Code {code} applied: −{amount}",
+    "promoErrors": {
+      "promo_unknown": "This code doesn't exist.",
+      "promo_inactive": "This code is no longer active.",
+      "promo_not_started": "This code isn't valid yet.",
+      "promo_expired": "This code has expired.",
+      "promo_exhausted": "This code has reached its maximum number of uses.",
+      "promo_already_used": "You've already used this code.",
+      "promo_first_booking_only": "This code is for a first booking only.",
+      "promoFormat": "Invalid code (letters, numbers and hyphens, 3 to 20 characters)."
+    }
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -310,7 +331,7 @@
     "q7": "What languages are spoken?",
     "a7": "Each experience lists its languages (French, Darija, Arabic, English…). The languages in your profile help us put together groups where everyone can join the conversation.",
     "q8": "I have a dietary requirement or an allergy: what should I do?",
-    "a8": "Write to us as soon as you book (Contact page): we check with the partner venue and suggest a solution, or another experience if it isn't possible. Have a look at the menu shown on the page.",
+    "a8": "Tell us when you book, under “For your welcome”: diet, allergies and table languages. With your consent, we pass it on to the venue so it can prepare. You can change it from your booking until the experience starts.",
     "q9": "How does membership work?",
     "a9": "For an annual price, you get the member price on experiences (shown next to the public price) and, depending on the plan, early access to new dates and members-only experiences. It lasts 12 months, with no automatic renewal.",
     "q10": "What if I feel uncomfortable?",
@@ -759,5 +780,30 @@
     "seeAll": "All my invoices",
     "total": "Amount",
     "refundReceipt": "Refund receipt"
+  },
+  "prefs": {
+    "title": "For your welcome (optional)",
+    "intro": "This helps the team and the venue welcome you properly.",
+    "diet": "Diet",
+    "diets": {
+      "none": "Nothing specific",
+      "vegetarian": "Vegetarian",
+      "vegan": "Vegan",
+      "pescatarian": "Pescatarian",
+      "gluten_free": "Gluten-free",
+      "lactose_free": "Lactose-free",
+      "other": "Other (please specify below)"
+    },
+    "allergies": "Allergies or intolerances",
+    "allergiesHint": "E.g. peanuts, seafood. 200 characters max.",
+    "languages": "Language(s) you'd like to speak at the table",
+    "consent": "I agree that this information (diet, allergies) is shared with the venue hosting me, only to prepare my welcome.",
+    "consentRequired": "Tick this box to share your diet or allergies.",
+    "editTitle": "Diet, allergies, languages",
+    "save": "Save",
+    "saved": "Saved.",
+    "error": "Couldn't save.",
+    "none": "Nothing specific reported.",
+    "shared": "Shared with the venue"
   }
 }

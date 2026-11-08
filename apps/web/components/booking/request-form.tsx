@@ -1,6 +1,6 @@
 "use client";
 
-import { REQUEST_MESSAGE_MAX } from "@thecommunity/shared";
+import { REQUEST_MESSAGE_MAX, type BookingPreferences } from "@thecommunity/shared";
 import { httpsCallable } from "firebase/functions";
 import { Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -8,9 +8,10 @@ import { useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { authReady, bookingErrorOf, type BookingError } from "@/lib/booking-client";
 import { firebase } from "@/lib/firebase/client";
+import { EMPTY_PREFERENCES, needsConsent, PreferencesFields } from "./preferences-fields";
 
 /** Demande de participation (expérience « sur demande ») : rien n'est payé ni bloqué à ce stade. */
-export function RequestForm({ sessionId, maxSeats, messageRequired }: { sessionId: string; maxSeats: number; messageRequired: boolean }) {
+export function RequestForm({ sessionId, maxSeats, messageRequired, defaultLanguages = [] }: { sessionId: string; maxSeats: number; messageRequired: boolean; defaultLanguages?: BookingPreferences["languages"] }) {
   const t = useTranslations("request");
   const tb = useTranslations("booking");
   const router = useRouter();
@@ -20,10 +21,16 @@ export function RequestForm({ sessionId, maxSeats, messageRequired }: { sessionI
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const tp = useTranslations("prefs");
+  const [prefs, setPrefs] = useState<BookingPreferences>({ ...EMPTY_PREFERENCES, languages: defaultLanguages });
+  const [consentError, setConsentError] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (messageRequired && !message.trim()) return setFieldErrors({ message: t("messageRequired") });
+    if (needsConsent(prefs) && !prefs.consent) return setConsentError(true);
+    setConsentError(false);
+    const shared = prefs.diet !== "none" || prefs.allergies.trim() || prefs.languages.length;
     setBusy(true);
     setError(null);
     setFieldErrors({});
@@ -34,7 +41,10 @@ export function RequestForm({ sessionId, maxSeats, messageRequired }: { sessionI
         await user.reload();
         if (user.emailVerified) await user.getIdToken(true);
       }
-      await httpsCallable(firebase().functions, "requestBooking")({ sessionId, seats, message: message.trim(), instagram: instagram.trim() });
+      await httpsCallable(firebase().functions, "requestBooking")({
+        sessionId, seats, message: message.trim(), instagram: instagram.trim(),
+        ...(shared ? { preferences: { ...prefs, allergies: prefs.allergies.trim() } } : {}),
+      });
       router.refresh();
     } catch (err) {
       const issues = (err as { details?: { issues?: { path: string; message: string }[] } }).details?.issues ?? [];
@@ -90,6 +100,16 @@ export function RequestForm({ sessionId, maxSeats, messageRequired }: { sessionI
         <p className="mt-1 text-xs text-muted">{t("instagramHint")}</p>
         {fieldErrors.instagram && <p className="text-sm text-red-800">{fieldErrors.instagram}</p>}
       </div>
+      <details className="rounded-2xl border border-line p-4">
+        <summary className="cursor-pointer list-none font-medium text-ink [&::-webkit-details-marker]:hidden">
+          {tp("title")}
+          <span className="mt-0.5 block text-xs font-normal text-muted">{tp("intro")}</span>
+        </summary>
+        <div className="mt-4">
+          <PreferencesFields idPrefix="req-pref" value={prefs} onChange={(v) => { setPrefs(v); setConsentError(false); }} disabled={busy} consentError={consentError} />
+        </div>
+      </details>
+      {consentError && <p role="alert" className="text-sm text-red-800">{tp("consentRequired")}</p>}
       {error && (
         <div role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">
           <p>{error}</p>

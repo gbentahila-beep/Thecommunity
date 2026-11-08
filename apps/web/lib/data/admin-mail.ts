@@ -1,4 +1,5 @@
 import "server-only";
+import { readServiceFee, type ServiceFee } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { connection } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin";
@@ -67,4 +68,11 @@ export async function getCompanySettings(): Promise<CompanySettings | null> {
     vatRate: typeof cd.vatRate === "number" ? cd.vatRate : null,
     mailProvider: ed.provider === "brevo" ? "brevo" : "outbox", fromName: s(ed.fromName), fromEmail: s(ed.fromEmail),
   };
+}
+
+/** Frais de service en vigueur (Paramètres). */
+export async function getServiceFee(): Promise<ServiceFee | null> {
+  if (!FIREBASE_ENABLED) return null;
+  await requireAdmin();
+  return readServiceFee((await adminDb().doc("settings/booking").get()).data()?.serviceFee);
 }

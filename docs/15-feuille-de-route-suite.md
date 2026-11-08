@@ -17,14 +17,14 @@
 | 5d ✅ | Partenaires dans le back-office : ajouter, modifier, archiver / réactiver, supprimer (super-admin, jamais un partenaire utilisé), candidature → partenaire, filtre « Archivés » |
 | 5e ✅ | Paramètres : villes (ajouter, renommer fr / ar / en, ouvrir ou « bientôt », quartiers) et univers (noms, description, ordre, visibilité, mode par défaut), super-admin, journalisé |
 | Accueil ✅ | Vraie photo fournie par Rita (8 novembre) |
+| 5f ✅ | **Codes promo** (back-office : créer, modifier, désactiver ; % ou montant, période, plafond, première réservation ; une fois par personne, comptés au paiement) et **frais de service** (Paramètres : aucun, par place ou % ; affichés avant le paiement, jamais sur une place gratuite, remboursés avec la place). Prix détaillé au tunnel, sur la réservation et sur la facture |
+| 5g ✅ | **Régime, allergies, langue(s) de table** à la réservation et sur les demandes (reprises à l'acceptation), modifiables jusqu'au début ; accord explicite et daté pour transmettre au lieu ; colonne « Accueil » des participants, export CSV, **fiche pour le lieu** imprimable (prénoms pour les marque-places, régimes, allergies, sans coordonnées) |
 
 ## Reste à faire — ordre proposé
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
-| **5f — prochaine** | **Codes promo** et frais de service | rien |
-| 5g | **Réservation** : régime alimentaire / allergies et langue(s) de table demandés au moment de réserver, transmis au lieu | rien |
-| 6 | **Composition des tables** (dîners) : algorithme + validation par l'équipe, révélation du groupe, **marque-places** (prénom de chacun), fiche « hôte » (accueil, présentations), plafond de participants | rien |
+| **6 — prochaine** | **Composition des tables** (dîners) : algorithme + validation par l'équipe, révélation du groupe, **marque-places** (prénom de chacun), fiche « hôte » (accueil, présentations), plafond de participants | rien |
 | 7 | **Rappels** J-1 / H-3, prévenir les participants d'un changement de date ou de lieu, notifications push, statistiques | e-mails réels (Brevo) |
 | 5h | **Prestataire de paiement réel** (CMI, Payzone, YouCan Pay) | contrat signé |
 | 8 | **Recette, sécurité, mise en production** | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
@@ -48,8 +48,8 @@ Inspirations à reprendre **à notre façon** (sans copier) :
 | Version **anglaise** du site | sélecteur FR · عربي · EN, adresses /en/… ; prix affichés en « MAD » ; fiches d'expériences encore en français tant qu'elles ne sont pas traduites dans le back-office | ✅ |
 | **Centre d'aide** façon Timeleft : recherche, onglets **Clients / Partenaires**, catégories (Bien démarrer, Abonnement, Expériences et réservations, Compte, Sécurité, Partenariats), articles, « Cet article vous a-t-il aidé ? », articles liés | /aide, /aide/partenaires, /aide/{article} ; retours lus dans le back-office (Centre d'aide) | ✅ 23 articles FR + EN (arabe à traduire) |
 | **Programme partenaires** : « Devenir partenaire », nos critères (ambiance propice à la conversation, réputation, emplacement central, lieux indépendants, accueil de petits groupes), formulaire de candidature, aide partenaires (gestion des réservations, signaler un problème : absences, retards, comportement) | /devenir-partenaire, /aide/partenaires ; candidatures lues dans le back-office (Partenaires) | ✅ candidature + articles ; espace partenaire en ligne : plus tard |
-| **Régime alimentaire / allergies** demandés à la réservation et transmis au lieu | tunnel de réservation | à faire (en attendant : via Contact, FAQ) |
-| **Langue(s) de la table** choisie(s) à la réservation pour mieux composer les groupes | tunnel + matching (phase 6) | à faire |
+| **Régime alimentaire / allergies** demandés à la réservation et transmis au lieu | tunnel de réservation, fiche pour le lieu | ✅ 5g |
+| **Langue(s) de la table** choisie(s) à la réservation pour mieux composer les groupes | tunnel ✅ (5g) ; utilisation par la composition des tables : étape 6 | en partie |
 | « Se rencontrer d'abord » : après la table, **contacts échangés seulement si les deux le souhaitent** | espace membre (après phase 6) | idée à valider (décision D8 : pas de messagerie au lancement) |
 | Lien **Instagram d'Aya Snoussi** | pied de page, À propos | ✅ fondatrice |
 | Page **À propos** : Aya Snoussi, créatrice (son parcours, ce qui compte pour elle), d'après l'article CULTIQ, réécrit à notre façon | /a-propos | ✅ texte à valider par Aya ; photo recadrée depuis l'article (image 1) |
@@ -182,3 +182,10 @@ Tests : 6 tests d'intégration et 4 unitaires (formule, souscription et renouvel
 
 - **Annulation impossible depuis le téléphone** : la confirmation utilisait une fenêtre système que certains navigateurs intégrés (WhatsApp, Instagram) bloquent sans l'afficher. Toutes les confirmations se font désormais **dans la page** (« Oui, annuler » / « Non, garder ma place »), y compris dans le back-office. Les tests de bout en bout refusent maintenant toute fenêtre système, pour que le problème ne revienne pas.
 - **« Mes réservations » en erreur pendant ~1 minute** juste après la mise en ligne de la 4b : un index de la base était encore en construction. Il est prêt ; à l'avenir, le délai de construction des nouveaux index est à prévoir lors des mises en ligne (quelques minutes).
+
+## Hypothèses retenues en 5f et 5g (modifiables)
+
+- Code promo : réservations directes uniquement (pas sur les demandes ni les offres de liste d'attente) ; s'applique après le prix membre ; une fois par personne ; arrondi au dirham pour les pourcentages.
+- Un code est compté au paiement (ou tout de suite si la place devient gratuite) : deux paiements quasi simultanés peuvent dépasser le plafond d'une unité.
+- Frais de service : sur toutes les réservations payantes (directes, demandes acceptées, liste d'attente), remboursés avec la place.
+- Allergies (donnée de santé) : transmises au lieu seulement avec l'accord coché, daté ; visibles par l'équipe.

@@ -1,4 +1,4 @@
-import { bookingRefusal, DEFAULT_CANCELLATION_POLICY, formatMoney, isMemberActive, maxSeatsFor, seatsAvailable } from "@thecommunity/shared";
+import { bookingRefusal, DEFAULT_CANCELLATION_POLICY, formatMoney, isMemberActive, maxSeatsFor, seatsAvailable, SPOKEN_LANGUAGES, type SpokenLanguage } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -34,6 +34,8 @@ type VisitorInfo = {
   waitPosition: number | null;
   /** Membre abonné à cet instant. */
   member: boolean;
+  /** Langues du profil (proposées comme langues de table). */
+  languages?: string[];
 };
 
 async function visitorState(sessionId: string): Promise<VisitorInfo> {
@@ -48,11 +50,12 @@ async function visitorState(sessionId: string): Promise<VisitorInfo> {
   if (!account.onboardingCompleted) return { ...base, state: "incomplete" };
   const db = adminDb();
   const sessRef = db.doc(`sessions/${sessionId}`);
-  const [req, lock, entry, mem] = await Promise.all([
+  const [req, lock, entry, mem, profile] = await Promise.all([
     db.doc(`bookingRequests/${sessionId}_${user.uid}`).get(),
     sessRef.collection("seatLocks").doc(user.uid).get(),
     sessRef.collection("waitlist").doc(user.uid).get(),
     db.doc(`memberships/${user.uid}`).get(),
+    db.doc(`users/${user.uid}`).get(),
   ]);
   const m = mem.data();
   const member = isMemberActive(m ? { status: m.status, startAt: m.startAt.toDate(), endAt: m.endAt.toDate() } : null);
@@ -69,7 +72,8 @@ async function visitorState(sessionId: string): Promise<VisitorInfo> {
     const ahead = await sessRef.collection("waitlist").where("status", "==", "waiting").where("createdAt", "<", w.createdAt).count().get();
     waitPosition = ahead.data().count + 1;
   }
-  return { state: "ready", testPayments, request, booked, waitPosition, member };
+  const languages = Array.isArray(profile.data()?.languages) ? (profile.data()!.languages as string[]) : [];
+  return { state: "ready", testPayments, request, booked, waitPosition, member, languages };
 }
 
 /**
@@ -265,9 +269,15 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           <WaitlistBox sessionId={session.id} maxSeats={maxSeatsFor(exp)} position={visitor.waitPosition} />
         </>
       ) : onRequest ? (
-        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} />
+        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} defaultLanguages={profileLanguages(visitor.languages)} />
       ) : (
-        <BookingForm sessionId={session.id} unitAmount={isMember && memberAmount !== null ? memberAmount : session.price.amount} currency={session.price.currency} maxSeats={maxSeats} />
+        <BookingForm
+          sessionId={session.id}
+          unitAmount={isMember && memberAmount !== null ? memberAmount : session.price.amount}
+          currency={session.price.currency}
+          maxSeats={maxSeats}
+          defaultLanguages={profileLanguages(visitor.languages)}
+        />
       )}
     </PageShell>
   );
@@ -298,4 +308,9 @@ function Notice({ title, text }: { title: string; text: string }) {
       </div>
     </section>
   );
+}
+
+/** Langues du profil reconnues comme langues de table. */
+function profileLanguages(l: string[] | undefined) {
+  return (l ?? []).filter((x): x is SpokenLanguage => (SPOKEN_LANGUAGES as readonly string[]).includes(x)).slice(0, 5);
 }

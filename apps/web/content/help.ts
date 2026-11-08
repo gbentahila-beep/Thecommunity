@@ -131,12 +131,14 @@ export const HELP_ARTICLES: HelpArticle[] = [
         `Si le paiement est refusé, votre place reste bloquée jusqu'à la fin du délai de ${HOLD_MINUTES} minutes : vous pouvez réessayer depuis la page de votre réservation.`,
         "Tant que le paiement en ligne n'est pas ouvert, le site l'indique clairement (« mode test ») et aucune somme n'est débitée.",
         "Membre ? Le prix membre est appliqué automatiquement : vous voyez le prix public barré et votre prix à côté.",
+        "Un code promo ? Saisissez-le avant de payer (« Vous avez un code promo ? ») : chaque code s'utilise une fois par personne. Les éventuels frais de service sont toujours affichés avant le paiement.",
       ],
       en: [
         "Payment is made online on a secure payment page. We never see or store your card number.",
         `If a payment is declined, your seat stays held until the end of the ${HOLD_MINUTES}-minute window: you can try again from your booking page.`,
         "Until online payment is open, the site says so clearly (“test mode”) and nothing is charged.",
         "A member? The member price is applied automatically: you'll see the public price struck through with your price next to it.",
+        "Got a promo code? Enter it before paying (“Got a promo code?”): each code can be used once per person. Any service fee is always shown before payment.",
       ],
     },
     related: ["annuler-une-reservation", "comment-fonctionne-l-abonnement"],
@@ -186,14 +188,14 @@ export const HELP_ARTICLES: HelpArticle[] = [
     summary: { fr: "Prévenez-nous dès la réservation : nous vérifions avec le lieu.", en: "Tell us when you book: we check with the venue." },
     body: {
       fr: [
-        "Végétarien, sans gluten, allergie, autre contrainte ? Écrivez-nous dès votre réservation via la page [Contact](/contact) en précisant l'expérience et la date. Nous vérifions avec le lieu partenaire et vous proposons une solution, ou une autre expérience si ce n'est pas possible.",
+        "Végétarien, sans gluten, allergie, autre contrainte ? Indiquez-le au moment de réserver, rubrique « Pour votre accueil ». Avec votre accord, nous le transmettons au lieu partenaire, qui prépare votre accueil. Vous pouvez le modifier depuis votre réservation jusqu'au début de l'expérience. Un doute ? Écrivez-nous via la page [Contact](/contact).",
         "Le menu ou ce qui est servi est indiqué sur chaque fiche, rubrique « Ce qui est inclus ».",
-        "Côté langues, chaque expérience indique celles qui y sont parlées (français, darija, arabe, anglais…). Les langues renseignées dans votre profil nous aident à vous placer dans un groupe où vous pourrez participer à la conversation.",
+        "Côté langues, chaque expérience indique celles qui y sont parlées (français, darija, arabe, anglais…). Au moment de réserver, choisissez la ou les langues que vous aimeriez parler à table : cela nous aide à vous placer dans un groupe où vous pourrez participer à la conversation.",
       ],
       en: [
-        "Vegetarian, gluten-free, an allergy or another requirement? Write to us when you book via the [Contact](/contact) page, giving the experience and date. We check with the partner venue and suggest a solution, or another experience if that isn't possible.",
+        "Vegetarian, gluten-free, an allergy or another requirement? Tell us when you book, under “For your welcome”. With your consent, we pass it on to the partner venue so it can prepare. You can change it from your booking until the experience starts. Any doubt? Write to us via the [Contact](/contact) page.",
         "The menu or what's served is shown on each experience page under “What's included”.",
-        "As for languages, each experience lists the ones spoken (French, Darija, Arabic, English…). The languages in your profile help us place you in a group where you can join the conversation.",
+        "As for languages, each experience lists the ones spoken (French, Darija, Arabic, English…). When you book, pick the language(s) you'd like to speak at the table: it helps us place you in a group where you can join the conversation.",
       ],
     },
     related: ["venir-seul", "reserver-une-place"],

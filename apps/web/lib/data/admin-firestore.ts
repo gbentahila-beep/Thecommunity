@@ -81,10 +81,13 @@ export async function fsAdminData(now: Date) {
       status: r.status,
       seats: r.seats ?? 1,
       total: r.pricing?.total ?? 0,
-      promoCode: r.promoCode ?? undefined,
+      promoCode: r.pricing?.promoCode ?? r.promoCode ?? undefined,
       createdAt: iso(r.createdAt),
       sessionStartAt: iso(r.sessionSnapshot?.startAt),
       finance: finance[d.id] ?? estimateFinance(r, economics[r.experienceId]),
+      ...(r.preferences
+        ? { preferences: { diet: String(r.preferences.diet ?? "none"), allergies: String(r.preferences.allergies ?? ""), languages: r.preferences.languages ?? [], shareWithVenue: r.preferences.shareWithVenue === true } }
+        : {}),
     };
   });
   const payments: AdminPayment[] = paySnap.docs.map((d) => {
@@ -115,7 +118,8 @@ export async function fsAdminData(now: Date) {
   const partners = partnersSnap.docs.map((d) => plain<Partner>({ id: d.id, ...d.data() }));
   const promos: PromoCode[] = promosSnap.docs.map((d) => {
     const p = d.data();
-    return { code: d.id, type: p.type, value: p.value, validTo: iso(p.validTo).slice(0, 10), maxRedemptions: p.maxRedemptions ?? 0, redemptionsCount: p.redemptionsCount ?? 0, firstBookingOnly: Boolean(p.firstBookingOnly), isActive: Boolean(p.isActive) };
+    return { code: d.id, type: p.type, value: p.value, validTo: iso(p.validTo).slice(0, 10), maxRedemptions: p.maxRedemptions ?? 0, redemptionsCount: p.redemptionsCount ?? 0, firstBookingOnly: Boolean(p.firstBookingOnly), isActive: Boolean(p.isActive),
+      ...(p.validFrom ? { validFrom: iso(p.validFrom).slice(0, 10) } : {}), description: p.description ?? "" };
   });
   const groups: AdminGroup[] = groupsSnap.docs.map((d) => ({ id: d.id, sessionId: d.data().sessionId, label: d.data().label, memberIds: d.data().memberIds ?? [] }));
   const waitlists: Record<string, string[]> = {};

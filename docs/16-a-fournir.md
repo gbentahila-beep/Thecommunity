@@ -33,6 +33,8 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
   - **annulations tardives / absences répétées** : restriction ou suspension temporaire après avertissement (CGU art. 7) — pas de barème automatique pour l'instant ;
   - **signalements et décisions de modération** conservés 3 ans au plus ;
   - mention d'une possible **vérification d'identité ou d'âge** en cas de doute.
+- [ ] **Allergies (donnée de santé, loi 09-08)** : faire valider le recueil avec accord explicite et sa durée de conservation (proposition : effacer régime et allergies 30 jours après l'expérience — pas encore automatique).
+- [ ] **Codes promo et frais de service** : valider les mentions ajoutées aux CGV (art. 2) avant d'activer des frais.
 - [ ] **E-mail sécurité informatique** (ex. security@…) pour le signalement des failles (page Sécurité).
 - [ ] **Durées de conservation** proposées (comptes inactifs 3 ans, journaux 12 mois, comptabilité selon la loi).
 - [ ] **Délai de traitement des signalements** annoncé : 48 h (page Sécurité).

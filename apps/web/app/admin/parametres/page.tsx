@@ -4,16 +4,18 @@ import { CompanyForm } from "@/components/admin/company-form";
 import { CategoryForm, CityForm } from "@/components/admin/place-forms";
 import { requireAdmin } from "@/lib/auth/admin";
 import { getAdminData } from "@/lib/data/admin";
-import { getCompanySettings } from "@/lib/data/admin-mail";
+import { getCompanySettings, getServiceFee } from "@/lib/data/admin-mail";
+import { ServiceFeeForm } from "@/components/admin/service-fee-form";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 
 export const metadata = { title: "Paramètres" };
 
 export default async function SettingsAdminPage() {
-  const [{ cities, categories }, company, me] = await Promise.all([
+  const [{ cities, categories }, company, me, serviceFee] = await Promise.all([
     getAdminData(),
     getCompanySettings(),
     FIREBASE_ENABLED ? requireAdmin() : Promise.resolve(null),
+    getServiceFee(),
   ]);
   return (
     <>
@@ -80,13 +82,17 @@ export default async function SettingsAdminPage() {
             <li>Annulation par The Host Club : remboursement 100 %</li>
           </ul>
         </Card>
-        <Card title="Réservations">
-          <dl className="grid grid-cols-2 gap-3 text-sm">
+        <Card title="Réservations et frais de service">
+          <dl className="mb-4 grid grid-cols-2 gap-3 text-sm">
             <div><dt className="text-xs text-muted">Blocage d&apos;une place pendant le paiement</dt><dd>15 minutes</dd></div>
             <div><dt className="text-xs text-muted">Fermeture des réservations</dt><dd>12 h avant (dîners) · 2 h (autres)</dd></div>
             <div><dt className="text-xs text-muted">Âge minimum</dt><dd>18 ans</dd></div>
-            <div><dt className="text-xs text-muted">Frais de service</dt><dd>Aucun</dd></div>
           </dl>
+          {serviceFee ? (
+            <ServiceFeeForm initial={serviceFee} canEdit={me?.role === "superadmin"} />
+          ) : (
+            <p className="text-sm text-muted">Frais de service : aucun. Démonstration : ils se règlent ici sur le site en ligne (super-admin).</p>
+          )}
         </Card>
       </div>
     </>

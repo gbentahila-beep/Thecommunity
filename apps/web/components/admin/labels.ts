@@ -18,3 +18,7 @@ export const INTEREST_LABELS: Record<string, string> = {
 };
 
 export const LANGUAGE_LABELS: Record<string, string> = { fr: "FR", ar: "AR", darija: "Darija", en: "EN", es: "ES" };
+
+export const DIET_LABELS: Record<string, string> = {
+  none: "—", vegetarian: "Végétarien", vegan: "Végan", pescatarian: "Pescétarien", gluten_free: "Sans gluten", lactose_free: "Sans lactose", other: "Autre",
+};

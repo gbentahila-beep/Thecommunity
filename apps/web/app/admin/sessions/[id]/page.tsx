@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CsvExportButton } from "@/components/admin/csv-export";
 import { CancelSessionButton, ReservationAdminActions } from "@/components/admin/reservation-admin-actions";
-import { LANGUAGE_LABELS, MODE_LABELS, RESERVATION_STATUS } from "@/components/admin/labels";
+import { DIET_LABELS, LANGUAGE_LABELS, MODE_LABELS, RESERVATION_STATUS } from "@/components/admin/labels";
 import { adminDate, Badge, Card, dh, PageHeader, StatTile, Table } from "@/components/admin/ui";
 import { getAdminData } from "@/lib/data/admin";
 
@@ -29,8 +29,12 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
   const waitlist = (d.waitlists[s.id] ?? []).map((uid) => d.usersById.get(uid)!);
   const grouped = e.bookingMode === "social_dinner" || e.bookingMode === "group";
   const csv: (string | number)[][] = [
-    ["Prénom", "Nom", "E-mail", "Téléphone", "Tranche d'âge", "Langues", "Places", "Montant (DH)", "Statut", "Réservation"],
-    ...rows.map(({ r, u }) => [u.firstName, u.lastName, u.email, u.phone, ageBand(ageOn(u.birthDate)), u.languages.join(", "), r.seats, (r.total / 100).toFixed(2), RESERVATION_STATUS[r.status][0], r.id]),
+    ["Prénom", "Nom", "E-mail", "Téléphone", "Tranche d'âge", "Langues", "Langues de table", "Régime", "Allergies", "Places", "Montant (DH)", "Code promo", "Statut", "Réservation"],
+    ...rows.map(({ r, u }) => [
+      u.firstName, u.lastName, u.email, u.phone, ageBand(ageOn(u.birthDate)), u.languages.join(", "),
+      (r.preferences?.languages ?? []).join(", "), DIET_LABELS[r.preferences?.diet ?? "none"] ?? "", r.preferences?.allergies ?? "",
+      r.seats, (r.total / 100).toFixed(2), r.promoCode ?? "", RESERVATION_STATUS[r.status][0], r.id,
+    ]),
   ];
 
   return (
@@ -42,6 +46,9 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
         actions={
           <>
             <CsvExportButton filename={`participants-${s.id}.csv`} rows={csv} log={d.isDemo ? undefined : { kind: "participants", targetId: s.id }} />
+            <Link href={`/admin/sessions/${s.id}/fiche-lieu`} className="rounded-full border border-plum-900 px-4 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-50">
+              Fiche pour le lieu
+            </Link>
             {grouped && (
               <Link href={`/admin/sessions/${s.id}/groupes`} className="rounded-full bg-plum-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">
                 Composer les groupes
@@ -62,7 +69,7 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
         <StatTile label="Encaissé" value={dh(confirmed.reduce((a, x) => a + x.r.total, 0))} />
       </div>
       <Card title={`Participants (${rows.length} réservations)`} className="mt-6">
-        <Table head={["Participant", "Contact", "Âge", "Langues", "Places", "Montant", "Statut", ...(d.isDemo ? [] : ["Actions"])]} caption="Participants">
+        <Table head={["Participant", "Contact", "Âge", "Langues", "Accueil", "Places", "Montant", "Statut", ...(d.isDemo ? [] : ["Actions"])]} caption="Participants">
           {rows.map(({ r, u }) => (
             <tr key={r.id}>
               <td className="font-medium text-ink">
@@ -71,7 +78,18 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
               <td className="text-muted"><span className="block">{u.email}</span><span className="block tabular-nums">{u.phone}</span></td>
               <td className="tabular-nums">{ageBand(ageOn(u.birthDate))}</td>
               <td>{u.languages.map((l) => LANGUAGE_LABELS[l]).join(" · ")}</td>
-              <td className="tabular-nums">{r.seats}</td>
+              <td className="min-w-36 text-sm">
+                {r.preferences && (r.preferences.diet !== "none" || r.preferences.allergies) ? (
+                  <>
+                    {r.preferences.diet !== "none" && <span className="block">{DIET_LABELS[r.preferences.diet] ?? r.preferences.diet}</span>}
+                    {r.preferences.allergies && <span className="block text-red-800">Allergie : {r.preferences.allergies}</span>}
+                  </>
+                ) : (
+                  <span className="text-muted">—</span>
+                )}
+                {r.preferences?.languages?.length ? <span className="block text-xs text-muted">Table : {r.preferences.languages.map((l) => LANGUAGE_LABELS[l]).join(" · ")}</span> : null}
+              </td>
+              <td className="tabular-nums">{r.seats}{r.promoCode && <span className="block font-mono text-xs text-muted">{r.promoCode}</span>}</td>
               <td className="tabular-nums">{dh(r.total)}</td>
               <td><Badge tone={RESERVATION_STATUS[r.status][1]}>{RESERVATION_STATUS[r.status][0]}</Badge></td>
               {!d.isDemo && (

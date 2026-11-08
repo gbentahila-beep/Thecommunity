@@ -182,7 +182,8 @@
       "already_started": "L'expérience a déjà commencé : l'annulation n'est plus possible.",
       "not_cancellable": "Cette réservation ne peut plus être annulée.",
       "members_only": "Expérience réservée aux membres abonnés.",
-      "members_early_access": "Cette nouvelle date est encore en accès anticipé pour les membres."
+      "members_early_access": "Cette nouvelle date est encore en accès anticipé pour les membres.",
+      "not_editable": "Cette réservation n'est plus modifiable."
     },
     "fullTextOnRequest": "Toutes les places sont prises pour cette date. Regardez les autres dates de cette expérience.",
     "seeMyBooking": "Voir ma réservation",
@@ -196,7 +197,27 @@
     "membersOnlyTitle": "Réservé aux membres",
     "membersOnlyText": "Cette expérience est proposée uniquement aux membres abonnés.",
     "earlyAccessTitle": "Accès anticipé des membres",
-    "earlyAccessText": "Cette nouvelle date est réservée aux membres jusqu'au {date}. Elle sera ouverte à tous ensuite."
+    "earlyAccessText": "Cette nouvelle date est réservée aux membres jusqu'au {date}. Elle sera ouverte à tous ensuite.",
+    "subtotal": "Places",
+    "memberDiscountLine": "Remise membre",
+    "promoLine": "Code {code}",
+    "feesLine": "Frais de service",
+    "totalLine": "Total à payer",
+    "promoToggle": "Vous avez un code promo ?",
+    "promoLabel": "Code promo",
+    "promoApply": "Appliquer",
+    "promoRemove": "Retirer",
+    "promoApplied": "Code {code} appliqué : −{amount}",
+    "promoErrors": {
+      "promo_unknown": "Ce code n'existe pas.",
+      "promo_inactive": "Ce code n'est plus actif.",
+      "promo_not_started": "Ce code n'est pas encore valable.",
+      "promo_expired": "Ce code a expiré.",
+      "promo_exhausted": "Ce code a atteint son nombre maximum d'utilisations.",
+      "promo_already_used": "Vous avez déjà utilisé ce code.",
+      "promo_first_booking_only": "Ce code est réservé à une première réservation.",
+      "promoFormat": "Code invalide (lettres, chiffres et tirets, 3 à 20 caractères)."
+    }
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -310,7 +331,7 @@
     "q7": "Quelles langues sont parlées ?",
     "a7": "Chaque expérience indique ses langues (français, darija, arabe, anglais…). Les langues que vous parlez, renseignées dans votre profil, nous aident à composer des groupes où chacun peut participer à la conversation.",
     "q8": "J'ai un régime alimentaire ou une allergie : comment faire ?",
-    "a8": "Écrivez-nous dès votre réservation (page Contact) : nous vérifions avec le lieu partenaire et vous proposons une solution, ou une autre expérience si ce n'est pas possible. Pensez à consulter le menu indiqué sur la fiche.",
+    "a8": "Indiquez-le au moment de réserver, rubrique « Pour votre accueil » : régime, allergies et langues de table. Avec votre accord, nous le transmettons au lieu, qui prépare votre accueil. Vous pouvez le modifier depuis votre réservation jusqu'au début de l'expérience.",
     "q9": "Comment fonctionne l'abonnement ?",
     "a9": "Pour un prix annuel, vous bénéficiez du prix membre sur les expériences (affiché à côté du prix public) et, selon la formule, d'un accès anticipé aux nouvelles dates et d'expériences réservées aux membres. Il dure 12 mois, sans renouvellement automatique.",
     "q10": "Et si je ne me sens pas à l'aise ?",
@@ -759,5 +780,30 @@
     "seeAll": "Toutes mes factures",
     "total": "Montant",
     "refundReceipt": "Reçu de remboursement"
+  },
+  "prefs": {
+    "title": "Pour votre accueil (facultatif)",
+    "intro": "Ces informations aident l'équipe et le lieu à bien vous recevoir.",
+    "diet": "Régime alimentaire",
+    "diets": {
+      "none": "Aucun en particulier",
+      "vegetarian": "Végétarien",
+      "vegan": "Végan",
+      "pescatarian": "Pescétarien",
+      "gluten_free": "Sans gluten",
+      "lactose_free": "Sans lactose",
+      "other": "Autre (précisez ci-dessous)"
+    },
+    "allergies": "Allergies ou intolérances",
+    "allergiesHint": "Ex. arachides, fruits de mer. 200 caractères au plus.",
+    "languages": "Langue(s) que vous aimeriez parler à table",
+    "consent": "J'accepte que ces informations (régime, allergies) soient transmises au lieu qui m'accueille, uniquement pour préparer mon accueil.",
+    "consentRequired": "Cochez cette case pour transmettre votre régime ou vos allergies.",
+    "editTitle": "Régime, allergies, langues",
+    "save": "Enregistrer",
+    "saved": "Enregistré.",
+    "error": "Enregistrement impossible.",
+    "none": "Rien de particulier signalé.",
+    "shared": "Transmis au lieu"
   }
 }

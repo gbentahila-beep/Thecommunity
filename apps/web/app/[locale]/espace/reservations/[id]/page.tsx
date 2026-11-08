@@ -1,4 +1,4 @@
-import { canReview, DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor } from "@thecommunity/shared";
+import { canReview, DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor, type BookingPreferences } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -13,6 +13,7 @@ import { Link } from "@/i18n/navigation";
 import { getReservationInvoices } from "@/lib/data/invoices";
 import { getMemberReservation, getMemberSpace } from "@/lib/data/member";
 import { InvoiceList } from "@/components/account/invoice-list";
+import { PreferencesEditor } from "@/components/booking/preferences-editor";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { buildIcs, icsDataUri } from "@/lib/ics";
@@ -29,10 +30,12 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   if (!data) notFound();
   const { reservation: r, group, profile, now } = data;
   const space = await getMemberSpace();
-  const [t, tl, ti, locale, invoices] = await Promise.all([
+  const [t, tl, ti, tb, tp, locale, invoices] = await Promise.all([
     getTranslations("reservation"),
     getTranslations("labels.interests"),
     getTranslations("invoices"),
+    getTranslations("booking"),
+    getTranslations("prefs"),
     getLocale(),
     space.session ? getReservationInvoices(space.session.uid, id) : Promise.resolve([]),
   ]);
@@ -220,6 +223,18 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
               </div>
             </>
           )}
+          {(r.pricing.discount ?? 0) > 0 && (
+            <div className="flex justify-between py-2.5 text-emerald-800">
+              <dt>{tb("promoLine", { code: r.pricing.promoCode ?? "" })}</dt>
+              <dd>−{formatMoney({ amount: r.pricing.discount, currency: r.pricing.currency }, lang)}</dd>
+            </div>
+          )}
+          {(r.pricing.fees ?? 0) > 0 && (
+            <div className="flex justify-between py-2.5">
+              <dt className="text-muted">{tb("feesLine")}</dt>
+              <dd>{formatMoney({ amount: r.pricing.fees, currency: r.pricing.currency }, lang)}</dd>
+            </div>
+          )}
           <div className="flex justify-between py-2.5">
             <dt className="text-muted">{r.paidAt ? t("total") : t("totalDue")}</dt>
             <dd className="font-semibold">{total}</dd>
@@ -246,6 +261,23 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           )}
         </dl>
       </section>
+
+      {(isActive || r.status === "pending_payment") && (
+        <section aria-labelledby="prefs" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
+          <h2 id="prefs" className="font-display text-2xl font-medium text-plum-900">{tp("editTitle")}</h2>
+          <p className="mb-4 mt-1 text-sm text-muted">{tp("intro")}</p>
+          <PreferencesEditor
+            reservationId={r.id}
+            editable={FIREBASE_ENABLED && isUpcoming}
+            initial={{
+              diet: (r.preferences?.diet ?? "none") as BookingPreferences["diet"],
+              allergies: r.preferences?.allergies ?? "",
+              languages: (r.preferences?.languages ?? []) as BookingPreferences["languages"],
+              consent: r.preferences?.shareWithVenue === true,
+            }}
+          />
+        </section>
+      )}
 
       {invoices.length > 0 && (
         <section aria-labelledby="documents" className="space-y-3">

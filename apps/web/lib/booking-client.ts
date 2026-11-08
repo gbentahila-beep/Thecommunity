@@ -1,5 +1,6 @@
 "use client";
 
+import type { BookingPreferences, Pricing } from "@thecommunity/shared";
 import { httpsCallable } from "firebase/functions";
 import { firebase } from "@/lib/firebase/client";
 
@@ -51,10 +52,25 @@ async function freshUser() {
   return user;
 }
 
-export async function createReservation(sessionId: string, seats: number) {
+export async function createReservation(sessionId: string, seats: number, opts: { promoCode?: string; preferences?: BookingPreferences } = {}) {
   await freshUser();
-  const res = await httpsCallable(firebase().functions, "createReservation")({ sessionId, seats });
+  const res = await httpsCallable(firebase().functions, "createReservation")({ sessionId, seats, ...opts });
   return res.data as { reservationId: string; status: "pending_payment" | "confirmed"; resumed: boolean; total: number };
+}
+
+/** Prix exact calculé par le serveur (prix membre, code promo, frais de service), avant de réserver. */
+export async function previewPricing(sessionId: string, seats: number, promoCode?: string) {
+  await freshUser();
+  const res = await httpsCallable(firebase().functions, "previewPricing")({ sessionId, seats, ...(promoCode ? { promoCode } : {}) });
+  return (res.data as { pricing: Pricing }).pricing;
+}
+
+/** Raison d'un refus de code promo (ou null si ce n'en est pas un). */
+export function promoErrorOf(err: unknown): string | null {
+  const reason = (err as { details?: { reason?: string; issues?: { path: string }[] } }).details;
+  if (reason?.reason?.startsWith("promo_")) return reason.reason;
+  if (reason?.issues?.some((i) => i.path === "promoCode")) return "promoFormat";
+  return null;
 }
 
 export async function startCheckout(reservationId: string) {

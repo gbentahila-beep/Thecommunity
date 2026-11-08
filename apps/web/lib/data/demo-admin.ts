@@ -141,6 +141,8 @@ export type AdminReservation = {
   /** Date de la session (copie gardée dans la réservation : reste lisible une fois la session passée). */
   sessionStartAt: string;
   finance: { gross: number; cost: number; margin: number };
+  /** Régime, allergies, langues de table (5g). */
+  preferences?: { diet: string; allergies: string; languages: string[]; shareWithVenue: boolean };
 };
 
 export type AdminPayment = {
@@ -168,6 +170,8 @@ export type PromoCode = {
   redemptionsCount: number;
   firstBookingOnly: boolean;
   isActive: boolean;
+  validFrom?: string;
+  description?: string;
 };
 
 export const DEMO_PROMOS: PromoCode[] = [
