@@ -22,12 +22,16 @@
     "comingSoon": "Soon",
     "language": "Language",
     "mainNav": "Main navigation",
-    "mobileNav": "Mobile navigation"
+    "mobileNav": "Mobile navigation",
+    "about": "About",
+    "blog": "Blog",
+    "allExperiences": "All experiences",
+    "discoverMenu": "Universes to discover"
   },
   "home": {
-    "heroTitle1": "Less scrolling.",
-    "heroTitle2": "More meeting.",
-    "heroSubtitle": "Experiences to share, people to discover.",
+    "heroTitle1": "Your people",
+    "heroTitle2": "are out there.",
+    "heroSubtitle": "Step out of your routine. Meet new people. Say yes to something different.",
     "heroCta": "Discover the experiences",
     "heroImageAlt": "A group of friends laughing around a rooftop table at sunset, with candles, lanterns and a minaret on the horizon",
     "thisWeek": "This week in {city}",
@@ -40,12 +44,24 @@
     "how3Title": "Meet your group",
     "how3Text": "We put the tables and teams together so the conversation flows.",
     "universesTitle": "Five ways to break your routine",
-    "reviewsTitle": "They were there",
+    "reviewsTitle": "Why come along",
     "trust1": "A welcoming community",
     "trust2": "Verified events",
     "trust3": "Book in a few taps",
     "citiesTitle": "Coming soon to more cities",
-    "citiesText": "Casablanca first, then Rabat, Marrakech, Tangier and Agadir."
+    "citiesText": "Casablanca first, then Rabat, Marrakech, Tangier and Agadir.",
+    "reviewsSubtitle": "What our members remember from their tables, workshops and outings.",
+    "reviewsPrev": "Previous review",
+    "reviewsNext": "Next review",
+    "reviewsPhotoAlt": "Participants laughing and raising their glasses at a The Host Club evening",
+    "howPhotosAlt": "Participants around a table, deep in conversation",
+    "universeCta": "Discover",
+    "universeCtaLabel": "Discover “{name}” experiences",
+    "faqTitle": "Frequently asked questions",
+    "moreQuestions": "Got more questions?",
+    "moreQuestionsText": "You'll find every detailed answer in our help centre.",
+    "helpCta": "Visit our help centre",
+    "universePhotoAlt": "{name}: a The Host Club experience"
   },
   "card": {
     "people": "{count} people",
@@ -288,7 +304,8 @@
     "toComplete": "to be completed",
     "dataStatement": "The Host Club applies appropriate technical and organisational security measures. You have the right of access, rectification and objection under Law 09-08: {email}.",
     "help": "Help centre",
-    "partner": "Become a partner"
+    "partner": "Become a partner",
+    "blog": "Blog"
   },
   "pages": {
     "howTitle": "How it works",
@@ -805,5 +822,22 @@
     "error": "Couldn't save.",
     "none": "Nothing specific reported.",
     "shared": "Shared with the venue"
+  },
+  "blog": {
+    "title": "Blog",
+    "heroTitle": "Strangers Today, Friends Tomorrow",
+    "heroText": "Making new connections shouldn't be complicated. Discover how shared experiences and simple meetups can bring people together.",
+    "intro": "Hands-on guides and honest articles to widen your circle, start conversations and make the most of your city.",
+    "tabs": "Blog topics",
+    "all": "All articles",
+    "readTime": "{minutes} min read",
+    "related": "Keep reading",
+    "ctaTitle": "Ready to put it into practice?",
+    "ctaText": "A table, a workshop, an outing: meet new people close to home.",
+    "ctaButton": "Discover experiences",
+    "arabicPending": "This article hasn't been translated into Arabic yet: the French version is shown meanwhile.",
+    "faqTitle": "Frequently asked questions",
+    "breadcrumb": "Breadcrumb",
+    "count": "{count, plural, one {# article} other {# articles}}"
   }
 }

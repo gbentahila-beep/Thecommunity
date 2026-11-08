@@ -22,12 +22,16 @@
     "comingSoon": "Bientôt",
     "language": "Langue",
     "mainNav": "Navigation principale",
-    "mobileNav": "Navigation mobile"
+    "mobileNav": "Navigation mobile",
+    "about": "À propos",
+    "blog": "Blog",
+    "allExperiences": "Toutes les expériences",
+    "discoverMenu": "Univers à découvrir"
   },
   "home": {
-    "heroTitle1": "Moins de scroll.",
-    "heroTitle2": "Plus de rencontres.",
-    "heroSubtitle": "Des expériences à partager, des personnes à découvrir.",
+    "heroTitle1": "Your people",
+    "heroTitle2": "are out there.",
+    "heroSubtitle": "Sortez de votre routine. Rencontrez de nouvelles personnes. Dites oui à quelque chose de différent.",
     "heroCta": "Découvrir les expériences",
     "heroImageAlt": "Un groupe d'amis rit autour d'une table sur un toit-terrasse au coucher du soleil, bougies et lanternes allumées, un minaret à l'horizon",
     "thisWeek": "Cette semaine à {city}",
@@ -40,12 +44,24 @@
     "how3Title": "Rencontrez votre groupe",
     "how3Text": "Nous composons les tables et les équipes pour que la conversation prenne.",
     "universesTitle": "Cinq univers pour sortir de sa routine",
-    "reviewsTitle": "Ils l'ont vécu",
+    "reviewsTitle": "Pourquoi venir",
     "trust1": "Une communauté bienveillante",
     "trust2": "Des événements vérifiés",
     "trust3": "Réservation en quelques clics",
     "citiesTitle": "Bientôt dans d'autres villes",
-    "citiesText": "Casablanca d'abord, puis Rabat, Marrakech, Tanger et Agadir."
+    "citiesText": "Casablanca d'abord, puis Rabat, Marrakech, Tanger et Agadir.",
+    "reviewsSubtitle": "Ce que nos membres retiennent de leurs tables, ateliers et sorties.",
+    "reviewsPrev": "Avis précédent",
+    "reviewsNext": "Avis suivant",
+    "reviewsPhotoAlt": "Des participants rient et trinquent lors d'une soirée The Host Club",
+    "howPhotosAlt": "Des participants autour d'une table, en pleine conversation",
+    "universeCta": "Découvrir",
+    "universeCtaLabel": "Découvrir les expériences « {name} »",
+    "faqTitle": "Questions fréquentes",
+    "moreQuestions": "Vous avez d'autres questions ?",
+    "moreQuestionsText": "Toutes les réponses détaillées sont dans notre centre d'aide.",
+    "helpCta": "Consulter le centre d'aide",
+    "universePhotoAlt": "{name} : une expérience The Host Club"
   },
   "card": {
     "people": "{count} pers.",
@@ -288,7 +304,8 @@
     "toComplete": "à compléter",
     "dataStatement": "The Host Club applique des mesures de sécurité techniques et organisationnelles adaptées. Vous disposez d'un droit d'accès, de rectification et d'opposition (loi n° 09-08) : {email}.",
     "help": "Centre d'aide",
-    "partner": "Devenir partenaire"
+    "partner": "Devenir partenaire",
+    "blog": "Blog"
   },
   "pages": {
     "howTitle": "Comment ça marche",
@@ -805,5 +822,22 @@
     "error": "Enregistrement impossible.",
     "none": "Rien de particulier signalé.",
     "shared": "Transmis au lieu"
+  },
+  "blog": {
+    "title": "Blog",
+    "heroTitle": "Inconnus aujourd'hui, amis demain",
+    "heroText": "Rencontrer de nouvelles personnes ne devrait pas être compliqué. Découvrez comment des expériences partagées et de simples rencontres rapprochent les gens.",
+    "intro": "Des guides concrets et des articles sincères pour élargir son cercle, oser la conversation et profiter de sa ville.",
+    "tabs": "Thèmes du blog",
+    "all": "Tous les articles",
+    "readTime": "{minutes} min de lecture",
+    "related": "À lire aussi",
+    "ctaTitle": "Prêt à passer à la pratique ?",
+    "ctaText": "Une table, un atelier, une sortie : rencontrez de nouvelles personnes près de chez vous.",
+    "ctaButton": "Découvrir les expériences",
+    "arabicPending": "Cet article n'est pas encore traduit en arabe : la version française s'affiche en attendant.",
+    "faqTitle": "Questions fréquentes",
+    "breadcrumb": "Fil d'Ariane",
+    "count": "{count, plural, one {# article} other {# articles}}"
   }
 }

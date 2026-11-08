@@ -21,6 +21,7 @@ export async function SiteFooter() {
         { href: "/a-propos", label: t("about") },
         { href: "/abonnement", label: t("membership") },
         { href: "/comment-ca-marche", label: (await getTranslations("nav"))("how") },
+        { href: "/blog", label: t("blog") },
         { href: "/aide", label: t("help") },
         { href: "/faq", label: t("faq") },
         { href: "/devenir-partenaire", label: t("partner") },

@@ -1,15 +1,18 @@
-import { CalendarCheck, HeartHandshake, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { CalendarCheck, ShieldCheck, Users } from "lucide-react";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CategoryChips } from "@/components/category-chips";
-import { CategoryIcon } from "@/components/category-icon";
 import { CityMenu } from "@/components/city-menu";
 import { ExperienceCard } from "@/components/experience-card";
-import { PageShell, PrimaryLink, SectionHeading, Stars } from "@/components/ui";
+import { HomeFaq } from "@/components/home/home-faq";
+import { HowItWorks } from "@/components/home/how-it-works";
+import { ReviewsShowcase } from "@/components/home/reviews-showcase";
+import { Universes } from "@/components/home/universes";
+import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getCategories, getCities, getCity, getNextSessionPerExperience, getReviews } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
-import { CATEGORY_STYLES, DEFAULT_CITY } from "@/lib/site";
+import { DEFAULT_CITY } from "@/lib/site";
 
 export const revalidate = 3600;
 
@@ -104,61 +107,28 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       </PageShell>
 
       {/* COMMENT ÇA MARCHE */}
-      <PageShell className="py-16">
-        <SectionHeading title={t("howTitle")} />
-        <ol className="mt-8 grid gap-6 md:grid-cols-3">
-          {[
-            { icon: Sparkles, title: t("how1Title"), text: t("how1Text") },
-            { icon: CalendarCheck, title: t("how2Title"), text: t("how2Text") },
-            { icon: HeartHandshake, title: t("how3Title"), text: t("how3Text") },
-          ].map(({ icon: Icon, title, text }, i) => (
-            <li key={title} className="relative rounded-[var(--radius-card)] border border-line bg-white/70 p-6">
-              <span className="font-display text-5xl text-plum-100">{i + 1}</span>
-              <Icon className="absolute end-6 top-6 size-7 text-plum-700" strokeWidth={1.5} aria-hidden />
-              <h3 className="mt-2 text-lg font-semibold text-ink">{title}</h3>
-              <p className="mt-2 text-[15px] text-muted">{text}</p>
-            </li>
-          ))}
-        </ol>
+      <PageShell>
+        <HowItWorks categories={categories} />
       </PageShell>
 
       {/* UNIVERS */}
-      <PageShell className="py-8">
-        <SectionHeading title={t("universesTitle")} />
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {categories.map((c) => {
-            const style = CATEGORY_STYLES[c.id];
-            return (
-              <li key={c.id}>
-                <Link
-                  href={`/${DEFAULT_CITY}/${c.id}`}
-                  className="flex h-full flex-col gap-3 rounded-[var(--radius-card)] bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-float"
-                >
-                  <span className={`grid size-12 place-items-center rounded-full ${style?.bg} ${style?.text}`}>
-                    <CategoryIcon category={c.id} className="size-6" />
-                  </span>
-                  <span className="text-base font-semibold text-ink">{tr(c.name, locale)}</span>
-                  <span className="text-sm text-muted">{tr(c.description, locale)}</span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+      <PageShell>
+        <Universes categories={categories} />
       </PageShell>
 
-      {/* AVIS */}
-      <PageShell className="py-16">
-        <SectionHeading title={t("reviewsTitle")} />
-        <ul className="-mx-4 mt-8 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0">
-          {reviews.slice(0, 3).map((r) => (
-            <li key={r.id} className="w-[85%] shrink-0 snap-start rounded-[var(--radius-card)] bg-white p-6 shadow-card sm:w-auto">
-              <Stars value={r.rating} />
-              <blockquote className="mt-4 font-display text-lg leading-relaxed text-ink">« {r.comment} »</blockquote>
-              <p className="mt-4 text-sm font-medium text-muted">{r.publicName}</p>
-            </li>
-          ))}
-        </ul>
-      </PageShell>
+      {/* POURQUOI VENIR */}
+      {reviews.length > 0 && (
+        <PageShell>
+          <ReviewsShowcase
+            reviews={reviews.slice(0, 3).map((r) => ({ id: r.id, rating: r.rating, comment: r.comment, publicName: r.publicName }))}
+            title={t("reviewsTitle")}
+            subtitle={t("reviewsSubtitle")}
+            photoAlt={t("reviewsPhotoAlt")}
+            prevLabel={t("reviewsPrev")}
+            nextLabel={t("reviewsNext")}
+          />
+        </PageShell>
+      )}
 
       {/* VILLES */}
       <PageShell className="pb-8">
@@ -176,6 +146,11 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             ))}
           </ul>
         </div>
+      </PageShell>
+
+      {/* FAQ + CENTRE D'AIDE */}
+      <PageShell>
+        <HomeFaq />
       </PageShell>
     </>
   );

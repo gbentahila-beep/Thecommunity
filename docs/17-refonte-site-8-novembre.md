@@ -1,10 +1,10 @@
 # 17 — Refonte demandée par Rita (document « the_host », 8 novembre 2026)
 
 > Demande reçue le 8 novembre. **Planifiée, pas encore réalisée** (règle : tout passe d'abord par le plan, puis étape par étape).
-> Photos fournies : `apps/web/design/photos-2026-11-08/` (optimisées). Captures des modèles : `docs/maquettes/2026-11-08/`.
+> Photos fournies : `apps/web/public/images/photos/` (optimisées). Captures des modèles : `docs/maquettes/2026-11-08/`.
 > Les modèles Timeleft servent d'inspiration de mise en page : on garde le style The Host Club et on rédige nos propres textes.
 
-## 8a — Page d'accueil
+## 8a — Page d'accueil ✅ (fait le 8 novembre)
 
 | Bloc | Demande | Ressources |
 |---|---|---|
@@ -14,12 +14,12 @@
 | « Ils l'ont vécu » | Renommer (ex. **« Pourquoi venir »**) et présenter comme le modèle : grande photo, avis en cartes par-dessus, carrousel sur mobile | 13 à 16 ; photo `pourquoi-venir` |
 | FAQ | Sous « Bientôt dans votre ville » : ajouter la **FAQ** puis « **Vous avez d'autres questions ? Consultez notre centre d'aide** » | 17 à 19 |
 
-## 8b — Menu du haut (ordinateur)
+## 8b — Menu du haut (ordinateur) ✅ (fait le 8 novembre)
 
 Aujourd'hui : Découvrir · Dîners · Activités · Comment ça marche. Demandé :
 **Découvrir** (menu déroulant : Dîners, Sport & bien-être, Jeux, Ateliers, Sorties) · **À propos** · **Comment ça marche** · **Blog**. (Réf. 20)
 
-## 8c — Blog (articles rédigés par nous)
+## 8c — Blog (articles rédigés par nous) ✅ (fait le 8 novembre : 19 articles FR + EN, /blog, /blog/theme/{onglet}, /blog/{article})
 
 - Titre : **« Strangers Today, Friends Tomorrow »** ; sous-titre : « Making new connections shouldn't be complicated. Discover how shared experiences and simple meetups can bring people together. » — traduit en FR et en AR.
 - Ligne d'introduction à reformuler (ne pas reprendre Timeleft) : guides pratiques et articles pour se faire des amis, rencontrer du monde et trouver quoi faire dans sa ville.
@@ -29,7 +29,7 @@ Aujourd'hui : Découvrir · Dîners · Activités · Comment ça marche. Demand�
   - **Amitié** : se faire des amis à l'âge adulte, pas d'amis : repartir de zéro, est-ce vraiment difficile de se faire des amis, la solitude et la santé.
   - **Comment fonctionne The Host Club** : dîner avec des inconnus (c'est quoi, comment ça marche), guide complet, comment nous composons les groupes, The Host Club est-il sûr, réserver sa première expérience pas à pas, est-ce une application de rencontre, The Host Club est-il fait pour vous (auto-évaluation).
 
-## 8d — Consignes de sécurité
+## 8d — Consignes de sécurité (prochaine étape)
 
 Enrichir la page Sécurité en s'inspirant (sans copier) des consignes Timeleft fournies :
 avant (prévenir un proche, prévoir le retour, signaler un besoin d'accessibilité tôt, réserver uniquement par le site officiel, ne jamais payer en dehors), pendant (tout est facultatif, garder verre et affaires en vue, modérer l'alcool, protéger ses coordonnées, vérifier les allergènes avec le personnel), activités en extérieur (visibilité, une oreille libre, eau et téléphone chargé, son rythme, météo, rester groupés, veiller les uns sur les autres), danger (secours d'abord, puis nous ; dans le doute, prévenir), après (garder le contact à son rythme, **ne jamais envoyer d'argent**, rentrer en sécurité), numéros (19, 177, 15 au Maroc ; 112 depuis un mobile).
