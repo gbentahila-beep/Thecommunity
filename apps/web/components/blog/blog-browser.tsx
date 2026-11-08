@@ -11,7 +11,7 @@ export type BrowseEntry = { slug: string; title: string; excerpt: string; theme:
 const norm = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 /** « Parcourir les articles » : tri Plus lus / Récents et recherche instantanée. */
-export function BlogBrowser({ popular, recent, contentLang }: { popular: BrowseEntry[]; recent: BrowseEntry[]; contentLang?: "fr" }) {
+export function BlogBrowser({ popular, recent }: { popular: BrowseEntry[]; recent: BrowseEntry[] }) {
   const t = useTranslations("blog");
   const [sort, setSort] = useState<"popular" | "recent">("popular");
   const [q, setQ] = useState("");
@@ -59,7 +59,7 @@ export function BlogBrowser({ popular, recent, contentLang }: { popular: BrowseE
           {shown.map((e) => (
             <li key={e.slug}>
               <Link href={`/blog/${e.slug}`} className="group flex items-center justify-between gap-4 py-5">
-                <span className="min-w-0" lang={contentLang} dir={contentLang ? "ltr" : undefined}>
+                <span className="min-w-0">
                   <span className="block text-[17px] leading-snug font-semibold text-ink group-hover:text-plum-900 sm:text-xl">{e.title}</span>
                   <span className="mt-1 block text-sm text-muted">{e.theme} · {t("readTime", { minutes: e.minutes })}</span>
                 </span>

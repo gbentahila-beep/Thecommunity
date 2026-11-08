@@ -102,8 +102,8 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   const experience = {
     slug,
     title: snapshot.title,
-    summary: { fr: v.summaryFr, ...(v.summaryEn ? { en: v.summaryEn } : {}) },
-    description: { fr: v.descriptionFr, ...(v.descriptionEn ? { en: v.descriptionEn } : {}) },
+    summary: { fr: v.summaryFr, ...(v.summaryAr ? { ar: v.summaryAr } : {}), ...(v.summaryEn ? { en: v.summaryEn } : {}) },
+    description: { fr: v.descriptionFr, ...(v.descriptionAr ? { ar: v.descriptionAr } : {}), ...(v.descriptionEn ? { en: v.descriptionEn } : {}) },
     categoryId: v.categoryId,
     cityId: v.cityId,
     district: v.district,

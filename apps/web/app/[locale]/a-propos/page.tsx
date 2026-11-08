@@ -44,7 +44,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
           <p className="text-sm font-semibold text-ink/80">{ta("heroEyebrow")}</p>
           <h1 className="mt-4 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-plum-900 sm:text-6xl">
             {ta("heroLine1")}
-            <span className="block bg-gradient-to-r from-plum-500 to-[#c9705f] bg-clip-text text-transparent italic">{ta("heroLine2")}</span>
+            <span className="block bg-gradient-to-r from-plum-500 to-[#c9705f] bg-clip-text text-transparent italic rtl:not-italic">{ta("heroLine2")}</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink/80">{t("aboutText")}</p>
           <Link href="/experiences" className="mt-7 inline-flex min-h-12 items-center gap-2 rounded-full bg-plum-900 px-6 font-semibold text-white shadow-card transition hover:bg-plum-800">

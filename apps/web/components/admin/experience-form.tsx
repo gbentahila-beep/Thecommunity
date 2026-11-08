@@ -204,9 +204,17 @@ export function ExperienceForm({
 
       <Section title="1. Informations">
         <div className="sm:col-span-2"><Label k="titleFr">Titre (français)</Label><input {...field("titleFr")} value={v.titleFr} onChange={(e) => set("titleFr", e.target.value)} />{err("titleFr")}</div>
-        <div className="sm:col-span-2"><Label k="titleAr" hint="Facultatif : sinon le titre français s'affiche sur la version arabe.">Titre (arabe)</Label><input {...field("titleAr")} dir="rtl" lang="ar" value={v.titleAr ?? ""} onChange={(e) => set("titleAr", e.target.value)} />{err("titleAr")}</div>
         <div className="sm:col-span-2"><Label k="summaryFr" hint="Une phrase, affichée sur les cartes.">Accroche</Label><input {...field("summaryFr")} value={v.summaryFr} onChange={(e) => set("summaryFr", e.target.value)} />{err("summaryFr")}</div>
         <div className="sm:col-span-2"><Label k="descriptionFr">Description</Label><textarea {...field("descriptionFr")} rows={5} value={v.descriptionFr} onChange={(e) => set("descriptionFr", e.target.value)} />{err("descriptionFr")}</div>
+        <details className="sm:col-span-2 rounded-xl border border-line p-4" open>
+          <summary className="cursor-pointer text-sm font-semibold text-ink">Version arabe (recommandé)</summary>
+          <p className="mt-1 text-xs text-muted">Affichée sur la version arabe du site. Champ laissé vide : le texte français s&apos;affiche à sa place.</p>
+          <div className="mt-4 grid gap-4">
+            <div><Label k="titleAr">Titre (arabe)</Label><input {...field("titleAr")} dir="rtl" lang="ar" value={v.titleAr ?? ""} onChange={(e) => set("titleAr", e.target.value)} />{err("titleAr")}</div>
+            <div><Label k="summaryAr" hint="Une phrase, affichée sur les cartes.">Accroche (arabe)</Label><input {...field("summaryAr")} dir="rtl" lang="ar" value={v.summaryAr ?? ""} onChange={(e) => set("summaryAr", e.target.value)} />{err("summaryAr")}</div>
+            <div><Label k="descriptionAr">Description (arabe)</Label><textarea {...field("descriptionAr")} dir="rtl" lang="ar" rows={4} value={v.descriptionAr ?? ""} onChange={(e) => set("descriptionAr", e.target.value)} />{err("descriptionAr")}</div>
+          </div>
+        </details>
         <details className="sm:col-span-2 rounded-xl border border-line p-4" open={Boolean(v.titleEn || v.summaryEn || v.descriptionEn)}>
           <summary className="cursor-pointer text-sm font-semibold text-ink">Version anglaise (facultatif)</summary>
           <p className="mt-1 text-xs text-muted">Sinon le texte français s&apos;affiche sur la version anglaise du site.</p>

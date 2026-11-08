@@ -1,26 +1,32 @@
 /**
  * Blog « Inconnus aujourd'hui, amis demain » (8c) — articles rédigés par nous.
- * Français : référence. Anglais : traduction. Arabe : à traduire (la version française s'affiche avec une mention).
+ * Français : référence. Anglais : traduction. Arabe : content/blog-ar.ts (fusionné ci-dessous).
  * Blocs : paragraphe (texte), liste (tableau), { h } intertitre, { ol } liste numérotée, { tip } encadré.
  * Liens internes : [texte](/chemin).
  */
 
+import { BLOG_ARTICLES_AR, BLOG_CATEGORIES_AR, CITY_GUIDE_FAQ_AR } from "./blog-ar";
+
 export type BlogCategoryKey = "city-guide" | "conversation" | "amitie" | "the-host-club";
-type L = { fr: string; en: string };
+type LRaw = { fr: string; en: string };
+type L = { fr: string; en: string; ar: string };
 export type BlogBlock = string | string[] | { h: string } | { ol: string[] } | { tip: string };
-export type BlogArticle = {
+type BlogArticleRaw = {
   slug: string;
   category: BlogCategoryKey;
-  title: L;
-  excerpt: L;
+  title: LRaw;
+  excerpt: LRaw;
   minutes: number;
   date: string;
   cover: string;
   body: { fr: BlogBlock[]; en: BlogBlock[] };
 };
+export type BlogLang = "fr" | "en" | "ar";
+export type BlogArticle = Omit<BlogArticleRaw, "title" | "excerpt" | "body"> & { title: L; excerpt: L; body: Record<BlogLang, BlogBlock[]> };
+type BlogCategoryRaw = { key: BlogCategoryKey; title: LRaw; description: LRaw };
 export type BlogCategory = { key: BlogCategoryKey; title: L; description: L };
 
-export const BLOG_CATEGORIES: BlogCategory[] = [
+const BLOG_CATEGORIES_RAW: BlogCategoryRaw[] = [
   { key: "city-guide", title: { fr: "City guide", en: "City guide" }, description: { fr: "Casablanca autrement : où aller, quoi faire, comment y rencontrer du monde.", en: "Casablanca differently: where to go, what to do, how to meet people there." } },
   { key: "conversation", title: { fr: "Conversation", en: "Conversation" }, description: { fr: "Des questions et des conseils pour lancer, nourrir et apaiser une discussion.", en: "Questions and tips to start, deepen and calm a conversation." } },
   { key: "amitie", title: { fr: "Amitié", en: "Friendship" }, description: { fr: "Se faire des amis à l'âge adulte, sans pression et pour de vrai.", en: "Making friends as an adult, without pressure and for real." } },
@@ -28,7 +34,7 @@ export const BLOG_CATEGORIES: BlogCategory[] = [
 ];
 
 /** FAQ affichée en bas de l'onglet City guide. */
-export const CITY_GUIDE_FAQ: { q: L; a: L }[] = [
+const CITY_GUIDE_FAQ_RAW: { q: LRaw; a: LRaw }[] = [
   {
     q: { fr: "Où sortir seul à Casablanca sans se sentir seul ?", en: "Where can you go out alone in Casablanca without feeling lonely?" },
     a: { fr: "Les activités en petit groupe sont idéales : cours de sport collectifs, ateliers créatifs, jeux, dîners organisés. Le cadre crée la conversation à votre place. C'est exactement ce que proposent les expériences The Host Club.", en: "Small-group activities are ideal: group fitness classes, creative workshops, games, organised dinners. The setting starts the conversation for you. That's exactly what The Host Club experiences offer." },
@@ -53,7 +59,7 @@ export const CITY_GUIDE_FAQ: { q: L; a: L }[] = [
 
 const D = "2026-11-08";
 
-export const BLOG_ARTICLES: BlogArticle[] = [
+const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
   // ——— City guide ———
   {
     slug: "que-faire-a-casablanca",
@@ -833,9 +839,25 @@ export const BLOG_ARTICLES: BlogArticle[] = [
   },
 ];
 
-export type BlogLang = "fr" | "en";
-/** Langue du contenu : l'arabe affiche la version française (traduction à venir). */
-export const blogLang = (locale: string): BlogLang => (locale === "en" ? "en" : "fr");
+/** Fusion de la version arabe (content/blog-ar.ts) ; un article sans traduction fait échouer la compilation. */
+function arOf<T>(map: Record<string, T>, key: string): T {
+  const v = map[key];
+  if (!v) throw new Error(`Traduction arabe manquante pour le blog : ${key}`);
+  return v;
+}
+export const BLOG_CATEGORIES: BlogCategory[] = BLOG_CATEGORIES_RAW.map((c) => {
+  const ar = arOf(BLOG_CATEGORIES_AR, c.key);
+  return { ...c, title: { ...c.title, ar: ar.title }, description: { ...c.description, ar: ar.description } };
+});
+if (CITY_GUIDE_FAQ_AR.length !== CITY_GUIDE_FAQ_RAW.length) throw new Error("FAQ City guide : traduction arabe incomplète");
+export const CITY_GUIDE_FAQ: { q: L; a: L }[] = CITY_GUIDE_FAQ_RAW.map((f, i) => ({ q: { ...f.q, ar: CITY_GUIDE_FAQ_AR[i]!.q }, a: { ...f.a, ar: CITY_GUIDE_FAQ_AR[i]!.a } }));
+export const BLOG_ARTICLES: BlogArticle[] = BLOG_ARTICLES_RAW.map((a) => {
+  const ar = arOf(BLOG_ARTICLES_AR, a.slug);
+  return { ...a, title: { ...a.title, ar: ar.title }, excerpt: { ...a.excerpt, ar: ar.excerpt }, body: { ...a.body, ar: ar.body } };
+});
+
+/** Langue du contenu des articles. */
+export const blogLang = (locale: string): BlogLang => (locale === "en" || locale === "ar" ? locale : "fr");
 export const articleBySlug = (slug: string) => BLOG_ARTICLES.find((a) => a.slug === slug);
 export const blogCategory = (key: string) => BLOG_CATEGORIES.find((c) => c.key === key);
 export const articlesIn = (key: BlogCategoryKey) => BLOG_ARTICLES.filter((a) => a.category === key);

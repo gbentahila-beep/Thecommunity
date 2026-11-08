@@ -60,8 +60,7 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
           <section aria-labelledby="blog-faq" className="mt-16">
             {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />}
             <h2 id="blog-faq" className="font-display text-[2.2rem] leading-tight font-medium text-plum-900 sm:text-5xl">{t("faqTitle")}</h2>
-            {locale === "ar" && <p className="mt-6 rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("arabicPending")}</p>}
-            <div className="mt-8 divide-y divide-line rounded-[var(--radius-card)] bg-white shadow-card" lang={locale === "ar" ? "fr" : undefined} dir={locale === "ar" ? "ltr" : undefined}>
+            <div className="mt-8 divide-y divide-line rounded-[var(--radius-card)] bg-white shadow-card">
               {faq.map((f) => (
                 <details key={f.q.fr} className="group p-5">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink [&::-webkit-details-marker]:hidden">

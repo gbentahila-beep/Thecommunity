@@ -32,12 +32,13 @@
 | 8h ✅ | **Confidentialité revue** : comment les données sont recueillies, **tableau finalité / base légale / durée** (régime et allergies avec accord explicite, effacés 30 jours après l'expérience ; photos avec accord ; pièces comptables 10 ans), **liste des prestataires** (Google Cloud / Firebase, Brevo, prestataire de paiement à venir), transferts hors du Maroc, droits avec réponse sous un mois, **mineurs et protection de l'enfance** ; tableaux affichés en fiches sur mobile |
 | 8e ✅ | **Page À propos** : en-tête (« Des inconnus à table. *Des amis en repartant.* » + grande photo), **la créatrice** (photo à gauche, texte à droite, Instagram), **ce qui compte pour elle**, **« Nos outils pour créer du lien »** en cartes numérotées qui défilent (flèche « suivant » seule au départ, puis les deux sens ; 8 outils réels du site), **galerie** « Des rencontres qui valent mille images » (8 photos, en mosaïque) |
 | 5i ✅ | **Archiver / supprimer une expérience** (back-office, fiche de l'expérience) : **Archiver** (équipe) → disparaît du site, fiche publique « Cette expérience n'est plus proposée » (non référencée, expériences du même univers proposées), historique conservé ; refusé tant qu'une date à venir a des participants, une liste d'attente ou une demande en attente ; dates vides repassées en brouillon ; filtre « Archivées », bouton **Réactiver** (en brouillon) ; une expérience archivée le reste même si on enregistre sa fiche. **Supprimer définitivement** (super-admin) → seulement sans aucun historique (réservation, demande, avis) ; efface dates, données internes, alertes et photos. Confirmation avant chaque action, journalisé |
+| Arabe ✅ | **Pages encore en français traduites en arabe** (8 novembre) : textes juridiques (Sécurité, Règles de la communauté, CGU, CGV, Confidentialité), **centre d'aide** (7 catégories, 23 articles), **blog** (4 thèmes, 19 articles, FAQ City guide) ; plus de mention « traduction à venir ». Back-office : **accroche et description en arabe** pour chaque expérience (bloc « Version arabe », ouvert par défaut) |
 
 ## Reste à faire — ordre proposé
 
 > 8a–8c : l'accroche « Your people are out there. » reste **en anglais dans les trois langues** (confirmé par Rita le 8 novembre). Les articles du blog citent des lieux connus de Casablanca sans adresse ni horaire (à vérifier avant de les mettre en avant). Proposition : un menu « hamburger » sur mobile pour Blog / À propos (aujourd'hui dans le pied de page) — à valider.
 
-> Ordre proposé : **traduction arabe** des pages encore en français (en cours), puis 5h (paiement réel, dès le contrat signé) et 9 (mise en production).
+> Ordre proposé : 5h (paiement réel, dès le contrat signé) et 9 (mise en production).
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
@@ -48,7 +49,7 @@ Idées notées, à valider avant de les planifier :
 
 - Formats **brunch** et **conversation** ; mention « en collaboration avec … » (lieu partenaire) sur la fiche.
 - Après une expérience, **se revoir seulement si les deux le souhaitent** (décision D8 : pas de messagerie au lancement).
-- **Traduction arabe** des textes juridiques et des articles d'aide.
+- **Arabe, reste à traduire** : les e-mails et notifications envoyés par le site (aujourd'hui en français), les factures PDF, et le contenu de chaque expérience (à saisir dans le back-office, bloc « Version arabe »).
 
 ---
 

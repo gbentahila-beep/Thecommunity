@@ -37,7 +37,7 @@ export default async function BlogPage({ params }: PageProps<"/[locale]/blog">) 
         </section>
         <section aria-labelledby="browse" className="mt-16">
           <h2 id="browse" className="mb-6 font-display text-[2.2rem] leading-tight font-medium text-plum-900 sm:text-5xl">{t("browse")}</h2>
-          <BlogBrowser popular={byPopularity(BLOG_ARTICLES).map(entry)} recent={byRecency(BLOG_ARTICLES).map(entry)} contentLang={locale === "ar" ? "fr" : undefined} />
+          <BlogBrowser popular={byPopularity(BLOG_ARTICLES).map(entry)} recent={byRecency(BLOG_ARTICLES).map(entry)} />
         </section>
       </div>
       <BlogCta />

@@ -17,7 +17,7 @@ function nextWeekDate(now: Date) {
 
 export function emptyExperienceValues(now: Date): ExperienceFormValues {
   return {
-    titleFr: "", titleAr: "", summaryFr: "", descriptionFr: "", titleEn: "", summaryEn: "", descriptionEn: "",
+    titleFr: "", titleAr: "", summaryAr: "", descriptionAr: "", summaryFr: "", descriptionFr: "", titleEn: "", summaryEn: "", descriptionEn: "",
     categoryId: "eat", cityId: "casablanca", district: "", venueName: "", address: "",
     revealPolicy: "immediate", bookingMode: "individual",
     groupMin: "5", groupTarget: "6", groupMax: "7", maxSeatsPerBooking: "1",
@@ -33,7 +33,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
 export function experienceToValues(e: Experience, eco: AdminData["economics"][string] | undefined, now: Date): ExperienceFormValues {
   return {
     ...emptyExperienceValues(now),
-    titleFr: e.title.fr, titleAr: e.title.ar ?? "", summaryFr: e.summary.fr, descriptionFr: e.description.fr,
+    titleFr: e.title.fr, titleAr: e.title.ar ?? "", summaryAr: e.summary.ar ?? "", descriptionAr: e.description.ar ?? "", summaryFr: e.summary.fr, descriptionFr: e.description.fr,
     titleEn: e.title.en ?? "", summaryEn: e.summary.en ?? "", descriptionEn: e.description.en ?? "",
     categoryId: e.categoryId, cityId: e.cityId, district: e.district, venueName: e.venue.name, address: e.venue.address,
     revealPolicy: e.venue.revealPolicy, bookingMode: e.bookingMode,

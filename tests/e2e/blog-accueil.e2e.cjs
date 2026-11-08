@@ -104,7 +104,14 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await d.getByRole('heading', { level: 1, name: 'Strangers Today, Friends Tomorrow' }).isVisible(), 'blog en anglais');
   await d.goto(`${base}/ar/blog/bien-ecouter`);
   assert(await d.locator('html').getAttribute('dir') === 'rtl', 'arabe : page en RTL');
-  assert(await d.locator('main p.bg-plum-50').first().isVisible(), 'arabe : mention de traduction à venir');
+  assert(await d.getByRole('heading', { level: 1, name: 'كيف تصبح شخصاً يُصغي حقاً' }).isVisible(), 'arabe : article traduit');
+  assert(await d.locator('main article [lang="fr"]').count() === 0, 'arabe : plus de texte français affiché à la place');
+  await d.goto(`${base}/ar/blog/theme/city-guide`);
+  assert(await d.getByText('هل يجب أن أتحدث العربية للتعرّف على الناس؟').isVisible(), 'arabe : FAQ City guide traduite');
+  for (const [path, h1] of [['/ar/charte', 'قواعد المجتمع'], ['/ar/securite', 'السلامة'], ['/ar/cgu', 'الشروط العامة للاستخدام'], ['/ar/cgv', 'الشروط العامة للبيع'], ['/ar/confidentialite', 'سياسة الخصوصية']]) {
+    await d.goto(`${base}${path}`);
+    assert(await d.getByRole('heading', { level: 1, name: h1 }).isVisible() && !(await d.getByText('النص العربي قيد الترجمة').isVisible()), `arabe : ${path} traduit`);
+  }
   await d.goto(`${base}/ar/blog`);
   assert(await d.getByRole('heading', { level: 1, name: 'غرباء اليوم، أصدقاء الغد' }).isVisible(), 'titre du blog en arabe');
 
@@ -185,7 +192,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await d.locator('footer').getByRole('link', { name: 'Règles de la communauté' }).getAttribute('href') === '/charte', 'pied de page → Règles de la communauté');
   await d.goto(`${base}/en/charte`);
   assert(await d.getByRole('heading', { level: 1, name: 'Community rules' }).isVisible(), 'règles en anglais');
-  for (const path of ['/charte', '/securite', '/cgu', '/confidentialite', '/a-propos', '/ar/a-propos', '/blog/theme/city-guide']) { await m.goto(`${base}${path}`); await noOverflow(m, `mobile ${path}`); }
+  for (const path of ['/charte', '/securite', '/cgu', '/confidentialite', '/a-propos', '/ar/a-propos', '/blog/theme/city-guide', '/ar/confidentialite', '/ar/blog/que-faire-a-casablanca', '/ar/aide']) { await m.goto(`${base}${path}`); await noOverflow(m, `mobile ${path}`); }
   await m.goto(`${base}/confidentialite`);
   assert(await m.locator('dl dt', { hasText: 'Base légale' }).first().isVisible(), 'mobile : tableau en fiches');
 

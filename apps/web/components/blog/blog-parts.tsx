@@ -6,8 +6,6 @@ import { Link } from "@/i18n/navigation";
 import { richText } from "@/lib/rich-text";
 
 const catTitle = (key: BlogCategoryKey, locale: string) => BLOG_CATEGORIES.find((c) => c.key === key)!.title[blogLang(locale)];
-/** En arabe, le contenu des articles est encore en français (affiché de gauche à droite). */
-const frIfAr = (locale: string) => (locale === "ar" ? ({ lang: "fr", dir: "ltr" } as const) : {});
 
 /** En-tête du blog : grande accroche avec la fin mise en couleur, puis l'introduction. */
 export async function BlogHero({ as = "h1" }: { as?: "h1" | "p" }) {
@@ -17,7 +15,7 @@ export async function BlogHero({ as = "h1" }: { as?: "h1" | "p" }) {
     <header className="max-w-3xl">
       <p className="text-sm font-semibold tracking-[0.18em] text-plum-700 uppercase">{t("title")}</p>
       <Title className="mt-3 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-plum-900 sm:text-6xl lg:text-7xl">
-        {t("heroTitleA")} <span className="bg-gradient-to-r from-plum-500 to-[#c9705f] bg-clip-text text-transparent italic">{t("heroTitleB")}</span>
+        {t("heroTitleA")} <span className="bg-gradient-to-r from-plum-500 to-[#c9705f] bg-clip-text text-transparent italic rtl:not-italic">{t("heroTitleB")}</span>
       </Title>
       <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink/80">{t("heroText")}</p>
       <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{t("intro")}</p>
@@ -61,7 +59,7 @@ export async function FeaturedArticle({ a, locale }: { a: BlogArticle; locale: s
       <div className="relative aspect-[16/11] overflow-hidden md:aspect-auto md:min-h-[22rem]">
         <Image src={a.cover} alt="" fill priority sizes="(min-width: 768px) 55vw, 100vw" className="object-cover transition duration-500 group-hover:scale-[1.03]" />
       </div>
-      <div className="flex flex-col justify-center p-6 sm:p-8" {...frIfAr(locale)}>
+      <div className="flex flex-col justify-center p-6 sm:p-8">
         <p className="text-sm text-muted">
           <span className="font-semibold text-ink">{t("startHere")}</span> · {catTitle(a.category, locale)} · {t("readTime", { minutes: a.minutes })}
         </p>
@@ -89,7 +87,7 @@ export async function CompactList({ articles, locale, showTheme = true }: { arti
             <span className="relative size-24 shrink-0 overflow-hidden rounded-2xl sm:size-28">
               <Image src={a.cover} alt="" fill sizes="112px" className="object-cover transition duration-500 group-hover:scale-105" />
             </span>
-            <span className="min-w-0" {...frIfAr(locale)}>
+            <span className="min-w-0">
               <span className="block text-[17px] leading-snug font-semibold text-ink group-hover:text-plum-900 sm:text-xl">{a.title[lang]}</span>
               <span className="mt-1.5 block text-sm text-muted">
                 {showTheme && <>{catTitle(a.category, locale)} · </>}
@@ -115,7 +113,7 @@ export async function UsefulAlso({ articles, locale, title }: { articles: BlogAr
         {articles.map((a) => (
           <li key={a.slug}>
             <Link href={`/blog/${a.slug}`} className="group flex items-center justify-between gap-4 py-5">
-              <span className="min-w-0" {...frIfAr(locale)}>
+              <span className="min-w-0">
                 <span className="block text-[17px] leading-snug font-semibold text-ink group-hover:text-plum-900 sm:text-xl">{a.title[lang]}</span>
                 <span className="mt-1 block text-sm text-muted">{catTitle(a.category, locale)} · {t("readTime", { minutes: a.minutes })}</span>
               </span>

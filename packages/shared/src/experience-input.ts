@@ -24,6 +24,8 @@ export const experienceInputSchema = z
     titleFr: z.string().trim().min(3, "tooShort").max(80, "tooLong"),
     titleAr: z.string().trim().max(80, "tooLong").optional().or(z.literal("")),
     // Anglais facultatif : sinon le texte français s'affiche sur la version anglaise du site.
+    summaryAr: z.string().trim().max(160, "tooLong").optional().or(z.literal("")),
+    descriptionAr: z.string().trim().max(3000, "tooLong").optional().or(z.literal("")),
     titleEn: z.string().trim().max(80, "tooLong").optional().or(z.literal("")),
     summaryEn: z.string().trim().max(160, "tooLong").optional().or(z.literal("")),
     descriptionEn: z.string().trim().max(3000, "tooLong").optional().or(z.literal("")),

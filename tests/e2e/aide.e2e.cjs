@@ -69,7 +69,8 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   await page.waitForURL('**/en/aide/liste-d-attente');
   assert(await visible(page.getByText(/have 4 hours to book/)), 'article en anglais');
   await page.goto(`${base}/ar/aide/liste-d-attente`);
-  assert(await page.locator('html[dir=rtl]').count() === 1 && await page.getByText('لم تُترجم هذه المقالة إلى العربية بعد').isVisible(), 'arabe : interface RTL + mention de traduction à venir');
+  assert(await page.locator('html[dir=rtl]').count() === 1 && await page.getByRole('heading', { level: 1, name: 'قائمة الانتظار' }).isVisible(), 'arabe : interface RTL + article traduit');
+  assert(!(await page.getByText('لم تُترجم هذه المقالة إلى العربية بعد').isVisible()), 'arabe : plus de mention « traduction à venir »');
   await noOverflow('/ar/aide/liste-d-attente');
 
   // Accès depuis le pied de page et la FAQ

@@ -72,8 +72,7 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
           <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-[2rem] shadow-card">
             <Image src={a.cover} alt="" fill priority sizes="(min-width: 768px) 768px, 100vw" className="object-cover" />
           </div>
-          {locale === "ar" && <p className="mt-8 rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("arabicPending")}</p>}
-          <div className="mt-8" lang={locale === "ar" ? "fr" : undefined} dir={locale === "ar" ? "ltr" : undefined}>
+          <div className="mt-8">
             <ArticleBody blocks={a.body[lang]} />
           </div>
         </article>
