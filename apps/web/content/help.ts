@@ -209,12 +209,12 @@ export const HELP_ARTICLES: HelpArticle[] = [
       fr: [
         `Une fois l'expérience passée, ouvrez votre réservation dans [Mes réservations](/espace/reservations) : vous pouvez donner une note de 1 à 5 et un commentaire pendant ${REVIEW_WINDOW_DAYS} jours.`,
         "Les avis restent visibles sur la fiche de l'expérience, même lorsqu'aucune nouvelle date n'est programmée. Seul votre prénom et l'initiale de votre nom apparaissent.",
-        "Un avis qui ne respecte pas la [charte de bonne conduite](/securite) peut être masqué par l'équipe.",
+        "Un avis qui ne respecte pas la [règles de la communauté](/charte) peut être masqué par l'équipe.",
       ],
       en: [
         `Once the experience is over, open your booking in [My bookings](/espace/reservations): you can give a rating from 1 to 5 and a comment for ${REVIEW_WINDOW_DAYS} days.`,
         "Reviews stay visible on the experience page, even when no new date is scheduled. Only your first name and last-name initial are shown.",
-        "A review that breaks our [code of conduct](/securite) may be hidden by the team.",
+        "A review that breaks our [community rules](/charte) may be hidden by the team.",
       ],
     },
     related: ["signaler-un-comportement"],
@@ -379,11 +379,11 @@ export const HELP_ARTICLES: HelpArticle[] = [
     body: {
       fr: [
         "Nous choisissons nos partenaires avec soin, car ils font l'expérience de nos membres.",
-        ["Un lieu ouvert au public, propre, sûr et facile d'accès.", "Un espace où un petit groupe peut échanger confortablement (table dédiée, salle, terrasse…).", "Une offre de qualité, avec des options sans alcool et, pour la restauration, une attention aux régimes et allergies.", "Un interlocuteur joignable le jour J.", "Le respect de notre [charte de bonne conduite](/securite) par votre équipe."],
+        ["Un lieu ouvert au public, propre, sûr et facile d'accès.", "Un espace où un petit groupe peut échanger confortablement (table dédiée, salle, terrasse…).", "Une offre de qualité, avec des options sans alcool et, pour la restauration, une attention aux régimes et allergies.", "Un interlocuteur joignable le jour J.", "Le respect de notre [règles de la communauté](/charte) par votre équipe."],
       ],
       en: [
         "We choose our partners carefully, because they shape our members' experience.",
-        ["A venue open to the public, clean, safe and easy to reach.", "A space where a small group can talk comfortably (dedicated table, room, terrace…).", "A quality offer, with alcohol-free options and, for food, care for diets and allergies.", "A contact person who can be reached on the day.", "Your team's respect for our [code of conduct](/securite)."],
+        ["A venue open to the public, clean, safe and easy to reach.", "A space where a small group can talk comfortably (dedicated table, room, terrace…).", "A quality offer, with alcohol-free options and, for food, care for diets and allergies.", "A contact person who can be reached on the day.", "Your team's respect for our [community rules](/charte)."],
       ],
     },
     related: ["devenir-partenaire"],
@@ -453,12 +453,12 @@ export const HELP_ARTICLES: HelpArticle[] = [
     summary: { fr: "Votre équipe peut demander à une personne de partir ; prévenez-nous ensuite.", en: "Your team may ask someone to leave; let us know afterwards." },
     body: {
       fr: [
-        "Chaque membre accepte notre [charte de bonne conduite](/securite). Si un participant ne la respecte pas, votre équipe peut lui demander de partir.",
+        "Chaque membre accepte notre [règles de la communauté](/charte). Si un participant ne la respecte pas, votre équipe peut lui demander de partir.",
         "Signalez-nous ensuite ce qui s'est passé (date, heure, faits) à {{safetyEmail}} ou via la page [Contact](/contact). Nous prenons les mesures nécessaires, pouvant aller jusqu'à l'exclusion.",
         "En cas de danger immédiat, appelez d'abord le 19 (Police) ou le 15 (Protection civile).",
       ],
       en: [
-        "Every member accepts our [code of conduct](/securite). If a participant breaks it, your team may ask them to leave.",
+        "Every member accepts our [community rules](/charte). If a participant breaks it, your team may ask them to leave.",
         "Then tell us what happened (date, time, facts) at {{safetyEmail}} or via the [Contact](/contact) page. We take the necessary steps, up to removing the member.",
         "If there's immediate danger, call 19 (Police) or 15 (Civil Protection) first.",
       ],

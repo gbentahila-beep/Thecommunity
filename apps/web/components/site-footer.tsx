@@ -35,6 +35,7 @@ export async function SiteFooter() {
         { href: "/cgv", label: t("sales") },
         { href: "/confidentialite", label: t("privacy") },
         { href: "/securite", label: t("safety") },
+        { href: "/charte", label: t("charter") },
       ],
     },
   ];

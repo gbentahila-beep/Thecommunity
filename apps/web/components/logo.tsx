@@ -4,7 +4,7 @@ export function Logo({ className = "" }: { className?: string }) {
   return (
     <Link
       href="/"
-      className={`font-display text-[1.65rem] leading-none font-semibold tracking-tight text-plum-900 ${className}`}
+      className={`font-display text-[1.4rem] leading-none lg:text-[1.65rem] font-semibold tracking-tight text-plum-900 ${className}`}
       aria-label="The Host Club — accueil"
     >
       <span lang="en" dir="ltr" className="font-[family-name:var(--font-fraunces)]">

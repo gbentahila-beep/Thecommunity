@@ -29,7 +29,7 @@ Aujourd'hui : Découvrir · Dîners · Activités · Comment ça marche. Demand�
   - **Amitié** : se faire des amis à l'âge adulte, pas d'amis : repartir de zéro, est-ce vraiment difficile de se faire des amis, la solitude et la santé.
   - **Comment fonctionne The Host Club** : dîner avec des inconnus (c'est quoi, comment ça marche), guide complet, comment nous composons les groupes, The Host Club est-il sûr, réserver sa première expérience pas à pas, est-ce une application de rencontre, The Host Club est-il fait pour vous (auto-évaluation).
 
-## 8d — Consignes de sécurité (prochaine étape)
+## 8d — Consignes de sécurité ✅ (fait le 8 novembre)
 
 Enrichir la page Sécurité en s'inspirant (sans copier) des consignes Timeleft fournies :
 avant (prévenir un proche, prévoir le retour, signaler un besoin d'accessibilité tôt, réserver uniquement par le site officiel, ne jamais payer en dehors), pendant (tout est facultatif, garder verre et affaires en vue, modérer l'alcool, protéger ses coordonnées, vérifier les allergènes avec le personnel), activités en extérieur (visibilité, une oreille libre, eau et téléphone chargé, son rythme, météo, rester groupés, veiller les uns sur les autres), danger (secours d'abord, puis nous ; dans le doute, prévenir), après (garder le contact à son rythme, **ne jamais envoyer d'argent**, rentrer en sécurité), numéros (19, 177, 15 au Maroc ; 112 depuis un mobile).
@@ -52,7 +52,7 @@ L'accroche de l'accueil reste en anglais dans les trois langues (confirmé par R
 
 Rita a transmis trois textes de Timeleft (*Community Guidelines*, *Privacy*, *Terms & Conditions*) : **s'en inspirer, ne pas copier**. Seule la structure est notée ici ; tout sera rédigé par nous, adapté au Maroc et à notre fonctionnement.
 
-## 8f — Règles de la communauté (page `/charte`)
+## 8f — Règles de la communauté (page `/charte`) ✅ (fait le 8 novembre)
 
 Aujourd'hui `/charte` affiche la page Sécurité. En faire une vraie page « Règles de la communauté », reliée depuis Sécurité, CGU, l'inscription et le pied de page.
 
@@ -76,7 +76,7 @@ Structure envisagée :
 
 Hypothèses : pas de photo de profil obligatoire (nous n'en demandons pas) ; pas de blocage entre membres ni de messagerie (D8) ; recours par e-mail / contact. **Option à valider** : dans le back-office, consigner les avertissements sur un compte (aujourd'hui : suspension seulement).
 
-## 8g — CGU revues
+## 8g — CGU revues ✅ (fait le 8 novembre)
 
 Points à reprendre à notre façon (sans copier) :
 - **Ce que le service fait et ne fait pas** : nous organisons la rencontre ; le lieu prépare et sert. Régime : nous transmettons, sans garantie absolue ; **allergies : vérifier aussi auprès du personnel** ; ce qui est inclus est indiqué sur chaque fiche, le reste est à la charge du membre.
@@ -107,7 +107,7 @@ Références : `docs/maquettes/2026-11-08/blog-mobile-1..5.png` (blog Timeleft s
 4. **« Parcourir les articles »** : tri **Plus lus / Récents** (onglets soulignés), **champ de recherche** (« Rechercher : Casablanca, questions… »), liste sans image avec flèche à droite.
 5. **Page d'un thème** (ex. City guide) : fil d'Ariane « Blog / City guide », grand titre, intro, « N articles · mis à jour le … », puis **carte d'appel** « Rencontrer du monde à Casablanca » (texte court + bouton « Trouver mon groupe » → expériences + bouton secondaire « Choisir une autre ville »), puis la liste compacte des articles du thème.
 6. **Bas d'article / de thème** : bloc blanc arrondi « Utile aussi quand on arrive » avec 2–3 articles en liste et une flèche ronde.
-7. **Menu hamburger sur mobile** (captures `menu-mobile-barre.jpg`, `menu-mobile-ouvert.png`, envoyées par Rita) :
+7. ✅ (fait le 8 novembre, validé par Rita) **Menu hamburger sur mobile** (captures `menu-mobile-barre.jpg`, `menu-mobile-ouvert.png`, envoyées par Rita) :
    - **Barre du haut** flottante : carte blanche aux coins très arrondis, légère ombre, logo à gauche, bouton **« S'inscrire »** (prune, ou « Mon compte » une fois connecté) et icône **burger** à droite.
    - **Menu ouvert** : la même carte s'agrandit vers le bas (fond de page atténué), croix pour fermer, puis une liste à séparateurs fins :
      **Découvrir ⌄** (dépliable : toutes les expériences, Dîners, Sport & bien-être, Jeux, Ateliers, Sorties) · **À propos** · **Comment ça marche** · **Blog** · **Villes ⌄** (dépliable : Casablanca, puis « bientôt » Rabat, Marrakech…), et en bas deux boutons côte à côte **« Se connecter »** (contour) et **« S'inscrire »** (plein) — ou « Mon compte » / « Se déconnecter » si connecté.

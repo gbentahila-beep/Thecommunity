@@ -1,33 +1,17 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Fragment, type ReactNode } from "react";
 import { StaticPage } from "@/components/static-page";
 import { LEGAL_DOCS, type LegalKey } from "@/content/legal";
-import { LEGAL_INFO } from "@/lib/legal-info";
+import { plainText, richText } from "@/lib/rich-text";
 
 const docFor = (locale: string, key: LegalKey) => LEGAL_DOCS[locale === "en" ? "en" : "fr"][key];
-
-/** Remplace les jetons {{…}} par les informations légales, ou par une mention « à compléter » bien visible. */
-function fill(text: string, missing: string): ReactNode {
-  const parts = text.split(/(\{\{\w+\}\})/g);
-  return parts.map((p, i) => {
-    const m = p.match(/^\{\{(\w+)\}\}$/);
-    if (!m) return <Fragment key={i}>{p}</Fragment>;
-    const value = (LEGAL_INFO as Record<string, string | null>)[m[1]!];
-    return value ? (
-      <Fragment key={i}>{value}</Fragment>
-    ) : (
-      <mark key={i} className="rounded bg-amber-100 px-1 text-amber-950">{missing}</mark>
-    );
-  });
-}
 
 /** Pages juridiques et Sécurité, rédigées à partir du fonctionnement réel du site. */
 export function legalPage(key: LegalKey) {
   async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const { locale } = await params;
     const doc = docFor(locale, key);
-    return { title: doc.title, description: doc.intro };
+    return { title: doc.title, description: plainText(doc.intro) };
   }
   async function Page({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
@@ -36,7 +20,7 @@ export function legalPage(key: LegalKey) {
     const doc = docFor(locale, key);
     const missing = t("missing");
     return (
-      <StaticPage title={doc.title} intro={doc.intro}>
+      <StaticPage title={doc.title} intro={richText(doc.intro, missing)}>
         <p className="text-sm text-muted">{doc.updated}</p>
         {locale === "ar" && <p className="rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("arabicPending")}</p>}
         <nav aria-label={t("toc")} className="rounded-[var(--radius-card)] bg-white/70 p-5">
@@ -54,10 +38,10 @@ export function legalPage(key: LegalKey) {
             {s.body.map((b, j) =>
               Array.isArray(b) ? (
                 <ul key={j} className="list-disc space-y-1.5 ps-5 leading-relaxed text-ink/85">
-                  {b.map((li, k) => <li key={k}>{fill(li, missing)}</li>)}
+                  {b.map((li, k) => <li key={k}>{richText(li, missing)}</li>)}
                 </ul>
               ) : (
-                <p key={j} className="leading-relaxed text-ink/85">{fill(b, missing)}</p>
+                <p key={j} className="leading-relaxed text-ink/85">{richText(b, missing)}</p>
               ),
             )}
           </section>

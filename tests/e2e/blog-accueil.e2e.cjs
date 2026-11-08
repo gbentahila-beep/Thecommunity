@@ -96,6 +96,46 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await m.goto(`${base}/`);
   assert(await m.locator('footer').getByRole('link', { name: 'Blog' }).isVisible(), 'mobile : Blog dans le pied de page');
 
+  // Menu burger (mobile) — la barre du bas reste en place
+  assert(await m.getByRole('navigation', { name: 'Navigation mobile' }).isVisible(), 'mobile : barre du bas conservée');
+  assert(await m.locator('header').getByRole('link', { name: "S'inscrire" }).isVisible(), 'mobile : bouton S\'inscrire dans la barre du haut');
+  const burger = m.getByRole('button', { name: 'Ouvrir le menu' });
+  await burger.click();
+  const dialog = m.getByRole('dialog', { name: 'Menu' });
+  assert(await visible(dialog), 'menu burger ouvert');
+  assert(await m.evaluate(() => document.body.style.overflow) === 'hidden', 'page bloquée derrière le menu');
+  for (const l of ['À propos', 'Comment ça marche', 'Blog', 'Se connecter', "S'inscrire"]) assert(await dialog.getByRole('link', { name: l, exact: true }).isVisible(), `menu burger : ${l}`);
+  const disc = dialog.getByRole('button', { name: 'Découvrir' });
+  assert(!(await dialog.getByRole('link', { name: 'Jeux' }).isVisible()), 'Découvrir replié au départ');
+  await disc.click();
+  assert(await disc.getAttribute('aria-expanded') === 'true' && await dialog.getByRole('link', { name: 'Jeux' }).isVisible(), 'Découvrir se déplie');
+  await dialog.getByRole('button', { name: 'Villes' }).click();
+  assert(await dialog.getByText('Bientôt').first().isVisible(), 'Villes : villes « bientôt »');
+  const topEl = await m.evaluate(() => { const r = document.querySelector('[role=dialog]').getBoundingClientRect(); const el = document.elementFromPoint(r.left + r.width / 2, Math.min(r.bottom - 10, innerHeight - 10)); return !!el.closest('[role=dialog]'); });
+  assert(topEl, 'le menu passe au-dessus de la barre du bas');
+  await m.keyboard.press('Escape');
+  assert(!(await dialog.isVisible()), 'Échap ferme le menu');
+  assert(await m.evaluate(() => document.activeElement?.getAttribute('aria-label')) === 'Ouvrir le menu', 'focus rendu au bouton du menu');
+  await burger.click();
+  await m.getByRole('dialog').getByRole('link', { name: 'Blog', exact: true }).click();
+  await m.waitForURL('**/blog');
+  assert(!(await m.getByRole('dialog').isVisible().catch(() => false)), 'menu fermé après navigation');
+
+  // 8d / 8f / 8g : Sécurité, Règles de la communauté, CGU
+  await d.goto(`${base}/charte`);
+  assert(await d.getByRole('heading', { level: 1, name: 'Règles de la communauté' }).isVisible(), 'page Règles de la communauté');
+  for (const h of ['Les lignes rouges', 'Pas de discrimination à table', 'Les mesures', 'Recours']) assert(await d.getByRole('heading', { level: 2, name: h }).isVisible(), `règles : ${h}`);
+  assert(await d.locator('main').getByRole('link', { name: 'Sécurité' }).first().getAttribute('href') === '/securite', 'règles → lien Sécurité');
+  await d.goto(`${base}/securite`);
+  for (const h of ['Avant l\'expérience', 'Pendant l\'expérience', 'Sorties, sport et activités en plein air', 'En cas d\'urgence', 'Après l\'expérience']) assert(await d.getByRole('heading', { level: 2, name: h }).isVisible(), `sécurité : ${h}`);
+  assert(await d.getByText('Police : 19').isVisible(), 'numéros d\'urgence au Maroc');
+  await d.goto(`${base}/cgu`);
+  for (const h of ['3. Ce que nous faisons, et ce que fait le lieu', '4. Ce que nous ne pouvons pas garantir', '10. Photos et vidéos', '12. Signalements, sanctions et recours']) assert(await d.getByRole('heading', { level: 2, name: h }).isVisible(), `CGU : ${h}`);
+  assert(await d.locator('footer').getByRole('link', { name: 'Règles de la communauté' }).getAttribute('href') === '/charte', 'pied de page → Règles de la communauté');
+  await d.goto(`${base}/en/charte`);
+  assert(await d.getByRole('heading', { level: 1, name: 'Community rules' }).isVisible(), 'règles en anglais');
+  for (const path of ['/charte', '/securite', '/cgu']) { await m.goto(`${base}${path}`); await noOverflow(m, `mobile ${path}`); }
+
   assert(errs.length === 0, 'aucune erreur navigateur' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();
   console.log('TOUT EST OK');
