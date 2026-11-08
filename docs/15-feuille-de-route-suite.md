@@ -52,6 +52,7 @@
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
+| **13 — proposée (retour de Rita du 8 novembre)** | **Pastille de notifications non lues** : aujourd'hui la notification est bien créée (ex. « Demande acceptée ») mais la barre du bas n'affiche aucun compteur (seul le menu de l'espace membre sur ordinateur en a un). Ajouter une pastille prune avec le nombre de non-lues sur l'onglet « Notifications » (mobile) et sur l'icône du compte (ordinateur), mise à jour en direct (sans recharger la page) et remise à zéro quand les notifications sont lues ; nombre aussi annoncé aux lecteurs d'écran. Les **notifications sur le téléphone** (même quand le site est fermé) restent liées à la clé Web Push (docs/16) | go de Rita |
 | 9 | **Recette, sécurité, mise en production** (dont : **effacement automatique** du régime et des allergies 30 jours après l'expérience, annoncé dans la politique de confidentialité) | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 
 Idées notées, à valider avant de les planifier :
