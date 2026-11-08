@@ -15,12 +15,15 @@ const PHOTOS: Record<string, string> = {
   discover: "/images/photos/univers-sorties.webp",
 };
 
-/** Les cinq univers, en alternance : photo d'un côté, texte et bouton de l'autre. */
-export async function Universes({ categories }: { categories: Category[] }) {
+/**
+ * Les cinq univers, en alternance : photo d'un côté, texte et bouton de l'autre.
+ * Utilisé sur l'accueil et sur « Comment ça marche » (titre « Les formats », étape 12b).
+ */
+export async function Universes({ categories, title }: { categories: Category[]; title?: string }) {
   const [t, locale] = await Promise.all([getTranslations("home"), getLocale()]);
   return (
     <section aria-labelledby="universes-title" className="py-12">
-      <h2 id="universes-title" className="text-center font-display text-[1.75rem] leading-tight font-medium text-plum-900 sm:text-[2.25rem]">{t("universesTitle")}</h2>
+      <h2 id="universes-title" className="text-center font-display text-[1.75rem] leading-tight font-medium text-plum-900 sm:text-[2.25rem]">{title ?? t("universesTitle")}</h2>
       <ul className="mt-10 space-y-10 sm:space-y-14">
         {categories.map((c, i) => {
           const name = tr(c.name, locale);

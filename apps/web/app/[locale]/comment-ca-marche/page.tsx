@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
-import { CategoryIcon } from "@/components/category-icon";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HowItWorks } from "@/components/home/how-it-works";
+import { Universes } from "@/components/home/universes";
 import { PageShell, PrimaryLink } from "@/components/ui";
 import { getCategories } from "@/lib/data";
-import { tr } from "@/lib/i18n-text";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/comment-ca-marche">): Promise<Metadata> {
   const { locale } = await params;
@@ -12,11 +11,11 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/comment-
   return { title: t("howTitle"), description: t("howIntro") };
 }
 
-/** Même présentation que la section de l'accueil (cartes décalées), puis les formats et la sécurité (étape 12). */
+/** Même présentation que l'accueil : cartes décalées (12), puis les formats comme « Cinq univers » (12b), puis la sécurité. */
 export default async function HowPage({ params }: PageProps<"/[locale]/comment-ca-marche">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, th, categories, loc] = await Promise.all([getTranslations("pages"), getTranslations("home"), getCategories(), getLocale()]);
+  const [t, th, categories] = await Promise.all([getTranslations("pages"), getTranslations("home"), getCategories()]);
   return (
     <PageShell className="py-10 sm:py-14">
       <header className="mx-auto max-w-2xl text-center">
@@ -26,21 +25,8 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
       <div className="mt-6">
         <HowItWorks categories={categories} showTitle={false} />
       </div>
-      <div className="mx-auto max-w-4xl space-y-12">
-        <section aria-labelledby="formats">
-          <h2 id="formats" className="font-display text-3xl font-medium text-plum-900">{t("formatsTitle")}</h2>
-          <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-            {categories.map((c) => (
-              <li key={c.id} className="flex items-start gap-3 rounded-2xl border border-line bg-white/70 p-4">
-                <CategoryIcon category={c.id} className="mt-0.5 size-5 text-plum-700" />
-                <div>
-                  <p className="font-semibold text-ink">{tr(c.name, loc)}</p>
-                  <p className="text-sm text-muted">{tr(c.description, loc)}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
+      <Universes categories={categories} title={t("formatsTitle")} />
+      <div className="mx-auto mt-6 max-w-4xl space-y-12">
         <section aria-labelledby="safety" className="rounded-[2rem] bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] p-6 text-cream sm:p-10">
           <h2 id="safety" className="font-display text-3xl font-medium">{t("safetyTitle")}</h2>
           <p className="mt-3 max-w-2xl leading-relaxed text-cream/85">{t("safetyText")}</p>
