@@ -10,10 +10,13 @@ import { CATEGORY_STYLES, DEFAULT_CITY } from "@/lib/site";
 const PHOTOS: Record<string, string> = {
   eat: "/images/photos/univers-diners.webp",
   move: "/images/photos/univers-sport-bien-etre.webp",
-  play: "/images/photos/univers-jeux.webp",
+  play: "/images/photos/univers-jeux-vinyles.webp",
   create: "/images/photos/univers-ateliers.webp",
-  discover: "/images/photos/univers-sorties.webp",
+  discover: "/images/photos/univers-sorties-soiree.webp",
 };
+
+/** Cadrage dans le format 4:3 quand le sujet n'est pas au centre (visages en haut de la photo). */
+const POSITION: Record<string, string> = { discover: "object-[50%_12%]" };
 
 /**
  * Les cinq univers, en alternance : photo d'un côté, texte et bouton de l'autre.
@@ -31,7 +34,7 @@ export async function Universes({ categories, title }: { categories: Category[];
           return (
             <li key={c.id} className="grid items-center gap-6 md:grid-cols-2 md:gap-12">
               <div className={`relative aspect-[4/3] overflow-hidden rounded-[2rem] shadow-card ${i % 2 ? "md:order-1" : "md:order-2"}`}>
-                {PHOTOS[c.id] && <Image src={PHOTOS[c.id]!} alt={t("universePhotoAlt", { name })} fill sizes="(min-width: 768px) 45vw, 100vw" className="object-cover transition duration-500 hover:scale-[1.03]" />}
+                {PHOTOS[c.id] && <Image src={PHOTOS[c.id]!} alt={t("universePhotoAlt", { name })} fill sizes="(min-width: 768px) 45vw, 100vw" className={`object-cover transition duration-500 hover:scale-[1.03] ${POSITION[c.id] ?? ""}`} />}
               </div>
               <div className={i % 2 ? "md:order-2" : "md:order-1"}>
                 <span className={`inline-grid size-12 place-items-center rounded-full ${style?.bg} ${style?.text}`}>

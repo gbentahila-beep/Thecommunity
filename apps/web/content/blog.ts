@@ -19,6 +19,8 @@ type BlogArticleRaw = {
   minutes: number;
   date: string;
   cover: string;
+  /** Cadrage de la photo de couverture quand le sujet n'est pas au centre (classe Tailwind object-…). */
+  coverPosition?: string;
   body: { fr: BlogBlock[]; en: BlogBlock[] };
 };
 export type BlogLang = "fr" | "en" | "ar";
@@ -68,7 +70,8 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
     excerpt: { fr: "Patrimoine, bord de mer, marchés, art, nature : de quoi remplir vos week-ends, seul ou accompagné.", en: "Heritage, seafront, markets, art, nature: plenty to fill your weekends, alone or with others." },
     minutes: 6,
     date: D,
-    cover: "/images/photos/univers-sorties.webp",
+    cover: "/images/photos/univers-sorties-soiree.webp",
+    coverPosition: "object-[50%_12%]",
     body: {
       fr: [
         "On croit connaître sa ville, puis on réalise qu'on fait toujours les mêmes trajets. Voici 25 idées pour sortir de vos habitudes à Casablanca, que vous y soyez né ou arrivé le mois dernier.",
@@ -293,7 +296,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
     excerpt: { fr: "Au travail, à table, en atelier ou en équipe : des questions légères pour détendre l'atmosphère.", en: "At work, at the table, in a workshop or a team: light questions to relax the mood." },
     minutes: 4,
     date: D,
-    cover: "/images/photos/univers-jeux.webp",
+    cover: "/images/photos/univers-jeux-vinyles.webp",
     body: {
       fr: [
         "Une bonne question pour briser la glace est légère, inclusive et amusante. Elle permet à chacun de répondre sans se sentir exposé.",
@@ -770,7 +773,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
     excerpt: { fr: "Non, et c'est voulu. Ce qui nous distingue d'une application de rencontre amoureuse.", en: "No, and that's deliberate. What sets us apart from a dating app." },
     minutes: 3,
     date: D,
-    cover: "/images/photos/univers-jeux.webp",
+    cover: "/images/photos/univers-jeux-vinyles.webp",
     body: {
       fr: [
         "Non. The Host Club réunit des personnes pour se faire de nouveaux amis, élargir son cercle et partager un bon moment. Ce n'est pas un service de rencontre amoureuse.",

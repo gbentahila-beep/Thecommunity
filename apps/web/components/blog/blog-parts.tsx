@@ -57,7 +57,7 @@ export async function FeaturedArticle({ a, locale }: { a: BlogArticle; locale: s
   return (
     <article className="group relative mt-8 grid overflow-hidden rounded-[2rem] bg-white shadow-card md:grid-cols-[1.15fr_1fr]">
       <div className="relative aspect-[16/11] overflow-hidden md:aspect-auto md:min-h-[22rem]">
-        <Image src={a.cover} alt="" fill priority sizes="(min-width: 768px) 55vw, 100vw" className="object-cover transition duration-500 group-hover:scale-[1.03]" />
+        <Image src={a.cover} alt="" fill priority sizes="(min-width: 768px) 55vw, 100vw" className={`object-cover transition duration-500 group-hover:scale-[1.03] ${a.coverPosition ?? ""}`} />
       </div>
       <div className="flex flex-col justify-center p-6 sm:p-8">
         <p className="text-sm text-muted">
@@ -85,7 +85,7 @@ export async function CompactList({ articles, locale, showTheme = true }: { arti
         <li key={a.slug}>
           <Link href={`/blog/${a.slug}`} className="group flex items-center gap-4 py-4 sm:gap-6 sm:py-5">
             <span className="relative size-24 shrink-0 overflow-hidden rounded-2xl sm:size-28">
-              <Image src={a.cover} alt="" fill sizes="112px" className="object-cover transition duration-500 group-hover:scale-105" />
+              <Image src={a.cover} alt="" fill sizes="112px" className={`object-cover transition duration-500 group-hover:scale-105 ${a.coverPosition ?? ""}`} />
             </span>
             <span className="min-w-0">
               <span className="block text-[17px] leading-snug font-semibold text-ink group-hover:text-plum-900 sm:text-xl">{a.title[lang]}</span>

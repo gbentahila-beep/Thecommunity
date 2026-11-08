@@ -7,15 +7,15 @@ import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { AYA_INSTAGRAM } from "@/lib/legal-info";
 
-/** Photos fournies par Rita (8 novembre), dimensions réelles pour éviter les sauts de mise en page. */
+/** Photos fournies par Rita (8 novembre ; 09 et 10 ajoutées ensuite), dimensions réelles pour éviter les sauts de mise en page. */
 const GALLERY = [
   { src: "/images/photos/galerie-01.webp", w: 1063, h: 1578 },
   { src: "/images/photos/galerie-02.webp", w: 1110, h: 1567 },
-  { src: "/images/photos/galerie-03.webp", w: 1017, h: 1600 },
+  { src: "/images/photos/galerie-09.webp", w: 1284, h: 1409 },
   { src: "/images/photos/galerie-04.webp", w: 1109, h: 1600 },
   { src: "/images/photos/galerie-05.webp", w: 1284, h: 1453 },
   { src: "/images/photos/galerie-06.webp", w: 1284, h: 809 },
-  { src: "/images/photos/galerie-07.webp", w: 1284, h: 818 },
+  { src: "/images/photos/galerie-10.webp", w: 1284, h: 1313 },
   { src: "/images/photos/galerie-08.webp", w: 1284, h: 1342 },
 ];
 
