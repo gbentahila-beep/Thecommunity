@@ -17,6 +17,7 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
   const sessions = d.sessions.filter((s) => s.experienceId === e.id);
   const me = d.isDemo ? null : await requireAdmin();
   const archived = e.status === "archived";
+  const bookedSeats = sessions.filter((s) => new Date(s.startAt).getTime() > d.now.getTime()).reduce((n, s) => n + s.seatsConfirmed, 0);
   return (
     <div className="max-w-3xl">
       <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-plum-900">← Expériences</Link></p>
@@ -45,6 +46,7 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
         live={!d.isDemo}
         experienceId={e.id}
         existingImages={e.images ?? []}
+        bookedSeats={bookedSeats}
         initial={experienceToValues(e, d.economics[e.id], d.now)}
         {...formOptions(d)}
       />
