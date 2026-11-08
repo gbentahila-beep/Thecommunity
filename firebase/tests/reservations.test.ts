@@ -1123,6 +1123,12 @@ describe("codes promo et frais de service (5f)", () => {
 describe("régime, allergies, langues de table (5g)", () => {
   const prefs = { diet: "vegetarian", allergies: "Arachides", languages: ["fr", "darija"], consent: true };
 
+  it("champs facultatifs vides (null) acceptés comme absents", async () => {
+    const sid = await makeSession();
+    const u = await member();
+    expect(await u.call("createReservation", { sessionId: sid, seats: 1, promoCode: null, preferences: null })).toMatchObject({ status: "pending_payment" });
+  });
+
   it("à la réservation : accord obligatoire, enregistré et daté ; modifiable par la personne seulement, avant le début", async () => {
     const sid = await makeSession();
     const u = await member();

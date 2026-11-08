@@ -54,7 +54,9 @@ async function freshUser() {
 
 export async function createReservation(sessionId: string, seats: number, opts: { promoCode?: string; preferences?: BookingPreferences } = {}) {
   await freshUser();
-  const res = await httpsCallable(firebase().functions, "createReservation")({ sessionId, seats, ...opts });
+  // Champs absents plutôt que vides : le SDK transmettrait `undefined` comme `null`, refusé par le serveur.
+  const extra = Object.fromEntries(Object.entries(opts).filter(([, v]) => v !== undefined && v !== null));
+  const res = await httpsCallable(firebase().functions, "createReservation")({ sessionId, seats, ...extra });
   return res.data as { reservationId: string; status: "pending_payment" | "confirmed"; resumed: boolean; total: number };
 }
 

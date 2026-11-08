@@ -25,7 +25,9 @@ export const createReservation = onCall({ region: REGION }, async (req) => {
 export async function reserveSeats(caller: { uid: string; emailVerified: boolean }, data: unknown) {
   const { uid } = caller;
   if (!caller.emailVerified) refuse("email_not_verified", "Confirmez votre adresse e-mail pour réserver.");
-  const parsed = reservationRequestSchema.safeParse(data);
+  // Champs facultatifs envoyés vides (null) : traités comme absents.
+  const clean = data && typeof data === "object" ? Object.fromEntries(Object.entries(data).filter(([, v]) => v !== null && v !== undefined)) : data;
+  const parsed = reservationRequestSchema.safeParse(clean);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { sessionId, seats, promoCode, preferences } = parsed.data;
 
