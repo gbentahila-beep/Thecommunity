@@ -14,6 +14,8 @@ export const firebaseConfig = {
 
 export const FIREBASE_ENABLED = Boolean(firebaseConfig.projectId);
 export const USE_EMULATORS = process.env.NEXT_PUBLIC_USE_EMULATORS === "true";
+/** Clé publique reCAPTCHA Enterprise pour App Check (étape D) ; vide = App Check désactivé. */
+export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
 export const FUNCTIONS_REGION = "europe-west1";
 export const SESSION_COOKIE = "__session"; // seul nom de cookie transmis par Firebase Hosting / App Hosting
 export const SESSION_DAYS = 5;

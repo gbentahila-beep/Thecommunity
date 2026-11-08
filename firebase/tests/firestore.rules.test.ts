@@ -201,10 +201,9 @@ describe("factures et e-mails (5c)", () => {
 
 describe("formulaires publics", () => {
   const msg = { name: "Rita", email: "rita@example.com", message: "Bonjour, une question sur les dîners.", createdAt: serverTimestamp() };
-  it("message de contact : création anonyme au bon format, jamais relu par le public", async () => {
-    await assertSucceeds(addDoc(collection(anon(), "contactMessages"), msg));
-    await assertFails(addDoc(collection(anon(), "contactMessages"), { ...msg, email: "pas-un-email" }));
-    await assertFails(addDoc(collection(anon(), "contactMessages"), { ...msg, admin: true }));
+  it("message de contact : jamais écrit directement (serveur seulement), jamais relu par le public", async () => {
+    await assertFails(addDoc(collection(anon(), "contactMessages"), msg));
+    await assertFails(addDoc(collection(salma(), "contactMessages"), msg));
     await assertFails(getDocs(collection(anon(), "contactMessages")));
   });
   it("centre d'aide : avis sur un article, anonyme et au bon format", async () => {
@@ -216,15 +215,12 @@ describe("formulaires publics", () => {
     await assertFails(getDocs(collection(salma(), "helpFeedback")));
     await assertSucceeds(getDocs(collection(admin(), "helpFeedback")));
   });
-  it("candidature partenaire : création publique au bon format, lue par l'équipe seulement", async () => {
+  it("candidature partenaire : écrite par le serveur seulement, lue par l'équipe seulement", async () => {
     const app = {
       contactName: "Yasmine", businessName: "Studio Lumière", type: "studio", city: "Casablanca", email: "contact@studio.ma",
       phone: "", link: "", message: "Nous proposons des cours de yoga en petit groupe à Maarif.", locale: "fr", createdAt: serverTimestamp(),
     };
-    await assertSucceeds(addDoc(collection(anon(), "partnerApplications"), app));
-    await assertFails(addDoc(collection(anon(), "partnerApplications"), { ...app, type: "casino" }));
-    await assertFails(addDoc(collection(anon(), "partnerApplications"), { ...app, message: "court" }));
-    await assertFails(addDoc(collection(anon(), "partnerApplications"), { ...app, status: "accepted" }));
+    await assertFails(addDoc(collection(anon(), "partnerApplications"), app));
     await assertFails(getDocs(collection(anon(), "partnerApplications")));
     await assertSucceeds(getDocs(collection(admin(), "partnerApplications")));
   });

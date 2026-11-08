@@ -1,14 +1,15 @@
 "use client";
 
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { firebase } from "@/lib/firebase/client";
+import { Honeypot } from "../honeypot";
 
 const TYPES = ["restaurant", "studio", "workshop", "venue", "organizer", "other"] as const;
 
-/** Candidature partenaire : écrite dans partnerApplications (format contrôlé par les règles Firestore). */
+/** Candidature partenaire : envoyée au serveur (submitPartnerApplication : format, limite d'envois, piège à robots). */
 export function PartnerApplicationForm() {
   const t = useTranslations("partner");
   const tf = useTranslations("footer");
@@ -19,14 +20,14 @@ export function PartnerApplicationForm() {
   const label = "mb-1.5 block text-sm font-medium";
   return (
     <form
-      className="space-y-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card sm:p-6"
+      className="relative space-y-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card sm:p-6"
       onSubmit={async (e) => {
         e.preventDefault();
         const f = new FormData(e.currentTarget);
         const v = (k: string) => String(f.get(k) ?? "").trim();
         setState("busy");
         try {
-          await addDoc(collection(firebase().db, "partnerApplications"), {
+          await httpsCallable(firebase().functions, "submitPartnerApplication")({
             contactName: v("contactName"),
             businessName: v("businessName"),
             type: v("type"),
@@ -36,7 +37,7 @@ export function PartnerApplicationForm() {
             link: v("link"),
             message: v("message"),
             locale,
-            createdAt: serverTimestamp(),
+            website: v("website"),
           });
           setState("sent");
         } catch {
@@ -45,6 +46,7 @@ export function PartnerApplicationForm() {
       }}
     >
       <h2 className="font-display text-2xl font-medium text-plum-900">{t("formTitle")}</h2>
+      <Honeypot />
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block"><span className={label}>{t("contactName")}</span><input name="contactName" required maxLength={80} autoComplete="name" className={input} /></label>
         <label className="block"><span className={label}>{t("businessName")}</span><input name="businessName" required maxLength={120} autoComplete="organization" className={input} /></label>

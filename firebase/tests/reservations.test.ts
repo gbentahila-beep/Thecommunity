@@ -1579,3 +1579,26 @@ describe("effacement du régime et des allergies (A)", () => {
     expect((await req.get()).data()!.preferences).toBeUndefined();
   });
 });
+
+describe("formulaires publics passés par le serveur (D)", () => {
+  it("contact : format vérifié, piège à robots silencieux, 5 envois par heure au plus", async () => {
+    const u = await member();
+    const msg = { name: "Rita", email: "rita@example.com", message: "Bonjour, une question sur les dîners." };
+    expect(await refusal(u.call("submitContactMessage", { ...msg, email: "pas-un-email" }))).toBe("invalid-argument:");
+    const before = (await db().collection("contactMessages").where("email", "==", "robot@example.com").get()).size;
+    expect(await u.call("submitContactMessage", { ...msg, email: "robot@example.com", website: "http://spam.example" })).toEqual({ ok: true });
+    expect((await db().collection("contactMessages").where("email", "==", "robot@example.com").get()).size).toBe(before); // rien écrit
+    for (let i = 0; i < 5; i++) expect(await u.call("submitContactMessage", msg)).toEqual({ ok: true });
+    expect(await refusal(u.call("submitContactMessage", msg))).toBe("resource-exhausted:rate_limited");
+    const saved = (await db().collection("contactMessages").where("email", "==", "rita@example.com").get()).docs[0]!.data();
+    expect(Object.keys(saved).sort()).toEqual(["createdAt", "email", "message", "name"]); // même format qu'avant, aucune adresse IP
+  });
+
+  it("candidature partenaire : format vérifié et enregistrée par le serveur", async () => {
+    const u = await member();
+    const app = { contactName: "Yasmine", businessName: "Studio Lumière", type: "studio", city: "Casablanca", email: "contact@studio.ma", phone: "", link: "", message: "Nous proposons des cours de yoga en petit groupe à Maarif.", locale: "fr" };
+    expect(await refusal(u.call("submitPartnerApplication", { ...app, type: "casino" }))).toBe("invalid-argument:");
+    expect(await u.call("submitPartnerApplication", app)).toEqual({ ok: true });
+    expect((await db().collection("partnerApplications").where("businessName", "==", "Studio Lumière").get()).size).toBeGreaterThanOrEqual(1);
+  });
+});

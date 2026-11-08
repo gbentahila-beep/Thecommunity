@@ -210,13 +210,10 @@ service cloud.firestore {
     }
 
     // ---------- Formulaires publics ----------
+    // Écrit uniquement par le serveur (submitContactMessage : format vérifié, limite d'envois, piège à robots).
     match /contactMessages/{id} {
       allow read: if isAdmin();
-      allow create: if request.resource.data.keys().hasOnly(['name', 'email', 'message', 'createdAt'])
-        && isShortString(request.resource.data.name, 80) && request.resource.data.name.size() > 0
-        && isShortString(request.resource.data.email, 120) && request.resource.data.email.matches('[^@ ]+@[^@ ]+[.][^@ ]+')
-        && isShortString(request.resource.data.message, 3000) && request.resource.data.message.size() >= 10
-        && request.resource.data.createdAt == request.time;
+      allow create: if false;
       allow update, delete: if false;
     }
     // Centre d'aide : « Cet article vous a-t-il aidé ? » (anonyme, sans donnée personnelle, lu par l'équipe seulement).
@@ -230,19 +227,10 @@ service cloud.firestore {
       allow update, delete: if false;
     }
     // Candidatures de lieux et d'organisateurs partenaires (formulaire public, lu par l'équipe seulement).
+    // Écrit uniquement par le serveur (submitPartnerApplication : format vérifié, limite d'envois, piège à robots).
     match /partnerApplications/{id} {
       allow read: if isAdmin();
-      allow create: if request.resource.data.keys().hasOnly(['contactName', 'businessName', 'type', 'city', 'email', 'phone', 'link', 'message', 'locale', 'createdAt'])
-        && isShortString(request.resource.data.contactName, 80) && request.resource.data.contactName.size() > 0
-        && isShortString(request.resource.data.businessName, 120) && request.resource.data.businessName.size() > 0
-        && request.resource.data.type in ['restaurant', 'studio', 'workshop', 'venue', 'organizer', 'other']
-        && isShortString(request.resource.data.city, 60) && request.resource.data.city.size() > 0
-        && isShortString(request.resource.data.email, 120) && request.resource.data.email.matches('[^@ ]+@[^@ ]+[.][^@ ]+')
-        && isShortString(request.resource.data.phone, 30)
-        && isShortString(request.resource.data.link, 200)
-        && isShortString(request.resource.data.message, 2000) && request.resource.data.message.size() >= 20
-        && request.resource.data.locale in ['fr', 'ar', 'en']
-        && request.resource.data.createdAt == request.time;
+      allow create: if false;
       allow update, delete: if false;
     }
     match /dataRequests/{id} {

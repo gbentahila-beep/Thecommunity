@@ -21,6 +21,7 @@ export { startCheckout } from "./payments/start-checkout";
 export { sandboxCompletePayment } from "./payments/sandbox-complete";
 export { purgePreferences } from "./maintenance/purge-preferences";
 export { transferReminders } from "./payments/transfer-reminders";
+export { submitContactMessage, submitPartnerApplication } from "./public/forms";
 export { adminCompleteManualRefund, adminConfirmTransfer, adminSavePaymentSettings } from "./payments/transfer-admin";
 export { requestBooking, cancelBookingRequest, adminDecideRequest } from "./requests/booking-requests";
 export { cancelReservation } from "./reservations/cancel-reservation";
