@@ -963,6 +963,7 @@
     "pendingText": "Référence {reference} · {amount} à virer avant le {when}. Votre place est réservée jusque-là.",
     "seeInstructions": "Voir les coordonnées bancaires",
     "noBank": "Les coordonnées bancaires seront communiquées prochainement.",
-    "refundPending": "Remboursement en cours : notre équipe vous contacte pour le virement retour."
+    "refundPending": "Remboursement en cours : notre équipe vous contacte pour le virement retour.",
+    "pendingMembership": "Référence {reference} · {amount} à virer avant le {when}. Votre abonnement est activé dès réception, et vous recevez votre facture."
   }
 }

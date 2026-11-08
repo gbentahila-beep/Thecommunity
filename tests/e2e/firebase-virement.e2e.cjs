@@ -134,6 +134,26 @@ async function login(page, email, password, suite) {
   await page.goto(`${base}/paiement/virement/${paymentId}`, { waitUntil: 'load' });
   assert(await visible(page.getByText('Virement reçu')), 'instructions : « Virement reçu »');
 
+  // 5 bis (C) : abonnement payé par virement, attente visible sur la page Abonnement, puis validé
+  await page.goto(`${base}/abonnement`, { waitUntil: 'load' });
+  await page.getByRole('button', { name: /Devenir membre/ }).click();
+  await page.waitForURL('**/paiement/virement/**', { timeout: 25000 });
+  const memPayment = page.url().split('/').pop().split('?')[0];
+  const memRef = (await page.getByTestId('transfer-reference').innerText()).trim();
+  assert(/^THC-/.test(memRef) && memRef !== ref, `abonnement : nouvelle référence (${memRef})`);
+  await page.goto(`${base}/abonnement`, { waitUntil: 'load' });
+  const pendingBox = page.getByTestId('membership-transfer');
+  assert(await visible(pendingBox) && (await pendingBox.innerText()).includes(memRef), 'page Abonnement : « En attente de votre virement » avec la référence');
+  assert(await page.getByRole('button', { name: /Devenir membre/ }).count() === 0, 'page Abonnement : pas de second achat pendant l’attente');
+  await admin.goto(`${base}/admin/virements?q=${memRef}`, { waitUntil: 'load' });
+  const memRow = admin.getByTestId(`transfer-${memRef}`);
+  await memRow.getByRole('button', { name: 'Virement reçu' }).click();
+  await memRow.getByRole('button', { name: 'Confirmer' }).click();
+  assert(await until(async () => (await fsGet(`memberships/${uid}`))?.fields?.status?.stringValue === 'active'), 'abonnement activé à la validation du virement');
+  await page.goto(`${base}/abonnement`, { waitUntil: 'load' });
+  assert(await visible(page.getByText('Vous êtes membre')) && await page.getByTestId('membership-transfer').count() === 0, 'page Abonnement : membre, plus de virement en attente');
+  assert((await fsGet(`payments/${memPayment}`)).fields.status.stringValue === 'succeeded', 'Firestore : paiement d’abonnement reçu');
+
   // 6. Retour au paiement de test
   await admin.goto(`${base}/admin/parametres`, { waitUntil: 'load' });
   await admin.getByLabel(/Paiement de test/).check();

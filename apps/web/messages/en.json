@@ -963,6 +963,7 @@
     "pendingText": "Reference {reference} · {amount} to transfer before {when}. Your spot is held until then.",
     "seeInstructions": "View bank details",
     "noBank": "Bank details will be shared soon.",
-    "refundPending": "Refund in progress: our team will contact you for the return transfer."
+    "refundPending": "Refund in progress: our team will contact you for the return transfer.",
+    "pendingMembership": "Reference {reference} · {amount} to transfer before {when}. Your membership is activated as soon as it arrives, and you receive your invoice."
   }
 }

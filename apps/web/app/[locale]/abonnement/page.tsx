@@ -25,18 +25,24 @@ async function myMembership() {
   const user = await getSessionUser();
   if (!user) return null;
   const db = adminDb();
-  const [mem, res, record, account] = await Promise.all([
+  const [mem, res, record, account, pending] = await Promise.all([
     db.doc(`memberships/${user.uid}`).get(),
     db.collection("reservations").where("userId", "==", user.uid).limit(200).get(),
     adminAuth().getUser(user.uid),
     getAccountState(user.uid),
+    // C : abonnement payé par virement, encore attendu
+    db.collection("payments").where("userId", "==", user.uid).where("purpose", "==", "membership").where("status", "==", "initiated").get(),
   ]);
+  const transferDoc = pending.docs.find((d) => d.data().provider === "bank_transfer");
+  const transfer = transferDoc
+    ? { id: transferDoc.id, reference: String(transferDoc.data().reference ?? ""), amount: transferDoc.data().amount as number, currency: (transferDoc.data().currency as string) ?? "MAD", deadline: transferDoc.data().transferDeadline?.toDate().toISOString() as string | undefined }
+    : null;
   const m = mem.data();
   const period = m ? { status: m.status as string, startAt: m.startAt.toDate() as Date, endAt: m.endAt.toDate() as Date } : null;
   const savings = res.docs
     .filter((d) => ["confirmed", "attended", "no_show"].includes(d.data().status))
     .reduce((a, d) => a + ((d.data().pricing?.memberDiscount as number) ?? 0), 0);
-  return { period, active: isMemberActive(period), savings, emailVerified: record.emailVerified, onboarded: account.onboardingCompleted };
+  return { period, active: isMemberActive(period), savings, emailVerified: record.emailVerified, onboarded: account.onboardingCompleted, transfer };
 }
 
 /** Abonnement annuel : avantages, prix, souscription ou renouvellement, et carte de membre. */
@@ -45,7 +51,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   setRequestLocale(locale);
   await connection();
   const sp = await searchParams;
-  const [t, plan] = await Promise.all([getTranslations("membership"), getMembershipPlan()]);
+  const [t, tv, plan] = await Promise.all([getTranslations("membership"), getTranslations("transfer"), getMembershipPlan()]);
   const lang = locale as "fr" | "ar" | "en";
   const me = FIREBASE_ENABLED ? await myMembership() : null;
 
@@ -114,6 +120,18 @@ export default async function MembershipPage({ params, searchParams }: PageProps
           <VerifyEmailBanner />
         ) : !me.onboarded ? (
           <Link href="/bienvenue" className="block w-full rounded-full bg-plum-900 px-6 py-4 text-center font-semibold text-white">{t("completeProfile")}</Link>
+        ) : me.transfer ? (
+          <div role="status" className="rounded-[var(--radius-card)] border border-amber-300 bg-amber-50 p-5 text-amber-950" data-testid="membership-transfer">
+            <h2 className="font-semibold">{tv("pendingTitle")}</h2>
+            <p className="mt-1 text-sm">
+              {tv("pendingMembership", {
+                reference: me.transfer.reference,
+                amount: formatMoney({ amount: me.transfer.amount, currency: me.transfer.currency as "MAD" }, lang),
+                when: me.transfer.deadline ? formatLongDate(me.transfer.deadline, locale) : "",
+              })}
+            </p>
+            <Link href={`/paiement/virement/${me.transfer.id}`} className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">{tv("seeInstructions")}</Link>
+          </div>
         ) : me.active && me.period && !canRenewMembership(me.period) ? null : (
           <>
             <SubscribeButton label={me.active ? t("renew", { price: formatMoney(plan.price, lang) }) : t("subscribe", { price: formatMoney(plan.price, lang) })} />
