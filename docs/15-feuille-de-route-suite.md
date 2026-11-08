@@ -43,7 +43,7 @@
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
-| **10 — en cours (10a livrée, à valider)** | **Identité de marque** (brand book, demande du 8 novembre, détail docs/18) : 10a ton & ambiance, couleurs, typographie → 10b logo principal + 3 pistes de monogramme → 10c motif → 10d papeterie (dont marque-places, carte de bienvenue), affichage, mises en situation → 10e brand book partageable + application au site | validation de Rita à chaque étape |
+| **10 — en cours (10a et 10b livrées ; choix du monogramme attendu)** | **Identité de marque** (brand book, demande du 8 novembre, détail docs/18) : 10a ton & ambiance, couleurs, typographie → 10b logo principal + 3 pistes de monogramme → 10c motif → 10d papeterie (dont marque-places, carte de bienvenue), affichage, mises en situation → 10e brand book partageable + application au site | validation de Rita à chaque étape |
 | 5h | **Prestataire de paiement réel** (CMI, Payzone, YouCan Pay) | contrat signé |
 | 9 | **Recette, sécurité, mise en production** (dont : **effacement automatique** du régime et des allergies 30 jours après l'expérience, annoncé dans la politique de confidentialité) | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 

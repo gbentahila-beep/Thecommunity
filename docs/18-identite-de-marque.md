@@ -12,6 +12,7 @@ Point de départ : l'identité **déjà en place sur le site** (prune / crème, 
 - **Logotype actuel : conservé, à améliorer** (étape 10b).
 - Maquettes demandées pour tous les éléments ; validation étape par étape.
 - 10a livrée sous forme de planches : `docs/marque/brand-book.html` (publiée comme page partageable).
+- **10b livrée** : logotype redessiné (vectoriel, Fraunces affiche, terminaisons adoucies, crénage, point rond prune clair), versions horizontale / empilée / crème / encre, zone de protection, taille minimale ; **trois pistes de monogramme** (A « h. », B « la table », C « le fil ») avec maquettes (icône d'application, onglet, Instagram, autocollant, marque-place). Fichiers : `docs/marque/logo/`. **En attente : choix de la piste par Rita.**
 
 ## Les 9 éléments
 
