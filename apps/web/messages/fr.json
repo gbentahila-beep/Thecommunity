@@ -209,7 +209,8 @@
       "not_cancellable": "Cette réservation ne peut plus être annulée.",
       "members_only": "Expérience réservée aux membres abonnés.",
       "members_early_access": "Cette nouvelle date est encore en accès anticipé pour les membres.",
-      "not_editable": "Cette réservation n'est plus modifiable."
+      "not_editable": "Cette réservation n'est plus modifiable.",
+      "transfer_too_late": "Cette date est trop proche pour un paiement par virement : choisissez une date plus lointaine."
     },
     "fullTextOnRequest": "Toutes les places sont prises pour cette date. Regardez les autres dates de cette expérience.",
     "seeMyBooking": "Voir ma réservation",
@@ -243,7 +244,12 @@
       "promo_already_used": "Vous avez déjà utilisé ce code.",
       "promo_first_booking_only": "Ce code est réservé à une première réservation.",
       "promoFormat": "Code invalide (lettres, chiffres et tirets, 3 à 20 caractères)."
-    }
+    },
+    "payCtaTransfer": "Réserver et payer {amount} par virement",
+    "holdNoteTransfer": "Votre place est bloquée jusqu'à réception du virement : {hours} h maximum, et au plus tard {cutoff} h avant l'expérience.",
+    "transferModeNote": "Paiement par virement bancaire : après la réservation, vous recevez une référence et nos coordonnées bancaires. Votre place est confirmée dès réception du virement, puis vous recevez votre billet.",
+    "transferTooLateTitle": "Paiement par virement impossible pour cette date",
+    "transferTooLateText": "Le virement doit nous parvenir au plus tard {cutoff} h avant l'expérience : cette date est trop proche. Choisissez une date plus lointaine."
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -926,5 +932,35 @@
     "text": "Présentez ce QR code à l'accueil. L'équipe le scanne pour vous pointer présent.",
     "code": "Code du billet : {code}",
     "onSite": "Pensez à régler la part sur place au partenaire."
+  },
+  "transfer": {
+    "title": "Payer par virement",
+    "intro": "Faites un virement du montant exact en indiquant la référence ci-dessous dans le motif.",
+    "amount": "Montant à virer",
+    "reference": "Référence à indiquer",
+    "referenceHint": "À écrire dans le motif du virement : c'est ainsi que nous reconnaissons votre paiement.",
+    "beneficiary": "Bénéficiaire",
+    "bank": "Banque",
+    "rib": "RIB",
+    "iban": "IBAN",
+    "swift": "SWIFT / BIC",
+    "deadline": "À effectuer avant le {when}",
+    "deadlineMembership": "À effectuer dans les {days} jours",
+    "step1": "Faites le virement depuis votre banque (application, agence ou guichet).",
+    "step2": "Indiquez la référence {reference} dans le motif.",
+    "step3": "Dès réception (en général 1 à 2 jours ouvrés), nous confirmons et vous recevez un e-mail avec votre billet et votre facture.",
+    "copy": "Copier",
+    "copied": "Copié",
+    "receivedTitle": "Virement reçu",
+    "receivedText": "Merci ! Votre paiement est confirmé.",
+    "seeBooking": "Voir ma réservation",
+    "seeMembership": "Voir mon abonnement",
+    "closedTitle": "Ce virement n'est plus attendu",
+    "closedText": "L'échéance est passée ou la réservation a changé. Vous avez déjà fait le virement ? Écrivez-nous avec la preuve : nous vous redonnons une place s'il en reste, sinon nous vous remboursons.",
+    "pendingTitle": "En attente de votre virement",
+    "pendingText": "Référence {reference} · {amount} à virer avant le {when}. Votre place est réservée jusque-là.",
+    "seeInstructions": "Voir les coordonnées bancaires",
+    "noBank": "Les coordonnées bancaires seront communiquées prochainement.",
+    "refundPending": "Remboursement en cours : notre équipe vous contacte pour le virement retour."
   }
 }

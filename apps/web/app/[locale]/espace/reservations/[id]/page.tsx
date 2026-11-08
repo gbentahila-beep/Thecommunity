@@ -31,7 +31,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   if (!data) notFound();
   const { reservation: r, group, profile, now } = data;
   const space = await getMemberSpace();
-  const [t, tl, ti, tb, tp, t2, tk, locale, invoices] = await Promise.all([
+  const [t, tl, ti, tb, tp, t2, tk, tv, locale, invoices] = await Promise.all([
     getTranslations("reservation"),
     getTranslations("labels.interests"),
     getTranslations("invoices"),
@@ -39,6 +39,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
     getTranslations("prefs"),
     getTranslations("twoPart"),
     getTranslations("ticket"),
+    getTranslations("transfer"),
     getLocale(),
     space.session ? getReservationInvoices(space.session.uid, id) : Promise.resolve([]),
   ]);
@@ -53,6 +54,12 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const ics = buildIcs({ uid: r.id, title, startAt: s.startAt, endAt: s.endAt, location: venueText, url: `${SITE_URL}/espace/reservations/${r.id}` });
   const dateFmt = (iso: string) => formatLongDate(iso, locale);
   const holdOpen = r.status === "pending_payment" && r.holdExpiresAt !== undefined && new Date(r.holdExpiresAt).getTime() > now.getTime();
+  const transfer = r.paymentMethod === "bank_transfer";
+  const holdWhen = r.holdExpiresAt
+    ? locale === "fr"
+      ? `${formatLongDate(r.holdExpiresAt, locale).toLowerCase()} à ${formatTime(r.holdExpiresAt, locale)}`
+      : `${formatLongDate(r.holdExpiresAt, locale)} ${formatTime(r.holdExpiresAt, locale)}`
+    : "";
   const total = formatMoney({ amount: r.pricing.total, currency: r.pricing.currency }, lang);
   // Étape 11d : billet avec QR code dès la confirmation (ouvre la fiche du billet dans le back-office).
   const showTicket = r.status === "confirmed" && isUpcoming;
@@ -86,12 +93,14 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           {r.fromWaitlist && holdOpen && <p className="mb-2 font-semibold">{t("waitlistOfferBanner")}</p>}
           <h2 className="flex items-center gap-2 font-semibold">
             <Clock className="size-5 shrink-0" aria-hidden />
-            {holdOpen ? t("pendingTitle") : t("pendingExpiredTitle")}
+            {holdOpen ? (transfer ? tv("pendingTitle") : t("pendingTitle")) : t("pendingExpiredTitle")}
           </h2>
           {paymentFlag === "refuse" && holdOpen && <p role="alert" className="mt-2 text-sm font-medium text-red-800">{t("paymentFailed")}</p>}
-          <p className="mt-1 text-sm">
+          <p className="mt-1 text-sm" data-testid={transfer ? "transfer-pending" : undefined}>
             {!holdOpen
               ? t("expiredText")
+              : transfer
+                ? tv("pendingText", { reference: r.transferReference ?? "", amount: total, when: holdWhen })
               : new Date(r.holdExpiresAt!).getTime() - now.getTime() > 3_600_000
                 ? t("pendingTextLong", {
                     when:
@@ -103,7 +112,11 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           </p>
           {holdOpen && (
             <div className="mt-4 flex flex-wrap items-center gap-4">
-              <PayNowButton reservationId={r.id} label={t("payNow", { amount: total })} />
+              {transfer && r.paymentId ? (
+                <Link href={`/paiement/virement/${r.paymentId}`} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">{tv("seeInstructions")}</Link>
+              ) : (
+                <PayNowButton reservationId={r.id} label={t("payNow", { amount: total })} />
+              )}
               {FIREBASE_ENABLED && <CancelReservationButton reservationId={r.id} label={t("releaseCta")} confirmText={t("releaseConfirm")} variant="quiet" />}
             </div>
           )}
@@ -292,6 +305,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                   <dd className="font-semibold">{formatMoney({ amount: r.cancellation.refundAmount, currency: r.pricing.currency }, lang)}</dd>
                 </div>
               )}
+              {r.cancellation.refundAmount > 0 && r.cancellation.refundStatus === "pending" && <p className="pb-2.5 text-xs text-muted">{tv("refundPending")}</p>}
             </>
           )}
         </dl>

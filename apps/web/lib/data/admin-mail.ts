@@ -76,3 +76,23 @@ export async function getServiceFee(): Promise<ServiceFee | null> {
   await requireAdmin();
   return readServiceFee((await adminDb().doc("settings/booking").get()).data()?.serviceFee);
 }
+
+/** Mode de paiement (5h) : test ou virement, et coordonnées bancaires de The Host Club (équipe seulement). */
+export type PaymentSettingsView = {
+  method: "sandbox" | "bank_transfer" | "none";
+  bank: { holder: string; bank: string; rib: string; iban: string; swift: string; deadlineHours: number; cutoffHours: number } | null;
+};
+
+export async function getPaymentSettings(): Promise<PaymentSettingsView | null> {
+  if (!FIREBASE_ENABLED) return null;
+  await requireAdmin();
+  const [pay, bank] = await Promise.all([adminDb().doc("settings/payment").get(), adminDb().doc("settings/bankTransfer").get()]);
+  const p = pay.data();
+  const b = bank.data();
+  return {
+    method: p?.provider === "bank_transfer" ? "bank_transfer" : p?.provider === "sandbox" ? "sandbox" : "none",
+    bank: b
+      ? { holder: String(b.holder ?? ""), bank: String(b.bank ?? ""), rib: String(b.rib ?? ""), iban: String(b.iban ?? ""), swift: String(b.swift ?? ""), deadlineHours: Number(b.deadlineHours ?? 48), cutoffHours: Number(b.cutoffHours ?? 24) }
+      : null,
+  };
+}

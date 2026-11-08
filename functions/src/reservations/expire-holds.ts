@@ -2,6 +2,7 @@ import { Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { db, FieldValue, REGION } from "../lib/admin";
+import { sendTransferExpired } from "../payments/transfer-mail";
 import { readWaitlist, writeOffers } from "../waitlist/offers";
 
 /**
@@ -52,7 +53,12 @@ export async function expireDueHolds(now = Date.now()): Promise<number> {
     .limit(300)
     .get();
   let count = 0;
-  for (const d of due.docs) if (await expireReservation(d.id, now)) count++;
+  for (const d of due.docs) {
+    if (!(await expireReservation(d.id, now))) continue;
+    count++;
+    // Virement non reçu à l'échéance : la personne est prévenue (5h).
+    if (d.data().paymentMethod === "bank_transfer") await sendTransferExpired(d.id);
+  }
   return count;
 }
 

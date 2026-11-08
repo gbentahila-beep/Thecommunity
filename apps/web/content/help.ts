@@ -129,17 +129,19 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     slug: "payer-ma-reservation",
     category: "bookings",
     title: { fr: "Payer ma réservation", en: "Paying for my booking" },
-    summary: { fr: "Paiement en ligne sur une page sécurisée ; un refus ne fait pas perdre la place tout de suite.", en: "Online payment on a secure page; a declined card doesn't lose your seat straight away." },
+    summary: { fr: "Par virement bancaire avec une référence unique (la place est bloquée jusqu'à l'échéance) ; la carte arrivera ensuite.", en: "By bank transfer with a unique reference (your seat is held until the deadline); card payment will follow." },
     body: {
       fr: [
-        "Le paiement se fait en ligne, sur une page de paiement sécurisée. Nous ne voyons ni ne conservons jamais votre numéro de carte.",
+        "Par virement bancaire : après « Réserver », vous recevez une référence (THC-…) et nos coordonnées bancaires, à l'écran et par e-mail. Faites le virement du montant exact en indiquant la référence dans le motif. Votre place est bloquée jusqu'à l'échéance (48 h au plus, au plus tard 24 h avant l'expérience) ; dès réception, nous confirmons et vous recevez votre billet et votre facture.",
+        "Par carte (bientôt) : sur une page de paiement sécurisée. Nous ne voyons ni ne conservons jamais votre numéro de carte.",
         `Si le paiement est refusé, votre place reste bloquée jusqu'à la fin du délai de ${HOLD_MINUTES} minutes : vous pouvez réessayer depuis la page de votre réservation.`,
         "Tant que le paiement en ligne n'est pas ouvert, le site l'indique clairement (« mode test ») et aucune somme n'est débitée.",
         "Membre ? Le prix membre est appliqué automatiquement : vous voyez le prix public barré et votre prix à côté.",
         "Un code promo ? Saisissez-le avant de payer (« Vous avez un code promo ? ») : chaque code s'utilise une fois par personne. Les éventuels frais de service sont toujours affichés avant le paiement.",
       ],
       en: [
-        "Payment is made online on a secure payment page. We never see or store your card number.",
+        "By bank transfer: after “Book”, you get a reference (THC-…) and our bank details, on screen and by email. Transfer the exact amount and write the reference in the description. Your seat is held until the deadline (48 hours at most, no later than 24 hours before the experience); once it arrives, we confirm and send your ticket and invoice.",
+        "By card (coming soon): on a secure payment page. We never see or store your card number.",
         `If a payment is declined, your seat stays held until the end of the ${HOLD_MINUTES}-minute window: you can try again from your booking page.`,
         "Until online payment is open, the site says so clearly (“test mode”) and nothing is charged.",
         "A member? The member price is applied automatically: you'll see the public price struck through with your price next to it.",

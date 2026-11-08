@@ -263,11 +263,14 @@ export type Reservation = {
   /** Fin du blocage des places pendant le paiement (réservation « pending_payment »). */
   holdExpiresAt?: string;
   paymentId?: string;
+  /** Étape 5h : paiement par virement — référence à indiquer (la place reste bloquée jusqu'à holdExpiresAt). */
+  paymentMethod?: "bank_transfer";
+  transferReference?: string;
   /** Place proposée automatiquement depuis la liste d'attente. */
   fromWaitlist?: boolean;
   /** Paiement arrivé après l'expiration du blocage, place reprise. */
   latePayment?: boolean;
-  cancellation?: { at: string; by: "user" | "admin" | "system"; refundAmount: number; reason?: string };
+  cancellation?: { at: string; by: "user" | "admin" | "system"; refundAmount: number; reason?: string; refundStatus?: "succeeded" | "pending" | "none" };
   /** Étape 11 : copie figée de la part partenaire (null = tout en ligne), montant attendu sur place (null = consommation libre ou sans objet) et suivi. */
   partnerSnapshot?: PartnerSnapshot | null;
   onSiteAmount?: number | null;

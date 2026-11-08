@@ -19,6 +19,7 @@ export { createReservation } from "./reservations/create-reservation";
 export { expireHolds } from "./reservations/expire-holds";
 export { startCheckout } from "./payments/start-checkout";
 export { sandboxCompletePayment } from "./payments/sandbox-complete";
+export { adminCompleteManualRefund, adminConfirmTransfer, adminSavePaymentSettings } from "./payments/transfer-admin";
 export { requestBooking, cancelBookingRequest, adminDecideRequest } from "./requests/booking-requests";
 export { cancelReservation } from "./reservations/cancel-reservation";
 export { joinWaitlist, leaveWaitlist } from "./waitlist/waitlist";

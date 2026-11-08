@@ -1,5 +1,7 @@
 import { HttpsError } from "firebase-functions/v2/https";
 import { db } from "../lib/admin";
+import { bankDetailsSchema, type BankDetails } from "@thecommunity/shared";
+import { bankTransferProvider } from "./providers/bank-transfer";
 import { sandboxProvider } from "./providers/sandbox";
 
 /**
@@ -26,7 +28,7 @@ export interface PaymentProvider {
   }>;
 }
 
-const PROVIDERS: Record<string, PaymentProvider> = { [sandboxProvider.id]: sandboxProvider };
+const PROVIDERS: Record<string, PaymentProvider> = { [sandboxProvider.id]: sandboxProvider, [bankTransferProvider.id]: bankTransferProvider };
 
 export type PaymentSettings = { provider: string; mode: "test" | "live" };
 
@@ -45,7 +47,17 @@ export async function paymentSettings(): Promise<PaymentSettings> {
   if (provider === sandboxProvider.id && mode !== "test") {
     throw new HttpsError("failed-precondition", "Paiement indisponible.", { reason: "payments_unavailable" });
   }
+  // Virement : jamais sans coordonnées bancaires complètes (le client doit savoir où virer).
+  if (provider === bankTransferProvider.id && !(await bankDetails())) {
+    throw new HttpsError("failed-precondition", "Paiement indisponible.", { reason: "payments_unavailable" });
+  }
   return { provider, mode };
+}
+
+/** Coordonnées bancaires de The Host Club (settings/bankTransfer), ou null si absentes ou incomplètes. */
+export async function bankDetails(): Promise<BankDetails | null> {
+  const parsed = bankDetailsSchema.safeParse((await db.doc("settings/bankTransfer").get()).data() ?? {});
+  return parsed.success ? parsed.data : null;
 }
 
 export function providerFor(id: string): PaymentProvider {

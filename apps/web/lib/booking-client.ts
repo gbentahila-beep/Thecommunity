@@ -23,6 +23,7 @@ export const BOOKING_ERRORS = [
   "approval_required",
   "members_only",
   "members_early_access",
+  "transfer_too_late",
   "busy",
   "signin",
   "generic",

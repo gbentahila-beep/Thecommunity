@@ -119,3 +119,35 @@ Règles Firestore : inchangées dans le principe (écriture uniquement par le se
 - Pour chaque expérience avec un partenaire : choisir la formule dans la section 5 et décrire ce qui est réglé sur place.
 - Une commission sur la part payée sur place (si prévue au contrat) se **facture au partenaire**, hors site.
 - Sur le téléphone de l'équipe : se connecter une fois au back-office ; le scan se fait avec l'appareil photo.
+
+## 9. Livré — 5h, phase 1 : virement bancaire (8 novembre, sans RIB)
+
+### Parcours
+1. **Super-admin → Paramètres → Mode de paiement** : « Paiement de test » ou « Virement bancaire ». Le virement exige le titulaire, la banque et le **RIB (24 chiffres)** ; IBAN et SWIFT facultatifs ; délai (48 h) et limite avant l'expérience (24 h) réglables. **Tant que le RIB n'est pas saisi, le site reste en paiement de test.**
+2. **Client** : « Réserver et payer … par virement » → page **Payer par virement** : montant, **référence unique** (THC-XXXXXX, boutons « Copier »), coordonnées bancaires, échéance, 3 étapes ; même contenu **par e-mail**. Sa réservation affiche « En attente de votre virement ». Si l'échéance tomberait à moins de 4 h, la réservation par virement est fermée pour cette date (message clair).
+3. **Équipe → Virements** : virements à valider (recherche par référence, nom ou e-mail ; échéances dépassées signalées) → **« Virement reçu »** (confirmation dans la page avec montant et référence) → réservation confirmée, **billet QR, facture et e-mail** (même traitement que la confirmation d'un prestataire).
+4. **Virement non reçu** : la place est libérée à l'échéance et proposée à la liste d'attente ; la personne reçoit un e-mail. Un virement arrivé ensuite et validé redonne la place s'il en reste, sinon il est remboursé.
+5. **Remboursement** (annulation, virement tardif sans place) : il apparaît dans **« Remboursements à faire »** ; l'équipe fait le virement retour depuis le compte de la société (coordonnées demandées à la personne, **jamais enregistrées**), puis **« Remboursement effectué »** → avoir et e-mail. Le client voit « Remboursement en cours » d'ici là.
+6. **Abonnement** : même virement (échéance indicative 7 jours), activé à la validation.
+
+### Données et sécurité
+- `settings/payment` = `{ provider: "bank_transfer", mode: "live" }` ; `settings/bankTransfer` (lisible par l'équipe seulement, comme tous les réglages).
+- `payments/{id}` : `reference`, `transferDeadline`, `receivedBy`, `receivedAt` ; remboursement : `completedBy`, `completedAt`.
+- `reservations/{id}` : `paymentMethod: "bank_transfer"`, `transferReference`, `holdExpiresAt` = échéance.
+- `transferRefs/{référence}` : garantit l'unicité (création atomique) ; aucun accès depuis le navigateur.
+- Fonctions : `adminConfirmTransfer`, `adminCompleteManualRefund` (admins), `adminSavePaymentSettings` (super-admin) — toutes journalisées (RIB masqué dans le journal). Le montant validé est toujours celui calculé par le serveur.
+- Règles Firestore : inchangées (tout est écrit par le serveur).
+
+### Tests
+- Unitaires : référence, échéance (48 h / 24 h / trop proche), validation du RIB.
+- Émulateurs (5) : référence unique et même référence au second essai, place bloquée 48 h, e-mail ; un membre ne peut pas se valider ; validation → confirmée + facture ; date trop proche refusée, échéance à 24 h avant ; échéance dépassée → place libérée + e-mail, virement tardif → place reprise ; remboursement manuel → avoir ; réglages super-admin seulement, RIB exigé.
+- De bout en bout : `tests/e2e/firebase-virement.e2e.cjs` (29 vérifications).
+- CGV (article 3) et aide « Payer ma réservation » mises à jour en FR / EN / AR.
+
+### Hypothèses à valider
+- Délai 48 h et limite 24 h avant l'expérience (réglables) ; virement fermé si moins de 4 h pour virer.
+- Abonnement : échéance indicative de 7 jours.
+- Pas encore de **rappel automatique** avant l'échéance (à ajouter si utile : e-mail 12 h avant).
+
+### Action de Rita
+- Une fois le compte professionnel ouvert : **Paramètres → Mode de paiement → Virement bancaire**, saisir titulaire, banque, RIB (et IBAN / SWIFT si clients à l'étranger), enregistrer. Rien d'autre à faire.

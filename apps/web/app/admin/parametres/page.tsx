@@ -4,18 +4,20 @@ import { CompanyForm } from "@/components/admin/company-form";
 import { CategoryForm, CityForm } from "@/components/admin/place-forms";
 import { requireAdmin } from "@/lib/auth/admin";
 import { getAdminData } from "@/lib/data/admin";
-import { getCompanySettings, getServiceFee } from "@/lib/data/admin-mail";
+import { getCompanySettings, getPaymentSettings, getServiceFee } from "@/lib/data/admin-mail";
+import { PaymentSettingsForm } from "@/components/admin/payment-settings-form";
 import { ServiceFeeForm } from "@/components/admin/service-fee-form";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 
 export const metadata = { title: "Paramètres" };
 
 export default async function SettingsAdminPage() {
-  const [{ cities, categories }, company, me, serviceFee] = await Promise.all([
+  const [{ cities, categories }, company, me, serviceFee, payment] = await Promise.all([
     getAdminData(),
     getCompanySettings(),
     FIREBASE_ENABLED ? requireAdmin() : Promise.resolve(null),
     getServiceFee(),
+    getPaymentSettings(),
   ]);
   return (
     <>
@@ -26,6 +28,13 @@ export default async function SettingsAdminPage() {
             <CompanyForm initial={company} canEdit={me?.role === "superadmin"} />
           ) : (
             <p className="text-sm text-muted">Démonstration : la raison sociale, l&apos;ICE, la TVA et l&apos;envoi des e-mails se règlent ici sur le site en ligne (super-admin). Tant qu&apos;ils ne sont pas renseignés, les documents s&apos;intitulent « Reçu — projet d&apos;essai ».</p>
+          )}
+        </Card>
+        <Card title="Mode de paiement" className="xl:col-span-2">
+          {payment ? (
+            <PaymentSettingsForm initial={payment} canEdit={me?.role === "superadmin"} />
+          ) : (
+            <p className="text-sm text-muted">Démonstration : le mode de paiement (test ou virement bancaire avec le RIB de la société) se règle ici sur le site en ligne (super-admin).</p>
           )}
         </Card>
         <Card title="Villes" className="xl:col-span-2">

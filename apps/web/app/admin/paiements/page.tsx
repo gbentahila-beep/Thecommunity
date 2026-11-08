@@ -13,7 +13,7 @@ export default async function PaymentsAdminPage() {
   return (
     <>
       <PageHeader title="Paiements et remboursements" />
-      <div className="mb-4"><DemoNote>Paiements de test (prestataire « sandbox ») : aucun prestataire réel n&apos;est connecté. Chaque paiement encaissé reçoit un document (série TEST tant que les paiements sont en test), envoyé par e-mail — voir la boîte d&apos;envoi.</DemoNote></div>
+      <div className="mb-4"><DemoNote>Paiements de test (« sandbox », aucun argent) ou virements bancaires (à valider dans « Virements »). Chaque paiement encaissé reçoit un document (série TEST tant que les paiements sont en test), envoyé par e-mail — voir la boîte d&apos;envoi.</DemoNote></div>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="Encaissé" value={dh(sum((p) => p.type === "payment" && p.status !== "initiated"))} />
         <StatTile label="Remboursé" value={dh(sum((p) => p.type === "refund"))} />
@@ -27,7 +27,7 @@ export default async function PaymentsAdminPage() {
             return (
               <tr key={p.id}>
                 <td className="whitespace-nowrap text-muted">{adminDate(p.createdAt)}</td>
-                <td>{p.type === "payment" ? "Paiement" : "Remboursement"}</td>
+                <td>{p.type === "payment" ? "Paiement" : "Remboursement"}{p.provider === "bank_transfer" && <span className="block text-xs text-muted">Virement{p.reference ? ` ${p.reference}` : ""}</span>}</td>
                 <td className="font-mono text-xs">{p.reservationId}</td>
                 <td>{u.firstName} {u.lastName}</td>
                 <td className={`tabular-nums ${p.type === "refund" ? "text-red-800" : ""}`}>{p.type === "refund" ? "−" : ""}{dh(p.amount)}</td>

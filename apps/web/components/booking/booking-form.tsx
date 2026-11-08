@@ -17,6 +17,8 @@ type Props = {
   /** Part réglée sur place au partenaire (étape 11) : prix fixe par place, ou null pour une consommation libre. Absent = tout en ligne.
    *  `partner` vide quand le lieu n'est révélé que la veille (on ne le dévoile pas avant). */
   onSite?: { unit: number | null; partner: string; description: string } | null;
+  /** Paiement par virement (5h) : délai et limite avant l'expérience, en heures. */
+  transfer?: { hours: number; cutoff: number } | null;
   /** Langues du profil, proposées par défaut comme langues de table. */
   defaultLanguages?: BookingPreferences["languages"];
 };
@@ -25,7 +27,7 @@ type Props = {
  * Choix du nombre de places, code promo, préférences pour l'accueil, puis réservation.
  * Le prix affiché vient du serveur (prix membre, code, frais) ; la réservation le recalcule.
  */
-export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite = null, defaultLanguages = [] }: Props) {
+export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite = null, transfer = null, defaultLanguages = [] }: Props) {
   const t = useTranslations("booking");
   const t2 = useTranslations("twoPart");
   const tp = useTranslations("prefs");
@@ -235,9 +237,9 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
         disabled={busy}
         className="w-full rounded-full bg-plum-900 px-6 py-4 font-semibold text-white shadow-card transition hover:bg-plum-800 disabled:opacity-60"
       >
-        {busy ? t("working") : free ? t("freeCta") : t("payCtaAmount", { amount: money(total) })}
+        {busy ? t("working") : free ? t("freeCta") : transfer ? t("payCtaTransfer", { amount: money(total) }) : t("payCtaAmount", { amount: money(total) })}
       </button>
-      {!free && <p className="text-center text-xs text-muted">{t("holdNote")}</p>}
+      {!free && <p className="text-center text-xs text-muted">{transfer ? t("holdNoteTransfer", { hours: transfer.hours, cutoff: transfer.cutoff }) : t("holdNote")}</p>}
     </div>
   );
 }

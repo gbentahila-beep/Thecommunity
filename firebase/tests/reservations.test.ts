@@ -1401,3 +1401,125 @@ describe("tarification en deux parts (11)", () => {
     expect(await refusal(team.call("adminSetPartnerPayment", { reservationId: p2, paid: true }))).toBe("failed-precondition:not_applicable");
   });
 });
+
+describe("virement bancaire (5h)", () => {
+  const BANK = { holder: "The Host Club (fictif)", bank: "Banque d'essai", rib: "000111000000000000000099", iban: "", swift: "", deadlineHours: 48, cutoffHours: 24 };
+  const useTransfer = async () => {
+    await db().doc("settings/bankTransfer").set(BANK);
+    await db().doc("settings/payment").set({ provider: "bank_transfer", mode: "live" });
+  };
+  const useSandbox = () => db().doc("settings/payment").set({ provider: "sandbox", mode: "test" });
+  const mails = async (field: string, value: string) => (await db().collection("mail").where(field, "==", value).get()).docs.map((d) => d.data());
+
+  it("référence unique, place bloquée 48 h, e-mail d'instructions ; validation par l'équipe → confirmée et facturée", async () => {
+    await useTransfer();
+    try {
+      const sid = await makeSession({ startInHours: 240 });
+      const u = await member();
+      const { reservationId } = await u.call("createReservation", { sessionId: sid, seats: 1 });
+      const t0 = Date.now();
+      const out = (await u.call("startCheckout", { reservationId })) as { paymentId: string; redirectUrl: string };
+      expect(out.redirectUrl).toBe(`/paiement/virement/${out.paymentId}`);
+      const p = await payment(out.paymentId);
+      expect(p).toMatchObject({ provider: "bank_transfer", status: "initiated", type: "payment" });
+      expect(p.reference).toMatch(/^THC-[2-9A-Z]{6}$/);
+      expect((await db().doc(`transferRefs/${p.reference}`).get()).data()?.paymentId).toBe(out.paymentId);
+      const r = await reservation(reservationId as string);
+      expect(r).toMatchObject({ status: "pending_payment", paymentMethod: "bank_transfer", transferReference: p.reference });
+      expect(Math.abs((r.holdExpiresAt as Timestamp).toMillis() - (t0 + 48 * 3_600_000))).toBeLessThan(60_000);
+      expect((await mails("refs.paymentId", out.paymentId)).map((m) => m.kind)).toContain("transfer_instructions");
+      // Deuxième essai : même virement, même référence.
+      expect(((await u.call("startCheckout", { reservationId })) as { paymentId: string }).paymentId).toBe(out.paymentId);
+      // Le membre ne peut ni simuler un paiement ni se valider lui-même.
+      expect(await refusal(u.call("sandboxCompletePayment", { paymentId: out.paymentId, outcome: "succeeded" }))).toBe("permission-denied:sandbox_disabled");
+      expect(await refusal(u.call("adminConfirmTransfer", { paymentId: out.paymentId }))).toBe("permission-denied:");
+      const team = await member({ role: "admin" });
+      expect(await team.call("adminConfirmTransfer", { paymentId: out.paymentId })).toMatchObject({ outcome: "confirmed", reservationId });
+      expect(await reservation(reservationId as string)).toMatchObject({ status: "confirmed", paymentId: out.paymentId });
+      expect(await payment(out.paymentId)).toMatchObject({ status: "succeeded", receivedBy: team.uid });
+      expect(await session(sid)).toMatchObject({ seatsConfirmed: 1, seatsHeld: 0 });
+      expect((await db().doc(`invoices/inv_${out.paymentId}`).get()).exists).toBe(true);
+      expect(await refusal(team.call("adminConfirmTransfer", { paymentId: out.paymentId }))).toBe("failed-precondition:already_processed");
+    } finally {
+      await useSandbox();
+    }
+  });
+
+  it("date trop proche : virement refusé ; échéance au plus tard 24 h avant l'expérience", async () => {
+    await useTransfer();
+    try {
+      const u = await member();
+      const near = await makeSession({ startInHours: 27 });
+      const { reservationId } = await u.call("createReservation", { sessionId: near, seats: 1 });
+      expect(await refusal(u.call("startCheckout", { reservationId }))).toBe("failed-precondition:transfer_too_late");
+      const mid = await makeSession({ startInHours: 40 });
+      const v = await member();
+      const { reservationId: rid } = await v.call("createReservation", { sessionId: mid, seats: 1 });
+      await v.call("startCheckout", { reservationId: rid });
+      const start = ((await session(mid)).startAt as Timestamp).toMillis();
+      expect((await reservation(rid as string)).holdExpiresAt.toMillis()).toBe(start - 24 * 3_600_000);
+    } finally {
+      await useSandbox();
+    }
+  });
+
+  it("virement non reçu : place libérée et personne prévenue ; virement tardif reçu → place reprise si disponible", async () => {
+    await useTransfer();
+    try {
+      const sid = await makeSession({ startInHours: 240 });
+      const u = await member();
+      const { reservationId } = await u.call("createReservation", { sessionId: sid, seats: 1 });
+      const { paymentId } = (await u.call("startCheckout", { reservationId })) as { paymentId: string };
+      await expireHold(reservationId as string);
+      expect(await expireDueHolds()).toBeGreaterThanOrEqual(1);
+      expect((await reservation(reservationId as string)).status).toBe("expired");
+      expect((await mails("refs.reservationId", reservationId as string)).map((m) => m.kind)).toContain("transfer_expired");
+      const team = await member({ role: "admin" });
+      expect(await team.call("adminConfirmTransfer", { paymentId })).toMatchObject({ outcome: "confirmed" });
+      expect(await reservation(reservationId as string)).toMatchObject({ status: "confirmed", latePayment: true });
+    } finally {
+      await useSandbox();
+    }
+  });
+
+  it("remboursement d'un virement : « en cours » jusqu'à ce que l'équipe le marque effectué → avoir", async () => {
+    await useTransfer();
+    try {
+      const sid = await makeSession({ startInHours: 240 });
+      const u = await member();
+      const { reservationId } = await u.call("createReservation", { sessionId: sid, seats: 1 });
+      const { paymentId } = (await u.call("startCheckout", { reservationId })) as { paymentId: string };
+      const team = await member({ role: "admin" });
+      await team.call("adminConfirmTransfer", { paymentId });
+      expect(await u.call("cancelReservation", { reservationId })).toMatchObject({ ok: true, refundStatus: "pending" });
+      const refund = (await db().collection("payments").where("parentPaymentId", "==", paymentId).get()).docs[0]!;
+      expect(refund.data()).toMatchObject({ type: "refund", provider: "bank_transfer", status: "initiated" });
+      expect((await payment(paymentId)).status).toBe("succeeded");
+      expect(await refusal(u.call("adminCompleteManualRefund", { refundId: refund.id }))).toBe("permission-denied:");
+      await team.call("adminCompleteManualRefund", { refundId: refund.id });
+      expect((await payment(refund.id)).status).toBe("succeeded");
+      expect((await payment(paymentId)).status).toBe("refunded");
+      expect((await db().collection("invoices").where("kind", "==", "credit_note").where("paymentId", "==", refund.id).get()).size).toBe(1);
+      expect(await refusal(team.call("adminCompleteManualRefund", { refundId: refund.id }))).toBe("failed-precondition:already_processed");
+    } finally {
+      await useSandbox();
+    }
+  });
+
+  it("réglage du paiement : super-admin seulement, RIB de 24 chiffres exigé pour activer le virement", async () => {
+    try {
+      const adm = await member({ role: "admin" });
+      const sup = await member({ role: "superadmin" });
+      expect(await refusal(adm.call("adminSavePaymentSettings", { method: "sandbox" }))).toBe("permission-denied:");
+      expect((await refusal(sup.call("adminSavePaymentSettings", { method: "bank_transfer" }))).startsWith("invalid-argument")).toBe(true);
+      expect((await refusal(sup.call("adminSavePaymentSettings", { method: "bank_transfer", bank: { ...BANK, rib: "1234" } }))).startsWith("invalid-argument")).toBe(true);
+      await sup.call("adminSavePaymentSettings", { method: "bank_transfer", bank: { ...BANK, rib: "000 111 0000000000000000 99" } });
+      expect((await db().doc("settings/payment").get()).data()).toMatchObject({ provider: "bank_transfer", mode: "live" });
+      expect((await db().doc("settings/bankTransfer").get()).data()).toMatchObject({ rib: "000111000000000000000099" });
+      await sup.call("adminSavePaymentSettings", { method: "sandbox" });
+      expect((await db().doc("settings/payment").get()).data()).toMatchObject({ provider: "sandbox", mode: "test" });
+    } finally {
+      await useSandbox();
+    }
+  });
+});

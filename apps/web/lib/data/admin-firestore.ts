@@ -98,6 +98,10 @@ export async function fsAdminData(now: Date) {
     const p = d.data();
     return {
       id: d.id, reservationId: p.reservationId, userId: p.userId, type: p.type, provider: p.provider, amount: p.amount,
+      purpose: p.purpose === "membership" ? "membership" : "reservation",
+      ...(p.reference ? { reference: String(p.reference) } : {}),
+      ...(p.transferDeadline ? { deadline: iso(p.transferDeadline) } : {}),
+      ...(p.parentPaymentId ? { parentPaymentId: String(p.parentPaymentId), reason: String(p.reason ?? "") } : {}),
       status: p.status === "partially_refunded" ? "refunded" : p.status, createdAt: iso(p.createdAt),
       ...(p.invoiceId ? { invoiceId: p.invoiceId, invoiceNumber: p.invoiceNumber ?? "" } : {}),
     };

@@ -14,3 +14,4 @@ export * from "./promo";
 export * from "./matching";
 export * from "./two-part";
 export * from "./ticket";
+export * from "./bank-transfer";

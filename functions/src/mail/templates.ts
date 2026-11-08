@@ -124,3 +124,65 @@ export function changeMail(o: { locale: string; kind: "date" | "venue"; firstNam
   }[l];
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
 }
+
+/** Étape 5h : instructions de virement (référence, montant, coordonnées, échéance). */
+export function transferInstructionsMail(o: {
+  locale: string; firstName: string; what: string; amount: string; reference: string; deadline: string | null;
+  holder: string; bank: string; rib: string; iban: string; swift: string; paymentId: string;
+}) {
+  const l = lang(o.locale);
+  const href = `${SITE_URL}${prefix(l)}/paiement/virement/${o.paymentId}`;
+  const bankLines = {
+    fr: [`Bénéficiaire : ${o.holder}`, `Banque : ${o.bank}`, `RIB : ${o.rib}`, ...(o.iban ? [`IBAN : ${o.iban}`] : []), ...(o.swift ? [`SWIFT / BIC : ${o.swift}`] : [])],
+    en: [`Beneficiary: ${o.holder}`, `Bank: ${o.bank}`, `RIB: ${o.rib}`, ...(o.iban ? [`IBAN: ${o.iban}`] : []), ...(o.swift ? [`SWIFT / BIC: ${o.swift}`] : [])],
+    ar: [`المستفيد: ${o.holder}`, `البنك: ${o.bank}`, `RIB: ${o.rib}`, ...(o.iban ? [`IBAN: ${o.iban}`] : []), ...(o.swift ? [`SWIFT / BIC: ${o.swift}`] : [])],
+  }[l];
+  const t = {
+    fr: {
+      subject: `Virement à effectuer : ${o.reference}`,
+      heading: "Plus qu'une étape : votre virement",
+      p: [
+        `Pour « ${o.what} », faites un virement de ${o.amount}${o.deadline ? ` avant le ${o.deadline}` : ""}.`,
+        `Indiquez impérativement la référence ${o.reference} dans le motif du virement.`,
+        ...bankLines,
+        o.deadline ? "Votre place est réservée jusqu'à cette échéance. Dès réception, nous confirmons votre réservation et vous envoyons votre billet." : "Dès réception, nous activons votre achat et vous envoyons votre facture.",
+      ],
+      cta: "Voir les instructions",
+    },
+    en: {
+      subject: `Bank transfer to make: ${o.reference}`,
+      heading: "One last step: your bank transfer",
+      p: [
+        `For “${o.what}”, please transfer ${o.amount}${o.deadline ? ` before ${o.deadline}` : ""}.`,
+        `Make sure to write the reference ${o.reference} in the transfer description.`,
+        ...bankLines,
+        o.deadline ? "Your spot is held until then. As soon as the transfer arrives, we confirm your booking and send your ticket." : "As soon as the transfer arrives, we activate your purchase and send your invoice.",
+      ],
+      cta: "View the instructions",
+    },
+    ar: {
+      subject: `تحويل بنكي مطلوب: ${o.reference}`,
+      heading: "خطوة أخيرة: تحويلك البنكي",
+      p: [
+        `من أجل « ${o.what} »، يُرجى تحويل ${o.amount}${o.deadline ? ` قبل ${o.deadline}` : ""}.`,
+        `اكتب المرجع ${o.reference} في خانة سبب التحويل.`,
+        ...bankLines,
+        o.deadline ? "مكانك محجوز حتى هذا الموعد. فور توصلنا بالتحويل نؤكد حجزك ونرسل لك تذكرتك." : "فور توصلنا بالتحويل نفعّل مشترياتك ونرسل لك الفاتورة.",
+      ],
+      cta: "عرض التعليمات",
+    },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
+}
+
+/** Étape 5h : virement non reçu à l'échéance, place libérée. */
+export function transferExpiredMail(o: { locale: string; firstName: string; title: string; reference: string; reservationId: string }) {
+  const l = lang(o.locale);
+  const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
+  const t = {
+    fr: { subject: `Place libérée : ${o.title}`, heading: "Nous n'avons pas reçu votre virement", p: [`Le virement ${o.reference} pour « ${o.title} » n'est pas arrivé à temps : la place a été libérée.`, "Vous l'avez déjà envoyé ? Répondez à cet e-mail avec la preuve du virement : nous vous redonnons une place s'il en reste, sinon nous vous remboursons."], cta: "Voir ma réservation" },
+    en: { subject: `Spot released: ${o.title}`, heading: "We haven't received your transfer", p: [`Transfer ${o.reference} for “${o.title}” didn't arrive in time, so the spot was released.`, "Already sent it? Reply to this email with proof of transfer: we'll give you a spot if one is left, otherwise we'll refund you."], cta: "View my booking" },
+    ar: { subject: `تم تحرير المكان: ${o.title}`, heading: "لم نتوصل بتحويلك", p: [`لم يصل التحويل ${o.reference} الخاص بـ « ${o.title} » في الوقت المحدد، فتم تحرير المكان.`, "هل أرسلته بالفعل؟ رد على هذه الرسالة مع إثبات التحويل: نمنحك مكانًا إن بقي، وإلا نسترد لك المبلغ."], cta: "عرض حجزي" },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
+}

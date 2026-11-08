@@ -1,4 +1,5 @@
 import {
+  MEMBERSHIP_TRANSFER_DAYS,
   canRenewMembership,
   MEMBERSHIP_PLAN_ID,
   membershipPlanInputSchema,
@@ -12,6 +13,7 @@ import { db, FieldValue, REGION } from "../lib/admin";
 import { audit } from "../lib/audit";
 import { invalidArgument, requireAuth, requireRole, roleOf } from "../lib/guards";
 import { paymentSettings, providerFor } from "../payments/provider";
+import { sendTransferInstructions } from "../payments/transfer-mail";
 import { requireMemberReady } from "../reservations/create-reservation";
 import { refuse } from "../reservations/refuse";
 import { memberFromDoc, planRef } from "./state";
@@ -62,6 +64,12 @@ export const startMembershipCheckout = onCall({ region: REGION }, async (req) =>
   if (current && !canRenewMembership({ status: current.status, endAt: (current.endAt as Timestamp).toDate() })) refuse("already_member", "Votre abonnement est déjà actif.");
   const settings = await paymentSettings();
   const provider = providerFor(settings.provider);
+  if (provider.id === "bank_transfer") {
+    // Un seul virement en attente par personne : on renvoie la même référence.
+    const pending = await db.collection("payments").where("userId", "==", uid).where("purpose", "==", "membership").where("status", "==", "initiated").get();
+    const prev = pending.docs.find((d) => d.data().provider === "bank_transfer");
+    if (prev) return { paymentId: prev.id, redirectUrl: `/paiement/virement/${prev.id}` };
+  }
   const payRef = db.collection("payments").doc();
   await payRef.set({
     purpose: "membership",
@@ -86,7 +94,12 @@ export const startMembershipCheckout = onCall({ region: REGION }, async (req) =>
     currency: plan!.price.currency,
     description: `${plan!.name.fr} — 12 mois`,
   });
-  await payRef.update({ providerRef: checkout.providerRef ?? null });
+  const transfer = provider.id === "bank_transfer";
+  await payRef.update({
+    providerRef: checkout.providerRef ?? null,
+    ...(transfer ? { reference: checkout.providerRef ?? null, transferDeadline: Timestamp.fromMillis(Date.now() + MEMBERSHIP_TRANSFER_DAYS * 86_400_000) } : {}),
+  });
+  if (transfer) await sendTransferInstructions(payRef.id);
   return { paymentId: payRef.id, redirectUrl: checkout.redirectUrl };
 });
 

@@ -1,4 +1,4 @@
-import { bookingRefusal, DEFAULT_CANCELLATION_POLICY, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, SPOKEN_LANGUAGES, type SpokenLanguage } from "@thecommunity/shared";
+import { bookingRefusal, DEFAULT_CANCELLATION_POLICY, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -27,6 +27,8 @@ type Visitor = "anonymous" | "unverified" | "incomplete" | "suspended" | "ready"
 type VisitorInfo = {
   state: Visitor;
   testPayments: boolean;
+  /** Paiement par virement (5h) : délai et limite avant l'expérience, en heures ; null sinon. */
+  transfer: { hours: number; cutoff: number } | null;
   request?: { id: string; status: string; reservationId?: string; createdAt?: string };
   /** Réservation active de cette personne sur cette date. */
   booked?: { id: string; pending: boolean };
@@ -42,7 +44,9 @@ async function visitorState(sessionId: string): Promise<VisitorInfo> {
   const user = await getSessionUser();
   const settings = (await adminDb().doc("settings/payment").get()).data();
   const testPayments = settings?.provider === "sandbox" && settings?.mode === "test";
-  const base = { testPayments, waitPosition: null, member: false };
+  const bank = settings?.provider === "bank_transfer" ? (await adminDb().doc("settings/bankTransfer").get()).data() : undefined;
+  const transfer = bank ? { hours: Number(bank.deadlineHours ?? TRANSFER_DEADLINE_HOURS), cutoff: Number(bank.cutoffHours ?? TRANSFER_CUTOFF_HOURS) } : null;
+  const base = { testPayments, transfer, waitPosition: null, member: false };
   if (!user) return { ...base, state: "anonymous" };
   const [record, account] = await Promise.all([adminAuth().getUser(user.uid), getAccountState(user.uid)]);
   if (account.suspended) return { ...base, state: "suspended" };
@@ -73,7 +77,7 @@ async function visitorState(sessionId: string): Promise<VisitorInfo> {
     waitPosition = ahead.data().count + 1;
   }
   const languages = Array.isArray(profile.data()?.languages) ? (profile.data()!.languages as string[]) : [];
-  return { state: "ready", testPayments, request, booked, waitPosition, member, languages };
+  return { state: "ready", testPayments, transfer, request, booked, waitPosition, member, languages };
 }
 
 /**
@@ -169,6 +173,10 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           <h2 className="font-semibold">{tr2("noteTitle")}</h2>
           <p className="mt-1 text-sm">{tr2("noteText")}</p>
         </section>
+      )}
+
+      {visitor?.transfer && refusal === null && !onRequest && (
+        <p role="note" className="mt-6 rounded-xl border border-plum-200 bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("transferModeNote")}</p>
       )}
 
       {visitor?.testPayments && refusal === null && !onRequest && (
@@ -269,6 +277,8 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           <Notice title={t("fullTitle")} text={t("fullText")} />
           <WaitlistBox sessionId={session.id} maxSeats={maxSeatsFor(exp)} position={visitor.waitPosition} />
         </>
+      ) : visitor.transfer && transferClosed(new Date(session.startAt), visitor.transfer) && !onRequest ? (
+        <Notice title={t("transferTooLateTitle")} text={t("transferTooLateText", { cutoff: visitor.transfer.cutoff })} />
       ) : onRequest ? (
         <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} defaultLanguages={profileLanguages(visitor.languages)} />
       ) : (
@@ -278,11 +288,17 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           currency={session.price.currency}
           onSite={twoPart.partner ? { unit: twoPart.partner.price?.amount ?? null, partner: exp.venue.revealPolicy === "immediate" ? twoPart.partner.name : "", description: twoPart.partner.description } : null}
           maxSeats={maxSeats}
+          transfer={visitor.transfer}
           defaultLanguages={profileLanguages(visitor.languages)}
         />
       )}
     </PageShell>
   );
+}
+
+/** Virement : date trop proche pour qu'un virement arrive avant la limite (hors du rendu, comme isAfterNow). */
+function transferClosed(start: Date, o: { hours: number; cutoff: number }) {
+  return transferDeadline(new Date(), start, { deadlineHours: o.hours, cutoffHours: o.cutoff }) === null;
 }
 
 /** Hors du rendu (règle de pureté React) : la page est de toute façon rendue à la demande. */

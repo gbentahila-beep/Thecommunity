@@ -209,7 +209,8 @@
       "not_cancellable": "This booking can no longer be cancelled.",
       "members_only": "This experience is for members only.",
       "members_early_access": "This new date is still in members' early access.",
-      "not_editable": "This booking can no longer be changed."
+      "not_editable": "This booking can no longer be changed.",
+      "transfer_too_late": "This date is too close for payment by bank transfer: please choose a later date."
     },
     "fullTextOnRequest": "All spots are taken for this date. Have a look at the other dates for this experience.",
     "seeMyBooking": "See my booking",
@@ -243,7 +244,12 @@
       "promo_already_used": "You've already used this code.",
       "promo_first_booking_only": "This code is for a first booking only.",
       "promoFormat": "Invalid code (letters, numbers and hyphens, 3 to 20 characters)."
-    }
+    },
+    "payCtaTransfer": "Book and pay {amount} by bank transfer",
+    "holdNoteTransfer": "Your spot is held until the transfer arrives: {hours} hours at most, and no later than {cutoff} hours before the experience.",
+    "transferModeNote": "Payment by bank transfer: after booking, you'll get a reference and our bank details. Your spot is confirmed as soon as the transfer arrives, then you receive your ticket.",
+    "transferTooLateTitle": "Bank transfer not possible for this date",
+    "transferTooLateText": "The transfer must reach us at least {cutoff} hours before the experience: this date is too close. Please choose a later date."
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -926,5 +932,35 @@
     "text": "Show this QR code when you arrive. The team scans it to check you in.",
     "code": "Ticket code: {code}",
     "onSite": "Remember to pay the on-site part to the partner."
+  },
+  "transfer": {
+    "title": "Pay by bank transfer",
+    "intro": "Transfer the exact amount and write the reference below in the transfer description.",
+    "amount": "Amount to transfer",
+    "reference": "Reference to write",
+    "referenceHint": "Write it in the transfer description: that's how we recognise your payment.",
+    "beneficiary": "Beneficiary",
+    "bank": "Bank",
+    "rib": "RIB",
+    "iban": "IBAN",
+    "swift": "SWIFT / BIC",
+    "deadline": "To be made before {when}",
+    "deadlineMembership": "To be made within {days} days",
+    "step1": "Make the transfer from your bank (app, branch or counter).",
+    "step2": "Write the reference {reference} in the description.",
+    "step3": "As soon as it arrives (usually 1 to 2 business days), we confirm and email you your ticket and invoice.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "receivedTitle": "Transfer received",
+    "receivedText": "Thank you! Your payment is confirmed.",
+    "seeBooking": "View my booking",
+    "seeMembership": "View my membership",
+    "closedTitle": "This transfer is no longer expected",
+    "closedText": "The deadline has passed or the booking has changed. Already made the transfer? Write to us with proof: we'll give you a spot if one is left, otherwise we'll refund you.",
+    "pendingTitle": "Waiting for your bank transfer",
+    "pendingText": "Reference {reference} · {amount} to transfer before {when}. Your spot is held until then.",
+    "seeInstructions": "View bank details",
+    "noBank": "Bank details will be shared soon.",
+    "refundPending": "Refund in progress: our team will contact you for the return transfer."
   }
 }

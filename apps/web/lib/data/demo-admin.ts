@@ -161,7 +161,15 @@ export type AdminPayment = {
   reservationId: string;
   userId: string;
   type: "payment" | "refund";
-  provider: "sandbox";
+  /** « sandbox » (test) ou « bank_transfer » (virement, 5h). */
+  provider: string;
+  purpose?: "reservation" | "membership";
+  /** Virement : référence à retrouver dans le motif, et échéance (place bloquée jusque-là). */
+  reference?: string;
+  deadline?: string;
+  /** Remboursement : paiement d'origine et motif. */
+  parentPaymentId?: string;
+  reason?: string;
   amount: number;
   status: "succeeded" | "initiated" | "failed" | "refunded";
   createdAt: string;
@@ -225,7 +233,9 @@ export function buildAdminData(now: Date = new Date()) {
       payments.push({ id: `ref-${id}`, reservationId: id, userId, type: "refund", provider: "sandbox", amount: total, status: "succeeded", createdAt: new Date(new Date(created).getTime() + 2 * 86_400_000).toISOString() });
     }
     if (status === "pending_payment") {
-      payments.push({ id: `pay-${id}`, reservationId: id, userId, type: "payment", provider: "sandbox", amount: total, status: "initiated", createdAt: created });
+      // Démonstration 5h : les paiements en attente sont des virements à valider.
+      const ref = `THC-${"23456789ABCDEFGHJKMNPQRSTUVWXYZ"[n % 31]}${"ABCDEFGHJKMNPQRSTUVWXYZ"[(n * 7) % 23]}${(n * 37) % 10 < 2 ? 7 : (n * 37) % 10}Q${"KMNPRT"[n % 6]}${(n % 8) + 2}`;
+      payments.push({ id: `pay-${id}`, reservationId: id, userId, type: "payment", provider: "bank_transfer", reference: ref, deadline: new Date(now.getTime() + ((n % 40) + 4) * 3_600_000).toISOString(), amount: total, status: "initiated", createdAt: created });
     }
   };
 
