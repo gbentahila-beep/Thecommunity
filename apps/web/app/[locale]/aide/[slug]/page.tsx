@@ -47,8 +47,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
       <article className="mt-6">
         <h1 className="font-display text-4xl font-medium text-plum-900 sm:text-5xl">{a.title[lang]}</h1>
         <p className="mt-4 text-lg leading-relaxed text-ink/80">{a.summary[lang]}</p>
-        {locale === "ar" && <p className="mt-6 rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("arabicPending")}</p>}
-        <div className="mt-8 space-y-5" lang={locale === "ar" ? "fr" : undefined} dir={locale === "ar" ? "ltr" : undefined}>
+        <div className="mt-8 space-y-5">
           {a.body[lang].map((b, i) =>
             Array.isArray(b) ? (
               <ul key={i} className="list-disc space-y-2 ps-5 leading-relaxed text-ink/85">

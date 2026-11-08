@@ -1,18 +1,23 @@
 /**
  * Centre d'aide — articles rédigés à partir du fonctionnement réel du site (délais, règles, écrans).
- * Français : référence. Anglais : traduction. Arabe : à traduire (la version française s'affiche avec une mention).
+ * Français : référence. Anglais : traduction. Arabe : content/help-ar.ts (fusionné ci-dessous).
  * Liens internes : syntaxe [texte](/chemin). Jetons {{…}} : informations légales (lib/legal-info.ts) ou « à compléter ».
  */
 import { ACCEPTED_HOLD_HOURS, HOLD_MINUTES, MEMBERSHIP_RENEW_WINDOW_DAYS, REVIEW_WINDOW_DAYS, WAITLIST_OFFER_HOURS } from "@thecommunity/shared";
+import { HELP_ARTICLES_AR, HELP_CATEGORIES_AR } from "./help-ar";
 
 export type HelpAudience = "clients" | "partners";
 export type HelpCategoryKey = "start" | "bookings" | "membership" | "account" | "safety" | "partner-join" | "partner-hosting";
-type L = { fr: string; en: string };
+type LRaw = { fr: string; en: string };
+type L = { fr: string; en: string; ar: string };
+export type HelpLang = "fr" | "en" | "ar";
 export type HelpBlock = string | string[];
-export type HelpArticle = { slug: string; category: HelpCategoryKey; title: L; summary: L; body: { fr: HelpBlock[]; en: HelpBlock[] }; related?: string[] };
+type HelpArticleRaw = { slug: string; category: HelpCategoryKey; title: LRaw; summary: LRaw; body: { fr: HelpBlock[]; en: HelpBlock[] }; related?: string[] };
+type HelpCategoryRaw = { key: HelpCategoryKey; audience: HelpAudience; title: LRaw; description: LRaw };
+export type HelpArticle = { slug: string; category: HelpCategoryKey; title: L; summary: L; body: Record<HelpLang, HelpBlock[]>; related?: string[] };
 export type HelpCategory = { key: HelpCategoryKey; audience: HelpAudience; title: L; description: L };
 
-export const HELP_CATEGORIES: HelpCategory[] = [
+const HELP_CATEGORIES_RAW: HelpCategoryRaw[] = [
   { key: "start", audience: "clients", title: { fr: "Bien démarrer", en: "Getting started" }, description: { fr: "Le principe, votre compte, votre première expérience.", en: "How it works, your account, your first experience." } },
   { key: "bookings", audience: "clients", title: { fr: "Expériences et réservations", en: "Experiences and bookings" }, description: { fr: "Réserver, payer, annuler, liste d'attente, avis.", en: "Booking, paying, cancelling, waiting list, reviews." } },
   { key: "membership", audience: "clients", title: { fr: "Abonnement", en: "Membership" }, description: { fr: "Prix membre, accès anticipé, renouvellement.", en: "Member price, early access, renewal." } },
@@ -22,7 +27,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
   { key: "partner-hosting", audience: "partners", title: { fr: "Accueillir un groupe", en: "Hosting a group" }, description: { fr: "Préparer une date, annulations, incidents.", en: "Preparing a date, cancellations, incidents." } },
 ];
 
-export const HELP_ARTICLES: HelpArticle[] = [
+const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
   // ——— Bien démarrer ———
   {
     slug: "comment-fonctionne-the-host-club",
@@ -209,7 +214,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
       fr: [
         `Une fois l'expérience passée, ouvrez votre réservation dans [Mes réservations](/espace/reservations) : vous pouvez donner une note de 1 à 5 et un commentaire pendant ${REVIEW_WINDOW_DAYS} jours.`,
         "Les avis restent visibles sur la fiche de l'expérience, même lorsqu'aucune nouvelle date n'est programmée. Seul votre prénom et l'initiale de votre nom apparaissent.",
-        "Un avis qui ne respecte pas la [règles de la communauté](/charte) peut être masqué par l'équipe.",
+        "Un avis qui ne respecte pas nos [règles de la communauté](/charte) peut être masqué par l'équipe.",
       ],
       en: [
         `Once the experience is over, open your booking in [My bookings](/espace/reservations): you can give a rating from 1 to 5 and a comment for ${REVIEW_WINDOW_DAYS} days.`,
@@ -379,7 +384,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
     body: {
       fr: [
         "Nous choisissons nos partenaires avec soin, car ils font l'expérience de nos membres.",
-        ["Un lieu ouvert au public, propre, sûr et facile d'accès.", "Un espace où un petit groupe peut échanger confortablement (table dédiée, salle, terrasse…).", "Une offre de qualité, avec des options sans alcool et, pour la restauration, une attention aux régimes et allergies.", "Un interlocuteur joignable le jour J.", "Le respect de notre [règles de la communauté](/charte) par votre équipe."],
+        ["Un lieu ouvert au public, propre, sûr et facile d'accès.", "Un espace où un petit groupe peut échanger confortablement (table dédiée, salle, terrasse…).", "Une offre de qualité, avec des options sans alcool et, pour la restauration, une attention aux régimes et allergies.", "Un interlocuteur joignable le jour J.", "Le respect de nos [règles de la communauté](/charte) par votre équipe."],
       ],
       en: [
         "We choose our partners carefully, because they shape our members' experience.",
@@ -453,12 +458,12 @@ export const HELP_ARTICLES: HelpArticle[] = [
     summary: { fr: "Votre équipe peut demander à une personne de partir ; prévenez-nous ensuite.", en: "Your team may ask someone to leave; let us know afterwards." },
     body: {
       fr: [
-        "Chaque membre accepte notre [règles de la communauté](/charte). Si un participant ne la respecte pas, votre équipe peut lui demander de partir.",
+        "Chaque membre accepte nos [règles de la communauté](/charte). Si un participant ne les respecte pas, votre équipe peut lui demander de partir.",
         "Signalez-nous ensuite ce qui s'est passé (date, heure, faits) à {{safetyEmail}} ou via la page [Contact](/contact). Nous prenons les mesures nécessaires, pouvant aller jusqu'à l'exclusion.",
         "En cas de danger immédiat, appelez d'abord le 19 (Police) ou le 15 (Protection civile).",
       ],
       en: [
-        "Every member accepts our [community rules](/charte). If a participant breaks it, your team may ask them to leave.",
+        "Every member accepts our [community rules](/charte). If a participant breaks them, your team may ask them to leave.",
         "Then tell us what happened (date, time, facts) at {{safetyEmail}} or via the [Contact](/contact) page. We take the necessary steps, up to removing the member.",
         "If there's immediate danger, call 19 (Police) or 15 (Civil Protection) first.",
       ],
@@ -469,16 +474,31 @@ export const HELP_ARTICLES: HelpArticle[] = [
 
 /** Typographie française : espace insécable avant « ? ! : ; » et à l'intérieur des guillemets (évite un « ? » seul en début de ligne). */
 const nbsp = (t: string) => t.replace(/ ([?!:;»])/g, "\u00a0$1").replace(/« /g, "«\u00a0");
-for (const c of HELP_CATEGORIES) {
+for (const c of HELP_CATEGORIES_RAW) {
   c.title.fr = nbsp(c.title.fr);
   c.description.fr = nbsp(c.description.fr);
 }
-for (const a of HELP_ARTICLES) {
+for (const a of HELP_ARTICLES_RAW) {
   a.title.fr = nbsp(a.title.fr);
   a.summary.fr = nbsp(a.summary.fr);
   a.body.fr = a.body.fr.map((b) => (Array.isArray(b) ? b.map(nbsp) : nbsp(b)));
 }
 
-export const helpLang = (locale: string): "fr" | "en" => (locale === "en" ? "en" : "fr");
+/** Fusion de la version arabe (content/help-ar.ts) ; un article sans traduction arabe ferait échouer la compilation des pages. */
+function arOf<T>(map: Record<string, T>, key: string): T {
+  const v = map[key];
+  if (!v) throw new Error(`Traduction arabe manquante pour l'aide : ${key}`);
+  return v;
+}
+export const HELP_CATEGORIES: HelpCategory[] = HELP_CATEGORIES_RAW.map((c) => {
+  const ar = arOf(HELP_CATEGORIES_AR, c.key);
+  return { ...c, title: { ...c.title, ar: ar.title }, description: { ...c.description, ar: ar.description } };
+});
+export const HELP_ARTICLES: HelpArticle[] = HELP_ARTICLES_RAW.map((a) => {
+  const ar = arOf(HELP_ARTICLES_AR, a.slug);
+  return { ...a, title: { ...a.title, ar: ar.title }, summary: { ...a.summary, ar: ar.summary }, body: { ...a.body, ar: ar.body } };
+});
+
+export const helpLang = (locale: string): HelpLang => (locale === "en" || locale === "ar" ? locale : "fr");
 export const articleBySlug = (slug: string) => HELP_ARTICLES.find((a) => a.slug === slug);
 export const categoryOf = (key: HelpCategoryKey) => HELP_CATEGORIES.find((c) => c.key === key)!;
