@@ -50,6 +50,7 @@
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
+| **11g — proposée (retour de Rita du 8 novembre)** | **Formulaire d'expérience : fusionner « Partenaire et économie » et « Tarification et paiement client »** en une seule section « 4. Prix, paiement et partenaire ». Problèmes constatés : (1) le coût par place (modèle « organisée par nous ») et le prix partenaire payé sur place se comptent deux fois ; (2) « Ce qui est inclus » et « Ce qui est réglé sur place » se recoupent. Proposition : partenaire → mode de paiement du client → prix (en ligne / sur place) chacun avec SA ligne « ce que ça comprend » → encadré « Ce que ça nous rapporte » (équipe seulement) adapté au mode, sans jamais compter la part sur place comme un coût ; avertissement si le coût saisi = le prix sur place ; aperçu client + aperçu marge côte à côte. Données inchangées (rétrocompatible). | go de Rita |
 | 9 | **Recette, sécurité, mise en production** (dont : **effacement automatique** du régime et des allergies 30 jours après l'expérience, annoncé dans la politique de confidentialité) | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 
 Idées notées, à valider avant de les planifier :
