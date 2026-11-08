@@ -132,7 +132,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       {/* VILLES */}
       <PageShell className="pb-8">
-        <div className="rounded-[2rem] bg-plum-900 px-6 py-12 text-center text-white sm:px-12">
+        <div id="villes" className="scroll-mt-24 rounded-[2rem] bg-plum-900 px-6 py-12 text-center text-white sm:px-12">
           <h2 className="font-display text-3xl font-medium sm:text-4xl">{t("citiesTitle")}</h2>
           <p className="mx-auto mt-3 max-w-xl text-plum-100">{t("citiesText")}</p>
           <ul className="mt-8 flex flex-wrap justify-center gap-2.5">

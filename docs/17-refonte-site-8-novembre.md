@@ -37,7 +37,7 @@ Adapter à notre fonctionnement : pas de discussion de groupe ni de messagerie a
 
 L'accroche de l'accueil reste en anglais dans les trois langues (confirmé par Rita).
 
-## 8e — Page À propos
+## 8e — Page À propos ✅ (fait le 8 novembre)
 
 1. Grande photo d'en-tête (`a-propos-hero`) avec un titre fort, mise en page du modèle 24.
 2. **La créatrice** : texte à droite, photo à gauche.
@@ -88,7 +88,7 @@ Points à reprendre à notre façon (sans copier) :
 - **Litiges** : loi marocaine (loi 31-08 sur la protection du consommateur), réclamation amiable d'abord, puis tribunaux compétents (Casablanca, hypothèse).
 - **À ne pas reprendre** : renouvellement automatique (notre abonnement n'en a pas), frais d'absence de 35 % (nous n'en facturons pas), messagerie, test de personnalité, médiateur français.
 
-## 8h — Confidentialité revue
+## 8h — Confidentialité revue ✅ (fait le 8 novembre)
 
 - Présentation en **tableau** : finalité → base légale (contrat, intérêt légitime, obligation légale, accord) → durée de conservation.
 - **Données** : identité et contact, profil (langues, intérêts, âge), réservations et paiements (sans données bancaires chez nous), régime / allergies (accord explicite), navigation et sécurité.
@@ -97,7 +97,7 @@ Points à reprendre à notre façon (sans copier) :
 - **Mineurs** : service réservé aux 18 ans et plus ; tolérance zéro pour toute exploitation de mineurs, signalement aux autorités.
 - Durées : reprendre celles de docs/16 (à faire valider).
 
-## 8i — Blog : mise en page mobile (captures envoyées par Rita le 8 novembre)
+## 8i — Blog : mise en page mobile (captures envoyées par Rita le 8 novembre) ✅ (fait le 8 novembre)
 
 Références : `docs/maquettes/2026-11-08/blog-mobile-1..5.png` (blog Timeleft sur téléphone). S'en inspirer pour la **mise en page**, garder le style The Host Club (couleurs prune / crème, typographies actuelles), ne pas reprendre leurs textes.
 

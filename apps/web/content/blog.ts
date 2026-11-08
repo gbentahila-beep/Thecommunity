@@ -839,3 +839,28 @@ export const blogLang = (locale: string): BlogLang => (locale === "en" ? "en" : 
 export const articleBySlug = (slug: string) => BLOG_ARTICLES.find((a) => a.slug === slug);
 export const blogCategory = (key: string) => BLOG_CATEGORIES.find((c) => c.key === key);
 export const articlesIn = (key: BlogCategoryKey) => BLOG_ARTICLES.filter((a) => a.category === key);
+
+/** Article mis en avant « Commencer ici ». */
+export const START_HERE = "diner-avec-des-inconnus";
+/**
+ * « Les plus lus » : notre sélection tant que les lectures ne sont pas mesurées (docs/17, 8i).
+ * Sert aussi d'ordre « Plus lus » dans « Parcourir les articles ».
+ */
+export const MOST_READ = [
+  "questions-pour-lancer-une-conversation",
+  "se-faire-des-amis-a-casablanca",
+  "que-faire-a-casablanca",
+  "se-faire-des-amis-adulte",
+  "reserver-sa-premiere-experience",
+  "est-ce-une-application-de-rencontre",
+];
+const rank = (slug: string) => {
+  const i = MOST_READ.indexOf(slug);
+  return i === -1 ? MOST_READ.length : i;
+};
+/** Ordre « Plus lus » (sélection puis le reste) et ordre « Récents » (date, puis dernier ajouté). */
+export const byPopularity = (list: BlogArticle[]) => [...list].sort((a, b) => rank(a.slug) - rank(b.slug));
+export const byRecency = (list: BlogArticle[]) =>
+  list.map((a, i) => ({ a, i })).sort((x, y) => y.a.date.localeCompare(x.a.date) || y.i - x.i).map((x) => x.a);
+/** Date de mise à jour d'un thème (article le plus récent). */
+export const lastUpdate = (list: BlogArticle[]) => list.reduce((d, a) => (a.date > d ? a.date : d), "");

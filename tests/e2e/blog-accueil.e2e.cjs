@@ -54,21 +54,47 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   const tabs = d.getByRole('navigation', { name: 'Thèmes du blog' });
   for (const l of ['Tous les articles', 'City guide', 'Conversation', 'Amitié', 'Comment fonctionne The Host Club']) assert(await tabs.getByRole('link', { name: l }).isVisible(), `onglet ${l}`);
   assert(await tabs.getByRole('link', { name: 'Tous les articles' }).getAttribute('aria-current') === 'page', 'onglet Tous actif');
-  assert(await d.locator('main article').count() === 19, '19 articles listés');
+  const featured = d.getByRole('link', { name: "Dîner avec des inconnus : c'est quoi, et comment ça se passe ?" }).first();
+  assert(await featured.getAttribute('href') === '/blog/diner-avec-des-inconnus', 'article « Commencer ici » mis en avant');
+  assert(await d.getByText('Commencer ici').first().isVisible(), 'mention « Commencer ici »');
+  const mostRead = d.locator('section[aria-labelledby="most-read"]');
+  assert(await mostRead.getByRole('heading', { name: 'Les plus lus' }).isVisible() && await mostRead.getByRole('link').count() === 6, '« Les plus lus » : 6 articles en liste compacte');
+  assert(await mostRead.locator('img').count() === 6, 'liste compacte avec vignettes');
+  const browse = d.locator('section[aria-labelledby="browse"]');
+  assert(await browse.getByRole('link').count() === 19, '« Parcourir les articles » : 19 articles');
+  const popular = browse.getByRole('button', { name: 'Plus lus' });
+  const recent = browse.getByRole('button', { name: 'Récents' });
+  assert(await popular.getAttribute('aria-pressed') === 'true', 'tri « Plus lus » par défaut');
+  const firstPopular = await browse.getByRole('link').first().textContent();
+  await recent.click();
+  assert(await recent.getAttribute('aria-pressed') === 'true' && (await browse.getByRole('link').first().textContent()) !== firstPopular, 'tri « Récents » change l\'ordre');
+  await browse.getByRole('searchbox', { name: 'Rechercher un article' }).fill('amitie adulte');
+  assert(await browse.getByRole('link').count() >= 1 && await browse.getByRole('link', { name: /amis à l'âge adulte/ }).isVisible(), 'recherche sans accents');
+  await browse.getByRole('searchbox').fill('zzzz introuvable');
+  assert(await browse.getByText('Aucun article ne correspond à votre recherche.').isVisible(), 'recherche sans résultat annoncée');
+  await browse.getByRole('button', { name: 'Effacer la recherche' }).click();
+  assert(await browse.getByRole('link').count() === 19, 'recherche effacée');
   await tabs.getByRole('link', { name: 'City guide' }).click();
   await d.waitForURL('**/blog/theme/city-guide');
-  assert(await d.locator('main article').count() === 3, 'City guide : 3 articles');
+  assert(await d.getByRole('heading', { level: 1, name: 'City guide' }).isVisible(), 'page de thème : titre');
+  assert(await d.getByText(/3 articles · Mis à jour le/).isVisible(), 'page de thème : nombre d\'articles et date');
+  assert(await d.getByRole('heading', { name: 'Rencontrer du monde à Casablanca' }).isVisible(), 'carte « Rencontrer du monde à Casablanca »');
+  assert(await d.getByRole('link', { name: 'Trouver mon groupe' }).getAttribute('href') === '/experiences' && await d.getByRole('link', { name: 'Choisir une autre ville' }).getAttribute('href') === '/#villes', 'carte : deux boutons');
+  assert(await d.locator('main ul.divide-y a[href^="/blog/"]').count() >= 3, 'City guide : 3 articles en liste');
   assert(await d.getByRole('heading', { name: 'Questions fréquentes' }).isVisible(), 'City guide : FAQ en bas');
   await d.getByText('Faut-il parler arabe pour rencontrer du monde ?').click();
   assert(await d.getByText(/français, la darija/).isVisible(), 'FAQ City guide dépliable');
-  await tabs.getByRole('link', { name: 'Comment fonctionne The Host Club' }).click();
+  const useful = d.locator('section[aria-labelledby="useful-also"]');
+  assert(await useful.getByRole('heading', { name: 'Utile aussi' }).isVisible() && await useful.getByRole('link').count() === 3, '« Utile aussi » : 3 articles');
+  await d.getByRole('navigation', { name: 'Thèmes du blog' }).getByRole('link', { name: 'Comment fonctionne The Host Club' }).click();
   await d.waitForURL('**/blog/theme/the-host-club');
-  assert(await d.locator('main article').count() === 7, 'The Host Club : 7 articles');
-  await d.getByRole('link', { name: 'Réserver sa première expérience, étape par étape' }).click();
+  assert(await d.getByText(/7 articles/).isVisible(), 'The Host Club : 7 articles');
+  await d.getByRole('link', { name: /Réserver sa première expérience, étape par étape/ }).first().click();
   await d.waitForURL('**/blog/reserver-sa-premiere-experience');
   assert(await d.getByRole('heading', { level: 1, name: 'Réserver sa première expérience, étape par étape' }).isVisible(), 'page article');
   assert(await d.locator('main ol li').count() >= 8, 'article : étapes numérotées');
-  assert(await d.getByRole('heading', { name: 'À lire aussi' }).isVisible() && await d.locator('section[aria-labelledby="related"] article').count() === 3, 'trois articles liés');
+  const related = d.locator('section[aria-labelledby="useful-also"]');
+  assert(await related.getByRole('heading', { name: 'À lire aussi' }).isVisible() && await related.getByRole('link').count() === 3, 'trois articles liés');
   const ld = JSON.parse(await d.locator('script[type="application/ld+json"]').first().textContent());
   assert(ld['@type'] === 'BlogPosting' && ld.headline.startsWith('Réserver'), 'données structurées BlogPosting');
   assert(/\/blog\/reserver-sa-premiere-experience$/.test(await d.locator('link[rel="canonical"]').getAttribute('href')), 'URL canonique');
@@ -85,6 +111,31 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   // 404
   assert((await d.goto(`${base}/blog/nexiste-pas`)).status() === 404, 'article inconnu → 404');
   assert((await d.goto(`${base}/blog/theme/nexiste-pas`)).status() === 404, 'thème inconnu → 404');
+
+  // 8e : À propos
+  await d.goto(`${base}/a-propos`);
+  assert(await d.getByRole('heading', { level: 1, name: /Des inconnus à table\.\s*Des amis en repartant\./ }).isVisible(), 'À propos : accroche');
+  const founder = d.locator('section[aria-labelledby="founder"]');
+  const [imgBox, textBox] = [await founder.locator('img').boundingBox(), await founder.getByRole('heading', { name: 'Aya Snoussi' }).boundingBox()];
+  assert(imgBox.x < textBox.x, 'créatrice : photo à gauche, texte à droite');
+  assert(await d.getByRole('heading', { name: 'Ce qui compte pour elle' }).isVisible(), 'ce qui compte pour elle');
+  const tools = d.locator('section[aria-labelledby="tools-title"]');
+  assert(await tools.getByRole('heading', { name: 'Nos outils pour créer du lien' }).isVisible() && await tools.locator('li').count() === 8, 'outils : 8 cartes');
+  const prevT = tools.getByRole('button', { name: 'Outil précédent' }).first(), nextT = tools.getByRole('button', { name: 'Outil suivant' }).first();
+  assert(await prevT.isDisabled() && await nextT.isEnabled(), 'outils : au départ, seulement « suivant »');
+  await nextT.click();
+  await d.waitForFunction(() => document.querySelector('section[aria-labelledby="tools-title"] ul').scrollLeft > 50);
+  await d.waitForTimeout(600);
+  assert(await prevT.isEnabled(), 'outils : puis les deux sens');
+  const gallery = d.locator('section[aria-labelledby="gallery"]');
+  assert(await gallery.getByRole('heading', { name: 'Des rencontres qui valent mille images' }).isVisible() && await gallery.locator('img').count() === 8, 'galerie : 8 photos');
+
+  // 8h : Confidentialité
+  await d.goto(`${base}/confidentialite`);
+  assert(await d.getByRole('columnheader', { name: 'Base légale' }).first().isVisible(), 'confidentialité : tableau finalité / base / durée');
+  assert(await d.getByRole('rowheader', { name: 'Transmettre régime, allergies et langues de table au lieu' }).isVisible(), 'confidentialité : régime et allergies avec accord');
+  assert(await d.getByRole('cell', { name: /Envoi des e-mails/ }).isVisible(), 'confidentialité : prestataires listés');
+  assert(await d.getByRole('heading', { name: '12. Mineurs et protection de l\'enfance' }).isVisible(), 'confidentialité : protection des mineurs');
 
   // ——— Mobile ———
   const mob = await b.newContext({ ...devices['iPhone 13'] });
@@ -134,7 +185,9 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await d.locator('footer').getByRole('link', { name: 'Règles de la communauté' }).getAttribute('href') === '/charte', 'pied de page → Règles de la communauté');
   await d.goto(`${base}/en/charte`);
   assert(await d.getByRole('heading', { level: 1, name: 'Community rules' }).isVisible(), 'règles en anglais');
-  for (const path of ['/charte', '/securite', '/cgu']) { await m.goto(`${base}${path}`); await noOverflow(m, `mobile ${path}`); }
+  for (const path of ['/charte', '/securite', '/cgu', '/confidentialite', '/a-propos', '/ar/a-propos', '/blog/theme/city-guide']) { await m.goto(`${base}${path}`); await noOverflow(m, `mobile ${path}`); }
+  await m.goto(`${base}/confidentialite`);
+  assert(await m.locator('dl dt', { hasText: 'Base légale' }).first().isVisible(), 'mobile : tableau en fiches');
 
   assert(errs.length === 0, 'aucune erreur navigateur' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();

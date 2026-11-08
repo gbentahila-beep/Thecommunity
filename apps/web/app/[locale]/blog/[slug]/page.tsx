@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArticleBody, ArticleGrid, BlogCta } from "@/components/blog/blog-parts";
+import { ArticleBody, BlogCta, UsefulAlso } from "@/components/blog/blog-parts";
 import { PageShell } from "@/components/ui";
-import { articleBySlug, articlesIn, BLOG_ARTICLES, blogCategory, blogLang } from "@/content/blog";
+import { articleBySlug, articlesIn, BLOG_ARTICLES, blogCategory, blogLang, byPopularity } from "@/content/blog";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { formatCalendarDate } from "@/lib/format";
@@ -38,8 +38,8 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
   const t = await getTranslations("blog");
   const lang = blogLang(locale);
   const cat = blogCategory(a.category)!;
-  const sameTheme = articlesIn(a.category).filter((x) => x.slug !== a.slug);
-  const related = (sameTheme.length >= 3 ? sameTheme : [...sameTheme, ...BLOG_ARTICLES.filter((x) => x.category !== a.category)]).slice(0, 3);
+  const sameTheme = byPopularity(articlesIn(a.category)).filter((x) => x.slug !== a.slug);
+  const related = [...sameTheme, ...byPopularity(BLOG_ARTICLES).filter((x) => x.category !== a.category)].slice(0, 3);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -78,10 +78,9 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
           </div>
         </article>
       </div>
-      <section aria-labelledby="related" className="mt-16">
-        <h2 id="related" className="mb-6 font-display text-3xl font-medium text-plum-900">{t("related")}</h2>
-        <ArticleGrid articles={related} locale={locale} />
-      </section>
+      <div className="mx-auto max-w-3xl">
+        <UsefulAlso articles={related} locale={locale} title={t("related")} />
+      </div>
       <BlogCta />
     </PageShell>
   );

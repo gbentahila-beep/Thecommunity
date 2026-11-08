@@ -6,7 +6,10 @@
  */
 
 export type LegalKey = "terms" | "sales" | "privacy" | "safety" | "community";
-export type LegalSection = { title: string; body: (string | string[])[] };
+/** Bloc : paragraphe, liste à puces, ou tableau (affiché en fiches sur mobile). */
+export type LegalTable = { table: { head: string[]; rows: string[][] } };
+export type LegalBlock = string | string[] | LegalTable;
+export type LegalSection = { title: string; body: LegalBlock[] };
 export type LegalDoc = { title: string; updated: string; intro: string; sections: LegalSection[] };
 
 const UPDATED_FR = "Dernière mise à jour : 8 novembre 2026 · en vigueur à la même date";
@@ -484,17 +487,18 @@ const fr: Record<LegalKey, LegalDoc> = {
     title: "Politique de confidentialité",
     updated: UPDATED_FR,
     intro:
-      "Cette politique explique quelles données nous collectons, pourquoi, avec qui elles sont partagées et comment exercer vos droits, conformément à la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel.",
+      "Cette politique explique quelles données nous collectons, comment, pourquoi, combien de temps nous les gardons, avec qui elles sont partagées et comment exercer vos droits, conformément à la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel. Elle s'applique au site The Host Club, à l'espace membre et à tous les services qui y sont accessibles.",
     sections: [
       {
         title: "1. L'essentiel",
         body: [
           [
             "Nous collectons uniquement ce qui est utile pour organiser des expériences en petit groupe, en sécurité.",
-            "Nous ne vendons jamais vos données.",
+            "Nous ne vendons jamais vos données et n'utilisons aucun cookie publicitaire ni votre position GPS.",
             "Au sein d'un groupe, seuls votre prénom et vos centres d'intérêt sont partagés.",
-            "Nous n'utilisons pas votre position GPS et aucun cookie publicitaire.",
-            "Vous pouvez à tout moment consulter, corriger ou télécharger vos données, modifier vos réponses au questionnaire et supprimer votre compte (loi n° 09-08).",
+            "Votre régime et vos allergies ne sont transmis au lieu qu'avec votre accord explicite.",
+            "Aucune photo où vous êtes reconnaissable n'est publiée sans votre accord.",
+            "Vous pouvez à tout moment consulter, corriger ou télécharger vos données et supprimer votre compte.",
           ],
         ],
       },
@@ -503,6 +507,7 @@ const fr: Record<LegalKey, LegalDoc> = {
         body: [
           "{{publisher}}, {{address}} (ICE {{ice}}), est responsable des données traitées sur le site. Pour toute question relative à vos données : {{privacyEmail}}.",
           "Déclaration des traitements auprès de la CNDP : {{cndpDeclaration}}. Autorisation de transfert des données hors du Maroc : {{cndpTransfer}}.",
+          "Il vous appartient de nous fournir des informations exactes et de les tenir à jour depuis votre espace membre.",
         ],
       },
       {
@@ -512,77 +517,114 @@ const fr: Record<LegalKey, LegalDoc> = {
             "Compte : prénom, nom, adresse e-mail, téléphone (facultatif). Le mot de passe est géré par notre prestataire d'authentification et n'est jamais stocké en clair.",
             "Profil et questionnaire : date de naissance (pour vérifier la majorité), ville, langues parlées, centres d'intérêt, objectifs ; genre, profession, biographie et photo (facultatifs). Le questionnaire n'est ni une évaluation médicale ni une évaluation psychologique.",
             "Localisation approximative : votre ville et, si vous l'indiquez, votre quartier. Aucun suivi GPS.",
-            "Expériences : réservations, demandes de participation (message, compte Instagram facultatif), listes d'attente, présence le jour J, absences, avis, abonnement, régime alimentaire ou allergie si vous nous les signalez.",
+            "Expériences : réservations, demandes de participation (message, compte Instagram facultatif), listes d'attente, tables ou équipes, présence le jour J, absences, avis, abonnement, codes promo utilisés.",
+            "Préférences d'accueil : régime alimentaire, allergies et langue(s) de table, si vous les indiquez, avec la date de votre accord pour leur transmission au lieu.",
             "Paiements et factures : montant, date, statut, référence du prestataire, documents émis. Les données de carte bancaire sont saisies et traitées uniquement par le prestataire de paiement : nous ne les recevons jamais.",
-            "Sécurité et assistance : signalements, messages envoyés à l'équipe, décisions de modération.",
+            "Sécurité et assistance : signalements, messages envoyés à l'équipe, décisions de modération et recours.",
             "Données techniques : adresse IP, journaux de connexion et de sécurité, cookies strictement nécessaires.",
           ],
         ],
       },
       {
-        title: "4. Pourquoi nous les utilisons, et sur quelle base",
+        title: "4. Comment nous les recueillons",
         body: [
           [
-            "Fournir le service (exécution du contrat) : compte, réservations, paiements, remboursements, factures, notifications.",
-            "Composer des groupes équilibrés et, pour les expériences sur demande, permettre à l'équipe de choisir les participants (exécution du contrat, intérêt légitime).",
-            "Protéger la communauté : vérification de l'âge, prévention des faux comptes, des abus et de la fraude, traitement des signalements (intérêt légitime, obligations légales).",
-            "Respecter nos obligations légales, notamment comptables.",
-            "Vous informer de nos nouveautés, uniquement avec votre consentement, retirable à tout moment dans vos préférences.",
+            "Directement auprès de vous : création du compte, questionnaire, réservation, demande de participation, formulaire de contact ou de candidature partenaire, signalement, avis.",
+            "Automatiquement : journaux techniques et cookies strictement nécessaires lorsque vous utilisez le site.",
+            "Par nos prestataires : le prestataire de paiement nous confirme le statut et la référence de chaque paiement.",
+            "Par notre équipe : présence le jour J, composition des tables, décisions de modération.",
           ],
         ],
       },
       {
-        title: "5. Composition des groupes : en toute transparence",
+        title: "5. Pourquoi, sur quelle base, et combien de temps",
         body: [
-          "Les groupes sont composés par notre équipe à partir de votre ville, de vos disponibilités, de vos langues, de vos centres d'intérêt et de vos réponses au questionnaire. Un outil de suggestion automatique pourra aider l'équipe ; aucune composition n'est publiée sans validation humaine. Vous pouvez modifier vos réponses à tout moment ; certaines informations restent nécessaires au fonctionnement du service (âge, ville, langues).",
+          {
+            table: {
+              head: ["Finalité", "Base légale", "Durée de conservation"],
+              rows: [
+                ["Créer et gérer votre compte", "Exécution du contrat", "Tant que le compte est actif, puis 3 ans après la dernière activité, avant suppression ou anonymisation."],
+                ["Réserver, payer, être remboursé, recevoir confirmations, rappels et changements", "Exécution du contrat", "Durée de la relation ; les pièces comptables suivent la durée légale (ligne « Obligations légales »)."],
+                ["Composer les tables et équipes, sans réunir toujours les mêmes personnes", "Exécution du contrat ; intérêt légitime", "Durée du compte (l'historique des tables sert à proposer de nouvelles rencontres)."],
+                ["Transmettre régime, allergies et langues de table au lieu", "Votre consentement explicite (le régime et les allergies peuvent révéler une donnée de santé)", "Le temps de l'expérience et de son suivi, puis effacement au plus tard 30 jours après l'expérience. Vous pouvez retirer votre accord jusqu'au début de l'expérience."],
+                ["Protéger la communauté : vérification de l'âge, prévention des faux comptes et de la fraude, signalements, modération, recours", "Intérêt légitime ; obligations légales", "Le temps nécessaire à la sécurité de la communauté, 3 ans au plus après la décision."],
+                ["Répondre à vos messages et demandes d'assistance", "Intérêt légitime", "3 ans après le dernier échange."],
+                ["Vous envoyer nos nouveautés par e-mail", "Votre consentement, retirable à tout moment dans vos préférences", "Jusqu'au retrait de votre accord, ou 3 ans après votre dernier contact avec nous."],
+                ["Publier des photos ou vidéos d'expériences où vous êtes reconnaissable", "Votre consentement, demandé séparément", "Jusqu'au retrait de votre accord."],
+                ["Assurer la sécurité et le bon fonctionnement du site", "Intérêt légitime", "Journaux techniques et de sécurité : 12 mois."],
+                ["Obligations légales (comptabilité, demandes des autorités)", "Obligation légale", "Pièces comptables (paiements, factures, avoirs) : 10 ans, conformément à la loi n° 9-88 relative aux obligations comptables."],
+                ["Traiter vos demandes d'exercice de droits", "Obligation légale", "Le temps de traiter la demande ; un éventuel justificatif d'identité est supprimé dès la vérification faite."],
+              ],
+            },
+          },
         ],
       },
       {
-        title: "6. Cookies",
+        title: "6. Composition des groupes : en toute transparence",
+        body: [
+          "Un outil propose une composition des tables et des équipes à partir de vos langues, de votre âge, de vos centres d'intérêt et de vos réponses au questionnaire, en évitant de réunir des personnes qui se sont déjà rencontrées. Notre équipe relit et ajuste chaque composition : aucune n'est révélée sans validation humaine. Vous pouvez modifier vos réponses à tout moment ; certaines informations restent nécessaires au fonctionnement du service (âge, ville, langues). En savoir plus : [comment nous composons les tables](/blog/comment-nous-composons-les-tables).",
+        ],
+      },
+      {
+        title: "7. Cookies",
         body: [
           "Nous utilisons uniquement des cookies strictement nécessaires : maintien de votre connexion et mémorisation de la langue. Ils ne nécessitent pas votre consentement. Nous n'utilisons aucun cookie de mesure d'audience, de personnalisation ou de publicité ; si cela devait changer, votre consentement serait demandé au préalable.",
         ],
       },
       {
-        title: "7. Qui y a accès",
+        title: "8. Qui y a accès",
         body: [
           [
             "Notre équipe, uniquement les personnes qui en ont besoin (assistance, sécurité, modération, technique), selon leur rôle ; ces accès sont enregistrés.",
             "Les autres participants de votre groupe : uniquement votre prénom et vos centres d'intérêt, une fois le groupe révélé.",
-            "Le lieu qui accueille l'expérience : le nombre de participants, les besoins particuliers (régime, allergie) et, si nécessaire, votre prénom pour l'accueil.",
-            "Nos prestataires techniques, pour notre compte et selon nos instructions : hébergement (Google Cloud / Firebase), paiement, envoi d'e-mails.",
+            "Le lieu qui accueille l'expérience : le nombre de participants, les prénoms pour l'accueil et les marque-places et, avec votre accord, votre régime, vos allergies et vos langues de table. Jamais vos coordonnées.",
             "Les autorités, lorsque la loi l'exige.",
           ],
+          "Nos prestataires traitent les données pour notre compte, selon nos instructions et avec des garanties de sécurité :",
+          {
+            table: {
+              head: ["Prestataire", "Rôle", "Localisation"],
+              rows: [
+                ["Google Cloud (Firebase)", "Hébergement du site, base de données, authentification, stockage des fichiers", "Union européenne (Belgique, Pays-Bas)"],
+                ["Brevo", "Envoi des e-mails (confirmations, rappels, factures)", "Union européenne (France)"],
+                ["Prestataire de paiement", "Saisie et traitement des paiements par carte (nous ne recevons jamais vos données de carte)", "Précisé ici dès sa mise en place"],
+              ],
+            },
+          },
           "Nous ne vendons jamais vos données.",
         ],
       },
       {
-        title: "8. Où sont-elles hébergées",
-        body: ["Vos données sont hébergées par Google Cloud dans l'Union européenne (Belgique et Pays-Bas). Ce transfert hors du Maroc est encadré conformément à la loi n° 09-08 et aux procédures de la CNDP ({{cndpTransfer}})."],
-      },
-      {
-        title: "9. Durées de conservation",
-        body: [
-          [
-            "Compte : tant qu'il est actif, puis 3 ans après la dernière activité, avant suppression ou anonymisation.",
-            "Signalements et décisions de modération : le temps nécessaire à la sécurité de la communauté, 3 ans au plus après la décision.",
-            "Journaux techniques et de sécurité : 12 mois.",
-            "Pièces comptables (paiements, factures, avoirs) : durée imposée par la loi.",
-          ],
-        ],
+        title: "9. Transferts hors du Maroc",
+        body: ["Vos données sont hébergées dans l'Union européenne. Ce transfert hors du Maroc est encadré conformément à la loi n° 09-08 et aux procédures de la CNDP ({{cndpTransfer}}), et nos prestataires sont tenus contractuellement de protéger vos données."],
       },
       {
         title: "10. Sécurité",
-        body: ["Nous appliquons des mesures techniques et organisationnelles adaptées : échanges chiffrés (HTTPS), mots de passe jamais stockés en clair, accès limités selon les rôles et enregistrés, règles d'accès à la base de données, aucune donnée de carte conservée, sauvegardes."],
+        body: [
+          "Nous appliquons des mesures techniques et organisationnelles adaptées : échanges chiffrés (HTTPS), mots de passe jamais stockés en clair, accès limités selon les rôles et enregistrés, règles d'accès à la base de données, aucune donnée de carte conservée, sauvegardes.",
+          "De votre côté, gardez votre mot de passe confidentiel et déconnectez-vous sur un appareil partagé.",
+        ],
       },
       {
         title: "11. Vos droits",
         body: [
-          "Vous disposez d'un droit d'accès, de rectification et d'opposition (loi n° 09-08). Depuis votre espace membre, vous pouvez modifier votre profil et vos réponses, télécharger vos données et demander la suppression de votre compte. Pour toute autre demande : {{privacyEmail}}. Vous pouvez aussi saisir la Commission nationale de contrôle de la protection des données à caractère personnel (CNDP, www.cndp.ma).",
+          "Conformément à la loi n° 09-08, vous disposez d'un droit d'accès, de rectification et d'opposition, notamment à la prospection. Vous pouvez aussi demander la suppression de vos données et retirer à tout moment un consentement donné (sans remettre en cause ce qui a été fait avant).",
+          [
+            "Depuis votre espace membre : modifier votre profil et vos réponses, gérer vos préférences d'e-mails, télécharger vos données, demander la suppression de votre compte.",
+            "Pour toute autre demande : {{privacyEmail}}. Nous pouvons vous demander de justifier de votre identité en cas de doute.",
+            "Nous répondons dans les meilleurs délais, et au plus tard dans un délai d'un mois.",
+          ],
+          "Vous pouvez également saisir la Commission nationale de contrôle de la protection des données à caractère personnel (CNDP, www.cndp.ma).",
         ],
       },
-      { title: "12. Mineurs", body: ["Le service est réservé aux personnes majeures (18 ans et plus). Si un compte semble appartenir à un mineur, nous pouvons le suspendre et procéder à des vérifications."] },
-      { title: "13. Modifications", body: ["Cette politique peut évoluer. La version applicable est celle publiée sur le site, avec sa date de mise à jour ; en cas de changement important, vous en serez informé."] },
+      {
+        title: "12. Mineurs et protection de l'enfance",
+        body: [
+          "Le service est réservé aux personnes majeures (18 ans et plus). Si un compte semble appartenir à un mineur, nous pouvons le suspendre et procéder à des vérifications.",
+          "Nous appliquons une tolérance zéro envers toute exploitation ou mise en danger de mineurs : tout contenu ou comportement de ce type entraîne la fermeture immédiate du compte, la conservation sécurisée des éléments utiles et un signalement aux autorités compétentes. Pour nous alerter : {{safetyEmail}}.",
+        ],
+      },
+      { title: "13. Modifications", body: ["Cette politique peut évoluer avec le service et la réglementation. La version applicable est celle publiée sur le site, avec sa date de mise à jour ; en cas de changement important, vous en êtes informé par e-mail."] },
     ],
   },
 };
@@ -971,21 +1013,67 @@ const en: Record<LegalKey, LegalDoc> = {
   privacy: {
     title: "Privacy policy",
     updated: UPDATED_EN,
-    intro: "This policy explains what data we collect, why, who it is shared with and how to exercise your rights, in accordance with Moroccan Law 09-08 on the protection of individuals with regard to the processing of personal data. The French version prevails.",
+    intro: "This policy explains what data we collect, how, why, how long we keep it, who it is shared with and how to exercise your rights, in accordance with Moroccan Law 09-08 on the protection of individuals with regard to the processing of personal data. It applies to The Host Club website, the member area and every service available through them. The French version prevails.",
     sections: [
-      { title: "1. Key points", body: [["We only collect what is useful to organise small-group experiences safely.", "We never sell your data.", "Within a group, only your first name and interests are shared.", "We do not use your GPS location or any advertising cookies.", "You can view, correct or download your data, change your questionnaire answers and delete your account at any time (Law 09-08)."]] },
-      { title: "2. Data controller", body: ["{{publisher}}, {{address}} (ICE {{ice}}), is responsible for the data processed on the site. For any question about your data: {{privacyEmail}}.", "Declaration to the CNDP: {{cndpDeclaration}}. Authorisation to transfer data outside Morocco: {{cndpTransfer}}."] },
-      { title: "3. Data we collect", body: [["Account: first name, last name, email address, phone (optional). Your password is handled by our authentication provider and never stored in plain text.", "Profile and questionnaire: date of birth (to check you are an adult), city, languages, interests, goals; gender, profession, bio and photo (optional). The questionnaire is neither a medical nor a psychological assessment.", "Approximate location: your city and, if you provide it, your neighbourhood. No GPS tracking.", "Experiences: bookings, participation requests (message, optional Instagram account), waitlists, attendance on the day, no-shows, reviews, membership, diet or allergies if you tell us.", "Payments and invoices: amount, date, status, provider reference, documents issued. Card details are entered and processed only by the payment provider: we never receive them.", "Safety and support: reports, messages sent to the team, moderation decisions.", "Technical data: IP address, connection and security logs, strictly necessary cookies."]] },
-      { title: "4. Why we use it, and on what basis", body: [["To provide the service (performance of the contract): account, bookings, payments, refunds, invoices, notifications.", "To put balanced groups together and, for on-request experiences, to let the team choose participants (performance of the contract, legitimate interest).", "To protect the community: age checks, preventing fake accounts, abuse and fraud, handling reports (legitimate interest, legal obligations).", "To meet our legal obligations, including accounting.", "To share news, only with your consent, which you can withdraw at any time in your preferences."]] },
-      { title: "5. How groups are put together, transparently", body: ["Groups are put together by our team based on your city, availability, languages, interests and questionnaire answers. An automatic suggestion tool may help the team; no group is published without human approval. You can change your answers at any time; some information remains necessary for the service to work (age, city, languages)."] },
-      { title: "6. Cookies", body: ["We only use strictly necessary cookies: keeping you signed in and remembering your language. They do not require your consent. We use no audience measurement, personalisation or advertising cookies; if that changes, we will ask for your consent first."] },
-      { title: "7. Who can access it", body: [["Our team, only people who need it (support, safety, moderation, technical), according to their role; this access is logged.", "Other participants in your group: only your first name and interests, once the group is revealed.", "The venue hosting the experience: the number of participants, special needs (diet, allergies) and, if needed, your first name to welcome you.", "Our technical providers, on our behalf and following our instructions: hosting (Google Cloud / Firebase), payment, email delivery.", "Authorities, where required by law."], "We never sell your data."] },
-      { title: "8. Where it is stored", body: ["Your data is hosted by Google Cloud in the European Union (Belgium and the Netherlands). This transfer outside Morocco is handled in accordance with Law 09-08 and CNDP procedures ({{cndpTransfer}})."] },
-      { title: "9. Retention", body: [["Account: while active, then 3 years after the last activity, before deletion or anonymisation.", "Reports and moderation decisions: as long as needed for the community's safety, at most 3 years after the decision.", "Technical and security logs: 12 months.", "Accounting records (payments, invoices, credit notes): as required by law."]] },
-      { title: "10. Security", body: ["We apply appropriate technical and organisational measures: encrypted connections (HTTPS), passwords never stored in plain text, role-based and logged access, database access rules, no card data stored, backups."] },
-      { title: "11. Your rights", body: ["You have the right of access, rectification and objection (Law 09-08). From your member area, you can edit your profile and answers, download your data and request the deletion of your account. For anything else: {{privacyEmail}}. You can also contact the CNDP (www.cndp.ma)."] },
-      { title: "12. Minors", body: ["The service is for adults only (18 and over). If an account seems to belong to a minor, we may suspend it and carry out checks."] },
-      { title: "13. Changes", body: ["This policy may change. The applicable version is the one published on the site with its update date; you will be informed of significant changes."] },
+      { title: "1. Key points", body: [["We only collect what is useful to organise small-group experiences safely.", "We never sell your data and use no advertising cookies or GPS location.", "Within a group, only your first name and interests are shared.", "Your diet and allergies are only passed on to the venue with your explicit consent.", "No photo in which you can be recognised is published without your agreement.", "You can view, correct or download your data and delete your account at any time."]] },
+      { title: "2. Data controller", body: ["{{publisher}}, {{address}} (ICE {{ice}}), is responsible for the data processed on the site. For any question about your data: {{privacyEmail}}.", "Declaration to the CNDP: {{cndpDeclaration}}. Authorisation to transfer data outside Morocco: {{cndpTransfer}}.", "It is up to you to give us accurate information and keep it up to date from your member area."] },
+      { title: "3. Data we collect", body: [["Account: first name, last name, email address, phone (optional). Your password is handled by our authentication provider and never stored in plain text.", "Profile and questionnaire: date of birth (to check you are an adult), city, languages, interests, goals; gender, profession, bio and photo (optional). The questionnaire is neither a medical nor a psychological assessment.", "Approximate location: your city and, if you provide it, your neighbourhood. No GPS tracking.", "Experiences: bookings, participation requests (message, optional Instagram account), waitlists, tables or teams, attendance on the day, no-shows, reviews, membership, promo codes used.", "Welcome preferences: diet, allergies and table language(s), if you provide them, with the date of your consent to share them with the venue.", "Payments and invoices: amount, date, status, provider reference, documents issued. Card details are entered and processed only by the payment provider: we never receive them.", "Safety and support: reports, messages sent to the team, moderation decisions and appeals.", "Technical data: IP address, connection and security logs, strictly necessary cookies."]] },
+      { title: "4. How we collect it", body: [["Directly from you: account creation, questionnaire, booking, participation request, contact or partner application form, report, review.", "Automatically: technical logs and strictly necessary cookies when you use the site.", "From our providers: the payment provider confirms the status and reference of each payment.", "From our team: attendance on the day, table line-ups, moderation decisions."]] },
+      {
+        title: "5. Why, on what basis, and for how long",
+        body: [
+          {
+            table: {
+              head: ["Purpose", "Legal basis", "Retention"],
+              rows: [
+                ["Creating and managing your account", "Performance of the contract", "While the account is active, then 3 years after the last activity, before deletion or anonymisation."],
+                ["Booking, paying, getting refunds, receiving confirmations, reminders and changes", "Performance of the contract", "For the duration of the relationship; accounting records follow the legal period (see “Legal obligations”)."],
+                ["Putting tables and teams together, without always seating the same people", "Performance of the contract; legitimate interest", "For the life of the account (table history is used to suggest new encounters)."],
+                ["Passing diet, allergies and table languages on to the venue", "Your explicit consent (diet and allergies may reveal health data)", "For the experience and its follow-up, then deleted no later than 30 days after the experience. You can withdraw your consent until the experience starts."],
+                ["Protecting the community: age checks, preventing fake accounts and fraud, reports, moderation, appeals", "Legitimate interest; legal obligations", "As long as needed for the community's safety, at most 3 years after the decision."],
+                ["Answering your messages and support requests", "Legitimate interest", "3 years after the last exchange."],
+                ["Sending you our news by email", "Your consent, which you can withdraw at any time in your preferences", "Until you withdraw consent, or 3 years after your last contact with us."],
+                ["Publishing photos or videos of experiences in which you can be recognised", "Your consent, asked for separately", "Until you withdraw consent."],
+                ["Keeping the site secure and working properly", "Legitimate interest", "Technical and security logs: 12 months."],
+                ["Legal obligations (accounting, requests from authorities)", "Legal obligation", "Accounting records (payments, invoices, credit notes): 10 years, under Law 9-88 on accounting obligations."],
+                ["Handling requests to exercise your rights", "Legal obligation", "For the time needed to handle the request; any proof of identity is deleted once checked."],
+              ],
+            },
+          },
+        ],
+      },
+      { title: "6. How groups are put together, transparently", body: ["A tool suggests table and team line-ups based on your languages, age, interests and questionnaire answers, avoiding seating people together who have already met. Our team reviews and adjusts every line-up: none is revealed without human approval. You can change your answers at any time; some information remains necessary for the service to work (age, city, languages). Learn more: [how we put tables together](/blog/comment-nous-composons-les-tables)."] },
+      { title: "7. Cookies", body: ["We only use strictly necessary cookies: keeping you signed in and remembering your language. They do not require your consent. We use no audience measurement, personalisation or advertising cookies; if that changes, we will ask for your consent first."] },
+      {
+        title: "8. Who can access it",
+        body: [
+          ["Our team, only people who need it (support, safety, moderation, technical), according to their role; this access is logged.", "Other participants in your group: only your first name and interests, once the group is revealed.", "The venue hosting the experience: the number of participants, first names for the welcome and place cards and, with your consent, your diet, allergies and table languages. Never your contact details.", "Authorities, where required by law."],
+          "Our providers process data on our behalf, following our instructions and with security safeguards:",
+          {
+            table: {
+              head: ["Provider", "Role", "Location"],
+              rows: [
+                ["Google Cloud (Firebase)", "Website hosting, database, authentication, file storage", "European Union (Belgium, Netherlands)"],
+                ["Brevo", "Sending emails (confirmations, reminders, invoices)", "European Union (France)"],
+                ["Payment provider", "Entering and processing card payments (we never receive your card details)", "Stated here as soon as it is in place"],
+              ],
+            },
+          },
+          "We never sell your data.",
+        ],
+      },
+      { title: "9. Transfers outside Morocco", body: ["Your data is hosted in the European Union. This transfer outside Morocco is handled in accordance with Law 09-08 and CNDP procedures ({{cndpTransfer}}), and our providers are contractually bound to protect your data."] },
+      { title: "10. Security", body: ["We apply appropriate technical and organisational measures: encrypted connections (HTTPS), passwords never stored in plain text, role-based and logged access, database access rules, no card data stored, backups.", "On your side, keep your password confidential and sign out on shared devices."] },
+      {
+        title: "11. Your rights",
+        body: [
+          "Under Law 09-08, you have the right of access, rectification and objection, including to marketing. You can also ask for your data to be deleted and withdraw any consent at any time (without affecting what was done before).",
+          ["From your member area: edit your profile and answers, manage your email preferences, download your data, request the deletion of your account.", "For anything else: {{privacyEmail}}. We may ask you to prove your identity if in doubt.", "We reply as quickly as possible, and within one month at the latest."],
+          "You can also contact the Moroccan data protection authority (CNDP, www.cndp.ma).",
+        ],
+      },
+      { title: "12. Minors and child protection", body: ["The service is for adults only (18 and over). If an account seems to belong to a minor, we may suspend it and carry out checks.", "We have zero tolerance for any exploitation or endangerment of minors: any such content or behaviour leads to the immediate closure of the account, secure preservation of relevant evidence and a report to the competent authorities. To alert us: {{safetyEmail}}."] },
+      { title: "13. Changes", body: ["This policy may change with the service and the regulations. The applicable version is the one published on the site with its update date; you will be informed of significant changes by email."] },
     ],
   },
 };

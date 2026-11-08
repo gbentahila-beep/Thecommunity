@@ -36,12 +36,43 @@ export function legalPage(key: LegalKey) {
           <section key={i} id={`s${i + 1}`} className="scroll-mt-28 space-y-3">
             <h2 className="font-display text-2xl font-medium text-plum-900">{s.title}</h2>
             {s.body.map((b, j) =>
-              Array.isArray(b) ? (
+              typeof b === "string" ? (
+                <p key={j} className="leading-relaxed text-ink/85">{richText(b, missing)}</p>
+              ) : Array.isArray(b) ? (
                 <ul key={j} className="list-disc space-y-1.5 ps-5 leading-relaxed text-ink/85">
                   {b.map((li, k) => <li key={k}>{richText(li, missing)}</li>)}
                 </ul>
               ) : (
-                <p key={j} className="leading-relaxed text-ink/85">{richText(b, missing)}</p>
+                <div key={j}>
+                  {/* Ordinateur : vrai tableau. Mobile : une fiche par ligne. */}
+                  <table className="hidden w-full overflow-hidden rounded-[var(--radius-card)] bg-white text-start text-sm shadow-card sm:table">
+                    <thead className="bg-plum-50 text-plum-900">
+                      <tr>{b.table.head.map((h) => <th key={h} scope="col" className="px-4 py-3 text-start font-semibold">{h}</th>)}</tr>
+                    </thead>
+                    <tbody className="divide-y divide-line">
+                      {b.table.rows.map((r, k) => (
+                        <tr key={k} className="align-top">
+                          {r.map((c, m) => m === 0 ? <th key={m} scope="row" className="px-4 py-3 text-start font-semibold text-ink">{richText(c, missing)}</th> : <td key={m} className="px-4 py-3 leading-relaxed text-ink/80">{richText(c, missing)}</td>)}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <ul className="space-y-3 sm:hidden">
+                    {b.table.rows.map((r, k) => (
+                      <li key={k} className="rounded-[var(--radius-card)] bg-white p-4 shadow-card">
+                        <p className="font-semibold text-ink">{richText(r[0]!, missing)}</p>
+                        <dl className="mt-2 space-y-1.5 text-sm">
+                          {r.slice(1).map((c, m) => (
+                            <div key={m}>
+                              <dt className="text-xs font-semibold tracking-wide text-plum-700 uppercase">{b.table.head[m + 1]}</dt>
+                              <dd className="leading-relaxed text-ink/80">{richText(c, missing)}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ),
             )}
           </section>
