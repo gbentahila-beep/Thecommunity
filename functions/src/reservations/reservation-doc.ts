@@ -1,4 +1,4 @@
-import { computePricing, NO_SERVICE_FEE, type BookingPreferences, type PromoRule, type ServiceFee } from "@thecommunity/shared";
+import { computePricing, initialPartnerStatus, NO_SERVICE_FEE, onSiteAmount, partnerSnapshotOf, pricingOf, type BookingPreferences, type PromoRule, type ServiceFee } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { FieldValue } from "../lib/admin";
 
@@ -29,6 +29,8 @@ export function reservationDoc(o: {
     serviceFee: o.serviceFee ?? NO_SERVICE_FEE,
   });
   const free = pricing.total === 0;
+  // Étape 11 : la part partenaire (sur place) est copiée telle qu'elle est au moment de la réservation.
+  const twoPart = pricingOf(e as never);
   const snap = s.experienceSnapshot ?? {};
   const venue = e.venue?.revealPolicy === "immediate" ? { name: e.venue.name ?? "", address: e.venue.address ?? "" } : null;
   const doc = {
@@ -41,6 +43,9 @@ export function reservationDoc(o: {
     status: free ? "confirmed" : "pending_payment",
     holdExpiresAt: Timestamp.fromMillis(o.holdUntilMs),
     pricing,
+    partnerSnapshot: partnerSnapshotOf(twoPart),
+    onSiteAmount: onSiteAmount(twoPart, seats),
+    partnerPaymentStatus: initialPartnerStatus(twoPart),
     cancellationPolicyId: e.cancellationPolicyId ?? "standard-48h",
     sessionSnapshot: {
       title: snap.title ?? e.title,

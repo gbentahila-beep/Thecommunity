@@ -1330,3 +1330,56 @@ describe("archiver / supprimer une expérience (5i)", () => {
     expect(await auditActions(freshId)).toContain("experience.delete");
   });
 });
+
+describe("tarification en deux parts (11)", () => {
+  const fixed = { model: "fixed_partner", currency: "MAD", partner: { name: "Escape Room Maarif", paymentMode: "on_site", pricingType: "fixed", price: { amount: 20000, currency: "MAD" }, description: "La partie" } };
+  const variable = { model: "variable_consumption", currency: "MAD", partner: { name: "Café Gauthier", paymentMode: "on_site", pricingType: "consumption", price: null, description: "" } };
+  const withPricing = async (sid: string, pricing: unknown) => db().doc(`experiences/${(await session(sid)).experienceId}`).update({ pricing });
+
+  it("prix fixe : seule la part organisation est payée en ligne ; la part partenaire est copiée dans la réservation", async () => {
+    const u = await member();
+    const sid = await makeSession({ price: 25000, maxSeats: 2 });
+    await withPricing(sid, fixed);
+    const { reservationId } = await paidReservation(u, sid, 2);
+    const r = await reservation(reservationId);
+    expect(r.pricing.total).toBe(50000); // 2 × 250 DH en ligne, jamais les 2 × 200 DH du partenaire
+    expect(r.onSiteAmount).toBe(40000);
+    expect(r.partnerPaymentStatus).toBe("due_on_site");
+    expect(r.partnerSnapshot).toMatchObject({ model: "fixed_partner", name: "Escape Room Maarif", price: { amount: 20000 } });
+    // Modifier ensuite le prix partenaire ne change pas la réservation (copie figée).
+    await withPricing(sid, { ...fixed, partner: { ...fixed.partner, price: { amount: 30000, currency: "MAD" } } });
+    expect((await reservation(reservationId)).onSiteAmount).toBe(40000);
+  });
+
+  it("consommation libre : aucun montant sur place inventé (null) ; tout en ligne : sans objet", async () => {
+    const u = await member();
+    const sid = await makeSession({ price: 15000 });
+    await withPricing(sid, variable);
+    const { reservationId } = await paidReservation(u, sid);
+    const r = await reservation(reservationId);
+    expect(r.pricing.total).toBe(15000);
+    expect(r.onSiteAmount).toBeNull();
+    expect(r.partnerSnapshot).toMatchObject({ model: "variable_consumption", price: null });
+    const old = await makeSession({ price: 16900 });
+    const { reservationId: oldId } = await paidReservation(await member(), old);
+    const o = await reservation(oldId);
+    expect(o.partnerSnapshot).toBeNull();
+    expect(o.onSiteAmount).toBeNull();
+    expect(o.partnerPaymentStatus).toBe("not_applicable");
+  });
+
+  it("part partenaire marquée réglée par l'équipe (jamais pour « tout en ligne »)", async () => {
+    const team = await member({ role: "admin" });
+    const sid = await makeSession({ price: 25000 });
+    await withPricing(sid, fixed);
+    const { reservationId } = await paidReservation(await member(), sid);
+    expect(await refusal((await member()).call("adminSetPartnerPayment", { reservationId, paid: true }))).toBe("permission-denied:");
+    await team.call("adminSetPartnerPayment", { reservationId, paid: true });
+    expect((await reservation(reservationId)).partnerPaymentStatus).toBe("paid_on_site");
+    await team.call("adminSetPartnerPayment", { reservationId, paid: false });
+    expect((await reservation(reservationId)).partnerPaymentStatus).toBe("due_on_site");
+    const plain = await makeSession({ price: 16900 });
+    const { reservationId: p2 } = await paidReservation(await member(), plain);
+    expect(await refusal(team.call("adminSetPartnerPayment", { reservationId: p2, paid: true }))).toBe("failed-precondition:not_applicable");
+  });
+});

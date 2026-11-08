@@ -201,6 +201,32 @@ export const adminCheckIn = onCall({ region: REGION }, async (req) => {
   return { ok: true };
 });
 
+/**
+ * Étape 11 : part partenaire réglée (ou non) sur place. Information de suivi uniquement : The Host Club
+ * n'encaisse jamais cette part. Sans objet pour une expérience « tout en ligne ».
+ */
+export const adminSetPartnerPayment = onCall({ region: REGION }, async (req) => {
+  const actor = requireTeam(req);
+  const parsed = z.object({ reservationId: idSchema, paid: z.boolean() }).safeParse(req.data);
+  if (!parsed.success) invalidArgument(parsed.error.issues);
+  const { reservationId, paid } = parsed.data;
+  const resRef = db.doc(`reservations/${reservationId}`);
+  await db.runTransaction(async (tx) => {
+    const r = (await tx.get(resRef)).data();
+    if (!r) throw new HttpsError("not-found", "Réservation introuvable.", { reason: "not_found" });
+    if (!r.partnerPaymentStatus || r.partnerPaymentStatus === "not_applicable") refuse("not_applicable", "Aucune part à régler sur place pour cette réservation.");
+    if (!["confirmed", "attended"].includes(r.status)) refuse("not_checkable", "Seule une réservation confirmée peut être marquée.");
+    tx.update(resRef, {
+      partnerPaymentStatus: paid ? "paid_on_site" : "due_on_site",
+      partnerPaidAt: paid ? FieldValue.serverTimestamp() : null,
+      partnerPaidMarkedBy: paid ? actor.uid : null,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  });
+  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: paid ? "reservation.partner.paid" : "reservation.partner.unpaid", targetType: "reservation", targetId: reservationId });
+  return { ok: true };
+});
+
 /** Journalise un export de données personnelles (liste de participants, réservations) avant son téléchargement. */
 export const adminLogExport = onCall({ region: REGION }, async (req) => {
   const actor = requireTeam(req);

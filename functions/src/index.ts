@@ -22,7 +22,7 @@ export { sandboxCompletePayment } from "./payments/sandbox-complete";
 export { requestBooking, cancelBookingRequest, adminDecideRequest } from "./requests/booking-requests";
 export { cancelReservation } from "./reservations/cancel-reservation";
 export { joinWaitlist, leaveWaitlist } from "./waitlist/waitlist";
-export { adminCancelReservation, adminCancelSession, adminMoveReservation, adminCheckIn, adminLogExport } from "./admin/reservations-admin";
+export { adminCancelReservation, adminCancelSession, adminMoveReservation, adminCheckIn, adminSetPartnerPayment, adminLogExport } from "./admin/reservations-admin";
 export { submitReview, adminSetReviewStatus, reviewRequests } from "./reviews/reviews";
 export { setExperienceAlert } from "./experiences/alerts";
 export { adminSaveMembershipPlan, startMembershipCheckout, adminGrantMembership, adminRevokeMembership } from "./membership/membership";

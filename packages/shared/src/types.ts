@@ -1,3 +1,4 @@
+import type { ExperiencePricing, PartnerPaymentStatus, PartnerSnapshot } from "./two-part";
 /**
  * Types métier partagés entre le frontend et (plus tard) les Cloud Functions.
  * Ils suivent le modèle décrit dans docs/03-modele-de-donnees.md.
@@ -86,7 +87,10 @@ export type Experience = {
   };
   images: ImageRef[];
   durationMinutes: number;
+  /** Part organisation, payée en ligne (étape 11 : seule part concernée par les réductions et les frais). */
   price: Money;
+  /** Étape 11 : part partenaire réglée sur place (absent = « tout en ligne »). */
+  pricing?: ExperiencePricing | null;
   bookingMode: BookingMode;
   groupConfig?: GroupConfig;
   maxSeatsPerBooking: number;
@@ -264,6 +268,10 @@ export type Reservation = {
   /** Paiement arrivé après l'expiration du blocage, place reprise. */
   latePayment?: boolean;
   cancellation?: { at: string; by: "user" | "admin" | "system"; refundAmount: number; reason?: string };
+  /** Étape 11 : copie figée de la part partenaire (null = tout en ligne), montant attendu sur place (null = consommation libre ou sans objet) et suivi. */
+  partnerSnapshot?: PartnerSnapshot | null;
+  onSiteAmount?: number | null;
+  partnerPaymentStatus?: PartnerPaymentStatus;
   reviewId?: string;
   createdAt: string;
   isDemo?: boolean;

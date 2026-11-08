@@ -99,8 +99,26 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     admission: v.admission,
   };
 
+  // Étape 11 : comment le client paie. La part organisation reste `price` (payée en ligne) ;
+  // la part partenaire (prix fixe ou consommation libre) est toujours réglée sur place, jamais encaissée.
+  const pricing =
+    v.pricingModel === "online_only" || !partner?.exists
+      ? { model: "online_only", currency: "MAD", partner: null }
+      : {
+          model: v.pricingModel,
+          currency: "MAD",
+          partner: {
+            name: String(partner.data()?.name ?? ""),
+            paymentMode: "on_site",
+            pricingType: v.pricingModel === "fixed_partner" ? "fixed" : "consumption",
+            price: v.pricingModel === "fixed_partner" ? { amount: Math.round((v.partnerPriceDh ?? 0) * 100), currency: "MAD" } : null,
+            description: v.partnerDescription ?? "",
+          },
+        };
+
   const experience = {
     slug,
+    pricing,
     title: snapshot.title,
     summary: { fr: v.summaryFr, ...(v.summaryAr ? { ar: v.summaryAr } : {}), ...(v.summaryEn ? { en: v.summaryEn } : {}) },
     description: { fr: v.descriptionFr, ...(v.descriptionAr ? { ar: v.descriptionAr } : {}), ...(v.descriptionEn ? { en: v.descriptionEn } : {}) },
@@ -192,6 +210,6 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   }
   // Nouvelles dates publiées : prévenir les personnes qui l'avaient demandé.
   const alerted = planned.length > 0 && v.status === "published" ? await notifyNewDates(id, v.titleFr, slug, planned.length) : 0;
-  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: isCreate ? "experience.create" : "experience.update", targetType: "experience", targetId: id, after: { title: v.titleFr, status: v.status, sessionsAdded: planned.length, alerted } });
+  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: isCreate ? "experience.create" : "experience.update", targetType: "experience", targetId: id, after: { title: v.titleFr, status: v.status, sessionsAdded: planned.length, alerted, pricingModel: pricing.model } });
   return { ok: true, experienceId: id, slug, sessionsCreated: planned.length };
 });

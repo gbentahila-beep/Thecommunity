@@ -58,6 +58,10 @@ export const experienceInputSchema = z
     economicsModel: z.enum(["own", "commission"]),
     costPerSeatDh: z.coerce.number().min(0, "min0").optional(),
     commissionPercent: z.coerce.number().min(0, "min0").max(100, "max100").optional(),
+    /** Étape 11 : comment le client paie (section « Tarification et paiement client »). */
+    pricingModel: z.enum(["online_only", "fixed_partner", "variable_consumption"]).default("online_only"),
+    partnerPriceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany").optional(),
+    partnerDescription: z.string().trim().max(300, "tooLong").optional().or(z.literal("")),
     status: z.enum(["draft", "published"]),
     sessions: sessionPlanSchema,
   })
@@ -90,6 +94,12 @@ export const experienceInputSchema = z
     }
     if (v.economicsModel === "commission" && !v.partnerId) {
       ctx.addIssue({ code: "custom", path: ["partnerId"], message: "partnerRequired" });
+    }
+    if (v.pricingModel !== "online_only" && !v.partnerId) {
+      ctx.addIssue({ code: "custom", path: ["pricingModel"], message: "pricingNeedsPartner" });
+    }
+    if (v.pricingModel === "fixed_partner" && v.partnerPriceDh === undefined) {
+      ctx.addIssue({ code: "custom", path: ["partnerPriceDh"], message: "required" });
     }
     if (v.revealPolicy === "on_group_reveal" && !grouped) {
       ctx.addIssue({ code: "custom", path: ["revealPolicy"], message: "revealNeedsGroups" });
