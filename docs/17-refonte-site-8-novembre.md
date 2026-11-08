@@ -107,7 +107,13 @@ Références : `docs/maquettes/2026-11-08/blog-mobile-1..5.png` (blog Timeleft s
 4. **« Parcourir les articles »** : tri **Plus lus / Récents** (onglets soulignés), **champ de recherche** (« Rechercher : Casablanca, questions… »), liste sans image avec flèche à droite.
 5. **Page d'un thème** (ex. City guide) : fil d'Ariane « Blog / City guide », grand titre, intro, « N articles · mis à jour le … », puis **carte d'appel** « Rencontrer du monde à Casablanca » (texte court + bouton « Trouver mon groupe » → expériences + bouton secondaire « Choisir une autre ville »), puis la liste compacte des articles du thème.
 6. **Bas d'article / de thème** : bloc blanc arrondi « Utile aussi quand on arrive » avec 2–3 articles en liste et une flèche ronde.
-7. **Menu hamburger sur mobile** (en haut à droite) donnant accès à Découvrir, À propos, Comment ça marche, Blog — aujourd'hui ces liens ne sont que dans le pied de page sur téléphone.
+7. **Menu hamburger sur mobile** (captures `menu-mobile-barre.jpg`, `menu-mobile-ouvert.png`, envoyées par Rita) :
+   - **Barre du haut** flottante : carte blanche aux coins très arrondis, légère ombre, logo à gauche, bouton **« S'inscrire »** (prune, ou « Mon compte » une fois connecté) et icône **burger** à droite.
+   - **Menu ouvert** : la même carte s'agrandit vers le bas (fond de page atténué), croix pour fermer, puis une liste à séparateurs fins :
+     **Découvrir ⌄** (dépliable : toutes les expériences, Dîners, Sport & bien-être, Jeux, Ateliers, Sorties) · **À propos** · **Comment ça marche** · **Blog** · **Villes ⌄** (dépliable : Casablanca, puis « bientôt » Rabat, Marrakech…), et en bas deux boutons côte à côte **« Se connecter »** (contour) et **« S'inscrire »** (plein) — ou « Mon compte » / « Se déconnecter » si connecté.
+   - Langues FR · عربي · EN en bas du menu.
+   - Accessibilité : bouton avec libellé « Ouvrir le menu » / « Fermer le menu », Échap pour fermer, focus gardé dans le menu, défilement de la page bloqué pendant l'ouverture, RTL en arabe.
+   - Hypothèse : la **barre du bas** de l'application (Explorer, Réservations, Notifications, Profil) est conservée pour les membres ; le burger s'ajoute en haut.
 
 Hypothèses :
 - « Les plus lus » : tant que nous ne mesurons pas les lectures, c'est **notre sélection** ; option : compter les ouvertures d'articles (compteur anonyme dans Firebase) pour un vrai classement.
