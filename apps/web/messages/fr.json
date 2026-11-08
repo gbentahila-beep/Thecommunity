@@ -148,7 +148,11 @@
     "pastEditions": "Éditions passées",
     "pastEditionsText": "{count, plural, one {Organisée une fois} other {Organisée # fois}} · dernière édition le {last}.",
     "membersOnlyNote": "Expérience réservée aux membres abonnés.",
-    "becomeMember": "Devenir membre"
+    "becomeMember": "Devenir membre",
+    "retiredEyebrow": "Expérience terminée",
+    "retiredText": "Cette expérience n'est plus proposée. Découvrez nos autres expériences : il y en a sûrement une qui vous ressemble.",
+    "retiredCta": "Voir les expériences",
+    "retiredSimilar": "Dans le même univers"
   },
   "booking": {
     "title": "Réserver ma place",

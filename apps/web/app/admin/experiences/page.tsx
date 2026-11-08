@@ -6,16 +6,47 @@ import { getAdminData } from "@/lib/data/admin";
 
 export const metadata = { title: "Expériences" };
 
-export default async function ExperiencesAdminPage() {
+const FILTERS = [
+  { key: "current", label: "En cours" },
+  { key: "archived", label: "Archivées" },
+] as const;
+
+const STATUS: Record<string, { label: string; tone: "green" | "gray" | "amber" }> = {
+  published: { label: "Publiée", tone: "green" },
+  draft: { label: "Brouillon", tone: "gray" },
+  archived: { label: "Archivée", tone: "amber" },
+};
+
+export default async function ExperiencesAdminPage({ searchParams }: PageProps<"/admin/experiences">) {
+  const sp = await searchParams;
+  const filter = sp.vue === "archived" ? "archived" : "current";
   const d = await getAdminData();
-  const list = [...d.experiences.values()];
+  const all = [...d.experiences.values()];
+  const archivedCount = all.filter((e) => e.status === "archived").length;
+  const list = all.filter((e) => (filter === "archived" ? e.status === "archived" : e.status !== "archived"));
   return (
     <>
       <PageHeader
         title="Expériences"
-        subtitle={`${list.length} expérience${list.length > 1 ? "s" : ""}`}
+        subtitle={`${all.length - archivedCount} expérience${all.length - archivedCount > 1 ? "s" : ""} · ${archivedCount} archivée${archivedCount > 1 ? "s" : ""}`}
         actions={<Link href="/admin/experiences/nouvelle" className="rounded-full bg-plum-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">+ Nouvelle expérience</Link>}
       />
+      {sp.supprime === "1" && <p role="status" className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900">Expérience supprimée.</p>}
+      <nav aria-label="Filtrer les expériences" className="mb-4 flex gap-2">
+        {FILTERS.map((f) => (
+          <Link
+            key={f.key}
+            href={f.key === "current" ? "/admin/experiences" : "/admin/experiences?vue=archived"}
+            aria-current={filter === f.key ? "page" : undefined}
+            className={`rounded-full px-4 py-2 text-sm font-medium ${filter === f.key ? "bg-plum-900 text-white" : "bg-white text-ink hover:bg-cream"}`}
+          >
+            {f.label}
+          </Link>
+        ))}
+      </nav>
+      {list.length === 0 ? (
+        <Card><p className="text-sm text-muted">{filter === "archived" ? "Aucune expérience archivée." : "Aucune expérience : créez la première."}</p></Card>
+      ) : (
       <Card>
         <Table head={["Expérience", "Univers", "Mode", "Prix", "Modèle", "Prochaines dates", "Statut", ""]} caption="Expériences">
           {list.map((e) => {
@@ -41,16 +72,17 @@ export default async function ExperiencesAdminPage() {
                     </Link>
                   )}
                 </td>
-                <td><Badge tone={e.status === "published" ? "green" : "gray"}>{e.status === "published" ? "Publiée" : "Brouillon"}</Badge></td>
+                <td><Badge tone={(STATUS[e.status] ?? STATUS.draft!).tone}>{(STATUS[e.status] ?? STATUS.draft!).label}</Badge></td>
                 <td className="whitespace-nowrap text-end">
                   <Link href={`/admin/experiences/${e.id}`} className="font-medium text-plum-900">Modifier</Link> ·{" "}
-                  <Link href={`/experiences/${e.slug}`} className="font-medium text-plum-900">Voir</Link>
+                  {e.status === "published" ? <Link href={`/experiences/${e.slug}`} className="font-medium text-plum-900">Voir</Link> : <span className="text-muted">Hors ligne</span>}
                 </td>
               </tr>
             );
           })}
         </Table>
       </Card>
+      )}
     </>
   );
 }

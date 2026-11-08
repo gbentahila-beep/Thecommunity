@@ -2,6 +2,7 @@ import {
   DEFAULT_CANCELLATION_POLICY,
   LOW_SEATS_THRESHOLD,
   seatsAvailable,
+  type CategoryKey,
   type Experience,
 } from "@thecommunity/shared";
 import { CalendarDays, Clock, Languages, Leaf, MapPin, Users } from "lucide-react";
@@ -10,13 +11,14 @@ import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoriteButton } from "@/components/favorite-button";
-import { PageShell, Stars } from "@/components/ui";
+import { ExperienceCard } from "@/components/experience-card";
+import { PageShell, PrimaryLink, Stars } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
 import { memberAmountFor, PriceTag } from "@/components/price-tag";
-import { getCategory, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublishedExperiences, getReviews, getUpcomingSessions } from "@/lib/data";
+import { getArchivedExperience, getCategory, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublishedExperiences, getReviews, getUpcomingSessions } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { SITE_URL } from "@/lib/site";
@@ -32,7 +34,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/[locale]/experiences/[slug]">): Promise<Metadata> {
   const { locale, slug } = await params;
   const exp = await getExperienceBySlug(slug);
-  if (!exp) return {};
+  if (!exp) {
+    const retired = await getArchivedExperience(slug);
+    return retired ? { title: tr(retired.title, locale), robots: { index: false, follow: true } } : {};
+  }
   const title = `${tr(exp.title, locale)} — ${exp.district}, Casablanca`;
   return {
     title,
@@ -42,13 +47,45 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/experien
   };
 }
 
+/** Fiche d'une expérience archivée : elle n'est plus proposée, on oriente vers des expériences proches. */
+async function RetiredExperience({ title, categoryId }: { title: string; categoryId: string }) {
+  const t = await getTranslations("experience");
+  const similar = (await getUpcomingSessions({ categoryId: categoryId as CategoryKey })).slice(0, 3);
+  return (
+    <PageShell className="py-14">
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-sm font-semibold tracking-[0.18em] text-plum-700 uppercase">{t("retiredEyebrow")}</p>
+        <h1 className="mt-3 font-display text-4xl font-medium text-plum-900 sm:text-5xl">{title}</h1>
+        <p className="mt-4 text-lg text-ink/75">{t("retiredText")}</p>
+        <PrimaryLink href="/experiences" className="mt-7">{t("retiredCta")}</PrimaryLink>
+      </div>
+      {similar.length > 0 && (
+        <section aria-labelledby="similar" className="mt-14">
+          <h2 id="similar" className="font-display text-2xl font-medium text-plum-900">{t("retiredSimilar")}</h2>
+          <ul className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {similar.map((s) => (
+              <li key={s.id}>
+                <ExperienceCard session={s} experience={s.experience} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </PageShell>
+  );
+}
+
 const LANGUAGE_NAMES: Record<string, string> = { fr: "Français", ar: "العربية", darija: "Darija", en: "English", es: "Español" };
 
 export default async function ExperiencePage({ params }: PageProps<"/[locale]/experiences/[slug]">) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
   const exp = await getExperienceBySlug(slug);
-  if (!exp) notFound();
+  if (!exp) {
+    const retired = await getArchivedExperience(slug);
+    if (!retired) notFound();
+    return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} />;
+  }
   const [t, tCard, category, sessions, reviews, past, plan] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),

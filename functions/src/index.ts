@@ -14,6 +14,7 @@ export { acceptTerms } from "./account/accept-terms";
 export { setUserRole } from "./admin/set-user-role";
 export { adminSetUserStatus } from "./admin/set-user-status";
 export { adminSaveExperience } from "./experiences/save-experience";
+export { adminExperienceAction } from "./experiences/experience-actions";
 export { createReservation } from "./reservations/create-reservation";
 export { expireHolds } from "./reservations/expire-holds";
 export { startCheckout } from "./payments/start-checkout";

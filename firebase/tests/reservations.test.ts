@@ -1269,3 +1269,64 @@ describe("rappels et changements (7)", () => {
     expect((await mailsFor(reservationId)).map((m) => m.kind)).toContain("change_date");
   });
 });
+
+describe("archiver / supprimer une expérience (5i)", () => {
+  const auditActions = async (targetId: string) => (await db().collection("auditLogs").where("targetId", "==", targetId).get()).docs.map((d) => d.data().action);
+  const expOf = async (sessionId: string) => (await session(sessionId)).experienceId as string;
+
+  it("archiver : refusé s'il reste des participants à venir ; sinon masquée, dates vides en brouillon ; réactiver → brouillon", async () => {
+    const adm = await member({ role: "admin" });
+    const user = await member();
+    const sid = await makeSession();
+    const id = await expOf(sid);
+    expect(await refusal(user.call("adminExperienceAction", { experienceId: id, action: "archive" }))).toBe("permission-denied:");
+    await db().doc(`sessions/${sid}`).update({ seatsConfirmed: 2 });
+    expect(await refusal(adm.call("adminExperienceAction", { experienceId: id, action: "archive" }))).toBe("failed-precondition:upcoming_participants");
+    await db().doc(`sessions/${sid}`).update({ seatsConfirmed: 0, waitlistCount: 1 });
+    expect(await refusal(adm.call("adminExperienceAction", { experienceId: id, action: "archive" }))).toBe("failed-precondition:upcoming_participants");
+    await db().doc(`sessions/${sid}`).update({ waitlistCount: 0 });
+    expect(await adm.call("adminExperienceAction", { experienceId: id, action: "archive" })).toEqual({ ok: true });
+    const archived = (await db().doc(`experiences/${id}`).get()).data()!;
+    expect(archived).toMatchObject({ status: "archived", archivedBy: adm.uid, nextSessionAt: null });
+    expect((await session(sid)).status).toBe("draft");
+    expect(await refusal(adm.call("adminExperienceAction", { experienceId: id, action: "archive" }))).toBe("ok"); // idempotent
+    await adm.call("adminExperienceAction", { experienceId: id, action: "activate" });
+    const back = (await db().doc(`experiences/${id}`).get()).data()!;
+    expect(back.status).toBe("draft");
+    expect(back.archivedAt).toBeUndefined();
+    expect(await refusal(adm.call("adminExperienceAction", { experienceId: id, action: "activate" }))).toBe("failed-precondition:not_archived");
+    expect(await auditActions(id)).toEqual(expect.arrayContaining(["experience.archive", "experience.activate"]));
+  });
+
+  it("archiver : refusé tant qu'une demande de participation est en attente", async () => {
+    const adm = await member({ role: "admin" });
+    const sid = await makeSession({ onRequest: true });
+    const id = await expOf(sid);
+    await db().doc(`bookingRequests/${sid}_x${run}`).set({ sessionId: sid, experienceId: id, userId: `x${run}`, status: "pending", seats: 1 });
+    expect(await refusal(adm.call("adminExperienceAction", { experienceId: id, action: "archive" }))).toBe("failed-precondition:pending_requests");
+    await db().doc(`bookingRequests/${sid}_x${run}`).update({ status: "declined" });
+    expect(await adm.call("adminExperienceAction", { experienceId: id, action: "archive" })).toEqual({ ok: true });
+  });
+
+  it("supprimer : super-admin seulement, jamais une expérience qui a eu des participants ; sinon tout est supprimé", async () => {
+    const adm = await member({ role: "admin" });
+    const sup = await member({ role: "superadmin" });
+    const used = await makeSession();
+    const usedId = await expOf(used);
+    await db().collection("reservations").add({ experienceId: usedId, sessionId: used, userId: "someone", status: "cancelled_by_member" });
+    expect(await refusal(adm.call("adminExperienceAction", { experienceId: usedId, action: "delete" }))).toBe("permission-denied:superadmin_only");
+    expect(await refusal(sup.call("adminExperienceAction", { experienceId: usedId, action: "delete" }))).toBe("failed-precondition:has_history");
+    expect((await db().doc(`experiences/${usedId}`).get()).exists).toBe(true);
+
+    const fresh = await makeSession();
+    const freshId = await expOf(fresh);
+    await db().doc(`experiences/${freshId}/private/economics`).set({ model: "own", costPerSeat: 10000 });
+    await db().doc(`experienceAlerts/${freshId}_u${run}`).set({ experienceId: freshId, uid: `u${run}` });
+    expect(await sup.call("adminExperienceAction", { experienceId: freshId, action: "delete" })).toEqual({ ok: true });
+    expect((await db().doc(`experiences/${freshId}`).get()).exists).toBe(false);
+    expect((await db().doc(`experiences/${freshId}/private/economics`).get()).exists).toBe(false);
+    expect((await db().doc(`sessions/${fresh}`).get()).exists).toBe(false);
+    expect((await db().doc(`experienceAlerts/${freshId}_u${run}`).get()).exists).toBe(false);
+    expect(await auditActions(freshId)).toContain("experience.delete");
+  });
+});

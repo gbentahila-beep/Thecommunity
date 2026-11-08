@@ -148,7 +148,11 @@
     "pastEditions": "نسخ سابقة",
     "pastEditionsText": "{count, plural, one {نُظّمت مرة واحدة} two {نُظّمت مرتين} other {نُظّمت # مرات}} · آخر نسخة في {last}.",
     "membersOnlyNote": "تجربة مخصصة للأعضاء المشتركين.",
-    "becomeMember": "كن عضوًا"
+    "becomeMember": "كن عضوًا",
+    "retiredEyebrow": "تجربة منتهية",
+    "retiredText": "هذه التجربة لم تعد متاحة. اكتشف تجاربنا الأخرى: بالتأكيد هناك واحدة تناسبك.",
+    "retiredCta": "عرض التجارب",
+    "retiredSimilar": "في العالم نفسه"
   },
   "booking": {
     "title": "احجز مكاني",

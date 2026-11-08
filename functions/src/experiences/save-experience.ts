@@ -7,6 +7,7 @@ import { audit } from "../lib/audit";
 import { notifyReservationChange } from "../notify/reminders";
 import { notifyNewDates } from "./alerts";
 import { invalidArgument, requireRole, roleOf } from "../lib/guards";
+import { refuse } from "../reservations/refuse";
 
 const ID = /^[A-Za-z0-9_-]{6,40}$/;
 const input = z.object({
@@ -124,7 +125,8 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     included: (v.included ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
     practicalInfo: { fr: v.practicalInfo ?? "" },
     cancellationPolicyId: v.cancellationPolicyId,
-    status: v.status,
+    // Une expérience archivée le reste tant qu'elle n'est pas réactivée (bouton « Réactiver »).
+    status: existing.data()?.status === "archived" ? "archived" : v.status,
     updatedAt: FieldValue.serverTimestamp(),
     updatedBy: actor.uid,
   };
@@ -133,6 +135,8 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   const now = Date.now();
   const planned = addSessions ? planSessionDates(v.sessions, v.durationMinutes, MOROCCO_TIMEZONE) : [];
   if (planned.some((d) => new Date(d.startAt).getTime() < now)) invalidArgument([{ path: ["sessions", "firstDate"], message: "inPast" }]);
+  const archived = existing.data()?.status === "archived";
+  if (archived && addSessions) refuse("archived", "Réactivez l'expérience avant d'ajouter des dates.");
   const sessionStatus = v.status === "published" ? "published" : "draft";
   for (const d of planned) {
     batch.set(db.collection("sessions").doc(), {
@@ -158,7 +162,7 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   const future = await db.collection("sessions").where("experienceId", "==", id).where("startAt", ">=", Timestamp.fromMillis(now)).get();
   for (const s of future.docs) {
     const status = s.data().status;
-    const nextStatus = status === "draft" && v.status === "published" ? "published" : status === "published" && v.status === "draft" && s.data().seatsConfirmed === 0 ? "draft" : status;
+    const nextStatus = archived ? status : status === "draft" && v.status === "published" ? "published" : status === "published" && v.status === "draft" && s.data().seatsConfirmed === 0 ? "draft" : status;
     batch.update(s.ref, { experienceSnapshot: snapshot, status: nextStatus });
   }
   const starts = [...future.docs.map((s) => (s.data().startAt as Timestamp).toMillis()), ...planned.map((d) => new Date(d.startAt).getTime())];

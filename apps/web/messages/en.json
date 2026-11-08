@@ -148,7 +148,11 @@
     "pastEditions": "Past editions",
     "pastEditionsText": "{count, plural, one {Held once} other {Held # times}} · last edition on {last}.",
     "membersOnlyNote": "This experience is for members only.",
-    "becomeMember": "Become a member"
+    "becomeMember": "Become a member",
+    "retiredEyebrow": "Experience ended",
+    "retiredText": "This experience is no longer offered. Discover our other experiences: there's surely one for you.",
+    "retiredCta": "See experiences",
+    "retiredSimilar": "In the same universe"
   },
   "booking": {
     "title": "Book my spot",

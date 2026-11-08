@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ExperienceActions } from "@/components/admin/experience-actions";
 import { ExperienceForm } from "@/components/admin/experience-form";
 import { adminDate, Card, FillBar, PageHeader } from "@/components/admin/ui";
 import { experienceToValues, formOptions } from "@/lib/admin-forms";
+import { requireAdmin } from "@/lib/auth/admin";
 import { getAdminData } from "@/lib/data/admin";
 
 export const metadata = { title: "Modifier une expérience" };
@@ -13,10 +15,20 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
   const e = d.experiences.get(id);
   if (!e) notFound();
   const sessions = d.sessions.filter((s) => s.experienceId === e.id);
+  const me = d.isDemo ? null : await requireAdmin();
+  const archived = e.status === "archived";
   return (
     <div className="max-w-3xl">
       <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-plum-900">← Expériences</Link></p>
-      <PageHeader title={e.title.fr} subtitle="Modifiable même après publication : prévenir automatiquement les participants d'un changement de date ou de lieu arrive à l'étape 7 du plan." />
+      <PageHeader title={e.title.fr} subtitle="Modifiable même après publication : en cas de changement de date ou de lieu, les participants sont prévenus automatiquement (notification + e-mail)." />
+      {archived && (
+        <p role="status" className="mb-5 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          Expérience <strong>archivée</strong> : elle n&apos;apparaît plus sur le site. Réactivez-la pour la republier ou lui ajouter des dates.
+        </p>
+      )}
+      <Card title="Archiver ou supprimer" className="mb-5">
+        <ExperienceActions id={e.id} status={e.status} canDelete={me?.role === "superadmin"} live={!d.isDemo} />
+      </Card>
       <Card title="Dates programmées" className="mb-5">
         <ul className="divide-y divide-line text-sm">
           {sessions.map((s) => (

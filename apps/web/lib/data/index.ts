@@ -50,6 +50,12 @@ export async function getExperienceBySlug(slug: string) {
   return DEMO_EXPERIENCES.find((e) => e.slug === slug && e.status === "published") ?? null;
 }
 
+/** Expérience archivée par l'équipe : la fiche indique qu'elle n'est plus proposée (pas de démo archivée). */
+export async function getArchivedExperience(slug: string) {
+  if (FIREBASE_ENABLED) return fs.fsArchivedExperienceBySlug(slug);
+  return null;
+}
+
 export async function getPublishedExperiences() {
   if (FIREBASE_ENABLED) return fs.fsPublishedExperiences();
   return DEMO_EXPERIENCES.filter((e) => e.status === "published");
