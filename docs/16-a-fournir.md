@@ -30,7 +30,7 @@ Utilisées dans le pied de page, les CGU, les CGV et la Politique de confidentia
 - [ ] **Textes juridiques** (CGU, CGV, Confidentialité, Sécurité) : relecture par un avocat. Le site ne l'indique plus (à votre demande) : les pages affichent simplement « Dernière mise à jour : 8 novembre 2026 ». Textes enrichis le 8 novembre en s'inspirant de Sahbi, sans recopier.
 - [ ] Points précis à faire valider par l'avocat :
   - **rétractation de l'abonnement** : 7 jours après le paiement, remboursement moins les avantages déjà utilisés (CGV art. 6) ;
-  - **annulations tardives / absences répétées** : restriction ou suspension temporaire après avertissement (CGU art. 7) — pas de barème automatique pour l'instant ;
+  - **annulations tardives / absences répétées** : restriction ou suspension temporaire après avertissement (CGU art. 9) — pas de barème automatique pour l'instant ;
   - **signalements et décisions de modération** conservés 3 ans au plus ;
   - mention d'une possible **vérification d'identité ou d'âge** en cas de doute.
 - [ ] **Confidentialité (8h)** : faire valider le tableau des durées (compte 3 ans après la dernière activité, signalements 3 ans, contacts 3 ans, journaux 12 mois, **pièces comptables 10 ans — loi 9-88**), l'effacement du régime / des allergies **30 jours après l'expérience** (à automatiser avant la mise en production), le délai de réponse d'**un mois**, la mention de **Brevo (France)** et compléter le **prestataire de paiement** dès qu'il est choisi.

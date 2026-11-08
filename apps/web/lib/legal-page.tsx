@@ -4,7 +4,7 @@ import { StaticPage } from "@/components/static-page";
 import { LEGAL_DOCS, type LegalKey } from "@/content/legal";
 import { plainText, richText } from "@/lib/rich-text";
 
-const docFor = (locale: string, key: LegalKey) => LEGAL_DOCS[locale === "en" ? "en" : "fr"][key];
+const docFor = (locale: string, key: LegalKey) => LEGAL_DOCS[locale === "en" || locale === "ar" ? locale : "fr"][key];
 
 /** Pages juridiques et Sécurité, rédigées à partir du fonctionnement réel du site. */
 export function legalPage(key: LegalKey) {
@@ -22,7 +22,6 @@ export function legalPage(key: LegalKey) {
     return (
       <StaticPage title={doc.title} intro={richText(doc.intro, missing)}>
         <p className="text-sm text-muted">{doc.updated}</p>
-        {locale === "ar" && <p className="rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("arabicPending")}</p>}
         <nav aria-label={t("toc")} className="rounded-[var(--radius-card)] bg-white/70 p-5">
           <ol className="space-y-1 text-sm">
             {doc.sections.map((s, i) => (

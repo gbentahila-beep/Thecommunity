@@ -2,8 +2,10 @@
  * Textes juridiques et page Sécurité, rédigés à partir du fonctionnement réel du site.
  * (Relecture par un avocat : suivie dans docs/16, jamais mentionnée sur le site.)
  * Les jetons {{…}} sont remplacés par les informations légales (lib/legal-info.ts) ou « à compléter » ; « [texte](/chemin) » crée un lien interne.
- * Français : version de référence. Anglais : traduction. Arabe : traduction à venir (la version française s'affiche).
+ * Français : version de référence. Anglais et arabe (content/legal-ar.ts) : traductions.
  */
+
+import { LEGAL_AR } from "./legal-ar";
 
 export type LegalKey = "terms" | "sales" | "privacy" | "safety" | "community";
 /** Bloc : paragraphe, liste à puces, ou tableau (affiché en fiches sur mobile). */
@@ -473,7 +475,7 @@ const fr: Record<LegalKey, LegalDoc> = {
       },
       {
         title: "7. Absences",
-        body: ["Une absence sans annulation (no-show) n'ouvre pas droit à remboursement. Des absences ou annulations tardives répétées peuvent limiter l'accès aux expériences sur demande ou entraîner une suspension temporaire (Conditions générales d'utilisation, article 7)."],
+        body: ["Une absence sans annulation (no-show) n'ouvre pas droit à remboursement. Des absences ou annulations tardives répétées peuvent limiter l'accès aux expériences sur demande ou entraîner une suspension temporaire ([conditions générales d'utilisation](/cgu), article 9)."],
       },
       { title: "8. Facturation", body: ["Un document (facture ou reçu) est émis pour chaque paiement et un avoir pour chaque remboursement. Ils sont envoyés par e-mail et disponibles dans l'espace membre, rubrique « Mes factures »."] },
       {
@@ -1005,7 +1007,7 @@ const en: Record<LegalKey, LegalDoc> = {
       { title: "4. Cancellation by the member", body: [["Up to 48 hours before the start: full refund.", "Less than 48 hours before the start: no refund (the spot may be offered to the waitlist).", "An experience may have specific conditions, shown on its page before booking."], "Cancel from your member area (My bookings). Refunds go back to the original payment method; how long they take to appear depends on your bank."] },
       { title: "5. Cancellation or change by The Host Club", body: ["If we cancel an experience (weather, partner unavailable, not enough participants…), you are informed and fully refunded. We may offer to move your booking to another date of the same experience; you remain free to cancel with a full refund if the new date doesn't suit you."] },
       { title: "6. Annual membership", body: [["Membership gives access for 12 months to the benefits described on the Membership page (member price and, depending on the plan, early access to new dates and members-only experiences).", "It is paid once and is not renewed automatically: you can renew from 30 days before it ends, the new period starting at the end date.", "You may withdraw within 7 days of payment by writing to {{supportEmail}}: you are refunded minus any benefits already used (the difference between the public price and the member price of the spots you booked)."]] },
-      { title: "7. No-shows", body: ["Not attending without cancelling does not entitle you to a refund. Repeated no-shows or late cancellations may limit access to on-request experiences or lead to a temporary suspension (Terms of use, section 7)."] },
+      { title: "7. No-shows", body: ["Not attending without cancelling does not entitle you to a refund. Repeated no-shows or late cancellations may limit access to on-request experiences or lead to a temporary suspension ([Terms of use](/cgu), section 9)."] },
       { title: "8. Invoices", body: ["A document (invoice or receipt) is issued for each payment and a credit note for each refund. They are emailed to you and available in your member area under “My invoices”."] },
       { title: "9. Complaints and governing law", body: ["Complaints can be sent to {{supportEmail}}; we always look for an amicable solution first. These terms are governed by Moroccan law, including Law 31-08 on consumer protection; failing agreement, the courts of Casablanca have jurisdiction."] },
     ],
@@ -1078,4 +1080,4 @@ const en: Record<LegalKey, LegalDoc> = {
   },
 };
 
-export const LEGAL_DOCS: Record<"fr" | "en", Record<LegalKey, LegalDoc>> = { fr, en };
+export const LEGAL_DOCS: Record<"fr" | "en" | "ar", Record<LegalKey, LegalDoc>> = { fr, en, ar: LEGAL_AR };
