@@ -102,6 +102,8 @@ export type Experience = {
   admission?: Admission;
   /** Message de motivation obligatoire avec la demande (sinon facultatif). */
   requestMessageRequired?: boolean;
+  /** Compte Instagram obligatoire dans la demande (11h). */
+  requestInstagramRequired?: boolean;
   languages: string[];
   alcoholServed?: boolean;
   included: LocalizedText[];

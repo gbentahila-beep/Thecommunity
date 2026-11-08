@@ -47,6 +47,8 @@ export const experienceInputSchema = z
     memberPriceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany").optional(),
     membersOnly: z.boolean().default(false),
     requestMessageRequired: z.boolean().default(false),
+    /** 11h : compte Instagram obligatoire dans la demande de participation (expériences sur demande). */
+    requestInstagramRequired: z.boolean().default(false),
     priceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany"),
     durationMinutes: z.coerce.number().int().min(15, "min15").max(1440, "tooMany"),
     languages: z.array(z.enum(SPOKEN_LANGUAGES as [SpokenLanguage, ...SpokenLanguage[]])).min(1, "pickOne"),

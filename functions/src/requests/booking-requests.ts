@@ -41,6 +41,7 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
     if (Date.now() >= bookingClosesAt(startAt, e!.bookingMode).getTime()) refuse("closed", "Les inscriptions sont fermées.");
     if (seats > maxSeatsFor(e!)) refuse("too_many_seats", "Trop de places.");
     if (e!.requestMessageRequired === true && !message) invalidArgument([{ path: ["message"], message: "required" }]);
+    if (e!.requestInstagramRequired === true && !instagram) invalidArgument([{ path: ["instagram"], message: "required" }]);
     if (existing.exists && ["pending", "accepted"].includes(existing.data()!.status)) refuse("already_requested", "Demande déjà envoyée.");
     if (existing.exists && existing.data()!.status === "declined") refuse("request_declined", "Demande non retenue pour cette date.");
     if (lock.exists) refuse("already_booked", "Vous avez déjà une place pour cette date.");

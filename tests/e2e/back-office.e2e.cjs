@@ -46,6 +46,12 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   assert(await page.getByText('Formulaire valide').isVisible(), 'formulaire valide : récapitulatif affiché');
   assert(await page.locator('#form-result li.list-disc').count() === 4, 'récurrence : 4 dates générées');
   assert(await page.locator('#form-result').textContent().then(t => t.includes('64 DH')), 'marge estimée par place (139 − 75 = 64 DH)');
+  // 11h : « Ce qui est inclus » dans « 3. Format » (prix total) ; Instagram obligatoire possible sur demande
+  assert(await page.locator('fieldset', { hasText: '3. Format' }).locator('#f-included').count() === 1, '« Ce qui est inclus » dans la section Format');
+  assert(await page.locator('#f-partnerDescription').count() === 0, 'plus de second champ « réglé sur place »');
+  await page.locator('#f-admission').selectOption('on_request');
+  assert(await page.getByLabel('Compte Instagram obligatoire').isVisible() && await page.getByLabel('Message de motivation obligatoire', { exact: false }).isVisible(), 'sur demande : Instagram et message obligatoires au choix');
+  await page.locator('#f-admission').selectOption('direct');
   // 11g : une seule section « Prix, paiement et partenaire », sans double comptage
   assert(await page.locator('#f-economicsModel').count() === 0, 'sans partenaire : pas de commission possible, seulement nos coûts');
   assert((await page.getByTestId('preview-team').innerText()).includes('64 DH'), 'aperçu équipe en direct : marge 64 DH par place');

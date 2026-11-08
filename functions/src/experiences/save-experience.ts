@@ -112,7 +112,7 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
             paymentMode: "on_site",
             pricingType: v.pricingModel === "fixed_partner" ? "fixed" : "consumption",
             price: v.pricingModel === "fixed_partner" ? { amount: Math.round((v.partnerPriceDh ?? 0) * 100), currency: "MAD" } : null,
-            description: v.partnerDescription ?? "",
+            description: "", // 11h : tout ce qui est inclus se décrit dans « Ce qui est inclus » (prix total)
           },
         };
 
@@ -138,6 +138,7 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     membersOnly: v.membersOnly,
     admission: v.admission,
     requestMessageRequired: v.admission === "on_request" && v.requestMessageRequired,
+    requestInstagramRequired: v.admission === "on_request" && v.requestInstagramRequired,
     languages: v.languages,
     alcoholServed: v.alcoholServed,
     included: (v.included ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),

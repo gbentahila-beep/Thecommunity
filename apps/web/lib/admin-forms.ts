@@ -21,7 +21,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
     categoryId: "eat", cityId: "casablanca", district: "", venueName: "", address: "",
     revealPolicy: "immediate", bookingMode: "individual",
     groupMin: "5", groupTarget: "6", groupMax: "7", maxSeatsPerBooking: "1",
-    admission: "direct", requestMessageRequired: false, memberPriceDh: "", membersOnly: false,
+    admission: "direct", requestMessageRequired: false, requestInstagramRequired: false, memberPriceDh: "", membersOnly: false,
     priceDh: "", durationMinutes: "120", languages: ["fr"], alcoholServed: false,
     included: "", practicalInfo: "", cancellationPolicyId: DEFAULT_CANCELLATION_POLICY.id,
     partnerId: "", economicsModel: "own", costPerSeatDh: "", commissionPercent: "",
@@ -39,11 +39,11 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     categoryId: e.categoryId, cityId: e.cityId, district: e.district, venueName: e.venue.name, address: e.venue.address,
     revealPolicy: e.venue.revealPolicy, bookingMode: e.bookingMode,
     groupMin: String(e.groupConfig?.minSize ?? 5), groupTarget: String(e.groupConfig?.targetSize ?? 6), groupMax: String(e.groupConfig?.maxSize ?? 7),
-    admission: e.admission ?? "direct", requestMessageRequired: Boolean(e.requestMessageRequired),
+    admission: e.admission ?? "direct", requestMessageRequired: Boolean(e.requestMessageRequired), requestInstagramRequired: Boolean(e.requestInstagramRequired),
     memberPriceDh: e.memberPrice ? String(e.memberPrice.amount / 100) : "", membersOnly: Boolean(e.membersOnly),
     maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String(e.price.amount / 100), durationMinutes: String(e.durationMinutes),
     languages: e.languages.filter((l): l is ExperienceFormValues["languages"][number] => ["fr", "ar", "darija", "en", "es"].includes(l)),
-    alcoholServed: Boolean(e.alcoholServed), included: (e.included ?? []).map((i) => i.fr).join("\n"), practicalInfo: e.practicalInfo?.fr ?? "",
+    alcoholServed: Boolean(e.alcoholServed), included: includedLines(e).join("\n"), practicalInfo: e.practicalInfo?.fr ?? "",
     partnerId: eco?.partnerId ?? "", economicsModel: eco?.model ?? "own",
     costPerSeatDh: eco?.costPerSeat != null ? String(eco.costPerSeat / 100) : "",
     commissionPercent: eco?.commissionPercent != null ? String(eco.commissionPercent) : "",
@@ -59,6 +59,16 @@ function pricingValues(e: Experience): Pick<ExperienceFormValues, "pricingModel"
   return {
     pricingModel: p.model,
     partnerPriceDh: p.partner?.price ? String(p.partner.price.amount / 100) : "",
-    partnerDescription: p.partner?.description ?? "",
+    partnerDescription: "",
   };
+}
+
+/**
+ * 11h : « Ce qui est inclus » décrit tout le prix (en ligne et sur place). Une ancienne description de la part sur place
+ * est reprise dans la liste (sans doublon) ; elle disparaît au prochain enregistrement.
+ */
+function includedLines(e: Experience): string[] {
+  const lines = (e.included ?? []).map((i) => i.fr);
+  const extra = pricingOf(e).partner?.description?.trim();
+  return extra && !lines.some((l) => l.trim().toLowerCase() === extra.toLowerCase()) ? [...lines, extra] : lines;
 }

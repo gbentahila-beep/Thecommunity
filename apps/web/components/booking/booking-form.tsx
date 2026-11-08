@@ -157,7 +157,6 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
             {onSite.partner ? t2("onSiteTo", { partner: onSite.partner }) : t2("onSiteToVenue")}
             {onSite.description ? ` ${t2("whatOnSite", { description: onSite.description })}` : ""}
           </p>
-          <p className="mt-1 text-xs text-muted">{t2("discountNote")}</p>
         </section>
       )}
 

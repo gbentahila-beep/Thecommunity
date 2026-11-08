@@ -280,7 +280,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
       ) : visitor.transfer && transferClosed(new Date(session.startAt), visitor.transfer) && !onRequest ? (
         <Notice title={t("transferTooLateTitle")} text={t("transferTooLateText", { cutoff: visitor.transfer.cutoff })} />
       ) : onRequest ? (
-        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} defaultLanguages={profileLanguages(visitor.languages)} />
+        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} instagramRequired={Boolean(exp.requestInstagramRequired)} defaultLanguages={profileLanguages(visitor.languages)} />
       ) : (
         <BookingForm
           sessionId={session.id}

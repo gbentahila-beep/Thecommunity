@@ -11,7 +11,7 @@ import { firebase } from "@/lib/firebase/client";
 import { EMPTY_PREFERENCES, needsConsent, PreferencesFields } from "./preferences-fields";
 
 /** Demande de participation (expérience « sur demande ») : rien n'est payé ni bloqué à ce stade. */
-export function RequestForm({ sessionId, maxSeats, messageRequired, defaultLanguages = [] }: { sessionId: string; maxSeats: number; messageRequired: boolean; defaultLanguages?: BookingPreferences["languages"] }) {
+export function RequestForm({ sessionId, maxSeats, messageRequired, instagramRequired = false, defaultLanguages = [] }: { sessionId: string; maxSeats: number; messageRequired: boolean; instagramRequired?: boolean; defaultLanguages?: BookingPreferences["languages"] }) {
   const t = useTranslations("request");
   const tb = useTranslations("booking");
   const router = useRouter();
@@ -27,7 +27,11 @@ export function RequestForm({ sessionId, maxSeats, messageRequired, defaultLangu
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (messageRequired && !message.trim()) return setFieldErrors({ message: t("messageRequired") });
+    const missing = {
+      ...(messageRequired && !message.trim() ? { message: t("messageRequired") } : {}),
+      ...(instagramRequired && !instagram.trim() ? { instagram: t("instagramRequired") } : {}),
+    };
+    if (Object.keys(missing).length) return setFieldErrors(missing);
     if (needsConsent(prefs) && !prefs.consent) return setConsentError(true);
     setConsentError(false);
     const shared = prefs.diet !== "none" || prefs.allergies.trim() || prefs.languages.length;
@@ -49,7 +53,7 @@ export function RequestForm({ sessionId, maxSeats, messageRequired, defaultLangu
     } catch (err) {
       const issues = (err as { details?: { issues?: { path: string; message: string }[] } }).details?.issues ?? [];
       if (issues.length) {
-        setFieldErrors(Object.fromEntries(issues.map((i) => [i.path, i.path === "instagram" ? t("instagramInvalid") : i.path === "message" && i.message === "required" ? t("messageRequired") : t("tooLong")])));
+        setFieldErrors(Object.fromEntries(issues.map((i) => [i.path, i.path === "instagram" ? (i.message === "required" ? t("instagramRequired") : t("instagramInvalid")) : i.path === "message" && i.message === "required" ? t("messageRequired") : t("tooLong")])));
       } else {
         const reason = (err as { details?: { reason?: string } }).details?.reason;
         setError(reason === "already_requested" || reason === "request_declined" ? t(`errors.${reason}`) : tb(`errors.${bookingErrorOf(err) as BookingError}`));
@@ -94,7 +98,7 @@ export function RequestForm({ sessionId, maxSeats, messageRequired, defaultLangu
       </div>
       <div>
         <label htmlFor="req-instagram" className="mb-1 block text-sm font-medium text-ink">
-          {t("instagramLabel")} <span className="font-normal text-muted">({t("optional")})</span>
+          {t("instagramLabel")} {!instagramRequired && <span className="font-normal text-muted">({t("optional")})</span>}
         </label>
         <input id="req-instagram" dir="ltr" value={instagram} onChange={(e) => { setInstagram(e.target.value); setFieldErrors((f) => ({ ...f, instagram: "" })); }} placeholder="@pseudo" autoComplete="off" aria-invalid={Boolean(fieldErrors.instagram)} className={input} />
         <p className="mt-1 text-xs text-muted">{t("instagramHint")}</p>

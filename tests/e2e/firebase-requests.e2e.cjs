@@ -72,6 +72,19 @@ async function login(page, who, suite) {
   assert(await visible(member.getByRole('heading', { name: 'Participation sur demande' })), 'tunnel : explication (paiement seulement après acceptation)');
   assert(await member.getByRole('button', { name: /Réserver et payer/ }).count() === 0, 'pas de paiement immédiat');
   await member.getByLabel('Pourquoi souhaitez-vous participer ?').fill('Nouvelle à Casablanca, j’adore les tables où l’on refait le monde.');
+  // 11h : l'équipe coche « Compte Instagram obligatoire » dans le back-office
+  const boss = await open({ viewport: { width: 1366, height: 900 } });
+  await login(boss, { email: 'admin@thecommunity.test', password: 'Demo2026!' }, '/admin/experiences/exp-diner-inconnus');
+  await boss.getByLabel('Compte Instagram obligatoire').check();
+  await boss.getByRole('button', { name: 'Enregistrer' }).click();
+  assert(await visible(boss.getByText('Expérience enregistrée'), 20000), 'back-office : Instagram rendu obligatoire');
+  assert((await fsGet('experiences/exp-diner-inconnus')).fields.requestInstagramRequired?.booleanValue === true, 'Firestore : requestInstagramRequired = true');
+  await boss.context().close();
+  await member.reload({ waitUntil: 'load' });
+  await member.getByLabel('Pourquoi souhaitez-vous participer ?').fill('Nouvelle à Casablanca, j’adore les tables où l’on refait le monde.');
+  assert(!(await member.locator('label[for=req-instagram]').innerText()).includes('facultatif'), 'Instagram obligatoire : plus marqué « facultatif »');
+  await member.getByRole('button', { name: 'Envoyer ma demande' }).click();
+  assert(await visible(member.getByText('Votre compte Instagram est demandé pour cette expérience.')), 'Instagram obligatoire : demande refusée sans compte');
   await member.getByLabel('Votre compte Instagram').fill('pas valide !');
   await member.getByRole('button', { name: 'Envoyer ma demande' }).click();
   assert(await visible(member.getByText('Compte Instagram invalide')), 'Instagram invalide refusé');
@@ -89,6 +102,7 @@ async function login(page, who, suite) {
   const yanis = await makeMember('Yanis', 'Ingénieur');
   const other = await open({ ...devices['iPhone 13'] });
   await login(other, yanis, `/reserver/${sid}`);
+  await other.getByLabel('Votre compte Instagram').fill('@yanis.casa'); // obligatoire depuis l'étape 2 (11h)
   await other.getByRole('button', { name: 'Envoyer ma demande' }).click();
   assert(await visible(other.getByRole('heading', { name: 'Demande envoyée' })), 'deuxième demande envoyée (message facultatif)');
 

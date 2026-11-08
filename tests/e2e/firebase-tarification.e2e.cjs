@@ -59,7 +59,7 @@ async function login(page, email, password, suite) {
   const box = page.getByTestId('two-part');
   assert(await visible(box), 'fiche : encadré « Comment se règle cette expérience »');
   const boxText = await box.innerText();
-  assert(boxText.includes(`${online / 100} DH`) && boxText.includes('80 DH') && boxText.includes('uniquement à la part payée en ligne'), 'fiche : part en ligne, part sur place, réductions limitées à la part en ligne');
+  assert(boxText.includes(`${online / 100} DH`) && boxText.includes('80 DH') && !boxText.includes('uniquement à la part payée en ligne'), 'fiche : part en ligne et part sur place, sans mention des réductions');
   assert(await page.locator('aside').getByText(`${(online + 8000) / 100} DH`).first().isVisible(), `fiche : total par personne (${(online + 8000) / 100} DH)`);
 
   // 2. Compte confirmé → tunnel : « À régler sur place » et bouton de paiement sur la seule part en ligne

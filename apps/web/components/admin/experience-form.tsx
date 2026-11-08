@@ -145,7 +145,7 @@ export function ExperienceForm({
       onSiteCommissionPercent: v.pricingModel !== "online_only" ? opt(v.onSiteCommissionPercent) : undefined,
       memberPriceDh: opt(v.memberPriceDh),
       partnerPriceDh: v.pricingModel === "fixed_partner" ? opt(v.partnerPriceDh) : undefined,
-      partnerDescription: v.pricingModel === "online_only" ? "" : v.partnerDescription,
+      partnerDescription: "",
     });
     if (!parsed.success) {
       const next: Record<string, string> = {};
@@ -321,6 +321,12 @@ export function ExperienceForm({
             Message de motivation obligatoire (« Pourquoi souhaitez-vous participer ? »)
           </label>
         )}
+        {v.admission === "on_request" && (
+          <label className="flex items-center gap-2 text-sm sm:col-span-2">
+            <input type="checkbox" checked={v.requestInstagramRequired} onChange={(e) => set("requestInstagramRequired", e.target.checked)} className="size-4 accent-plum-900" />
+            Compte Instagram obligatoire
+          </label>
+        )}
         {grouped && (
           <div className="grid grid-cols-3 gap-3 sm:col-span-2">
             <div><Label k="groupMin">Taille min</Label><input {...field("groupMin")} inputMode="numeric" value={v.groupMin} onChange={(e) => set("groupMin", e.target.value)} />{err("groupMin")}</div>
@@ -357,6 +363,7 @@ export function ExperienceForm({
           <input type="checkbox" checked={v.alcoholServed} onChange={(e) => set("alcoholServed", e.target.checked)} className="size-4 accent-plum-900" />
           De l&apos;alcool est servi pendant l&apos;expérience
         </label>
+        <div className="sm:col-span-2"><Label k="included" hint="Tout ce que comprend le prix total, payé en ligne et sur place. Un élément par ligne, affiché sur la fiche.">Ce qui est inclus</Label><textarea {...field("included")} rows={3} value={v.included ?? ""} onChange={(e) => set("included", e.target.value)} /></div>
         <div className="sm:col-span-2"><Label k="practicalInfo">Infos pratiques</Label><textarea {...field("practicalInfo")} rows={2} value={v.practicalInfo ?? ""} onChange={(e) => set("practicalInfo", e.target.value)} /></div>
       </Section>
 
@@ -391,16 +398,17 @@ export function ExperienceForm({
           <p className="text-sm font-semibold text-ink sm:col-span-2">Payé en ligne, encaissé par The Host Club</p>
           <div><Label k="priceDh" hint="Ce que le client paie à la réservation.">Prix par place (DH)</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
           <div><Label k="memberPriceDh" hint="Facultatif. Vide = réduction de l'abonnement (réglée dans « Abonnement »).">Prix membre (DH)</Label><input {...field("memberPriceDh")} inputMode="decimal" value={v.memberPriceDh} onChange={(e) => set("memberPriceDh", e.target.value)} />{err("memberPriceDh")}</div>
-          <div className="sm:col-span-2"><Label k="included" hint="Un élément par ligne, affiché sur la fiche. Ex. « Place réservée et accueil par un hôte ».">{onSiteMode ? "Ce que comprend la part payée en ligne" : "Ce qui est inclus"}</Label><textarea {...field("included")} rows={3} value={v.included ?? ""} onChange={(e) => set("included", e.target.value)} /></div>
         </div>
 
         {onSiteMode && (
           <div className="grid gap-4 rounded-xl border border-line p-4 sm:col-span-2 sm:grid-cols-2" data-testid="part-on-site">
             <p className="text-sm font-semibold text-ink sm:col-span-2">Payé sur place, directement {partnerName ? `à ${partnerName}` : "au partenaire"} — jamais encaissé par nous</p>
-            {v.pricingModel === "fixed_partner" && (
+            {v.pricingModel === "fixed_partner" ? (
               <div><Label k="partnerPriceDh" hint="Montant fixe par place, connu à l'avance.">Prix sur place par place (DH)</Label><input {...field("partnerPriceDh")} inputMode="decimal" value={v.partnerPriceDh} onChange={(e) => set("partnerPriceDh", e.target.value)} />{err("partnerPriceDh")}</div>
+            ) : (
+              <p className="text-sm text-muted sm:col-span-2">Le client règle sur place ce qu&apos;il consomme : le site affiche « + consommation », sans montant.</p>
             )}
-            <div className={v.pricingModel === "fixed_partner" ? "" : "sm:col-span-2"}><Label k="partnerDescription" hint={v.pricingModel === "fixed_partner" ? "Affiché au client. Ex. « Menu 3 plats et une boisson »." : "Affiché au client. Ex. « Boissons et plats à la carte »."}>Ce que comprend la part sur place</Label><textarea {...field("partnerDescription")} rows={2} value={v.partnerDescription ?? ""} onChange={(e) => set("partnerDescription", e.target.value)} />{err("partnerDescription")}</div>
+            <p className="text-xs text-muted sm:col-span-2">Ce que comprend le prix (en ligne et sur place) se décrit une seule fois, dans « Ce qui est inclus » (section 3).</p>
           </div>
         )}
 
@@ -444,7 +452,6 @@ export function ExperienceForm({
                 )}
                 {split.model === "online_only" && <p className="text-sm text-ink">Tout est réglé en ligne à la réservation.</p>}
                 {split.variable && <p className="text-sm text-ink">{formatMoney({ amount: split.onlineUnit, currency: "MAD" })} maintenant · votre consommation réglée sur place</p>}
-                {split.model !== "online_only" && v.partnerDescription?.trim() && <p className="mt-1 text-xs text-muted">Sur place : {v.partnerDescription.trim()}</p>}
               </>
             ) : (
               <p className="mt-1 text-sm text-muted">Saisissez les prix pour voir l&apos;aperçu.</p>

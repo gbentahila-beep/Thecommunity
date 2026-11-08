@@ -650,7 +650,8 @@
       "request_declined": "Votre demande pour cette date n'a pas été retenue."
     },
     "pageTitle": "Demander à participer",
-    "cancelYes": "Oui, retirer ma demande"
+    "cancelYes": "Oui, retirer ma demande",
+    "instagramRequired": "Votre compte Instagram est demandé pour cette expérience."
   },
   "waitlist": {
     "joinTitle": "Liste d'attente",
@@ -917,7 +918,6 @@
     "onSiteTo": "Réglé directement à {partner}, sur place.",
     "onSiteVariable": "Selon votre consommation",
     "whatOnSite": "Sur place : {description}",
-    "discountNote": "Les réductions (abonnement, prix membre, codes promo) s'appliquent uniquement à la part payée en ligne.",
     "payNowLine": "À payer maintenant",
     "paidOnline": "Payé en ligne",
     "dueOnline": "À payer en ligne",
@@ -926,8 +926,7 @@
     "sectionOnline": "En ligne, à la réservation : {amount} par personne.",
     "sectionFixed": "Sur place, au partenaire : {amount} par personne.",
     "sectionVariable": "Sur place, au partenaire : ce que vous consommez.",
-    "onSiteToVenue": "Réglé directement au lieu partenaire, sur place.",
-    "includedOnline": "Inclus dans la part payée en ligne"
+    "onSiteToVenue": "Réglé directement au lieu partenaire, sur place."
   },
   "ticket": {
     "title": "Votre billet",

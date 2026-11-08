@@ -52,7 +52,7 @@ async function refusal(p: Promise<unknown>) {
   }
 }
 
-async function makeSession(opts: { capacity?: number; price?: number; startInHours?: number; mode?: string; maxSeats?: number; onRequest?: boolean; messageRequired?: boolean; membersOnly?: boolean; memberPrice?: number; createdHoursAgo?: number } = {}) {
+async function makeSession(opts: { capacity?: number; price?: number; startInHours?: number; mode?: string; maxSeats?: number; onRequest?: boolean; messageRequired?: boolean; instagramRequired?: boolean; membersOnly?: boolean; memberPrice?: number; createdHoursAgo?: number } = {}) {
   const expRef = db().collection("experiences").doc();
   await expRef.set({
     slug: `test-${expRef.id}`,
@@ -66,6 +66,7 @@ async function makeSession(opts: { capacity?: number; price?: number; startInHou
     cancellationPolicyId: "standard-48h",
     admission: opts.onRequest ? "on_request" : "direct",
     requestMessageRequired: opts.messageRequired ?? false,
+    requestInstagramRequired: opts.instagramRequired ?? false,
     membersOnly: opts.membersOnly ?? false,
     memberPrice: opts.memberPrice !== undefined ? { amount: opts.memberPrice, currency: "MAD" } : null,
   });
@@ -319,6 +320,13 @@ describe("demandes de participation (expériences sur demande)", () => {
     // Aucune place bloquée tant que l'équipe n'a pas accepté.
     expect(await session(sid)).toMatchObject({ seatsHeld: 0, seatsConfirmed: 0 });
     expect(await refusal(u.call("requestBooking", { sessionId: sid, seats: 1, message: "Encore" }))).toBe("failed-precondition:already_requested");
+  });
+
+  it("Instagram obligatoire si l'équipe l'a demandé (11h)", async () => {
+    const sid = await makeSession({ onRequest: true, instagramRequired: true });
+    const u = await member();
+    expect(await refusal(u.call("requestBooking", { sessionId: sid, seats: 1, message: "Bonjour" }))).toBe("invalid-argument:");
+    expect(await u.call("requestBooking", { sessionId: sid, seats: 1, message: "", instagram: "@nadia.casa" })).toMatchObject({ status: "pending" });
   });
 
   it("acceptée : place bloquée 24 h, paiement, confirmation, notification et journal", async () => {

@@ -180,7 +180,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <p className="leading-relaxed text-ink/85">{tr(exp.description, locale)}</p>
             </Section>
 
-            <Section title={twoPart.partner ? t2("includedOnline") : t("included")}>
+            <Section title={t("included")}>
               <ul className="grid gap-2 sm:grid-cols-2">
                 {exp.included.map((item) => (
                   <li key={item.fr} className="flex items-start gap-2.5 text-ink/85">
@@ -247,7 +247,6 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                     <li>{twoPart.partner.price ? t2("sectionFixed", { amount: formatMoney(twoPart.partner.price, lang) }) : t2("sectionVariable")}</li>
                   </ul>
                   {twoPart.partner.description && <p className="mt-1 text-muted">{t2("whatOnSite", { description: twoPart.partner.description })}</p>}
-                  <p className="mt-1 text-xs text-muted">{t2("discountNote")}</p>
                 </div>
               )}
               {plan && (memberAmount !== null || exp.membersOnly) && (
