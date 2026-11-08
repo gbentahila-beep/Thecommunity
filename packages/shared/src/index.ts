@@ -11,3 +11,4 @@ export * from "./membership";
 export * from "./invoice";
 export * from "./admin-catalog";
 export * from "./promo";
+export * from "./matching";

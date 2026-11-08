@@ -66,3 +66,21 @@ export function refundMail(o: { locale: string; firstName: string; what: string;
   }[l];
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: [...t.p, ...(o.test ? [TEST_NOTE[l]] : [])], cta: { label: t.cta, href }, footer: FOOTER[l] }) };
 }
+
+export function groupRevealedMail(o: { locale: string; firstName: string; title: string; when: string; table: string; venue: string | null; reservationId: string }) {
+  const l = lang(o.locale);
+  const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
+  const t = {
+    fr: { subject: `Votre table est prête : ${o.title}`, heading: `${o.firstName ? `${o.firstName}, v` : "V"}otre table vous attend`, p: [`Pour « ${o.title} », ${o.when}, vous êtes à la ${o.table}.`, o.venue ? `Rendez-vous : ${o.venue}.` : "Le lieu figure sur votre réservation.", "Découvrez les prénoms et centres d'intérêt de votre groupe sur votre réservation. À très vite !"], cta: "Voir ma table" },
+    en: { subject: `Your table is ready: ${o.title}`, heading: `${o.firstName ? `${o.firstName}, y` : "Y"}our table is waiting`, p: [`For “${o.title}”, ${o.when}, you're at ${o.table}.`, o.venue ? `Meeting point: ${o.venue}.` : "The venue is on your booking.", "See your group's first names and interests on your booking. See you soon!"], cta: "See my table" },
+    ar: { subject: `مائدتك جاهزة: ${o.title}`, heading: "مائدتك في انتظارك", p: [`في « ${o.title} »، ${o.when}، مكانك في ${o.table}.`, o.venue ? `المكان: ${o.venue}.` : "المكان مذكور في حجزك.", "اكتشف أسماء أفراد مجموعتك واهتماماتهم في صفحة حجزك. إلى اللقاء!"], cta: "عرض مائدتي" },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
+}
+
+/** Pied des e-mails de service (sans facture jointe). */
+const NOTICE_FOOTER: Record<L, string> = {
+  fr: "Vous recevez cet e-mail car vous avez une réservation sur The Host Club.",
+  en: "You're receiving this email because you have a booking on The Host Club.",
+  ar: "تتوصل بهذه الرسالة لأن لديك حجزًا على The Host Club.",
+};

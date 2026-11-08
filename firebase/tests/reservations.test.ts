@@ -1152,3 +1152,68 @@ describe("régime, allergies, langues de table (5g)", () => {
     expect((await reservation(reservationId as string)).preferences).toMatchObject({ diet: "vegetarian", allergies: "Arachides", shareWithVenue: true });
   });
 });
+
+describe("composition des tables (6)", () => {
+  async function dinnerSession(n: number) {
+    const sid = await makeSession({ capacity: 20, mode: "social_dinner" });
+    const expId = (await session(sid)).experienceId as string;
+    await db().doc(`experiences/${expId}`).update({
+      groupConfig: { minSize: 3, targetSize: 4, maxSize: 5 },
+      venue: { name: "Rooftop secret", address: "1 rue du Test", revealPolicy: "on_group_reveal" },
+    });
+    const people: Client[] = [];
+    for (let i = 0; i < n; i++) {
+      const u = await member();
+      await db().doc(`users/${u.uid}`).set({ firstName: `P${i}`, birthDate: `${1985 + i}-05-10`, languages: i % 3 === 0 ? ["en"] : ["fr", "en"], interests: ["food"], email: `p${i}.${run}@example.com` }, { merge: true });
+      await paidReservation(u, sid);
+      people.push(u);
+    }
+    return { sid, people };
+  }
+
+  it("proposer, corriger, enregistrer puis révéler : chacun voit sa table, le lieu, une notification et un e-mail", async () => {
+    const { sid, people } = await dinnerSession(8);
+    const adm = await member({ role: "admin" });
+    expect(await refusal(people[0]!.call("adminProposeGroups", { sessionId: sid }))).toBe("permission-denied:");
+    expect(await adm.call("adminProposeGroups", { sessionId: sid })).toEqual({ groups: 2 });
+    const proposed = (await db().collection("groups").where("sessionId", "==", sid).get()).docs.map((d) => d.data());
+    expect(proposed.map((g) => g.status)).toEqual(["proposed", "proposed"]);
+    expect(proposed.flatMap((g) => g.memberIds).sort()).toEqual(people.map((p) => p.uid).sort());
+    expect(await refusal(adm.call("adminRevealGroups", { sessionId: sid }))).toBe("failed-precondition:not_validated");
+    // Correction à la main : une personne oubliée est refusée, puis la composition complète est enregistrée.
+    const all = people.map((p) => p.uid);
+    expect(await refusal(adm.call("adminSaveGroups", { sessionId: sid, groups: [{ label: "Table 1", memberIds: all.slice(0, 7) }] }))).toBe("failed-precondition:unassigned");
+    expect(await refusal(adm.call("adminSaveGroups", { sessionId: sid, groups: [{ label: "Table 1", memberIds: all }, { label: "Table 2", memberIds: [all[0]!] }] }))).toBe("failed-precondition:duplicate_member");
+    expect(await adm.call("adminSaveGroups", { sessionId: sid, groups: [{ label: "Table 1", memberIds: all.slice(0, 4) }, { label: "Table 2", memberIds: all.slice(4) }] })).toEqual({ ok: true, status: "validated" });
+    expect(await adm.call("adminRevealGroups", { sessionId: sid })).toEqual({ ok: true, participants: 8 });
+    expect((await session(sid)).groupsStatus).toBe("revealed");
+    const r0 = (await db().collection("reservations").where("sessionId", "==", sid).where("userId", "==", all[0]).get()).docs[0]!.data();
+    expect(r0).toMatchObject({ groupId: `${sid}_t1`, venue: { name: "Rooftop secret" } });
+    const g1 = (await db().doc(`groups/${sid}_t1`).get()).data()!;
+    expect(g1).toMatchObject({ status: "revealed", label: "Table 1", seats: 4 });
+    expect(g1.members[0]).toMatchObject({ firstName: "P0", interests: ["food"] });
+    expect(g1.members[0].email).toBeUndefined();
+    const notes = await db().collection(`users/${all[0]}/notifications`).where("type", "==", "group_revealed").get();
+    expect(notes.size).toBe(1);
+    const mails = await db().collection("mail").where("refs.sessionId", "==", sid).get();
+    expect(mails.size).toBe(8);
+    expect(mails.docs[0]!.data()).toMatchObject({ kind: "group_revealed", status: "outbox" });
+    // Après la révélation : plus de proposition automatique ; un changement à la main prévient les personnes déplacées.
+    expect(await refusal(adm.call("adminProposeGroups", { sessionId: sid }))).toBe("failed-precondition:already_revealed");
+    await adm.call("adminSaveGroups", { sessionId: sid, groups: [{ label: "Table 1", memberIds: [...all.slice(1, 4), all[4]!] }, { label: "Table 2", memberIds: [all[0]!, ...all.slice(5)] }] });
+    const moved = (await db().collection("reservations").where("sessionId", "==", sid).where("userId", "==", all[0]).get()).docs[0]!.data();
+    expect(moved.groupId).toBe(`${sid}_t2`);
+    expect((await db().collection(`users/${all[0]}/notifications`).where("type", "==", "group_revealed").get()).size).toBe(2);
+    expect((await db().collection(`users/${all[2]}/notifications`).where("type", "==", "group_revealed").get()).size).toBe(1);
+  });
+
+  it("fiche hôte enregistrée par l'équipe ; plafond de 50 places par date", async () => {
+    const sid = await makeSession();
+    const adm = await member({ role: "admin" });
+    await adm.call("adminSaveHosting", { sessionId: sid, hostName: "Aya", notes: "Accueil 19 h 45, tour de table." });
+    expect((await session(sid)).hosting).toMatchObject({ hostName: "Aya", notes: "Accueil 19 h 45, tour de table." });
+    const { sessionPlanSchema } = await import("../../packages/shared/src/experience-input");
+    expect(sessionPlanSchema.safeParse({ firstDate: "2027-01-10", time: "19:30", weeks: 1, capacity: 51 }).success).toBe(false);
+    expect(sessionPlanSchema.safeParse({ firstDate: "2027-01-10", time: "19:30", weeks: 1, capacity: 50 }).success).toBe(true);
+  });
+});

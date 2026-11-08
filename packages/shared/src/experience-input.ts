@@ -15,7 +15,8 @@ export const sessionPlanSchema = z.object({
   firstDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "required"),
   time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "required"),
   weeks: z.coerce.number().int().min(1, "min1").max(RECURRENCE_MAX_WEEKS, "tooMany"),
-  capacity: z.coerce.number().int().min(1, "min1").max(500, "tooMany"),
+  // Plafond par date : rester à taille humaine (décision du 8 novembre, voir MAX_SESSION_CAPACITY).
+  capacity: z.coerce.number().int().min(1, "min1").max(50, "tooMany"),
 });
 
 export const experienceInputSchema = z
