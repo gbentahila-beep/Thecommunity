@@ -29,7 +29,7 @@
 
 > 8a–8c : l'accroche « Your people are out there. » reste **en anglais dans les trois langues** (confirmé par Rita le 8 novembre). Les articles du blog citent des lieux connus de Casablanca sans adresse ni horaire (à vérifier avant de les mettre en avant). Proposition : un menu « hamburger » sur mobile pour Blog / À propos (aujourd'hui dans le pied de page) — à valider.
 
-> Ordre proposé : **8d, 8f, 8g, 8h ensemble** (les quatre textes se renvoient les uns aux autres : Sécurité ↔ Règles de la communauté ↔ CGU ↔ Confidentialité), puis 8e.
+> Ordre proposé : **8d, 8f, 8g, 8h ensemble** (les quatre textes se renvoient les uns aux autres : Sécurité ↔ Règles de la communauté ↔ CGU ↔ Confidentialité), puis **8i** (blog mobile + menu hamburger), puis 8e.
 
 | Étape | Contenu | Dépend de |
 |---|---|---|
@@ -38,6 +38,7 @@
 | 8f | **Règles de la communauté** (page dédiée `/charte`, aujourd'hui alias de Sécurité), inspirées des *Community Guidelines* de Timeleft, réécrites et adaptées (détail docs/17) | — |
 | 8g | **CGU revues** en s'inspirant des *Terms* de Timeleft, sans copier : ce que le service fait et ne fait pas, lieux et allergies, conditions pour s'inscrire, interdits, sanctions et recours, droit à l'image (avec accord), litiges au Maroc (détail docs/17) | avocat pour validation (docs/16) |
 | 8h | **Confidentialité revue** en s'inspirant de la *Privacy* de Timeleft, sans copier : tableau finalité / base légale / durée, sous-traitants, droits (loi 09-08, CNDP), protection des mineurs (détail docs/17) | avocat + récépissé CNDP (docs/16) |
+| 8i | **Blog, mise en page mobile** façon captures Timeleft (sans copier) : accroche avec un mot en couleur, filtres en pastilles défilantes, article « Commencer ici » mis en avant, « Les plus lus » en liste compacte (vignette à gauche, titre, thème · minutes), « Parcourir les articles » avec recherche et tri Plus lus / Récents, page de thème (titre, intro, « N articles · mis à jour le… », carte « Rencontrer du monde à Casablanca »), « Utile aussi » en liste avec flèches ; **menu hamburger sur mobile** (détail docs/17) | — |
 | 5h | **Prestataire de paiement réel** (CMI, Payzone, YouCan Pay) | contrat signé |
 | 9 | **Recette, sécurité, mise en production** | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 

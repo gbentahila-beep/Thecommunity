@@ -96,3 +96,21 @@ Points à reprendre à notre façon (sans copier) :
 - **Droits** (loi 09-08) : accès, rectification, opposition, suppression, retrait de l'accord ; réponse sous 30 jours (hypothèse) ; plainte auprès de la **CNDP**.
 - **Mineurs** : service réservé aux 18 ans et plus ; tolérance zéro pour toute exploitation de mineurs, signalement aux autorités.
 - Durées : reprendre celles de docs/16 (à faire valider).
+
+## 8i — Blog : mise en page mobile (captures envoyées par Rita le 8 novembre)
+
+Références : `docs/maquettes/2026-11-08/blog-mobile-1..5.png` (blog Timeleft sur téléphone). S'en inspirer pour la **mise en page**, garder le style The Host Club (couleurs prune / crème, typographies actuelles), ne pas reprendre leurs textes.
+
+1. **En-tête du blog** : grande accroche avec un mot mis en couleur (ex. « Inconnus aujourd'hui, *amis* demain »), texte d'introduction, puis **pastilles défilantes** horizontalement (thèmes ou intentions : « Nouveau à Casablanca », « Première fois », « Conversation »…).
+2. **« Commencer ici »** : un grand article mis en avant (grande image, mention « Commencer ici · thème · minutes », titre, résumé) — proposition : « Dîner avec des inconnus : c'est quoi ? ».
+3. **« Les plus lus »** : liste compacte, vignette arrondie à gauche, titre, « thème · N min de lecture », séparateurs fins.
+4. **« Parcourir les articles »** : tri **Plus lus / Récents** (onglets soulignés), **champ de recherche** (« Rechercher : Casablanca, questions… »), liste sans image avec flèche à droite.
+5. **Page d'un thème** (ex. City guide) : fil d'Ariane « Blog / City guide », grand titre, intro, « N articles · mis à jour le … », puis **carte d'appel** « Rencontrer du monde à Casablanca » (texte court + bouton « Trouver mon groupe » → expériences + bouton secondaire « Choisir une autre ville »), puis la liste compacte des articles du thème.
+6. **Bas d'article / de thème** : bloc blanc arrondi « Utile aussi quand on arrive » avec 2–3 articles en liste et une flèche ronde.
+7. **Menu hamburger sur mobile** (en haut à droite) donnant accès à Découvrir, À propos, Comment ça marche, Blog — aujourd'hui ces liens ne sont que dans le pied de page sur téléphone.
+
+Hypothèses :
+- « Les plus lus » : tant que nous ne mesurons pas les lectures, c'est **notre sélection** ; option : compter les ouvertures d'articles (compteur anonyme dans Firebase) pour un vrai classement.
+- Recherche dans le navigateur, sans accents (comme le centre d'aide).
+- Vignettes : nos photos actuelles (pas d'illustrations dessinées).
+- Sur ordinateur : même contenu, en grille plus large (la grille actuelle reste la base).
