@@ -41,15 +41,18 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         )}
         <header className="relative z-30 flex h-16 items-center gap-3 border-b border-line bg-cream/95 px-4 backdrop-blur lg:hidden print:hidden">
           <MobileAdminMenu />
-          <Link href="/admin" className="font-display text-xl font-semibold text-plum-900">
-            The Host Club<span className="text-plum-500">.</span> <span className="font-sans text-sm font-medium text-muted">admin</span>
+          <Link href="/admin" className="flex items-center gap-2" aria-label="The Host Club — back-office">
+            {/* eslint-disable-next-line @next/next/no-img-element -- logo SVG statique */}
+            <img src="/images/brand/logo-horizontal-prune.svg" alt="" width={150} height={21} className="h-5 w-auto" />
+            <span className="text-sm font-medium text-muted">admin</span>
           </Link>
         </header>
         <div className="mx-auto flex max-w-[1500px]">
           <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 overflow-y-auto border-e border-line px-4 py-6 lg:flex print:hidden">
-            <Link href="/admin" className="px-3 font-display text-2xl font-semibold text-plum-900">
-              The Host Club<span className="text-plum-500">.</span>
-              <span className="mt-0.5 block font-sans text-xs font-medium uppercase tracking-wider text-muted">Back-office</span>
+            <Link href="/admin" className="px-3" aria-label="The Host Club — back-office">
+              {/* eslint-disable-next-line @next/next/no-img-element -- logo SVG statique */}
+              <img src="/images/brand/logo-horizontal-prune.svg" alt="" width={180} height={25} className="h-6 w-auto" />
+              <span className="mt-1 block text-xs font-medium uppercase tracking-wider text-muted">Back-office</span>
             </Link>
             <AdminNav />
             <Link href="/" className="mt-auto px-3 text-sm text-muted hover:text-plum-900">← Voir le site public</Link>

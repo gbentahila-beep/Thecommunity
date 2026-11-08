@@ -5,14 +5,15 @@ const lang = (l: string): L => (l === "en" || l === "ar" ? l : "fr");
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const prefix = (l: L) => (l === "fr" ? "" : `/${l}`);
 
-/** Gabarit commun : sobre, lisible sur téléphone, aux couleurs du site. */
+/** Gabarit commun : bandeau prune avec le logo et le motif « le fil » (identité 10f), lisible sur téléphone. */
 function layout(l: L, o: { heading: string; paragraphs: string[]; cta?: { label: string; href: string }; footer: string }) {
   const dir = l === "ar" ? "rtl" : "ltr";
   const html = `<!doctype html><html lang="${l}" dir="${dir}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
 <body style="margin:0;background:#f8efe9;font-family:Helvetica,Arial,sans-serif;color:#221c1e">
 <div style="max-width:560px;margin:0 auto;padding:24px 16px">
-<p style="font-family:Georgia,serif;font-size:24px;font-weight:bold;color:#561a29;margin:0 0 20px">The Host Club.</p>
-<div style="background:#fff;border-radius:16px;padding:24px">
+<div style="background:#561a29;border-radius:16px 16px 0 0;padding:22px 24px"><img src="${SITE_URL}/images/brand/email-logo.png" width="200" height="35" alt="The Host Club." style="display:block;border:0;color:#f8efe8;font-family:Georgia,serif;font-size:22px"></div>
+<div style="height:16px;background:#561a29 url('${SITE_URL}/images/brand/email-band.png') 0 0/280px 16px repeat-x"></div>
+<div style="background:#fff;border-radius:0 0 16px 16px;padding:24px">
 <h1 style="font-family:Georgia,serif;font-size:22px;color:#561a29;margin:0 0 12px">${esc(o.heading)}</h1>
 ${o.paragraphs.map((p) => `<p style="line-height:1.55;margin:0 0 12px">${esc(p)}</p>`).join("\n")}
 ${o.cta ? `<p style="margin:20px 0 4px"><a href="${esc(o.cta.href)}" style="display:inline-block;background:#561a29;color:#fff;text-decoration:none;padding:12px 20px;border-radius:999px;font-weight:bold">${esc(o.cta.label)}</a></p>` : ""}

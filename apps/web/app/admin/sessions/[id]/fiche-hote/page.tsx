@@ -2,6 +2,7 @@ import { ICEBREAKERS_FR } from "@thecommunity/shared";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HostingForm } from "@/components/admin/hosting-form";
+import { PlaceCard, TableNumberCard, WelcomeCard } from "@/components/admin/printables";
 import { PrintButton } from "@/components/admin/print-button";
 import { adminDate, Card, PageHeader } from "@/components/admin/ui";
 import { getAdminData } from "@/lib/data/admin";
@@ -50,14 +51,25 @@ export default async function HostSheetPage({ params }: PageProps<"/admin/sessio
         <section key={t.label} aria-label={t.label} className="mb-6 break-inside-avoid">
           <h3 className="mb-2 font-semibold text-ink">{t.label} · {t.names.length} pers.</h3>
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {t.names.map((n, i) => (
-              <li key={`${n}-${i}`} className="grid h-24 place-items-center rounded-xl border border-dashed border-plum-300 bg-white text-center font-display text-2xl text-plum-900">
-                {n}
-              </li>
-            ))}
+            {t.names.map((n, i) => <PlaceCard key={`${n}-${i}`} name={n} table={groups.length ? t.label : undefined} />)}
           </ul>
         </section>
       ))}
+      {groups.length > 0 && (
+        <>
+          <h2 className="mb-3 mt-8 font-display text-2xl font-medium text-plum-900 print:break-before-page">Numéros de table</h2>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {tables.map((t) => <TableNumberCard key={t.label} label={t.label} />)}
+          </div>
+        </>
+      )}
+      <h2 className="mb-3 mt-8 font-display text-2xl font-medium text-plum-900 print:break-before-page">Cartes de bienvenue</h2>
+      <p className="mb-3 text-sm text-muted print:hidden">Une carte par table, avec trois questions différentes pour lancer la conversation.</p>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {tables.map((t, i) => (
+          <WelcomeCard key={t.label} questions={[0, 1, 2].map((k) => ICEBREAKERS_FR[(i * 3 + k) % ICEBREAKERS_FR.length]!)} />
+        ))}
+      </div>
     </>
   );
 }

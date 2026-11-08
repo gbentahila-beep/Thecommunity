@@ -1,6 +1,7 @@
 import { PDFDocument, rgb, StandardFonts, type PDFFont, type PDFPage } from "pdf-lib";
 import type { InvoiceDoc } from "./types";
 import { dateFr, money } from "./format";
+import { LOGO_CAP, LOGO_DOT, LOGO_PATHS } from "./logo-paths";
 
 const PLUM = rgb(0.337, 0.102, 0.161); // #561a29
 const INK = rgb(0.13, 0.11, 0.12);
@@ -60,7 +61,10 @@ export async function renderInvoicePdf(inv: InvoiceDoc): Promise<Uint8Array> {
   };
 
   // En-tête
-  text("The Host Club.", M, y - 18, { size: 22, f: bold, color: PLUM });
+  // Logo vectoriel (identité 10b) : environ 20 pt de hauteur de capitale.
+  const k = 20 / LOGO_CAP;
+  for (const d of LOGO_PATHS) page.drawSvgPath(d, { x: M, y: y - 22, scale: k, color: PLUM, borderWidth: 0 });
+  page.drawCircle({ x: M + LOGO_DOT.cx * k, y: y - 22 - LOGO_DOT.cy * k, size: LOGO_DOT.r * k, color: rgb(0.69, 0.337, 0.416) });
   const titleLines = wrap(bold, inv.title, 13, 250);
   titleLines.forEach((l, i) => right(l, M + W, y - 12 - i * 16, { size: 13, f: bold, color: PLUM }));
   let ty = y - 12 - titleLines.length * 16;

@@ -14,7 +14,7 @@ def h_mark(x, y, size, fill, dot):
 PLUM, PLUM_LIGHT, DOT, CREAM, SAND = "#561A29", "#8E3A4C", "#B0566A", "#F8EFE8", "#EEDFD3"
 W, H = 640, 420  # tuile
 
-def fil(bg, line, dots, accent, stroke=15, opacity=1.0):
+def fil(bg, line, dots, accent, stroke=15, opacity=1.0, samples=600):
     """« Le fil » : une ligne qui ondule et fait une boucle ronde par tuile (trochoïde), des points posés dessus (les convives)."""
     def pt(t, row):
         ph = 0.5 * (row % 2)
@@ -25,7 +25,7 @@ def fil(bg, line, dots, accent, stroke=15, opacity=1.0):
     parts = []
     for row in (-1, 0, 1, 2):
         for dx in (-W, 0, W):
-            pts = [pt(i / 600, row) for i in range(601)]
+            pts = [pt(i / samples, row) for i in range(samples + 1)]
             d = "M" + " L".join(f"{x + dx:.1f},{y:.1f}" for x, y in pts)
             parts.append(f'<path d="{d}" fill="none" stroke="{line}" stroke-width="{stroke}" stroke-linecap="round" stroke-linejoin="round" opacity="{opacity}"/>')
             for i, t in enumerate((0.08, 0.36, 0.62, 0.86)):

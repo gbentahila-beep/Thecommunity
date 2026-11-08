@@ -174,7 +174,7 @@ export function ArticleBody({ blocks }: { blocks: BlogBlock[] }) {
 export async function BlogCta() {
   const t = await getTranslations("blog");
   return (
-    <section className="mt-16 rounded-[2rem] bg-plum-900 px-6 py-10 text-center text-white sm:px-10">
+    <section className="mt-16 rounded-[2rem] bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] px-6 py-10 text-center text-white sm:px-10">
       <h2 className="font-display text-3xl font-medium">{t("ctaTitle")}</h2>
       <p className="mx-auto mt-3 max-w-xl text-white/80">{t("ctaText")}</p>
       <Link href="/experiences" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-6 font-semibold text-plum-900 transition hover:bg-cream">

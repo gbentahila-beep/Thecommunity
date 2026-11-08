@@ -38,6 +38,10 @@ export default async function PartnerPage({ params, searchParams }: { params: Pr
               </ul>
             )}
           </Card>
+          <Card title="Supports à imprimer">
+            <p className="mb-3 text-sm text-muted">Chevalet « Réservé » aux couleurs de la marque, avec un QR code vers le site, à poser sur la table du groupe.</p>
+            <Link href={`/admin/partenaires/${p.id}/chevalet`} className="inline-flex rounded-full border border-plum-900 px-4 py-2 text-sm font-semibold text-plum-900 hover:bg-plum-50">Chevalet « Réservé »</Link>
+          </Card>
           <Card title="Archiver ou supprimer">
             <p className="mb-3 text-sm text-muted">Un partenaire archivé n&apos;est plus proposé dans les fiches d&apos;expériences ; son historique est conservé.</p>
             {d.isDemo ? (
