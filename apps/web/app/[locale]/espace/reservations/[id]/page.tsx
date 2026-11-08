@@ -1,4 +1,4 @@
-import { canReview, DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor, type BookingPreferences } from "@thecommunity/shared";
+import { canReview, DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor, ticketCode, ticketPath, type BookingPreferences } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -17,6 +17,7 @@ import { PreferencesEditor } from "@/components/booking/preferences-editor";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { buildIcs, icsDataUri } from "@/lib/ics";
+import { qrSvg } from "@/lib/qr";
 import { SITE_URL } from "@/lib/site";
 
 export default async function ReservationDetailPage({ params, searchParams }: PageProps<"/[locale]/espace/reservations/[id]">) {
@@ -30,13 +31,14 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   if (!data) notFound();
   const { reservation: r, group, profile, now } = data;
   const space = await getMemberSpace();
-  const [t, tl, ti, tb, tp, t2, locale, invoices] = await Promise.all([
+  const [t, tl, ti, tb, tp, t2, tk, locale, invoices] = await Promise.all([
     getTranslations("reservation"),
     getTranslations("labels.interests"),
     getTranslations("invoices"),
     getTranslations("booking"),
     getTranslations("prefs"),
     getTranslations("twoPart"),
+    getTranslations("ticket"),
     getLocale(),
     space.session ? getReservationInvoices(space.session.uid, id) : Promise.resolve([]),
   ]);
@@ -52,6 +54,9 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const dateFmt = (iso: string) => formatLongDate(iso, locale);
   const holdOpen = r.status === "pending_payment" && r.holdExpiresAt !== undefined && new Date(r.holdExpiresAt).getTime() > now.getTime();
   const total = formatMoney({ amount: r.pricing.total, currency: r.pricing.currency }, lang);
+  // Étape 11d : billet avec QR code dès la confirmation (ouvre la fiche du billet dans le back-office).
+  const showTicket = r.status === "confirmed" && isUpcoming;
+  const qr = showTicket ? await qrSvg(`${SITE_URL}${ticketPath(r.id)}`) : null;
 
   return (
     <div className="space-y-6">
@@ -178,6 +183,20 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           </div>
         </div>
       </article>
+
+      {qr && (
+        <section aria-labelledby="ticket-title" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="ticket">
+          <h2 id="ticket-title" className="font-display text-2xl font-medium text-plum-900">{tk("title")}</h2>
+          <div className="mt-3 flex flex-col items-center gap-3 sm:flex-row sm:items-start sm:gap-5">
+            <div role="img" aria-label={tk("title")} className="size-48 shrink-0 rounded-xl ring-1 ring-line [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: qr }} />
+            <div className="space-y-2 text-sm text-ink">
+              <p>{tk("text")}</p>
+              <p className="font-mono text-base font-semibold tracking-wider text-plum-900">{tk("code", { code: ticketCode(r.id) })}</p>
+              {r.partnerPaymentStatus === "due_on_site" && <p className="text-muted">{tk("onSite")}</p>}
+            </div>
+          </div>
+        </section>
+      )}
 
       {group && (
         <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">

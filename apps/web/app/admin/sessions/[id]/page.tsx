@@ -1,4 +1,4 @@
-import { ageBand, ageOn, DEFAULT_CANCELLATION_POLICY, refundAmountFor, seatsAvailable } from "@thecommunity/shared";
+import { ageBand, ageOn, DEFAULT_CANCELLATION_POLICY, pricingOf, refundAmountFor, seatsAvailable } from "@thecommunity/shared";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CsvExportButton } from "@/components/admin/csv-export";
@@ -28,12 +28,17 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
   const confirmed = rows.filter((x) => x.r.status === "confirmed");
   const waitlist = (d.waitlists[s.id] ?? []).map((uid) => d.usersById.get(uid)!);
   const grouped = e.bookingMode === "social_dinner" || e.bookingMode === "group";
+  const twoPart = pricingOf(e).model !== "online_only" || rows.some((x) => x.r.onSite);
+  const onSiteRows = rows.filter((x) => x.r.onSite && (x.r.status === "confirmed" || x.r.status === "attended"));
+  const onSiteExpected = onSiteRows.reduce((a, x) => a + (x.r.onSite?.amount ?? 0), 0);
+  const onSitePaid = onSiteRows.filter((x) => x.r.onSite?.status === "paid_on_site");
   const csv: (string | number)[][] = [
-    ["Prénom", "Nom", "E-mail", "Téléphone", "Tranche d'âge", "Langues", "Langues de table", "Régime", "Allergies", "Places", "Montant (DH)", "Code promo", "Statut", "Réservation"],
+    ["Prénom", "Nom", "E-mail", "Téléphone", "Tranche d'âge", "Langues", "Langues de table", "Régime", "Allergies", "Places", "Payé en ligne (DH)", "Sur place (DH)", "Part partenaire", "Code promo", "Statut", "Réservation"],
     ...rows.map(({ r, u }) => [
       u.firstName, u.lastName, u.email, u.phone, ageBand(ageOn(u.birthDate)), u.languages.join(", "),
       (r.preferences?.languages ?? []).join(", "), DIET_LABELS[r.preferences?.diet ?? "none"] ?? "", r.preferences?.allergies ?? "",
-      r.seats, (r.total / 100).toFixed(2), r.promoCode ?? "", RESERVATION_STATUS[r.status][0], r.id,
+      r.seats, (r.total / 100).toFixed(2), r.onSite ? (r.onSite.amount != null ? (r.onSite.amount / 100).toFixed(2) : "consommation") : "",
+      r.onSite ? (r.onSite.status === "paid_on_site" ? "réglée" : "à régler") : "", r.promoCode ?? "", RESERVATION_STATUS[r.status][0], r.id,
     ]),
   ];
 
@@ -69,10 +74,16 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
         <StatTile label="Places confirmées" value={`${s.seatsConfirmed} / ${s.capacity}`} />
         <StatTile label="Places libres" value={String(seatsAvailable(s))} />
         <StatTile label="Liste d'attente" value={String(waitlist.length)} />
-        <StatTile label="Encaissé" value={dh(confirmed.reduce((a, x) => a + x.r.total, 0))} />
+        <StatTile label={twoPart ? "Encaissé en ligne" : "Encaissé"} value={dh(confirmed.reduce((a, x) => a + x.r.total, 0))} />
       </div>
+      {twoPart && (
+        <p className="mt-3 rounded-xl bg-cream px-4 py-3 text-sm text-ink" data-testid="on-site-summary">
+          Part partenaire, réglée sur place (jamais encaissée par nous) :{" "}
+          {onSiteRows.some((x) => x.r.onSite?.amount == null) ? "consommation libre" : <strong>{dh(onSiteExpected)} attendus</strong>} · {onSitePaid.length} / {onSiteRows.length} réglée{onSitePaid.length > 1 ? "s" : ""}.
+        </p>
+      )}
       <Card title={`Participants (${rows.length} réservations)`} className="mt-6">
-        <Table head={["Participant", "Contact", "Âge", "Langues", "Accueil", "Places", "Montant", "Statut", ...(d.isDemo ? [] : ["Actions"])]} caption="Participants">
+        <Table head={["Participant", "Contact", "Âge", "Langues", "Accueil", "Places", twoPart ? "En ligne" : "Montant", ...(twoPart ? ["Sur place"] : []), "Statut", ...(d.isDemo ? [] : ["Actions"])]} caption="Participants">
           {rows.map(({ r, u }) => (
             <tr key={r.id}>
               <td className="font-medium text-ink">
@@ -94,6 +105,18 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
               </td>
               <td className="tabular-nums">{r.seats}{r.promoCode && <span className="block font-mono text-xs text-muted">{r.promoCode}</span>}</td>
               <td className="tabular-nums">{dh(r.total)}</td>
+              {twoPart && (
+                <td className="tabular-nums">
+                  {r.onSite ? (
+                    <>
+                      {r.onSite.amount != null ? dh(r.onSite.amount) : "Conso."}
+                      <span className={`block text-xs ${r.onSite.status === "paid_on_site" ? "text-emerald-800" : "text-muted"}`}>{r.onSite.status === "paid_on_site" ? "Réglée" : "À régler"}</span>
+                    </>
+                  ) : (
+                    <span className="text-muted">—</span>
+                  )}
+                </td>
+              )}
               <td><Badge tone={RESERVATION_STATUS[r.status][1]}>{RESERVATION_STATUS[r.status][0]}</Badge></td>
               {!d.isDemo && (
                 <td className="min-w-48">
@@ -110,6 +133,7 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
                       policy: dh(refundAmountFor(DEFAULT_CANCELLATION_POLICY, r.total, start, d.now)),
                       paid: r.status === "confirmed" && r.total > 0,
                     }}
+                    onSite={r.onSite}
                   />
                 </td>
               )}

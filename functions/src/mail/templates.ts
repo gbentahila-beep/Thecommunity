@@ -39,9 +39,9 @@ export function reservationConfirmedMail(o: { locale: string; firstName: string;
   const l = lang(o.locale);
   const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
   const t = {
-    fr: { subject: `C'est réservé : ${o.title}`, heading: `À bientôt, ${o.firstName || "et bienvenue"} !`, p: [`Votre place est confirmée pour « ${o.title} », ${o.when}.`, `${o.seats} place(s) · ${o.total} · document ${o.number}.`], cta: "Voir ma réservation" },
-    en: { subject: `You're booked: ${o.title}`, heading: `See you soon${o.firstName ? `, ${o.firstName}` : ""}!`, p: [`Your seat is confirmed for “${o.title}”, ${o.when}.`, `${o.seats} seat(s) · ${o.total} · document ${o.number}.`], cta: "View my booking" },
-    ar: { subject: `تم الحجز: ${o.title}`, heading: `إلى اللقاء قريبًا${o.firstName ? ` ${o.firstName}` : ""}!`, p: [`تم تأكيد مقعدك في « ${o.title} »، ${o.when}.`, `${o.seats} مقعد · ${o.total} · الوثيقة ${o.number}.`], cta: "عرض حجزي" },
+    fr: { subject: `C'est réservé : ${o.title}`, heading: `À bientôt, ${o.firstName || "et bienvenue"} !`, p: [`Votre place est confirmée pour « ${o.title} », ${o.when}.`, `${o.seats} place(s) · ${o.total} · document ${o.number}.`, "Votre billet avec QR code vous attend dans votre réservation : présentez-le à l'accueil."], cta: "Voir mon billet" },
+    en: { subject: `You're booked: ${o.title}`, heading: `See you soon${o.firstName ? `, ${o.firstName}` : ""}!`, p: [`Your seat is confirmed for “${o.title}”, ${o.when}.`, `${o.seats} seat(s) · ${o.total} · document ${o.number}.`, "Your ticket with its QR code is in your booking: show it when you arrive."], cta: "View my ticket" },
+    ar: { subject: `تم الحجز: ${o.title}`, heading: `إلى اللقاء قريبًا${o.firstName ? ` ${o.firstName}` : ""}!`, p: [`تم تأكيد مقعدك في « ${o.title} »، ${o.when}.`, `${o.seats} مقعد · ${o.total} · الوثيقة ${o.number}.`, "تذكرتك برمز QR موجودة في حجزك: اعرضها عند الاستقبال."], cta: "عرض تذكرتي" },
   }[l];
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: [...t.p, ...(o.onSite ? [o.onSite] : []), ...(o.test ? [TEST_NOTE[l]] : [])], cta: { label: t.cta, href }, footer: FOOTER[l] }) };
 }

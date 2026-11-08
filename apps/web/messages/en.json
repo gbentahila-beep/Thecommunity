@@ -920,5 +920,11 @@
     "sectionFixed": "On site, to the partner: {amount} per person.",
     "sectionVariable": "On site, to the partner: whatever you order.",
     "onSiteToVenue": "Paid directly to the partner venue, on site."
+  },
+  "ticket": {
+    "title": "Your ticket",
+    "text": "Show this QR code when you arrive. The team scans it to check you in.",
+    "code": "Ticket code: {code}",
+    "onSite": "Remember to pay the on-site part to the partner."
   }
 }

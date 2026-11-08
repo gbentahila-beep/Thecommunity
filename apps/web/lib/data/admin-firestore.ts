@@ -85,6 +85,10 @@ export async function fsAdminData(now: Date) {
       createdAt: iso(r.createdAt),
       sessionStartAt: iso(r.sessionSnapshot?.startAt),
       finance: finance[d.id] ?? estimateFinance(r, economics[r.experienceId]),
+      onSite:
+        r.partnerSnapshot && (r.partnerPaymentStatus === "due_on_site" || r.partnerPaymentStatus === "paid_on_site")
+          ? { partnerName: String(r.partnerSnapshot.name ?? ""), amount: typeof r.onSiteAmount === "number" ? r.onSiteAmount : null, status: r.partnerPaymentStatus }
+          : null,
       ...(r.preferences
         ? { preferences: { diet: String(r.preferences.diet ?? "none"), allergies: String(r.preferences.allergies ?? ""), languages: r.preferences.languages ?? [], shareWithVenue: r.preferences.shareWithVenue === true } }
         : {}),

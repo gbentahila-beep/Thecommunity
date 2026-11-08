@@ -16,6 +16,7 @@ const ERRORS: Record<string, string> = {
   too_early: "Le pointage ouvre 3 h avant le début.",
   not_checkable: "Seule une réservation confirmée se pointe.",
   already_cancelled: "Cette date est déjà annulée.",
+  not_applicable: "Aucune part à régler sur place pour cette réservation.",
 };
 
 async function call(name: string, data: Record<string, unknown>) {
@@ -39,6 +40,7 @@ export function ReservationAdminActions({
   canCheckIn,
   moveTargets,
   amounts,
+  onSite = null,
 }: {
   reservationId: string;
   name: string;
@@ -46,6 +48,8 @@ export function ReservationAdminActions({
   canCheckIn: boolean;
   moveTargets: { id: string; label: string }[];
   amounts: { full: string; policy: string; paid: boolean };
+  /** Étape 11 : part partenaire réglée sur place (suivi seulement, jamais encaissée). */
+  onSite?: { status: "due_on_site" | "paid_on_site" } | null;
 }) {
   const router = useRouter();
   const [panel, setPanel] = useState<"cancel" | "move" | null>(null);
@@ -90,6 +94,17 @@ export function ReservationAdminActions({
               </button>
             )}
           </>
+        )}
+        {onSite && (status === "confirmed" || status === "attended") && (
+          onSite.status === "due_on_site" ? (
+            <button type="button" disabled={busy} onClick={() => run("adminSetPartnerPayment", { reservationId, paid: true })} className={`${btn} border-plum-700 text-plum-900 hover:bg-plum-50`}>
+              Part partenaire réglée
+            </button>
+          ) : (
+            <button type="button" disabled={busy} onClick={() => run("adminSetPartnerPayment", { reservationId, paid: false })} className={`${btn} border-line text-muted hover:bg-cream`}>
+              Part partenaire non réglée
+            </button>
+          )
         )}
         {active && moveTargets.length > 0 && (
           <button type="button" disabled={busy} onClick={() => setPanel(panel === "move" ? null : "move")} className={`${btn} border-line text-ink hover:bg-cream`} aria-expanded={panel === "move"}>

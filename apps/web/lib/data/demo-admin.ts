@@ -7,6 +7,8 @@ import {
   ageBand,
   ageOn,
   marginPerSeat,
+  onSiteAmount,
+  pricingOf,
   type Experience,
   type Gender,
   type Interest,
@@ -143,6 +145,15 @@ export type AdminReservation = {
   finance: { gross: number; cost: number; margin: number };
   /** Régime, allergies, langues de table (5g). */
   preferences?: { diet: string; allergies: string; languages: string[]; shareWithVenue: boolean };
+  /** Étape 11 : part réglée sur place au partenaire (copie figée de la réservation). */
+  onSite: AdminOnSite | null;
+};
+
+export type AdminOnSite = {
+  partnerName: string;
+  /** Prix fixe × places (centimes), ou null pour une consommation libre. */
+  amount: number | null;
+  status: "due_on_site" | "paid_on_site";
 };
 
 export type AdminPayment = {
@@ -202,7 +213,11 @@ export function buildAdminData(now: Date = new Date()) {
     const total = (unit - discount) * seats;
     const created = new Date(now.getTime() - ((n * 7) % 9 + 1) * 86_400_000 - (n % 24) * 3_600_000).toISOString();
     const id = `res-${String(n).padStart(4, "0")}`;
-    reservations.push({ id, userId, sessionId: s.id, experienceId: exp.id, status, seats, total, promoCode, createdAt: created, sessionStartAt: s.startAt, finance: financeFor(exp, status === "confirmed" ? total : 0, seats) });
+    const two = pricingOf(exp);
+    const onSite: AdminOnSite | null = two.partner
+      ? { partnerName: two.partner.name, amount: onSiteAmount(two, seats), status: status === "attended" ? "paid_on_site" : "due_on_site" }
+      : null;
+    reservations.push({ id, userId, sessionId: s.id, experienceId: exp.id, status, seats, total, promoCode, createdAt: created, sessionStartAt: s.startAt, finance: financeFor(exp, status === "confirmed" ? total : 0, seats), onSite });
     if (status === "confirmed" || status === "refunded") {
       payments.push({ id: `pay-${id}`, reservationId: id, userId, type: "payment", provider: "sandbox", amount: total, status: status === "refunded" ? "refunded" : "succeeded", createdAt: created });
     }

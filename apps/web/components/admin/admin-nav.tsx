@@ -16,6 +16,7 @@ import {
   Star,
   ShieldCheck,
   Ticket,
+  ScanLine,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -27,6 +28,7 @@ export const ADMIN_LINKS = [
   { href: "/admin/sessions", label: "Sessions & groupes", icon: CalendarRange },
   { href: "/admin/participations", label: "Demandes de participation", icon: Inbox },
   { href: "/admin/reservations", label: "Réservations", icon: Ticket },
+  { href: "/admin/billets", label: "Billets (scan)", icon: ScanLine },
   { href: "/admin/avis", label: "Avis", icon: Star },
   { href: "/admin/abonnement", label: "Abonnement", icon: BadgeCheck },
   { href: "/admin/utilisateurs", label: "Utilisateurs", icon: Users },

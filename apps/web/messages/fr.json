@@ -920,5 +920,11 @@
     "sectionFixed": "Sur place, au partenaire : {amount} par personne.",
     "sectionVariable": "Sur place, au partenaire : ce que vous consommez.",
     "onSiteToVenue": "Réglé directement au lieu partenaire, sur place."
+  },
+  "ticket": {
+    "title": "Votre billet",
+    "text": "Présentez ce QR code à l'accueil. L'équipe le scanne pour vous pointer présent.",
+    "code": "Code du billet : {code}",
+    "onSite": "Pensez à régler la part sur place au partenaire."
   }
 }
