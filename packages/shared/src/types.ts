@@ -248,6 +248,8 @@ export type Reservation = {
   };
   /** Lieu exact : renseigné dès la réservation, ou à la révélation du groupe pour les dîners. */
   venue?: { name: string; address: string };
+  /** Régime, allergies, langues de table (5g) ; transmis au lieu seulement avec l'accord de la personne. */
+  preferences?: { diet: string; allergies: string; languages: string[]; shareWithVenue: boolean };
   groupId?: string;
   paidAt?: string;
   /** Fin du blocage des places pendant le paiement (réservation « pending_payment »). */
