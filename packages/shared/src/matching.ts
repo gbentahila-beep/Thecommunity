@@ -37,6 +37,13 @@ export function groupCount(totalSeats: number, c: MatchConfig): number {
 
 const seatsOf = (g: MatchPerson[]) => g.reduce((a, p) => a + p.seats, 0);
 
+/** Langue commune à toute la table (une personne sans langue renseignée ne bloque pas). */
+export function hasCommonLanguage(g: { languages: string[] }[]): boolean {
+  const known = g.filter((p) => p.languages.length > 0);
+  if (known.length < 2) return true;
+  return known[0]!.languages.some((l) => known.every((p) => p.languages.includes(l)));
+}
+
 /** Coût d'une table (plus bas = mieux). Exporté pour l'affichage des alertes et les tests. */
 export function groupCost(g: MatchPerson[], c: MatchConfig, o: MatchOptions = {}): number {
   if (g.length === 0) return 0;
@@ -44,10 +51,7 @@ export function groupCost(g: MatchPerson[], c: MatchConfig, o: MatchOptions = {}
   let cost = 5 * Math.abs(size - c.targetSize);
   if (size > c.maxSize) cost += 400 * (size - c.maxSize);
   if (size < c.minSize) cost += 60 * (c.minSize - size);
-  if (g.length > 1) {
-    const common = g[0]!.languages.filter((l) => g.every((p) => p.languages.includes(l)));
-    if (common.length === 0) cost += 150;
-  }
+  if (!hasCommonLanguage(g)) cost += 150;
   if (o.pastPairs) {
     for (let i = 0; i < g.length; i++) for (let j = i + 1; j < g.length; j++) if (o.pastPairs.has(pairKey(g[i]!.uid, g[j]!.uid))) cost += 40;
   }
@@ -131,7 +135,7 @@ export function groupWarnings(g: MatchPerson[], c: MatchConfig, o: MatchOptions 
   const size = seatsOf(g);
   if (size > c.maxSize) out.push("too_big");
   if (size < c.minSize) out.push("too_small");
-  if (g.length > 1 && g[0]!.languages.filter((l) => g.every((p) => p.languages.includes(l))).length === 0) out.push("no_common_language");
+  if (!hasCommonLanguage(g)) out.push("no_common_language");
   if (o.pastPairs && g.some((p, i) => g.some((q, j) => j > i && o.pastPairs!.has(pairKey(p.uid, q.uid))))) out.push("already_met");
   const ages = g.map((p) => p.age).filter((a): a is number => a !== null);
   if (ages.length > 1 && Math.max(...ages) - Math.min(...ages) > 20) out.push("age_gap");

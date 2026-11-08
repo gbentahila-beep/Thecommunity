@@ -121,7 +121,9 @@ export async function fsAdminData(now: Date) {
     return { code: d.id, type: p.type, value: p.value, validTo: iso(p.validTo).slice(0, 10), maxRedemptions: p.maxRedemptions ?? 0, redemptionsCount: p.redemptionsCount ?? 0, firstBookingOnly: Boolean(p.firstBookingOnly), isActive: Boolean(p.isActive),
       ...(p.validFrom ? { validFrom: iso(p.validFrom).slice(0, 10) } : {}), description: p.description ?? "" };
   });
-  const groups: AdminGroup[] = groupsSnap.docs.map((d) => ({ id: d.id, sessionId: d.data().sessionId, label: d.data().label, memberIds: d.data().memberIds ?? [] }));
+  const groups: AdminGroup[] = groupsSnap.docs
+    .map((d) => ({ id: d.id, sessionId: d.data().sessionId, label: d.data().label, memberIds: d.data().memberIds ?? [], status: d.data().status }))
+    .sort((a, b) => a.label.localeCompare(b.label, "fr", { numeric: true }));
   const waitlists: Record<string, string[]> = {};
   for (const w of [...waitSnap.docs].sort((a, b) => iso(a.data().createdAt).localeCompare(iso(b.data().createdAt)))) {
     const sessionId = w.ref.parent.parent?.id;

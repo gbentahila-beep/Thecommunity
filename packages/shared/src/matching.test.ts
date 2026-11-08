@@ -50,6 +50,11 @@ describe("composition des tables", () => {
     expect(groups.flat().filter((u) => u === "duo")).toHaveLength(1);
   });
 
+  it("une personne sans langue renseignée ne bloque pas la langue commune", () => {
+    const g = [person("a", { languages: ["en"] }), person("b", { languages: [] }), person("c", { languages: ["fr", "en"] })];
+    expect(groupWarnings(g, cfg)).not.toContain("no_common_language");
+  });
+
   it("résultat déterministe", () => {
     const people = Array.from({ length: 17 }, (_, i) => person(`u${i}`, { age: 20 + i, gender: i % 2 ? "female" : "male", interests: i % 3 ? ["food"] : ["sport"] }));
     expect(composeGroups(people, cfg)).toEqual(composeGroups(people, cfg));

@@ -161,6 +161,10 @@ export type Session = {
   isFeatured: boolean;
   /** Date de création (accès anticipé des membres aux nouvelles dates). */
   createdAt?: string;
+  /** Composition des tables (6) : état, à revoir après une annulation, fiche hôte. */
+  groupsStatus?: "none" | "proposed" | "validated" | "revealed";
+  groupsNeedReview?: boolean;
+  hosting?: { hostName: string; notes: string };
   isDemo?: boolean;
 };
 

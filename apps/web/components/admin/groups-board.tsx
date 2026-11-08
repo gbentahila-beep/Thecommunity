@@ -1,7 +1,10 @@
 "use client";
 
-import { AlertTriangle, Check, GripVertical, Merge, Plus, RotateCcw, Split } from "lucide-react";
+import { httpsCallable } from "firebase/functions";
+import { AlertTriangle, Check, GripVertical, Merge, Plus, RotateCcw, Sparkles, Split } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { firebase } from "@/lib/firebase/client";
 
 export type BoardMember = {
   uid: string;
@@ -10,15 +13,20 @@ export type BoardMember = {
   gender: "female" | "male" | "undisclosed";
   languages: string[];
   interests: string[];
+  /** Places de la réservation (la personne + ses invités). */
+  seats?: number;
 };
 export type BoardGroup = { id: string; label: string; memberIds: string[] };
 
 const LANG: Record<string, string> = { fr: "FR", ar: "AR", darija: "Darija", en: "EN", es: "ES" };
 
+const UNASSIGNED = "__unassigned";
+const STATUS_LABELS: Record<string, string> = { none: "Pas encore composés", proposed: "Proposition de l'algorithme", validated: "Enregistrés (pas encore révélés)", revealed: "Révélés aux participants" };
+
 /**
- * Composition manuelle des groupes (tables / équipes).
- * Phase 2 : modifications locales à l'écran. Phase 6 : proposition par l'algorithme de matching,
- * scores détaillés, validation enregistrée (callable admin-groups-update / validate).
+ * Composition des groupes (tables / équipes) : proposition de l'algorithme, corrections à la main
+ * (glisser-déposer ou « Déplacer vers »), enregistrement, puis révélation aux participants.
+ * En démonstration, les modifications restent à l'écran.
  */
 export function GroupsBoard({
   initial,
@@ -26,14 +34,61 @@ export function GroupsBoard({
   config,
   interestLabels,
   prefix,
+  live = false,
+  sessionId,
+  status: groupsStatus = "none",
+  unassigned = [],
 }: {
   initial: BoardGroup[];
   members: Record<string, BoardMember>;
   config: { minSize: number; targetSize: number; maxSize: number };
   interestLabels: Record<string, string>;
   prefix: string;
+  live?: boolean;
+  sessionId?: string;
+  status?: string;
+  unassigned?: string[];
 }) {
-  const [groups, setGroups] = useState(initial);
+  const router = useRouter();
+  const start = () => [...initial, ...(live ? [{ id: UNASSIGNED, label: "Non placés", memberIds: unassigned }] : [])];
+  const [groups, setGroups] = useState(start);
+  // Nouvelles données du serveur (après une proposition ou un enregistrement) : on repart de la version enregistrée,
+  // sans recréer le composant (le message de confirmation reste affiché).
+  const source = JSON.stringify([initial, unassigned]);
+  const [seen, setSeen] = useState(source);
+  if (seen !== source) {
+    setSeen(source);
+    setGroups(start());
+  }
+  const [busy, setBusy] = useState(false);
+  const [confirmReveal, setConfirmReveal] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const REASONS: Record<string, string> = {
+    unassigned: "Tous les participants confirmés doivent être placés.",
+    duplicate_member: "Un participant est placé deux fois.",
+    unknown_member: "Un participant n'a plus de réservation confirmée : rechargez la page.",
+    already_revealed: "Groupes déjà révélés : modifiez-les à la main puis enregistrez.",
+    not_validated: "Enregistrez d'abord la composition.",
+    no_participants: "Aucun participant confirmé.",
+  };
+  const call = async (fn: string, data: unknown, ok: string) => {
+    setBusy(true);
+    setMessage(null);
+    try {
+      await firebase().auth.authStateReady();
+      await httpsCallable(firebase().functions, fn)(data);
+      setMessage({ ok: true, text: ok });
+      router.refresh();
+      return true;
+    } catch (e) {
+      const reason = (e as { details?: { reason?: string } }).details?.reason;
+      setMessage({ ok: false, text: (reason && REASONS[reason]) || "Action impossible." });
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  };
+  const payload = () => ({ sessionId, groups: groups.filter((g) => g.id !== UNASSIGNED && g.memberIds.length).map((g) => ({ label: g.label, memberIds: g.memberIds })) });
   const [dragging, setDragging] = useState<string | null>(null);
   const [mergeA, setMergeA] = useState("");
   const [mergeB, setMergeB] = useState("");
@@ -45,8 +100,8 @@ export function GroupsBoard({
     setStatus(`${members[uid]?.firstName} déplacé·e vers ${target?.label}.`);
   };
 
-  const nextLabel = (gs: BoardGroup[]) => `${prefix} ${gs.length + 1}`;
-  const addGroup = () => setGroups((gs) => [...gs, { id: `new-${Date.now()}`, label: nextLabel(gs), memberIds: [] }]);
+  const nextLabel = (gs: BoardGroup[]) => `${prefix} ${gs.filter((g) => g.id !== UNASSIGNED).length + 1}`;
+  const addGroup = () => setGroups((gs) => [...gs.filter((g) => g.id !== UNASSIGNED), { id: `new-${Date.now()}`, label: nextLabel(gs), memberIds: [] }, ...gs.filter((g) => g.id === UNASSIGNED)]);
   const split = (id: string) =>
     setGroups((gs) => {
       const g = gs.find((x) => x.id === id);
@@ -69,7 +124,9 @@ export function GroupsBoard({
       Object.fromEntries(
         groups.map((g) => {
           const ms = g.memberIds.map((id) => members[id]).filter(Boolean) as BoardMember[];
-          const common = ms.length ? Object.keys(LANG).filter((l) => ms.every((m) => m.languages.includes(l))) : [];
+          const seats = ms.reduce((a, m) => a + (m.seats ?? 1), 0);
+          const known = ms.filter((m) => m.languages.length > 0);
+          const common = known.length ? Object.keys(LANG).filter((l) => known.every((m) => m.languages.includes(l))) : [];
           const bands = [...new Set(ms.map((m) => m.ageBand))].sort();
           const counts = new Map<string, number>();
           ms.forEach((m) => m.interests.forEach((i) => counts.set(i, (counts.get(i) ?? 0) + 1)));
@@ -77,11 +134,12 @@ export function GroupsBoard({
           const women = ms.filter((m) => m.gender === "female").length;
           const men = ms.filter((m) => m.gender === "male").length;
           const warnings: string[] = [];
-          if (ms.length < config.minSize) warnings.push(`moins de ${config.minSize} personnes`);
-          if (ms.length > config.maxSize) warnings.push(`plus de ${config.maxSize} personnes`);
-          if (ms.length > 1 && common.length === 0) warnings.push("aucune langue commune");
+          if (g.id === UNASSIGNED) return [g.id, { size: seats, common, bands, shared, women, men, warnings: ms.length ? ["à placer"] : [] }];
+          if (seats < config.minSize) warnings.push(`moins de ${config.minSize} personnes`);
+          if (seats > config.maxSize) warnings.push(`plus de ${config.maxSize} personnes`);
+          if (known.length > 1 && common.length === 0) warnings.push("aucune langue commune");
           if (bands.length > 3) warnings.push("écart d'âge important");
-          return [g.id, { size: ms.length, common, bands, shared, women, men, warnings }];
+          return [g.id, { size: seats, common, bands, shared, women, men, warnings }];
         }),
       ),
     [groups, members, config],
@@ -111,9 +169,14 @@ export function GroupsBoard({
             Fusionner
           </button>
         </span>
-        <button type="button" onClick={() => { setGroups(initial); setStatus("Proposition initiale restaurée."); }} className="ms-auto inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-muted hover:bg-cream">
-          <RotateCcw className="size-4" aria-hidden /> Revenir à la proposition
+        <button type="button" onClick={() => { setGroups(start()); setStatus("Composition enregistrée restaurée."); }} className="ms-auto inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-muted hover:bg-cream">
+          <RotateCcw className="size-4" aria-hidden /> Annuler mes changements
         </button>
+        {live && groupsStatus !== "revealed" && (
+          <button type="button" disabled={busy} onClick={() => call("adminProposeGroups", { sessionId }, "Nouvelle proposition de l'algorithme.")} className="inline-flex items-center gap-1.5 rounded-full border border-plum-900 px-3 py-2 text-sm font-semibold text-plum-900 hover:bg-plum-50 disabled:opacity-50">
+            <Sparkles className="size-4" aria-hidden /> Proposer avec l&apos;algorithme
+          </button>
+        )}
       </div>
 
       <p className="sr-only" role="status" aria-live="polite">{status}</p>
@@ -121,6 +184,7 @@ export function GroupsBoard({
       <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
         {groups.map((g) => {
           const a = analysis[g.id]!;
+          if (g.id === UNASSIGNED && g.memberIds.length === 0) return null;
           return (
             <section
               key={g.id}
@@ -173,7 +237,7 @@ export function GroupsBoard({
                       <GripVertical className="size-4 shrink-0 cursor-grab text-muted" aria-hidden />
                       <span className="min-w-0 flex-1">
                         <span className="font-medium text-ink">{m.firstName}</span>{" "}
-                        <span className="text-xs text-muted">{m.ageBand} · {m.languages.map((l) => LANG[l]).join("/")}</span>
+                        <span className="text-xs text-muted">{m.ageBand} · {m.languages.map((l) => LANG[l]).join("/")}{(m.seats ?? 1) > 1 ? ` · +${(m.seats ?? 1) - 1} invité(s)` : ""}</span>
                       </span>
                       <label className="sr-only" htmlFor={`mv-${uid}`}>Déplacer {m.firstName} vers</label>
                       <select
@@ -195,13 +259,39 @@ export function GroupsBoard({
 
       <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-white p-4 shadow-card">
         <p className="text-sm text-ink">
-          {groups.length} groupes · {totalWarnings === 0 ? "aucune alerte" : `${totalWarnings} alerte${totalWarnings > 1 ? "s" : ""}`}
+          {groups.filter((g) => g.id !== UNASSIGNED).length} groupes · {totalWarnings === 0 ? "aucune alerte" : `${totalWarnings} alerte${totalWarnings > 1 ? "s" : ""}`}
+          {live && <span className="block text-xs text-muted">État : {STATUS_LABELS[groupsStatus] ?? groupsStatus}</span>}
         </p>
-        <button type="button" disabled className="ms-auto cursor-not-allowed rounded-full bg-plum-900/30 px-5 py-2.5 text-sm font-semibold text-white">
-          Valider et révéler — étape 6
-        </button>
+        {live ? (
+          <div className="ms-auto flex flex-wrap gap-2">
+            <button type="button" disabled={busy} onClick={() => call("adminSaveGroups", payload(), groupsStatus === "revealed" ? "Enregistré : les personnes déplacées sont prévenues." : "Composition enregistrée.")} className="rounded-full border border-plum-900 px-5 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-50 disabled:opacity-50">
+              Enregistrer la composition
+            </button>
+            {groupsStatus !== "revealed" && !confirmReveal && (
+              <button type="button" disabled={busy || groupsStatus !== "validated"} onClick={() => setConfirmReveal(true)} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-40">
+                Révéler aux participants
+              </button>
+            )}
+          </div>
+        ) : (
+          <button type="button" disabled className="ms-auto cursor-not-allowed rounded-full bg-plum-900/30 px-5 py-2.5 text-sm font-semibold text-white">
+            Valider et révéler
+          </button>
+        )}
+        {confirmReveal && (
+          <div role="alertdialog" aria-label="Confirmer la révélation" className="basis-full rounded-xl border border-plum-200 bg-plum-50 p-3 text-sm text-plum-900">
+            <p>Chaque participant verra sa table (prénoms et centres d&apos;intérêt), recevra une notification et un e-mail{" "}; le lieu exact sera communiqué s&apos;il était gardé secret. Révéler maintenant ?</p>
+            <div className="mt-2 flex gap-2">
+              <button type="button" disabled={busy} onClick={async () => { if (await call("adminRevealGroups", { sessionId }, "Groupes révélés : les participants sont prévenus.")) setConfirmReveal(false); }} className="rounded-full bg-plum-900 px-4 py-2 font-semibold text-white disabled:opacity-50">Oui, révéler</button>
+              <button type="button" onClick={() => setConfirmReveal(false)} className="rounded-full border border-line bg-white px-4 py-2 font-semibold">Pas encore</button>
+            </div>
+          </div>
+        )}
+        {message && <p role={message.ok ? "status" : "alert"} className={`basis-full text-sm ${message.ok ? "text-emerald-800" : "text-red-800"}`}>{message.text}</p>}
         <p className="basis-full text-xs text-muted">
-          Démonstration : les modifications restent à l&apos;écran. L&apos;enregistrement, la révélation aux participants et l&apos;algorithme de matching arrivent à l&apos;étape 6 du plan.
+          {live
+            ? "1. Proposer avec l'algorithme (langues, âges, rencontres passées, intérêts) · 2. Corriger à la main · 3. Enregistrer · 4. Révéler. Toutes les actions sont journalisées."
+            : "Démonstration : les modifications restent à l'écran. Sur le site en ligne : proposition par l'algorithme, enregistrement et révélation aux participants."}
         </p>
       </div>
     </div>

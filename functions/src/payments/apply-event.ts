@@ -96,7 +96,13 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
     const n = r.seats as number;
     if (r.status === "pending_payment") {
       // Les places sont encore bloquées pour cette réservation : elles deviennent confirmées.
-      tx.update(sessRef, { seatsHeld: FieldValue.increment(-n), seatsConfirmed: FieldValue.increment(n), updatedAt: FieldValue.serverTimestamp() });
+      tx.update(sessRef, {
+        seatsHeld: FieldValue.increment(-n),
+        seatsConfirmed: FieldValue.increment(n),
+        // Tables déjà composées : la nouvelle personne est à placer.
+        ...(["validated", "revealed"].includes(sess.data()?.groupsStatus) ? { groupsNeedReview: true } : {}),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
       tx.update(resRef, confirmFields(exp, pay.id));
       countPromo();
       return { outcome: "confirmed", reservationId: res.id };
@@ -111,6 +117,7 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
         tx.update(sessRef, {
           seatsConfirmed: FieldValue.increment(n),
           ...(available - n === 0 ? { status: "full" } : {}),
+          ...(["validated", "revealed"].includes(s.groupsStatus) ? { groupsNeedReview: true } : {}),
           updatedAt: FieldValue.serverTimestamp(),
         });
         tx.set(lockRef, { reservationId: res.id, createdAt: FieldValue.serverTimestamp() });

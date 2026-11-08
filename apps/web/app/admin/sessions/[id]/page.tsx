@@ -46,6 +46,9 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
         actions={
           <>
             <CsvExportButton filename={`participants-${s.id}.csv`} rows={csv} log={d.isDemo ? undefined : { kind: "participants", targetId: s.id }} />
+            <Link href={`/admin/sessions/${s.id}/fiche-hote`} className="rounded-full border border-plum-900 px-4 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-50">
+              Fiche hôte
+            </Link>
             <Link href={`/admin/sessions/${s.id}/fiche-lieu`} className="rounded-full border border-plum-900 px-4 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-50">
               Fiche pour le lieu
             </Link>

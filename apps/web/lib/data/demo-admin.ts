@@ -159,7 +159,7 @@ export type AdminPayment = {
   invoiceNumber?: string;
 };
 
-export type AdminGroup = { id: string; sessionId: string; label: string; memberIds: string[] };
+export type AdminGroup = { id: string; sessionId: string; label: string; memberIds: string[]; status?: "proposed" | "validated" | "revealed" };
 
 export type PromoCode = {
   code: string;
