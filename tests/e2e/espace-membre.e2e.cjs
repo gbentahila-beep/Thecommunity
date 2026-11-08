@@ -68,6 +68,15 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.getByRole('button', { name: 'Retirer des favoris' }).click();
   assert(await page.getByText('Touchez le cœur').isVisible(), 'favori retiré');
 
+  // 5j : ordre des favoris — date à venir (la plus proche d'abord), puis sans date
+  await page.evaluate(() => localStorage.setItem('tc:favorites', JSON.stringify(['exp-diner-inconnus', 'exp-pilates-brunch', 'exp-escape-game', 'exp-ceramique', 'exp-rooftop', 'exp-brunch-inconnus', 'exp-yoga-sunrise', 'exp-quiz', 'exp-cuisine'])));
+  await page.goto(base + '/espace/historique', { waitUntil: 'load' });
+  await page.getByText(/Prochaine date|Prochaines dates bientôt/).first().waitFor();
+  const metas = await page.locator('li').filter({ has: page.getByRole('button', { name: 'Retirer des favoris' }) }).evaluateAll((lis) => lis.map((li) => (li.innerText.match(/Prochaine date : .*|Prochaines dates bientôt/) || [''])[0]));
+  const firstNoDate = metas.findIndex((m) => m.startsWith('Prochaines dates'));
+  assert(metas.length >= 2 && metas.every((m) => m) && (firstNoDate === -1 || metas.slice(firstNoDate).every((m) => m.startsWith('Prochaines dates'))), `favoris : avec date d'abord, puis sans date (${metas.length})`);
+  await page.evaluate(() => localStorage.setItem('tc:favorites', '[]'));
+
   // Notifications
   await page.goto(base + '/espace/notifications', { waitUntil: 'load' });
   const before = await page.getByLabel('Non lue').count();

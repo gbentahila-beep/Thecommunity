@@ -70,6 +70,15 @@ const int = (v) => ({ integerValue: String(v) });
   await page.goto(`${base}/experiences`);
   assert(!(await page.getByText(titleA).isVisible()), 'catalogue : expérience archivée absente');
 
+  // 4 bis. Favoris (5j) : une expérience archivée reste dans les favoris, en dernier, avec la mention
+  const source_id = source.name.split('/').pop();
+  await fsCreate('users/demo-superadmin/favorites', A, { createdAt: { timestampValue: new Date().toISOString() } });
+  await fsCreate('users/demo-superadmin/favorites', source_id, { createdAt: { timestampValue: new Date().toISOString() } }).catch(() => {});
+  await page.goto(`${base}/espace/historique`);
+  const favs = page.locator('li').filter({ has: page.getByRole('button', { name: 'Retirer des favoris' }) });
+  assert(await visible(favs.filter({ hasText: titleA }).getByText("N'est plus proposée")), 'favoris : expérience archivée avec la mention « N\'est plus proposée »');
+  assert((await favs.last().innerText()).includes(titleA), 'favoris : expérience archivée en dernier');
+
   // 5. Réactiver → brouillon
   await page.goto(`${base}/admin/experiences/${A}`);
   await page.getByRole('button', { name: 'Réactiver (en brouillon)' }).click();

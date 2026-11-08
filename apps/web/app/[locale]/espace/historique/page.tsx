@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoritesList } from "@/components/account/favorites-list";
 import { ReservationCard } from "@/components/account/reservation-card";
-import { getPublishedExperiences } from "@/lib/data";
+import { getArchivedExperiences, getNextSessionPerExperience, getPublishedExperiences } from "@/lib/data";
+import { formatLongDate } from "@/lib/format";
 import { getMemberSpace } from "@/lib/data/member";
 import { tr } from "@/lib/i18n-text";
 
@@ -14,8 +15,23 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/espace/h
 export default async function HistoryPage({ params }: PageProps<"/[locale]/espace/historique">) {
   const { locale: localeParam } = await params;
   setRequestLocale(localeParam);
-  const [t, locale, space, experiences] = await Promise.all([getTranslations("history"), getLocale(), getMemberSpace(), getPublishedExperiences()]);
-  const candidates = experiences.map((e) => ({ id: e.id, slug: e.slug, title: tr(e.title, locale), district: e.district, image: e.images[0]?.path ?? "" }));
+  const [t, locale, space, experiences, archived, nextSessions] = await Promise.all([
+    getTranslations("history"),
+    getLocale(),
+    getMemberSpace(),
+    getPublishedExperiences(),
+    getArchivedExperiences(),
+    getNextSessionPerExperience(),
+  ]);
+  const nextAt = new Map(nextSessions.map((s) => [s.experienceId, s.startAt]));
+  // Favoris (5j) : d'abord ceux qui ont une date à venir (la plus proche en premier), puis sans date, puis archivés.
+  const candidates = [
+    ...experiences
+      .map((e) => ({ e, at: nextAt.get(e.id) ?? null }))
+      .sort((a, b) => (a.at && b.at ? a.at.localeCompare(b.at) : a.at ? -1 : b.at ? 1 : 0))
+      .map(({ e, at }) => ({ id: e.id, slug: e.slug, title: tr(e.title, locale), district: e.district, image: e.images[0]?.path ?? "", status: at ? ("dated" as const) : ("noDate" as const), when: at ? formatLongDate(at, locale) : null })),
+    ...archived.map((e) => ({ id: e.id, slug: e.slug, title: tr(e.title, locale), district: e.district, image: e.images[0]?.path ?? "", status: "archived" as const, when: null })),
+  ];
   return (
     <div className="space-y-10">
       <h1 className="font-display text-4xl font-medium text-plum-900">{t("title")}</h1>

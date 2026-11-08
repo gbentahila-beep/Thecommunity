@@ -547,7 +547,10 @@
     "favorites": "My favourites",
     "noFavorites": "Tap the heart on an experience to find it here.",
     "reviewed": "Review published",
-    "notReviewed": "Review to give"
+    "notReviewed": "Review to give",
+    "favNext": "Next date: {date}",
+    "favNoDate": "New dates coming soon",
+    "favArchived": "No longer offered"
   },
   "onboarding": {
     "title": "Let's get to know you",

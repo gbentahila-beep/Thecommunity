@@ -59,14 +59,18 @@ export const getMemberSpace = cache(async function getMemberSpace() {
     isDemo: !FIREBASE_ENABLED,
     upcoming: sorted.filter((r) => bucketOf(r, now) === "upcoming"),
     past: sorted.filter((r) => bucketOf(r, now) === "past").reverse(),
-    cancelled: sorted.filter((r) => bucketOf(r, now) === "cancelled"),
+    // Annulées : la plus récente d'abord (5j).
+    cancelled: sorted.filter((r) => bucketOf(r, now) === "cancelled").reverse(),
     toReview: sorted.filter((r) => !r.reviewId && canReview(r, now)),
     // Listes d'attente en cours (une place proposée devient une réservation « à payer »).
-    openWaitlists: data.waitlists.filter((w) => w.status === "waiting" && new Date(w.sessionSnapshot.startAt).getTime() > now.getTime()),
+    // Triées par date de l'expérience, la plus proche d'abord (5j).
+    openWaitlists: data.waitlists
+      .filter((w) => w.status === "waiting" && new Date(w.sessionSnapshot.startAt).getTime() > now.getTime())
+      .sort((a, b) => a.sessionSnapshot.startAt.localeCompare(b.sessionSnapshot.startAt)),
     // Demandes en attente, ou refusées pour une date à venir (les acceptées deviennent des réservations).
-    openRequests: data.requests.filter(
-      (q) => q.status === "pending" || (q.status === "declined" && new Date(q.sessionSnapshot.startAt).getTime() > now.getTime()),
-    ),
+    openRequests: data.requests
+      .filter((q) => q.status === "pending" || (q.status === "declined" && new Date(q.sessionSnapshot.startAt).getTime() > now.getTime()))
+      .sort((a, b) => a.sessionSnapshot.startAt.localeCompare(b.sessionSnapshot.startAt)),
     unreadCount: data.notifications.filter((n) => !n.readAt).length,
   };
 });

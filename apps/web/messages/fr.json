@@ -547,7 +547,10 @@
     "favorites": "Mes favoris",
     "noFavorites": "Touchez le cœur d'une expérience pour la retrouver ici.",
     "reviewed": "Avis publié",
-    "notReviewed": "Avis à donner"
+    "notReviewed": "Avis à donner",
+    "favNext": "Prochaine date : {date}",
+    "favNoDate": "Prochaines dates bientôt",
+    "favArchived": "N'est plus proposée"
   },
   "onboarding": {
     "title": "Faisons connaissance",

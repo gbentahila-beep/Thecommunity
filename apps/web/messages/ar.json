@@ -547,7 +547,10 @@
     "favorites": "مفضلاتي",
     "noFavorites": "اضغط على القلب في أي تجربة لتجدها هنا.",
     "reviewed": "تم نشر الرأي",
-    "notReviewed": "رأي بانتظارك"
+    "notReviewed": "رأي بانتظارك",
+    "favNext": "الموعد القادم: {date}",
+    "favNoDate": "مواعيد جديدة قريباً",
+    "favArchived": "لم تعد متاحة"
   },
   "onboarding": {
     "title": "لنتعارف",

@@ -67,6 +67,13 @@ async function fsArchivedExperienceBySlugRaw(slug: string): Promise<{ title: Exp
 }
 export const fsArchivedExperienceBySlug = cached(fsArchivedExperienceBySlugRaw, "fsArchivedExperienceBySlug");
 
+/** Expériences archivées (favoris de l'espace membre : affichées en dernier, « n'est plus proposée »). */
+async function fsArchivedExperiencesRaw(): Promise<Experience[]> {
+  const snap = await adminDb().collection("experiences").where("status", "==", "archived").get();
+  return snap.docs.map((d) => withId<Experience>(d));
+}
+export const fsArchivedExperiences = cached(fsArchivedExperiencesRaw, "fsArchivedExperiences");
+
 async function fsExperiencesListRaw(sortedIds: string[]): Promise<Experience[]> {
   if (sortedIds.length === 0) return [];
   const db = adminDb();

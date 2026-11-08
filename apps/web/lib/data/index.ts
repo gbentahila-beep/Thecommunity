@@ -56,6 +56,12 @@ export async function getArchivedExperience(slug: string) {
   return null;
 }
 
+/** Expériences archivées (aucune en démonstration). */
+export async function getArchivedExperiences(): Promise<Experience[]> {
+  if (FIREBASE_ENABLED) return fs.fsArchivedExperiences();
+  return [];
+}
+
 export async function getPublishedExperiences() {
   if (FIREBASE_ENABLED) return fs.fsPublishedExperiences();
   return DEMO_EXPERIENCES.filter((e) => e.status === "published");
