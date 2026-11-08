@@ -156,6 +156,13 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await d.goto(`${base}/admin/sessions/ses-ceramique-1/fiche-hote`);
   assert(await d.getByRole('heading', { name: 'Cartes de bienvenue' }).isVisible() && await d.getByText('Bienvenue à table').first().isVisible(), '10f : cartes de bienvenue imprimables');
 
+  // 12 : « Comment ça marche » présentée comme sur l'accueil
+  await d.goto(`${base}/comment-ca-marche`);
+  assert(await d.getByRole('heading', { level: 1, name: 'Comment ça marche' }).isVisible(), '12 : titre de la page');
+  const howCards = d.locator('section[aria-label="Comment ça marche"] ol > li');
+  assert(await howCards.count() === 3 && await d.locator('section[aria-label="Comment ça marche"] img').count() === 3, '12 : trois cartes décalées comme sur l\'accueil');
+  assert(await d.getByRole('heading', { name: 'Les formats' }).isVisible() && await d.getByRole('heading', { name: 'Votre sécurité' }).isVisible(), '12 : formats et sécurité conservés');
+
   // ——— Mobile ———
   const mob = await b.newContext({ ...devices['iPhone 13'] });
   const m = await mob.newPage(); watch(m);

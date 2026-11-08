@@ -10,12 +10,12 @@ import { CATEGORY_STYLES } from "@/lib/site";
  * « Comment ça marche » en trois cartes légèrement inclinées et décalées (style The Host Club) :
  * 1) les univers, 2) un bouton vers les expériences, 3) trois photos de groupe.
  */
-export async function HowItWorks({ categories }: { categories: Category[] }) {
+export async function HowItWorks({ categories, showTitle = true }: { categories: Category[]; showTitle?: boolean }) {
   const t = await getTranslations("home");
   const card = "relative rounded-[2rem] p-6 shadow-float transition duration-300 hover:rotate-0 sm:p-7";
   return (
-    <section aria-labelledby="how-title" className="py-16">
-      <h2 id="how-title" className="text-center font-display text-[1.75rem] leading-tight font-medium text-plum-900 sm:text-[2.25rem]">{t("howTitle")}</h2>
+    <section aria-labelledby={showTitle ? "how-title" : undefined} aria-label={showTitle ? undefined : t("howTitle")} className={showTitle ? "py-16" : "pb-16"}>
+      <h2 id="how-title" hidden={!showTitle} className="text-center font-display text-[1.75rem] leading-tight font-medium text-plum-900 sm:text-[2.25rem]">{t("howTitle")}</h2>
       <ol className="mx-auto mt-10 grid max-w-6xl gap-8 px-2 md:grid-cols-3 md:gap-6 md:pt-6">
         <li className={`${card} -rotate-2 bg-white md:translate-y-6`}>
           <span className="font-display text-5xl text-plum-100">1</span>

@@ -36,6 +36,7 @@
 | 5j ✅ | **Ordre des listes de l'espace membre** : annulées de la plus récente à la plus ancienne ; demandes et listes d'attente par date de l'expérience (la plus proche d'abord) ; favoris : date à venir (avec la date), puis sans date, puis **archivées en dernier** (« N'est plus proposée », grisées) |
 | 10 ✅ | **Identité de marque** (docs/18) : ton & ambiance, typographie, couleurs ; logotype redessiné ; monogramme **« h. »** ; motif **« le fil »** ; papeterie, accueil des tables, affichage, objets ; **brand book version 1** (`docs/marque/brand-book.html`, fichiers SVG dans `docs/marque/`) |
 | 10f ✅ | **Identité sur le site** : logo vectoriel (en-tête, menu mobile, pied de page, back-office) ; icônes « h. » (onglet, application, manifeste) ; image de partage 1200×630 ; motif « le fil » sur le bandeau des villes et l'appel du blog ; fiche hôte : marque-places au monogramme, **numéros de table**, **cartes de bienvenue** (3 questions par table) ; **chevalet « Réservé » avec QR** par partenaire ; **e-mails** avec bandeau prune, logo et motif ; **factures PDF** avec le logo vectoriel. Reste en option : page « Kit presse » |
+| 12 ✅ | **Page « Comment ça marche »** présentée comme la section de l'accueil (trois cartes décalées : univers, bouton vers les expériences, photos), puis les formats et la sécurité (bandeau au motif « le fil ») |
 
 ## Reste à faire — ordre proposé
 
@@ -46,7 +47,6 @@
 | Étape | Contenu | Dépend de |
 |---|---|---|
 | **11 — proposée (analyse faite)** | **Tarification en deux parts** : part organisation payée en ligne (seule concernée par l'abonnement, le prix membre, les codes promo et les frais) + part partenaire payée sur place (prix fixe ou consommation libre), ou tout en ligne ; section 4 « Partenaire et économie » conservée ; nouvelle section 5 « Tarification et paiement client » avec aperçu ; affichage fiche / tunnel / billet ; QR code et scan ; suivi des paiements sur place (détail docs/19) | go de Rita |
-| **12 — proposée** | **Page « Comment ça marche »** affichée comme la section de l'accueil (cartes décalées, icônes, photos) | go de Rita |
 | 5h | **Paiement** — phase 1 **virement bancaire** (référence unique, validation manuelle, QR code après confirmation, 0 DH de frais ; RIB à fournir) → phase 2 formaliser l'encaissement (compte pro, modèle validé, contrats partenaires) → phase 3 **ChariPay** (carte, confirmation automatique) (détail docs/19) | RIB ; compte pro ; contrat ChariPay |
 | 9 | **Recette, sécurité, mise en production** (dont : **effacement automatique** du régime et des allergies 30 jours après l'expérience, annoncé dans la politique de confidentialité) | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 
