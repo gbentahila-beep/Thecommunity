@@ -43,6 +43,7 @@
 | Étape | Contenu | Dépend de |
 |---|---|---|
 | **5j — proposée** | **Ordre des listes de l'espace membre** (question de Rita du 8 novembre) : *Annulées* de la plus récente à la plus ancienne (aujourd'hui l'inverse) ; *listes d'attente* et *demandes* triées par date de l'expérience, la plus proche d'abord (aujourd'hui : ordre d'inscription / sans ordre défini) ; *Favoris* : d'abord les expériences avec une date à venir (la plus proche en premier), puis celles sans date (« Prochaines dates bientôt »), puis les **archivées en dernier** avec la mention « N'est plus proposée » (aujourd'hui elles disparaissent des favoris sans explication, et l'ordre n'est pas défini) | — |
+| **10 — proposée** | **Identité de marque** (brand book, demande du 8 novembre, détail docs/18) : 10a ton & ambiance, couleurs, typographie → 10b logo principal + 3 pistes de monogramme → 10c motif → 10d papeterie (dont marque-places, carte de bienvenue), affichage, mises en situation → 10e brand book partageable + application au site | validation de Rita à chaque étape |
 | 5h | **Prestataire de paiement réel** (CMI, Payzone, YouCan Pay) | contrat signé |
 | 9 | **Recette, sécurité, mise en production** (dont : **effacement automatique** du régime et des allergies 30 jours après l'expérience, annoncé dans la politique de confidentialité) | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 
