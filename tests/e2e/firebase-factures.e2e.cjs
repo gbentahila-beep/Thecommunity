@@ -129,10 +129,10 @@ async function payOnTestPage(page) {
   await admin.getByLabel('Raison sociale').fill('The Host Club SARL');
   await admin.getByLabel('ICE', { exact: true }).fill('123');
   await admin.getByLabel('Adresse du siège').fill('Bd d\'Anfa, Casablanca');
-  await admin.getByRole('button', { name: 'Enregistrer' }).click();
+  await admin.getByRole('button', { name: 'Enregistrer', exact: true }).click();
   assert(await visible(admin.getByText('Valeur invalide.')), 'société : ICE invalide refusé');
   await admin.getByLabel('ICE', { exact: true }).fill('001234567000089');
-  await admin.getByRole('button', { name: 'Enregistrer' }).click();
+  await admin.getByRole('button', { name: 'Enregistrer', exact: true }).click();
   assert(await visible(admin.getByText('Enregistré. Les prochains documents')), 'société enregistrée (super-admin)');
   const company = await fsGet('settings/company');
   assert(company.fields.ice.stringValue === '001234567000089', 'Firestore : société enregistrée');
