@@ -1,4 +1,4 @@
-import { UserRound } from "lucide-react";
+import { AccountLink } from "./account-link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCategories, getCities } from "@/lib/data";
@@ -38,13 +38,7 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
         <div className="ms-auto hidden items-center gap-2 lg:flex">
           <CityMenu currentCityId={cityId} />
           <LanguageSwitch />
-          <Link
-            href="/espace"
-            aria-label={t("account")}
-            className="grid size-11 place-items-center rounded-full bg-cream-deep text-plum-900 transition hover:bg-sand"
-          >
-            <UserRound className="size-5" aria-hidden />
-          </Link>
+          <AccountLink label={t("account")} />
         </div>
         <div className="ms-auto lg:hidden">
           <MobileMenu discover={discover} links={links} cities={cityItems} />

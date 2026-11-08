@@ -3,6 +3,7 @@
 import { Bell, CalendarDays, Compass, UserRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
+import { UnreadBadge, useUnreadLabel } from "./unread-badge";
 
 /**
  * Barre d'onglets mobile (maquette). « Messages » est remplacé par « Notifications » (décision D8).
@@ -11,6 +12,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 export function MobileTabBar() {
   const t = useTranslations("nav");
   const pathname = usePathname();
+  const notifLabel = useUnreadLabel(t("notifications"), (count) => t("unreadCount", { count }));
   const inSpace = pathname.startsWith("/espace") || pathname.startsWith("/bienvenue");
   const tabs = [
     { href: "/", label: t("explore"), icon: Compass, active: !inSpace && !pathname.startsWith("/connexion") && !pathname.startsWith("/inscription") },
@@ -34,9 +36,13 @@ export function MobileTabBar() {
             <Link
               href={href}
               aria-current={active ? "page" : undefined}
+              aria-label={href === "/espace/notifications" ? notifLabel : undefined}
               className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium ${active ? "text-plum-900" : "text-muted"}`}
             >
-              <Icon className="size-[22px]" strokeWidth={active ? 2.2 : 1.6} aria-hidden />
+              <span className="relative">
+                <Icon className="size-[22px]" strokeWidth={active ? 2.2 : 1.6} aria-hidden />
+                {href === "/espace/notifications" && <UnreadBadge className="-end-2.5 -top-1.5" />}
+              </span>
               {label}
             </Link>
           </li>

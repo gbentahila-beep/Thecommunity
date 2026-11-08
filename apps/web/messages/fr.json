@@ -32,7 +32,8 @@
     "menuTitle": "Menu",
     "cities": "Villes",
     "signup": "S'inscrire",
-    "login": "Se connecter"
+    "login": "Se connecter",
+    "unreadCount": "{count, plural, one {# non lue} other {# non lues}}"
   },
   "home": {
     "heroTitle1": "Your people",

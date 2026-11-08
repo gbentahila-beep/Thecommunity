@@ -32,7 +32,8 @@
     "menuTitle": "Menu",
     "cities": "Cities",
     "signup": "Sign up",
-    "login": "Log in"
+    "login": "Log in",
+    "unreadCount": "{count} unread"
   },
   "home": {
     "heroTitle1": "Your people",

@@ -124,8 +124,14 @@ async function login(page, who, suite) {
   assert(await visible(admin.getByText('Acceptée')) && await visible(admin.getByText('Refusée')), 'dernières décisions affichées');
 
   // 5. Nadia : notification, place réservée 24 h, paiement
+  // 13 : la pastille apparaît en direct dans la barre du bas, sans recharger la page
+  const badge = member.locator('nav[aria-label] [data-testid=unread-badge]');
+  assert(await visible(badge), 'pastille de notifications non lues, en direct');
+  assert(/non lues?/.test(await member.locator('a[href$="/espace/notifications"]').last().getAttribute('aria-label')), 'nombre de non-lues annoncé aux lecteurs d’écran');
   await member.goto(`${base}/espace/notifications`);
   assert(await visible(member.getByText('Votre demande est acceptée')), 'notification « demande acceptée »');
+  await member.getByRole('button', { name: 'Tout marquer comme lu' }).click();
+  assert(await badge.first().waitFor({ state: 'detached', timeout: 15000 }).then(() => true, () => false), 'pastille effacée une fois les notifications lues');
   await member.goto(`${base}/reserver/${sid}`);
   await member.getByRole('link', { name: 'Voir et payer ma réservation' }).click();
   assert(await visible(member.getByText(/Votre place vous est réservée jusqu'au/)), 'place réservée jusqu’au lendemain (24 h)');

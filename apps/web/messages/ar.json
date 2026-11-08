@@ -32,7 +32,8 @@
     "menuTitle": "القائمة",
     "cities": "المدن",
     "signup": "إنشاء حساب",
-    "login": "تسجيل الدخول"
+    "login": "تسجيل الدخول",
+    "unreadCount": "{count} غير مقروءة"
   },
   "home": {
     "heroTitle1": "Your people",
