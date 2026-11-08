@@ -44,7 +44,9 @@
 | Étape | Contenu | Dépend de |
 |---|---|---|
 | **10 — en cours (10a et 10b livrées ; choix du monogramme attendu)** | **Identité de marque** (brand book, demande du 8 novembre, détail docs/18) : 10a ton & ambiance, couleurs, typographie → 10b logo principal + 3 pistes de monogramme → 10c motif → 10d papeterie (dont marque-places, carte de bienvenue), affichage, mises en situation → 10e brand book partageable + application au site | validation de Rita à chaque étape |
-| 5h | **Prestataire de paiement réel** (CMI, Payzone, YouCan Pay) | contrat signé |
+| **11 — proposée (analyse faite)** | **Tarification en deux parts** : part organisation payée en ligne (seule concernée par l'abonnement, le prix membre, les codes promo et les frais) + part partenaire payée sur place (prix fixe ou consommation libre), ou tout en ligne ; section 4 « Partenaire et économie » conservée ; nouvelle section 5 « Tarification et paiement client » avec aperçu ; affichage fiche / tunnel / billet ; QR code et scan ; suivi des paiements sur place (détail docs/19) | go de Rita |
+| **12 — proposée** | **Page « Comment ça marche »** affichée comme la section de l'accueil (cartes décalées, icônes, photos) | go de Rita |
+| 5h | **Paiement** — phase 1 **virement bancaire** (référence unique, validation manuelle, QR code après confirmation, 0 DH de frais ; RIB à fournir) → phase 2 formaliser l'encaissement (compte pro, modèle validé, contrats partenaires) → phase 3 **ChariPay** (carte, confirmation automatique) (détail docs/19) | RIB ; compte pro ; contrat ChariPay |
 | 9 | **Recette, sécurité, mise en production** (dont : **effacement automatique** du régime et des allergies 30 jours après l'expérience, annoncé dans la politique de confidentialité) | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 
 Idées notées, à valider avant de les planifier :
