@@ -118,9 +118,9 @@ export const DEMO_PARTNERS: Partner[] = [
 ];
 
 /** Modèle économique par expérience (admin uniquement : experiences/{id}/private/economics). */
-export const DEMO_ECONOMICS: Record<string, { partnerId?: string; model: "own" | "commission"; costPerSeat?: number; commissionPercent?: number }> = {
+export const DEMO_ECONOMICS: Record<string, { partnerId?: string; model: "own" | "commission"; costPerSeat?: number; commissionPercent?: number; onSiteCommissionPercent?: number }> = {
   "exp-diner-inconnus": { partnerId: "p-resto-gauthier", model: "own", costPerSeat: 9500 },
-  "exp-brunch-inconnus": { partnerId: "p-resto-gauthier", model: "own", costPerSeat: 1500 },
+  "exp-brunch-inconnus": { partnerId: "p-resto-gauthier", model: "own", costPerSeat: 1500, onSiteCommissionPercent: 10 },
   "exp-pilates-brunch": { partnerId: "p-studio-anfa", model: "commission", commissionPercent: 20 },
   "exp-yoga-sunrise": { model: "own", costPerSeat: 4000 },
   "exp-escape-game": { partnerId: "p-escape-maarif", model: "commission", commissionPercent: 15 },

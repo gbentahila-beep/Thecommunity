@@ -58,6 +58,8 @@ export const experienceInputSchema = z
     economicsModel: z.enum(["own", "commission"]),
     costPerSeatDh: z.coerce.number().min(0, "min0").optional(),
     commissionPercent: z.coerce.number().min(0, "min0").max(100, "max100").optional(),
+    /** 11g : commission éventuelle sur la part réglée sur place, facturée au partenaire hors site (jamais encaissée en ligne). */
+    onSiteCommissionPercent: z.coerce.number().min(0, "min0").max(100, "max100").optional(),
     /** Étape 11 : comment le client paie (section « Tarification et paiement client »). */
     pricingModel: z.enum(["online_only", "fixed_partner", "variable_consumption"]).default("online_only"),
     partnerPriceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany").optional(),
@@ -86,7 +88,8 @@ export const experienceInputSchema = z
     if (v.memberPriceDh !== undefined && v.memberPriceDh > v.priceDh) {
       ctx.addIssue({ code: "custom", path: ["memberPriceDh"], message: "memberAbovePublic" });
     }
-    if (v.economicsModel === "own" && v.costPerSeatDh === undefined) {
+    // 11g : avec une part sur place, le prix payé au partenaire n'est jamais un coût pour nous ; nos coûts éventuels sont facultatifs (0 par défaut).
+    if (v.economicsModel === "own" && v.costPerSeatDh === undefined && v.pricingModel === "online_only") {
       ctx.addIssue({ code: "custom", path: ["costPerSeatDh"], message: "required" });
     }
     if (v.economicsModel === "commission" && v.commissionPercent === undefined) {
@@ -94,6 +97,9 @@ export const experienceInputSchema = z
     }
     if (v.economicsModel === "commission" && !v.partnerId) {
       ctx.addIssue({ code: "custom", path: ["partnerId"], message: "partnerRequired" });
+    }
+    if (v.pricingModel !== "online_only" && v.economicsModel === "commission") {
+      ctx.addIssue({ code: "custom", path: ["economicsModel"], message: "onSiteNoCommission" });
     }
     if (v.pricingModel !== "online_only" && !v.partnerId) {
       ctx.addIssue({ code: "custom", path: ["pricingModel"], message: "pricingNeedsPartner" });

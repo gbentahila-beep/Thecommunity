@@ -180,7 +180,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <p className="leading-relaxed text-ink/85">{tr(exp.description, locale)}</p>
             </Section>
 
-            <Section title={t("included")}>
+            <Section title={twoPart.partner ? t2("includedOnline") : t("included")}>
               <ul className="grid gap-2 sm:grid-cols-2">
                 {exp.included.map((item) => (
                   <li key={item.fr} className="flex items-start gap-2.5 text-ink/85">

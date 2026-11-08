@@ -50,3 +50,17 @@ describe("tableau de bord en ligne / sur place (11e)", () => {
     expect(s.consumptionBookings).toBe(1);
   });
 });
+
+describe("économie d'une place sans double comptage (11g)", () => {
+  it("prix fixe sur place : la part partenaire n'est pas un coût ; commission facturée à part", async () => {
+    const { seatEconomics } = await import("./two-part");
+    const e = seatEconomics({ onlineUnit: 25000, model: "fixed_partner", onSiteUnit: 20000, economicsModel: "own", costPerSeat: 3000, onSiteCommissionPercent: 10 });
+    expect(e).toMatchObject({ clientPays: 45000, weCollect: 25000, paidOut: 3000, margin: 22000, onSiteCommission: 2000, onSiteCommissionOnConsumption: false });
+  });
+  it("tout en ligne avec un partenaire : reversement ou commission ; consommation : pas de total inventé", async () => {
+    const { seatEconomics } = await import("./two-part");
+    expect(seatEconomics({ onlineUnit: 16900, model: "online_only", onSiteUnit: null, economicsModel: "own", costPerSeat: 9500 })).toMatchObject({ clientPays: 16900, paidOut: 9500, margin: 7400, onSiteCommission: null });
+    expect(seatEconomics({ onlineUnit: 18000, model: "online_only", onSiteUnit: null, economicsModel: "commission", commissionPercent: 15, onSiteCommissionPercent: 10 })).toMatchObject({ margin: 2700, paidOut: 15300, onSiteCommission: null });
+    expect(seatEconomics({ onlineUnit: 12000, model: "variable_consumption", onSiteUnit: null, economicsModel: "own", onSiteCommissionPercent: 8 })).toMatchObject({ clientPays: null, margin: 12000, onSiteCommission: null, onSiteCommissionOnConsumption: true });
+  });
+});

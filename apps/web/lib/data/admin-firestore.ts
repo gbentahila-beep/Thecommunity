@@ -14,7 +14,7 @@ function plain<T>(value: unknown): T {
   return value as T;
 }
 
-export type Economics = { partnerId?: string; model: "own" | "commission"; costPerSeat?: number; commissionPercent?: number };
+export type Economics = { partnerId?: string; model: "own" | "commission"; costPerSeat?: number; commissionPercent?: number; onSiteCommissionPercent?: number };
 
 /**
  * Chiffres d'une réservation payée, à partir du modèle économique de l'expérience
@@ -59,7 +59,7 @@ export async function fsAdminData(now: Date) {
     if (!parent) continue;
     if (parent.parent.id === "experiences" && d.id === "economics") {
       const e = d.data();
-      economics[parent.id] = { partnerId: e.partnerId ?? undefined, model: e.model, costPerSeat: e.costPerSeat ?? undefined, commissionPercent: e.commissionPercent ?? undefined };
+      economics[parent.id] = { partnerId: e.partnerId ?? undefined, model: e.model, costPerSeat: e.costPerSeat ?? undefined, commissionPercent: e.commissionPercent ?? undefined, onSiteCommissionPercent: e.onSiteCommissionPercent ?? undefined };
     }
     if (parent.parent.id === "reservations" && d.id === "finance") {
       const f = d.data();

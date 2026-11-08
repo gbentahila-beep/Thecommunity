@@ -309,7 +309,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
     maxSeatsPerBooking: 1,
     languages: ["fr", "darija"],
     alcoholServed: false,
-    included: [{ fr: "Brunch complet" }, { fr: "Boisson chaude et jus pressé" }],
+    included: [{ fr: "Place réservée à une table de six" }, { fr: "Accueil et présentations par un hôte" }],
     practicalInfo: { fr: "Expérience réservée aux 18 ans et plus." },
     cancellationPolicyId: policy,
     status: "published",

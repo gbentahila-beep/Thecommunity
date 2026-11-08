@@ -3,7 +3,7 @@
 import {
   experienceInputSchema,
   formatMoney,
-  marginPerSeat,
+  seatEconomics,
   MOROCCO_TIMEZONE,
   planSessionDates,
   priceSplit,
@@ -21,9 +21,9 @@ import { mediaUrl } from "@/components/media";
 import { firebase } from "@/lib/firebase/client";
 
 type Option = { id: string; label: string; disabled?: boolean };
-export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh"> & {
+export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "onSiteCommissionPercent"> & {
   groupMin: string; groupTarget: string; groupMax: string; costPerSeatDh: string; commissionPercent: string;
-  priceDh: string; durationMinutes: string; maxSeatsPerBooking: string; memberPriceDh: string; partnerPriceDh: string;
+  priceDh: string; durationMinutes: string; maxSeatsPerBooking: string; memberPriceDh: string; partnerPriceDh: string; onSiteCommissionPercent: string;
   sessions: { firstDate: string; time: string; weeks: string; capacity: string };
 };
 
@@ -34,11 +34,12 @@ const MESSAGES: Record<string, string> = {
   seatsPerBookingMode: "Plus de 2 places par réservation : seulement en mode libre ou privatisé.", partnerRequired: "Le modèle commission nécessite un partenaire.",
   revealNeedsGroups: "La révélation différée n'est possible qu'avec des groupes (dîner social ou groupe).",
   inPast: "La première date est déjà passée.", memberAbovePublic: "Le prix membre doit être inférieur ou égal au prix public.", invalidImagePath: "Photo invalide.",
-  pricingNeedsPartner: "Choisissez d'abord un partenaire (section 4) : la part sur place lui est réglée directement.",
+  pricingNeedsPartner: "Choisissez d'abord le partenaire : la part sur place lui est réglée directement.",
+  onSiteNoCommission: "Avec une part sur place, utilisez « Nos coûts » ; une commission sur la part sur place se saisit dans son propre champ.",
 };
 const PRICING_CHOICES: { id: ExperienceFormValues["pricingModel"]; title: string; text: string; needsPartner: boolean }[] = [
   { id: "online_only", title: "Tout payé en ligne", text: "Le client paie tout à la réservation. Aucune part sur place.", needsPartner: false },
-  { id: "fixed_partner", title: "Prix fixe chez le partenaire", text: "Une part en ligne + un montant connu réglé sur place (ex. menu, cours).", needsPartner: true },
+  { id: "fixed_partner", title: "Prix fixe chez le partenaire", text: "Une part en ligne + un montant connu, réglé sur place au partenaire (ex. menu, cours).", needsPartner: true },
   { id: "variable_consumption", title: "Consommation libre chez le partenaire", text: "Une part en ligne + ce que le client consomme sur place (montant inconnu).", needsPartner: true },
 ];
 /** Convertit une saisie en dirhams (« 250 », « 99,5 ») en centimes ; null si vide ou invalide. */
@@ -141,6 +142,7 @@ export function ExperienceForm({
       groupMax: grouped ? opt(v.groupMax) : undefined,
       costPerSeatDh: v.economicsModel === "own" ? opt(v.costPerSeatDh) : undefined,
       commissionPercent: v.economicsModel === "commission" ? opt(v.commissionPercent) : undefined,
+      onSiteCommissionPercent: v.pricingModel !== "online_only" ? opt(v.onSiteCommissionPercent) : undefined,
       memberPriceDh: opt(v.memberPriceDh),
       partnerPriceDh: v.pricingModel === "fixed_partner" ? opt(v.partnerPriceDh) : undefined,
       partnerDescription: v.pricingModel === "online_only" ? "" : v.partnerDescription,
@@ -199,7 +201,10 @@ export function ExperienceForm({
     if (!result) return null;
     const dates = addSessions ? planSessionDates(result.sessions, result.durationMinutes, MOROCCO_TIMEZONE) : [];
     const price = Math.round(result.priceDh * 100);
-    const margin = marginPerSeat(price, result.economicsModel, Math.round((result.costPerSeatDh ?? 0) * 100), result.commissionPercent ?? 0);
+    const margin = seatEconomics({
+      onlineUnit: price, model: result.pricingModel, onSiteUnit: result.partnerPriceDh != null ? Math.round(result.partnerPriceDh * 100) : null,
+      economicsModel: result.economicsModel, costPerSeat: Math.round((result.costPerSeatDh ?? 0) * 100), commissionPercent: result.commissionPercent ?? 0,
+    }).margin;
     return { dates, price, margin };
   }, [result, addSessions]);
 
@@ -213,6 +218,27 @@ export function ExperienceForm({
       ? { model: "online_only", currency: "MAD", partner: null }
       : { model: v.pricingModel, currency: "MAD", partner: { name: partnerName, paymentMode: "on_site", pricingType: v.pricingModel === "fixed_partner" ? "fixed" : "consumption", price: v.pricingModel === "fixed_partner" ? { amount: onSite ?? 0, currency: "MAD" } : null, description: v.partnerDescription ?? "" } });
   }, [v.priceDh, v.partnerPriceDh, v.pricingModel, v.partnerId, v.partnerDescription, partnerName]);
+
+  const onSiteMode = v.pricingModel !== "online_only";
+  /** 11g : ce que rapporte une place, en direct (la part sur place n'est jamais un coût). */
+  const eco = useMemo(() => {
+    const online = dhToCents(v.priceDh);
+    if (online == null) return null;
+    return seatEconomics({
+      onlineUnit: online, model: v.partnerId ? v.pricingModel : "online_only", onSiteUnit: dhToCents(v.partnerPriceDh),
+      economicsModel: v.economicsModel, costPerSeat: dhToCents(v.costPerSeatDh) ?? 0,
+      commissionPercent: Number(v.commissionPercent.replace(",", ".")) || 0, onSiteCommissionPercent: Number(v.onSiteCommissionPercent.replace(",", ".")) || 0,
+    });
+  }, [v.priceDh, v.partnerPriceDh, v.pricingModel, v.partnerId, v.economicsModel, v.costPerSeatDh, v.commissionPercent, v.onSiteCommissionPercent]);
+  const doubleCounted = v.pricingModel === "fixed_partner" && dhToCents(v.costPerSeatDh) != null && dhToCents(v.costPerSeatDh) === dhToCents(v.partnerPriceDh) && (dhToCents(v.costPerSeatDh) ?? 0) > 0;
+  const choosePricing = (id: ExperienceFormValues["pricingModel"]) => {
+    setV((x) => ({ ...x, pricingModel: id, ...(id !== "online_only" ? { economicsModel: "own" as const } : {}) }));
+    setResult(null);
+  };
+  const choosePartner = (id: string) => {
+    setV((x) => ({ ...x, partnerId: id, ...(!id ? { economicsModel: "own" as const, pricingModel: "online_only" as const } : {}) }));
+    setResult(null);
+  };
 
   const field = (key: string) => ({
     id: `f-${key}`,
@@ -331,29 +357,15 @@ export function ExperienceForm({
           <input type="checkbox" checked={v.alcoholServed} onChange={(e) => set("alcoholServed", e.target.checked)} className="size-4 accent-plum-900" />
           De l&apos;alcool est servi pendant l&apos;expérience
         </label>
-        <div className="sm:col-span-2"><Label k="included" hint="Un élément par ligne.">Ce qui est inclus</Label><textarea {...field("included")} rows={3} value={v.included ?? ""} onChange={(e) => set("included", e.target.value)} /></div>
         <div className="sm:col-span-2"><Label k="practicalInfo">Infos pratiques</Label><textarea {...field("practicalInfo")} rows={2} value={v.practicalInfo ?? ""} onChange={(e) => set("practicalInfo", e.target.value)} /></div>
       </Section>
 
-      <Section title="4. Partenaire et économie (visible uniquement par l'équipe)">
-        <div><Label k="partnerId">Partenaire</Label>
-          <select {...field("partnerId")} value={v.partnerId ?? ""} onChange={(e) => set("partnerId", e.target.value)}>
-            <option value="">— Aucun (organisé par The Host Club)</option>
+      <Section id="tarification" title="4. Prix, paiement et partenaire">
+        <div className="sm:col-span-2"><Label k="partnerId" hint="Le lieu ou le prestataire de l'expérience. Facultatif.">Partenaire</Label>
+          <select {...field("partnerId")} value={v.partnerId ?? ""} onChange={(e) => choosePartner(e.target.value)}>
+            <option value="">— Aucun (organisé entièrement par The Host Club)</option>
             {partners.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
           </select>{err("partnerId")}</div>
-        <div><Label k="economicsModel">Modèle</Label>
-          <select {...field("economicsModel")} value={v.economicsModel} onChange={(e) => set("economicsModel", e.target.value as "own" | "commission")}>
-            <option value="own">Organisée par nous (marge = prix − coût)</option>
-            <option value="commission">Commission sur un partenaire</option>
-          </select></div>
-        {v.economicsModel === "own" ? (
-          <div><Label k="costPerSeatDh">Coût par place (DH)</Label><input {...field("costPerSeatDh")} inputMode="decimal" value={v.costPerSeatDh} onChange={(e) => set("costPerSeatDh", e.target.value)} />{err("costPerSeatDh")}</div>
-        ) : (
-          <div><Label k="commissionPercent">Commission (%)</Label><input {...field("commissionPercent")} inputMode="decimal" value={v.commissionPercent} onChange={(e) => set("commissionPercent", e.target.value)} />{err("commissionPercent")}</div>
-        )}
-      </Section>
-
-      <Section id="tarification" title="5. Tarification et paiement client">
         <fieldset className="sm:col-span-2">
           <legend className="mb-2 text-sm font-medium text-ink">Comment le client paie-t-il ?</legend>
           <div className="grid gap-2 sm:grid-cols-3" role="radiogroup" aria-invalid={Boolean(errors.pricingModel)} aria-describedby={errors.pricingModel ? "e-pricingModel" : undefined}>
@@ -363,7 +375,7 @@ export function ExperienceForm({
               return (
                 <label key={c.id} className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3 text-sm ${on ? "border-plum-900 bg-plum-50 ring-2 ring-plum-100" : "border-line bg-white"} ${disabled ? "cursor-not-allowed opacity-50" : ""}`}>
                   <span className="flex items-center gap-2 font-semibold text-ink">
-                    <input type="radio" name="pricingModel" value={c.id} checked={on} disabled={disabled} onChange={() => set("pricingModel", c.id)} className="size-4 accent-plum-900" />
+                    <input type="radio" name="pricingModel" value={c.id} checked={on} disabled={disabled} onChange={() => choosePricing(c.id)} className="size-4 accent-plum-900" />
                     {c.title}
                   </span>
                   <span className="text-xs text-muted">{c.text}</span>
@@ -371,41 +383,89 @@ export function ExperienceForm({
               );
             })}
           </div>
-          {!v.partnerId && <p className="mt-2 text-xs text-muted">Les formules avec une part sur place nécessitent un partenaire (section 4).</p>}
+          {!v.partnerId && <p className="mt-2 text-xs text-muted">Les formules avec une part sur place demandent un partenaire (choisi juste au-dessus).</p>}
           {err("pricingModel")}
         </fieldset>
-        {v.partnerId && v.pricingModel !== "online_only" && (
-          <p className="text-sm text-ink sm:col-span-2">Partenaire payé sur place : <strong>{partnerName}</strong> (repris de la section 4).</p>
-        )}
-        <div><Label k="priceDh" hint="Ce que le client paie à la réservation.">{v.pricingModel === "online_only" ? "Prix par place, payé en ligne (DH)" : "Prix organisation, payé en ligne (DH)"}</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
-        <div><Label k="memberPriceDh" hint="Facultatif, sur la part en ligne seulement. Vide = réduction de l'abonnement (réglée dans « Abonnement »).">Prix membre, payé en ligne (DH)</Label><input {...field("memberPriceDh")} inputMode="decimal" value={v.memberPriceDh} onChange={(e) => set("memberPriceDh", e.target.value)} />{err("memberPriceDh")}</div>
-        {v.pricingModel === "fixed_partner" && (
-          <div><Label k="partnerPriceDh" hint="Réglé directement au partenaire, par place.">Prix partenaire, payé sur place (DH)</Label><input {...field("partnerPriceDh")} inputMode="decimal" value={v.partnerPriceDh} onChange={(e) => set("partnerPriceDh", e.target.value)} />{err("partnerPriceDh")}</div>
-        )}
-        {v.pricingModel !== "online_only" && (
-          <div className="sm:col-span-2"><Label k="partnerDescription" hint="Affiché au client. Ex. « Menu 3 plats et boisson » ou « Boissons et plats à la carte ».">Ce qui est réglé sur place</Label><textarea {...field("partnerDescription")} rows={2} value={v.partnerDescription ?? ""} onChange={(e) => set("partnerDescription", e.target.value)} />{err("partnerDescription")}</div>
-        )}
-        <div className="rounded-xl bg-cream p-4 sm:col-span-2" aria-live="polite">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">Aperçu client</p>
-          {split ? (
-            <>
-              <p className="mt-1 text-lg font-semibold text-ink">
-                {split.variable
-                  ? `${formatMoney({ amount: split.onlineUnit, currency: "MAD" })} + consommation sur place`
-                  : `${formatMoney({ amount: split.totalUnit ?? split.onlineUnit, currency: "MAD" })} par personne`}
-              </p>
-              {split.model === "fixed_partner" && split.onSiteUnit != null && (
-                <p className="text-sm text-ink">{formatMoney({ amount: split.onlineUnit, currency: "MAD" })} maintenant · {formatMoney({ amount: split.onSiteUnit, currency: "MAD" })} sur place</p>
-              )}
-              {split.model === "online_only" && <p className="text-sm text-ink">Tout est réglé en ligne à la réservation.</p>}
-              {split.variable && <p className="text-sm text-ink">{formatMoney({ amount: split.onlineUnit, currency: "MAD" })} maintenant · votre consommation réglée sur place</p>}
-              {split.model !== "online_only" && v.partnerDescription?.trim() && <p className="mt-1 text-xs text-muted">Sur place : {v.partnerDescription.trim()}</p>}
-            </>
-          ) : (
-            <p className="mt-1 text-sm text-muted">Saisissez les prix pour voir l&apos;aperçu.</p>
-          )}
-          <p className="mt-2 text-xs text-muted">Prix membre, abonnement, codes promo et frais de service ne s&apos;appliquent qu&apos;à la part payée en ligne. The Host Club n&apos;encaisse jamais la part réglée au partenaire.</p>
+
+        <div className="grid gap-4 rounded-xl border border-line p-4 sm:col-span-2 sm:grid-cols-2" data-testid="part-online">
+          <p className="text-sm font-semibold text-ink sm:col-span-2">Payé en ligne, encaissé par The Host Club</p>
+          <div><Label k="priceDh" hint="Ce que le client paie à la réservation.">Prix par place (DH)</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
+          <div><Label k="memberPriceDh" hint="Facultatif. Vide = réduction de l'abonnement (réglée dans « Abonnement »).">Prix membre (DH)</Label><input {...field("memberPriceDh")} inputMode="decimal" value={v.memberPriceDh} onChange={(e) => set("memberPriceDh", e.target.value)} />{err("memberPriceDh")}</div>
+          <div className="sm:col-span-2"><Label k="included" hint="Un élément par ligne, affiché sur la fiche. Ex. « Place réservée et accueil par un hôte ».">{onSiteMode ? "Ce que comprend la part payée en ligne" : "Ce qui est inclus"}</Label><textarea {...field("included")} rows={3} value={v.included ?? ""} onChange={(e) => set("included", e.target.value)} /></div>
         </div>
+
+        {onSiteMode && (
+          <div className="grid gap-4 rounded-xl border border-line p-4 sm:col-span-2 sm:grid-cols-2" data-testid="part-on-site">
+            <p className="text-sm font-semibold text-ink sm:col-span-2">Payé sur place, directement {partnerName ? `à ${partnerName}` : "au partenaire"} — jamais encaissé par nous</p>
+            {v.pricingModel === "fixed_partner" && (
+              <div><Label k="partnerPriceDh" hint="Montant fixe par place, connu à l'avance.">Prix sur place par place (DH)</Label><input {...field("partnerPriceDh")} inputMode="decimal" value={v.partnerPriceDh} onChange={(e) => set("partnerPriceDh", e.target.value)} />{err("partnerPriceDh")}</div>
+            )}
+            <div className={v.pricingModel === "fixed_partner" ? "" : "sm:col-span-2"}><Label k="partnerDescription" hint={v.pricingModel === "fixed_partner" ? "Affiché au client. Ex. « Menu 3 plats et une boisson »." : "Affiché au client. Ex. « Boissons et plats à la carte »."}>Ce que comprend la part sur place</Label><textarea {...field("partnerDescription")} rows={2} value={v.partnerDescription ?? ""} onChange={(e) => set("partnerDescription", e.target.value)} />{err("partnerDescription")}</div>
+          </div>
+        )}
+
+        <div className="grid gap-4 rounded-xl border border-dashed border-plum-200 bg-plum-50/40 p-4 sm:col-span-2 sm:grid-cols-2" data-testid="economics">
+          <p className="text-sm font-semibold text-ink sm:col-span-2">Ce que ça nous rapporte <span className="font-normal text-muted">(visible uniquement par l&apos;équipe)</span></p>
+          {!onSiteMode && v.partnerId && (
+            <div className="sm:col-span-2"><Label k="economicsModel">Accord avec le partenaire</Label>
+              <select {...field("economicsModel")} value={v.economicsModel} onChange={(e) => set("economicsModel", e.target.value as "own" | "commission")}>
+                <option value="own">Nous lui achetons la prestation (montant reversé par place)</option>
+                <option value="commission">Il nous laisse une commission (pourcentage du prix en ligne)</option>
+              </select>{err("economicsModel")}</div>
+          )}
+          {v.economicsModel === "own" ? (
+            <div><Label k="costPerSeatDh" hint={onSiteMode ? "Hôte, matériel… Facultatif. La part payée sur place n'est pas un coût pour nous : ne la recomptez pas." : v.partnerId ? "Ce que nous reversons au partenaire pour une place." : "Repas, salle, matériel, animation…"}>{onSiteMode ? "Nos coûts par place, hors part sur place (DH)" : v.partnerId ? "Montant reversé au partenaire par place (DH)" : "Nos coûts par place (DH)"}</Label><input {...field("costPerSeatDh")} inputMode="decimal" value={v.costPerSeatDh} onChange={(e) => set("costPerSeatDh", e.target.value)} />{err("costPerSeatDh")}</div>
+          ) : (
+            <div><Label k="commissionPercent" hint="Nous gardons ce pourcentage du prix payé en ligne et reversons le reste.">Commission gardée (%)</Label><input {...field("commissionPercent")} inputMode="decimal" value={v.commissionPercent} onChange={(e) => set("commissionPercent", e.target.value)} />{err("commissionPercent")}</div>
+          )}
+          {onSiteMode && (
+            <div><Label k="onSiteCommissionPercent" hint="Facultatif, selon le contrat : facturée au partenaire en dehors du site.">Commission sur la part sur place (%)</Label><input {...field("onSiteCommissionPercent")} inputMode="decimal" value={v.onSiteCommissionPercent} onChange={(e) => set("onSiteCommissionPercent", e.target.value)} />{err("onSiteCommissionPercent")}</div>
+          )}
+          {doubleCounted && (
+            <p role="alert" className="flex items-start gap-2 rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-950 sm:col-span-2">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
+              Vos coûts sont égaux au prix payé sur place : ce montant est réglé par le client au partenaire, il ne nous coûte rien. Laissez vos coûts à 0 sauf dépense réelle (hôte, matériel).
+            </p>
+          )}
+        </div>
+
+        <div className="grid gap-3 sm:col-span-2 sm:grid-cols-2" aria-live="polite">
+          <div className="rounded-xl bg-cream p-4" data-testid="preview-client">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Ce que voit le client</p>
+            {split ? (
+              <>
+                <p className="mt-1 text-lg font-semibold text-ink">
+                  {split.variable
+                    ? `${formatMoney({ amount: split.onlineUnit, currency: "MAD" })} + consommation sur place`
+                    : `${formatMoney({ amount: split.totalUnit ?? split.onlineUnit, currency: "MAD" })} par personne`}
+                </p>
+                {split.model === "fixed_partner" && split.onSiteUnit != null && (
+                  <p className="text-sm text-ink">{formatMoney({ amount: split.onlineUnit, currency: "MAD" })} maintenant · {formatMoney({ amount: split.onSiteUnit, currency: "MAD" })} sur place</p>
+                )}
+                {split.model === "online_only" && <p className="text-sm text-ink">Tout est réglé en ligne à la réservation.</p>}
+                {split.variable && <p className="text-sm text-ink">{formatMoney({ amount: split.onlineUnit, currency: "MAD" })} maintenant · votre consommation réglée sur place</p>}
+                {split.model !== "online_only" && v.partnerDescription?.trim() && <p className="mt-1 text-xs text-muted">Sur place : {v.partnerDescription.trim()}</p>}
+              </>
+            ) : (
+              <p className="mt-1 text-sm text-muted">Saisissez les prix pour voir l&apos;aperçu.</p>
+            )}
+          </div>
+          <div className="rounded-xl bg-plum-50 p-4" data-testid="preview-team">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Par place, pour nous</p>
+            {eco ? (
+              <dl className="mt-1 space-y-0.5 text-sm text-ink">
+                <div className="flex justify-between gap-2"><dt>Nous encaissons</dt><dd className="tabular-nums">{formatMoney({ amount: eco.weCollect, currency: "MAD" })}</dd></div>
+                <div className="flex justify-between gap-2"><dt>{v.economicsModel === "commission" || (!onSiteMode && v.partnerId) ? "Reversé au partenaire" : "Nos coûts"}</dt><dd className="tabular-nums">−{formatMoney({ amount: eco.paidOut, currency: "MAD" })}</dd></div>
+                <div className="flex justify-between gap-2 border-t border-plum-100 pt-1 font-semibold"><dt>Marge</dt><dd className="tabular-nums">{formatMoney({ amount: eco.margin, currency: "MAD" })}</dd></div>
+                {eco.onSiteCommission != null && <div className="flex justify-between gap-2 text-muted"><dt>+ commission à facturer au partenaire</dt><dd className="tabular-nums">{formatMoney({ amount: eco.onSiteCommission, currency: "MAD" })}</dd></div>}
+                {eco.onSiteCommissionOnConsumption && <p className="text-xs text-muted">+ commission sur la consommation réelle, à facturer au partenaire.</p>}
+              </dl>
+            ) : (
+              <p className="mt-1 text-sm text-muted">Saisissez le prix en ligne.</p>
+            )}
+          </div>
+        </div>
+        <p className="text-xs text-muted sm:col-span-2">Prix membre, abonnement, codes promo et frais de service ne s&apos;appliquent qu&apos;à la part payée en ligne. The Host Club n&apos;encaisse jamais la part réglée au partenaire.</p>
         {mode === "edit" && bookedSeats > 0 && (
           <p role="note" className="flex items-start gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-950 sm:col-span-2">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -414,7 +474,7 @@ export function ExperienceForm({
         )}
       </Section>
 
-      <Section id="dates" title={mode === "create" ? "6. Dates" : "6. Ajouter des dates (ou reproposer l'expérience)"}>
+      <Section id="dates" title={mode === "create" ? "5. Dates" : "5. Ajouter des dates (ou reproposer l'expérience)"}>
         <label className="flex items-center gap-2 text-sm sm:col-span-2">
           <input type="checkbox" checked={addSessions} onChange={(e) => setAddSessions(e.target.checked)} className="size-4 accent-plum-900" />
           {mode === "create" ? "Programmer des dates maintenant" : "Créer ces nouvelles dates à l'enregistrement"}
@@ -433,7 +493,7 @@ export function ExperienceForm({
       </Section>
 
       <fieldset className="rounded-2xl bg-white p-4 shadow-card sm:p-5">
-        <legend className="float-left mb-3 w-full text-base font-semibold text-ink">7. Photos</legend>
+        <legend className="float-left mb-3 w-full text-base font-semibold text-ink">6. Photos</legend>
         <div className="clear-both">
           {existingImages.length > 0 && images.length === 0 && (
             <div className="mb-3 flex flex-wrap gap-3">
@@ -504,7 +564,7 @@ export function ExperienceForm({
           <h2 className="flex items-center gap-2 text-base font-semibold"><CheckCircle2 className="size-5" aria-hidden /> Formulaire valide — voici ce qui serait créé</h2>
           <ul className="mt-3 space-y-1">
             <li><strong>{result.titleFr}</strong> · {result.district} · statut « {result.status === "published" ? "publiée" : "brouillon"} »</li>
-            <li>Prix organisation (en ligne) {formatMoney({ amount: preview.price, currency: "MAD" })} · marge estimée {formatMoney({ amount: preview.margin, currency: "MAD" })} par place</li>
+            <li>Prix payé en ligne {formatMoney({ amount: preview.price, currency: "MAD" })} · marge estimée {formatMoney({ amount: preview.margin, currency: "MAD" })} par place</li>
             <li>{preview.dates.length === 0 ? "Aucune nouvelle date (« Prochaines dates bientôt »)" : `${preview.dates.length} date${preview.dates.length > 1 ? "s" : ""} de ${result.sessions.capacity} places :`}</li>
           </ul>
           <ul className="mt-1 grid gap-1 ps-4 sm:grid-cols-2">

@@ -926,7 +926,8 @@
     "sectionOnline": "Online, when you book: {amount} per person.",
     "sectionFixed": "On site, to the partner: {amount} per person.",
     "sectionVariable": "On site, to the partner: whatever you order.",
-    "onSiteToVenue": "Paid directly to the partner venue, on site."
+    "onSiteToVenue": "Paid directly to the partner venue, on site.",
+    "includedOnline": "Included in the part paid online"
   },
   "ticket": {
     "title": "Your ticket",

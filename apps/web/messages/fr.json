@@ -926,7 +926,8 @@
     "sectionOnline": "En ligne, à la réservation : {amount} par personne.",
     "sectionFixed": "Sur place, au partenaire : {amount} par personne.",
     "sectionVariable": "Sur place, au partenaire : ce que vous consommez.",
-    "onSiteToVenue": "Réglé directement au lieu partenaire, sur place."
+    "onSiteToVenue": "Réglé directement au lieu partenaire, sur place.",
+    "includedOnline": "Inclus dans la part payée en ligne"
   },
   "ticket": {
     "title": "Votre billet",

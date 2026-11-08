@@ -193,6 +193,8 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     model: v.economicsModel,
     costPerSeat: v.economicsModel === "own" ? Math.round((v.costPerSeatDh ?? 0) * 100) : null,
     commissionPercent: v.economicsModel === "commission" ? v.commissionPercent : null,
+    // 11g : commission sur la part réglée sur place, facturée au partenaire hors site.
+    onSiteCommissionPercent: v.pricingModel !== "online_only" && v.onSiteCommissionPercent ? v.onSiteCommissionPercent : null,
     updatedAt: FieldValue.serverTimestamp(),
   });
   await batch.commit();

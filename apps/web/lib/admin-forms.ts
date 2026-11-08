@@ -25,7 +25,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
     priceDh: "", durationMinutes: "120", languages: ["fr"], alcoholServed: false,
     included: "", practicalInfo: "", cancellationPolicyId: DEFAULT_CANCELLATION_POLICY.id,
     partnerId: "", economicsModel: "own", costPerSeatDh: "", commissionPercent: "",
-    pricingModel: "online_only", partnerPriceDh: "", partnerDescription: "",
+    pricingModel: "online_only", partnerPriceDh: "", partnerDescription: "", onSiteCommissionPercent: "",
     status: "draft",
     sessions: { firstDate: nextWeekDate(now), time: "19:30", weeks: "1", capacity: "12" },
   };
@@ -47,6 +47,7 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     partnerId: eco?.partnerId ?? "", economicsModel: eco?.model ?? "own",
     costPerSeatDh: eco?.costPerSeat != null ? String(eco.costPerSeat / 100) : "",
     commissionPercent: eco?.commissionPercent != null ? String(eco.commissionPercent) : "",
+    onSiteCommissionPercent: eco?.onSiteCommissionPercent != null ? String(eco.onSiteCommissionPercent) : "",
     ...pricingValues(e),
     status: e.status === "published" ? "published" : "draft",
   };

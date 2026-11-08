@@ -101,3 +101,35 @@ export function summarizeLedger(rows: TwoPartLedgerRow[]) {
     consumptionBookings: valid.filter((r) => r.partnerStatus && r.onSiteAmount == null).length,
   };
 }
+
+/**
+ * 11g — ce que rapporte une place, sans jamais compter la part réglée sur place comme un coût :
+ * - nous encaissons la part en ligne (prix public, avant remises) ;
+ * - « own » : nos coûts (ou ce que nous reversons au partenaire) sont déduits ; « commission » : nous gardons le pourcentage ;
+ * - une commission sur la part sur place se facture au partenaire, hors site (chiffrée seulement pour un prix fixe).
+ */
+export function seatEconomics(o: {
+  onlineUnit: number;
+  model: PricingModel;
+  onSiteUnit: number | null;
+  economicsModel: "own" | "commission";
+  costPerSeat?: number;
+  commissionPercent?: number;
+  onSiteCommissionPercent?: number;
+}) {
+  const onSite = o.model === "fixed_partner" ? o.onSiteUnit : null;
+  const margin = o.economicsModel === "commission" ? Math.round((o.onlineUnit * (o.commissionPercent ?? 0)) / 100) : o.onlineUnit - (o.costPerSeat ?? 0);
+  const pct = o.model === "online_only" ? 0 : (o.onSiteCommissionPercent ?? 0);
+  return {
+    /** Total payé par le client pour une place (null : consommation libre, inconnue). */
+    clientPays: o.model === "variable_consumption" ? null : o.onlineUnit + (onSite ?? 0),
+    onSiteUnit: onSite,
+    weCollect: o.onlineUnit,
+    /** Nos coûts, ou ce qui est reversé au partenaire. */
+    paidOut: o.onlineUnit - margin,
+    margin,
+    /** Commission à facturer au partenaire sur la part sur place (prix fixe), ou null. */
+    onSiteCommission: onSite != null && pct > 0 ? Math.round((onSite * pct) / 100) : null,
+    onSiteCommissionOnConsumption: o.model === "variable_consumption" && pct > 0,
+  };
+}
