@@ -26,8 +26,9 @@
 |---|---|---|
 | **6 — prochaine** | **Composition des tables** (dîners) : algorithme + validation par l'équipe, révélation du groupe, **marque-places** (prénom de chacun), fiche « hôte » (accueil, présentations), plafond de participants | rien |
 | 7 | **Rappels** J-1 / H-3, prévenir les participants d'un changement de date ou de lieu, notifications push, statistiques | e-mails réels (Brevo) |
+| 8 | **Refonte demandée le 8 novembre** (document « the_host », détail dans docs/17) : 8a accueil (accroche « Your people are out there. », cartes décalées, univers en alternance photo / texte, « Pourquoi venir », FAQ + centre d'aide), 8b menu (Découvrir déroulant, À propos, Comment ça marche, Blog), 8c blog (City guide Casablanca, Conversation, Amitié, Comment fonctionne The Host Club), 8d consignes de sécurité enrichies, 8e page À propos (en-tête photo, créatrice, outils défilants, galerie) | photos reçues ✅ |
 | 5h | **Prestataire de paiement réel** (CMI, Payzone, YouCan Pay) | contrat signé |
-| 8 | **Recette, sécurité, mise en production** | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
+| 9 | **Recette, sécurité, mise en production** | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 
 Idées notées, à valider avant de les planifier :
 
