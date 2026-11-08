@@ -6,6 +6,13 @@ Point de départ : l'identité **déjà en place sur le site** (prune / crème, 
 
 ---
 
+## Décisions de Rita (8 novembre)
+
+- **Univers prune et crème : conservé.**
+- **Logotype actuel : conservé, à améliorer** (étape 10b).
+- Maquettes demandées pour tous les éléments ; validation étape par étape.
+- 10a livrée sous forme de planches : `docs/marque/brand-book.html` (publiée comme page partageable).
+
 ## Les 9 éléments
 
 ### 1. Logo principal (Primary logo)
