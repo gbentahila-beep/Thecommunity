@@ -68,3 +68,9 @@ Conséquence pratique : le site d'essai reste réservé à des **testeurs** (don
 - [ ] **Adresse e-mail presse** (ex. presse@…) : pour l'instant, la page renvoie vers le formulaire de contact.
 - [ ] **Photos** : confirmer que The Host Club détient les droits des photos du site ; pour la presse, n'envoyer des photos où des participants sont reconnaissables qu'avec leur accord. Le kit ne propose que 2 photos sans visage.
 - [ ] **Portrait d'Aya** en haute définition (sans la photo CULTIQ tant que l'accord n'est pas obtenu).
+
+## Sécurité et sauvegardes (étapes D et E, 8 novembre)
+- [ ] **Clé reCAPTCHA Enterprise pour App Check** : console Firebase → App Check → application web → reCAPTCHA Enterprise → créer la clé (domaine du site). Me donner la **clé du site** (publique, ce n'est pas un secret) : je l'ajoute au site, puis j'active l'obligation sur les formulaires publics.
+- [ ] **Droits de la sauvegarde nocturne** : console Google Cloud → IAM → compte de service des fonctions (« Compute Engine default service account ») → ajouter les rôles **« Administrateur import/export Cloud Datastore »** et **« Administrateur des objets Storage »**. Sans eux, la carte « Santé du site » affiche « échec » et les super-admins reçoivent une alerte. (Je ne modifie pas les droits moi-même sans votre accord.)
+- [ ] **Alerte de budget** : console Google Cloud → Facturation → Budgets et alertes (ex. 20 € par mois, alerte à 50 %, 90 %, 100 %).
+- [ ] **E-mail des super-admins** : vérifier que l'adresse de votre compte super-admin est la bonne (les alertes de santé y arrivent ; boîte d'envoi tant que Brevo n'est pas branché).

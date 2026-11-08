@@ -96,3 +96,22 @@ export async function getPaymentSettings(): Promise<PaymentSettingsView | null> 
       : null,
   };
 }
+
+/** Étape E : santé du site (sauvegarde de la nuit, bilan quotidien), lue dans settings/health. */
+export type SiteHealth = {
+  backup: { status: "ok" | "failed"; at: string | null; error: string | null } | null;
+  checkedAt: string | null;
+  issues: { code: string; count?: number; detail?: string }[];
+};
+
+export async function getSiteHealth(): Promise<SiteHealth | null> {
+  if (!FIREBASE_ENABLED) return null;
+  await requireAdmin();
+  const h = (await adminDb().doc("settings/health").get()).data() ?? {};
+  const iso = (v: unknown) => (v && typeof (v as { toDate?: () => Date }).toDate === "function" ? (v as { toDate: () => Date }).toDate().toISOString() : null);
+  return {
+    backup: h.backup ? { status: h.backup.status === "ok" ? "ok" : "failed", at: iso(h.backup.at), error: typeof h.backup.error === "string" ? h.backup.error : null } : null,
+    checkedAt: iso(h.checkedAt),
+    issues: Array.isArray(h.issues) ? h.issues : [],
+  };
+}

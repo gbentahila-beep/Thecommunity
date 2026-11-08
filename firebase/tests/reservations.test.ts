@@ -14,6 +14,8 @@ import { reserveSeats } from "../../functions/src/reservations/create-reservatio
 import { expireDueHolds } from "../../functions/src/reservations/expire-holds";
 import { purgeExpiredPreferences } from "../../functions/src/maintenance/purge-preferences";
 import { sendTransferReminders } from "../../functions/src/payments/transfer-reminders";
+import { expiredBackupFolders } from "../../functions/src/maintenance/backup";
+import { runHealthCheck } from "../../functions/src/maintenance/health";
 import { sendDueReminders } from "../../functions/src/notify/reminders";
 
 const PROJECT = "demo-thecommunity";
@@ -1600,5 +1602,27 @@ describe("formulaires publics passés par le serveur (D)", () => {
     expect(await refusal(u.call("submitPartnerApplication", { ...app, type: "casino" }))).toBe("invalid-argument:");
     expect(await u.call("submitPartnerApplication", app)).toEqual({ ok: true });
     expect((await db().collection("partnerApplications").where("businessName", "==", "Studio Lumière").get()).size).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("sauvegardes et bilan de santé (E)", () => {
+  it("sauvegardes : seules celles de plus de 14 jours sont supprimées", () => {
+    const now = new Date("2026-11-20T03:00:00Z");
+    expect(expiredBackupFolders(["2026-11-19", "2026-11-07", "2026-11-06", "2026-10-01", "autre"], now)).toEqual(["2026-11-06", "2026-10-01"]);
+  });
+
+  it("bilan quotidien : sauvegarde échouée et e-mails en échec signalés aux super-admins", async () => {
+    const sup = await member({ role: "superadmin" });
+    await db().doc(`users/${sup.uid}`).set({ email: `sante.${run}@example.com` }, { merge: true });
+    await db().doc("settings/health").set({ backup: { status: "failed", at: Timestamp.now(), error: "permission denied" } }, { merge: true });
+    await db().collection("mail").add({ to: "x@example.com", status: "failed", kind: "reminder_d1", createdAt: Timestamp.now() });
+    const issues = await runHealthCheck();
+    expect(issues.map((i) => i.code)).toEqual(expect.arrayContaining(["backup_failed", "mail_failures"]));
+    const health = (await db().doc("settings/health").get()).data()!;
+    expect(health.issues.length).toBeGreaterThanOrEqual(2);
+    const alerts = (await db().collection("mail").where("kind", "==", "health_alert").where("to", "==", `sante.${run}@example.com`).get()).docs;
+    expect(alerts.length).toBe(1);
+    expect(alerts[0]!.data().text).toContain("La sauvegarde de la nuit a échoué");
+    await db().doc("settings/health").set({ backup: { status: "ok", at: Timestamp.now(), error: null } }, { merge: true });
   });
 });

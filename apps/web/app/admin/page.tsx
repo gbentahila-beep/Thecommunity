@@ -4,11 +4,13 @@ import Link from "next/link";
 import { adminDate, BarList, Card, dh, FillBar, PageHeader, pct, StatTile, Table } from "@/components/admin/ui";
 import { computeStats, getAdminData } from "@/lib/data/admin";
 import { countPendingRequests } from "@/lib/data/admin-requests";
+import { getSiteHealth } from "@/lib/data/admin-mail";
+import { SiteHealthCard } from "@/components/admin/site-health";
 
 export const metadata = { title: "Tableau de bord" };
 
 export default async function AdminDashboard() {
-  const [d, pendingRequests] = await Promise.all([getAdminData(), countPendingRequests()]);
+  const [d, pendingRequests, health] = await Promise.all([getAdminData(), countPendingRequests(), getSiteHealth()]);
   const s = computeStats(d);
   const upcoming = d.sessions.slice(0, 8);
   const weekEnd = d.now.getTime() + 7 * 86_400_000;
@@ -30,6 +32,7 @@ export default async function AdminDashboard() {
           {pendingRequests} demande{pendingRequests > 1 ? "s" : ""} de participation à traiter →
         </Link>
       )}
+      {health && <SiteHealthCard health={health} />}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="Chiffre d'affaires brut" value={dh(s.gross)} hint={`${s.bookings} réservations confirmées`} />
         <StatTile label="Marge estimée" value={dh(s.margin)} hint={`${pct(s.gross ? s.margin / s.gross : 0)} du CA`} />
