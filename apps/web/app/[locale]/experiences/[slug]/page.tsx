@@ -306,13 +306,13 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
 
       {/* Barre de réservation collante sur mobile */}
       {next && (
-        <div className="fixed inset-x-0 bottom-[calc(64px+env(safe-area-inset-bottom))] z-20 border-t border-line bg-white/95 px-4 py-3 backdrop-blur-md lg:hidden">
-          <div className="mx-auto flex max-w-md items-center justify-between gap-4">
-            <div>
-              <p><PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} detail={false} /></p>
+        <div data-testid="mobile-book-bar" className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 border-t border-line bg-white px-4 py-2.5 shadow-[0_-4px_16px_rgba(0,0,0,0.04)] lg:hidden">
+          <div className="mx-auto flex max-w-md items-center justify-between gap-3 max-[359px]:flex-col max-[359px]:items-stretch max-[359px]:gap-2">
+            <div className="min-w-0 flex-1">
+              <p className="leading-tight"><PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} detail={false} /></p>
               <p className="text-xs text-muted">{formatShortSlot(next.startAt, locale)}</p>
             </div>
-            <Link href={`/reserver/${next.id}`} className="rounded-full bg-plum-900 px-6 py-3 font-semibold text-white">
+            <Link href={`/reserver/${next.id}`} className="inline-flex h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-plum-900 px-5 text-[15px] font-semibold text-white">
               {exp.admission === "on_request" ? t("requestCta") : t("bookCta")}
             </Link>
           </div>

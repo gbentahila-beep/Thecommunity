@@ -115,7 +115,7 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
           <UserRound className="size-5" aria-hidden />
         </Link>
       ) : (
-        <Link href="/inscription" className="inline-flex h-10 items-center rounded-full bg-plum-900 px-4 text-sm font-semibold text-white shadow-card transition hover:bg-plum-800">
+        <Link href="/inscription" className="inline-flex h-10 shrink-0 items-center whitespace-nowrap rounded-full bg-plum-900 px-4 text-sm font-semibold max-[379px]:px-3 max-[379px]:text-[13px] text-white shadow-card transition hover:bg-plum-800">
           {t("signup")}
         </Link>
       )}

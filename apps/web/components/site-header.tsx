@@ -25,7 +25,7 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
   return (
     <header className="sticky top-0 z-30 px-3 pt-2 lg:border-b lg:border-line/60 lg:bg-cream/90 lg:px-0 lg:pt-0 lg:backdrop-blur-md">
       {/* Mobile : barre flottante (logo, S'inscrire, menu) ; ordinateur : barre pleine largeur. */}
-      <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 rounded-full border border-line/60 bg-white/95 ps-5 pe-2 shadow-card backdrop-blur-md lg:h-20 lg:gap-4 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-8 lg:shadow-none lg:backdrop-blur-none">
+      <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 rounded-full border border-line/60 bg-white/95 ps-5 pe-2 max-[379px]:gap-2 max-[379px]:ps-4 shadow-card backdrop-blur-md lg:h-20 lg:gap-4 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-8 lg:shadow-none lg:backdrop-blur-none">
         <Logo />
         <nav aria-label={t("mainNav")} className="ms-8 hidden items-center gap-1 lg:flex">
           <DiscoverMenu label={t("discover")} menuLabel={t("discoverMenu")} items={discover} />

@@ -223,6 +223,25 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await m.goto(`${base}/confidentialite`);
   assert(await m.locator('dl dt', { hasText: 'Base légale' }).first().isVisible(), 'mobile : tableau en fiches');
 
+  // Barre de réservation mobile de la fiche expérience : bouton sur une ligne, collée au menu du bas, rien qui dépasse
+  for (const [w, h] of [[390, 844], [360, 740], [320, 568]]) {
+    await m.setViewportSize({ width: w, height: h });
+    for (const loc of ['', '/ar', '/en']) {
+      await m.goto(`${base}${loc}/experiences/diner-entre-inconnus-casablanca`);
+      const r = await m.evaluate(() => {
+        const bar = document.querySelector('[data-testid="mobile-book-bar"]'); const btn = bar.querySelector('a');
+        const nav = document.querySelector('nav.fixed'); const B = btn.getBoundingClientRect();
+        return { btnH: B.height, inside: B.left >= 0 && B.right <= innerWidth, gap: nav.getBoundingClientRect().top - bar.getBoundingClientRect().bottom };
+      });
+      assert(r.btnH <= 52 && r.inside && r.gap <= 0, `${w}px ${loc || '/fr'} : bouton de la barre sur une ligne, visible en entier, sans jour au-dessus du menu`);
+      await noOverflow(m, `${w}px ${loc || '/fr'} fiche expérience`);
+    }
+  }
+  await m.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  const foot = await m.evaluate(() => ({ last: Math.max(...[...document.querySelectorAll('footer a, footer p')].map((e) => e.getBoundingClientRect().bottom)), bar: document.querySelector('[data-testid="mobile-book-bar"]').getBoundingClientRect().top }));
+  assert(foot.last <= foot.bar, 'fiche expérience : le bas du pied de page n\'est pas caché par la barre de réservation');
+  await m.setViewportSize(devices['iPhone 13'].viewport);
+
   assert(errs.length === 0, 'aucune erreur navigateur' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();
   console.log('TOUT EST OK');

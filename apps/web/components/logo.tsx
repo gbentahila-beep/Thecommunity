@@ -6,7 +6,7 @@ export function Logo({ className = "", tone = "plum" }: { className?: string; to
   return (
     <Link href="/" className={`inline-flex shrink-0 items-center ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element -- SVG statique, pas d'optimisation nécessaire */}
-      <img src={src} alt="The Host Club — accueil" width={180} height={25} className="h-[1.55rem] w-auto lg:h-[1.85rem]" />
+      <img src={src} alt="The Host Club — accueil" width={180} height={25} className="h-[1.55rem] w-auto max-[379px]:h-[1.3rem] max-[339px]:h-[1.1rem] lg:h-[1.85rem]" />
     </Link>
   );
 }

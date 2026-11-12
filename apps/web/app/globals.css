@@ -88,3 +88,11 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Fiche expérience sur mobile : la barre de réservation s'ajoute au menu du bas,
+   le pied de page garde assez de marge pour ne pas passer dessous. */
+@media (max-width: 1023px) {
+  body:has([data-testid="mobile-book-bar"]) footer {
+    padding-bottom: calc(15rem + env(safe-area-inset-bottom));
+  }
+}
