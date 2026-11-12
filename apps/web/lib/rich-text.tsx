@@ -7,7 +7,15 @@ import { LEGAL_INFO } from "@/lib/legal-info";
  * et jetons « {{cle}} » remplacés par les informations légales, ou par une mention « à compléter » bien visible.
  */
 export function richText(text: string, missing: string): ReactNode {
-  return text.split(/(\[[^\]]+\]\(\/[^)]*\)|\{\{\w+\}\})/g).map((p, i) => {
+  return text.split(/(\[[^\]]+\]\((?:\/|https:\/\/)[^)]*\)|\{\{\w+\}\})/g).map((p, i) => {
+    const ext = p.match(/^\[([^\]]+)\]\((https:\/\/[^)]*)\)$/);
+    if (ext) {
+      return (
+        <a key={i} href={ext[2]!} target="_blank" rel="noopener noreferrer" className="font-medium text-plum-900 underline decoration-plum-700/40 underline-offset-4 hover:decoration-plum-900">
+          {ext[1]}
+        </a>
+      );
+    }
     const link = p.match(/^\[([^\]]+)\]\((\/[^)]*)\)$/);
     if (link) {
       return (
@@ -27,5 +35,5 @@ export function richText(text: string, missing: string): ReactNode {
 
 /** Version texte brut (recherche, métadonnées). */
 export function plainText(text: string): string {
-  return text.replace(/\[([^\]]+)\]\(\/[^)]*\)/g, "$1").replace(/\{\{\w+\}\}/g, "");
+  return text.replace(/\[([^\]]+)\]\((?:\/|https:\/\/)[^)]*\)/g, "$1").replace(/\{\{\w+\}\}/g, "");
 }

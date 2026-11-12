@@ -908,7 +908,8 @@
     "findGroup": "Find my group",
     "otherCity": "Pick another city",
     "usefulAlso": "Also useful",
-    "themesLabel": "Themes"
+    "themesLabel": "Themes",
+    "keyPoints": "Key points"
   },
   "twoPart": {
     "now": "{amount} now",

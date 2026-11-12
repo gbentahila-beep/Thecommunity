@@ -73,7 +73,7 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
             <Image src={a.cover} alt="" fill priority sizes="(min-width: 768px) 768px, 100vw" className={`object-cover ${a.coverPosition ?? ""}`} />
           </div>
           <div className="mt-8">
-            <ArticleBody blocks={a.body[lang]} />
+            <ArticleBody blocks={a.body[lang]} summaryLabel={t("keyPoints")} />
           </div>
         </article>
       </div>

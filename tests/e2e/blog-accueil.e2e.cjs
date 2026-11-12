@@ -93,6 +93,13 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await d.waitForURL('**/blog/reserver-sa-premiere-experience');
   assert(await d.getByRole('heading', { level: 1, name: 'Réserver sa première expérience, étape par étape' }).isVisible(), 'page article');
   assert(await d.locator('main ol li').count() >= 8, 'article : étapes numérotées');
+  const summary = d.getByTestId('article-summary');
+  assert(await summary.getByText('L\'essentiel').isVisible() && await summary.locator('li').count() === 4, 'article : encadré « L\'essentiel » (4 points)');
+  await d.goto(`${base}/blog/solitude-et-sante`);
+  const who = d.locator('main a[href^="https://www.who.int/"]');
+  assert(await who.count() === 1 && await who.getAttribute('target') === '_blank' && /noopener/.test(await who.getAttribute('rel')), 'source externe (OMS) : nouvel onglet, noopener');
+  assert(!(await d.locator('main').textContent()).includes('[Organisation'), 'lien externe rendu, pas de crochets bruts');
+  await d.goto(`${base}/blog/reserver-sa-premiere-experience`);
   const related = d.locator('section[aria-labelledby="useful-also"]');
   assert(await related.getByRole('heading', { name: 'À lire aussi' }).isVisible() && await related.getByRole('link').count() === 3, 'trois articles liés');
   const ld = JSON.parse(await d.locator('script[type="application/ld+json"]').first().textContent());
@@ -106,6 +113,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await d.locator('html').getAttribute('dir') === 'rtl', 'arabe : page en RTL');
   assert(await d.getByRole('heading', { level: 1, name: 'كيف تصبح شخصاً يُصغي حقاً' }).isVisible(), 'arabe : article traduit');
   assert(await d.locator('main article [lang="fr"]').count() === 0, 'arabe : plus de texte français affiché à la place');
+  assert(await d.getByTestId('article-summary').getByText('باختصار').isVisible(), 'arabe : encadré « L\'essentiel » traduit');
   await d.goto(`${base}/ar/blog/theme/city-guide`);
   assert(await d.getByText('هل يجب أن أتحدث العربية للتعرّف على الناس؟').isVisible(), 'arabe : FAQ City guide traduite');
   for (const [path, h1] of [['/ar/charte', 'قواعد المجتمع'], ['/ar/securite', 'السلامة'], ['/ar/cgu', 'الشروط العامة للاستخدام'], ['/ar/cgv', 'الشروط العامة للبيع'], ['/ar/confidentialite', 'سياسة الخصوصية']]) {

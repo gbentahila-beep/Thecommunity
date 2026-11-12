@@ -151,7 +151,7 @@ export async function CityCard() {
 }
 
 /** Corps d'un article : paragraphes, intertitres, listes, encadrés. */
-export function ArticleBody({ blocks }: { blocks: BlogBlock[] }) {
+export function ArticleBody({ blocks, summaryLabel }: { blocks: BlogBlock[]; summaryLabel: string }) {
   return (
     <div className="space-y-5 text-[17px] leading-relaxed text-ink/85">
       {blocks.map((b, i) => {
@@ -159,6 +159,14 @@ export function ArticleBody({ blocks }: { blocks: BlogBlock[] }) {
         if (Array.isArray(b)) return <ul key={i} className="list-disc space-y-2 ps-5 marker:text-plum-700">{b.map((li, k) => <li key={k}>{richText(li, "")}</li>)}</ul>;
         if ("h" in b) return <h2 key={i} className="pt-4 font-display text-2xl font-medium text-plum-900 sm:text-3xl">{b.h}</h2>;
         if ("ol" in b) return <ol key={i} className="list-decimal space-y-3 ps-6 marker:font-semibold marker:text-plum-700">{b.ol.map((li, k) => <li key={k} className="ps-1">{richText(li, "")}</li>)}</ol>;
+        if ("summary" in b) {
+          return (
+            <section key={i} aria-label={summaryLabel} className="rounded-2xl border border-plum-100 bg-white p-5 shadow-card" data-testid="article-summary">
+              <p className="text-xs font-semibold uppercase tracking-wide text-plum-700">{summaryLabel}</p>
+              <ul className="mt-2 list-disc space-y-1.5 ps-5 text-[16px] text-ink marker:text-plum-700">{b.summary.map((li, k) => <li key={k}>{richText(li, "")}</li>)}</ul>
+            </section>
+          );
+        }
         return (
           <aside key={i} className="flex gap-3 rounded-2xl bg-plum-50 p-5 text-plum-900">
             <Lightbulb className="mt-0.5 size-5 shrink-0" aria-hidden />

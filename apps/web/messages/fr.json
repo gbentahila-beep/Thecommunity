@@ -908,7 +908,8 @@
     "findGroup": "Trouver mon groupe",
     "otherCity": "Choisir une autre ville",
     "usefulAlso": "Utile aussi",
-    "themesLabel": "Thèmes"
+    "themesLabel": "Thèmes",
+    "keyPoints": "L'essentiel"
   },
   "twoPart": {
     "now": "{amount} maintenant",
