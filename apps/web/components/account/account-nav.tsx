@@ -1,10 +1,10 @@
 "use client";
 
-import { BadgeCheck, Bell, CalendarDays, History, LayoutDashboard, ReceiptText, SlidersHorizontal, UserRound } from "lucide-react";
+import { BadgeCheck, Bell, CalendarDays, History, LayoutDashboard, Lightbulb, ReceiptText, SlidersHorizontal, UserRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
-export function AccountNav({ unreadCount }: { unreadCount: number }) {
+export function AccountNav({ unreadCount, trustedHost = false }: { unreadCount: number; trustedHost?: boolean }) {
   const t = useTranslations("account");
   const pathname = usePathname();
   const items = [
@@ -14,6 +14,8 @@ export function AccountNav({ unreadCount }: { unreadCount: number }) {
     { href: "/espace/historique", label: t("navHistory"), icon: History },
     { href: "/espace/factures", label: t("navInvoices"), icon: ReceiptText },
     { href: "/abonnement", label: t("navMembership"), icon: BadgeCheck },
+    // 18d : visible uniquement pour les membres de confiance.
+    ...(trustedHost ? [{ href: "/espace/proposer", label: t("navPropose"), icon: Lightbulb }] : []),
     { href: "/espace/profil", label: t("navProfile"), icon: UserRound },
     { href: "/espace/preferences", label: t("navPreferences"), icon: SlidersHorizontal },
   ];

@@ -280,7 +280,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
       ) : visitor.transfer && transferClosed(new Date(session.startAt), visitor.transfer) && !onRequest ? (
         <Notice title={t("transferTooLateTitle")} text={t("transferTooLateText", { cutoff: visitor.transfer.cutoff })} />
       ) : onRequest ? (
-        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} instagramRequired={Boolean(exp.requestInstagramRequired)} defaultLanguages={profileLanguages(visitor.languages)} />
+        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} instagramRequired={Boolean(exp.requestInstagramRequired)} defaultLanguages={profileLanguages(visitor.languages)} physical={exp.physicalActivity === true} />
       ) : (
         <BookingForm
           sessionId={session.id}
@@ -290,6 +290,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           maxSeats={maxSeats}
           transfer={visitor.transfer}
           defaultLanguages={profileLanguages(visitor.languages)}
+          physical={exp.physicalActivity === true}
         />
       )}
     </PageShell>

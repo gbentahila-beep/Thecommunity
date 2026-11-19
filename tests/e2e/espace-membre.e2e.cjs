@@ -109,6 +109,18 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.goto(base + '/espace/reservations?onglet=annulees', { waitUntil: 'load' });
   assert(await page.getByText('Remboursée').isVisible(), 'onglet annulées');
 
+  // 18d : proposer une sortie (membre de confiance en démonstration)
+  await page.goto(base + '/espace/proposer', { waitUntil: 'load' });
+  await page.getByRole('button', { name: 'Envoyer ma proposition' }).click();
+  assert(await page.getByText('Trop court.').count() >= 1, 'proposition : champs vérifiés');
+  await page.getByLabel('Titre de la sortie').fill('Padel du dimanche');
+  await page.getByLabel(/^Description/).fill('Deux terrains, tous niveaux, puis un café ensemble au club de Racine.');
+  await page.getByLabel('Quartier').fill('Racine');
+  await page.getByLabel(/^Dates envisagées/).fill('Dimanches matin');
+  await page.getByRole('button', { name: 'Envoyer ma proposition' }).click();
+  assert(await page.getByTestId('proposal-sent').isVisible(), 'proposition : confirmation (démonstration)');
+  assert(await page.getByTestId('my-proposal').count() >= 1, 'proposition : « Mes propositions » listées');
+
   // Arabe
   await page.goto(base + '/ar/espace', { waitUntil: 'load' });
   assert(await page.evaluate(() => document.documentElement.dir) === 'rtl', 'espace en arabe RTL');

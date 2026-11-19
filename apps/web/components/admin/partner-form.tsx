@@ -17,6 +17,7 @@ const MESSAGES: Record<string, string> = {
   slug: "Ville inconnue.",
   min0: "Doit être positif.",
   tooMany: "Valeur trop élevée.",
+  invalidDate: "Date invalide.",
 };
 const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100 disabled:bg-cream";
 
@@ -112,6 +113,30 @@ export function PartnerForm({ id, initial, cities, live }: { id?: string; initia
           </label>
         </div>
         {v.model === "commission" && field("defaultCommissionPercent", "Commission (%)", { type: "number", min: "0", max: "80", inputMode: "decimal" })}
+      </fieldset>
+      <fieldset className="grid gap-4 rounded-xl border border-line p-4 sm:grid-cols-2" data-testid="partner-insurance">
+        <legend className="px-1 text-base font-semibold text-ink">Assurance du lieu (activités physiques)</legend>
+        <p className="text-xs text-muted sm:col-span-2">
+          Pour le sport, le paintball ou toute activité physique, demandez l&apos;attestation d&apos;assurance responsabilité civile du lieu.
+          Une alerte apparaît sur le tableau de bord quand elle manque, a expiré ou expire dans moins de 30 jours.
+        </p>
+        <label className="flex items-center gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" disabled={!live} checked={v.insurance?.verified === true} onChange={(e) => set("insurance", { ...(v.insurance ?? { verified: false }), verified: e.target.checked })} className="size-4 accent-plum-900" />
+          Attestation d&apos;assurance vue par l&apos;équipe
+        </label>
+        <div>
+          <label htmlFor="pf-insurer" className="mb-1 block text-sm font-medium">Assureur</label>
+          <input id="pf-insurer" className={input} disabled={!live} value={v.insurance?.insurer ?? ""} onChange={(e) => set("insurance", { ...(v.insurance ?? { verified: false }), insurer: e.target.value })} />
+        </div>
+        <div>
+          <label htmlFor="pf-policy" className="mb-1 block text-sm font-medium">N° de contrat</label>
+          <input id="pf-policy" className={input} disabled={!live} value={v.insurance?.policyNumber ?? ""} onChange={(e) => set("insurance", { ...(v.insurance ?? { verified: false }), policyNumber: e.target.value })} />
+        </div>
+        <div>
+          <label htmlFor="pf-expires" className="mb-1 block text-sm font-medium">Valable jusqu&apos;au</label>
+          <input id="pf-expires" type="date" className={input} disabled={!live} value={v.insurance?.expiresOn ?? ""} onChange={(e) => set("insurance", { ...(v.insurance ?? { verified: false }), expiresOn: e.target.value })} />
+          {err("insurance")}
+        </div>
       </fieldset>
       <div>
         <label htmlFor="pf-notes" className="mb-1 block text-sm font-medium">Notes internes</label>

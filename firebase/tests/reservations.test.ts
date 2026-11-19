@@ -15,8 +15,9 @@ import { expireDueHolds } from "../../functions/src/reservations/expire-holds";
 import { purgeExpiredPreferences } from "../../functions/src/maintenance/purge-preferences";
 import { sendTransferReminders } from "../../functions/src/payments/transfer-reminders";
 import { expiredBackupFolders } from "../../functions/src/maintenance/backup";
-import { runHealthCheck } from "../../functions/src/maintenance/health";
+import { runHealthCheck, uninsuredPhysicalExperiences } from "../../functions/src/maintenance/health";
 import { sendDueReminders } from "../../functions/src/notify/reminders";
+import { QUESTIONNAIRE_TEMPLATES } from "@thecommunity/shared";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -56,7 +57,7 @@ async function refusal(p: Promise<unknown>) {
   }
 }
 
-async function makeSession(opts: { capacity?: number; price?: number; startInHours?: number; mode?: string; maxSeats?: number; onRequest?: boolean; messageRequired?: boolean; instagramRequired?: boolean; membersOnly?: boolean; memberPrice?: number; createdHoursAgo?: number } = {}) {
+async function makeSession(opts: { capacity?: number; price?: number; startInHours?: number; mode?: string; maxSeats?: number; onRequest?: boolean; messageRequired?: boolean; instagramRequired?: boolean; membersOnly?: boolean; memberPrice?: number; createdHoursAgo?: number; extra?: Record<string, unknown> } = {}) {
   const expRef = db().collection("experiences").doc();
   await expRef.set({
     slug: `test-${expRef.id}`,
@@ -73,6 +74,7 @@ async function makeSession(opts: { capacity?: number; price?: number; startInHou
     requestInstagramRequired: opts.instagramRequired ?? false,
     membersOnly: opts.membersOnly ?? false,
     memberPrice: opts.memberPrice !== undefined ? { amount: opts.memberPrice, currency: "MAD" } : null,
+    ...(opts.extra ?? {}),
   });
   const start = Date.now() + (opts.startInHours ?? 72) * 3_600_000;
   const sessRef = db().collection("sessions").doc();
@@ -1624,5 +1626,142 @@ describe("sauvegardes et bilan de santé (E)", () => {
     expect(alerts.length).toBe(1);
     expect(alerts[0]!.data().text).toContain("La sauvegarde de la nuit a échoué");
     await db().doc("settings/health").set({ backup: { status: "ok", at: Timestamp.now(), error: null } }, { merge: true });
+  });
+});
+
+describe("toutes les activités (18)", () => {
+  const padel = QUESTIONNAIRE_TEMPLATES.find((t) => t.id === "padel")!.questions;
+  const born = (age: number) => `${new Date().getUTCFullYear() - age - 1}-01-15`;
+
+  it("âge minimum vérifié par le serveur (réservation et demande)", async () => {
+    const sessionId = await makeSession({ price: 0, extra: { minAge: 21 } });
+    const young = await member();
+    await db().doc(`users/${young.uid}`).set({ birthDate: born(19) }, { merge: true });
+    expect(await refusal(young.call("createReservation", { sessionId, seats: 1 }))).toBe("failed-precondition:too_young");
+    const older = await member();
+    await db().doc(`users/${older.uid}`).set({ birthDate: born(25) }, { merge: true });
+    expect(await older.call("createReservation", { sessionId, seats: 1 })).toMatchObject({ status: "confirmed" });
+    const req = await makeSession({ onRequest: true, extra: { minAge: 21 } });
+    expect(await refusal(young.call("requestBooking", { sessionId: req, seats: 1 }))).toBe("failed-precondition:too_young");
+  });
+
+  it("activité physique : conditions de participation obligatoires, version et date enregistrées", async () => {
+    const sessionId = await makeSession({ price: 0, extra: { physicalActivity: true } });
+    const u = await member();
+    expect(await refusal(u.call("createReservation", { sessionId, seats: 1 }))).toBe("failed-precondition:physical_terms_required");
+    const { reservationId } = await u.call("createReservation", { sessionId, seats: 1, physicalTermsAccepted: true });
+    const r = await reservation(String(reservationId));
+    expect(r.physicalTerms.version).toBe("2026-11-19");
+    expect(r.physicalTerms.acceptedAt).toBeInstanceOf(Timestamp);
+    // Sur demande : acceptées avec la demande, recopiées sur la réservation à l'acceptation.
+    const req = await makeSession({ onRequest: true, price: 0, extra: { physicalActivity: true } });
+    const v = await member();
+    expect(await refusal(v.call("requestBooking", { sessionId: req, seats: 1 }))).toBe("failed-precondition:physical_terms_required");
+    const { requestId } = await v.call("requestBooking", { sessionId: req, seats: 1, physicalTermsAccepted: true });
+    const team = await member({ role: "admin" });
+    const { reservationId: rid } = await team.call("adminDecideRequest", { requestId, decision: "accept" });
+    expect((await reservation(String(rid))).physicalTerms.version).toBe("2026-11-19");
+  });
+
+  it("questionnaire : invitation à la confirmation, réponses vérifiées, groupes padel par niveau", async () => {
+    const sessionId = await makeSession({ price: 0, mode: "group", capacity: 8, maxSeats: 1, extra: { questionnaire: padel, groupConfig: { minSize: 4, targetSize: 4, maxSize: 4 } } });
+    const players = await Promise.all(Array.from({ length: 8 }, () => member()));
+    const ids: string[] = [];
+    for (const p of players) ids.push(String((await p.call("createReservation", { sessionId, seats: 1 })).reservationId));
+    const notes = (await db().collection(`users/${players[0]!.uid}/notifications`).where("type", "==", "questionnaire").get()).docs;
+    expect(notes).toHaveLength(1);
+    expect(notes[0]!.data().link).toBe(`/espace/reservations/${ids[0]}#questionnaire`);
+    // Réponses invalides : obligatoire manquante, réponse hors liste, réservation d'autrui.
+    expect(await refusal(players[0]!.call("submitQuestionnaire", { reservationId: ids[0], answers: { qlevel: 0 } }))).toBe("invalid-argument:");
+    expect(await refusal(players[0]!.call("submitQuestionnaire", { reservationId: ids[0], answers: { qlevel: 5, qgoal: 0 } }))).toBe("invalid-argument:");
+    expect(await refusal(players[1]!.call("submitQuestionnaire", { reservationId: ids[0], answers: { qlevel: 0, qgoal: 0 } }))).toBe("not-found:not_found");
+    const levels = [0, 2, 0, 2, 0, 2, 0, 2];
+    for (const [i, p] of players.entries()) expect(await p.call("submitQuestionnaire", { reservationId: ids[i], answers: { qlevel: levels[i], qgoal: 0 } })).toEqual({ ok: true });
+    expect((await reservation(ids[1]!)).questionnaire.answers).toEqual({ qlevel: 2, qgoal: 0 });
+    const team = await member({ role: "admin" });
+    expect(await team.call("adminProposeGroups", { sessionId })).toEqual({ groups: 2 });
+    const groups = (await db().collection("groups").where("sessionId", "==", sessionId).get()).docs.map((d) => d.data().memberIds as string[]);
+    const levelOf = new Map(players.map((p, i) => [p.uid, levels[i]]));
+    for (const g of groups) expect(new Set(g.map((u) => levelOf.get(u))).size).toBe(1);
+    // Réponse modifiée après la proposition : groupes à revoir.
+    expect(await players[0]!.call("submitQuestionnaire", { reservationId: ids[0], answers: { qlevel: 1, qgoal: 1 } })).toEqual({ ok: true });
+    expect((await session(sessionId)).groupsNeedReview).toBe(true);
+  });
+
+  it("questionnaire effacé 30 jours après l'expérience", async () => {
+    const sessionId = await makeSession({ price: 0, extra: { questionnaire: padel } });
+    const u = await member();
+    const { reservationId } = await u.call("createReservation", { sessionId, seats: 1 });
+    await u.call("submitQuestionnaire", { reservationId, answers: { qlevel: 1, qgoal: 2 } });
+    await db().doc(`reservations/${reservationId}`).update({ "sessionSnapshot.startAt": Timestamp.fromMillis(Date.now() - 31 * 86_400_000) });
+    await purgeExpiredPreferences();
+    const r = await reservation(String(reservationId));
+    expect(r.questionnaire).toBeUndefined();
+    expect(r.questionnairePurgedAt).toBeInstanceOf(Timestamp);
+  });
+
+  it("membres de confiance : statut donné par l'équipe, proposition, refus avec message, limite par jour", async () => {
+    const u = await member();
+    await db().doc(`users/${u.uid}`).set({ firstName: "Yasmine", cityId: "casablanca" }, { merge: true });
+    const proposal = { title: "Padel du samedi matin", categoryId: "move", description: "Deux terrains de padel, tous niveaux, puis un café ensemble au club.", district: "Anfa", datesIdea: "Samedis matin de décembre", capacity: 8 };
+    expect(await refusal(u.call("submitOutingProposal", proposal))).toBe("failed-precondition:not_trusted");
+    expect(await refusal(u.call("adminSetTrustedHost", { uid: u.uid, trusted: true }))).toBe("permission-denied:");
+    const team = await member({ role: "admin" });
+    expect(await team.call("adminSetTrustedHost", { uid: u.uid, trusted: true })).toEqual({ ok: true, trusted: true });
+    expect(await refusal(u.call("submitOutingProposal", { ...proposal, capacity: 500 }))).toBe("invalid-argument:");
+    const { proposalId } = await u.call("submitOutingProposal", proposal);
+    const p = (await db().doc(`outingProposals/${proposalId}`).get()).data()!;
+    expect(p).toMatchObject({ userId: u.uid, firstName: "Yasmine", status: "pending", capacity: 8 });
+    expect(await refusal(u.call("adminDecideProposal", { proposalId, decision: "declined", message: "Pas cette fois." }))).toBe("permission-denied:");
+    expect(await team.call("adminDecideProposal", { proposalId, decision: "declined", message: "Le club n'est pas disponible en décembre." })).toEqual({ ok: true });
+    expect((await db().doc(`outingProposals/${proposalId}`).get()).data()!.status).toBe("declined");
+    const note = (await db().collection(`users/${u.uid}/notifications`).where("type", "==", "proposal_declined").get()).docs[0]!.data();
+    expect(note.body.fr).toContain("Le club n'est pas disponible en décembre.");
+    expect(await refusal(team.call("adminDecideProposal", { proposalId, decision: "declined", message: "Encore non." }))).toBe("failed-precondition:proposal_not_pending");
+    await u.call("submitOutingProposal", proposal);
+    await u.call("submitOutingProposal", proposal);
+    expect(await refusal(u.call("submitOutingProposal", proposal))).toBe("failed-precondition:too_many_proposals");
+    await team.call("adminSetTrustedHost", { uid: u.uid, trusted: false });
+    expect(await refusal(u.call("submitOutingProposal", proposal))).toBe("failed-precondition:not_trusted");
+  });
+
+  it("proposition retenue : l'expérience créée par l'équipe la lie, le membre est prévenu", async () => {
+    const u = await member();
+    await db().doc(`users/${u.uid}`).set({ firstName: "Karim", trustedHost: true }, { merge: true });
+    const { proposalId } = await u.call("submitOutingProposal", { title: "Paintball entre inconnus", categoryId: "play", description: "Deux équipes mélangées au hasard, puis un goûter tous ensemble.", district: "Bouskoura", datesIdea: "Un dimanche après-midi", capacity: 16 });
+    const team = await member({ role: "admin" });
+    await db().doc("categories/play").set({ isActive: true }, { merge: true });
+    const data = {
+      titleFr: "Paintball entre inconnus", summaryFr: "Deux équipes mélangées, puis un goûter tous ensemble.", descriptionFr: "Une après-midi de paintball en équipes composées par nous, tous niveaux.",
+      categoryId: "play", cityId: "casablanca", district: "Bouskoura", venueName: "Terrain partenaire", address: "Route de Bouskoura, Casablanca", revealPolicy: "immediate",
+      bookingMode: "group", groupMin: 6, groupTarget: 8, groupMax: 8, maxSeatsPerBooking: 1, priceDh: 250, durationMinutes: 180, languages: ["fr", "darija"], alcoholServed: false,
+      cancellationPolicyId: "standard-48h", partnerId: "", economicsModel: "own", costPerSeatDh: 150, status: "draft",
+      sessions: { firstDate: "2027-01-10", time: "14:00", weeks: 1, capacity: 16 },
+      physicalActivity: true, minAge: 18, outdoor: true, level: "all", whatToBring: "Baskets fermées", questionnaire: QUESTIONNAIRE_TEMPLATES.find((t) => t.id === "paintball")!.questions, proposalId,
+    };
+    const { experienceId } = await team.call("adminSaveExperience", { data, addSessions: false, images: [] });
+    const e = (await db().doc(`experiences/${experienceId}`).get()).data()!;
+    expect(e).toMatchObject({ physicalActivity: true, outdoor: true, level: "all", whatToBring: "Baskets fermées", proposedBy: { uid: u.uid, firstName: "Karim" } });
+    expect(e.questionnaire).toHaveLength(2);
+    expect((await db().doc(`outingProposals/${proposalId}`).get()).data()).toMatchObject({ status: "accepted", experienceId });
+    expect((await db().collection(`users/${u.uid}/notifications`).where("type", "==", "proposal_published").get()).size).toBe(1);
+    // Une proposition déjà utilisée ne peut pas servir à une autre expérience.
+    expect(await refusal(team.call("adminSaveExperience", { data, addSessions: false, images: [] }))).toBe("invalid-argument:");
+  });
+
+  it("bilan de santé : activité physique chez un lieu sans assurance vérifiée", async () => {
+    const partner = await db().collection("partners").add({ name: "Club sans attestation", status: "active" });
+    const insured = await db().collection("partners").add({ name: "Club assuré", status: "active", insurance: { verified: true, expiresOn: "2099-12-31" } });
+    const mk = async (title: string, partnerId: string) => {
+      const e = await db().collection("experiences").add({ title: { fr: title }, status: "published", physicalActivity: true });
+      await db().doc(`experiences/${e.id}/private/economics`).set({ partnerId });
+    };
+    await mk(`Padel non assuré ${run}`, partner.id);
+    await mk(`Padel assuré ${run}`, insured.id);
+    const list = await uninsuredPhysicalExperiences();
+    expect(list).toContain(`Padel non assuré ${run}`);
+    expect(list).not.toContain(`Padel assuré ${run}`);
+    const issues = await runHealthCheck();
+    expect(issues.map((i) => i.code)).toContain("partner_insurance");
   });
 });

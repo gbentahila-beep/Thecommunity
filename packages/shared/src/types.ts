@@ -1,4 +1,6 @@
 import type { ExperiencePricing, PartnerPaymentStatus, PartnerSnapshot } from "./two-part";
+import type { ActivityLevel } from "./activity";
+import type { QuestionDef, QuestionnaireAnswers } from "./questionnaire";
 /**
  * Types métier partagés entre le frontend et (plus tard) les Cloud Functions.
  * Ils suivent le modèle décrit dans docs/03-modele-de-donnees.md.
@@ -112,6 +114,19 @@ export type Experience = {
   status: "draft" | "published" | "archived";
   ratingAvg: number;
   ratingCount: number;
+  /* 18b : précisions pour les activités (facultatives, en français ; affichées telles quelles). */
+  level?: ActivityLevel | null;
+  equipmentProvided?: string;
+  whatToBring?: string;
+  dressCode?: string;
+  minAge?: number | null;
+  outdoor?: boolean;
+  /** 18c : activité physique, conditions de participation à accepter. */
+  physicalActivity?: boolean;
+  /** 18a : questionnaire rempli après la réservation. */
+  questionnaire?: QuestionDef[];
+  /** 18d : proposée par un membre de confiance (prénom affiché sur la fiche). */
+  proposedBy?: { uid: string; firstName: string } | null;
   isDemo?: boolean;
 };
 
@@ -210,6 +225,8 @@ export type UserProfile = {
   onboardingCompleted: boolean;
   notificationPrefs: { email: boolean; push: boolean; marketingEmail: boolean };
   createdAt: string;
+  /** 18d : membre de confiance (peut proposer des sorties, statut donné par l'équipe). */
+  trustedHost?: boolean;
   isDemo?: boolean;
 };
 
@@ -278,6 +295,12 @@ export type Reservation = {
   onSiteAmount?: number | null;
   partnerPaymentStatus?: PartnerPaymentStatus;
   reviewId?: string;
+  /** 18a : réponses au questionnaire de l'expérience (effacées 30 jours après l'expérience). */
+  questionnaire?: { answers: QuestionnaireAnswers; answeredAt: string } | null;
+  /** Invitation à remplir le questionnaire envoyée (une seule fois). */
+  questionnaireNotifiedAt?: string;
+  /** 18c : conditions de participation aux activités physiques acceptées (version et date). */
+  physicalTerms?: { version: string; acceptedAt: string } | null;
   createdAt: string;
   isDemo?: boolean;
 };
@@ -305,6 +328,9 @@ export type NotificationType =
   | "new_dates"
   | "request_accepted"
   | "request_declined"
+  | "questionnaire"
+  | "proposal_published"
+  | "proposal_declined"
   | "welcome";
 
 export type AppNotification = {
@@ -316,4 +342,28 @@ export type AppNotification = {
   createdAt: string;
   readAt?: string;
   isDemo?: boolean;
+};
+
+/** 18d : sortie proposée par un membre de confiance (lisible par son auteur et l'équipe). */
+export type OutingProposal = {
+  id: string;
+  userId: string;
+  firstName: string;
+  cityId: string;
+  title: string;
+  categoryId: CategoryKey;
+  description: string;
+  district: string;
+  venueIdea: string;
+  datesIdea: string;
+  capacity: number;
+  priceIdeaDh: number | null;
+  level: ActivityLevel | null;
+  willHost: boolean;
+  notes: string;
+  status: "pending" | "accepted" | "declined";
+  experienceId?: string;
+  decisionMessage?: string;
+  createdAt: string;
+  decidedAt?: string;
 };

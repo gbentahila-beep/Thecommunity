@@ -5,6 +5,7 @@ import { Minus, Plus, Tag } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
+import { PhysicalTermsCheckbox } from "@/components/booking/physical-terms";
 import { authReady, bookingErrorOf, createReservation, previewPricing, promoErrorOf, startCheckout, type BookingError } from "@/lib/booking-client";
 import { goToCheckout } from "./go-to-checkout";
 import { EMPTY_PREFERENCES, needsConsent, PreferencesFields } from "./preferences-fields";
@@ -16,6 +17,8 @@ type Props = {
   maxSeats: number;
   /** Part réglée sur place au partenaire (étape 11) : prix fixe par place, ou null pour une consommation libre. Absent = tout en ligne.
    *  `partner` vide quand le lieu n'est révélé que la veille (on ne le dévoile pas avant). */
+  /** 18c : activité physique → conditions de participation à accepter avant de réserver. */
+  physical?: boolean;
   onSite?: { unit: number | null; partner: string; description: string } | null;
   /** Paiement par virement (5h) : délai et limite avant l'expérience, en heures. */
   transfer?: { hours: number; cutoff: number } | null;
@@ -27,7 +30,7 @@ type Props = {
  * Choix du nombre de places, code promo, préférences pour l'accueil, puis réservation.
  * Le prix affiché vient du serveur (prix membre, code, frais) ; la réservation le recalcule.
  */
-export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite = null, transfer = null, defaultLanguages = [] }: Props) {
+export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite = null, transfer = null, defaultLanguages = [], physical = false }: Props) {
   const t = useTranslations("booking");
   const t2 = useTranslations("twoPart");
   const tp = useTranslations("prefs");
@@ -43,6 +46,8 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
   const [promoError, setPromoError] = useState<string | null>(null);
   const [prefs, setPrefs] = useState<BookingPreferences>({ ...EMPTY_PREFERENCES, languages: defaultLanguages });
   const [consentError, setConsentError] = useState(false);
+  const [physicalOk, setPhysicalOk] = useState(false);
+  const [physicalError, setPhysicalError] = useState(false);
   const request = useRef(0);
   const money = (amount: number) => formatMoney({ amount, currency }, lang);
 
@@ -85,11 +90,15 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
       return;
     }
     setConsentError(false);
+    if (physical && !physicalOk) {
+      setPhysicalError(true);
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
       await authReady();
-      const r = await createReservation(sessionId, seats, { promoCode: promo, preferences: shared ? { ...prefs, allergies: prefs.allergies.trim() } : undefined });
+      const r = await createReservation(sessionId, seats, { promoCode: promo, preferences: shared ? { ...prefs, allergies: prefs.allergies.trim() } : undefined, physicalTermsAccepted: physical ? true : undefined });
       if (r.status === "confirmed") {
         router.push(`/espace/reservations/${r.reservationId}?reservation=confirmee`);
         return;
@@ -214,6 +223,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
         </div>
       </details>
       {consentError && <p role="alert" className="text-sm text-red-800">{tp("consentRequired")}</p>}
+      {physical && <PhysicalTermsCheckbox checked={physicalOk} onChange={(v) => { setPhysicalOk(v); setPhysicalError(false); }} error={physicalError} disabled={busy} />}
 
       {error && (
         <div role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">

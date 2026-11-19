@@ -1,7 +1,7 @@
 "use client";
 
 import type { AppNotification } from "@thecommunity/shared";
-import { Bell, CalendarCheck, CreditCard, Sparkles, Star, Users } from "lucide-react";
+import { Bell, CalendarCheck, ClipboardList, CreditCard, Lightbulb, Sparkles, Star, Users } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { doc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { useState } from "react";
@@ -16,6 +16,9 @@ const ICONS: Partial<Record<AppNotification["type"], typeof Bell>> = {
   group_revealed: Users,
   review_request: Star,
   welcome: Sparkles,
+  questionnaire: ClipboardList,
+  proposal_published: Lightbulb,
+  proposal_declined: Lightbulb,
 };
 
 /** Liste des notifications. Phase 2 : « lu » mémorisé le temps de la visite ; phase 3 : écrit dans Firestore (readAt). */

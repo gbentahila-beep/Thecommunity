@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { BOOKING_MODES, CATEGORY_KEYS } from "./constants";
 import { SPOKEN_LANGUAGES } from "./profile";
+import { ACTIVITY_LEVELS, MIN_AGE_FLOOR, MIN_AGE_MAX } from "./activity";
+import { questionnaireSchema } from "./questionnaire";
 import { zonedDateTimeToUtc } from "./time";
 import type { BookingMode, CategoryKey, SpokenLanguage } from "./types";
 
@@ -68,6 +70,21 @@ export const experienceInputSchema = z
     partnerDescription: z.string().trim().max(300, "tooLong").optional().or(z.literal("")),
     status: z.enum(["draft", "published"]),
     sessions: sessionPlanSchema,
+    /* ——— 18b : précisions pour les activités (toutes facultatives) ——— */
+    level: z.enum(ACTIVITY_LEVELS).optional(),
+    equipmentProvided: z.string().trim().max(300, "tooLong").optional().or(z.literal("")),
+    whatToBring: z.string().trim().max(300, "tooLong").optional().or(z.literal("")),
+    dressCode: z.string().trim().max(200, "tooLong").optional().or(z.literal("")),
+    /** Âge minimum au-delà de 18 ans (vérifié par le serveur à la réservation). */
+    minAge: z.coerce.number().int().min(MIN_AGE_FLOOR, "minAge").max(MIN_AGE_MAX, "tooMany").optional(),
+    /** En plein air : reportée ou annulée (remboursée) si la météo ne permet pas l'activité. */
+    outdoor: z.boolean().default(false),
+    /** 18c : activité physique → conditions de participation à accepter à la réservation. */
+    physicalActivity: z.boolean().default(false),
+    /** 18a : questionnaire rempli par les participants après leur réservation (10 questions au plus). */
+    questionnaire: questionnaireSchema,
+    /** 18d : proposition d'un membre de confiance dont cette expérience est issue. */
+    proposalId: z.string().regex(/^[A-Za-z0-9_-]{6,40}$/).optional(),
   })
   .superRefine((v, ctx) => {
     const grouped = v.bookingMode === "group" || v.bookingMode === "social_dinner";

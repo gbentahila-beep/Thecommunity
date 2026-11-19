@@ -92,6 +92,8 @@ export async function fsAdminData(now: Date) {
       ...(r.preferences
         ? { preferences: { diet: String(r.preferences.diet ?? "none"), allergies: String(r.preferences.allergies ?? ""), languages: r.preferences.languages ?? [], shareWithVenue: r.preferences.shareWithVenue === true } }
         : {}),
+      ...(r.questionnaire?.answers ? { answers: r.questionnaire.answers as Record<string, number> } : {}),
+      ...(r.physicalTerms?.version ? { physicalTermsVersion: String(r.physicalTerms.version) } : {}),
     };
   });
   const payments: AdminPayment[] = paySnap.docs.map((d) => {
@@ -121,6 +123,7 @@ export async function fsAdminData(now: Date) {
       role: u.role ?? "user",
       status: u.status === "suspended" ? "suspended" : "active",
       createdAt: iso(u.createdAt),
+      ...(u.trustedHost === true ? { trustedHost: true } : {}),
     };
   });
   const partners = partnersSnap.docs.map((d) => plain<Partner>({ id: d.id, ...d.data() }));

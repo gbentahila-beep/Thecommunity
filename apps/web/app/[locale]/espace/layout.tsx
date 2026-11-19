@@ -26,7 +26,7 @@ export default async function AccountLayout({ children }: LayoutProps<"/[locale]
       {space.session && !space.session.emailVerified && <VerifyEmailBanner />}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-10">
         <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start">
-          <AccountNav unreadCount={space.unreadCount} />
+          <AccountNav unreadCount={space.unreadCount} trustedHost={space.profile.trustedHost === true} />
           {space.session && (
             <div className="mt-2 hidden lg:block">
               <LogoutButton />

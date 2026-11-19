@@ -28,7 +28,7 @@ export default async function UsersAdminPage({ searchParams }: PageProps<"/admin
         <Table head={["Membre", "Âge", "Centres d'intérêt", "Réservations", "Inscrit le", "Rôle", "Statut", ...(d.isDemo ? [] : ["Actions"])]} caption="Utilisateurs">
           {users.map((u) => (
             <tr key={u.uid}>
-              <td><span className="block font-medium text-ink">{u.firstName} {u.lastName}</span><span className="text-xs text-muted">{u.email} · {u.phone}</span></td>
+              <td><span className="block font-medium text-ink">{u.firstName} {u.lastName}{u.trustedHost && <span className="ms-2 rounded-full bg-plum-50 px-2 py-0.5 text-[11px] font-semibold text-plum-900">Membre de confiance</span>}</span><span className="text-xs text-muted">{u.email} · {u.phone}</span></td>
               <td className="tabular-nums">{u.birthDate ? ageOn(u.birthDate) : "—"}</td>
               <td className="text-xs text-muted">{u.interests.map((i) => INTEREST_LABELS[i]).join(", ")}</td>
               <td className="tabular-nums">{count(u.uid)}</td>
@@ -37,7 +37,7 @@ export default async function UsersAdminPage({ searchParams }: PageProps<"/admin
               <td><Badge tone={u.status === "active" ? "green" : "red"}>{u.status === "active" ? "Actif" : "Suspendu"}</Badge></td>
               {!d.isDemo && (
                 <td>
-                  <UserActions uid={u.uid} role={u.role} status={u.status} canSetRole={d.admin?.role === "superadmin"} isSelf={d.admin?.uid === u.uid} />
+                  <UserActions uid={u.uid} role={u.role} status={u.status} canSetRole={d.admin?.role === "superadmin"} isSelf={d.admin?.uid === u.uid} trustedHost={u.trustedHost === true} />
                 </td>
               )}
             </tr>

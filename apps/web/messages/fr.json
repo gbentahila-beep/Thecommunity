@@ -153,7 +153,24 @@
     "retiredEyebrow": "Expérience terminée",
     "retiredText": "Cette expérience n'est plus proposée. Découvrez nos autres expériences : il y en a sûrement une qui vous ressemble.",
     "retiredCta": "Voir les expériences",
-    "retiredSimilar": "Dans le même univers"
+    "retiredSimilar": "Dans le même univers",
+    "levelLabel": "Niveau",
+    "level_all": "Tous niveaux",
+    "level_beginner": "Débutant",
+    "level_intermediate": "Intermédiaire",
+    "level_advanced": "Confirmé",
+    "minAgeLabel": "Âge minimum",
+    "minAgeValue": "{age} ans et plus",
+    "activityTitle": "Avant de venir",
+    "equipmentProvided": "Matériel fourni",
+    "whatToBring": "À apporter",
+    "dressCode": "Tenue conseillée",
+    "outdoorTitle": "En plein air",
+    "outdoorText": "Si la météo ne permet pas l'activité, nous vous prévenons au plus tôt : elle est reportée (vous gardez votre place ou êtes remboursé, au choix) ou annulée et intégralement remboursée.",
+    "physicalTitle": "Activité physique",
+    "physicalText": "Pour réserver, vous acceptez nos [conditions de participation aux activités physiques](/conditions-activites-physiques) : pratiquez à votre rythme et signalez à l'équipe tout souci de santé.",
+    "questionnaireNote": "Après votre réservation, un court questionnaire ({count, plural, one {# question} other {# questions}}) nous aide à composer votre groupe.",
+    "proposedBy": "Sortie proposée par {name}, membre de la communauté"
   },
   "booking": {
     "title": "Réserver ma place",
@@ -211,7 +228,9 @@
       "members_only": "Expérience réservée aux membres abonnés.",
       "members_early_access": "Cette nouvelle date est encore en accès anticipé pour les membres.",
       "not_editable": "Cette réservation n'est plus modifiable.",
-      "transfer_too_late": "Cette date est trop proche pour un paiement par virement : choisissez une date plus lointaine."
+      "transfer_too_late": "Cette date est trop proche pour un paiement par virement : choisissez une date plus lointaine.",
+      "too_young": "Cette expérience demande un âge minimum plus élevé que le vôtre.",
+      "physical_terms_required": "Acceptez les conditions de participation aux activités physiques pour réserver."
     },
     "fullTextOnRequest": "Toutes les places sont prises pour cette date. Regardez les autres dates de cette expérience.",
     "seeMyBooking": "Voir ma réservation",
@@ -250,7 +269,9 @@
     "holdNoteTransfer": "Votre place est bloquée jusqu'à réception du virement : {hours} h maximum, et au plus tard {cutoff} h avant l'expérience.",
     "transferModeNote": "Paiement par virement bancaire : après la réservation, vous recevez une référence et nos coordonnées bancaires. Votre place est confirmée dès réception du virement, puis vous recevez votre billet.",
     "transferTooLateTitle": "Paiement par virement impossible pour cette date",
-    "transferTooLateText": "Le virement doit nous parvenir au plus tard {cutoff} h avant l'expérience : cette date est trop proche. Choisissez une date plus lointaine."
+    "transferTooLateText": "Le virement doit nous parvenir au plus tard {cutoff} h avant l'expérience : cette date est trop proche. Choisissez une date plus lointaine.",
+    "physicalTerms": "J'ai lu et j'accepte les [conditions de participation aux activités physiques](/conditions-activites-physiques), et je confirme être en état de pratiquer cette activité.",
+    "physicalTermsRequired": "Cochez la case pour accepter les conditions de participation aux activités physiques."
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -323,7 +344,8 @@
     "help": "Centre d'aide",
     "partner": "Devenir partenaire",
     "blog": "Blog",
-    "press": "Presse"
+    "press": "Presse",
+    "physical": "Activités physiques"
   },
   "pages": {
     "howTitle": "Comment ça marche",
@@ -415,6 +437,13 @@
       "refunded": "Remboursée",
       "attended": "Vécue",
       "no_show": "Absent"
+    },
+    "categories": {
+      "eat": "Dîners & gastronomie",
+      "move": "Sport & bien-être",
+      "play": "Jeux",
+      "create": "Ateliers",
+      "discover": "Sorties"
     }
   },
   "account": {
@@ -448,7 +477,8 @@
     "emptyTab": "Rien ici pour le moment.",
     "seats": "{count, plural, one {# place} other {# places}}",
     "navMembership": "Abonnement",
-    "navInvoices": "Mes factures"
+    "navInvoices": "Mes factures",
+    "navPropose": "Proposer une sortie"
   },
   "reservation": {
     "back": "Mes réservations",
@@ -966,5 +996,70 @@
     "noBank": "Les coordonnées bancaires seront communiquées prochainement.",
     "refundPending": "Remboursement en cours : notre équipe vous contacte pour le virement retour.",
     "pendingMembership": "Référence {reference} · {amount} à virer avant le {when}. Votre abonnement est activé dès réception, et vous recevez votre facture."
+  },
+  "questionnaire": {
+    "title": "Votre questionnaire",
+    "intro": "Deux minutes pour nous aider à composer votre groupe (niveau, envies…). Vos réponses servent uniquement à vous placer avec les bonnes personnes et sont effacées 30 jours après l'expérience.",
+    "introDone": "Merci, vos réponses sont enregistrées. Vous pouvez les modifier jusqu'au début de l'expérience.",
+    "optional": "facultatif",
+    "required": "Choisissez une réponse.",
+    "submit": "Envoyer mes réponses",
+    "update": "Mettre à jour mes réponses",
+    "saving": "Envoi…",
+    "saved": "Réponses enregistrées.",
+    "closed": "L'expérience a commencé : les réponses ne sont plus modifiables.",
+    "errorStarted": "L'expérience a déjà commencé.",
+    "errorGeneric": "Envoi impossible pour le moment. Réessayez dans un instant.",
+    "todo": "Questionnaire à remplir"
+  },
+  "propose": {
+    "title": "Proposer une sortie",
+    "intro": "Vous avez une idée de sortie (padel, randonnée, atelier, quiz…) ? Proposez-la : l'équipe la relit, trouve le lieu et le prix, puis la publie. Vous êtes prévenu à chaque étape.",
+    "notTrusted": "Cette page est réservée aux membres de confiance : des habitués à qui l'équipe propose d'organiser leurs propres sorties. Une idée en attendant ? Écrivez-nous.",
+    "contactUs": "Nous écrire",
+    "titleLabel": "Titre de la sortie",
+    "titlePlaceholder": "Ex. Padel du samedi matin",
+    "categoryLabel": "Univers",
+    "levelLabel": "Niveau",
+    "levelNone": "Non précisé",
+    "level_all": "Tous niveaux",
+    "level_beginner": "Débutant",
+    "level_intermediate": "Intermédiaire",
+    "level_advanced": "Confirmé",
+    "descriptionLabel": "Description",
+    "descriptionHint": "Le déroulé, l'ambiance, pour qui c'est fait (30 caractères au moins).",
+    "districtLabel": "Quartier",
+    "venueLabel": "Lieu envisagé (facultatif)",
+    "datesLabel": "Dates envisagées",
+    "datesHint": "Ex. « samedis matin de décembre » ou « un dimanche après-midi ».",
+    "capacityLabel": "Nombre de participants",
+    "priceLabel": "Prix par personne envisagé (DH)",
+    "priceHint": "Facultatif : l'équipe fixe le prix final.",
+    "willHost": "Je serai présent pour accueillir le groupe.",
+    "notesLabel": "Un mot pour l'équipe (facultatif)",
+    "reviewNote": "Rien n'est publié sans l'équipe : nous vérifions le lieu, la sécurité et le prix avant de créer la fiche.",
+    "submit": "Envoyer ma proposition",
+    "sending": "Envoi…",
+    "sentTitle": "Proposition envoyée",
+    "sentText": "Merci ! L'équipe la relit et vous répond dans vos notifications.",
+    "sentDemo": "Démonstration : rien n'a été envoyé. Sur le site en ligne, l'équipe reçoit votre proposition.",
+    "another": "Proposer une autre sortie",
+    "mine": "Mes propositions",
+    "status_pending": "En cours de lecture",
+    "status_accepted": "Retenue",
+    "status_declined": "Non retenue",
+    "teamMessage": "Message de l'équipe :",
+    "errors": {
+      "tooShort": "Trop court.",
+      "tooLong": "Trop long.",
+      "required": "Champ obligatoire.",
+      "min2": "Au moins 2 personnes.",
+      "tooMany": "Valeur trop élevée (50 au plus).",
+      "min0": "Doit être positif.",
+      "invalid": "Valeur invalide.",
+      "tooManyProposals": "Vous avez déjà envoyé 3 propositions aujourd'hui : réessayez demain.",
+      "notTrusted": "Les propositions sont réservées aux membres de confiance.",
+      "generic": "Envoi impossible pour le moment."
+    }
   }
 }

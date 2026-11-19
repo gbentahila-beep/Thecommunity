@@ -242,6 +242,12 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time;
       allow update, delete: if false;
     }
+    // 18d : sorties proposées par les membres de confiance — écrites uniquement par le serveur
+    // (submitOutingProposal : statut vérifié, limite par jour), lues par leur auteur et l'équipe.
+    match /outingProposals/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow write: if false;
+    }
     match /reports/{id} {
       // Création via callable (vérifie que les deux personnes ont participé à la même session).
       allow read: if isAdmin();

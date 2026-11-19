@@ -1,4 +1,4 @@
-import { ageBand, ageOn } from "@thecommunity/shared";
+import { ageBand, ageOn, optionText } from "@thecommunity/shared";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GroupsBoard, type BoardMember } from "@/components/admin/groups-board";
@@ -17,6 +17,7 @@ export default async function GroupsPage({ params }: PageProps<"/admin/sessions/
   const e = d.experiences.get(s.experienceId)!;
   if (!e.groupConfig) notFound();
   const groups = d.groups.filter((g) => g.sessionId === s.id);
+  const questions = e.questionnaire ?? [];
   // Participants confirmés : la langue de table choisie à la réservation passe avant celles du profil.
   const confirmed = d.reservations.filter((r) => r.sessionId === s.id && (r.status === "confirmed" || r.status === "attended"));
   const members: Record<string, BoardMember> = {};
@@ -31,6 +32,13 @@ export default async function GroupsPage({ params }: PageProps<"/admin/sessions/
       languages: r.preferences?.languages?.length ? r.preferences.languages : u.languages,
       interests: u.interests,
       seats: r.seats,
+      // 18a : réponses au questionnaire, résumées pour l'équipe (« Niveau de padel ? Intermédiaire »).
+      ...(r.answers
+        ? {
+            answers: r.answers,
+            answersText: questions.filter((q) => r.answers![q.id] !== undefined).map((q) => optionText(q, r.answers![q.id]!)).join(" · "),
+          }
+        : {}),
     };
   }
   // Démonstration : les groupes fictifs renvoient à des membres qui n'ont pas forcément de réservation.
@@ -56,6 +64,12 @@ export default async function GroupsPage({ params }: PageProps<"/admin/sessions/
           Une réservation a changé depuis l&apos;enregistrement (annulation, déplacement ou nouvelle place) : vérifiez la composition et enregistrez-la à nouveau.
         </p>
       )}
+      {questions.length > 0 && (
+        <p className="mb-4 rounded-2xl bg-plum-50 px-4 py-3 text-sm text-plum-900" data-testid="questionnaire-summary">
+          Questionnaire : {confirmed.filter((r) => r.answers).length} réponse(s) sur {confirmed.length} participant(s). La proposition de l&apos;algorithme en tient compte
+          ({questions.filter((q) => q.match === "same").length} question(s) « réunir », {questions.filter((q) => q.match === "mix").length} « mélanger »).
+        </p>
+      )}
       <div className="mb-4">
         <DemoNote>Glissez-déposez un participant, ou utilisez la liste « Déplacer vers » (mobile et clavier). Une réservation à plusieurs places compte pour toutes ses places.</DemoNote>
       </div>
@@ -72,6 +86,7 @@ export default async function GroupsPage({ params }: PageProps<"/admin/sessions/
           sessionId={s.id}
           status={status}
           unassigned={unassigned}
+          questions={questions.map(({ id, kind, match }) => ({ id, kind, match }))}
         />
       )}
     </>

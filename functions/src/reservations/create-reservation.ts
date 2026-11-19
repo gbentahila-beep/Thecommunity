@@ -1,10 +1,11 @@
-import { bookingClosesAt, bookingRefusal, HOLD_MINUTES, promoRefusal, readServiceFee, reservationRequestSchema, type BookingPreferences } from "@thecommunity/shared";
+import { bookingClosesAt, bookingRefusal, HOLD_MINUTES, PHYSICAL_TERMS_VERSION, promoRefusal, readServiceFee, reservationRequestSchema, tooYoung, type BookingPreferences } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth } from "../lib/guards";
 import { membershipRef, membershipTerms, planRef } from "../membership/state";
 import { reservationDoc } from "./reservation-doc";
+import { notifyQuestionnaire } from "./questionnaire";
 
 import { refuse } from "./refuse";
 export { refuse };
@@ -29,10 +30,13 @@ export async function reserveSeats(caller: { uid: string; emailVerified: boolean
   const clean = data && typeof data === "object" ? Object.fromEntries(Object.entries(data).filter(([, v]) => v !== null && v !== undefined)) : data;
   const parsed = reservationRequestSchema.safeParse(clean);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats, promoCode, preferences } = parsed.data;
+  const { sessionId, seats, promoCode, preferences, physicalTermsAccepted } = parsed.data;
 
   await requireMemberReady(uid);
-  return runReservation({ uid, sessionId, seats, promoCode, preferences });
+  const out = await runReservation({ uid, sessionId, seats, promoCode, preferences, physicalTermsAccepted });
+  // 18a : réservation gratuite confirmée tout de suite → invitation à remplir le questionnaire.
+  if (out.status === "confirmed" && !out.resumed) await notifyQuestionnaire(out.reservationId).catch(() => undefined);
+  return out;
 }
 
 /** Compte actif et questionnaire complété (conditions pour réserver ou demander à participer). */
@@ -66,7 +70,7 @@ export async function runReservation(o: ReservationRun) {
   }
 }
 
-type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences };
+type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean };
 
 async function runReservationOnce(o: ReservationRun) {
   const { uid, sessionId, seats } = o;
@@ -77,7 +81,7 @@ async function runReservationOnce(o: ReservationRun) {
   const promoRef = o.promoCode && !requestRef ? db.doc(`promoCodes/${o.promoCode}`) : null;
 
   return db.runTransaction(async (tx) => {
-    const [sess, lock, request, wait, planSnap, memSnap, bookingSettings, promoSnap, redemption, pastBookings] = await Promise.all([
+    const [sess, lock, request, wait, planSnap, memSnap, bookingSettings, promoSnap, redemption, pastBookings, userSnap] = await Promise.all([
       tx.get(sessRef),
       tx.get(lockRef),
       requestRef ? tx.get(requestRef) : Promise.resolve(null),
@@ -88,6 +92,7 @@ async function runReservationOnce(o: ReservationRun) {
       promoRef ? tx.get(promoRef) : Promise.resolve(null),
       promoRef ? tx.get(promoRef.collection("redemptions").doc(uid)) : Promise.resolve(null),
       promoRef ? tx.get(db.collection("reservations").where("userId", "==", uid).where("status", "in", ["confirmed", "attended"]).limit(1)) : Promise.resolve(null),
+      tx.get(db.doc(`users/${uid}`)),
     ]);
     if (!sess.exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
     const s = sess.data()!;
@@ -96,6 +101,11 @@ async function runReservationOnce(o: ReservationRun) {
     const e = exp.data()!;
     const now = Date.now();
     if (!requestRef && e.admission === "on_request") refuse("approval_required", "Cette expérience est sur demande.");
+    // 18b : âge minimum de l'expérience (au-delà de 18 ans), vérifié sur la date de naissance du profil.
+    if (tooYoung(e.minAge, userSnap.data()?.birthDate, new Date(now))) refuse("too_young", "Cette expérience est réservée aux personnes plus âgées.");
+    // 18c : activité physique → conditions de participation acceptées (à la réservation, ou déjà avec la demande).
+    const acceptedWithRequest = request?.data()?.physicalTerms;
+    if (e.physicalActivity === true && o.physicalTermsAccepted !== true && !acceptedWithRequest) refuse("physical_terms_required", "Acceptez les conditions de participation aux activités physiques.");
     const terms = membershipTerms({ plan: planSnap.data(), membership: memSnap.data(), s, e, now, byTeam: Boolean(requestRef) });
     if (request) {
       const r = request.data();
@@ -155,7 +165,12 @@ async function runReservationOnce(o: ReservationRun) {
       promo,
       serviceFee: readServiceFee(bookingSettings.data()?.serviceFee),
       preferences: o.preferences ?? (request?.data()?.preferences ? storedPreferences(request.data()!.preferences) : undefined),
-      extra: requestRef ? { requestId: requestRef.id } : undefined,
+      extra: {
+        ...(requestRef ? { requestId: requestRef.id } : {}),
+        ...(e.physicalActivity === true
+          ? { physicalTerms: acceptedWithRequest ?? { version: PHYSICAL_TERMS_VERSION, acceptedAt: Timestamp.fromMillis(now) } }
+          : {}),
+      },
     });
     tx.set(resRef, doc);
     // Gratuite grâce au code : utilisée tout de suite (sinon, comptée au paiement).

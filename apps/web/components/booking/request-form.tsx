@@ -4,6 +4,7 @@ import { REQUEST_MESSAGE_MAX, type BookingPreferences } from "@thecommunity/shar
 import { httpsCallable } from "firebase/functions";
 import { Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { PhysicalTermsCheckbox } from "@/components/booking/physical-terms";
 import { useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { authReady, bookingErrorOf, type BookingError } from "@/lib/booking-client";
@@ -11,7 +12,7 @@ import { firebase } from "@/lib/firebase/client";
 import { EMPTY_PREFERENCES, needsConsent, PreferencesFields } from "./preferences-fields";
 
 /** Demande de participation (expérience « sur demande ») : rien n'est payé ni bloqué à ce stade. */
-export function RequestForm({ sessionId, maxSeats, messageRequired, instagramRequired = false, defaultLanguages = [] }: { sessionId: string; maxSeats: number; messageRequired: boolean; instagramRequired?: boolean; defaultLanguages?: BookingPreferences["languages"] }) {
+export function RequestForm({ sessionId, maxSeats, messageRequired, instagramRequired = false, defaultLanguages = [], physical = false }: { sessionId: string; maxSeats: number; messageRequired: boolean; instagramRequired?: boolean; defaultLanguages?: BookingPreferences["languages"]; physical?: boolean }) {
   const t = useTranslations("request");
   const tb = useTranslations("booking");
   const router = useRouter();
@@ -24,6 +25,8 @@ export function RequestForm({ sessionId, maxSeats, messageRequired, instagramReq
   const tp = useTranslations("prefs");
   const [prefs, setPrefs] = useState<BookingPreferences>({ ...EMPTY_PREFERENCES, languages: defaultLanguages });
   const [consentError, setConsentError] = useState(false);
+  const [physicalOk, setPhysicalOk] = useState(false);
+  const [physicalError, setPhysicalError] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +37,7 @@ export function RequestForm({ sessionId, maxSeats, messageRequired, instagramReq
     if (Object.keys(missing).length) return setFieldErrors(missing);
     if (needsConsent(prefs) && !prefs.consent) return setConsentError(true);
     setConsentError(false);
+    if (physical && !physicalOk) return setPhysicalError(true);
     const shared = prefs.diet !== "none" || prefs.allergies.trim() || prefs.languages.length;
     setBusy(true);
     setError(null);
@@ -48,6 +52,7 @@ export function RequestForm({ sessionId, maxSeats, messageRequired, instagramReq
       await httpsCallable(firebase().functions, "requestBooking")({
         sessionId, seats, message: message.trim(), instagram: instagram.trim(),
         ...(shared ? { preferences: { ...prefs, allergies: prefs.allergies.trim() } } : {}),
+        ...(physical ? { physicalTermsAccepted: true } : {}),
       });
       router.refresh();
     } catch (err) {
@@ -114,6 +119,7 @@ export function RequestForm({ sessionId, maxSeats, messageRequired, instagramReq
         </div>
       </details>
       {consentError && <p role="alert" className="text-sm text-red-800">{tp("consentRequired")}</p>}
+      {physical && <PhysicalTermsCheckbox checked={physicalOk} onChange={(v) => { setPhysicalOk(v); setPhysicalError(false); }} error={physicalError} disabled={busy} />}
       {error && (
         <div role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">
           <p>{error}</p>

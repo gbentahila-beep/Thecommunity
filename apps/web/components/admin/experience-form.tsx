@@ -9,6 +9,7 @@ import {
   priceSplit,
   RECURRENCE_MAX_WEEKS,
   SPOKEN_LANGUAGES,
+  type ActivityLevel,
   type ExperienceInput,
 } from "@thecommunity/shared";
 import { collection, doc } from "firebase/firestore";
@@ -18,10 +19,14 @@ import { AlertTriangle, CheckCircle2, ImagePlus, Info, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { mediaUrl } from "@/components/media";
+import { QuestionnaireEditor } from "@/components/admin/questionnaire-editor";
+import type { QuestionDraft } from "@/lib/questionnaire-draft";
 import { firebase } from "@/lib/firebase/client";
 
-type Option = { id: string; label: string; disabled?: boolean };
-export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "onSiteCommissionPercent"> & {
+type Option = { id: string; label: string; disabled?: boolean; /** 18c : état de l'assurance du lieu partenaire. */ insurance?: "valid" | "expiring" | "expired" | "missing" };
+export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "onSiteCommissionPercent" | "minAge" | "level" | "questionnaire" | "proposalId"> & {
+  /** 18b : âge minimum (vide = 18 ans), niveau attendu (vide = non précisé) ; 18a : questionnaire ; 18d : proposition d'origine. */
+  minAge: string; level: "" | ActivityLevel; questionnaire: QuestionDraft[]; proposalId?: string;
   groupMin: string; groupTarget: string; groupMax: string; costPerSeatDh: string; commissionPercent: string;
   priceDh: string; durationMinutes: string; maxSeatsPerBooking: string; memberPriceDh: string; partnerPriceDh: string; onSiteCommissionPercent: string;
   sessions: { firstDate: string; time: string; weeks: string; capacity: string };
@@ -36,7 +41,10 @@ const MESSAGES: Record<string, string> = {
   inPast: "La première date est déjà passée.", memberAbovePublic: "Le prix membre doit être inférieur ou égal au prix public.", invalidImagePath: "Photo invalide.",
   pricingNeedsPartner: "Choisissez d'abord le partenaire : la part sur place lui est réglée directement.",
   onSiteNoCommission: "Avec une part sur place, utilisez « Nos coûts » ; une commission sur la part sur place se saisit dans son propre champ.",
+  minAge: "18 ans minimum (règle du site).", optionsMin: "Au moins 2 réponses par question.", optionsMax: "6 réponses au plus par question.",
+  questionnaireMax: "10 questions au plus.", duplicate: "Question en double.", proposalUnavailable: "Cette proposition a déjà été utilisée ou n'existe plus.",
 };
+const LEVEL_LABELS: Record<ActivityLevel, string> = { all: "Tous niveaux", beginner: "Débutant", intermediate: "Intermédiaire", advanced: "Confirmé" };
 const PRICING_CHOICES: { id: ExperienceFormValues["pricingModel"]; title: string; text: string; needsPartner: boolean }[] = [
   { id: "online_only", title: "Tout payé en ligne", text: "Le client paie tout à la réservation. Aucune part sur place.", needsPartner: false },
   { id: "fixed_partner", title: "Prix fixe chez le partenaire", text: "Une part en ligne + un montant connu, réglé sur place au partenaire (ex. menu, cours).", needsPartner: true },
@@ -143,6 +151,9 @@ export function ExperienceForm({
       costPerSeatDh: v.economicsModel === "own" ? opt(v.costPerSeatDh) : undefined,
       commissionPercent: v.economicsModel === "commission" ? opt(v.commissionPercent) : undefined,
       onSiteCommissionPercent: v.pricingModel !== "online_only" ? opt(v.onSiteCommissionPercent) : undefined,
+      minAge: opt(v.minAge),
+      level: v.level || undefined,
+      proposalId: v.proposalId || undefined,
       memberPriceDh: opt(v.memberPriceDh),
       partnerPriceDh: v.pricingModel === "fixed_partner" ? opt(v.partnerPriceDh) : undefined,
       partnerDescription: "",
@@ -209,6 +220,7 @@ export function ExperienceForm({
   }, [result, addSessions]);
 
   const partnerName = partners.find((p) => p.id === v.partnerId)?.label ?? "";
+  const insurance = partners.find((p) => p.id === v.partnerId)?.insurance ?? "missing";
   const split = useMemo(() => {
     const online = dhToCents(v.priceDh);
     if (online == null) return null;
@@ -280,7 +292,12 @@ export function ExperienceForm({
           </div>
         </details>
         <div><Label k="categoryId">Univers</Label>
-          <select {...field("categoryId")} value={v.categoryId} onChange={(e) => set("categoryId", e.target.value as ExperienceFormValues["categoryId"])}>
+          <select {...field("categoryId")} value={v.categoryId} onChange={(e) => {
+            const id = e.target.value as ExperienceFormValues["categoryId"];
+            // 18c : une activité sportive est en principe une activité physique (modifiable juste après).
+            setV((x) => ({ ...x, categoryId: id, ...(mode === "create" && id === "move" ? { physicalActivity: true } : {}) }));
+            setResult(null);
+          }}>
             {categories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select>{err("categoryId")}</div>
         <div><Label k="status">Statut</Label>
@@ -367,7 +384,37 @@ export function ExperienceForm({
         <div className="sm:col-span-2"><Label k="practicalInfo">Infos pratiques</Label><textarea {...field("practicalInfo")} rows={2} value={v.practicalInfo ?? ""} onChange={(e) => set("practicalInfo", e.target.value)} /></div>
       </Section>
 
-      <Section id="tarification" title="4. Prix, paiement et partenaire">
+      <Section id="activite" title="4. Activité, sécurité et questionnaire">
+        <div><Label k="level" hint="Affiché sur la fiche. Pour former des groupes de même niveau, ajoutez une question « niveau » au questionnaire.">Niveau attendu</Label>
+          <select {...field("level")} value={v.level} onChange={(e) => set("level", e.target.value as ExperienceFormValues["level"])}>
+            <option value="">Non précisé</option>
+            {(Object.keys(LEVEL_LABELS) as ActivityLevel[]).map((l) => <option key={l} value={l}>{LEVEL_LABELS[l]}</option>)}
+          </select></div>
+        <div><Label k="minAge" hint="Vide = 18 ans (règle du site). Vérifié à la réservation avec la date de naissance.">Âge minimum</Label><input {...field("minAge")} inputMode="numeric" value={v.minAge} onChange={(e) => set("minAge", e.target.value)} />{err("minAge")}</div>
+        <div><Label k="equipmentProvided" hint="Ex. raquettes et balles, masque et lanceur, tablier.">Matériel fourni</Label><textarea {...field("equipmentProvided")} rows={2} value={v.equipmentProvided ?? ""} onChange={(e) => set("equipmentProvided", e.target.value)} />{err("equipmentProvided")}</div>
+        <div><Label k="whatToBring" hint="Ex. baskets propres, bouteille d'eau, serviette.">À apporter</Label><textarea {...field("whatToBring")} rows={2} value={v.whatToBring ?? ""} onChange={(e) => set("whatToBring", e.target.value)} />{err("whatToBring")}</div>
+        <div className="sm:col-span-2"><Label k="dressCode" hint="Ex. tenue de sport, vêtements qui ne craignent pas la peinture.">Tenue conseillée</Label><input {...field("dressCode")} value={v.dressCode ?? ""} onChange={(e) => set("dressCode", e.target.value)} />{err("dressCode")}</div>
+        <label className="flex items-start gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" checked={v.outdoor} onChange={(e) => set("outdoor", e.target.checked)} className="mt-0.5 size-4 accent-plum-900" />
+          <span>En plein air<span className="block text-xs text-muted">Affiché sur la fiche : si la météo ne permet pas l&apos;activité, elle est reportée (place gardée ou remboursée, au choix) ou annulée et remboursée.</span></span>
+        </label>
+        <label className="flex items-start gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" checked={v.physicalActivity} onChange={(e) => set("physicalActivity", e.target.checked)} className="mt-0.5 size-4 accent-plum-900" />
+          <span>Activité physique<span className="block text-xs text-muted">Chaque participant accepte les <Link href="/conditions-activites-physiques" target="_blank" className="underline">conditions de participation aux activités physiques</Link> avant de réserver (enregistré avec la réservation).</span></span>
+        </label>
+        {v.physicalActivity && v.partnerId && insurance !== "valid" && (
+          <p role="status" data-testid="insurance-warning" className="flex items-start gap-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-950 sm:col-span-2">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
+            <span>
+              {insurance === "expired" ? "L'assurance du lieu partenaire a expiré." : insurance === "expiring" ? "L'assurance du lieu partenaire expire dans moins de 30 jours." : "L'assurance du lieu partenaire n'a pas encore été vérifiée."}{" "}
+              Demandez son attestation de responsabilité civile et mettez à jour la <Link href={`/admin/partenaires/${v.partnerId}`} className="underline">fiche du partenaire</Link>.
+            </span>
+          </p>
+        )}
+        <QuestionnaireEditor value={v.questionnaire} onChange={(q) => set("questionnaire", q)} error={Object.entries(errors).find(([k]) => k.startsWith("questionnaire"))?.[1]} />
+      </Section>
+
+      <Section id="tarification" title="5. Prix, paiement et partenaire">
         <div className="sm:col-span-2"><Label k="partnerId" hint="Le lieu ou le prestataire de l'expérience. Facultatif.">Partenaire</Label>
           <select {...field("partnerId")} value={v.partnerId ?? ""} onChange={(e) => choosePartner(e.target.value)}>
             <option value="">— Aucun (organisé entièrement par The Host Club)</option>
@@ -481,7 +528,7 @@ export function ExperienceForm({
         )}
       </Section>
 
-      <Section id="dates" title={mode === "create" ? "5. Dates" : "5. Ajouter des dates (ou reproposer l'expérience)"}>
+      <Section id="dates" title={mode === "create" ? "6. Dates" : "6. Ajouter des dates (ou reproposer l'expérience)"}>
         <label className="flex items-center gap-2 text-sm sm:col-span-2">
           <input type="checkbox" checked={addSessions} onChange={(e) => setAddSessions(e.target.checked)} className="size-4 accent-plum-900" />
           {mode === "create" ? "Programmer des dates maintenant" : "Créer ces nouvelles dates à l'enregistrement"}

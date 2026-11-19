@@ -8,9 +8,12 @@
  *  3. ne pas remettre ensemble des personnes déjà attablées ensemble ;
  *  4. écart d'âge raisonnable ;
  *  5. équilibre femmes / hommes quand le genre est connu ;
- *  6. centres d'intérêt partagés (bonus).
+ *  6. centres d'intérêt partagés (bonus) ;
+ *  7. (18a) réponses au questionnaire de l'expérience : réunir les réponses proches (« same » : niveau de padel,
+ *     allure de course) ou les mélanger (« mix » : expérience au paintball, timides et bavards à table).
  * Une réservation de plusieurs places (amis) reste à la même table.
  */
+import type { QuestionKind, QuestionMatch } from "./questionnaire";
 
 export type MatchPerson = {
   uid: string;
@@ -20,9 +23,13 @@ export type MatchPerson = {
   gender?: "female" | "male" | "undisclosed";
   languages: string[];
   interests: string[];
+  /** Réponses au questionnaire de l'expérience (numéro de la réponse par question). */
+  answers?: Record<string, number>;
 };
+/** Question du questionnaire utile au calcul (18a). */
+export type MatchQuestion = { id: string; kind: QuestionKind; match: QuestionMatch };
 export type MatchConfig = { minSize: number; targetSize: number; maxSize: number };
-export type MatchOptions = { pastPairs?: Set<string> };
+export type MatchOptions = { pastPairs?: Set<string>; questions?: MatchQuestion[] };
 
 export const pairKey = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
@@ -63,6 +70,29 @@ export function groupCost(g: MatchPerson[], c: MatchConfig, o: MatchOptions = {}
   const counts = new Map<string, number>();
   for (const p of g) for (const i of p.interests) counts.set(i, (counts.get(i) ?? 0) + 1);
   cost -= [...counts.values()].filter((n) => n >= 2).length;
+  cost += questionnaireCost(g, o.questions);
+  return cost;
+}
+
+/**
+ * Coût lié au questionnaire (18a), par paire de personnes ayant répondu.
+ * « same » + réponses ordonnées : 25 par cran d'écart (un débutant et un confirmé au même terrain = 50) ;
+ * « same » + choix : 8 si les réponses diffèrent ; « mix » : 4 si les réponses sont identiques.
+ */
+export function questionnaireCost(g: Pick<MatchPerson, "answers">[], questions: MatchQuestion[] = []): number {
+  let cost = 0;
+  for (const q of questions) {
+    if (q.match === "none") continue;
+    const values = g.map((p) => p.answers?.[q.id]).filter((a): a is number => typeof a === "number");
+    for (let i = 0; i < values.length; i++) {
+      for (let j = i + 1; j < values.length; j++) {
+        const a = values[i]!;
+        const b = values[j]!;
+        if (q.match === "same") cost += q.kind === "ordered" ? 25 * Math.abs(a - b) : a === b ? 0 : 8;
+        else if (a === b) cost += 4;
+      }
+    }
+  }
   return cost;
 }
 
@@ -139,6 +169,16 @@ export function groupWarnings(g: MatchPerson[], c: MatchConfig, o: MatchOptions 
   if (o.pastPairs && g.some((p, i) => g.some((q, j) => j > i && o.pastPairs!.has(pairKey(p.uid, q.uid))))) out.push("already_met");
   const ages = g.map((p) => p.age).filter((a): a is number => a !== null);
   if (ages.length > 1 && Math.max(...ages) - Math.min(...ages) > 20) out.push("age_gap");
+  // 18a : niveaux trop éloignés (ex. débutant avec confirmé) sur une question « réunir les réponses proches ».
+  for (const q of o.questions ?? []) {
+    if (q.match !== "same" || q.kind !== "ordered") continue;
+    const values = g.map((p) => p.answers?.[q.id]).filter((a): a is number => typeof a === "number");
+    if (values.length > 1 && Math.max(...values) - Math.min(...values) >= 2) {
+      out.push("level_gap");
+      break;
+    }
+  }
+  if ((o.questions?.length ?? 0) > 0 && g.some((p) => !p.answers || Object.keys(p.answers).length === 0)) out.push("questionnaire_missing");
   return out;
 }
 

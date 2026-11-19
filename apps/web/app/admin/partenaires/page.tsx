@@ -5,12 +5,15 @@ import { PARTNER_STATUS_LABELS, PARTNER_STATUS_TONES, PARTNER_TYPE_LABELS } from
 import { adminDate, Badge, Card, dh, PageHeader } from "@/components/admin/ui";
 import { getAdminData } from "@/lib/data/admin";
 import { getPartnerApplications } from "@/lib/data/admin-help";
+import { insuranceState } from "@thecommunity/shared";
 
 export const metadata = { title: "Partenaires" };
 const FILTERS = [
   { key: "current", label: "Actifs et prospects" },
   { key: "archived", label: "Archivés" },
 ] as const;
+
+const INSURANCE_LABEL = { valid: "Vérifiée", expiring: "Expire dans moins de 30 jours", expired: "Expirée", missing: "Non vérifiée" } as const;
 
 export default async function PartnersAdminPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const sp = await searchParams;
@@ -97,6 +100,7 @@ export default async function PartnersAdminPage({ searchParams }: { searchParams
                   <div><dt className="text-xs text-muted">Modèle</dt><dd className="tabular-nums">{commission ? `Commission ${p.defaultCommissionPercent} %` : "Achat de prestation"}</dd></div>
                   <div><dt className="text-xs text-muted">Expériences</dt><dd>{exps.map((e) => e.title.fr).join(", ") || "—"}</dd></div>
                   <div><dt className="text-xs text-muted">Ventes confirmées</dt><dd className="tabular-nums">{dh(revenue)}</dd></div>
+                  <div className="col-span-2"><dt className="text-xs text-muted">Assurance (activités physiques)</dt><dd>{INSURANCE_LABEL[insuranceState(p.insurance, d.now)]}{p.insurance?.expiresOn ? ` · jusqu'au ${p.insurance.expiresOn.split("-").reverse().join("/")}` : ""}</dd></div>
                 </dl>
               </Link>
             );

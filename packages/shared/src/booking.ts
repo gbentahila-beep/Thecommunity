@@ -29,6 +29,8 @@ export const reservationRequestSchema = z.object({
   promoCode: promoCodeSchema.optional(),
   /** Régime, allergies, langues de table (5g, facultatif). */
   preferences: bookingPreferencesSchema.optional(),
+  /** 18c : conditions de participation aux activités physiques acceptées (exigé si l'expérience le demande). */
+  physicalTermsAccepted: z.boolean().optional(),
 });
 export type ReservationRequest = z.infer<typeof reservationRequestSchema>;
 
@@ -65,6 +67,7 @@ export const bookingRequestSchema = z.object({
     .max(120)
     .default("")
     .refine((v) => v === "" || normalizeInstagram(v) !== null, "invalidInstagram"),
+  physicalTermsAccepted: z.boolean().optional(),
 });
 export type BookingRequestInput = z.input<typeof bookingRequestSchema>;
 

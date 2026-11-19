@@ -1,4 +1,4 @@
-import { ageOn, composeGroups, pairKey, type MatchPerson } from "@thecommunity/shared";
+import { ageOn, composeGroups, pairKey, type MatchPerson, type MatchQuestion } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -100,8 +100,11 @@ export const adminProposeGroups = onCall({ region: REGION, timeoutSeconds: 120 }
     gender: p.user.gender,
     languages: p.languages,
     interests: (p.user.interests ?? []) as string[],
+    // 18a : réponses au questionnaire de l'expérience (niveau, allure, envies…).
+    ...(p.reservation.questionnaire?.answers ? { answers: p.reservation.questionnaire.answers as Record<string, number> } : {}),
   }));
-  const groups = composeGroups(people, e.groupConfig, { pastPairs: await pastPairs(people.map((p) => p.uid), sessRef.id) });
+  const questions = ((e.questionnaire ?? []) as MatchQuestion[]).map((q) => ({ id: q.id, kind: q.kind, match: q.match }));
+  const groups = composeGroups(people, e.groupConfig, { pastPairs: await pastPairs(people.map((p) => p.uid), sessRef.id), questions });
   const byUid = new Map(participants.map((p) => [p.uid, p]));
   const prefix = labelPrefix(e);
   await writeGroups(sessRef.id, s.experienceId, groups.map((m, i) => ({ label: `${prefix} ${i + 1}`, memberIds: m })), "proposed", byUid, actor.uid);

@@ -7,7 +7,7 @@ import {
   type CategoryKey,
   type Experience,
 } from "@thecommunity/shared";
-import { CalendarDays, Clock, Languages, Leaf, MapPin, Users } from "lucide-react";
+import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -23,6 +23,7 @@ import { memberAmountFor, PriceTag } from "@/components/price-tag";
 import { getArchivedExperience, getCategory, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublishedExperiences, getReviews, getUpcomingSessions } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
+import { richText } from "@/lib/rich-text";
 import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 300;
@@ -174,7 +175,12 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <Fact icon={Clock} label={t("duration")} value={duration} />
               <Fact icon={Languages} label={t("languages")} value={exp.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ")} />
               {exp.alcoholServed === false && <Fact icon={Leaf} label={t("alcoholFree")} value="" />}
+              {exp.level && <Fact icon={Gauge} label={t("levelLabel")} value={t(`level_${exp.level}`)} />}
+              {exp.minAge != null && exp.minAge > 18 && <Fact icon={UserCheck} label={t("minAgeLabel")} value={t("minAgeValue", { age: exp.minAge })} />}
             </ul>
+            {exp.proposedBy?.firstName && (
+              <p className="-mt-6 text-sm text-muted" data-testid="proposed-by">{t("proposedBy", { name: exp.proposedBy.firstName })}</p>
+            )}
 
             <Section title={t("about")}>
               <p className="leading-relaxed text-ink/85">{tr(exp.description, locale)}</p>
@@ -199,9 +205,24 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               )}
             </Section>
 
-            <Section title={t("practical")}>
-              <p className="text-ink/85">{tr(exp.practicalInfo, locale)}</p>
-            </Section>
+            {(exp.equipmentProvided || exp.whatToBring || exp.dressCode || exp.outdoor || exp.physicalActivity || (exp.questionnaire?.length ?? 0) > 0) && (
+              <Section title={t("activityTitle")}>
+                <ul className="space-y-3" data-testid="activity-details">
+                  {exp.equipmentProvided && <Detail icon={Backpack} label={t("equipmentProvided")} text={exp.equipmentProvided} />}
+                  {exp.whatToBring && <Detail icon={Backpack} label={t("whatToBring")} text={exp.whatToBring} />}
+                  {exp.dressCode && <Detail icon={Shirt} label={t("dressCode")} text={exp.dressCode} />}
+                  {exp.outdoor && <Detail icon={CloudSun} label={t("outdoorTitle")} text={t("outdoorText")} />}
+                  {exp.physicalActivity && <Detail icon={HeartPulse} label={t("physicalTitle")} text={richText(t.raw("physicalText") as string, "")} />}
+                </ul>
+                {(exp.questionnaire?.length ?? 0) > 0 && <p className="mt-4 rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("questionnaireNote", { count: exp.questionnaire!.length })}</p>}
+              </Section>
+            )}
+
+            {tr(exp.practicalInfo, locale) && (
+              <Section title={t("practical")}>
+                <p className="text-ink/85">{tr(exp.practicalInfo, locale)}</p>
+              </Section>
+            )}
 
             <Section title={t("cancellation")}>
               <p className="text-ink/85">{tr(DEFAULT_CANCELLATION_POLICY.label, locale)}.</p>
@@ -378,5 +399,17 @@ function Gallery({ exp, locale }: { exp: Experience; locale: string }) {
         </div>
       )}
     </div>
+  );
+}
+
+function Detail({ icon: Icon, label, text }: { icon: typeof Backpack; label: string; text: React.ReactNode }) {
+  return (
+    <li className="flex items-start gap-3">
+      <Icon className="mt-0.5 size-5 shrink-0 text-plum-700" aria-hidden />
+      <span>
+        <span className="block font-medium text-ink">{label}</span>
+        <span className="text-ink/80">{text}</span>
+      </span>
+    </li>
   );
 }

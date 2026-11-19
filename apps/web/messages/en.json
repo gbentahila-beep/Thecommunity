@@ -153,7 +153,24 @@
     "retiredEyebrow": "Experience ended",
     "retiredText": "This experience is no longer offered. Discover our other experiences: there's surely one for you.",
     "retiredCta": "See experiences",
-    "retiredSimilar": "In the same universe"
+    "retiredSimilar": "In the same universe",
+    "levelLabel": "Level",
+    "level_all": "All levels",
+    "level_beginner": "Beginner",
+    "level_intermediate": "Intermediate",
+    "level_advanced": "Advanced",
+    "minAgeLabel": "Minimum age",
+    "minAgeValue": "{age} and over",
+    "activityTitle": "Before you come",
+    "equipmentProvided": "Equipment provided",
+    "whatToBring": "What to bring",
+    "dressCode": "Suggested outfit",
+    "outdoorTitle": "Outdoors",
+    "outdoorText": "If the weather doesn't allow the activity, we'll let you know as early as possible: it's postponed (you keep your spot or get a refund, your choice) or cancelled with a full refund.",
+    "physicalTitle": "Physical activity",
+    "physicalText": "To book, you accept our [terms for physical activities](/conditions-activites-physiques): go at your own pace and tell the team about any health concern.",
+    "questionnaireNote": "After booking, a short questionnaire ({count, plural, one {# question} other {# questions}}) helps us put your group together.",
+    "proposedBy": "Outing proposed by {name}, a community member"
   },
   "booking": {
     "title": "Book my spot",
@@ -211,7 +228,9 @@
       "members_only": "This experience is for members only.",
       "members_early_access": "This new date is still in members' early access.",
       "not_editable": "This booking can no longer be changed.",
-      "transfer_too_late": "This date is too close for payment by bank transfer: please choose a later date."
+      "transfer_too_late": "This date is too close for payment by bank transfer: please choose a later date.",
+      "too_young": "This experience has a higher minimum age than yours.",
+      "physical_terms_required": "Accept the terms for physical activities to book."
     },
     "fullTextOnRequest": "All spots are taken for this date. Have a look at the other dates for this experience.",
     "seeMyBooking": "See my booking",
@@ -250,7 +269,9 @@
     "holdNoteTransfer": "Your spot is held until the transfer arrives: {hours} hours at most, and no later than {cutoff} hours before the experience.",
     "transferModeNote": "Payment by bank transfer: after booking, you'll get a reference and our bank details. Your spot is confirmed as soon as the transfer arrives, then you receive your ticket.",
     "transferTooLateTitle": "Bank transfer not possible for this date",
-    "transferTooLateText": "The transfer must reach us at least {cutoff} hours before the experience: this date is too close. Please choose a later date."
+    "transferTooLateText": "The transfer must reach us at least {cutoff} hours before the experience: this date is too close. Please choose a later date.",
+    "physicalTerms": "I have read and accept the [terms for physical activities](/conditions-activites-physiques), and I confirm I'm fit to take part in this activity.",
+    "physicalTermsRequired": "Tick the box to accept the terms for physical activities."
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -323,7 +344,8 @@
     "help": "Help centre",
     "partner": "Become a partner",
     "blog": "Blog",
-    "press": "Press"
+    "press": "Press",
+    "physical": "Physical activities"
   },
   "pages": {
     "howTitle": "How it works",
@@ -415,6 +437,13 @@
       "refunded": "Refunded",
       "attended": "Attended",
       "no_show": "No-show"
+    },
+    "categories": {
+      "eat": "Dinners & food",
+      "move": "Sport & wellbeing",
+      "play": "Games",
+      "create": "Workshops",
+      "discover": "Outings"
     }
   },
   "account": {
@@ -448,7 +477,8 @@
     "emptyTab": "Nothing here for now.",
     "seats": "{count, plural, one {# spot} other {# spots}}",
     "navMembership": "Membership",
-    "navInvoices": "My invoices"
+    "navInvoices": "My invoices",
+    "navPropose": "Propose an outing"
   },
   "reservation": {
     "back": "My bookings",
@@ -966,5 +996,70 @@
     "noBank": "Bank details will be shared soon.",
     "refundPending": "Refund in progress: our team will contact you for the return transfer.",
     "pendingMembership": "Reference {reference} · {amount} to transfer before {when}. Your membership is activated as soon as it arrives, and you receive your invoice."
+  },
+  "questionnaire": {
+    "title": "Your questionnaire",
+    "intro": "Two minutes to help us shape your group (level, preferences…). Your answers are only used to place you with the right people and are deleted 30 days after the experience.",
+    "introDone": "Thank you, your answers are saved. You can change them until the experience starts.",
+    "optional": "optional",
+    "required": "Choose an answer.",
+    "submit": "Send my answers",
+    "update": "Update my answers",
+    "saving": "Sending…",
+    "saved": "Answers saved.",
+    "closed": "The experience has started: answers can no longer be changed.",
+    "errorStarted": "The experience has already started.",
+    "errorGeneric": "Couldn't send right now. Please try again in a moment.",
+    "todo": "Questionnaire to fill in"
+  },
+  "propose": {
+    "title": "Propose an outing",
+    "intro": "Got an idea for an outing (padel, a hike, a workshop, a quiz…)? Propose it: the team reviews it, finds the venue and price, then publishes it. You're kept posted at each step.",
+    "notTrusted": "This page is for trusted members: regulars the team invites to organise their own outings. Have an idea meanwhile? Write to us.",
+    "contactUs": "Write to us",
+    "titleLabel": "Outing title",
+    "titlePlaceholder": "E.g. Saturday morning padel",
+    "categoryLabel": "Universe",
+    "levelLabel": "Level",
+    "levelNone": "Not specified",
+    "level_all": "All levels",
+    "level_beginner": "Beginner",
+    "level_intermediate": "Intermediate",
+    "level_advanced": "Advanced",
+    "descriptionLabel": "Description",
+    "descriptionHint": "How it goes, the vibe, who it's for (at least 30 characters).",
+    "districtLabel": "Neighbourhood",
+    "venueLabel": "Venue in mind (optional)",
+    "datesLabel": "Dates in mind",
+    "datesHint": "E.g. “Saturday mornings in December” or “a Sunday afternoon”.",
+    "capacityLabel": "Number of participants",
+    "priceLabel": "Price per person in mind (MAD)",
+    "priceHint": "Optional: the team sets the final price.",
+    "willHost": "I'll be there to welcome the group.",
+    "notesLabel": "A note for the team (optional)",
+    "reviewNote": "Nothing is published without the team: we check the venue, safety and price before creating the page.",
+    "submit": "Send my proposal",
+    "sending": "Sending…",
+    "sentTitle": "Proposal sent",
+    "sentText": "Thank you! The team will review it and reply in your notifications.",
+    "sentDemo": "Demo: nothing was sent. On the live site, the team receives your proposal.",
+    "another": "Propose another outing",
+    "mine": "My proposals",
+    "status_pending": "Being reviewed",
+    "status_accepted": "Accepted",
+    "status_declined": "Not accepted",
+    "teamMessage": "Message from the team:",
+    "errors": {
+      "tooShort": "Too short.",
+      "tooLong": "Too long.",
+      "required": "Required field.",
+      "min2": "At least 2 people.",
+      "tooMany": "Too high (50 at most).",
+      "min0": "Must be positive.",
+      "invalid": "Invalid value.",
+      "tooManyProposals": "You've already sent 3 proposals today: try again tomorrow.",
+      "notTrusted": "Proposals are for trusted members only.",
+      "generic": "Couldn't send right now."
+    }
   }
 }

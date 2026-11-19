@@ -743,7 +743,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         { summary: ["Des expériences en petit groupe à Casablanca, dans cinq univers, pour rencontrer de nouvelles personnes sans rien organiser.", "Réservation directe ou sur demande, liste d'attente quand c'est complet.", "Paiement par virement avec une référence unique ; billet avec QR code dès la confirmation.", "Annulation remboursée jusqu'à 48 heures avant ; abonnement de 12 mois sans renouvellement automatique."] },
         "The Host Club organise des expériences en petit groupe à Casablanca pour rencontrer de nouvelles personnes, sans avoir à organiser quoi que ce soit. Vous choisissez, nous nous occupons du lieu, du groupe et de l'accueil. Voici l'essentiel, en une page.",
         { h: "Cinq univers" },
-        ["Dîners & gastronomie : une table de nouvelles têtes dans un restaurant partenaire, ou un brunch.", "Sport & bien-être : yoga, pilates, course, cours collectifs.", "Jeux : quiz, blind tests, jeux de société, énigmes en équipe.", "Ateliers : cuisine, poterie, peinture, fabriquer quelque chose ensemble.", "Sorties : balades, visites, rooftops, lieux à découvrir."],
+        ["Dîners & gastronomie : une table de nouvelles têtes dans un restaurant partenaire, ou un brunch.", "Sport & bien-être : padel, course, yoga, pilates, randonnée, cours collectifs.", "Jeux : paintball, quiz, blind tests, jeux de société, énigmes en équipe.", "Ateliers : cuisine, poterie, peinture, fabriquer quelque chose ensemble.", "Sorties : balades, visites, rooftops, lieux à découvrir."],
         { h: "Réserver" },
         "Vous créez votre compte (prénom, e-mail confirmé, quelques informations de profil), choisissez une expérience et une date, puis réservez. Il existe deux façons de participer :",
         ["Réservation directe : vous réservez et payez, votre place est à vous.", "Sur demande : pour certaines expériences, vous envoyez une courte demande (un message de motivation, parfois votre compte Instagram). L'équipe répond ; si elle est acceptée, votre place vous est réservée 24 heures pour la régler."],
@@ -765,7 +765,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         { summary: ["Small-group experiences in Casablanca, across five universes, to meet new people without organising anything.", "Direct booking or on request, and a waiting list when it's full.", "Payment by bank transfer with a unique reference; a ticket with a QR code as soon as it's confirmed.", "Refunded cancellation up to 48 hours before; a 12-month membership with no automatic renewal."] },
         "The Host Club organises small-group experiences in Casablanca so you can meet new people without organising anything. You choose; we take care of the venue, the group and the welcome. Here are the essentials, on one page.",
         { h: "Five universes" },
-        ["Dinners & food: a table of new faces at a partner restaurant, or a brunch.", "Sport & wellbeing: yoga, pilates, running, group classes.", "Games: quizzes, music quizzes, board games, team puzzles.", "Workshops: cooking, pottery, painting, making something together.", "Outings: walks, visits, rooftops, places to discover."],
+        ["Dinners & food: a table of new faces at a partner restaurant, or a brunch.", "Sport & wellbeing: padel, running, yoga, pilates, hiking, group classes.", "Games: paintball, quizzes, music quizzes, board games, team puzzles.", "Workshops: cooking, pottery, painting, making something together.", "Outings: walks, visits, rooftops, places to discover."],
         { h: "Booking" },
         "Create your account (first name, confirmed email, a few profile details), choose an experience and a date, then book. There are two ways to take part:",
         ["Direct booking: you book and pay, and the spot is yours.", "On request: for some experiences, you send a short request (a few words about why you'd like to come, sometimes your Instagram account). The team replies; if you're accepted, your spot is held for 24 hours while you pay."],
@@ -1003,6 +1003,135 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
       ],
     },
   },
+  // ——— 18 : toutes les activités ———
+  {
+    slug: "toutes-les-activites",
+    category: "the-host-club",
+    title: {"fr": "Dîners, padel, paintball, ateliers : tout ce que vous pouvez faire avec The Host Club", "en": "Dinners, padel, paintball, workshops: everything you can do with The Host Club"},
+    excerpt: {"fr": "Le dîner n'est qu'une porte d'entrée. Sport, jeux, ateliers, sorties : comment chaque format vous fait rencontrer du monde, et comment nous composons les groupes.", "en": "Dinner is just one way in. Sport, games, workshops, outings: how each format helps you meet people, and how we put the groups together."},
+    date: "2026-11-19",
+    cover: "/images/photos/univers-ateliers.webp",
+    body: {
+      fr: [
+        {"summary": ["The Host Club ne se limite pas au dîner : sport, jeux, ateliers et sorties, dans cinq univers.", "Chaque format a sa façon de créer le lien : la table, l'équipe, le terrain, l'atelier.", "Pour le sport, un court questionnaire forme des groupes de même niveau ; pour le jeu, il mélange les profils.", "Vous venez seul : nous composons le groupe et nous occupons du reste."]},
+        "On nous connaît pour les dîners entre inconnus, mais l'idée est plus large : rencontrer de nouvelles personnes en faisant quelque chose ensemble. Un match de padel, une partie de paintball, un atelier de poterie ou une balade créent souvent plus vite le lien qu'une conversation debout.",
+        {"h": "Cinq univers, une même idée"},
+        ["Dîners & gastronomie : tables de nouvelles têtes, brunchs, ateliers cuisine.", "Sport & bien-être : padel, course, yoga, pilates, randonnée.", "Jeux : paintball, quiz, blind tests, jeux d'énigmes en équipe.", "Ateliers : poterie, peinture, cuisine, tout ce qui se fabrique à plusieurs.", "Sorties : balades, visites, rooftops, lieux à découvrir."],
+        {"h": "Comment nous composons les groupes, selon l'activité"},
+        {"ol": ["À table : un mélange de langues communes, d'âges proches et de centres d'intérêt partagés, sans remettre ensemble les mêmes personnes.", "Au padel ou en course : un court questionnaire donne votre niveau ou votre allure, et nous réunissons des personnes proches (quatre joueurs de même niveau par terrain).", "Au paintball ou au quiz : nous mélangeons au contraire débutants et habitués, pour des équipes équilibrées.", "Dans un atelier : peu importe le niveau, l'activité occupe les mains et la conversation suit."]},
+        {"h": "Avant de venir"},
+        "Chaque fiche indique ce qu'il faut savoir : niveau attendu, matériel fourni, ce qu'il faut apporter, tenue conseillée, âge minimum et si l'activité a lieu en plein air. Pour les activités physiques, vous acceptez nos [conditions de participation](/conditions-activites-physiques) en réservant.",
+        {"tip": "Envie d'essayer autre chose qu'un dîner ? [Voir toutes les expériences](/experiences). Et pour comprendre le questionnaire : [à quoi il sert](/blog/le-questionnaire-avant-votre-experience)."},
+      ],
+      en: [
+        {"summary": ["The Host Club isn't just dinners: sport, games, workshops and outings, across five universes.", "Each format builds connection its own way: the table, the team, the court, the workshop.", "For sport, a short questionnaire forms same-level groups; for games, it mixes profiles.", "You come alone: we put the group together and take care of the rest."]},
+        "People know us for dinners with strangers, but the idea is broader: meeting new people by doing something together. A padel match, a paintball game, a pottery workshop or a walk often builds connection faster than a standing conversation.",
+        {"h": "Five universes, one idea"},
+        ["Dinners & food: tables of new faces, brunches, cooking workshops.", "Sport & wellbeing: padel, running, yoga, pilates, hiking.", "Games: paintball, quizzes, music quizzes, team puzzles.", "Workshops: pottery, painting, cooking, anything made together.", "Outings: walks, visits, rooftops, places to discover."],
+        {"h": "How we put groups together, depending on the activity"},
+        {"ol": ["At the table: a mix of shared languages, similar ages and common interests, without seating the same people together again.", "For padel or running: a short questionnaire gives your level or pace, and we group similar people (four players of the same level per court).", "For paintball or quizzes: we mix beginners and regulars instead, for balanced teams.", "In a workshop: level doesn't matter, the activity keeps hands busy and the conversation follows."]},
+        {"h": "Before you come"},
+        "Each page tells you what to know: expected level, equipment provided, what to bring, suggested outfit, minimum age and whether the activity is outdoors. For physical activities, you accept our [terms](/conditions-activites-physiques) when booking.",
+        {"tip": "Fancy something other than a dinner? [See all experiences](/experiences). And to understand the questionnaire: [what it's for](/blog/le-questionnaire-avant-votre-experience)."},
+      ],
+    },
+  },
+  {
+    slug: "le-questionnaire-avant-votre-experience",
+    category: "the-host-club",
+    title: {"fr": "Le questionnaire avant votre expérience : à quoi sert-il ?", "en": "The questionnaire before your experience: what is it for?"},
+    excerpt: {"fr": "Dix questions au plus, uniquement à choix, pour vous placer avec les bonnes personnes : ce qu'on vous demande, ce qu'on en fait, et ce qu'on n'en fait jamais.", "en": "Ten questions at most, multiple choice only, to place you with the right people: what we ask, what we do with it, and what we never do."},
+    date: "2026-11-19",
+    cover: "/images/illustrations/padel.webp",
+    body: {
+      fr: [
+        {"summary": ["Certaines expériences comportent un court questionnaire, à remplir après la réservation.", "Selon l'activité, il réunit des niveaux proches (padel, course) ou mélange les profils (paintball, dîner).", "Uniquement des choix, jamais montrés aux autres participants, effacés 30 jours après.", "Le calcul est fait chez nous, et une personne de l'équipe relit toujours les groupes."]},
+        "Après votre réservation, une notification vous invite parfois à répondre à quelques questions. Deux minutes, pas plus : elles nous aident à composer un groupe où vous serez à l'aise.",
+        {"h": "Ce qu'on vous demande"},
+        ["Au padel : votre niveau, et si vous jouez plutôt pour le plaisir ou pour progresser.", "En course à pied : votre allure habituelle et la distance qui vous convient.", "Au paintball : si vous avez déjà joué, et votre état d'esprit.", "À table : si vous êtes plutôt de ceux qui écoutent ou qui animent, et le sujet qui vous fait parler des heures."],
+        {"h": "Ce qu'on en fait"},
+        "Un outil propose des groupes à partir de vos réponses, de vos langues et de votre âge. Selon l'expérience, il réunit des réponses proches (quatre joueurs de même niveau par terrain) ou les mélange (débutants et habitués dans chaque équipe). Une personne de l'équipe relit et ajuste toujours la composition avant de la révéler.",
+        {"h": "Ce qu'on n'en fait jamais"},
+        ["Vos réponses ne sont jamais montrées aux autres participants.", "Elles ne sont envoyées à aucun service extérieur : le calcul est fait sur nos serveurs.", "Elles sont effacées automatiquement 30 jours après l'expérience.", "Aucune question ouverte, rien de médical ni de sensible."],
+        {"tip": "Pas le temps de répondre ? Le questionnaire n'est pas obligatoire : nous composerons votre groupe avec votre profil. Vous pouvez aussi modifier vos réponses jusqu'au début de l'expérience, depuis [vos réservations](/espace/reservations)."},
+      ],
+      en: [
+        {"summary": ["Some experiences include a short questionnaire, filled in after booking.", "Depending on the activity, it groups similar levels (padel, running) or mixes profiles (paintball, dinner).", "Multiple choice only, never shown to other participants, deleted 30 days after.", "The calculation runs on our side, and someone on the team always reviews the groups."]},
+        "After booking, a notification sometimes invites you to answer a few questions. Two minutes, no more: they help us put together a group where you'll feel at ease.",
+        {"h": "What we ask"},
+        ["Padel: your level, and whether you play more for fun or to improve.", "Running: your usual pace and the distance that suits you.", "Paintball: whether you've played before, and your mindset.", "At the table: whether you're more of a listener or someone who gets things going, and the topic you could talk about for hours."],
+        {"h": "What we do with it"},
+        "A tool suggests groups from your answers, languages and age. Depending on the experience, it brings similar answers together (four players of the same level per court) or mixes them (beginners and regulars in each team). Someone on the team always reviews and adjusts the line-up before revealing it.",
+        {"h": "What we never do with it"},
+        ["Your answers are never shown to other participants.", "They're not sent to any outside service: the calculation runs on our servers.", "They're deleted automatically 30 days after the experience.", "No open questions, nothing medical or sensitive."],
+        {"tip": "No time to answer? The questionnaire isn't compulsory: we'll put your group together from your profile. You can also change your answers until the experience starts, from [your bookings](/espace/reservations)."},
+      ],
+    },
+  },
+  {
+    slug: "proposer-votre-propre-sortie",
+    category: "the-host-club",
+    title: {"fr": "Proposer votre propre sortie : comment ça marche ?", "en": "Proposing your own outing: how does it work?"},
+    excerpt: {"fr": "Les membres de confiance peuvent soumettre leurs idées de sorties. L'équipe les vérifie, les organise et les publie : le parcours d'une proposition, de l'idée à la fiche.", "en": "Trusted members can submit their outing ideas. The team checks, organises and publishes them: the journey of a proposal, from idea to page."},
+    date: "2026-11-19",
+    cover: "/images/photos/galerie-08.webp",
+    body: {
+      fr: [
+        {"summary": ["Les membres de confiance peuvent proposer leurs propres sorties depuis leur espace.", "L'équipe vérifie le lieu, la sécurité et le prix avant toute publication.", "L'expérience est organisée et vendue par The Host Club, aux mêmes conditions que les autres.", "Le membre qui propose n'encaisse jamais d'argent auprès des participants."]},
+        "Vous connaissez un club de padel génial, une boucle de randonnée parfaite ou un atelier qui mériterait d'être partagé ? Certains habitués peuvent désormais proposer leurs idées de sorties.",
+        {"h": "Qui peut proposer ?"},
+        "Les membres de confiance : des habitués à qui l'équipe ouvre cette possibilité. La rubrique « Proposer une sortie » apparaît alors dans leur espace. Vous n'êtes pas encore concerné ? Une idée est toujours la bienvenue : [écrivez-nous](/contact).",
+        {"h": "De l'idée à la fiche"},
+        {"ol": ["Vous décrivez votre idée : univers, déroulé, quartier, lieu envisagé, dates, nombre de participants et prix envisagé.", "L'équipe la relit et vérifie le lieu, son assurance pour une activité physique, la sécurité et le prix.", "Si elle est retenue, nous créons la fiche de l'expérience, avec son questionnaire si besoin, et vous prévenons.", "Le jour J, si vous l'avez souhaité, vous accueillez le groupe à nos côtés."]},
+        {"h": "Les règles du jeu"},
+        ["Rien n'est publié sans l'équipe.", "L'expérience est vendue par The Host Club : vous ne demandez jamais d'argent directement aux participants.", "Nos [règles de la communauté](/charte) s'appliquent à tous, organisateurs compris.", "Proposer n'est pas un emploi : vous n'êtes pas rémunéré à ce titre, sauf accord écrit distinct."],
+        {"tip": "Membre de confiance ? Rendez-vous dans [votre espace](/espace/proposer) pour proposer votre première sortie."},
+      ],
+      en: [
+        {"summary": ["Trusted members can propose their own outings from their account.", "The team checks the venue, safety and price before anything is published.", "The experience is organised and sold by The Host Club, on the same terms as the others.", "The member who proposes never collects money from participants."]},
+        "Know a great padel club, a perfect hiking loop or a workshop worth sharing? Some regulars can now propose their outing ideas.",
+        {"h": "Who can propose?"},
+        "Trusted members: regulars the team opens this up to. A “Propose an outing” section then appears in their account. Not there yet? Ideas are always welcome: [write to us](/contact).",
+        {"h": "From idea to page"},
+        {"ol": ["You describe your idea: universe, how it goes, neighbourhood, venue in mind, dates, number of participants and intended price.", "The team reviews it and checks the venue, its insurance for a physical activity, safety and price.", "If it goes ahead, we create the experience page, with its questionnaire if needed, and let you know.", "On the day, if you wish, you welcome the group alongside us."]},
+        {"h": "The rules of the game"},
+        ["Nothing is published without the team.", "The experience is sold by The Host Club: you never ask participants for money directly.", "Our [community rules](/charte) apply to everyone, organisers included.", "Proposing isn't a job: you aren't paid for it, unless agreed separately in writing."],
+        {"tip": "A trusted member? Head to [your account](/espace/proposer) to propose your first outing."},
+      ],
+    },
+  },
+  {
+    slug: "sport-pour-rencontrer-du-monde-casablanca",
+    category: "city-guide",
+    title: {"fr": "Faire du sport à Casablanca pour rencontrer du monde", "en": "Doing sport in Casablanca to meet people"},
+    excerpt: {"fr": "Padel, course, yoga, paintball, randonnée : les activités qui créent du lien, comment choisir selon votre niveau, et les bons réflexes pour venir seul.", "en": "Padel, running, yoga, paintball, hiking: the activities that build connection, how to choose for your level, and good habits for coming alone."},
+    date: "2026-11-19",
+    cover: "/images/illustrations/paintball.webp",
+    body: {
+      fr: [
+        {"summary": ["Le sport est l'un des moyens les plus simples de rencontrer du monde : on fait quelque chose ensemble, la conversation suit.", "Choisissez une activité adaptée à votre niveau, ou une séance « tous niveaux ».", "Les sports à deux ou en équipe (padel, paintball) créent le lien le plus vite.", "Écoutez votre corps, hydratez-vous et suivez les consignes du lieu."]},
+        "Quand on arrive dans une ville ou qu'on veut élargir son cercle, le sport a un avantage : il donne un rôle à chacun. On se passe la balle, on s'encourage, on rit d'une partie ratée, et à la fin on a déjà des souvenirs communs.",
+        {"h": "Les activités qui créent du lien"},
+        ["Le padel : on joue toujours à quatre, en double ; les échanges sont courts et l'ambiance détendue. Idéal pour se faire de nouveaux partenaires de jeu.", "La course à pied : en groupe et à une allure où l'on peut parler, c'est une conversation qui avance.", "Le paintball : des équipes à construire, des stratégies à inventer, beaucoup de rires.", "Le yoga et le pilates : plus calmes, souvent suivis d'un brunch où l'on fait vraiment connaissance.", "La randonnée : en forêt de Bouskoura ou sur la côte, on marche côte à côte et la conversation vient toute seule."],
+        {"h": "Choisir selon votre niveau"},
+        "Rien de plus intimidant que de se retrouver avec des personnes bien plus fortes. Regardez le niveau indiqué sur la fiche, et répondez honnêtement au questionnaire quand il y en a un : il sert justement à vous placer avec des personnes de votre niveau.",
+        {"h": "Les bons réflexes"},
+        ["Arrivez un peu en avance : l'échauffement est le meilleur moment pour faire connaissance.", "Venez avec ce qui est indiqué (baskets, eau, tenue) ; le reste du matériel est souvent fourni.", "Allez à votre rythme, arrêtez-vous si quelque chose ne va pas et suivez les consignes de l'encadrant.", "Après l'effort, restez pour le verre ou le goûter : c'est souvent là que naissent les amitiés."],
+        {"tip": "Prêt à bouger ? [Voir les expériences Sport & bien-être](/experiences). Et pour la sécurité : nos [conseils](/securite)."},
+      ],
+      en: [
+        {"summary": ["Sport is one of the easiest ways to meet people: you do something together and the conversation follows.", "Choose an activity suited to your level, or an “all levels” session.", "Pair and team sports (padel, paintball) build connection fastest.", "Listen to your body, drink water and follow the venue's instructions."]},
+        "When you move to a city or want to widen your circle, sport has an advantage: it gives everyone a role. You pass the ball, cheer each other on, laugh at a missed shot, and by the end you already share memories.",
+        {"h": "Activities that build connection"},
+        ["Padel: always played as four, in doubles; rallies are short and the mood relaxed. Ideal for finding new playing partners.", "Running: in a group and at a pace where you can talk, it's a conversation on the move.", "Paintball: teams to build, tactics to invent, lots of laughs.", "Yoga and pilates: calmer, often followed by a brunch where you really get to know each other.", "Hiking: in the Bouskoura forest or along the coast, you walk side by side and conversation comes naturally."],
+        {"h": "Choosing for your level"},
+        "Nothing is more intimidating than ending up with people far better than you. Check the level shown on the page, and answer the questionnaire honestly when there is one: it's there to place you with people at your level.",
+        {"h": "Good habits"},
+        ["Arrive a little early: the warm-up is the best moment to get to know each other.", "Bring what's listed (trainers, water, outfit); the rest of the equipment is often provided.", "Go at your own pace, stop if something's wrong and follow the coach's instructions.", "After the effort, stay for the drink or snack: that's often where friendships begin."],
+        {"tip": "Ready to move? [See Sport & wellbeing experiences](/experiences). And for safety: our [advice](/securite)."},
+      ],
+    },
+  },
 ];
 
 /** Fusion de la version arabe (content/blog-ar.ts) ; un article sans traduction fait échouer la compilation. */
@@ -1037,7 +1166,7 @@ export const blogCategory = (key: string) => BLOG_CATEGORIES.find((c) => c.key =
 export const articlesIn = (key: BlogCategoryKey) => BLOG_ARTICLES.filter((a) => a.category === key);
 
 /** Article mis en avant « Commencer ici ». */
-export const START_HERE = "diner-avec-des-inconnus";
+export const START_HERE = "the-host-club-guide-complet";
 /**
  * « Les plus lus » : notre sélection tant que les lectures ne sont pas mesurées (docs/17, 8i).
  * Sert aussi d'ordre « Plus lus » dans « Parcourir les articles ».

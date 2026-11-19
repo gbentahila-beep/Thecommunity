@@ -7,6 +7,7 @@ import { buildDemoSessions, DEMO_EXPERIENCES, DEMO_REVIEWS } from "./demo";
 
 export const DEMO_MEMBER: UserProfile = {
   uid: "demo-salma",
+  trustedHost: true,
   firstName: "Salma",
   lastName: "Benali",
   email: "salma.demo@example.com",

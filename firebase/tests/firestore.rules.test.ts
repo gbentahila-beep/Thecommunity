@@ -44,6 +44,7 @@ beforeEach(async () => {
     await setDoc(doc(db, "settings/booking"), { holdMinutes: 15 });
     await setDoc(doc(db, "auditLogs/a1"), { action: "x" });
     await setDoc(doc(db, "cities/casablanca"), { isActive: true });
+    await setDoc(doc(db, "outingProposals/op1"), { userId: "salma", title: "Padel du samedi", status: "pending" });
   });
 });
 
@@ -223,6 +224,18 @@ describe("formulaires publics", () => {
     await assertFails(addDoc(collection(anon(), "partnerApplications"), app));
     await assertFails(getDocs(collection(anon(), "partnerApplications")));
     await assertSucceeds(getDocs(collection(admin(), "partnerApplications")));
+  });
+  it("propositions de sorties (18d) : lues par leur auteur et l'équipe, jamais écrites par le navigateur", async () => {
+    await assertSucceeds(getDoc(doc(salma(), "outingProposals/op1")));
+    await assertFails(getDoc(doc(karim(), "outingProposals/op1")));
+    await assertFails(getDoc(doc(anon(), "outingProposals/op1")));
+    await assertSucceeds(getDocs(collection(admin(), "outingProposals")));
+    await assertSucceeds(getDocs(query(collection(salma(), "outingProposals"), where("userId", "==", "salma"))));
+    await assertFails(addDoc(collection(salma(), "outingProposals"), { userId: "salma", title: "X", status: "pending" }));
+    await assertFails(updateDoc(doc(salma(), "outingProposals/op1"), { status: "accepted" }));
+  });
+  it("profil : impossible de se donner soi-même le statut de membre de confiance", async () => {
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { trustedHost: true }));
   });
   it("demande d'export / suppression : seulement pour soi", async () => {
     await assertSucceeds(addDoc(collection(salma(), "dataRequests"), { userId: "salma", type: "deletion", createdAt: serverTimestamp() }));

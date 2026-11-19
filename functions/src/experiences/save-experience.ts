@@ -1,4 +1,4 @@
-import { experienceInputSchema, MOROCCO_TIMEZONE, planSessionDates } from "@thecommunity/shared";
+import { cleanQuestion, experienceInputSchema, MOROCCO_TIMEZONE, planSessionDates } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -83,6 +83,12 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   if (!city.exists || city.data()?.isActive !== true) invalidArgument([{ path: ["cityId"], message: "required" }]);
   if (!category.exists) invalidArgument([{ path: ["categoryId"], message: "required" }]);
   if (v.partnerId && !partner?.exists) invalidArgument([{ path: ["partnerId"], message: "required" }]);
+  // 18d : expérience issue de la proposition d'un membre de confiance (encore en attente, ou déjà liée à CETTE expérience).
+  let proposal: FirebaseFirestore.DocumentData | undefined;
+  if (v.proposalId) {
+    proposal = (await db.doc(`outingProposals/${v.proposalId}`).get()).data();
+    if (!proposal || (proposal.status !== "pending" && proposal.experienceId !== id)) invalidArgument([{ path: ["proposalId"], message: "proposalUnavailable" }]);
+  }
 
   const grouped = v.bookingMode === "group" || v.bookingMode === "social_dinner";
   const price = { amount: Math.round(v.priceDh * 100), currency: "MAD" as const };
@@ -144,6 +150,17 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     included: (v.included ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
     practicalInfo: { fr: v.practicalInfo ?? "" },
     cancellationPolicyId: v.cancellationPolicyId,
+    // 18b / 18c : précisions pour les activités (facultatives).
+    level: v.level ?? null,
+    equipmentProvided: v.equipmentProvided ?? "",
+    whatToBring: v.whatToBring ?? "",
+    dressCode: v.dressCode ?? "",
+    minAge: v.minAge ?? null,
+    outdoor: v.outdoor,
+    physicalActivity: v.physicalActivity,
+    // 18a : questionnaire (traductions vides retirées).
+    questionnaire: v.questionnaire.map(cleanQuestion),
+    ...(proposal ? { proposedBy: { uid: proposal.userId, firstName: String(proposal.firstName ?? "") }, proposalId: v.proposalId } : {}),
     // Une expérience archivée le reste tant qu'elle n'est pas réactivée (bouton « Réactiver »).
     status: existing.data()?.status === "archived" ? "archived" : v.status,
     updatedAt: FieldValue.serverTimestamp(),
@@ -198,6 +215,20 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     onSiteCommissionPercent: v.pricingModel !== "online_only" && v.onSiteCommissionPercent ? v.onSiteCommissionPercent : null,
     updatedAt: FieldValue.serverTimestamp(),
   });
+  if (proposal && v.proposalId && proposal.status === "pending") {
+    batch.update(db.doc(`outingProposals/${v.proposalId}`), { status: "accepted", experienceId: id, decidedAt: FieldValue.serverTimestamp(), decidedBy: actor.uid, updatedAt: FieldValue.serverTimestamp() });
+    batch.set(db.collection(`users/${proposal.userId}/notifications`).doc(), {
+      type: "proposal_published",
+      title: { fr: "Votre proposition est retenue", ar: "تم قبول اقتراحك", en: "Your proposal has been accepted" },
+      body: {
+        fr: `L'équipe prépare « ${v.titleFr} » à partir de votre proposition. Merci !`,
+        ar: `يُعدّ الفريق «${v.titleAr || v.titleFr}» انطلاقاً من اقتراحك. شكراً!`,
+        en: `The team is preparing “${v.titleEn || v.titleFr}” from your proposal. Thank you!`,
+      },
+      link: v.status === "published" ? `/experiences/${slug}` : "/espace/proposer",
+      createdAt: FieldValue.serverTimestamp(),
+    });
+  }
   await batch.commit();
 
   // Lieu modifié : les personnes à qui il avait déjà été communiqué reçoivent le nouveau (notification + e-mail).

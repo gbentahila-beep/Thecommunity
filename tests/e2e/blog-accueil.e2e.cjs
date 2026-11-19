@@ -54,14 +54,14 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   const tabs = d.getByRole('navigation', { name: 'Thèmes du blog' });
   for (const l of ['Tous les articles', 'City guide', 'Conversation', 'Amitié', 'Comment fonctionne The Host Club']) assert(await tabs.getByRole('link', { name: l }).isVisible(), `onglet ${l}`);
   assert(await tabs.getByRole('link', { name: 'Tous les articles' }).getAttribute('aria-current') === 'page', 'onglet Tous actif');
-  const featured = d.getByRole('link', { name: "Dîner avec des inconnus : c'est quoi, et comment ça se passe ?" }).first();
-  assert(await featured.getAttribute('href') === '/blog/diner-avec-des-inconnus', 'article « Commencer ici » mis en avant');
+  const featured = d.getByRole('link', { name: "The Host Club, le guide complet" }).first();
+  assert(await featured.getAttribute('href') === '/blog/the-host-club-guide-complet', 'article « Commencer ici » mis en avant : le guide complet (toutes les activités)');
   assert(await d.getByText('Commencer ici').first().isVisible(), 'mention « Commencer ici »');
   const mostRead = d.locator('section[aria-labelledby="most-read"]');
   assert(await mostRead.getByRole('heading', { name: 'Les plus lus' }).isVisible() && await mostRead.getByRole('link').count() === 6, '« Les plus lus » : 6 articles en liste compacte');
   assert(await mostRead.locator('img').count() === 6, 'liste compacte avec vignettes');
   const browse = d.locator('section[aria-labelledby="browse"]');
-  assert(await browse.getByRole('link').count() === 19, '« Parcourir les articles » : 19 articles');
+  assert(await browse.getByRole('link').count() === 23, '« Parcourir les articles » : 23 articles');
   const popular = browse.getByRole('button', { name: 'Plus lus' });
   const recent = browse.getByRole('button', { name: 'Récents' });
   assert(await popular.getAttribute('aria-pressed') === 'true', 'tri « Plus lus » par défaut');
@@ -73,14 +73,14 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await browse.getByRole('searchbox').fill('zzzz introuvable');
   assert(await browse.getByText('Aucun article ne correspond à votre recherche.').isVisible(), 'recherche sans résultat annoncée');
   await browse.getByRole('button', { name: 'Effacer la recherche' }).click();
-  assert(await browse.getByRole('link').count() === 19, 'recherche effacée');
+  assert(await browse.getByRole('link').count() === 23, 'recherche effacée');
   await tabs.getByRole('link', { name: 'City guide' }).click();
   await d.waitForURL('**/blog/theme/city-guide');
   assert(await d.getByRole('heading', { level: 1, name: 'City guide' }).isVisible(), 'page de thème : titre');
-  assert(await d.getByText(/3 articles · Mis à jour le/).isVisible(), 'page de thème : nombre d\'articles et date');
+  assert(await d.getByText(/4 articles · Mis à jour le/).isVisible(), 'page de thème : nombre d\'articles et date');
   assert(await d.getByRole('heading', { name: 'Rencontrer du monde à Casablanca' }).isVisible(), 'carte « Rencontrer du monde à Casablanca »');
   assert(await d.getByRole('link', { name: 'Trouver mon groupe' }).getAttribute('href') === '/experiences' && await d.getByRole('link', { name: 'Choisir une autre ville' }).getAttribute('href') === '/#villes', 'carte : deux boutons');
-  assert(await d.locator('main ul.divide-y a[href^="/blog/"]').count() >= 3, 'City guide : 3 articles en liste');
+  assert(await d.locator('main ul.divide-y a[href^="/blog/"]').count() >= 4, 'City guide : 4 articles en liste');
   assert(await d.getByRole('heading', { name: 'Questions fréquentes' }).isVisible(), 'City guide : FAQ en bas');
   await d.getByText('Faut-il parler arabe pour rencontrer du monde ?').click();
   assert(await d.getByText(/français, la darija/).isVisible(), 'FAQ City guide dépliable');
@@ -88,7 +88,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await useful.getByRole('heading', { name: 'Utile aussi' }).isVisible() && await useful.getByRole('link').count() === 3, '« Utile aussi » : 3 articles');
   await d.getByRole('navigation', { name: 'Thèmes du blog' }).getByRole('link', { name: 'Comment fonctionne The Host Club' }).click();
   await d.waitForURL('**/blog/theme/the-host-club');
-  assert(await d.getByText(/7 articles/).isVisible(), 'The Host Club : 7 articles');
+  assert(await d.getByText(/10 articles/).isVisible(), 'The Host Club : 10 articles');
   await d.getByRole('link', { name: /Réserver sa première expérience, étape par étape/ }).first().click();
   await d.waitForURL('**/blog/reserver-sa-premiere-experience');
   assert(await d.getByRole('heading', { level: 1, name: 'Réserver sa première expérience, étape par étape' }).isVisible(), 'page article');
@@ -105,6 +105,25 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   const ld = JSON.parse(await d.locator('script[type="application/ld+json"]').first().textContent());
   assert(ld['@type'] === 'BlogPosting' && ld.headline.startsWith('Réserver'), 'données structurées BlogPosting');
   assert(/\/blog\/reserver-sa-premiere-experience$/.test(await d.locator('link[rel="canonical"]').getAttribute('href')), 'URL canonique');
+
+  // 18 : fiches d'activités physiques (démonstration padel et paintball)
+  await d.goto(`${base}/experiences/padel-entre-inconnus-anfa`);
+  const details = d.getByTestId('activity-details');
+  for (const txt of ['Matériel fourni', 'À apporter', 'Tenue conseillée', 'Activité physique']) assert(await details.getByText(txt).isVisible(), `padel : « ${txt} »`);
+  assert(await d.getByText('Tous niveaux').isVisible(), 'padel : niveau affiché');
+  assert(await d.getByText(/court questionnaire \(3 questions\)/).isVisible(), 'padel : questionnaire annoncé');
+  assert(await details.getByRole('link', { name: /conditions de participation/ }).getAttribute('href') === '/conditions-activites-physiques', 'lien vers les conditions des activités physiques');
+  await d.goto(`${base}/experiences/paintball-entre-inconnus-bouskoura`);
+  assert(await d.getByText('21 ans et plus').isVisible() && await d.getByTestId('activity-details').getByText('En plein air', { exact: true }).isVisible(), 'paintball : âge minimum et plein air');
+  await d.goto(`${base}/conditions-activites-physiques`);
+  assert(await d.getByRole('heading', { level: 1, name: 'Conditions de participation aux activités physiques' }).isVisible(), 'page des conditions des activités physiques');
+  assert(await d.getByRole('heading', { name: '2. Votre état de santé' }).isVisible(), 'conditions : état de santé');
+  await d.goto(`${base}/ar/conditions-activites-physiques`);
+  assert(await d.getByRole('heading', { level: 1, name: 'شروط المشاركة في الأنشطة البدنية' }).isVisible(), 'conditions en arabe');
+  await d.goto(`${base}/blog/le-questionnaire-avant-votre-experience`);
+  assert(await d.getByRole('heading', { level: 1, name: 'Le questionnaire avant votre expérience : à quoi sert-il ?' }).isVisible(), 'article : le questionnaire');
+  await d.goto(`${base}/aide/questionnaire-avant-l-experience`);
+  assert(await d.getByRole('heading', { level: 1 }).textContent().then((t) => t.includes('questionnaire')), 'aide : le questionnaire');
 
   // Anglais / arabe
   await d.goto(`${base}/en/blog`);

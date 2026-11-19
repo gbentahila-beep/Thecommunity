@@ -15,7 +15,12 @@ export type BoardMember = {
   interests: string[];
   /** Places de la réservation (la personne + ses invités). */
   seats?: number;
+  /** 18a : réponses au questionnaire (numéros) et leur résumé lisible. */
+  answers?: Record<string, number>;
+  answersText?: string;
 };
+/** 18a : questions utiles aux alertes (niveau éloigné, questionnaire non rempli). */
+export type BoardQuestion = { id: string; kind: "choice" | "ordered"; match: "same" | "mix" | "none" };
 export type BoardGroup = { id: string; label: string; memberIds: string[] };
 
 const LANG: Record<string, string> = { fr: "FR", ar: "AR", darija: "Darija", en: "EN", es: "ES" };
@@ -38,6 +43,7 @@ export function GroupsBoard({
   sessionId,
   status: groupsStatus = "none",
   unassigned = [],
+  questions = [],
 }: {
   initial: BoardGroup[];
   members: Record<string, BoardMember>;
@@ -48,6 +54,7 @@ export function GroupsBoard({
   sessionId?: string;
   status?: string;
   unassigned?: string[];
+  questions?: BoardQuestion[];
 }) {
   const router = useRouter();
   const start = () => [...initial, ...(live ? [{ id: UNASSIGNED, label: "Non placés", memberIds: unassigned }] : [])];
@@ -139,10 +146,17 @@ export function GroupsBoard({
           if (seats > config.maxSize) warnings.push(`plus de ${config.maxSize} personnes`);
           if (known.length > 1 && common.length === 0) warnings.push("aucune langue commune");
           if (bands.length > 3) warnings.push("écart d'âge important");
+          // 18a : niveaux trop éloignés (débutant avec confirmé) sur une question « réunir les réponses proches ».
+          if (questions.some((q) => q.match === "same" && q.kind === "ordered" && (() => {
+            const vals = ms.map((m) => m.answers?.[q.id]).filter((x): x is number => typeof x === "number");
+            return vals.length > 1 && Math.max(...vals) - Math.min(...vals) >= 2;
+          })())) warnings.push("niveaux très différents");
+          const unanswered = questions.length ? ms.filter((m) => !m.answers || Object.keys(m.answers).length === 0).length : 0;
+          if (unanswered > 0) warnings.push(`${unanswered} questionnaire${unanswered > 1 ? "s" : ""} non rempli${unanswered > 1 ? "s" : ""}`);
           return [g.id, { size: seats, common, bands, shared, women, men, warnings }];
         }),
       ),
-    [groups, members, config],
+    [groups, members, config, questions],
   );
   const totalWarnings = Object.values(analysis).reduce((a, x) => a + x.warnings.length, 0);
 
@@ -238,6 +252,7 @@ export function GroupsBoard({
                       <span className="min-w-0 flex-1">
                         <span className="font-medium text-ink">{m.firstName}</span>{" "}
                         <span className="text-xs text-muted">{m.ageBand} · {m.languages.map((l) => LANG[l]).join("/")}{(m.seats ?? 1) > 1 ? ` · +${(m.seats ?? 1) - 1} invité(s)` : ""}</span>
+                        {m.answersText && <span className="block text-xs text-plum-900" data-testid="member-answers">{m.answersText}</span>}
                       </span>
                       <label className="sr-only" htmlFor={`mv-${uid}`}>Déplacer {m.firstName} vers</label>
                       <select

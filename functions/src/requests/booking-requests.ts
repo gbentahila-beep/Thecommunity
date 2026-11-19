@@ -1,5 +1,5 @@
 import { preferencesDoc } from "../reservations/reservation-doc";
-import { ACCEPTED_HOLD_HOURS, bookingClosesAt, bookingRequestSchema, maxSeatsFor, normalizeInstagram } from "@thecommunity/shared";
+import { ACCEPTED_HOLD_HOURS, bookingClosesAt, bookingRequestSchema, maxSeatsFor, normalizeInstagram, PHYSICAL_TERMS_VERSION, tooYoung } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -8,6 +8,7 @@ import { audit } from "../lib/audit";
 import { invalidArgument, requireAuth, requireRole, roleOf } from "../lib/guards";
 import { memberFromDoc, membershipRef } from "../membership/state";
 import { refuse, requireMemberReady, runReservation } from "../reservations/create-reservation";
+import { notifyQuestionnaire } from "../reservations/questionnaire";
 
 const idSchema = z.string().trim().min(1).max(200).regex(/^[A-Za-z0-9_-]+$/);
 
@@ -22,14 +23,14 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
   if (token.email_verified !== true) refuse("email_not_verified", "Confirmez votre adresse e-mail.");
   const parsed = bookingRequestSchema.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats, message, instagram, preferences } = parsed.data;
+  const { sessionId, seats, message, instagram, preferences, physicalTermsAccepted } = parsed.data;
   await requireMemberReady(uid);
 
   const sessRef = db.doc(`sessions/${sessionId}`);
   const reqRef = db.doc(`bookingRequests/${sessionId}_${uid}`);
   const lockRef = sessRef.collection("seatLocks").doc(uid);
   return db.runTransaction(async (tx) => {
-    const [sess, existing, lock, mem] = await Promise.all([tx.get(sessRef), tx.get(reqRef), tx.get(lockRef), tx.get(membershipRef(uid))]);
+    const [sess, existing, lock, mem, user] = await Promise.all([tx.get(sessRef), tx.get(reqRef), tx.get(lockRef), tx.get(membershipRef(uid)), tx.get(db.doc(`users/${uid}`))]);
     if (!sess.exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
     const s = sess.data()!;
     const exp = await tx.get(db.doc(`experiences/${s.experienceId}`));
@@ -45,6 +46,8 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
     if (existing.exists && ["pending", "accepted"].includes(existing.data()!.status)) refuse("already_requested", "Demande déjà envoyée.");
     if (existing.exists && existing.data()!.status === "declined") refuse("request_declined", "Demande non retenue pour cette date.");
     if (lock.exists) refuse("already_booked", "Vous avez déjà une place pour cette date.");
+    if (tooYoung(e!.minAge, user.data()?.birthDate, new Date())) refuse("too_young", "Cette expérience est réservée aux personnes plus âgées.");
+    if (e!.physicalActivity === true && physicalTermsAccepted !== true) refuse("physical_terms_required", "Acceptez les conditions de participation aux activités physiques.");
 
     const snap = s.experienceSnapshot ?? {};
     tx.set(reqRef, {
@@ -56,6 +59,7 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
       message,
       instagram: instagram ? normalizeInstagram(instagram) : null,
       ...(preferences ? { preferences: preferencesDoc(preferences) } : {}),
+      ...(e!.physicalActivity === true ? { physicalTerms: { version: PHYSICAL_TERMS_VERSION, acceptedAt: Timestamp.now() } } : {}),
       status: "pending",
       sessionSnapshot: {
         title: snap.title ?? e!.title,
@@ -125,6 +129,7 @@ export const adminDecideRequest = onCall({ region: REGION }, async (req) => {
       actorUid: actor.uid,
     });
     reservationId = res.reservationId;
+    if (res.status === "confirmed") await notifyQuestionnaire(res.reservationId).catch(() => undefined);
   } else {
     await db.runTransaction(async (tx) => {
       const cur = (await tx.get(ref)).data();

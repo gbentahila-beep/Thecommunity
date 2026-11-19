@@ -8,8 +8,9 @@ const ISSUE_TEXT: Record<string, (i: { count?: number }) => string> = {
   backup_missing: () => "Aucune sauvegarde réussie depuis plus de 36 h.",
   mail_failures: (i) => `${i.count} e-mail(s) en échec sur 24 h.`,
   transfers_overdue: (i) => `${i.count} virement(s) en retard à vérifier.`,
+  partner_insurance: (i) => `${i.count} activité(s) physique(s) chez un lieu sans assurance vérifiée ou à jour.`,
 };
-const ISSUE_LINK: Record<string, string> = { mail_failures: "/admin/emails", transfers_overdue: "/admin/virements" };
+const ISSUE_LINK: Record<string, string> = { mail_failures: "/admin/emails", transfers_overdue: "/admin/virements", partner_insurance: "/admin/partenaires" };
 
 /** Carte « Santé du site » (étape E) : sauvegarde de la nuit et bilan quotidien. */
 export function SiteHealthCard({ health }: { health: SiteHealth }) {

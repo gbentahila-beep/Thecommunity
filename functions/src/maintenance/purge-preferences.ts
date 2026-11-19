@@ -3,7 +3,7 @@ import { logger } from "firebase-functions/v2";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { db, FieldValue, REGION } from "../lib/admin";
 
-/** Politique de confidentialité : régime, allergies et langues de table effacés 30 jours après l'expérience. */
+/** Politique de confidentialité : régime, allergies, langues de table et réponses au questionnaire (18a) effacés 30 jours après l'expérience. */
 export const PREFERENCES_RETENTION_DAYS = 30;
 
 /**
@@ -14,11 +14,12 @@ export const PREFERENCES_RETENTION_DAYS = 30;
 export async function purgeExpiredPreferences(now = Date.now()): Promise<number> {
   const cutoff = now - PREFERENCES_RETENTION_DAYS * 86_400_000;
   let purged = 0;
-  for (const coll of ["reservations", "bookingRequests"]) {
+  const targets: [string, "preferences" | "questionnaire"][] = [["reservations", "preferences"], ["bookingRequests", "preferences"], ["reservations", "questionnaire"]];
+  for (const [coll, field] of targets) {
     let last: QueryDocumentSnapshot | null = null;
     for (let page = 0; page < 20; page++) {
-      let q = db.collection(coll).where("preferences", "!=", null).orderBy("preferences").orderBy(FieldPath.documentId()).limit(300);
-      if (last) q = q.startAfter(last.get("preferences"), last.id);
+      let q = db.collection(coll).where(field, "!=", null).orderBy(field).orderBy(FieldPath.documentId()).limit(300);
+      if (last) q = q.startAfter(last.get(field), last.id);
       const snap = await q.get();
       if (snap.empty) break;
       const batch = db.batch();
@@ -26,7 +27,7 @@ export async function purgeExpiredPreferences(now = Date.now()): Promise<number>
       for (const d of snap.docs) {
         const start = d.get("sessionSnapshot.startAt");
         if (start instanceof Timestamp && start.toMillis() <= cutoff) {
-          batch.update(d.ref, { preferences: FieldValue.delete(), preferencesPurgedAt: FieldValue.serverTimestamp() });
+          batch.update(d.ref, field === "preferences" ? { preferences: FieldValue.delete(), preferencesPurgedAt: FieldValue.serverTimestamp() } : { questionnaire: FieldValue.delete(), questionnairePurgedAt: FieldValue.serverTimestamp() });
           n++;
         }
       }

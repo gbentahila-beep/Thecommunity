@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { BOOKING_MODES } from "./constants";
+import { partnerInsuranceSchema } from "./activity";
 
 /**
  * Back-office (5d, 5e) : partenaires, villes et univers. Mêmes schémas dans le navigateur (messages d'erreur)
@@ -31,6 +32,8 @@ export const partnerInputSchema = z
     model: z.enum(PARTNER_MODELS),
     defaultCommissionPercent: z.coerce.number().min(0, "min0").max(80, "tooMany"),
     notes: z.string().trim().max(2000, "tooLong"),
+    /** 18c : assurance responsabilité civile du lieu (vue par l'équipe), utile pour les activités physiques. */
+    insurance: partnerInsuranceSchema.optional(),
   })
   .refine((v) => v.model !== "commission" || v.defaultCommissionPercent > 0, { path: ["defaultCommissionPercent"], message: "required" });
 export type PartnerInput = z.infer<typeof partnerInputSchema>;

@@ -1,4 +1,5 @@
-import { DEFAULT_CANCELLATION_POLICY, pricingOf, type Experience } from "@thecommunity/shared";
+import { DEFAULT_CANCELLATION_POLICY, insuranceState, pricingOf, type Experience, type OutingProposal } from "@thecommunity/shared";
+import { toDraft } from "@/lib/questionnaire-draft";
 import type { ExperienceFormValues } from "@/components/admin/experience-form";
 import type { AdminData } from "@/lib/data/admin";
 
@@ -6,7 +7,7 @@ export function formOptions(d: Pick<AdminData, "categories" | "cities" | "partne
   return {
     categories: d.categories.map((c) => ({ id: c.id, label: c.name.fr })),
     cities: d.cities.map((c) => ({ id: c.id, label: c.isActive ? c.name.fr : `${c.name.fr} (bientôt)`, disabled: !c.isActive })),
-    partners: d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, label: p.name })),
+    partners: d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, label: p.name, insurance: insuranceState(p.insurance, new Date()) })),
     policies: [{ id: DEFAULT_CANCELLATION_POLICY.id, label: DEFAULT_CANCELLATION_POLICY.label.fr }],
   };
 }
@@ -28,6 +29,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
     pricingModel: "online_only", partnerPriceDh: "", partnerDescription: "", onSiteCommissionPercent: "",
     status: "draft",
     sessions: { firstDate: nextWeekDate(now), time: "19:30", weeks: "1", capacity: "12" },
+    level: "", equipmentProvided: "", whatToBring: "", dressCode: "", minAge: "", outdoor: false, physicalActivity: false, questionnaire: [],
   };
 }
 
@@ -50,6 +52,9 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     onSiteCommissionPercent: eco?.onSiteCommissionPercent != null ? String(eco.onSiteCommissionPercent) : "",
     ...pricingValues(e),
     status: e.status === "published" ? "published" : "draft",
+    level: e.level ?? "", equipmentProvided: e.equipmentProvided ?? "", whatToBring: e.whatToBring ?? "", dressCode: e.dressCode ?? "",
+    minAge: e.minAge ? String(e.minAge) : "", outdoor: Boolean(e.outdoor), physicalActivity: Boolean(e.physicalActivity),
+    questionnaire: (e.questionnaire ?? []).map(toDraft),
   };
 }
 
@@ -71,4 +76,25 @@ function includedLines(e: Experience): string[] {
   const lines = (e.included ?? []).map((i) => i.fr);
   const extra = pricingOf(e).partner?.description?.trim();
   return extra && !lines.some((l) => l.trim().toLowerCase() === extra.toLowerCase()) ? [...lines, extra] : lines;
+}
+
+/** 18d : formulaire pré-rempli à partir d'une sortie proposée par un membre de confiance. */
+export function proposalToValues(p: OutingProposal, now: Date): ExperienceFormValues {
+  const base = emptyExperienceValues(now);
+  return {
+    ...base,
+    titleFr: p.title,
+    summaryFr: p.description.split(/(?<=[.!?])\s/)[0]!.slice(0, 160),
+    descriptionFr: p.description,
+    categoryId: p.categoryId,
+    cityId: p.cityId || base.cityId,
+    district: p.district,
+    venueName: p.venueIdea,
+    priceDh: p.priceIdeaDh != null ? String(p.priceIdeaDh) : "",
+    level: p.level ?? "",
+    physicalActivity: p.categoryId === "move",
+    proposalId: p.id,
+    practicalInfo: p.willHost ? `Sortie proposée et accueillie par ${p.firstName}, membre de la communauté.` : "",
+    sessions: { ...base.sessions, capacity: String(Math.min(50, Math.max(2, p.capacity))) },
+  };
 }

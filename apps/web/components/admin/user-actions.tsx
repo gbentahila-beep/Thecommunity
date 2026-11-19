@@ -21,14 +21,18 @@ export function UserActions({
   status,
   canSetRole,
   isSelf,
+  trustedHost = false,
 }: {
   uid: string;
   role: string;
   status: "active" | "suspended";
   canSetRole: boolean;
   isSelf: boolean;
+  /** 18d : membre de confiance (peut proposer des sorties). */
+  trustedHost?: boolean;
 }) {
   const [currentRole, setRole] = useState(role);
+  const [trusted, setTrusted] = useState(trustedHost);
   const [currentStatus, setStatus] = useState(status);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -70,6 +74,16 @@ export function UserActions({
           </select>
         </>
       )}
+      <button
+        type="button"
+        disabled={busy || currentStatus === "suspended"}
+        aria-pressed={trusted}
+        onClick={() => run("adminSetTrustedHost", { uid, trusted: !trusted }, () => setTrusted(!trusted))}
+        title="Un membre de confiance peut proposer ses propres sorties, relues par l'équipe avant publication."
+        className={`rounded-full px-3 py-1 text-xs font-semibold ${trusted ? "bg-plum-900 text-white hover:bg-plum-800" : "border border-plum-900 text-plum-900 hover:bg-plum-50"} disabled:opacity-40`}
+      >
+        {trusted ? "Membre de confiance ✓" : "Rendre membre de confiance"}
+      </button>
       <button
         type="button"
         disabled={busy}

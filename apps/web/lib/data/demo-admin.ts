@@ -56,6 +56,8 @@ export type AdminUser = {
   role: "user" | "organizer" | "admin" | "superadmin";
   status: "active" | "suspended";
   createdAt: string;
+  /** 18d : membre de confiance, peut proposer des sorties. */
+  trustedHost?: boolean;
 };
 
 const FEMALE = ["Salma", "Lina", "Sofia", "Inès", "Nadia", "Yasmine", "Kenza", "Rim", "Ghita", "Hiba", "Meryem", "Sara", "Aya", "Imane", "Chaïmae", "Leila", "Zineb", "Nora", "Dounia", "Sanaa"];
@@ -106,6 +108,8 @@ export type Partner = {
   model?: "purchase" | "commission";
   notes?: string;
   applicationId?: string;
+  /** 18c : assurance responsabilité civile du lieu, vue par l'équipe. */
+  insurance?: { verified: boolean; insurer?: string; policyNumber?: string; expiresOn?: string };
 };
 
 export const DEMO_PARTNERS: Partner[] = [
@@ -114,6 +118,8 @@ export const DEMO_PARTNERS: Partner[] = [
   { id: "p-escape-maarif", name: "Escape room partenaire", type: "venue", district: "Maarif", contactName: "M. Senhaji", contactEmail: "escape@example.com", defaultCommissionPercent: 15, status: "active" },
   { id: "p-atelier-cil", name: "Atelier céramique partenaire", type: "workshop", district: "CIL", contactName: "Mme Tahiri", contactEmail: "atelier@example.com", defaultCommissionPercent: 18, status: "active" },
   { id: "p-rooftop", name: "Rooftop partenaire", type: "venue", district: "Centre-ville", contactName: "M. Lazrak", contactEmail: "rooftop@example.com", defaultCommissionPercent: 0, status: "active" },
+  { id: "p-padel-anfa", name: "Club de padel partenaire", type: "venue", district: "Anfa", contactName: "M. Bennis", contactEmail: "padel@example.com", defaultCommissionPercent: 0, status: "active", insurance: { verified: true, insurer: "Assureur du club", expiresOn: "2027-06-30" } },
+  { id: "p-paintball-bouskoura", name: "Terrain de paintball partenaire", type: "venue", district: "Bouskoura", contactName: "Mme Idrissi", contactEmail: "paintball@example.com", defaultCommissionPercent: 0, status: "active" },
   { id: "p-maison-habous", name: "Maison d'hôtes Habous", type: "workshop", district: "Habous", contactName: "Mme Berrada", contactEmail: "habous@example.com", defaultCommissionPercent: 20, status: "prospect" },
 ];
 
@@ -128,6 +134,8 @@ export const DEMO_ECONOMICS: Record<string, { partnerId?: string; model: "own" |
   "exp-ceramique": { partnerId: "p-atelier-cil", model: "commission", commissionPercent: 18 },
   "exp-rooftop": { partnerId: "p-rooftop", model: "own", costPerSeat: 6000 },
   "exp-cuisine": { partnerId: "p-maison-habous", model: "commission", commissionPercent: 20 },
+  "exp-padel": { partnerId: "p-padel-anfa", model: "own", costPerSeat: 8000 },
+  "exp-paintball": { partnerId: "p-paintball-bouskoura", model: "own", costPerSeat: 15000 },
 };
 
 export type AdminReservation = {
@@ -147,6 +155,9 @@ export type AdminReservation = {
   preferences?: { diet: string; allergies: string; languages: string[]; shareWithVenue: boolean };
   /** Étape 11 : part réglée sur place au partenaire (copie figée de la réservation). */
   onSite: AdminOnSite | null;
+  /** 18a : réponses au questionnaire ; 18c : version des conditions d'activité physique acceptée. */
+  answers?: Record<string, number>;
+  physicalTermsVersion?: string;
 };
 
 export type AdminOnSite = {

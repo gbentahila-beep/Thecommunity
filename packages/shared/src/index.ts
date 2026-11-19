@@ -15,3 +15,5 @@ export * from "./matching";
 export * from "./two-part";
 export * from "./ticket";
 export * from "./bank-transfer";
+export * from "./questionnaire";
+export * from "./activity";

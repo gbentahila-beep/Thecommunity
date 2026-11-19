@@ -23,7 +23,13 @@ export const adminSavePartner = onCall({ region: REGION }, async (req) => {
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const v = partnerInputSchema.safeParse(parsed.data.data);
   if (!v.success) invalidArgument(v.error.issues);
-  const data = { ...v.data, defaultCommissionPercent: v.data.model === "commission" ? v.data.defaultCommissionPercent : 0 };
+  const { insurance, ...rest } = v.data;
+  const data = {
+    ...rest,
+    defaultCommissionPercent: v.data.model === "commission" ? v.data.defaultCommissionPercent : 0,
+    // 18c : assurance du lieu (vue par l'équipe), datée et signée par la personne qui l'a vérifiée.
+    ...(insurance ? { insurance: { verified: insurance.verified, insurer: insurance.insurer ?? "", policyNumber: insurance.policyNumber ?? "", expiresOn: insurance.expiresOn ?? "", checkedBy: actor.uid } } : {}),
+  };
   const city = await db.doc(`cities/${data.cityId}`).get();
   if (!city.exists) invalidArgument([{ path: ["cityId"], message: "required" }]);
   const ref = parsed.data.id ? db.doc(`partners/${parsed.data.id}`) : db.collection("partners").doc();

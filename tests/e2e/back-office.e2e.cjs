@@ -117,6 +117,39 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await go('/admin/utilisateurs');
   assert(await page.getByText('Suspendu').count() === 1, 'liste des utilisateurs avec statut');
 
+  // 18 : activités, questionnaire, propositions, assurance
+  await go('/admin/experiences/nouvelle');
+  const act = page.locator('#activite');
+  assert(await act.getByText('4. Activité, sécurité et questionnaire').isVisible(), 'formulaire : section « Activité, sécurité et questionnaire »');
+  await page.getByLabel('Partir d\'un modèle').selectOption('padel');
+  await page.getByRole('button', { name: 'Utiliser ce modèle' }).click();
+  assert(await page.getByTestId('question').count() === 3, 'questionnaire : modèle « padel » chargé (3 questions)');
+  assert(await page.getByLabel('Question (français)').first().inputValue() === 'Votre niveau de padel ?', 'questionnaire : question de niveau');
+  await page.getByRole('button', { name: /Ajouter une question/ }).click();
+  assert(await page.getByTestId('question').count() === 4, 'questionnaire : ajouter une question');
+  await page.getByRole('button', { name: 'Supprimer la question 4' }).click();
+  await page.getByLabel('Partir d\'un modèle').selectOption('paintball');
+  await page.getByRole('button', { name: 'Utiliser ce modèle' }).click();
+  assert(await page.getByText('Remplacer les 3 questions actuelles ?').isVisible(), 'remplacer un questionnaire : confirmation dans la page');
+  await page.getByRole('button', { name: 'Oui, remplacer' }).click();
+  assert(await page.getByTestId('question').count() === 2, 'questionnaire : modèle « paintball » (2 questions)');
+  await page.getByLabel(/^Univers/).selectOption('move');
+  assert(await page.getByRole('checkbox', { name: /Activité physique/ }).isChecked(), 'univers Sport : activité physique cochée d\'office');
+  await page.getByLabel(/^Partenaire/).selectOption('p-paintball-bouskoura');
+  assert(await page.getByTestId('insurance-warning').isVisible(), 'activité physique chez un lieu sans assurance vérifiée : alerte');
+  await page.getByLabel(/^Partenaire/).selectOption('p-padel-anfa');
+  assert(await page.getByTestId('insurance-warning').count() === 0, 'lieu assuré : pas d\'alerte');
+  await go('/admin/propositions');
+  assert(await page.getByTestId('proposal').count() === 2, 'sorties proposées : 2 propositions d\'exemple');
+  await page.getByRole('link', { name: 'Créer l\'expérience à partir de la proposition' }).first().click();
+  await page.waitForURL('**/admin/experiences/nouvelle?proposition=*');
+  assert(await page.getByTestId('from-proposal').isVisible(), 'création pré-remplie : bandeau de la proposition');
+  assert(await page.getByLabel('Titre (français)').inputValue() === 'Padel du samedi matin', 'création pré-remplie : titre repris');
+  await go('/admin/partenaires');
+  assert(await page.getByText('Assurance (activités physiques)').first().isVisible(), 'partenaires : état de l\'assurance affiché');
+  await go('/admin/partenaires/p-padel-anfa');
+  assert(await page.getByTestId('partner-insurance').isVisible(), 'fiche partenaire : bloc assurance');
+
   // Mobile : menu et débordement
   const m = await b.newContext({ ...devices['iPhone 13'] }); const mp = await m.newPage();
   mp.on('pageerror', e => errs.push('mobile: ' + e.message));

@@ -74,3 +74,12 @@ Conséquence pratique : le site d'essai reste réservé à des **testeurs** (don
 - [ ] **Droits de la sauvegarde nocturne** : console Google Cloud → IAM → compte de service des fonctions (« Compute Engine default service account ») → ajouter les rôles **« Administrateur import/export Cloud Datastore »** et **« Administrateur des objets Storage »**. Sans eux, la carte « Santé du site » affiche « échec » et les super-admins reçoivent une alerte. (Je ne modifie pas les droits moi-même sans votre accord.)
 - [ ] **Alerte de budget** : console Google Cloud → Facturation → Budgets et alertes (ex. 20 € par mois, alerte à 50 %, 90 %, 100 %).
 - [ ] **E-mail des super-admins** : vérifier que l'adresse de votre compte super-admin est la bonne (les alertes de santé y arrivent ; boîte d'envoi tant que Brevo n'est pas branché).
+
+## Toutes les activités (étape 18, 19 novembre)
+
+- **Conditions de participation aux activités physiques** (`/conditions-activites-physiques`, FR / EN / AR) : projet rédigé par nous, sans reprendre le texte d'une autre société. À faire relire par un avocat quand Rita le souhaite (notamment : partage des responsabilités, assurance conseillée, durée de conservation de la preuve d'accord, 5 ans proposés). Toute nouvelle version = changer `PHYSICAL_TERMS_VERSION` (packages/shared/src/activity.ts).
+- **CGV, CGU, charte, confidentialité, sécurité** complétées le 19 novembre (âge minimum, activités physiques, questionnaire, plein air, membres de confiance) : à inclure dans la relecture de l'avocat.
+- **Assurance des lieux** : pour chaque lieu qui accueille une activité physique, demander l'attestation de responsabilité civile et la date de fin, puis la saisir dans Partenaires → la fiche → « Assurance du lieu ». Une alerte apparaît sur le tableau de bord tant qu'elle manque.
+- **Photos** : de vraies photos de padel et de paintball (avec l'accord écrit des personnes reconnaissables). Le site utilise en attendant deux illustrations sans personnes (`public/images/illustrations/`).
+- **Membres de confiance** : décider plus tard d'une éventuelle contrepartie pour les membres qui proposent et accueillent des sorties (aujourd'hui : aucune, écrit dans les CGU).
+

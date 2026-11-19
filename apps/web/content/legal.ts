@@ -7,16 +7,94 @@
 
 import { LEGAL_AR } from "./legal-ar";
 
-export type LegalKey = "terms" | "sales" | "privacy" | "safety" | "community";
+export type LegalKey = "terms" | "sales" | "privacy" | "safety" | "community" | "physical";
 /** Bloc : paragraphe, liste à puces, ou tableau (affiché en fiches sur mobile). */
 export type LegalTable = { table: { head: string[]; rows: string[][] } };
 export type LegalBlock = string | string[] | LegalTable;
 export type LegalSection = { title: string; body: LegalBlock[] };
 export type LegalDoc = { title: string; updated: string; intro: string; sections: LegalSection[] };
 
-const UPDATED_FR = "Dernière mise à jour : 8 novembre 2026 · en vigueur à la même date";
+const UPDATED_FR = "Dernière mise à jour : 19 novembre 2026 · en vigueur à la même date";
 
 const fr: Record<LegalKey, LegalDoc> = {
+  physical: {
+    "title": "Conditions de participation aux activités physiques",
+    "updated": UPDATED_FR,
+    "intro": "Ces conditions s'appliquent aux expériences marquées « Activité physique » sur leur fiche : sport, padel, course, paintball, randonnée, danse… Vous les acceptez en réservant ou en demandant à participer. Elles complètent les [conditions générales d'utilisation](/cgu), les [conditions générales de vente](/cgv) et nos conseils de [sécurité](/securite).",
+    "sections": [
+      {
+        "title": "1. À quoi servent ces conditions",
+        "body": [
+          "Une activité physique demande un effort et comporte des risques propres (chute, entorse, choc, fatigue). Ces conditions vous informent de ces risques, rappellent les règles qui permettent de les limiter et précisent le rôle de chacun : vous, le lieu partenaire et The Host Club."
+        ]
+      },
+      {
+        "title": "2. Votre état de santé",
+        "body": [
+          [
+            "En réservant, vous confirmez être en état de pratiquer l'activité et ne connaître aucune contre-indication.",
+            "En cas de doute (problème cardiaque ou respiratoire, blessure récente, grossesse, traitement en cours…), demandez l'avis d'un médecin avant de réserver.",
+            "Si quelque chose vous gêne le jour même, dites-le discrètement à l'encadrant ou à l'équipe : vous pouvez adapter l'effort ou vous arrêter à tout moment.",
+            "Ne nous envoyez aucun certificat ni document médical : nous ne collectons pas d'informations sur votre santé."
+          ]
+        ]
+      },
+      {
+        "title": "3. Votre niveau",
+        "body": [
+          "Le niveau attendu est indiqué sur la fiche. Choisissez une activité adaptée et répondez honnêtement au questionnaire de l'expérience (niveau, allure…) : il sert à vous placer avec des personnes de votre niveau, pour le plaisir et la sécurité de tous."
+        ]
+      },
+      {
+        "title": "4. Pendant l'activité",
+        "body": [
+          [
+            "Suivez les consignes de l'encadrant et du lieu, et les règles du jeu.",
+            "Portez la tenue et les protections demandées (par exemple, le masque au paintball reste en place pendant tout le jeu) et utilisez le matériel conformément aux instructions.",
+            "Échauffez-vous, hydratez-vous et allez à votre rythme : personne ne doit suivre à tout prix.",
+            "Ni alcool ni substance avant ou pendant l'activité. L'encadrant ou l'équipe peut refuser la participation d'une personne qui se met en danger ou met les autres en danger.",
+            "Respectez les autres participants et leur niveau : le fair-play fait partie de l'expérience."
+          ]
+        ]
+      },
+      {
+        "title": "5. Les risques de l'activité",
+        "body": [
+          "Malgré ces précautions, une activité physique comporte des risques normaux et prévisibles : courbatures, chutes, entorses, hématomes (par exemple, impacts de billes au paintball), fatigue. Vous participez en connaissance de ces risques."
+        ]
+      },
+      {
+        "title": "6. Le rôle de chacun",
+        "body": [
+          [
+            "The Host Club organise l'expérience, choisit les lieux partenaires et vérifie qu'ils disposent d'une assurance responsabilité civile.",
+            "Le lieu partenaire est responsable de ses installations, de son matériel et, le cas échéant, de l'encadrement de l'activité.",
+            "Vous êtes responsable de votre comportement, du respect des consignes et des dommages que vous causeriez à d'autres personnes ou au matériel.",
+            "Nous vous conseillons d'être couvert par une assurance personnelle (individuelle accident, responsabilité civile) : vérifiez vos contrats."
+          ],
+          "Rien dans ces conditions ne limite la responsabilité de The Host Club ou du lieu partenaire pour leurs propres fautes, ni les droits que vous donne la loi."
+        ]
+      },
+      {
+        "title": "7. Âge minimum et météo",
+        "body": [
+          "Nos expériences sont réservées aux personnes de 18 ans et plus ; certaines activités demandent un âge minimum plus élevé, indiqué sur leur fiche et vérifié à la réservation. Pour une activité en plein air, si la météo ne permet pas de la pratiquer en sécurité, elle est reportée ou annulée selon les [conditions générales de vente](/cgv)."
+        ]
+      },
+      {
+        "title": "8. En cas d'accident",
+        "body": [
+          "Prévenez immédiatement l'encadrant, le personnel du lieu ou l'équipe. En cas d'urgence au Maroc : 15 (Protection civile, secours), 19 (police), 112 depuis un mobile. Ensuite, signalez ce qui s'est passé depuis votre réservation : nous faisons le point avec le lieu et vous répondons."
+        ]
+      },
+      {
+        "title": "9. Votre accord",
+        "body": [
+          "La version de ces conditions que vous acceptez et sa date sont enregistrées avec votre réservation. Une nouvelle version s'applique aux réservations faites après sa publication."
+        ]
+      }
+    ]
+  },
   safety: {
     title: "Sécurité",
     updated: UPDATED_FR,
@@ -82,6 +160,10 @@ const fr: Record<LegalKey, LegalDoc> = {
             "Allez à votre rythme : personne ne doit suivre à tout prix. Vertiges, chaleur, douleur ? Arrêtez-vous et dites-le.",
             "Pensez à la météo : par forte chaleur, buvez avant de venir, protégez-vous du soleil et ralentissez ; par temps de pluie, prévoyez des chaussures adaptées.",
             "Restez groupés : une balade n'est pas une course. Veillez les uns sur les autres et aidez une personne en difficulté à rentrer en sécurité.",
+            "Niveau et questionnaire : répondez honnêtement au questionnaire de l'expérience (niveau, allure…) ; il sert à vous placer avec des personnes de votre niveau, pour le plaisir et la sécurité de tous.",
+            "Matériel et tenue : suivez les indications de la fiche (matériel fourni, à apporter, tenue conseillée) et les consignes de l'encadrant ou du lieu (échauffement, protections, règles du jeu).",
+            "Activités physiques : avant de réserver, vous acceptez nos [conditions de participation aux activités physiques](/conditions-activites-physiques). En cas de doute sur votre santé, demandez l'avis d'un médecin avant de venir.",
+            "En plein air : si la météo ne permet pas l'activité, nous la reportons ou l'annulons, et vous êtes remboursé si la nouvelle date ne vous convient pas (voir les [conditions générales de vente](/cgv)).",
           ],
         ],
       },
@@ -231,6 +313,8 @@ const fr: Record<LegalKey, LegalDoc> = {
             "Pas de contournement : comptes multiples, abus des codes promo, de la liste d'attente ou des avis sont interdits.",
             "Réglez votre part : si une consommation hors prix est partagée sur place, partir sans payer revient à la faire payer aux autres.",
             "Rien qui mette les autres en danger : ni promotion de la violence ou de l'extrémisme, ni exploitation de qui que ce soit.",
+            "Fair-play : au sport comme au jeu, respectez les règles, les consignes de sécurité et le niveau des autres. On vient pour partager un bon moment, jamais pour humilier ou blesser qui que ce soit.",
+            "Membres de confiance : si l'équipe vous permet de proposer des sorties, décrivez-les honnêtement (lieu, niveau, prix envisagé). Le jour J, accueillez le groupe dans le respect de ces règles et ne demandez jamais d'argent directement aux participants.",
           ],
         ],
       },
@@ -336,6 +420,7 @@ const fr: Record<LegalKey, LegalDoc> = {
             "Fournir des informations exactes et à jour, sous votre vrai prénom ; un seul compte par personne. Nous pouvons vous demander de confirmer votre identité ou votre âge en cas de doute.",
             "Vos identifiants sont personnels : vous êtes responsable de leur confidentialité et de l'activité de votre compte. Prévenez-nous immédiatement en cas d'utilisation non autorisée.",
             "La confirmation de l'adresse e-mail et le questionnaire de profil sont nécessaires pour réserver. Vos réponses peuvent être modifiées à tout moment.",
+            "Certaines expériences demandent un âge minimum plus élevé, indiqué sur leur fiche : il est vérifié à la réservation à partir de votre date de naissance.",
           ],
           "Si vous ne remplissez plus ces conditions, votre accès peut prendre fin.",
         ],
@@ -344,12 +429,15 @@ const fr: Record<LegalKey, LegalDoc> = {
         title: "6. Réservations, demandes et listes d'attente",
         body: [
           "Une expérience se réserve directement ou, si elle est « sur demande », après validation de votre demande par l'équipe. Quand une date est complète, vous pouvez rejoindre la liste d'attente. Le fonctionnement détaillé (prix, délais de paiement, annulation, remboursement) figure dans les [conditions générales de vente](/cgv).",
+          "Pour les activités physiques (sport, paintball, randonnée…), réserver ou demander à participer implique d'accepter les [conditions de participation aux activités physiques](/conditions-activites-physiques).",
+          "Membres de confiance : l'équipe peut permettre à des membres habitués de proposer leurs propres idées de sorties. Une proposition n'engage à rien : l'équipe la vérifie (lieu, sécurité, prix) avant toute publication et reste l'organisatrice de l'expérience publiée, vendue par The Host Club aux mêmes conditions que les autres. Le membre qui l'a proposée n'est ni salarié ni prestataire de The Host Club et n'est pas rémunéré à ce titre, sauf accord écrit distinct.",
         ],
       },
       {
         title: "7. Composition des groupes",
         body: [
           "Les groupes sont composés à partir de votre ville, de vos langues, de votre âge, de vos centres d'intérêt et de vos réponses au questionnaire, en évitant de réunir les mêmes personnes, afin que chacun puisse participer à la conversation. Une personne de l'équipe relit chaque composition. Ce n'est ni une évaluation psychologique ni un jugement sur votre personne.",
+          "Certaines expériences comportent aussi un court questionnaire (10 questions au plus, uniquement à choix : niveau, allure, envies…) à remplir après la réservation. Selon l'expérience, les réponses servent à réunir des niveaux proches (ex. au padel) ou à mélanger les profils ; elles ne sont jamais montrées aux autres participants et sont effacées 30 jours après l'expérience.",
         ],
       },
       {
@@ -446,6 +534,9 @@ const fr: Record<LegalKey, LegalDoc> = {
             "Paiement par virement bancaire : après la réservation, une référence unique et les coordonnées bancaires de The Host Club sont communiquées (à l'écran et par e-mail). La place est bloquée jusqu'à l'échéance indiquée : 48 heures au plus, et au plus tard 24 heures avant l'expérience. La réservation est confirmée, avec le billet et la facture, dès que l'équipe constate la réception du virement du montant exact portant la référence.",
             "Virement non reçu à l'échéance : la place est libérée et vous en êtes informé. Un virement arrivé ensuite donne droit à une place s'il en reste, sinon il est intégralement remboursé. Les remboursements d'un virement se font par virement : les coordonnées nécessaires vous sont demandées à ce moment-là et ne sont pas enregistrées sur le site.",
             "Lorsque le paiement par carte est proposé, il s'effectue auprès d'un prestataire de paiement sécurisé ; The Host Club ne reçoit ni ne conserve aucune donnée de carte. La réservation est confirmée à réception de la confirmation du paiement.",
+            "Âge minimum : certaines expériences sont réservées à partir d'un âge supérieur à 18 ans, indiqué sur leur fiche ; la réservation est refusée si votre date de naissance ne le permet pas.",
+            "Activités physiques : la réservation (ou la demande de participation) implique l'acceptation des [conditions de participation aux activités physiques](/conditions-activites-physiques) ; la version acceptée et sa date sont conservées avec la réservation.",
+            "Questionnaire : pour certaines expériences, un court questionnaire est proposé après la réservation pour composer les groupes. Il est recommandé mais ne conditionne pas la réservation.",
           ],
         ],
       },
@@ -464,6 +555,7 @@ const fr: Record<LegalKey, LegalDoc> = {
         title: "5. Annulation ou modification par The Host Club",
         body: [
           "Si nous annulons une expérience (météo, indisponibilité du partenaire, nombre insuffisant de participants…), vous êtes prévenu et remboursé intégralement. Nous pouvons proposer de déplacer votre réservation vers une autre date de la même expérience ; vous restez libre d'annuler avec remboursement intégral si la nouvelle date ne vous convient pas.",
+          "Expérience en plein air : si la météo ne permet pas l'activité, nous vous prévenons au plus tôt. Elle est soit reportée (vous gardez votre place à la nouvelle date, ou êtes intégralement remboursé si elle ne vous convient pas), soit annulée et intégralement remboursée.",
         ],
       },
       {
@@ -524,6 +616,9 @@ const fr: Record<LegalKey, LegalDoc> = {
             "Localisation approximative : votre ville et, si vous l'indiquez, votre quartier. Aucun suivi GPS.",
             "Expériences : réservations, demandes de participation (message, compte Instagram facultatif), listes d'attente, tables ou équipes, présence le jour J, absences, avis, abonnement, codes promo utilisés.",
             "Préférences d'accueil : régime alimentaire, allergies et langue(s) de table, si vous les indiquez, avec la date de votre accord pour leur transmission au lieu.",
+            "Questionnaire d'une expérience : vos réponses (uniquement des choix : niveau, allure, envies…), si l'expérience en comporte un.",
+            "Activités physiques : la version des conditions de participation que vous avez acceptée et sa date.",
+            "Propositions de sorties (membres de confiance) : le contenu de vos propositions et la réponse de l'équipe.",
             "Paiements et factures : montant, date, statut, référence du prestataire, documents émis. Les données de carte bancaire sont saisies et traitées uniquement par le prestataire de paiement : nous ne les recevons jamais.",
             "Sécurité et assistance : signalements, messages envoyés à l'équipe, décisions de modération et recours.",
             "Données techniques : adresse IP, journaux de connexion et de sécurité, cookies strictement nécessaires.",
@@ -552,6 +647,9 @@ const fr: Record<LegalKey, LegalDoc> = {
                 ["Réserver, payer, être remboursé, recevoir confirmations, rappels et changements", "Exécution du contrat", "Durée de la relation ; les pièces comptables suivent la durée légale (ligne « Obligations légales »)."],
                 ["Composer les tables et équipes, sans réunir toujours les mêmes personnes", "Exécution du contrat ; intérêt légitime", "Durée du compte (l'historique des tables sert à proposer de nouvelles rencontres)."],
                 ["Transmettre régime, allergies et langues de table au lieu", "Votre consentement explicite (le régime et les allergies peuvent révéler une donnée de santé)", "Le temps de l'expérience et de son suivi, puis effacement au plus tard 30 jours après l'expérience. Vous pouvez retirer votre accord jusqu'au début de l'expérience."],
+                ["Composer les groupes à partir du questionnaire d'une expérience (niveau, allure, envies…)", "Exécution du contrat", "Jusqu'à l'expérience, puis effacement automatique 30 jours après l'expérience."],
+                ["Conserver la preuve de l'acceptation des conditions de participation aux activités physiques", "Intérêt légitime (preuve en cas de litige)", "Avec la réservation, 5 ans au plus après l'expérience."],
+                ["Étudier les sorties proposées par les membres de confiance et y répondre", "Exécution du contrat ; intérêt légitime", "3 ans après la dernière proposition."],
                 ["Protéger la communauté : vérification de l'âge, prévention des faux comptes et de la fraude, signalements, modération, recours", "Intérêt légitime ; obligations légales", "Le temps nécessaire à la sécurité de la communauté, 3 ans au plus après la décision."],
                 ["Répondre à vos messages et demandes d'assistance", "Intérêt légitime", "3 ans après le dernier échange."],
                 ["Vous envoyer nos nouveautés par e-mail", "Votre consentement, retirable à tout moment dans vos préférences", "Jusqu'au retrait de votre accord, ou 3 ans après votre dernier contact avec nous."],
@@ -568,6 +666,7 @@ const fr: Record<LegalKey, LegalDoc> = {
         title: "6. Composition des groupes : en toute transparence",
         body: [
           "Un outil propose une composition des tables et des équipes à partir de vos langues, de votre âge, de vos centres d'intérêt et de vos réponses au questionnaire, en évitant de réunir des personnes qui se sont déjà rencontrées. Notre équipe relit et ajuste chaque composition : aucune n'est révélée sans validation humaine. Vous pouvez modifier vos réponses à tout moment ; certaines informations restent nécessaires au fonctionnement du service (âge, ville, langues). En savoir plus : [comment nous composons les tables](/blog/comment-nous-composons-les-tables).",
+          "Pour certaines expériences, vos réponses au questionnaire de l'expérience (niveau, allure…) servent aussi à réunir des niveaux proches ou à mélanger les profils. Le calcul est fait sur nos propres serveurs, sans service d'intelligence artificielle externe ; vos réponses ne sont jamais montrées aux autres participants et sont effacées 30 jours après l'expérience.",
         ],
       },
       {
@@ -634,9 +733,87 @@ const fr: Record<LegalKey, LegalDoc> = {
   },
 };
 
-const UPDATED_EN = "Last updated: 8 November 2026 · effective the same day";
+const UPDATED_EN = "Last updated: 19 November 2026 · effective the same day";
 
 const en: Record<LegalKey, LegalDoc> = {
+  physical: {
+    "title": "Terms for physical activities",
+    "updated": UPDATED_EN,
+    "intro": "These terms apply to experiences marked “Physical activity” on their page: sport, padel, running, paintball, hiking, dance… You accept them when you book or request to take part. They complete the [terms of use](/cgu), the [terms of sale](/cgv) and our [safety](/securite) advice.",
+    "sections": [
+      {
+        "title": "1. What these terms are for",
+        "body": [
+          "A physical activity requires effort and carries its own risks (falls, sprains, knocks, fatigue). These terms tell you about those risks, set out the rules that help limit them and explain each party's role: you, the partner venue and The Host Club."
+        ]
+      },
+      {
+        "title": "2. Your health",
+        "body": [
+          [
+            "By booking, you confirm you are fit to take part and know of no reason not to.",
+            "If in doubt (heart or breathing condition, recent injury, pregnancy, ongoing treatment…), ask a doctor before booking.",
+            "If something bothers you on the day, tell the coach or the team discreetly: you can reduce the effort or stop at any time.",
+            "Don't send us any medical certificate or document: we don't collect information about your health."
+          ]
+        ]
+      },
+      {
+        "title": "3. Your level",
+        "body": [
+          "The expected level is shown on the page. Choose a suitable activity and answer the experience questionnaire honestly (level, pace…): it places you with people at your level, for everyone's enjoyment and safety."
+        ]
+      },
+      {
+        "title": "4. During the activity",
+        "body": [
+          [
+            "Follow the instructions of the coach and the venue, and the rules of the game.",
+            "Wear the required outfit and protective gear (for example, your paintball mask stays on throughout the game) and use equipment as instructed.",
+            "Warm up, drink water and go at your own pace: nobody has to keep up at all costs.",
+            "No alcohol or substances before or during the activity. The coach or the team may refuse to let someone take part if they put themselves or others in danger.",
+            "Respect other participants and their level: fair play is part of the experience."
+          ]
+        ]
+      },
+      {
+        "title": "5. The risks of the activity",
+        "body": [
+          "Despite these precautions, a physical activity carries normal, foreseeable risks: sore muscles, falls, sprains, bruises (for example, paintball impacts), fatigue. You take part knowing these risks."
+        ]
+      },
+      {
+        "title": "6. Who does what",
+        "body": [
+          [
+            "The Host Club organises the experience, chooses partner venues and checks that they have liability insurance.",
+            "The partner venue is responsible for its facilities, its equipment and, where relevant, the coaching of the activity.",
+            "You are responsible for your behaviour, for following instructions and for any damage you cause to other people or equipment.",
+            "We advise you to have personal insurance (personal accident, liability): check your policies."
+          ],
+          "Nothing in these terms limits The Host Club's or the partner venue's liability for their own faults, or your rights under the law."
+        ]
+      },
+      {
+        "title": "7. Minimum age and weather",
+        "body": [
+          "Our experiences are for people aged 18 and over; some activities require a higher minimum age, shown on their page and checked when you book. For an outdoor activity, if the weather doesn't allow it to be done safely, it is postponed or cancelled according to the [terms of sale](/cgv)."
+        ]
+      },
+      {
+        "title": "8. If there's an accident",
+        "body": [
+          "Tell the coach, the venue staff or the team immediately. In an emergency in Morocco: 15 (Civil Protection, emergency help), 19 (police), 112 from a mobile. Afterwards, report what happened from your booking: we look into it with the venue and get back to you."
+        ]
+      },
+      {
+        "title": "9. Your agreement",
+        "body": [
+          "The version of these terms you accept and its date are recorded with your booking. A new version applies to bookings made after it is published."
+        ]
+      }
+    ]
+  },
   safety: {
     title: "Safety",
     updated: UPDATED_EN,
@@ -702,6 +879,10 @@ const en: Record<LegalKey, LegalDoc> = {
             "Go at your own pace: nobody has to keep up at all costs. Dizzy, overheated, in pain? Stop and say so.",
             "Mind the weather: in strong heat, drink before you arrive, protect yourself from the sun and slow down; in rain, wear suitable shoes.",
             "Stay together: a walk isn't a race. Look out for each other and help anyone in difficulty get home safely.",
+            "Level and questionnaire: answer the experience questionnaire honestly (level, pace…); it places you with people at your level, for everyone's enjoyment and safety.",
+            "Equipment and outfit: follow what the page says (equipment provided, what to bring, suggested outfit) and the instructions of the coach or venue (warm-up, protective gear, game rules).",
+            "Physical activities: before booking, you accept our [terms for physical activities](/conditions-activites-physiques). If you have any doubt about your health, ask a doctor before coming.",
+            "Outdoors: if the weather doesn't allow the activity, we postpone or cancel it, and you're refunded if the new date doesn't suit you (see the [terms of sale](/cgv)).",
           ],
         ],
       },
@@ -849,6 +1030,8 @@ const en: Record<LegalKey, LegalDoc> = {
             "No spam, bots or misleading links.",
             "No gaming the system: multiple accounts and abuse of promo codes, the waitlist or reviews are prohibited.",
             "Pay your share: if something outside the price is shared on site, leaving without paying means the others pay for you.",
+            "Fair play: in sport as in games, respect the rules, safety instructions and other people's level. You come to share a good time, never to humiliate or hurt anyone.",
+            "Trusted members: if the team lets you propose outings, describe them honestly (venue, level, intended price). On the day, welcome the group in line with these rules and never ask participants for money directly.",
             "Nothing that endangers others: no promotion of violence or extremism, no exploitation of anyone.",
           ],
         ],
@@ -947,12 +1130,13 @@ const en: Record<LegalKey, LegalDoc> = {
             "Provide accurate, up-to-date information under your real first name; one account per person. We may ask you to confirm your identity or age if in doubt.",
             "Your login details are personal: you are responsible for keeping them confidential and for activity on your account. Tell us immediately about any unauthorised use.",
             "A confirmed email address and the profile questionnaire are required to book. You can change your answers at any time.",
+            "Some experiences have a higher minimum age, shown on their page: it is checked when you book, from your date of birth.",
           ],
           "If you no longer meet these conditions, your access may end.",
         ],
       },
-      { title: "6. Bookings, requests and waitlists", body: ["An experience is booked directly or, if it is “on request”, once the team approves your request. When a date is full, you can join the waitlist. Prices, payment deadlines, cancellation and refunds are described in the [terms of sale](/cgv)."] },
-      { title: "7. How groups are put together", body: ["Groups are based on your city, languages, age, interests and questionnaire answers, avoiding seating the same people together again, so that everyone can join the conversation. A person on our team reviews each line-up. This is neither a psychological assessment nor a judgement about you."] },
+      { title: "6. Bookings, requests and waitlists", body: ["An experience is booked directly or, if it is “on request”, once the team approves your request. When a date is full, you can join the waitlist. Prices, payment deadlines, cancellation and refunds are described in the [terms of sale](/cgv).", "For physical activities (sport, paintball, hiking…), booking or requesting to take part means accepting the [terms for physical activities](/conditions-activites-physiques).", "Trusted members: the team may let regular members propose their own outing ideas. A proposal commits no one: the team checks it (venue, safety, price) before anything is published and remains the organiser of the published experience, sold by The Host Club on the same terms as the others. The member who proposed it is neither an employee nor a contractor of The Host Club and is not paid for it, unless agreed separately in writing."] },
+      { title: "7. How groups are put together", body: ["Groups are based on your city, languages, age, interests and questionnaire answers, avoiding seating the same people together again, so that everyone can join the conversation. A person on our team reviews each line-up. This is neither a psychological assessment nor a judgement about you.", "Some experiences also include a short questionnaire (10 questions at most, multiple choice only: level, pace, preferences…) to fill in after booking. Depending on the experience, answers are used to group similar levels (e.g. padel) or to mix profiles; they are never shown to other participants and are deleted 30 days after the experience."] },
       {
         title: "8. Code of conduct",
         body: [
@@ -1006,9 +1190,9 @@ const en: Record<LegalKey, LegalDoc> = {
     sections: [
       { title: "1. Seller", body: ["{{publisher}}, {{address}} — ICE {{ice}}. Contact: {{supportEmail}}."] },
       { title: "2. Prices", body: ["Prices are shown in Moroccan dirhams (MAD), all taxes included, per spot. What is included (meal, drinks, equipment, classes…) is stated on each experience page; anything extra is paid directly to the venue. Members pay the member price shown next to the public price.", "A promo code applies after the member price, on direct bookings, once per person, under the conditions stated with the code. A service fee may be added: it is always shown before payment, never applies to a free spot and is refunded with the spot.", "Some experiences are paid in two parts, always shown on the experience page: the organisation part, paid online when you book, and a part paid on site directly to the partner (a fixed price announced in advance, or whatever you order). The on-site part is never collected by The Host Club: it is not on our invoice and is not owed if your booking is cancelled. Member prices, membership, promo codes and service fees only apply to the part paid online."] },
-      { title: "3. Booking and payment", body: [["Direct booking: your spot is held while you pay (15 minutes for a card payment; until the stated deadline for a bank transfer), then released if payment fails.", "On-request experiences: nothing to pay when you apply; once accepted, your spot is held for 24 hours.", "Waitlist: if a spot opens up, it is offered to the first person on the list and held for 4 hours.", "Payment by bank transfer: after booking, you receive a unique reference and The Host Club's bank details (on screen and by email). Your spot is held until the stated deadline: 48 hours at most, and no later than 24 hours before the experience. Your booking is confirmed, with your ticket and invoice, as soon as the team sees the transfer of the exact amount with the reference.", "Transfer not received by the deadline: the spot is released and you are told. A transfer that arrives later gets you a spot if one is left; otherwise it is refunded in full. Refunds of a transfer are made by transfer: we ask for the details needed at that time and do not store them on the site.", "When card payment is offered, it is handled by a secure payment provider; The Host Club never receives or stores card details. Your booking is confirmed once payment is confirmed."]] },
+      { title: "3. Booking and payment", body: [["Direct booking: your spot is held while you pay (15 minutes for a card payment; until the stated deadline for a bank transfer), then released if payment fails.", "On-request experiences: nothing to pay when you apply; once accepted, your spot is held for 24 hours.", "Waitlist: if a spot opens up, it is offered to the first person on the list and held for 4 hours.", "Payment by bank transfer: after booking, you receive a unique reference and The Host Club's bank details (on screen and by email). Your spot is held until the stated deadline: 48 hours at most, and no later than 24 hours before the experience. Your booking is confirmed, with your ticket and invoice, as soon as the team sees the transfer of the exact amount with the reference.", "Transfer not received by the deadline: the spot is released and you are told. A transfer that arrives later gets you a spot if one is left; otherwise it is refunded in full. Refunds of a transfer are made by transfer: we ask for the details needed at that time and do not store them on the site.", "When card payment is offered, it is handled by a secure payment provider; The Host Club never receives or stores card details. Your booking is confirmed once payment is confirmed.", "Minimum age: some experiences are open only above an age higher than 18, shown on their page; the booking is refused if your date of birth doesn't allow it.", "Physical activities: booking (or requesting to take part) means accepting the [terms for physical activities](/conditions-activites-physiques); the accepted version and its date are kept with the booking.", "Questionnaire: for some experiences, a short questionnaire is offered after booking to put the groups together. It's recommended but not a condition of the booking."]] },
       { title: "4. Cancellation by the member", body: [["Up to 48 hours before the start: full refund.", "Less than 48 hours before the start: no refund (the spot may be offered to the waitlist).", "An experience may have specific conditions, shown on its page before booking."], "Cancel from your member area (My bookings). Refunds go back to the original payment method; how long they take to appear depends on your bank."] },
-      { title: "5. Cancellation or change by The Host Club", body: ["If we cancel an experience (weather, partner unavailable, not enough participants…), you are informed and fully refunded. We may offer to move your booking to another date of the same experience; you remain free to cancel with a full refund if the new date doesn't suit you."] },
+      { title: "5. Cancellation or change by The Host Club", body: ["If we cancel an experience (weather, partner unavailable, not enough participants…), you are informed and fully refunded. We may offer to move your booking to another date of the same experience; you remain free to cancel with a full refund if the new date doesn't suit you.", "Outdoor experience: if the weather doesn't allow the activity, we let you know as early as possible. It is either postponed (you keep your spot on the new date, or get a full refund if it doesn't suit you) or cancelled with a full refund."] },
       { title: "6. Annual membership", body: [["Membership gives access for 12 months to the benefits described on the Membership page (member price and, depending on the plan, early access to new dates and members-only experiences).", "It is paid once and is not renewed automatically: you can renew from 30 days before it ends, the new period starting at the end date.", "You may withdraw within 7 days of payment by writing to {{supportEmail}}: you are refunded minus any benefits already used (the difference between the public price and the member price of the spots you booked)."]] },
       { title: "7. No-shows", body: ["Not attending without cancelling does not entitle you to a refund. Repeated no-shows or late cancellations may limit access to on-request experiences or lead to a temporary suspension ([Terms of use](/cgu), section 9)."] },
       { title: "8. Invoices", body: ["A document (invoice or receipt) is issued for each payment and a credit note for each refund. They are emailed to you and available in your member area under “My invoices”."] },
@@ -1022,7 +1206,7 @@ const en: Record<LegalKey, LegalDoc> = {
     sections: [
       { title: "1. Key points", body: [["We only collect what is useful to organise small-group experiences safely.", "We never sell your data and use no advertising cookies or GPS location.", "Within a group, only your first name and interests are shared.", "Your diet and allergies are only passed on to the venue with your explicit consent.", "No photo in which you can be recognised is published without your agreement.", "You can view, correct or download your data and delete your account at any time."]] },
       { title: "2. Data controller", body: ["{{publisher}}, {{address}} (ICE {{ice}}), is responsible for the data processed on the site. For any question about your data: {{privacyEmail}}.", "Declaration to the CNDP: {{cndpDeclaration}}. Authorisation to transfer data outside Morocco: {{cndpTransfer}}.", "It is up to you to give us accurate information and keep it up to date from your member area."] },
-      { title: "3. Data we collect", body: [["Account: first name, last name, email address, phone (optional). Your password is handled by our authentication provider and never stored in plain text.", "Profile and questionnaire: date of birth (to check you are an adult), city, languages, interests, goals; gender, profession, bio and photo (optional). The questionnaire is neither a medical nor a psychological assessment.", "Approximate location: your city and, if you provide it, your neighbourhood. No GPS tracking.", "Experiences: bookings, participation requests (message, optional Instagram account), waitlists, tables or teams, attendance on the day, no-shows, reviews, membership, promo codes used.", "Welcome preferences: diet, allergies and table language(s), if you provide them, with the date of your consent to share them with the venue.", "Payments and invoices: amount, date, status, provider reference, documents issued. Card details are entered and processed only by the payment provider: we never receive them.", "Safety and support: reports, messages sent to the team, moderation decisions and appeals.", "Technical data: IP address, connection and security logs, strictly necessary cookies."]] },
+      { title: "3. Data we collect", body: [["Account: first name, last name, email address, phone (optional). Your password is handled by our authentication provider and never stored in plain text.", "Profile and questionnaire: date of birth (to check you are an adult), city, languages, interests, goals; gender, profession, bio and photo (optional). The questionnaire is neither a medical nor a psychological assessment.", "Approximate location: your city and, if you provide it, your neighbourhood. No GPS tracking.", "Experiences: bookings, participation requests (message, optional Instagram account), waitlists, tables or teams, attendance on the day, no-shows, reviews, membership, promo codes used.", "Welcome preferences: diet, allergies and table language(s), if you provide them, with the date of your consent to share them with the venue.", "Payments and invoices: amount, date, status, provider reference, documents issued. Card details are entered and processed only by the payment provider: we never receive them.", "Safety and support: reports, messages sent to the team, moderation decisions and appeals.", "Technical data: IP address, connection and security logs, strictly necessary cookies.", "Experience questionnaire: your answers (multiple choice only: level, pace, preferences…), if the experience has one.", "Physical activities: the version of the participation terms you accepted and its date.", "Outing proposals (trusted members): the content of your proposals and the team's reply."]] },
       { title: "4. How we collect it", body: [["Directly from you: account creation, questionnaire, booking, participation request, contact or partner application form, report, review.", "Automatically: technical logs and strictly necessary cookies when you use the site.", "From our providers: the payment provider confirms the status and reference of each payment.", "From our team: attendance on the day, table line-ups, moderation decisions."]] },
       {
         title: "5. Why, on what basis, and for how long",
@@ -1035,6 +1219,9 @@ const en: Record<LegalKey, LegalDoc> = {
                 ["Booking, paying, getting refunds, receiving confirmations, reminders and changes", "Performance of the contract", "For the duration of the relationship; accounting records follow the legal period (see “Legal obligations”)."],
                 ["Putting tables and teams together, without always seating the same people", "Performance of the contract; legitimate interest", "For the life of the account (table history is used to suggest new encounters)."],
                 ["Passing diet, allergies and table languages on to the venue", "Your explicit consent (diet and allergies may reveal health data)", "For the experience and its follow-up, then deleted no later than 30 days after the experience. You can withdraw your consent until the experience starts."],
+                ["Putting groups together from an experience questionnaire (level, pace, preferences…)", "Performance of the contract", "Until the experience, then deleted automatically 30 days after it."],
+                ["Keeping proof that the terms for physical activities were accepted", "Legitimate interest (evidence in case of dispute)", "With the booking, at most 5 years after the experience."],
+                ["Reviewing and answering outings proposed by trusted members", "Performance of the contract; legitimate interest", "3 years after the last proposal."],
                 ["Protecting the community: age checks, preventing fake accounts and fraud, reports, moderation, appeals", "Legitimate interest; legal obligations", "As long as needed for the community's safety, at most 3 years after the decision."],
                 ["Answering your messages and support requests", "Legitimate interest", "3 years after the last exchange."],
                 ["Sending you our news by email", "Your consent, which you can withdraw at any time in your preferences", "Until you withdraw consent, or 3 years after your last contact with us."],
@@ -1047,7 +1234,7 @@ const en: Record<LegalKey, LegalDoc> = {
           },
         ],
       },
-      { title: "6. How groups are put together, transparently", body: ["A tool suggests table and team line-ups based on your languages, age, interests and questionnaire answers, avoiding seating people together who have already met. Our team reviews and adjusts every line-up: none is revealed without human approval. You can change your answers at any time; some information remains necessary for the service to work (age, city, languages). Learn more: [how we put tables together](/blog/comment-nous-composons-les-tables)."] },
+      { title: "6. How groups are put together, transparently", body: ["A tool suggests table and team line-ups based on your languages, age, interests and questionnaire answers, avoiding seating people together who have already met. Our team reviews and adjusts every line-up: none is revealed without human approval. You can change your answers at any time; some information remains necessary for the service to work (age, city, languages). Learn more: [how we put tables together](/blog/comment-nous-composons-les-tables).", "For some experiences, your answers to the experience questionnaire (level, pace…) are also used to group similar levels or to mix profiles. The calculation runs on our own servers, with no external artificial-intelligence service; your answers are never shown to other participants and are deleted 30 days after the experience."] },
       { title: "7. Cookies", body: ["We only use strictly necessary cookies: keeping you signed in and remembering your language. They do not require your consent. We use no audience measurement, personalisation or advertising cookies; if that changes, we will ask for your consent first."] },
       {
         title: "8. Who can access it",

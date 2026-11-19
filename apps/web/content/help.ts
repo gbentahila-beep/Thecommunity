@@ -472,6 +472,193 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     },
     related: ["preparer-l-accueil-d-un-groupe"],
   },
+  // ——— 18 : toutes les activités ———
+  {
+    "slug": "questionnaire-avant-l-experience",
+    "category": "bookings",
+    "title": {
+      "fr": "À quoi sert le questionnaire après ma réservation ?",
+      "en": "What is the questionnaire after my booking for?"
+    },
+    "summary": {
+      "fr": "Quelques questions à choix (niveau, allure, envies) pour vous placer avec les bonnes personnes.",
+      "en": "A few multiple-choice questions (level, pace, preferences) to place you with the right people."
+    },
+    "body": {
+      "fr": [
+        "Certaines expériences comportent un court questionnaire, 10 questions au plus, que vous remplissez après votre réservation, depuis la page de la réservation (rubrique « Votre questionnaire »). Une notification vous y invite.",
+        [
+          "Au padel ou en course à pied, il sert à réunir des personnes de niveau ou d'allure proches : par exemple, quatre joueurs de même niveau par terrain.",
+          "Au paintball ou à table, il peut au contraire servir à mélanger les profils : débutants et habitués, personnes qui écoutent et personnes qui animent.",
+          "Uniquement des réponses à choisir : aucune question ouverte, rien de sensible."
+        ],
+        "Vos réponses ne sont jamais montrées aux autres participants. Vous pouvez les modifier jusqu'au début de l'expérience ; elles sont effacées automatiquement 30 jours après.",
+        "Le questionnaire est recommandé mais pas obligatoire : sans réponse, nous composons votre groupe avec votre profil (langues, âge, centres d'intérêt)."
+      ],
+      "en": [
+        "Some experiences include a short questionnaire, 10 questions at most, that you fill in after booking, from the booking page (“Your questionnaire”). A notification reminds you.",
+        [
+          "For padel or running, it groups people with a similar level or pace: for example, four players of the same level per court.",
+          "For paintball or at the table, it can instead mix profiles: beginners and regulars, listeners and people who get things going.",
+          "Multiple choice only: no open questions, nothing sensitive."
+        ],
+        "Your answers are never shown to other participants. You can change them until the experience starts; they're deleted automatically 30 days after it.",
+        "The questionnaire is recommended but not compulsory: without answers, we put your group together from your profile (languages, age, interests)."
+      ]
+    },
+    "related": [
+      "reserver-une-place",
+      "niveau-materiel-et-tenue"
+    ]
+  },
+  {
+    "slug": "niveau-materiel-et-tenue",
+    "category": "bookings",
+    "title": {
+      "fr": "Niveau, matériel, tenue : comment me préparer ?",
+      "en": "Level, equipment, outfit: how do I get ready?"
+    },
+    "summary": {
+      "fr": "Tout est indiqué sur la fiche de l'expérience, dans « Avant de venir ».",
+      "en": "Everything is on the experience page, under “Before you come”."
+    },
+    "body": {
+      "fr": [
+        "Pour le sport, les jeux et les ateliers, la fiche de l'expérience précise ce qu'il faut savoir avant de venir :",
+        [
+          "Le niveau attendu : tous niveaux, débutant, intermédiaire ou confirmé.",
+          "Le matériel fourni (raquettes, masque, tablier…) et ce que vous devez apporter (baskets propres, bouteille d'eau…).",
+          "La tenue conseillée.",
+          "L'âge minimum, s'il est supérieur à 18 ans.",
+          "Si l'activité a lieu en plein air."
+        ],
+        "Pas sûr de votre niveau ? Choisissez une expérience « tous niveaux » et répondez honnêtement au questionnaire : nous vous placerons avec des personnes de votre niveau."
+      ],
+      "en": [
+        "For sport, games and workshops, the experience page tells you what to know before you come:",
+        [
+          "The expected level: all levels, beginner, intermediate or advanced.",
+          "Equipment provided (rackets, mask, apron…) and what you need to bring (clean trainers, water bottle…).",
+          "The suggested outfit.",
+          "The minimum age, if it's above 18.",
+          "Whether the activity takes place outdoors."
+        ],
+        "Not sure about your level? Pick an “all levels” experience and answer the questionnaire honestly: we'll place you with people at your level."
+      ]
+    },
+    "related": [
+      "questionnaire-avant-l-experience",
+      "activites-physiques-et-meteo"
+    ]
+  },
+  {
+    "slug": "activites-physiques-et-meteo",
+    "category": "safety",
+    "title": {
+      "fr": "Activités physiques, âge minimum et météo",
+      "en": "Physical activities, minimum age and weather"
+    },
+    "summary": {
+      "fr": "Ce que vous acceptez en réservant une activité physique, et ce qui se passe s'il pleut.",
+      "en": "What you accept when booking a physical activity, and what happens if it rains."
+    },
+    "body": {
+      "fr": [
+        "Pour les expériences marquées « Activité physique » (sport, padel, paintball, randonnée…), vous cochez une case en réservant : vous acceptez nos [conditions de participation aux activités physiques](/conditions-activites-physiques) et confirmez être en état de pratiquer.",
+        [
+          "Allez à votre rythme et suivez les consignes de l'encadrant et du lieu.",
+          "En cas de doute sur votre santé, demandez l'avis d'un médecin avant de réserver. Ne nous envoyez aucun document médical.",
+          "Certaines activités demandent un âge minimum plus élevé que 18 ans : il est vérifié à la réservation."
+        ],
+        "En plein air, si la météo ne permet pas l'activité en sécurité, nous vous prévenons au plus tôt : elle est reportée (vous gardez votre place ou êtes remboursé, au choix) ou annulée et intégralement remboursée."
+      ],
+      "en": [
+        "For experiences marked “Physical activity” (sport, padel, paintball, hiking…), you tick a box when booking: you accept our [terms for physical activities](/conditions-activites-physiques) and confirm you're fit to take part.",
+        [
+          "Go at your own pace and follow the instructions of the coach and the venue.",
+          "If you have any doubt about your health, ask a doctor before booking. Don't send us any medical document.",
+          "Some activities require a minimum age above 18: it's checked when you book."
+        ],
+        "Outdoors, if the weather doesn't allow the activity to be done safely, we let you know as early as possible: it's postponed (you keep your spot or get a refund, your choice) or cancelled with a full refund."
+      ]
+    },
+    "related": [
+      "securite-pendant-une-experience",
+      "niveau-materiel-et-tenue"
+    ]
+  },
+  {
+    "slug": "proposer-une-sortie",
+    "category": "start",
+    "title": {
+      "fr": "Puis-je proposer ma propre sortie ?",
+      "en": "Can I propose my own outing?"
+    },
+    "summary": {
+      "fr": "Oui, si l'équipe vous a donné le statut de membre de confiance.",
+      "en": "Yes, if the team has made you a trusted member."
+    },
+    "body": {
+      "fr": [
+        "L'équipe propose à certains habitués de devenir « membres de confiance ». Une rubrique « Proposer une sortie » apparaît alors dans leur espace.",
+        [
+          "Décrivez votre idée : univers, déroulé, quartier, lieu envisagé, dates, nombre de participants, prix envisagé.",
+          "L'équipe la relit, vérifie le lieu, la sécurité et le prix, puis crée la fiche de l'expérience : rien n'est publié sans elle.",
+          "Vous êtes prévenu dans vos notifications, que la proposition soit retenue ou non."
+        ],
+        "L'expérience publiée est organisée et vendue par The Host Club, aux mêmes conditions que les autres. Vous n'avez jamais à encaisser d'argent auprès des participants.",
+        "Pas encore membre de confiance ? Une idée de sortie est toujours la bienvenue : [écrivez-nous](/contact)."
+      ],
+      "en": [
+        "The team invites some regulars to become “trusted members”. A “Propose an outing” section then appears in their account.",
+        [
+          "Describe your idea: universe, how it goes, neighbourhood, venue in mind, dates, number of participants, intended price.",
+          "The team reviews it, checks the venue, safety and price, then creates the experience page: nothing is published without it.",
+          "You're told in your notifications whether the proposal goes ahead or not."
+        ],
+        "The published experience is organised and sold by The Host Club, on the same terms as the others. You never collect money from participants.",
+        "Not a trusted member yet? Outing ideas are always welcome: [write to us](/contact)."
+      ]
+    },
+    "related": [
+      "comment-fonctionne-the-host-club"
+    ]
+  },
+  {
+    "slug": "assurance-et-activites-physiques",
+    "category": "partner-hosting",
+    "title": {
+      "fr": "Assurance et activités physiques",
+      "en": "Insurance and physical activities"
+    },
+    "summary": {
+      "fr": "Pour le sport ou le paintball, nous vous demandons votre attestation de responsabilité civile.",
+      "en": "For sport or paintball, we ask for your liability insurance certificate."
+    },
+    "body": {
+      "fr": [
+        "Pour accueillir une activité physique (sport, padel, paintball, randonnée…), nous vous demandons une copie de votre attestation d'assurance responsabilité civile, avec sa date de fin de validité.",
+        [
+          "Nous l'enregistrons sur votre fiche partenaire et vous prévenons avant son expiration.",
+          "Vous restez responsable de vos installations, de votre matériel et de l'encadrement de l'activité.",
+          "Les participants acceptent nos [conditions de participation aux activités physiques](/conditions-activites-physiques) avant de réserver ; présentez-leur les consignes de sécurité au début de l'activité."
+        ],
+        "Une question ? Écrivez-nous à {{supportEmail}}."
+      ],
+      "en": [
+        "To host a physical activity (sport, padel, paintball, hiking…), we ask for a copy of your liability insurance certificate, with its expiry date.",
+        [
+          "We record it on your partner file and remind you before it expires.",
+          "You remain responsible for your facilities, equipment and the coaching of the activity.",
+          "Participants accept our [terms for physical activities](/conditions-activites-physiques) before booking; go through the safety instructions with them at the start."
+        ],
+        "Any questions? Write to us at {{supportEmail}}."
+      ]
+    },
+    "related": [
+      "preparer-l-accueil-d-un-groupe"
+    ]
+  },
 ];
 
 /** Typographie française : espace insécable avant « ? ! : ; » et à l'intérieur des guillemets (évite un « ? » seul en début de ligne). */

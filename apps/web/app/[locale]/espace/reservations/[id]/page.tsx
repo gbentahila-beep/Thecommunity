@@ -14,6 +14,8 @@ import { getReservationInvoices } from "@/lib/data/invoices";
 import { getMemberReservation, getMemberSpace } from "@/lib/data/member";
 import { InvoiceList } from "@/components/account/invoice-list";
 import { PreferencesEditor } from "@/components/booking/preferences-editor";
+import { QuestionnaireForm } from "@/components/account/questionnaire-form";
+import { getExperienceBySlug } from "@/lib/data";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { buildIcs, icsDataUri } from "@/lib/ics";
@@ -31,7 +33,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   if (!data) notFound();
   const { reservation: r, group, profile, now } = data;
   const space = await getMemberSpace();
-  const [t, tl, ti, tb, tp, t2, tk, tv, locale, invoices] = await Promise.all([
+  const [t, tl, ti, tb, tp, t2, tk, tv, tq, locale, invoices, experience] = await Promise.all([
     getTranslations("reservation"),
     getTranslations("labels.interests"),
     getTranslations("invoices"),
@@ -40,9 +42,13 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
     getTranslations("twoPart"),
     getTranslations("ticket"),
     getTranslations("transfer"),
+    getTranslations("questionnaire"),
     getLocale(),
     space.session ? getReservationInvoices(space.session.uid, id) : Promise.resolve([]),
+    getExperienceBySlug(r.sessionSnapshot.slug).catch(() => null),
   ]);
+  // 18a : questionnaire de l'expérience (s'il y en a un), rempli après la réservation.
+  const questions = experience?.questionnaire ?? [];
   const lang = locale as "fr" | "ar" | "en";
   const s = r.sessionSnapshot;
   const title = tr(s.title, locale);
@@ -310,6 +316,14 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           )}
         </dl>
       </section>
+
+      {(isActive || r.status === "pending_payment") && questions.length > 0 && (
+        <section id="questionnaire" aria-labelledby="questionnaire-title" className="scroll-mt-28 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="questionnaire">
+          <h2 id="questionnaire-title" className="font-display text-2xl font-medium text-plum-900">{tq("title")}</h2>
+          <p className="mb-4 mt-1 text-sm text-muted">{r.questionnaire ? tq("introDone") : tq("intro")}</p>
+          <QuestionnaireForm reservationId={r.id} questions={questions} initial={r.questionnaire?.answers ?? null} editable={FIREBASE_ENABLED && isUpcoming} />
+        </section>
+      )}
 
       {(isActive || r.status === "pending_payment") && (
         <section aria-labelledby="prefs" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">

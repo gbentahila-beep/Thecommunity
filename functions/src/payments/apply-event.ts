@@ -5,6 +5,7 @@ import { db, FieldValue } from "../lib/admin";
 import { afterPaymentSettled } from "../invoices/issue";
 import { issueRefund } from "./refund";
 import { redeemPromo } from "../reservations/create-reservation";
+import { notifyQuestionnaire } from "../reservations/questionnaire";
 
 /** Notification de paiement, déjà authentifiée (signature du prestataire, ou callable de test). */
 export type PaymentEvent = {
@@ -132,6 +133,8 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
 
   // Facture + e-mail de confirmation (5c). En cas de remboursement automatique, la facture est émise avec l'avoir.
   if (decision.outcome === "confirmed") await afterPaymentSettled({ paymentId: ev.paymentId });
+  // 18a : place confirmée → invitation à remplir le questionnaire de l'expérience (s'il y en a un).
+  if (decision.outcome === "confirmed" && decision.reservationId) await notifyQuestionnaire(decision.reservationId).catch(() => undefined);
   if (decision.refund) await refundPayment(ev.paymentId, decision.refund.amount, decision.refund.reason);
   return { outcome: decision.outcome, reservationId: decision.reservationId, purpose: decision.purpose ?? "reservation" };
 }

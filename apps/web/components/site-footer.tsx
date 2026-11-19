@@ -37,6 +37,7 @@ export async function SiteFooter() {
         { href: "/confidentialite", label: t("privacy") },
         { href: "/securite", label: t("safety") },
         { href: "/charte", label: t("charter") },
+        { href: "/conditions-activites-physiques", label: t("physical") },
       ],
     },
   ];
