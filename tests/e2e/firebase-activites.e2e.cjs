@@ -141,6 +141,8 @@ async function bookWithTerms(page, sid, uid) {
   // 5. Membre de confiance : statut, proposition, refus avec message
   await admin.goto(`${base}/admin/utilisateurs?q=${encodeURIComponent(a.email)}`, { waitUntil: 'load' });
   await admin.getByRole('button', { name: 'Rendre membre de confiance' }).click();
+  // Premier appel de cette fonction dans l'émulateur : le démarrage peut prendre du temps après une longue série de tests.
+  assert(await visible(admin.getByRole('button', { name: 'Membre de confiance ✓' }), 60000), 'équipe : bouton « Membre de confiance ✓ »');
   assert(await until(async () => (await fsGet(`users/${a.uid}`)).fields.trustedHost?.booleanValue === true), 'équipe : Amal devient membre de confiance');
   await pa.goto(`${base}/espace/proposer`, { waitUntil: 'load' });
   await pa.getByLabel('Titre de la sortie').fill('Padel du dimanche matin');
