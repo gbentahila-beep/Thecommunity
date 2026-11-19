@@ -63,6 +63,17 @@
 |---|---|---|
 | 9 | **Recette, sécurité, mise en production** (dont : **effacement automatique** du régime et des allergies 30 jours après l'expérience, annoncé dans la politique de confidentialité) | récépissé CNDP, avocat, comptable, domaine, Brevo (docs/16) |
 
+Idées issues de l'étude des concurrents (19 novembre ; Timeleft, déjà à Casablanca le mercredi à 20 h depuis juillet 2024 ; 222 aux États-Unis ; Pie aux États-Unis ; Joiner en Europe ; Hype au Caire), à valider avant de les planifier :
+
+- **Revoir quelqu'un, avec accord des deux** après l'expérience (222 le fait) : priorité, car garder les membres est le point faible de tous ces services.
+- **Un rendez-vous fixe chaque semaine** (ex. « le jeudi The Host Club »), pour créer une habitude, sans copier le mercredi de Timeleft.
+- **Un verre commun après le dîner** : toutes les tables du soir se retrouvent dans un bar partenaire.
+- **Un court questionnaire de personnalité** (10 questions) pour mieux composer les tables, en plus des langues et des centres d'intérêt.
+- **Des expériences « entre femmes » régulières**, déjà testées avec « Move & Connect » : en faire un rendez-vous identifié.
+- **Des clubs récurrents** (course du samedi, club lecture…) où l'on retrouve les mêmes personnes.
+- **Des hôtes ambassadeurs**, récompensés quand ils font venir de nouveaux membres.
+- **Chiffres réels sur le site** (participants, expériences, note moyenne) dès qu'il y en a : jamais de chiffres inventés.
+
 Idées notées, à valider avant de les planifier :
 
 - Formats **brunch** et **conversation** ; mention « en collaboration avec … » (lieu partenaire) sur la fiche.
