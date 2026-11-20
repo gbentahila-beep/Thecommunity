@@ -64,7 +64,7 @@ async function login(page, who, suite) {
 
   // 1. Fiche : bouton « Demander à participer »
   await member.goto(`${base}/experiences/${exp.fields.slug.stringValue}`);
-  assert(await visible(member.getByText("Participation sur demande : l'équipe valide chaque inscription.")), 'fiche : participation sur demande annoncée');
+  assert(await visible(member.getByText("Participation sur demande : envoyez votre demande, l'équipe (ou l'organisateur) vous répond, puis vous payez pour confirmer votre place.")), 'fiche : participation sur demande annoncée');
   assert(await member.getByRole('link', { name: 'Demander à participer' }).count() >= 1, 'fiche : bouton « Demander à participer »');
 
   // 2. Demande
