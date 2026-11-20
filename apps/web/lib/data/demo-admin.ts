@@ -136,6 +136,21 @@ export const DEMO_ECONOMICS: Record<string, { partnerId?: string; model: "own" |
   "exp-cuisine": { partnerId: "p-maison-habous", model: "commission", commissionPercent: 20 },
   "exp-padel": { partnerId: "p-padel-anfa", model: "own", costPerSeat: 8000 },
   "exp-paintball": { partnerId: "p-paintball-bouskoura", model: "own", costPerSeat: 15000 },
+  // 21b : expériences inventées (coûts par place estimés, sans lieu partenaire nommé).
+  "exp-couscous-vendredi": { model: "own", costPerSeat: 9000 },
+  "exp-the-patisseries": { model: "own", costPerSeat: 7000 },
+  "exp-running-corniche": { model: "own", costPerSeat: 2000 },
+  "exp-randonnee-bouskoura": { model: "own", costPerSeat: 6000 },
+  "exp-jeux-societe": { model: "own", costPerSeat: 4000 },
+  "exp-karaoke": { model: "own", costPerSeat: 6000 },
+  "exp-zellige": { model: "own", costPerSeat: 14000 },
+  "exp-parfum": { model: "own", costPerSeat: 20000 },
+  "exp-street-art": { model: "own", costPerSeat: 3500 },
+  "exp-gnaoua": { model: "own", costPerSeat: 9000 },
+  "exp-echange-langues": { model: "own", costPerSeat: 2500 },
+  "exp-nouveaux-arrivants": { model: "own", costPerSeat: 5000 },
+  "exp-art-deco": { model: "own", costPerSeat: 5000 },
+  "exp-cafe-specialite": { model: "own", costPerSeat: 10000 },
 };
 
 export type AdminReservation = {

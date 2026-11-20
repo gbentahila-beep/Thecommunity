@@ -161,7 +161,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   // Étape 19 : Paramètres → catégories dynamiques (démo : lecture seule)
   await page.goto(`${base}/admin/parametres`);
   assert(await page.locator('summary', { hasText: 'Padel' }).getByText('Sous-catégorie').isVisible(), 'Paramètres : Padel listée comme sous-catégorie');
-  assert(await page.locator('summary', { hasText: 'Rencontres & activités sociales' }).getByText('Masquée').isVisible(), 'Paramètres : catégorie préparée, masquée');
+  assert(await page.locator('summary', { hasText: 'Rencontres & activités sociales' }).getByText('Masquée').count() === 0, 'Paramètres : Rencontres visible (expériences de démonstration, 21b)');
   assert(await page.locator('#cat-padel-parent').inputValue() === 'move', 'Padel rattachée à Sport & bien-être');
   for (const p of ['/admin', '/admin/experiences', '/admin/experiences/nouvelle', '/admin/sessions/ses-diner-inconnus-1', '/admin/sessions/ses-diner-inconnus-1/groupes', '/admin/reservations', '/admin/utilisateurs', '/admin/partenaires', '/admin/paiements', '/admin/promos', '/admin/statistiques', '/admin/parametres']) {
     await mp.goto(base + p, { waitUntil: 'load' });

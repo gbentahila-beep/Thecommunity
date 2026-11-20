@@ -3,6 +3,7 @@
  * Elles seront remplacées par Firestore en phase 3. Les photos sont extraites
  * de la maquette de référence et devront être remplacées par de vraies photos des lieux.
  */
+import { DEMO_MORE_EXPERIENCES, DEMO_MORE_REVIEWS, DEMO_MORE_SCHEDULE } from "./demo-more";
 import {
   DEFAULT_CANCELLATION_POLICY,
   MOROCCO_TIMEZONE,
@@ -115,8 +116,8 @@ export const DEMO_CATEGORIES: Category[] = [
     isActive: true,
     defaultBookingMode: "open",
   },
-  // Étape 19 : catégories dynamiques. Deux catégories du cahier des charges, préparées mais masquées tant
-  // qu'aucune activité n'y est publiée (le super-admin les rend visibles dans Paramètres).
+  // Étape 19 : catégories dynamiques. Deux catégories du cahier des charges ; visibles depuis l'ajout
+  // d'expériences inventées pour la démonstration (21b).
   {
     id: "meet",
     name: { fr: "Rencontres & activités sociales", ar: "لقاءات وأنشطة اجتماعية", en: "Social meetups" },
@@ -127,7 +128,8 @@ export const DEMO_CATEGORIES: Category[] = [
       en: "Language exchanges, book clubs, newcomer drinks.",
     },
     order: 6,
-    isActive: false,
+    isActive: true,
+    imagePath: "/images/illustrations/langues.webp",
     defaultBookingMode: "open",
     icon: "users",
     color: "#3d6b8c",
@@ -142,7 +144,8 @@ export const DEMO_CATEGORIES: Category[] = [
       en: "Guided tours, talks, introductions and masterclasses.",
     },
     order: 7,
-    isActive: false,
+    isActive: true,
+    imagePath: "/images/illustrations/artdeco.webp",
     defaultBookingMode: "individual",
     icon: "book",
     color: "#6a5a8e",
@@ -524,6 +527,8 @@ export const DEMO_EXPERIENCES: Experience[] = [
     ratingCount: 12,
     isDemo: true,
   },
+  // 21b : expériences inventées pour toutes les catégories (démonstration).
+  ...DEMO_MORE_EXPERIENCES,
 ];
 
 /** Planning type : jour de semaine (0 = dimanche), heure locale, capacité, places prises par occurrence. */
@@ -539,6 +544,7 @@ const SCHEDULE: Record<string, { weekday: number; hour: number; minute: number; 
   "exp-cuisine": { weekday: 6, hour: 16, minute: 0, capacity: 10, taken: [10, 5, 1] },
   "exp-padel": { weekday: 6, hour: 10, minute: 30, capacity: 16, taken: [12, 5, 0], featured: true },
   "exp-paintball": { weekday: 0, hour: 14, minute: 30, capacity: 20, taken: [14, 6, 0], featured: true },
+  ...DEMO_MORE_SCHEDULE,
 };
 
 /** Génère trois occurrences à venir pour chaque expérience, à partir de `now`. */
@@ -603,4 +609,5 @@ export const DEMO_REVIEWS: Review[] = [
   { id: "r3", experienceId: "exp-pilates-brunch", rating: 5, publicName: "Inès K.", comment: "Le combo parfait pour un samedi matin. Le brunch est délicieux.", createdAt: "2026-10-26T12:00:00Z", isDemo: true },
   { id: "r4", experienceId: "exp-escape-game", rating: 4, publicName: "Mehdi R.", comment: "On ne se connaissait pas et on est sortis avec 4 minutes d'avance !", createdAt: "2026-10-24T22:00:00Z", isDemo: true },
   { id: "r5", experienceId: "exp-ceramique", rating: 5, publicName: "Nadia T.", comment: "Moment hors du temps, et la céramiste est adorable.", createdAt: "2026-10-20T18:00:00Z", isDemo: true },
+  ...DEMO_MORE_REVIEWS,
 ];

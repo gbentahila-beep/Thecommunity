@@ -26,7 +26,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await d.keyboard.press('ArrowDown');
   const menu = d.getByRole('navigation', { name: /univers/i });
   assert(await visible(menu), 'Découvrir ouvert au clavier');
-  for (const l of ['Dîners & gastronomie', 'Sport & bien-être', 'Jeux', 'Ateliers', 'Sorties']) assert(await menu.getByRole('link', { name: l }).isVisible(), `menu Découvrir : ${l}`);
+  for (const l of ['Dîners & gastronomie', 'Sport & bien-être', 'Jeux', 'Ateliers', 'Sorties', 'Rencontres & activités sociales', 'Culture & apprentissage']) assert(await menu.getByRole('link', { name: l }).isVisible(), `menu Découvrir : ${l}`);
   await d.keyboard.press('Escape');
   assert(await discover.getAttribute('aria-expanded') === 'false', 'Échap referme le menu');
   await discover.hover();
@@ -40,7 +40,8 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await how.getByRole('link', { name: /Découvrir les expériences/ }).getAttribute('href') === '/experiences', 'carte 2 : bouton vers les expériences');
   assert(await how.locator('img').count() === 3, 'carte 3 : trois photos');
   const uni = d.locator('section[aria-labelledby="universes-title"]');
-  assert(await uni.locator('li').count() === 5, 'cinq univers');
+  assert(await uni.locator('li').count() === 7, 'sept univers (dont Rencontres et Culture, 21b)');
+  assert((await uni.locator('li').nth(5).locator('img').getAttribute('src')).includes('langues.webp'), 'Rencontres : illustration de la catégorie');
   const boxes = await uni.locator('li').evaluateAll((lis) => lis.map((li) => { const img = li.querySelector('img').getBoundingClientRect(); const h = li.querySelector('h3').getBoundingClientRect(); return img.left > h.left; }));
   assert(boxes.every((right, i) => right === (i % 2 === 0)), 'univers en alternance photo à droite / à gauche');
   assert(await d.getByRole('heading', { level: 2, name: 'Pourquoi venir' }).isVisible(), 'section « Pourquoi venir »');
@@ -272,7 +273,17 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(padelCards.length >= 1 && padelCards.every((t) => /padel/i.test(t)), 'sous-catégorie : seulement les activités padel');
   await d.goto(`${base}/experiences/padel-entre-inconnus-anfa`);
   assert(await d.getByRole('navigation', { name: "Fil d'Ariane" }).getByRole('link', { name: 'Padel' }).isVisible(), 'fiche : sous-catégorie dans le fil d\'Ariane');
-  assert((await d.goto(`${base}/casablanca/meet`)).status() === 404, 'catégorie préparée mais masquée : introuvable');
+  // 21b : expériences inventées dans toutes les catégories (au moins trois par univers d'origine, deux dans les nouvelles)
+  for (const [cat, min] of [['eat', 3], ['move', 3], ['play', 3], ['create', 3], ['discover', 3], ['meet', 2], ['learn', 2]]) {
+    await d.goto(`${base}/casablanca/${cat}`);
+    const n = await d.locator('main article h3, main a h3').count();
+    assert(n >= min, `/casablanca/${cat} : ${n} expériences (≥ ${min})`);
+  }
+  await d.goto(`${base}/experiences/echange-de-langues-maarif`);
+  assert(await d.getByRole('heading', { level: 1, name: 'Échange de langues' }).isVisible(), 'fiche d\'une expérience inventée (Rencontres)');
+  assert(await d.locator('img[src*="langues"]').first().isVisible(), 'illustration de la fiche');
+  await d.goto(`${base}/en/experiences/visite-guidee-casablanca-art-deco`);
+  assert(await d.getByRole('heading', { level: 1, name: 'Guided tour: Art Deco Casablanca' }).isVisible(), 'version anglaise de la fiche (Culture)');
   await d.goto(`${base}/`);
   assert(!(await d.locator('header').getByText('Padel').count()), 'sous-catégorie absente du menu principal');
 

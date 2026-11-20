@@ -91,3 +91,9 @@ Conséquence pratique : le site d'essai reste réservé à des **testeurs** (don
 - [ ] **Expert-comptable** : traitement de la commission (chiffre d'affaires de The Host Club) et des sommes encaissées pour le compte des organisateurs (à reverser, pas du chiffre d'affaires) ; TVA sur la commission.
 - [ ] **CNDP** : la déclaration doit mentionner la transmission aux organisateurs du prénom, de l'initiale du nom, et, si la personne l'accepte, du régime et des allergies des participants de leurs activités.
 - [ ] **Catégories préparées** : rendre visibles « Rencontres & activités sociales » et « Culture & apprentissage » (Paramètres → Catégories) quand des activités y sont publiées ; ajouter une image et vérifier les traductions.
+
+## Expériences inventées (21b, 20 novembre)
+
+- [ ] Les 14 expériences ajoutées pour la démonstration (et les 11 d'origine) sont **fictives** (`isDemo`) : à archiver ou supprimer dans le back-office avant l'ouverture au public, ou à transformer en vraies expériences (lieu, prix, dates réels).
+- [ ] Leurs images sont des **illustrations** (sans personnes) : à remplacer par de vraies photos des lieux (avec l'accord écrit des personnes reconnaissables).
+- [ ] Vérifier les traductions arabes des titres et accroches.
