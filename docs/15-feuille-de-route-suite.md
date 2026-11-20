@@ -92,6 +92,28 @@ Idées notées, à valider avant de les planifier :
 
 ---
 
+## Audit du 20 novembre (ChatGPT) — plan proposé, en attente du « go »
+
+L'audit a lu le site d'essai public (pas le code ni les espaces connectés). Une bonne partie de ce qu'il demande **existe déjà** :
+composition des groupes par langues, âge, centres d'intérêt et en évitant les personnes déjà rencontrées (étape 6),
+questionnaire (18a), réservation individuelle, sorties proposées par des membres de confiance (18d), organisateurs qui
+vendent leurs activités (19 à 24). Ce qui manque surtout, c'est de **le montrer** et de **prolonger la rencontre**.
+
+| Étape | Contenu | Taille |
+|---|---|---|
+| 28 | **« Venir seul·e », au premier coup d'œil, et textes cohérents** : sous l'accroche (gardée en anglais), trois repères — « Vous pouvez venir seul·e », « Tout le monde est là pour rencontrer du monde », « Nous composons les groupes » ; bouton « Rejoindre cette expérience » pour la réservation directe, et une phrase qui explique « sur demande » ; **textes de paiement générés à partir des réglages** (virement aujourd'hui, carte quand CMI sera actif : plus de « bientôt par carte » écrit en dur) ; **abonnement moins mis en avant avant la première réservation** (prix membre discret, offre proposée après la 1re expérience) ; « Comment ça marche » en 5 étapes. | Petite |
+| 29 | **Fiches « rencontre » : « Qui allez-vous rencontrer ? »** : taille du groupe, « on peut venir seul·e », langues, public (mixte, entre femmes…), tranche d'âge **indicative** et centres d'intérêt **les plus fréquents** des inscrits — en chiffres agrégés seulement, et seulement à partir de 4 inscrits (jamais de donnée qui identifie quelqu'un) ; nouveaux champs du formulaire : « public » et « tranche d'âge visée ». | Moyenne |
+| 30 | **Profil social enrichi et suggestions** : quartier (facultatif), univers préférés, niveau sportif, préférence d'âge pour son groupe (souple) ; pris en compte par la composition des groupes (qui évite déjà les personnes déjà rencontrées) ; bloc « Pour vous » sur l'accueil et le catalogue (personnes connectées). | Moyenne |
+| 31 | **« Mes rencontres » et retrouvailles** : historique des groupes (prénoms et initiale) ; « J'aimerais revoir cette personne » (privé) — si c'est **réciproque**, les deux sont prévenus et peuvent **s'inviter à une prochaine expérience** ; « Proposer une sortie à mon ancien groupe » (passe par la validation de l'équipe, comme 18d) ; signaler ou ne plus être proposé à quelqu'un. **Sans messagerie** (décision D8). | Grande |
+| 32 | **Navigation simplifiée** (barre du bas sur téléphone) : Découvrir · Mes rencontres · Réservations · Profil ; notifications dans la cloche de l'en-tête. | Petite |
+
+Points à trancher par Rita avant de lancer (voir aussi docs/16) :
+- **Accroche** : elle reste « Your people are out there. » (confirmé le 8 novembre) ; seul le texte dessous change.
+- **Tutoiement** : l'audit tutoie, le site vouvoie. À choisir pour tout le site (pas de mélange).
+- **Messagerie de groupe** : l'audit la suggère (priorité moyenne) ; elle reste exclue au lancement (D8 : modération, sécurité).
+- **Public « entre femmes »** : à faire valider par l'avocat (non-discrimination) avant d'en faire un filtre.
+- **Hors code, avant le lancement** : de vraies expériences avec des dates, les informations légales, le paiement par carte (CMI) ; le bandeau « démonstration » disparaît à la mise en production (étape 27).
+
 ## Ajouts du 7 novembre (exemples Sahbi et Timeleft)
 
 Inspirations à reprendre **à notre façon** (sans copier) :
