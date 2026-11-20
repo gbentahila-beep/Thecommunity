@@ -1,28 +1,28 @@
 "use client";
 
-import { Bell, CalendarDays, Compass, UserRound } from "lucide-react";
+import { CalendarDays, Compass, HeartHandshake, UserRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { UnreadBadge, useUnreadLabel } from "./unread-badge";
 
 /**
- * Barre d'onglets mobile (maquette). « Messages » est remplacé par « Notifications » (décision D8).
- * Phase 2 : l'espace membre affiche le compte de démonstration ; phase 3 : protégé par la connexion.
+ * Barre d'onglets mobile. Étape 32 : Découvrir · Mes rencontres · Réservations · Profil ; les notifications passent
+ * dans la cloche de l'en-tête (la pastille des non-lues reste aussi sur « Profil »). Pas de messagerie (décision D8).
  */
 export function MobileTabBar() {
   const t = useTranslations("nav");
   const pathname = usePathname();
-  const notifLabel = useUnreadLabel(t("notifications"), (count) => t("unreadCount", { count }));
+  const profileLabel = useUnreadLabel(t("profile"), (count) => t("unreadCount", { count }));
   const inSpace = pathname.startsWith("/espace") || pathname.startsWith("/bienvenue");
   const tabs = [
-    { href: "/", label: t("explore"), icon: Compass, active: !inSpace && !pathname.startsWith("/connexion") && !pathname.startsWith("/inscription") },
+    { href: "/", label: t("discover"), icon: Compass, active: !inSpace && !pathname.startsWith("/connexion") && !pathname.startsWith("/inscription") },
+    { href: "/espace/rencontres", label: t("meet"), icon: HeartHandshake, active: pathname.startsWith("/espace/rencontres") },
     { href: "/espace/reservations", label: t("bookings"), icon: CalendarDays, active: pathname.startsWith("/espace/reservations") },
-    { href: "/espace/notifications", label: t("notifications"), icon: Bell, active: pathname.startsWith("/espace/notifications") },
     {
       href: "/espace",
       label: t("profile"),
       icon: UserRound,
-      active: inSpace && !pathname.startsWith("/espace/reservations") && !pathname.startsWith("/espace/notifications"),
+      active: inSpace && !pathname.startsWith("/espace/reservations") && !pathname.startsWith("/espace/rencontres"),
     },
   ];
   return (
@@ -36,12 +36,12 @@ export function MobileTabBar() {
             <Link
               href={href}
               aria-current={active ? "page" : undefined}
-              aria-label={href === "/espace/notifications" ? notifLabel : undefined}
+              aria-label={href === "/espace" ? profileLabel : undefined}
               className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] leading-4 font-medium ${active ? "text-plum-900" : "text-muted"}`}
             >
               <span className="relative">
                 <Icon className="size-[22px]" strokeWidth={active ? 2.2 : 1.6} aria-hidden />
-                {href === "/espace/notifications" && <UnreadBadge className="-end-2.5 -top-1.5" />}
+                {href === "/espace" && <UnreadBadge className="-end-2.5 -top-1.5" />}
               </span>
               {label}
             </Link>

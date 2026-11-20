@@ -95,6 +95,22 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   const reco = p.locator('section[aria-labelledby=reco-title] article');
   assert(await reco.count() > 0, '30 : suggestions de l\'espace membre');
 
+  // ——— 32 ———
+  const m = await (await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true })).newPage();
+  m.on('pageerror', (e) => errs.push(e.message));
+  globalThis.__page = m;
+  await m.goto(base + '/', { waitUntil: 'load' });
+  const bar = m.getByRole('navigation', { name: 'Navigation mobile' });
+  assert(JSON.stringify(await bar.getByRole('link').allTextContents()) === JSON.stringify(['Découvrir', 'Mes rencontres', 'Réservations', 'Profil']), '32 : barre du bas Découvrir · Mes rencontres · Réservations · Profil');
+  assert(!(await m.locator('[data-testid=header-bell]:visible').count()), '32 : téléphone non connecté — pas de cloche (le bouton « S\'inscrire » reste visible)');
+  await bar.getByRole('link', { name: 'Mes rencontres' }).click();
+  await m.waitForURL('**/espace/rencontres');
+  assert(await bar.getByRole('link', { name: 'Mes rencontres' }).getAttribute('aria-current') === 'page', '32 : onglet actif');
+  assert(await m.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), '32 : pas de défilement horizontal (Mes rencontres, téléphone)');
+  await p.goto(base + '/', { waitUntil: 'load' });
+  const bell = p.locator('[data-testid=header-bell]:visible');
+  assert(await bell.count() === 1 && await bell.getAttribute('href') === '/espace/notifications', '32 : cloche des notifications dans l\'en-tête (ordinateur, démonstration)');
+
   assert(errs.length === 0, 'aucune erreur navigateur' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();
   console.log('TOUT EST OK');

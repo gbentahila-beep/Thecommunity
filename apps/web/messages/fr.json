@@ -34,7 +34,8 @@
     "signup": "S'inscrire",
     "login": "Se connecter",
     "unreadCount": "{count, plural, one {# non lue} other {# non lues}}",
-    "search": "Rechercher"
+    "search": "Rechercher",
+    "meet": "Mes rencontres"
   },
   "home": {
     "heroTitle1": "Your people",

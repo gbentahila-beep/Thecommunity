@@ -10,6 +10,7 @@ import { LanguageSwitch } from "./language-switch";
 import { Logo } from "./logo";
 import { MobileMenu } from "./mobile-menu";
 import { SearchBox } from "./search-box";
+import { HeaderBell } from "./header-bell";
 import { Search } from "lucide-react";
 
 export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string }) {
@@ -46,9 +47,11 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
           </Link>
           <CityMenu currentCityId={cityId} />
           <LanguageSwitch />
+          <HeaderBell />
           <AccountLink label={t("account")} />
         </div>
-        <div className="ms-auto lg:hidden">
+        <div className="ms-auto flex items-center gap-1 lg:hidden">
+          <HeaderBell mobile />
           <MobileMenu discover={discover} links={links} cities={cityItems} />
         </div>
       </div>

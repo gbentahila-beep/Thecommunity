@@ -34,7 +34,8 @@
     "signup": "Sign up",
     "login": "Log in",
     "unreadCount": "{count} unread",
-    "search": "Search"
+    "search": "Search",
+    "meet": "Connections"
   },
   "home": {
     "heroTitle1": "Your people",
