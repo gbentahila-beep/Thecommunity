@@ -1,4 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server";
+import NextLink from "next/link";
 import { Link } from "@/i18n/navigation";
 import { getCategories } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
@@ -64,7 +65,7 @@ export async function SiteFooter() {
                 <li key={l.href}>
                   {l.href === "/pro" ? (
                     // Espace organisateur : en français, hors routage par langue (comme le back-office).
-                    <a href="/pro" className="text-sm text-muted hover:text-plum-900">{l.label}</a>
+                    <NextLink href="/pro" className="text-sm text-muted hover:text-plum-900">{l.label}</NextLink>
                   ) : (
                     <Link href={l.href} className="text-sm text-muted hover:text-plum-900">
                       {l.label}

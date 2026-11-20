@@ -158,7 +158,7 @@ export function OrganizerApplicationForm({
         <legend className="float-left mb-2 w-full text-base font-semibold text-ink">2. Vos activités</legend>
         <div className="clear-both">
           <p className="mb-2 text-sm font-medium text-ink" id="o-categoryIds-label">Catégories (1 à 3)</p>
-          <div className="flex flex-wrap gap-2" role="group" aria-labelledby="o-categoryIds-label" aria-invalid={Boolean(errors.categoryIds) || undefined}>
+          <div className="flex flex-wrap gap-2" role="group" aria-labelledby="o-categoryIds-label" aria-describedby={errors.categoryIds ? "o-categoryIds-error" : undefined}>
             {categories.map((c) => {
               const on = v.categoryIds.includes(c.id);
               return (
@@ -169,7 +169,7 @@ export function OrganizerApplicationForm({
               );
             })}
           </div>
-          {errors.categoryIds && <p className="mt-1 text-xs text-red-700">{errors.categoryIds}</p>}
+          {errors.categoryIds && <p id="o-categoryIds-error" role="alert" className="mt-1 text-xs text-red-700">{errors.categoryIds}</p>}
         </div>
         <Field id="o-description" label="Présentation (affichée sur votre page une fois validée)" hint="Ce que vous proposez, pour qui, où, votre expérience. 30 caractères minimum." error={errors.description}>
           <textarea {...f("description")} rows={5} value={v.description} onChange={(e) => set("description", e.target.value)} />
