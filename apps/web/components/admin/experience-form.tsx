@@ -43,7 +43,7 @@ export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin"
 
 const MESSAGES: Record<string, string> = {
   required: "Champ obligatoire.", tooShort: "Trop court.", tooLong: "Trop long.", tooMany: "Valeur trop élevée.",
-  depositRange: "Acompte entre 10 et 90 %.", paymentModelDisabled: "Ce mode de paiement n'est pas proposé pour l'instant.",
+  depositRange: "Acompte entre 10 et 90 %.", invalidCoords: "Coordonnées illisibles : deux nombres séparés par une virgule (ex. 33.5951, -7.6187).", paymentModelDisabled: "Ce mode de paiement n'est pas proposé pour l'instant.",
   min0: "Doit être positif.", min1: "Au moins 1.", min2: "Au moins 2.", min15: "Au moins 15 minutes.", max100: "100 % maximum.",
   pickOne: "Choisissez au moins une langue.", groupOrder: "Il faut min ≤ cible ≤ max.", capacityBelowGroup: "La capacité doit permettre au moins un groupe complet.",
   seatsPerBookingMode: "Plus de 2 places par réservation : seulement en mode libre ou privatisé.", partnerRequired: "Le modèle commission nécessite un partenaire.",
@@ -364,6 +364,7 @@ export function ExperienceForm({
         <div><Label k="district">Quartier</Label><input {...field("district")} value={v.district} onChange={(e) => set("district", e.target.value)} />{err("district")}</div>
         <div><Label k="venueName">Nom du lieu</Label><input {...field("venueName")} value={v.venueName} onChange={(e) => set("venueName", e.target.value)} />{err("venueName")}</div>
         <div><Label k="address">Adresse</Label><input {...field("address")} value={v.address} onChange={(e) => set("address", e.target.value)} />{err("address")}</div>
+        <div className="sm:col-span-2"><Label k="venueCoords" hint="Facultatif. Dans Google Maps, clic droit sur le lieu puis cliquez sur les chiffres pour les copier (ex. 33.5951, -7.6187). Une carte s'affiche alors sur la fiche, seulement si le lieu est visible dès la réservation.">Coordonnées GPS du lieu</Label><input {...field("venueCoords")} value={v.venueCoords ?? ""} onChange={(e) => set("venueCoords", e.target.value)} placeholder="33.5951, -7.6187" inputMode="decimal" />{err("venueCoords")}</div>
         <div className="sm:col-span-2"><Label k="revealPolicy">Révélation du lieu</Label>
           <select {...field("revealPolicy")} value={v.revealPolicy} onChange={(e) => set("revealPolicy", e.target.value as "immediate" | "on_group_reveal")}>
             <option value="immediate">Visible dès la réservation</option>
@@ -432,6 +433,7 @@ export function ExperienceForm({
           De l&apos;alcool est servi pendant l&apos;expérience
         </label>
         <div className="sm:col-span-2"><Label k="included" hint="Tout ce que comprend le prix total, payé en ligne et sur place. Un élément par ligne, affiché sur la fiche.">Ce qui est inclus</Label><textarea {...field("included")} rows={3} value={v.included ?? ""} onChange={(e) => set("included", e.target.value)} /></div>
+        <div className="sm:col-span-2"><Label k="notIncluded" hint="Facultatif : ce que le prix ne comprend pas (boissons, transport, matériel à louer…). Un élément par ligne.">Ce qui n&apos;est pas inclus</Label><textarea {...field("notIncluded")} rows={2} value={v.notIncluded ?? ""} onChange={(e) => set("notIncluded", e.target.value)} /></div>
         <div className="sm:col-span-2"><Label k="practicalInfo">Infos pratiques</Label><textarea {...field("practicalInfo")} rows={2} value={v.practicalInfo ?? ""} onChange={(e) => set("practicalInfo", e.target.value)} /></div>
       </Section>
 

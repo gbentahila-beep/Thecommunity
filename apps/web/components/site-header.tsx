@@ -9,6 +9,8 @@ import { DiscoverMenu } from "./discover-menu";
 import { LanguageSwitch } from "./language-switch";
 import { Logo } from "./logo";
 import { MobileMenu } from "./mobile-menu";
+import { SearchBox } from "./search-box";
+import { Search } from "lucide-react";
 
 export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string }) {
   const [t, locale, categories, cities] = await Promise.all([getTranslations("nav"), getLocale(), getCategories(), getCities()]);
@@ -27,15 +29,21 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
       {/* Mobile : barre flottante (logo, S'inscrire, menu) ; ordinateur : barre pleine largeur. */}
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 rounded-full border border-line/60 bg-white/95 ps-5 pe-2 max-[379px]:gap-2 max-[379px]:ps-4 shadow-card backdrop-blur-md lg:h-20 lg:gap-4 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-8 lg:shadow-none lg:backdrop-blur-none">
         <Logo />
-        <nav aria-label={t("mainNav")} className="ms-8 hidden items-center gap-1 lg:flex">
+        <nav aria-label={t("mainNav")} className="ms-8 hidden items-center gap-1 lg:flex xl:ms-6">
           <DiscoverMenu label={t("discover")} menuLabel={t("discoverMenu")} items={discover} />
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className="rounded-full px-3 py-2 text-[15px] text-ink/85 hover:bg-cream-deep hover:text-ink">
+            <Link key={l.href} href={l.href} className="whitespace-nowrap rounded-full px-3 py-2 text-[15px] text-ink/85 hover:bg-cream-deep hover:text-ink">
               {l.label}
             </Link>
           ))}
         </nav>
         <div className="ms-auto hidden items-center gap-2 lg:flex">
+          <div className="hidden w-44 xl:block 2xl:w-64">
+            <SearchBox />
+          </div>
+          <Link href="/experiences" aria-label={t("search")} className="grid size-10 place-items-center rounded-full text-ink/80 hover:bg-cream-deep xl:hidden">
+            <Search className="size-5" aria-hidden />
+          </Link>
           <CityMenu currentCityId={cityId} />
           <LanguageSwitch />
           <AccountLink label={t("account")} />

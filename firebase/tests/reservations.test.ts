@@ -17,7 +17,7 @@ import { sendTransferReminders } from "../../functions/src/payments/transfer-rem
 import { expiredBackupFolders } from "../../functions/src/maintenance/backup";
 import { runHealthCheck, uninsuredPhysicalExperiences } from "../../functions/src/maintenance/health";
 import { sendDueReminders } from "../../functions/src/notify/reminders";
-import { QUESTIONNAIRE_TEMPLATES } from "@thecommunity/shared";
+import { DEFAULT_HOME_SETTINGS, QUESTIONNAIRE_TEMPLATES } from "@thecommunity/shared";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -2173,4 +2173,33 @@ describe("paiements A/B/C, politiques d'annulation, remboursements (22)", () => 
     expect(await team.call("adminDecideRefund", { requestId: b.reservationId, decision: "decline", message: "Après vérification avec l'organisateur, le parcours était sécurisé." })).toMatchObject({ status: "declined" });
     expect((await reservation(b.reservationId)).refundedAmount ?? 0).toBe(0);
   }, 120_000);
+});
+
+describe("accueil modifiable par l'équipe (23)", () => {
+  it("bannière, sections et mises en avant : équipe seulement, activités publiées seulement, journalisé", async () => {
+    const team = await member({ role: "admin" });
+    const someone = await member();
+    const sessionId = await makeSession();
+    const expId = String((await session(sessionId)).experienceId);
+    const draft = db().collection("experiences").doc();
+    await draft.set({ slug: `brouillon-${draft.id}`, title: { fr: "Brouillon" }, status: "draft" });
+    const input = {
+      banner: { enabled: true, textFr: "Nouveau : le padel entre inconnus", textEn: "New: padel with strangers", href: "/experiences?q=padel", linkFr: "Réserver" },
+      sections: [...DEFAULT_HOME_SETTINGS.sections].reverse().map((s) => ({ ...s, enabled: true })),
+      featuredExperienceIds: [expId],
+    };
+    expect(await refusal(someone.call("adminSaveHomeSettings", input))).toBe("permission-denied:");
+    expect(await refusal(team.call("adminSaveHomeSettings", { ...input, banner: { ...input.banner, href: "javascript:alert(1)" } }))).toBe("invalid-argument:");
+    expect(await refusal(team.call("adminSaveHomeSettings", { ...input, featuredExperienceIds: [expId, draft.id] }))).toBe("failed-precondition:not_published");
+    await team.call("adminSaveHomeSettings", input);
+    const saved = (await db().doc("settings/home").get()).data()!;
+    expect(saved.banner).toEqual({ enabled: true, text: { fr: "Nouveau : le padel entre inconnus", en: "New: padel with strangers" }, href: "/experiences?q=padel", linkLabel: { fr: "Réserver" } });
+    expect(saved.sections[0]).toEqual({ id: "faq", enabled: true });
+    expect(saved.featuredExperienceIds).toEqual([expId]);
+    const log = await db().collection("auditLogs").where("action", "==", "settings.home").where("actorUid", "==", team.uid).get();
+    expect(log.size).toBe(1);
+    // Retour aux réglages par défaut (les autres parcours lisent l'accueil).
+    await team.call("adminSaveHomeSettings", { banner: { enabled: false, textFr: "" }, sections: DEFAULT_HOME_SETTINGS.sections, featuredExperienceIds: [] });
+    expect((await db().doc("settings/home").get()).get("banner")).toBeNull();
+  }, 60_000);
 });

@@ -23,12 +23,12 @@ function nextWeekDate(now: Date) {
 export function emptyExperienceValues(now: Date): ExperienceFormValues {
   return {
     titleFr: "", titleAr: "", summaryAr: "", descriptionAr: "", summaryFr: "", descriptionFr: "", titleEn: "", summaryEn: "", descriptionEn: "",
-    categoryId: "eat", subcategoryId: "", cityId: "casablanca", district: "", venueName: "", address: "",
+    categoryId: "eat", subcategoryId: "", cityId: "casablanca", district: "", venueName: "", address: "", venueCoords: "",
     revealPolicy: "immediate", bookingMode: "individual",
     groupMin: "5", groupTarget: "6", groupMax: "7", maxSeatsPerBooking: "1",
     admission: "direct", requestMessageRequired: false, requestInstagramRequired: false, memberPriceDh: "", membersOnly: false,
     priceDh: "", durationMinutes: "120", languages: ["fr"], alcoholServed: false,
-    included: "", practicalInfo: "", cancellationPolicyId: DEFAULT_CANCELLATION_POLICY.id,
+    included: "", notIncluded: "", practicalInfo: "", cancellationPolicyId: DEFAULT_CANCELLATION_POLICY.id,
     partnerId: "", economicsModel: "own", costPerSeatDh: "", commissionPercent: "",
     pricingModel: "online_only", partnerPriceDh: "", partnerDescription: "", onSiteCommissionPercent: "",
     paymentModel: "full_online", depositPercent: "30",
@@ -43,7 +43,7 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     ...emptyExperienceValues(now),
     titleFr: e.title.fr, titleAr: e.title.ar ?? "", summaryAr: e.summary.ar ?? "", descriptionAr: e.description.ar ?? "", summaryFr: e.summary.fr, descriptionFr: e.description.fr,
     titleEn: e.title.en ?? "", summaryEn: e.summary.en ?? "", descriptionEn: e.description.en ?? "",
-    categoryId: e.categoryId, subcategoryId: e.subcategoryId ?? "", cityId: e.cityId, district: e.district, venueName: e.venue.name, address: e.venue.address,
+    categoryId: e.categoryId, subcategoryId: e.subcategoryId ?? "", cityId: e.cityId, district: e.district, venueName: e.venue.name, address: e.venue.address, venueCoords: e.venue.geo ? `${e.venue.geo.lat}, ${e.venue.geo.lng}` : "",
     revealPolicy: e.venue.revealPolicy, bookingMode: e.bookingMode,
     groupMin: String(e.groupConfig?.minSize ?? 5), groupTarget: String(e.groupConfig?.targetSize ?? 6), groupMax: String(e.groupConfig?.maxSize ?? 7),
     admission: e.admission ?? "direct", requestMessageRequired: Boolean(e.requestMessageRequired), requestInstagramRequired: Boolean(e.requestInstagramRequired),
@@ -51,7 +51,7 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     // Étape 22 : pour une activité d'organisateur, le prix saisi est le prix TOTAL (la part en ligne en découle).
     maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String((e.totalPrice?.amount ?? e.price.amount) / 100), durationMinutes: String(e.durationMinutes),
     languages: e.languages.filter((l): l is ExperienceFormValues["languages"][number] => ["fr", "ar", "darija", "en", "es"].includes(l)),
-    alcoholServed: Boolean(e.alcoholServed), included: includedLines(e).join("\n"), practicalInfo: e.practicalInfo?.fr ?? "",
+    alcoholServed: Boolean(e.alcoholServed), included: includedLines(e).join("\n"), notIncluded: (e.notIncluded ?? []).map((i) => i.fr).join("\n"), practicalInfo: e.practicalInfo?.fr ?? "",
     partnerId: eco?.partnerId ?? "", economicsModel: eco?.model ?? "own",
     costPerSeatDh: eco?.costPerSeat != null ? String(eco.costPerSeat / 100) : "",
     commissionPercent: eco?.commissionPercent != null ? String(eco.commissionPercent) : "",

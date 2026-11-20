@@ -100,3 +100,10 @@ Conséquence pratique : le site d'essai reste réservé à des **testeurs** (don
 - [ ] Les 14 expériences ajoutées pour la démonstration (et les 11 d'origine) sont **fictives** (`isDemo`) : à archiver ou supprimer dans le back-office avant l'ouverture au public, ou à transformer en vraies expériences (lieu, prix, dates réels).
 - [ ] Leurs images sont des **illustrations** (sans personnes) : à remplacer par de vraies photos des lieux (avec l'accord écrit des personnes reconnaissables).
 - [ ] Vérifier les traductions arabes des titres et accroches.
+
+## Catalogue et découverte (étape 23, 20 novembre)
+
+- [ ] **Accueil** : Back-office → Accueil du site : choisir les **coups de cœur** et, si vous le souhaitez, activer « Ce week-end », « Nouveautés » ou « Populaires » (désactivées par défaut pour garder l'accueil actuel).
+- [ ] **Coordonnées GPS des lieux publics** (points de rendez-vous, parcs, plages…) : à saisir dans chaque activité pour afficher la carte. Celles des activités de démonstration sont **approximatives**.
+- [ ] **« Non inclus »** : à compléter sur les vraies activités (boissons, transport, location de matériel…).
+- [ ] **Avocat / CNDP** : la politique de confidentialité mentionne désormais la carte OpenStreetMap (chargée seulement sur clic) et le lien vers Google Maps.

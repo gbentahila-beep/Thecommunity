@@ -42,6 +42,8 @@ export const experienceInputSchema = z
     venueName: z.string().trim().min(2, "required").max(100, "tooLong"),
     address: z.string().trim().min(5, "required").max(200, "tooLong"),
     revealPolicy: z.enum(["immediate", "on_group_reveal"]),
+    /** Étape 23 : coordonnées GPS du lieu (« 33.5951, -7.6187 », copiées depuis une carte) : carte sur la fiche si le lieu est public. */
+    venueCoords: z.string().trim().max(40, "tooLong").refine((s) => !s || parseCoords(s) !== null, "invalidCoords").optional().or(z.literal("")),
     bookingMode: z.enum(BOOKING_MODES as [BookingMode, ...BookingMode[]]),
     groupMin: z.coerce.number().int().min(2, "min2").max(20, "tooMany").optional(),
     groupTarget: z.coerce.number().int().min(2, "min2").max(20, "tooMany").optional(),
@@ -59,6 +61,8 @@ export const experienceInputSchema = z
     languages: z.array(z.enum(SPOKEN_LANGUAGES as [SpokenLanguage, ...SpokenLanguage[]])).min(1, "pickOne"),
     alcoholServed: z.boolean(),
     included: z.string().max(1000, "tooLong").optional().or(z.literal("")),
+    /** Étape 23 : ce qui n'est pas compris dans le prix (un élément par ligne). */
+    notIncluded: z.string().max(1000, "tooLong").optional().or(z.literal("")),
     practicalInfo: z.string().max(1000, "tooLong").optional().or(z.literal("")),
     cancellationPolicyId: z.string().min(1, "required"),
     partnerId: z.string().optional().or(z.literal("")),
@@ -160,4 +164,13 @@ export function planSessionDates(
 /** Marge estimée par place, en centimes, selon le modèle économique. */
 export function marginPerSeat(priceAmount: number, model: "own" | "commission", costPerSeat = 0, commissionPercent = 0): number {
   return model === "own" ? priceAmount - costPerSeat : Math.round((priceAmount * commissionPercent) / 100);
+}
+
+/** « 33.5951, -7.6187 » → { lat, lng } (null si illisible ou hors limites). */
+export function parseCoords(s: string | null | undefined): { lat: number; lng: number } | null {
+  const m = /^\s*(-?\d{1,2}(?:[.,]\d+)?)\s*[,;\s]\s*(-?\d{1,3}(?:[.,]\d+)?)\s*$/.exec(s ?? "");
+  if (!m) return null;
+  const lat = Number(m[1]!.replace(",", "."));
+  const lng = Number(m[2]!.replace(",", "."));
+  return Math.abs(lat) <= 90 && Math.abs(lng) <= 180 ? { lat: Math.round(lat * 1e6) / 1e6, lng: Math.round(lng * 1e6) / 1e6 } : null;
 }

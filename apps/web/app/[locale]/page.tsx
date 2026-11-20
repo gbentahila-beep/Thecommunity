@@ -10,7 +10,8 @@ import { ReviewsShowcase } from "@/components/home/reviews-showcase";
 import { Universes } from "@/components/home/universes";
 import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { getCategories, getCities, getCity, getNextSessionPerExperience, getReviews } from "@/lib/data";
+import { experienceBadge, NEW_EXPERIENCE_DAYS, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
+import { getCategories, getCities, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences, getReviews } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
 import { DEFAULT_CITY } from "@/lib/site";
 
@@ -19,17 +20,22 @@ export const revalidate = 3600;
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, city, sessions, categories, reviews, cities] = await Promise.all([
+  const [t, city, sessions, categories, reviews, cities, home, upcomingAll, undated, published, weekend] = await Promise.all([
     getTranslations("home"),
     getCity(DEFAULT_CITY),
     getNextSessionPerExperience({ cityId: DEFAULT_CITY, when: "week" }),
     getCategories(),
     getReviews(),
     getCities(),
+    getHomeSettings(),
+    getNextSessionPerExperience({ cityId: DEFAULT_CITY }),
+    getExperiencesWithoutUpcoming({ cityId: DEFAULT_CITY }),
+    getPublishedExperiences(),
+    getNextSessionPerExperience({ cityId: DEFAULT_CITY, when: "weekend" }),
   ]);
   const cityName = city ? tr(city.name, locale) : "";
   // Si la semaine est calme, on complète avec les prochaines dates.
-  const pool = sessions.length >= 4 ? sessions : await getNextSessionPerExperience({ cityId: DEFAULT_CITY });
+  const pool = sessions.length >= 4 ? sessions : upcomingAll;
   // Mises en avant d'abord, sessions complètes en dernier, puis ordre chronologique.
   const featured = [...pool]
     .sort(
@@ -40,8 +46,134 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     )
     .slice(0, 4);
 
+  // Étape 23 : sections de l'accueil choisies et ordonnées par l'équipe (Back-office → Accueil).
+  const now = new Date();
+  const nextOf = new Map(upcomingAll.map((x) => [x.experienceId, x]));
+  const entry = (e: Experience): { experience: Experience; session?: Session } => ({ experience: e, session: nextOf.get(e.id) });
+  const byId = new Map(published.map((e) => [e.id, e]));
+  const picks = home.featuredExperienceIds.flatMap((id) => (byId.has(id) ? [entry(byId.get(id)!)] : []));
+  const cityExps = [...upcomingAll.map((x) => x.experience), ...undated];
+  const fresh = cityExps
+    .filter((e) => e.createdAt && now.getTime() - Date.parse(e.createdAt) < NEW_EXPERIENCE_DAYS * 86_400_000)
+    .sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""))
+    .slice(0, 4)
+    .map(entry);
+  const popular = cityExps
+    .filter((e) => experienceBadge(e, nextOf.get(e.id), now) === "popular")
+    .sort((a, b) => b.ratingAvg - a.ratingAvg || b.ratingCount - a.ratingCount)
+    .slice(0, 4)
+    .map(entry);
+  const cards = (id: string, title: string, items: { experience: Experience; session?: Session }[]) =>
+    items.length > 0 && (
+      <PageShell key={id} className="space-y-8 py-6" data-testid={`home-${id}`}>
+        <SectionHeading title={title} action={{ href: "/experiences", label: t("seeAll") }} />
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {items.map((x) => <ExperienceCard key={x.experience.id} session={x.session} experience={x.experience} />)}
+        </div>
+      </PageShell>
+    );
+  const banner = home.banner?.enabled ? home.banner : null;
+
+  const sectionsById: Record<HomeSectionId, React.ReactNode> = {
+    featured: cards("featured", t("featuredTitle"), picks),
+    weekend: cards("weekend", t("weekendTitle", { city: cityName }), weekend.slice(0, 4).map((x) => ({ experience: x.experience, session: x }))),
+    new: cards("new", t("newTitle"), fresh),
+    popular: cards("popular", t("popularTitle"), popular),
+    thisWeek: (
+      <PageShell key="thisWeek" className="space-y-8 py-6">
+        <SectionHeading
+          title={t("thisWeek", { city: cityName })}
+          action={{ href: `/${DEFAULT_CITY}`, label: t("seeAll") }}
+        />
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {featured.map((s, i) => (
+            <ExperienceCard key={s.id} session={s} experience={s.experience} priority={i < 2} />
+          ))}
+        </div>
+        <Link href={`/${DEFAULT_CITY}`} className="block text-center text-sm font-medium text-plum-900 underline underline-offset-4 sm:hidden">
+          {t("seeAll")}
+        </Link>
+      </PageShell>
+    ),
+    trust: (
+      <PageShell key="trust" className="py-6">
+        <ul className="grid gap-4 rounded-[var(--radius-card)] bg-cream-deep p-6 sm:grid-cols-3 sm:p-8">
+          {[
+            { icon: Users, label: t("trust1") },
+            { icon: ShieldCheck, label: t("trust2") },
+            { icon: CalendarCheck, label: t("trust3") },
+          ].map(({ icon: Icon, label }) => (
+            <li key={label} className="flex items-center gap-4">
+              <Icon className="size-8 shrink-0 text-plum-900" strokeWidth={1.5} aria-hidden />
+              <span className="text-[15px] text-ink">{label}</span>
+            </li>
+          ))}
+        </ul>
+      </PageShell>
+    ),
+    how: (
+      <PageShell key="how">
+        <HowItWorks categories={categories} />
+      </PageShell>
+    ),
+    universes: (
+      <PageShell key="universes">
+        <Universes categories={categories} />
+      </PageShell>
+    ),
+    reviews: reviews.length > 0 && (
+        <PageShell key="reviews">
+          <ReviewsShowcase
+            reviews={reviews.slice(0, 3).map((r) => ({ id: r.id, rating: r.rating, comment: r.comment, publicName: r.publicName }))}
+            title={t("reviewsTitle")}
+            subtitle={t("reviewsSubtitle")}
+            photoAlt={t("reviewsPhotoAlt")}
+            prevLabel={t("reviewsPrev")}
+            nextLabel={t("reviewsNext")}
+          />
+        </PageShell>
+      ),
+    cities: (
+      <PageShell key="cities" className="pb-8">
+        <div id="villes" className="scroll-mt-24 rounded-[2rem] bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] px-6 py-12 text-center text-white sm:px-12">
+          <h2 className="font-display text-3xl font-medium sm:text-4xl">{t("citiesTitle")}</h2>
+          <p className="mx-auto mt-3 max-w-xl text-plum-100">{t("citiesText")}</p>
+          <ul className="mt-8 flex flex-wrap justify-center gap-2.5">
+            {cities.map((c) => (
+              <li
+                key={c.id}
+                className={`rounded-full px-4 py-2 text-sm ${c.isActive ? "bg-white font-semibold text-plum-900" : "border border-white/25 text-plum-100"}`}
+              >
+                {tr(c.name, locale)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </PageShell>
+    ),
+    faq: (
+      <PageShell key="faq">
+        <HomeFaq />
+      </PageShell>
+    ),
+  };
+
   return (
     <>
+      {banner && (
+        <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 lg:px-8" data-testid="home-banner">
+          <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-2xl bg-plum-900 px-5 py-3 text-center text-sm text-white">
+            <span>{tr(banner.text, locale)}</span>
+            {banner.href && banner.linkLabel && (
+              banner.href.startsWith("/") ? (
+                <Link href={banner.href} className="font-semibold underline underline-offset-4">{tr(banner.linkLabel, locale)}</Link>
+              ) : (
+                <a href={banner.href} target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-4">{tr(banner.linkLabel, locale)}</a>
+              )
+            )}
+          </p>
+        </div>
+      )}
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-8">
@@ -70,88 +202,15 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </div>
       </section>
 
-      {/* CATÉGORIES + CETTE SEMAINE */}
-      <PageShell className="space-y-8 py-6">
-        <div className="flex justify-center sm:hidden">
+      {/* CATÉGORIES */}
+      <PageShell className="pt-6">
+        <div className="mb-6 flex justify-center sm:hidden">
           <CityMenu />
         </div>
         <CategoryChips hrefFor={(id) => (id ? `/${DEFAULT_CITY}/${id}` : "/experiences")} />
-        <SectionHeading
-          title={t("thisWeek", { city: cityName })}
-          action={{ href: `/${DEFAULT_CITY}`, label: t("seeAll") }}
-        />
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          {featured.map((s, i) => (
-            <ExperienceCard key={s.id} session={s} experience={s.experience} priority={i < 2} />
-          ))}
-        </div>
-        <Link href={`/${DEFAULT_CITY}`} className="block text-center text-sm font-medium text-plum-900 underline underline-offset-4 sm:hidden">
-          {t("seeAll")}
-        </Link>
       </PageShell>
 
-      {/* RÉASSURANCE */}
-      <PageShell className="py-6">
-        <ul className="grid gap-4 rounded-[var(--radius-card)] bg-cream-deep p-6 sm:grid-cols-3 sm:p-8">
-          {[
-            { icon: Users, label: t("trust1") },
-            { icon: ShieldCheck, label: t("trust2") },
-            { icon: CalendarCheck, label: t("trust3") },
-          ].map(({ icon: Icon, label }) => (
-            <li key={label} className="flex items-center gap-4">
-              <Icon className="size-8 shrink-0 text-plum-900" strokeWidth={1.5} aria-hidden />
-              <span className="text-[15px] text-ink">{label}</span>
-            </li>
-          ))}
-        </ul>
-      </PageShell>
-
-      {/* COMMENT ÇA MARCHE */}
-      <PageShell>
-        <HowItWorks categories={categories} />
-      </PageShell>
-
-      {/* UNIVERS */}
-      <PageShell>
-        <Universes categories={categories} />
-      </PageShell>
-
-      {/* POURQUOI VENIR */}
-      {reviews.length > 0 && (
-        <PageShell>
-          <ReviewsShowcase
-            reviews={reviews.slice(0, 3).map((r) => ({ id: r.id, rating: r.rating, comment: r.comment, publicName: r.publicName }))}
-            title={t("reviewsTitle")}
-            subtitle={t("reviewsSubtitle")}
-            photoAlt={t("reviewsPhotoAlt")}
-            prevLabel={t("reviewsPrev")}
-            nextLabel={t("reviewsNext")}
-          />
-        </PageShell>
-      )}
-
-      {/* VILLES */}
-      <PageShell className="pb-8">
-        <div id="villes" className="scroll-mt-24 rounded-[2rem] bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] px-6 py-12 text-center text-white sm:px-12">
-          <h2 className="font-display text-3xl font-medium sm:text-4xl">{t("citiesTitle")}</h2>
-          <p className="mx-auto mt-3 max-w-xl text-plum-100">{t("citiesText")}</p>
-          <ul className="mt-8 flex flex-wrap justify-center gap-2.5">
-            {cities.map((c) => (
-              <li
-                key={c.id}
-                className={`rounded-full px-4 py-2 text-sm ${c.isActive ? "bg-white font-semibold text-plum-900" : "border border-white/25 text-plum-100"}`}
-              >
-                {tr(c.name, locale)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </PageShell>
-
-      {/* FAQ + CENTRE D'AIDE */}
-      <PageShell>
-        <HomeFaq />
-      </PageShell>
+      {home.sections.filter((x) => x.enabled).map((x) => sectionsById[x.id])}
     </>
   );
 }

@@ -16,6 +16,7 @@ export { adminSetUserStatus } from "./admin/set-user-status";
 export { adminSaveExperience, organizerSaveExperience } from "./experiences/save-experience";
 export { applyAsOrganizer, adminDecideOrganizer, organizerUpdateProfile, adminReviewExperience } from "./organizers/organizers";
 export { adminSaveCancellationPolicy, adminSaveOrganizerPaymentModels } from "./catalog/policies";
+export { adminSaveHomeSettings } from "./catalog/home";
 export { requestRefund, adminDecideRefund } from "./refunds/refunds";
 export { adminSaveCommissionRule, adminSetCommissionRuleActive, organizerSaveBankDetails, adminCreatePayout, adminMarkPayoutPaid } from "./commissions/commissions";
 export { adminExperienceAction } from "./experiences/experience-actions";

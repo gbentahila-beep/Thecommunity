@@ -1,4 +1,4 @@
-import { cleanQuestion, experienceInputSchema, MOROCCO_TIMEZONE, PAYMENT_MODELS, planSessionDates, resolveCommission, splitForModel } from "@thecommunity/shared";
+import { cleanQuestion, experienceInputSchema, MOROCCO_TIMEZONE, parseCoords, PAYMENT_MODELS, planSessionDates, resolveCommission, splitForModel } from "@thecommunity/shared";
 import { commissionRules, moroccoToday } from "../commissions/ledger";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -197,7 +197,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     district: v.district,
     tags: [] as string[],
     partnerSnapshot: partner?.exists ? { name: partner.data()?.name } : null,
-    venue: { name: v.venueName, address: v.address, revealPolicy: v.revealPolicy },
+    venue: { name: v.venueName, address: v.address, revealPolicy: v.revealPolicy, geo: parseCoords(v.venueCoords) },
     images: keepImages,
     durationMinutes: v.durationMinutes,
     price: sellPrice(),
@@ -212,6 +212,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     languages: v.languages,
     alcoholServed: v.alcoholServed,
     included: (v.included ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
+    notIncluded: (v.notIncluded ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
     practicalInfo: { fr: v.practicalInfo ?? "" },
     cancellationPolicyId: v.cancellationPolicyId,
     // 18b / 18c : précisions pour les activités (facultatives).

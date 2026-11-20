@@ -4,16 +4,25 @@
  * pas les pages.
  */
 import {
+  applyCatalog,
+  DEFAULT_HOME_SETTINGS,
+  experienceSearchFields,
   MOROCCO_TIMEZONE,
+  queryTokens,
+  searchScore,
   zonedDateTimeToUtc,
   zonedParts,
+  type CatalogFilters,
   type Category,
   type CategoryKey,
   type Experience,
+  type HomeSettings,
+  type Organizer,
   type Session,
 } from "@thecommunity/shared";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { buildDemoSessions, DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES, DEMO_MEMBERSHIP_PLAN, DEMO_REVIEWS } from "./demo";
+import { DEMO_ORGANIZER } from "./demo-organizer";
 import * as fs from "./firestore-source";
 
 /**
@@ -212,4 +221,89 @@ export async function getMembershipPlan() {
 export async function getReviews(experienceId?: string) {
   if (FIREBASE_ENABLED) return fs.fsReviews(experienceId);
   return DEMO_REVIEWS.filter((r) => !experienceId || r.experienceId === experienceId);
+}
+
+/* ——— Étape 23 : accueil modifiable, organisateurs, catalogue filtré, recherche ——— */
+
+/** Réglages de l'accueil (settings/home) ; démonstration : l'accueil par défaut. */
+export async function getHomeSettings(): Promise<HomeSettings> {
+  if (FIREBASE_ENABLED) return fs.fsHomeSettings();
+  return DEFAULT_HOME_SETTINGS;
+}
+
+/** Back-office : réglages de l'accueil sans cache. */
+export async function getHomeSettingsFresh(): Promise<HomeSettings> {
+  if (FIREBASE_ENABLED) return fs.fsHomeSettingsFresh();
+  return DEFAULT_HOME_SETTINGS;
+}
+
+/** Organisateurs validés (profil public). */
+export async function getPublicOrganizers(): Promise<Organizer[]> {
+  if (FIREBASE_ENABLED) return fs.fsPublicOrganizers();
+  return [DEMO_ORGANIZER];
+}
+
+export async function getPublicOrganizerBySlug(slug: string) {
+  return (await getPublicOrganizers()).find((o) => o.slug === slug) ?? null;
+}
+
+export async function getPublicOrganizer(id: string | null | undefined) {
+  if (!id) return null;
+  return (await getPublicOrganizers()).find((o) => o.id === id) ?? null;
+}
+
+/** Ce que la recherche sait d'une expérience en plus de ses textes : noms de ses catégories, de son organisateur. */
+async function searchExtras() {
+  const [categories, organizers] = await Promise.all([activeCategories(), getPublicOrganizers()]);
+  const catNames = new Map(categories.map((c) => [c.id, [c.name.fr, c.name.ar, c.name.en, c.shortName.fr, c.shortName.en].filter(Boolean).join(" ")]));
+  const orgNames = new Map(organizers.map((o) => [o.id, o.name]));
+  return (e: Experience) => ({
+    categoryNames: [catNames.get(e.categoryId), e.subcategoryId ? catNames.get(e.subcategoryId) : undefined].filter((x): x is string => Boolean(x)),
+    organizerName: e.organizerId ? orgNames.get(e.organizerId) : undefined,
+  });
+}
+
+/** Catalogue filtré et trié (une carte par expérience : la première date qui correspond). */
+export async function getCatalog(input: { cityId: string; categoryId?: CategoryKey; when: WhenFilter; filters: CatalogFilters }) {
+  const [sessions, undated, extras, home] = await Promise.all([
+    getUpcomingSessions({ cityId: input.cityId, categoryId: input.categoryId, when: input.when }),
+    input.when === "all" ? getExperiencesWithoutUpcoming({ cityId: input.cityId, categoryId: input.categoryId }) : Promise.resolve([]),
+    searchExtras(),
+    getHomeSettings(),
+  ]);
+  return applyCatalog({ sessions, undated, filters: input.filters, extras, featuredIds: home.featuredExperienceIds });
+}
+
+export type SearchSuggestion =
+  | { kind: "experience"; label: string; href: string; detail: string }
+  | { kind: "category"; label: string; href: string }
+  | { kind: "organizer"; label: string; href: string };
+
+/** Suggestions de la barre de recherche : expériences (6 au plus), catégories (3), organisateurs (3). */
+export async function getSearchSuggestions(q: string, locale: "fr" | "ar" | "en", cityId: string): Promise<SearchSuggestion[]> {
+  const tokens = queryTokens(q);
+  if (tokens.length === 0) return [];
+  const [experiences, categories, organizers, extras] = await Promise.all([getPublishedExperiences(), activeCategories(), getPublicOrganizers(), searchExtras()]);
+  const name = (t: { fr: string; ar?: string; en?: string }) => t[locale] || t.fr;
+  const exps = experiences
+    .map((e) => ({ e, score: searchScore(tokens, experienceSearchFields(e, extras(e))) }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score || b.e.ratingCount - a.e.ratingCount)
+    .slice(0, 6)
+    .map(({ e }) => ({ kind: "experience" as const, label: name(e.title), href: `/experiences/${e.slug}`, detail: e.district }));
+  const cats = categories
+    .map((c) => ({ c, score: searchScore(tokens, [{ text: [c.name.fr, c.name.ar, c.name.en, c.shortName.fr].filter(Boolean).join(" "), weight: 1 }]) }))
+    .filter((x) => x.score > 0)
+    .slice(0, 3)
+    .map(({ c }) => ({ kind: "category" as const, label: name(c.name), href: `/${cityId}/${c.id}` }));
+  const orgs = organizers
+    .filter((o) => searchScore(tokens, [{ text: o.name, weight: 1 }]) > 0)
+    .slice(0, 3)
+    .map((o) => ({ kind: "organizer" as const, label: o.name, href: `/organisateurs/${o.slug}` }));
+  return [...exps, ...cats, ...orgs];
+}
+
+/** Logo affichable publiquement : seulement depuis le dossier public de l'organisateur (jamais ses envois privés). */
+export function publicLogo(path: string | null | undefined): string | null {
+  return path && (path.startsWith("organizers/") || path.startsWith("/")) ? path : null;
 }

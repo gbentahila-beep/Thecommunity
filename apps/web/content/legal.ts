@@ -700,6 +700,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
             },
           },
           "Nous ne vendons jamais vos données.",
+          "Cartes : sur la fiche d'une activité, la carte (OpenStreetMap) ne se charge que si vous cliquez sur « Afficher la carte » ; votre navigateur contacte alors les serveurs d'OpenStreetMap, qui reçoivent votre adresse IP. Le lien « Itinéraire » ouvre Google Maps, soumis à ses propres règles.",
         ],
       },
       {
@@ -1256,6 +1257,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
             },
           },
           "We never sell your data.",
+          "Maps: on an activity page, the map (OpenStreetMap) only loads if you click “Show the map”; your browser then contacts OpenStreetMap's servers, which receive your IP address. The “Directions” link opens Google Maps, which has its own rules.",
         ],
       },
       { title: "9. Transfers outside Morocco", body: ["Your data is hosted in the European Union. This transfer outside Morocco is handled in accordance with Law 09-08 and CNDP procedures ({{cndpTransfer}}), and our providers are contractually bound to protect your data."] },

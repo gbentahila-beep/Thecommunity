@@ -33,7 +33,8 @@
     "cities": "المدن",
     "signup": "إنشاء حساب",
     "login": "تسجيل الدخول",
-    "unreadCount": "{count} غير مقروءة"
+    "unreadCount": "{count} غير مقروءة",
+    "search": "بحث"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -68,7 +69,11 @@
     "moreQuestions": "لديك أسئلة أخرى؟",
     "moreQuestionsText": "ستجد كل الإجابات المفصّلة في مركز المساعدة.",
     "helpCta": "زيارة مركز المساعدة",
-    "universePhotoAlt": "{name}: تجربة من The Host Club"
+    "universePhotoAlt": "{name}: تجربة من The Host Club",
+    "featuredTitle": "اختيارات الفريق",
+    "weekendTitle": "نهاية هذا الأسبوع في {city}",
+    "newTitle": "الجديد",
+    "popularTitle": "الأكثر رواجاً الآن"
   },
   "card": {
     "people": "{count} أشخاص",
@@ -83,7 +88,10 @@
     "from": "ابتداءً من",
     "datesSoon": "مواعيد قادمة قريبًا",
     "memberShort": "للأعضاء",
-    "membersOnly": "مخصص للأعضاء"
+    "membersOnly": "مخصص للأعضاء",
+    "badge_featured": "اختيار الفريق",
+    "badge_new": "جديد",
+    "badge_popular": "رائج"
   },
   "filters": {
     "all": "الكل",
@@ -171,7 +179,10 @@
     "physicalTitle": "نشاط بدني",
     "physicalText": "للحجز، توافق على [شروط المشاركة في الأنشطة البدنية](/conditions-activites-physiques): مارس حسب إيقاعك وأخبر الفريق بأي مشكلة صحية.",
     "questionnaireNote": "بعد الحجز، يساعدنا استبيان قصير ({count, plural, zero {# سؤال} one {سؤال واحد} two {سؤالان} few {# أسئلة} many {# سؤالاً} other {# سؤال}}) على تكوين مجموعتك.",
-    "proposedBy": "خرجة اقترحها {name}، من أعضاء المجتمع"
+    "proposedBy": "خرجة اقترحها {name}، من أعضاء المجتمع",
+    "notIncluded": "غير مشمول",
+    "organizedBy": "من تنظيم",
+    "organizerPage": "صفحة المنظّم"
   },
   "booking": {
     "title": "احجز مكاني",
@@ -1088,5 +1099,77 @@
     "status_declined": "لم يُقبل طلب الاسترداد.",
     "teamMessage": "رسالة الفريق:",
     "partial": "مستردة جزئياً ({amount})"
+  },
+  "search": {
+    "label": "ابحث عن نشاط",
+    "placeholder": "بادل، خزف، المعاريف…",
+    "suggestions": "اقتراحات",
+    "kindExperience": "نشاط",
+    "kindCategory": "فئة",
+    "kindOrganizer": "منظّم",
+    "seeAll": "عرض كل النتائج لـ «{q}»",
+    "noSuggestion": "لا اقتراحات: اضغط Entrée للبحث في كل التجارب."
+  },
+  "catalogFilters": {
+    "searchLabel": "بحث",
+    "searchPlaceholder": "نشاط، حي، منظّم…",
+    "searchButton": "بحث",
+    "resultsFor": "نتائج «{q}»",
+    "emptySearch": "لا شيء يطابق «{q}» مع هذه التصفية. جرّب كلمة أخرى أو أزل أحد المرشّحات.",
+    "open": "التصفية",
+    "title": "التصفية",
+    "apply": "عرض النتائج",
+    "applyShort": "تطبيق",
+    "clear": "مسح الكل",
+    "close": "إغلاق التصفية",
+    "active": "المرشّحات المفعّلة",
+    "remove": "إزالة المرشّح: {label}",
+    "price": "السعر للمقعد",
+    "priceAny": "كل الأسعار",
+    "priceMax": "{amount} درهم كحد أقصى",
+    "district": "الحي",
+    "districtAny": "كل الأحياء",
+    "date": "اليوم",
+    "format": "الصيغة",
+    "formatAny": "لا يهم",
+    "format_solo": "آتي وحدي",
+    "format_together": "مع آخرين",
+    "beginner": "مناسب للمبتدئين",
+    "available": "أماكن متاحة",
+    "sort": "الترتيب حسب",
+    "sort_recommended": "المقترحة",
+    "sort_date": "التاريخ",
+    "sort_price_asc": "السعر تصاعدياً",
+    "sort_price_desc": "السعر تنازلياً",
+    "sort_rating": "الأعلى تقييماً",
+    "sort_new": "الجديدة"
+  },
+  "gallery": {
+    "title": "الصور",
+    "open": "تكبير الصورة {n} من {total}",
+    "seeAll": "{count} صور",
+    "counter": "{n} / {total}",
+    "close": "إغلاق",
+    "prev": "الصورة السابقة",
+    "next": "الصورة التالية"
+  },
+  "map": {
+    "title": "خريطة: {place}",
+    "show": "عرض الخريطة",
+    "privacy": "لا تُحمَّل الخريطة (OpenStreetMap) إلا إذا نقرت.",
+    "directions": "المسار (Google Maps)"
+  },
+  "organizerPage": {
+    "eyebrow": "منظّم",
+    "verified": "منظّم تحقّق منه The Host Club",
+    "website": "الموقع",
+    "instagram": "إنستغرام",
+    "upcoming": "أنشطته القادمة",
+    "undated": "أنشطته الأخرى",
+    "none": "لا مواعيد مبرمجة حالياً.",
+    "reviews": "آراء حول أنشطته",
+    "rating": "{avg} من 5 · {count, plural, one {# رأي} other {# آراء}}",
+    "categories": "العوالم",
+    "back": "كل التجارب"
   }
 }

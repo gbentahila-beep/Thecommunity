@@ -71,7 +71,7 @@ async function main() {
   for (const e of DEMO_EXPERIENCES) {
     const next = admin.sessions.find((s) => s.experienceId === e.id);
     const { id, ...rest } = e;
-    entries.push([`experiences/${id}`, { ...rest, nextSessionAt: next ? ts(next.startAt) : null }]);
+    entries.push([`experiences/${id}`, { ...rest, ...(rest.createdAt ? { createdAt: ts(rest.createdAt) } : {}), nextSessionAt: next ? ts(next.startAt) : null }]);
     if (DEMO_ECONOMICS[id]) entries.push([`experiences/${id}/private/economics`, { ...DEMO_ECONOMICS[id] }]);
   }
   for (const s of admin.sessions) {

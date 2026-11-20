@@ -20,3 +20,6 @@ export * from "./activity";
 export * from "./organizer";
 export * from "./commission";
 export * from "./marketplace";
+export * from "./search";
+export * from "./catalog";
+export * from "./home";

@@ -9,6 +9,8 @@ import {
 import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
+import { ExperienceGallery } from "@/components/experience-gallery";
+import { VenueMap } from "@/components/venue-map";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoriteButton } from "@/components/favorite-button";
@@ -20,7 +22,7 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
 import { memberAmountFor, PriceTag } from "@/components/price-tag";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
-import { getArchivedExperience, getCategory, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublishedExperiences, getReviews, getUpcomingSessions } from "@/lib/data";
+import { getArchivedExperience, getCategory, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublicOrganizer, getPublishedExperiences, getReviews, getUpcomingSessions, publicLogo } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { richText } from "@/lib/rich-text";
@@ -89,7 +91,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     if (!retired) notFound();
     return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} />;
   }
-  const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan, policies] = await Promise.all([
+  const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan, policies, organizer] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),
     getTranslations("twoPart"),
@@ -100,6 +102,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     getPastSessions(exp.id),
     getMembershipPlan(),
     getCancellationPolicies(),
+    getPublicOrganizer(exp.organizerId),
   ]);
   // Étape 22 : politique d'annulation propre à l'activité.
   const policy = policyOf(policies, exp.cancellationPolicyId);
@@ -157,7 +160,9 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
           )}
         </nav>
 
-        <Gallery exp={exp} locale={locale} />
+        <ExperienceGallery photos={exp.images.map((i) => ({ src: i.path, alt: tr(i.alt, locale) }))}>
+          <FavoriteButton experienceId={exp.id} className="absolute end-4 top-4" />
+        </ExperienceGallery>
 
         <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-10">
@@ -208,13 +213,46 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               </ul>
             </Section>
 
+            {(exp.notIncluded?.length ?? 0) > 0 && (
+              <Section title={t("notIncluded")}>
+                <ul className="grid gap-2 sm:grid-cols-2" data-testid="not-included">
+                  {exp.notIncluded!.map((item) => (
+                    <li key={item.fr} className="flex items-start gap-2.5 text-ink/85">
+                      <span className="mt-2 size-1.5 shrink-0 rounded-full border border-plum-700" aria-hidden />
+                      {tr(item, locale)}
+                    </li>
+                  ))}
+                </ul>
+              </Section>
+            )}
+
             <Section title={t("venue")}>
               <p className="font-medium text-ink">{exp.venue.name}</p>
               <p className="text-muted">{exp.venue.address}</p>
               {exp.venue.revealPolicy === "on_group_reveal" && (
                 <p className="mt-3 rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("venueRevealed")}</p>
               )}
+              {exp.venue.revealPolicy === "immediate" && exp.venue.geo && <VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} />}
             </Section>
+
+            {organizer && (
+              <Section title={t("organizedBy")}>
+                <div className="flex items-center gap-4 rounded-[var(--radius-card)] bg-white p-4 shadow-card" data-testid="organizer-block">
+                  <div className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-plum-50 font-display text-2xl text-plum-900">
+                    {publicLogo(organizer.logoPath) ? <Image src={publicLogo(organizer.logoPath)!} alt="" fill sizes="64px" className="object-cover" /> : organizer.name.slice(0, 1)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-ink">{organizer.name}</p>
+                    {organizer.ratingCount > 0 && (
+                      <p className="flex items-center gap-1.5 text-sm text-muted">
+                        <Stars value={organizer.ratingAvg} /> {organizer.ratingAvg.toFixed(1)} · {t("reviewsCount", { count: organizer.ratingCount })}
+                      </p>
+                    )}
+                    <Link href={`/organisateurs/${organizer.slug}`} className="text-sm font-semibold text-plum-900 underline underline-offset-4">{t("organizerPage")}</Link>
+                  </div>
+                </div>
+              </Section>
+            )}
 
             {(exp.equipmentProvided || exp.whatToBring || exp.dressCode || exp.outdoor || exp.physicalActivity || (exp.questionnaire?.length ?? 0) > 0) && (
               <Section title={t("activityTitle")}>
@@ -388,28 +426,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
       <h2 className="mb-3 font-display text-2xl font-medium text-plum-900">{title}</h2>
       {children}
     </section>
-  );
-}
-
-function Gallery({ exp, locale }: { exp: Experience; locale: string }) {
-  const [cover, ...rest] = exp.images;
-  if (!cover) return null;
-  return (
-    <div className={`grid gap-3 ${rest.length ? "lg:grid-cols-[2fr_1fr]" : ""}`}>
-      <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] sm:aspect-[16/9] lg:aspect-auto lg:h-[460px]">
-        <Image src={cover.path} alt={tr(cover.alt, locale)} fill priority sizes="(min-width: 1024px) 66vw, 100vw" className="object-cover" />
-        <FavoriteButton experienceId={exp.id} className="absolute end-4 top-4" />
-      </div>
-      {rest.length > 0 && (
-        <div className="hidden gap-3 lg:grid lg:grid-rows-2">
-          {rest.slice(0, 2).map((img) => (
-            <div key={img.path} className="relative overflow-hidden rounded-[var(--radius-card)]">
-              <Image src={img.path} alt={tr(img.alt, locale)} fill sizes="33vw" className="object-cover" />
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
   );
 }
 

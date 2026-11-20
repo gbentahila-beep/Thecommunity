@@ -11,6 +11,7 @@ import { firebase } from "@/lib/firebase/client";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { LanguageSwitch } from "./language-switch";
 import { Logo } from "./logo";
+import { SearchBox } from "./search-box";
 
 type Item = { href: string; label: string; dot?: string; dotStyle?: CSSProperties };
 type City = { id: string; name: string; active: boolean };
@@ -84,7 +85,7 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
         return;
       }
       if (e.key !== "Tab" || !root) return;
-      const items = [...root.querySelectorAll<HTMLElement>("a[href], button:not([disabled])")].filter((el) => el.offsetParent !== null);
+      const items = [...root.querySelectorAll<HTMLElement>("a[href], button:not([disabled]), input")].filter((el) => el.offsetParent !== null);
       if (!items.length) return;
       const first = items[0]!;
       const last = items[items.length - 1]!;
@@ -156,6 +157,9 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
               >
                 <X className="size-6" aria-hidden />
               </button>
+            </div>
+            <div className="mt-3">
+              <SearchBox variant="menu" />
             </div>
             <nav aria-label={t("mainNav")} className="mt-3">
               <ul>

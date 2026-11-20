@@ -50,6 +50,6 @@ export function Stars({ value, className = "" }: { value: number; className?: st
   );
 }
 
-export function PageShell({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`}>{children}</div>;
+export function PageShell({ children, className = "", ...rest }: { children: ReactNode; className?: string; "data-testid"?: string }) {
+  return <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`} {...rest}>{children}</div>;
 }

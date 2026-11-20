@@ -33,7 +33,8 @@
     "cities": "Villes",
     "signup": "S'inscrire",
     "login": "Se connecter",
-    "unreadCount": "{count, plural, one {# non lue} other {# non lues}}"
+    "unreadCount": "{count, plural, one {# non lue} other {# non lues}}",
+    "search": "Rechercher"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -68,7 +69,11 @@
     "moreQuestions": "Vous avez d'autres questions ?",
     "moreQuestionsText": "Toutes les réponses détaillées sont dans notre centre d'aide.",
     "helpCta": "Consulter le centre d'aide",
-    "universePhotoAlt": "{name} : une expérience The Host Club"
+    "universePhotoAlt": "{name} : une expérience The Host Club",
+    "featuredTitle": "Coups de cœur de l'équipe",
+    "weekendTitle": "Ce week-end à {city}",
+    "newTitle": "Nouveautés",
+    "popularTitle": "Populaires en ce moment"
   },
   "card": {
     "people": "{count} pers.",
@@ -83,7 +88,10 @@
     "from": "dès",
     "datesSoon": "Prochaines dates bientôt",
     "memberShort": "membres",
-    "membersOnly": "Réservé aux membres"
+    "membersOnly": "Réservé aux membres",
+    "badge_featured": "Coup de cœur",
+    "badge_new": "Nouveau",
+    "badge_popular": "Populaire"
   },
   "filters": {
     "all": "Tout",
@@ -171,7 +179,10 @@
     "physicalTitle": "Activité physique",
     "physicalText": "Pour réserver, vous acceptez nos [conditions de participation aux activités physiques](/conditions-activites-physiques) : pratiquez à votre rythme et signalez à l'équipe tout souci de santé.",
     "questionnaireNote": "Après votre réservation, un court questionnaire ({count, plural, one {# question} other {# questions}}) nous aide à composer votre groupe.",
-    "proposedBy": "Sortie proposée par {name}, membre de la communauté"
+    "proposedBy": "Sortie proposée par {name}, membre de la communauté",
+    "notIncluded": "Non inclus",
+    "organizedBy": "Organisé par",
+    "organizerPage": "Voir la page de l'organisateur"
   },
   "booking": {
     "title": "Réserver ma place",
@@ -1088,5 +1099,77 @@
     "status_declined": "Demande de remboursement non retenue.",
     "teamMessage": "Message de l'équipe :",
     "partial": "Partiellement remboursée ({amount})"
+  },
+  "search": {
+    "label": "Rechercher une activité",
+    "placeholder": "Padel, céramique, Maarif…",
+    "suggestions": "Suggestions",
+    "kindExperience": "Activité",
+    "kindCategory": "Catégorie",
+    "kindOrganizer": "Organisateur",
+    "seeAll": "Voir tous les résultats pour « {q} »",
+    "noSuggestion": "Aucune suggestion : appuyez sur Entrée pour chercher dans tout le catalogue."
+  },
+  "catalogFilters": {
+    "searchLabel": "Rechercher",
+    "searchPlaceholder": "Une activité, un quartier, un organisateur…",
+    "searchButton": "Rechercher",
+    "resultsFor": "Résultats pour « {q} »",
+    "emptySearch": "Rien ne correspond à « {q} » avec ces filtres. Essayez un autre mot ou retirez un filtre.",
+    "open": "Filtres",
+    "title": "Filtres",
+    "apply": "Afficher les résultats",
+    "applyShort": "Appliquer",
+    "clear": "Tout effacer",
+    "close": "Fermer les filtres",
+    "active": "Filtres actifs",
+    "remove": "Retirer le filtre : {label}",
+    "price": "Prix par place",
+    "priceAny": "Tous les prix",
+    "priceMax": "{amount} DH max",
+    "district": "Quartier",
+    "districtAny": "Tous les quartiers",
+    "date": "Jour",
+    "format": "Format",
+    "formatAny": "Peu importe",
+    "format_solo": "Je viens seul·e",
+    "format_together": "À plusieurs",
+    "beginner": "Accessible aux débutants",
+    "available": "Places disponibles",
+    "sort": "Trier par",
+    "sort_recommended": "Recommandées",
+    "sort_date": "Date",
+    "sort_price_asc": "Prix croissant",
+    "sort_price_desc": "Prix décroissant",
+    "sort_rating": "Mieux notées",
+    "sort_new": "Nouveautés"
+  },
+  "gallery": {
+    "title": "Photos",
+    "open": "Agrandir la photo {n} sur {total}",
+    "seeAll": "{count} photos",
+    "counter": "{n} / {total}",
+    "close": "Fermer",
+    "prev": "Photo précédente",
+    "next": "Photo suivante"
+  },
+  "map": {
+    "title": "Carte : {place}",
+    "show": "Afficher la carte",
+    "privacy": "La carte (OpenStreetMap) ne se charge que si vous cliquez.",
+    "directions": "Itinéraire (Google Maps)"
+  },
+  "organizerPage": {
+    "eyebrow": "Organisateur",
+    "verified": "Organisateur vérifié par The Host Club",
+    "website": "Site web",
+    "instagram": "Instagram",
+    "upcoming": "Ses prochaines activités",
+    "undated": "Ses autres activités",
+    "none": "Pas de date prévue pour le moment.",
+    "reviews": "Avis sur ses activités",
+    "rating": "{avg} sur 5 · {count, plural, one {# avis} other {# avis}}",
+    "categories": "Univers",
+    "back": "Toutes les expériences"
   }
 }

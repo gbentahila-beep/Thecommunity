@@ -8,7 +8,8 @@ import { DEFAULT_CANCELLATION_POLICY, type Experience, type Review } from "@thec
 const mad = (dh: number) => ({ amount: dh * 100, currency: "MAD" as const });
 const policy = DEFAULT_CANCELLATION_POLICY.id;
 const img = (file: string, fr: string) => [{ path: `/images/illustrations/${file}.webp`, alt: { fr } }];
-const base = { cityId: "casablanca", tags: [] as string[], cancellationPolicyId: policy, status: "published" as const, isDemo: true };
+// Étape 23 : ajoutées le 20 novembre (badge « Nouveau » pendant 30 jours).
+const base = { cityId: "casablanca", tags: [] as string[], cancellationPolicyId: policy, status: "published" as const, isDemo: true, createdAt: "2026-11-20T08:00:00.000Z" };
 
 export const DEMO_MORE_EXPERIENCES: Experience[] = [
   // ——— Dîners & gastronomie ———
@@ -65,7 +66,8 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
     description: { fr: "Rendez-vous au phare d'El Hank pour une sortie de 6 km le long de la Corniche. Trois groupes d'allure, un encadrant par groupe, personne n'est laissé derrière. On termine par un jus pressé en terrasse.", en: "Meet at El Hank lighthouse for a 6 km run along the Corniche. Three pace groups, one leader per group, nobody left behind. We finish with a fresh juice on a terrace." },
     categoryId: "move",
     district: "Aïn Diab",
-    venue: { name: "Phare d'El Hank (point de rendez-vous)", address: "Boulevard de la Corniche, Casablanca", revealPolicy: "immediate" },
+    venue: { name: "Phare d'El Hank (point de rendez-vous)", address: "Boulevard de la Corniche, Casablanca", revealPolicy: "immediate", geo: { lat: 33.6086, lng: -7.656 } },
+    notIncluded: [{ fr: "Transport jusqu'au point de rendez-vous", en: "Transport to the meeting point" }, { fr: "Vestiaires", en: "Changing rooms" }],
     images: img("running", "Chaussure de course sur la route de la Corniche, l'océan au fond"),
     durationMinutes: 75,
     price: mad(60),
@@ -91,7 +93,8 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
     description: { fr: "À vingt minutes du centre, la forêt de Bouskoura offre des sentiers ombragés. Un guide mène le groupe sur une boucle de 10 km, avec une pause pique-nique à mi-parcours. Navette depuis le Maârif possible.", en: "Twenty minutes from the centre, Bouskoura forest has shaded trails. A guide leads the group on a 10 km loop, with a picnic break halfway. Shuttle from Maârif available." },
     categoryId: "move",
     district: "Bouskoura",
-    venue: { name: "Entrée de la forêt (point de rendez-vous)", address: "Route de Bouskoura, Casablanca", revealPolicy: "immediate" },
+    venue: { name: "Entrée de la forêt (point de rendez-vous)", address: "Route de Bouskoura, Casablanca", revealPolicy: "immediate", geo: { lat: 33.4562, lng: -7.6505 } },
+    notIncluded: [{ fr: "Transport jusqu'à la forêt", en: "Transport to the forest" }],
     images: img("randonnee", "Sentier en forêt et sac à dos"),
     durationMinutes: 240,
     price: mad(140),
@@ -207,7 +210,8 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
     description: { fr: "Deux heures à pied entre le boulevard Mohammed V et le marché central, à la découverte des fresques laissées par les festivals de street art et des artistes qui les ont peintes. On termine autour d'un café.", en: "Two hours on foot between Boulevard Mohammed V and the central market, discovering murals left by street art festivals and the artists behind them. We end over a coffee." },
     categoryId: "discover",
     district: "Centre-ville",
-    venue: { name: "Place des Nations unies (point de rendez-vous)", address: "Centre-ville, Casablanca", revealPolicy: "immediate" },
+    venue: { name: "Place des Nations unies (point de rendez-vous)", address: "Centre-ville, Casablanca", revealPolicy: "immediate", geo: { lat: 33.5967, lng: -7.6189 } },
+    notIncluded: [{ fr: "Transport jusqu'au point de rendez-vous", en: "Transport to the meeting point" }, { fr: "Boissons en plus du café", en: "Drinks other than the coffee" }],
     images: img("streetart", "Mur peint et bombe de peinture"),
     durationMinutes: 120,
     price: mad(90),
@@ -231,6 +235,7 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
     categoryId: "discover",
     district: "Ancienne médina",
     venue: { name: "Toit-terrasse partenaire", address: "Ancienne médina, Casablanca", revealPolicy: "immediate" },
+    notIncluded: [{ fr: "Boissons autres que le thé", en: "Drinks other than tea" }],
     images: img("gnaoua", "Tambour et qraqeb sur un toit, de nuit"),
     durationMinutes: 150,
     price: mad(200),
@@ -298,7 +303,7 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
     description: { fr: "Une architecte vous fait découvrir les immeubles Art déco et néo-mauresques du centre-ville : leurs architectes, leurs ornements, leurs histoires. Petit groupe, questions bienvenues.", en: "An architect shows you the Art Deco and neo-Moorish buildings of downtown: their architects, ornaments and stories. Small group, questions welcome." },
     categoryId: "learn",
     district: "Centre-ville",
-    venue: { name: "Boulevard Mohammed V (point de rendez-vous)", address: "Centre-ville, Casablanca", revealPolicy: "immediate" },
+    venue: { name: "Boulevard Mohammed V (point de rendez-vous)", address: "Centre-ville, Casablanca", revealPolicy: "immediate", geo: { lat: 33.596, lng: -7.6136 } },
     images: img("artdeco", "Façade d'immeuble Art déco et rayons de soleil"),
     durationMinutes: 120,
     price: mad(120),

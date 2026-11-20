@@ -99,6 +99,8 @@ export type Experience = {
     name: string;
     address: string;
     revealPolicy: "immediate" | "on_group_reveal";
+    /** Étape 23 : position du lieu (carte sur la fiche, seulement si le lieu est public). */
+    geo?: { lat: number; lng: number } | null;
   };
   images: ImageRef[];
   durationMinutes: number;
@@ -122,6 +124,10 @@ export type Experience = {
   languages: string[];
   alcoholServed?: boolean;
   included: LocalizedText[];
+  /** Étape 23 : ce qui n'est pas compris dans le prix. */
+  notIncluded?: LocalizedText[];
+  /** Date de création (badge « Nouveau », tri « Nouveautés ») ; absente sur les anciennes données de démonstration. */
+  createdAt?: string;
   practicalInfo: LocalizedText;
   cancellationPolicyId: string;
   /** Étape 20 : « pending_review » (envoyée par un organisateur, à valider) et « rejected » (refusée par l'équipe). */

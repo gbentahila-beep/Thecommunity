@@ -33,7 +33,8 @@
     "cities": "Cities",
     "signup": "Sign up",
     "login": "Log in",
-    "unreadCount": "{count} unread"
+    "unreadCount": "{count} unread",
+    "search": "Search"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -68,7 +69,11 @@
     "moreQuestions": "Got more questions?",
     "moreQuestionsText": "You'll find every detailed answer in our help centre.",
     "helpCta": "Visit our help centre",
-    "universePhotoAlt": "{name}: a The Host Club experience"
+    "universePhotoAlt": "{name}: a The Host Club experience",
+    "featuredTitle": "Team picks",
+    "weekendTitle": "This weekend in {city}",
+    "newTitle": "New",
+    "popularTitle": "Popular right now"
   },
   "card": {
     "people": "{count} people",
@@ -83,7 +88,10 @@
     "from": "from",
     "datesSoon": "New dates coming soon",
     "memberShort": "members",
-    "membersOnly": "Members only"
+    "membersOnly": "Members only",
+    "badge_featured": "Team pick",
+    "badge_new": "New",
+    "badge_popular": "Popular"
   },
   "filters": {
     "all": "All",
@@ -171,7 +179,10 @@
     "physicalTitle": "Physical activity",
     "physicalText": "To book, you accept our [terms for physical activities](/conditions-activites-physiques): go at your own pace and tell the team about any health concern.",
     "questionnaireNote": "After booking, a short questionnaire ({count, plural, one {# question} other {# questions}}) helps us put your group together.",
-    "proposedBy": "Outing proposed by {name}, a community member"
+    "proposedBy": "Outing proposed by {name}, a community member",
+    "notIncluded": "Not included",
+    "organizedBy": "Organized by",
+    "organizerPage": "See the organizer's page"
   },
   "booking": {
     "title": "Book my spot",
@@ -1088,5 +1099,77 @@
     "status_declined": "Refund request not accepted.",
     "teamMessage": "Message from the team:",
     "partial": "Partially refunded ({amount})"
+  },
+  "search": {
+    "label": "Search for an activity",
+    "placeholder": "Padel, ceramics, Maarif…",
+    "suggestions": "Suggestions",
+    "kindExperience": "Activity",
+    "kindCategory": "Category",
+    "kindOrganizer": "Organizer",
+    "seeAll": "See all results for “{q}”",
+    "noSuggestion": "No suggestion: press Enter to search the whole catalogue."
+  },
+  "catalogFilters": {
+    "searchLabel": "Search",
+    "searchPlaceholder": "An activity, a neighbourhood, an organizer…",
+    "searchButton": "Search",
+    "resultsFor": "Results for “{q}”",
+    "emptySearch": "Nothing matches “{q}” with these filters. Try another word or remove a filter.",
+    "open": "Filters",
+    "title": "Filters",
+    "apply": "Show results",
+    "applyShort": "Apply",
+    "clear": "Clear all",
+    "close": "Close filters",
+    "active": "Active filters",
+    "remove": "Remove filter: {label}",
+    "price": "Price per seat",
+    "priceAny": "Any price",
+    "priceMax": "Up to {amount} MAD",
+    "district": "Neighbourhood",
+    "districtAny": "All neighbourhoods",
+    "date": "Day",
+    "format": "Format",
+    "formatAny": "Any",
+    "format_solo": "Coming on my own",
+    "format_together": "With friends",
+    "beginner": "Beginner-friendly",
+    "available": "Seats available",
+    "sort": "Sort by",
+    "sort_recommended": "Recommended",
+    "sort_date": "Date",
+    "sort_price_asc": "Price: low to high",
+    "sort_price_desc": "Price: high to low",
+    "sort_rating": "Top rated",
+    "sort_new": "Newest"
+  },
+  "gallery": {
+    "title": "Photos",
+    "open": "Enlarge photo {n} of {total}",
+    "seeAll": "{count} photos",
+    "counter": "{n} / {total}",
+    "close": "Close",
+    "prev": "Previous photo",
+    "next": "Next photo"
+  },
+  "map": {
+    "title": "Map: {place}",
+    "show": "Show the map",
+    "privacy": "The map (OpenStreetMap) only loads if you click.",
+    "directions": "Directions (Google Maps)"
+  },
+  "organizerPage": {
+    "eyebrow": "Organizer",
+    "verified": "Organizer verified by The Host Club",
+    "website": "Website",
+    "instagram": "Instagram",
+    "upcoming": "Upcoming activities",
+    "undated": "Other activities",
+    "none": "No date planned for now.",
+    "reviews": "Reviews of their activities",
+    "rating": "{avg} out of 5 · {count, plural, one {# review} other {# reviews}}",
+    "categories": "Universes",
+    "back": "All experiences"
   }
 }

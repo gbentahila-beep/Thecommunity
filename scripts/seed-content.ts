@@ -84,6 +84,23 @@ async function main() {
   const existing = new Set((await db.collection("experiences").get()).docs.map((d) => d.id));
   existing.forEach((id) => DEMO_EXPERIENCES.some((e) => e.id === id) && registry.add(id));
   const toAdd = DEMO_EXPERIENCES.filter((e) => !existing.has(e.id) && !registry.has(e.id) && !deleted.has(e.id));
+  // Étape 23 : sur les expériences de démonstration déjà présentes, seuls les champs nouveaux MANQUANTS sont ajoutés
+  // (date de création, « non inclus », position du lieu si l'adresse n'a pas changé) ; rien de ce que l'équipe a saisi n'est remplacé.
+  let completed = 0;
+  for (const e of DEMO_EXPERIENCES) {
+    if (!existing.has(e.id)) continue;
+    const snap = await db.doc(`experiences/${e.id}`).get();
+    if (snap.get("isDemo") !== true) continue;
+    const patch: Record<string, unknown> = {};
+    if (e.createdAt && snap.get("createdAt") === undefined) patch.createdAt = ts(e.createdAt);
+    if (e.notIncluded?.length && snap.get("notIncluded") === undefined) patch.notIncluded = e.notIncluded;
+    if (e.venue.geo && snap.get("venue.geo") === undefined && snap.get("venue.address") === e.venue.address) patch["venue.geo"] = e.venue.geo;
+    if (Object.keys(patch).length) {
+      await snap.ref.update(patch);
+      completed++;
+    }
+  }
+  if (completed) console.log(`✅ Démonstration : ${completed} expérience(s) complétée(s) (champs de l'étape 23 manquants).`);
   const demo = db.batch();
   // Lieux partenaires et organisateur de démonstration utilisés par ces expériences (créés s'ils manquent).
   for (const p of DEMO_PARTNERS) if (!(await db.doc(`partners/${p.id}`).get()).exists) demo.set(db.doc(`partners/${p.id}`), { ...p, isDemo: true });
@@ -97,7 +114,7 @@ async function main() {
   for (const e of toAdd) {
     const { id, ...rest } = e;
     const next = sessions.find((s) => s.experienceId === id);
-    demo.set(db.doc(`experiences/${id}`), { ...rest, nextSessionAt: next ? ts(next.startAt) : null, isDemo: true });
+    demo.set(db.doc(`experiences/${id}`), { ...rest, ...(rest.createdAt ? { createdAt: ts(rest.createdAt) } : {}), nextSessionAt: next ? ts(next.startAt) : null, isDemo: true });
     if (DEMO_ECONOMICS[id]) demo.set(db.doc(`experiences/${id}/private/economics`), { ...DEMO_ECONOMICS[id] });
     for (const s of sessions.filter((x) => x.experienceId === id)) {
       const { id: sid, ...srest } = s;

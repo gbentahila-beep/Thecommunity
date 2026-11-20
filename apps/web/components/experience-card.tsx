@@ -1,9 +1,9 @@
-import { LOW_SEATS_THRESHOLD, pricingOf, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
+import { experienceBadge, LOW_SEATS_THRESHOLD, pricingOf, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
 import { MapPin, Star, Users } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { getCategory, getMembershipPlan } from "@/lib/data";
+import { getCategory, getHomeSettings, getMembershipPlan } from "@/lib/data";
 import { memberAmountFor, PriceTag } from "./price-tag";
 import { formatShortSlot } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
@@ -34,11 +34,14 @@ export async function ExperienceCard({
   experience: Experience;
   priority?: boolean;
 }) {
-  const [locale, t, t2, category, plan] = await Promise.all([getLocale(), getTranslations("card"), getTranslations("twoPart"), getCategory(experience.categoryId), getMembershipPlan()]);
+  const [locale, t, t2, category, plan, home] = await Promise.all([getLocale(), getTranslations("card"), getTranslations("twoPart"), getCategory(experience.categoryId), getMembershipPlan(), getHomeSettings()]);
   const shownPrice = session?.price ?? experience.price;
   const left = session ? seatsAvailable(session) : 0;
   const full = Boolean(session) && (session!.status === "full" || left === 0);
   const cover = experience.images[0];
+  // Étape 23 : un badge au plus (coup de cœur de l'équipe > nouveau > populaire), jamais sur une date complète.
+  const badge = full ? null : experienceBadge(experience, session, new Date(), home.featuredExperienceIds);
+  const badgeTone = { featured: "bg-plum-900 text-white", new: "bg-white/90 text-plum-900", popular: "bg-badge text-plum-900" } as const;
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-float">
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -55,15 +58,22 @@ export async function ExperienceCard({
         <span className="absolute bottom-3 start-3 rounded-full bg-badge px-3 py-1 text-xs font-medium text-plum-900">
           {category ? tr(category.shortName, locale) : ""}
         </span>
-        {full ? (
-          <span className="absolute top-3 start-3 rounded-full bg-ink/80 px-3 py-1 text-xs font-medium text-white">
-            {t("full")}
-          </span>
-        ) : session && left <= LOW_SEATS_THRESHOLD ? (
-          <span className="absolute top-3 start-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-plum-800">
-            {t("lastSeats", { count: left })}
-          </span>
-        ) : null}
+        <div className="absolute top-3 start-3 flex flex-col items-start gap-1.5">
+          {full ? (
+            <span className="rounded-full bg-ink/80 px-3 py-1 text-xs font-medium text-white">
+              {t("full")}
+            </span>
+          ) : session && left <= LOW_SEATS_THRESHOLD ? (
+            <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-plum-800">
+              {t("lastSeats", { count: left })}
+            </span>
+          ) : null}
+          {badge && (
+            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeTone[badge]}`} data-testid="card-badge">
+              {t(`badge_${badge}`)}
+            </span>
+          )}
+        </div>
         <FavoriteButton experienceId={experience.id} className="absolute end-3 top-3 z-10" />
         {experience.membersOnly && (
           <span className="absolute bottom-3 end-3 rounded-full bg-plum-900 px-3 py-1 text-xs font-semibold text-white">{t("membersOnly")}</span>

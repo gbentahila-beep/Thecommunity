@@ -13,7 +13,7 @@ import type {
   Session,
   UserProfile,
 } from "@thecommunity/shared";
-import { MEMBERSHIP_PLAN_ID, type Membership, type MembershipPlan } from "@thecommunity/shared";
+import { MEMBERSHIP_PLAN_ID, normalizeHomeSettings, type HomeSettings, type Membership, type MembershipPlan, type Organizer } from "@thecommunity/shared";
 import { Timestamp, type DocumentSnapshot } from "firebase-admin/firestore";
 import { unstable_cache } from "next/cache";
 import { adminDb } from "@/lib/firebase/admin";
@@ -196,3 +196,19 @@ export const fsSessionFresh = fsSessionRaw;
 export const fsReviews = cached(fsReviewsRaw, "fsReviews");
 export const fsPastSessions = cached(fsPastSessionsRaw, "fsPastSessions");
 export const fsMembershipPlan = cached(fsMembershipPlanRaw, "fsMembershipPlan");
+
+/* ——— Étape 23 : accueil modifiable, organisateurs publics ——— */
+
+async function fsHomeSettingsRaw(): Promise<HomeSettings> {
+  const snap = await adminDb().doc("settings/home").get();
+  return normalizeHomeSettings(snap.exists ? plain<Partial<HomeSettings>>(snap.data()) : null);
+}
+/** Organisateurs validés (profil public seulement : jamais les coordonnées privées). */
+async function fsPublicOrganizersRaw(): Promise<Organizer[]> {
+  const snap = await adminDb().collection("organizers").where("status", "==", "approved").get();
+  return snap.docs.map((d) => withId<Organizer>(d)).sort((a, b) => a.name.localeCompare(b.name, "fr"));
+}
+export const fsHomeSettings = cached(fsHomeSettingsRaw, "fsHomeSettings");
+export const fsPublicOrganizers = cached(fsPublicOrganizersRaw, "fsPublicOrganizers");
+/** Back-office : réglages de l'accueil relus sans cache. */
+export const fsHomeSettingsFresh = fsHomeSettingsRaw;
