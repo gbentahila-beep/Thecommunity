@@ -1,4 +1,4 @@
-import { bookingRefusal, DEFAULT_CANCELLATION_POLICY, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage } from "@thecommunity/shared";
+import { bookingRefusal, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -18,6 +18,7 @@ import { adminAuth, adminDb } from "@/lib/firebase/admin";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
+import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
 
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -165,7 +166,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
 
       <section className="mt-6 rounded-[var(--radius-card)] border border-line bg-white/60 p-4">
         <h2 className="font-semibold text-ink">{t("policy")}</h2>
-        <p className="mt-1 text-sm text-muted">{tr(DEFAULT_CANCELLATION_POLICY.label, locale)}.</p>
+        <p className="mt-1 text-sm text-muted">{tr(policyOf(await getCancellationPolicies(), session.experience.cancellationPolicyId).label, locale)}.</p>
       </section>
 
       {onRequest && refusal === null && (

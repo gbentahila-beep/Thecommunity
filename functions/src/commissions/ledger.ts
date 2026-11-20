@@ -1,4 +1,4 @@
-import { commissionAmount, commissionRefund, resolveCommission, zonedParts, MOROCCO_TIMEZONE, type CommissionRule, type CommissionSnapshot } from "@thecommunity/shared";
+import { commissionAmount, commissionOnTotal, commissionRefund, resolveCommission, zonedParts, MOROCCO_TIMEZONE, type CommissionRule, type CommissionSnapshot } from "@thecommunity/shared";
 import { Timestamp, type DocumentData, type Transaction } from "firebase-admin/firestore";
 import { db, FieldValue } from "../lib/admin";
 
@@ -31,7 +31,11 @@ export function commissionSnapshot(rules: CommissionRule[], e: DocumentData, exp
   const organizerId = e.organizerId as string | null | undefined;
   if (!organizerId) return null;
   const c: CommissionSnapshot = resolveCommission(rules, { experienceId, organizerId, categoryId: String(e.categoryId ?? ""), at: moroccoToday(now) });
-  return { ...c, base, amount: commissionAmount(base, seats, c) };
+  // Étape 22 : acompte (B) ou frais de réservation (C) — commission sur le prix TOTAL, jamais plus que l'encaissé.
+  const partial = e.paymentModel === "deposit" || e.paymentModel === "booking_fee";
+  const total = Number(e.totalPrice?.amount ?? 0) * seats;
+  const amount = partial && total > 0 ? commissionOnTotal(base, total, seats, c) : commissionAmount(base, seats, c);
+  return { ...c, base, amount, ...(partial ? { paymentModel: e.paymentModel, activityTotal: total } : {}) };
 }
 
 /** Écriture « vente » (idempotente) quand une réservation d'organisateur est payée. À appeler dans la transaction. */

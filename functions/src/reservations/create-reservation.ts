@@ -3,6 +3,7 @@ import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { commissionRules } from "../commissions/ledger";
+import { cancellationPolicies } from "../catalog/policies";
 import { invalidArgument, requireAuth } from "../lib/guards";
 import { membershipRef, membershipTerms, planRef } from "../membership/state";
 import { reservationDoc } from "./reservation-doc";
@@ -77,6 +78,8 @@ async function runReservationOnce(o: ReservationRun) {
   const { uid, sessionId, seats } = o;
   // Étape 21 : règles de commission (cache d'une minute), lues hors transaction.
   const rules = await commissionRules();
+  // Étape 22 : politiques d'annulation (cache d'une minute), copiées sur la réservation.
+  const policies = await cancellationPolicies();
   const sessRef = db.doc(`sessions/${sessionId}`);
   const lockRef = sessRef.collection("seatLocks").doc(uid);
   const requestRef = o.requestId ? db.doc(`bookingRequests/${o.requestId}`) : null;
@@ -169,6 +172,7 @@ async function runReservationOnce(o: ReservationRun) {
       serviceFee: readServiceFee(bookingSettings.data()?.serviceFee),
       preferences: o.preferences ?? (request?.data()?.preferences ? storedPreferences(request.data()!.preferences) : undefined),
       commissionRules: rules,
+      policies,
       extra: {
         ...(requestRef ? { requestId: requestRef.id } : {}),
         ...(e.physicalActivity === true

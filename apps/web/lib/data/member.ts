@@ -10,7 +10,7 @@ import { connection } from "next/server";
 import { cache } from "react";
 import { redirect } from "@/i18n/navigation";
 import { getAccountState, getSessionUser, type SessionUser } from "@/lib/auth/session";
-import { adminAuth } from "@/lib/firebase/admin";
+import { adminAuth, adminDb } from "@/lib/firebase/admin";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { buildDemoMemberData } from "./demo-member";
 import { fsMemberData } from "./firestore-source";
@@ -82,4 +82,12 @@ export async function getMemberReservation(id: string) {
   const group = reservation.groupId ? space.groups.find((g) => g.id === reservation.groupId && g.status === "revealed") : undefined;
   const review = space.myReviews.find((x) => x.id === reservation.id);
   return { reservation, group, profile: space.profile, now: space.now, review };
+}
+
+/** Étape 22 — demande de remboursement d'une réservation du membre connecté (lecture serveur). */
+export async function getRefundRequest(uid: string | undefined, reservationId: string): Promise<{ status: string; amount?: number; message?: string | null } | null> {
+  if (!FIREBASE_ENABLED || !uid) return null;
+  const d = (await adminDb().doc(`refundRequests/${reservationId}`).get()).data();
+  if (!d || d.userId !== uid) return null;
+  return { status: String(d.status), amount: typeof d.amount === "number" ? d.amount : undefined, message: d.message ?? null };
 }

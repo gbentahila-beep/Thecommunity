@@ -2,7 +2,7 @@ import { computePricing, initialPartnerStatus, NO_SERVICE_FEE, onSiteAmount, par
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { FieldValue } from "../lib/admin";
 import { commissionSnapshot } from "../commissions/ledger";
-import type { CommissionRule } from "@thecommunity/shared";
+import type { CancellationPolicy, CommissionRule } from "@thecommunity/shared";
 
 /**
  * Document d'une nouvelle réservation, construit à partir de la session et de l'expérience lues dans la
@@ -25,6 +25,8 @@ export function reservationDoc(o: {
   extra?: Record<string, unknown>;
   /** Étape 21 : règles de commission (activités des organisateurs). */
   commissionRules?: CommissionRule[];
+  /** Étape 22 : politiques d'annulation (copiée sur la réservation). */
+  policies?: CancellationPolicy[];
 }) {
   const { s, e, uid, sessionId, seats } = o;
   const pricing = computePricing(s.price.amount, seats, s.price.currency, {
@@ -43,6 +45,8 @@ export function reservationDoc(o: {
     experienceId: s.experienceId,
     // Étape 19 : organisateur de l'activité (null = The Host Club), pour son espace et les règles d'accès.
     organizerId: (e.organizerId as string | undefined) ?? (s.organizerId as string | undefined) ?? null,
+    // Étape 22 : politique d'annulation figée au moment de la réservation.
+    ...(o.policies ? { cancellationPolicy: (() => { const p = o.policies.find((x) => x.id === e.cancellationPolicyId) ?? o.policies[0]; return p ? { id: p.id, label: p.label, rules: p.rules } : null; })() } : {}),
     // Étape 21 : commission figée au moment de la réservation (base : payé en ligne, hors frais de service).
     ...(o.commissionRules && e.organizerId ? { commission: commissionSnapshot(o.commissionRules, e, s.experienceId, pricing.total - pricing.fees, seats) } : {}),
     cityId: s.cityId,

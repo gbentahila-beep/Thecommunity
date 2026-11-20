@@ -1065,5 +1065,28 @@
       "notTrusted": "Les propositions sont réservées aux membres de confiance.",
       "generic": "Envoi impossible pour le moment."
     }
+  },
+  "refund": {
+    "title": "Un problème avec cette activité ?",
+    "intro": "Activité annulée sans prévenir, très différente de sa description, souci de sécurité : expliquez-nous ce qui s'est passé (jusqu'à 7 jours après). L'équipe étudie chaque demande et vous répond.",
+    "reason": "Motif",
+    "reasons": {
+      "not_delivered": "L'activité n'a pas eu lieu",
+      "different": "Très différente de la description",
+      "cancelled_by_organizer": "Annulée par l'organisateur sur place",
+      "safety": "Problème de sécurité",
+      "other": "Autre"
+    },
+    "message": "Ce qui s'est passé",
+    "submit": "Envoyer ma demande",
+    "sent": "Demande envoyée. L'équipe vous répond par notification et par e-mail.",
+    "error": "Envoi impossible. Vérifiez votre message (10 caractères minimum) et réessayez.",
+    "status_pending": "Demande de remboursement en cours d'examen.",
+    "status_processing": "Demande de remboursement en cours de traitement.",
+    "status_refunded": "Remboursement accepté : {amount}.",
+    "status_partially_refunded": "Remboursement partiel accepté : {amount}.",
+    "status_declined": "Demande de remboursement non retenue.",
+    "teamMessage": "Message de l'équipe :",
+    "partial": "Partiellement remboursée ({amount})"
   }
 }

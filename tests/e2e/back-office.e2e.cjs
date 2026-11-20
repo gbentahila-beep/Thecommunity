@@ -163,7 +163,24 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   assert(await page.locator('summary', { hasText: 'Padel' }).getByText('Sous-catégorie').isVisible(), 'Paramètres : Padel listée comme sous-catégorie');
   assert(await page.locator('summary', { hasText: 'Rencontres & activités sociales' }).getByText('Masquée').count() === 0, 'Paramètres : Rencontres visible (expériences de démonstration, 21b)');
   assert(await page.locator('#cat-padel-parent').inputValue() === 'move', 'Padel rattachée à Sport & bien-être');
-  for (const p of ['/admin', '/admin/experiences', '/admin/experiences/nouvelle', '/admin/sessions/ses-diner-inconnus-1', '/admin/sessions/ses-diner-inconnus-1/groupes', '/admin/reservations', '/admin/utilisateurs', '/admin/partenaires', '/admin/paiements', '/admin/promos', '/admin/statistiques', '/admin/parametres']) {
+  // Étape 22 : politiques d'annulation, modes de paiement des organisateurs, demandes de remboursement
+  assert(await page.getByTestId('policies').locator('li').count() === 3, 'Paramètres : 3 politiques d\'annulation (démonstration)');
+  await page.getByText('+ Nouvelle politique').click();
+  await page.locator('#policy-id').fill('test-72h');
+  await page.locator('#policy-fr').fill('Annulation gratuite jusqu\'à 3 jours avant');
+  assert(/7 jours avant ou plus : 100 % · 48 h avant ou plus : 50 % · moins de 48 h : 0 %/.test(await page.getByText(/^Aperçu :/).textContent()), 'nouvelle politique : aperçu des paliers');
+  await page.getByRole('button', { name: 'Enregistrer la politique' }).click();
+  assert(await page.getByRole('status').filter({ hasText: 'Démonstration' }).isVisible(), 'politique valide (démonstration)');
+  assert(await page.getByRole('checkbox', { name: /Acompte en ligne/ }).isChecked(), 'modes de paiement : acompte proposé');
+  await page.goto(`${base}/admin/remboursements`);
+  assert(await page.getByTestId('refund-request-admin').count() === 1, 'remboursements : une demande d\'exemple');
+  await page.getByRole('button', { name: 'Rembourser en partie' }).click();
+  await page.getByRole('button', { name: 'Confirmer', exact: true }).click();
+  assert(await page.getByRole('status').filter({ hasText: 'Indiquez le montant' }).isVisible(), 'remboursement partiel : montant exigé');
+  await page.getByRole('button', { name: 'Refuser' }).click();
+  await page.getByRole('button', { name: 'Confirmer le refus' }).click();
+  assert(await page.getByRole('status').filter({ hasText: 'Expliquez le refus' }).isVisible(), 'refus : motif exigé');
+  for (const p of ['/admin', '/admin/experiences', '/admin/experiences/nouvelle', '/admin/sessions/ses-diner-inconnus-1', '/admin/sessions/ses-diner-inconnus-1/groupes', '/admin/reservations', '/admin/utilisateurs', '/admin/partenaires', '/admin/paiements', '/admin/promos', '/admin/statistiques', '/admin/parametres', '/admin/remboursements']) {
     await mp.goto(base + p, { waitUntil: 'load' });
     assert(!(await mp.evaluate(() => document.documentElement.scrollWidth > innerWidth)), 'mobile sans débordement : ' + p);
   }

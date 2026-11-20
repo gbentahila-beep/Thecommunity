@@ -1065,5 +1065,28 @@
       "notTrusted": "Proposals are for trusted members only.",
       "generic": "Couldn't send right now."
     }
+  },
+  "refund": {
+    "title": "A problem with this activity?",
+    "intro": "Cancelled without notice, very different from its description, a safety issue: tell us what happened (up to 7 days after). The team reviews every request and gets back to you.",
+    "reason": "Reason",
+    "reasons": {
+      "not_delivered": "The activity didn't take place",
+      "different": "Very different from the description",
+      "cancelled_by_organizer": "Cancelled by the organizer on the day",
+      "safety": "Safety issue",
+      "other": "Other"
+    },
+    "message": "What happened",
+    "submit": "Send my request",
+    "sent": "Request sent. The team will reply by notification and email.",
+    "error": "Couldn't send. Check your message (at least 10 characters) and try again.",
+    "status_pending": "Refund request under review.",
+    "status_processing": "Refund request being processed.",
+    "status_refunded": "Refund accepted: {amount}.",
+    "status_partially_refunded": "Partial refund accepted: {amount}.",
+    "status_declined": "Refund request not accepted.",
+    "teamMessage": "Message from the team:",
+    "partial": "Partially refunded ({amount})"
   }
 }

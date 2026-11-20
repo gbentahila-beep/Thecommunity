@@ -4,7 +4,8 @@ import { ExperienceForm } from "@/components/admin/experience-form";
 import { Badge, PageHeader } from "@/components/admin/ui";
 import { experienceToValues } from "@/lib/admin-forms";
 import { getProData, requireApprovedOrganizer } from "@/lib/data/organizer";
-import { EXPERIENCE_STATUS_PRO, proFormOptions } from "@/lib/pro-forms";
+import { getOrganizerFinance } from "@/lib/data/finance";
+import { currentRate, EXPERIENCE_STATUS_PRO, organizerPaymentModels, proFormOptions } from "@/lib/pro-forms";
 
 export const metadata = { title: "Modifier l'activité" };
 
@@ -15,7 +16,7 @@ export default async function ProEditActivityPage({ params }: PageProps<"/pro/ac
   const d = await getProData(space.organizer.id);
   const e = d.experiences.find((x) => x.id === id);
   if (!e) notFound();
-  const options = await proFormOptions();
+  const [options, models, fin] = await Promise.all([proFormOptions(), organizerPaymentModels(), getOrganizerFinance(space.organizer.id)]);
   const st = EXPERIENCE_STATUS_PRO[e.status] ?? { label: e.status, tone: "gray" as const };
   const nowIso = d.now.toISOString();
   const bookedSeats = d.sessions.filter((s) => s.experienceId === e.id && s.startAt >= nowIso).reduce((a, s) => a + s.seatsConfirmed, 0);
@@ -36,7 +37,7 @@ export default async function ProEditActivityPage({ params }: PageProps<"/pro/ac
         existingImages={e.images}
         live={!space.isDemo}
         bookedSeats={bookedSeats}
-        organizer={{ orgId: space.organizer.id, currentStatus: e.status }}
+        organizer={{ orgId: space.organizer.id, currentStatus: e.status, models, ...currentRate(fin.rules, space.organizer.id, e.categoryId, e.id) }}
       />
     </div>
   );

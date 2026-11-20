@@ -130,6 +130,10 @@ export type Experience = {
   organizerId?: string | null;
   organizerSnapshot?: { name: string; slug: string } | null;
   subcategoryId?: string | null;
+  /** Étape 22 : mode de paiement (activités d'organisateurs) et prix total par place (la part en ligne est `price`). */
+  paymentModel?: "full_online" | "deposit" | "booking_fee";
+  depositPercent?: number | null;
+  totalPrice?: Money | null;
   /** Étape 20 : activité publiée modifiée par l'organisateur (à relire) ; message de l'équipe en cas de refus. */
   reviewFlag?: boolean;
   rejectionMessage?: string | null;
@@ -302,6 +306,9 @@ export type Reservation = {
   paidAt?: string;
   /** Fin du blocage des places pendant le paiement (réservation « pending_payment »). */
   holdExpiresAt?: string;
+  /** Étape 22 : montant déjà remboursé (remboursements partiels possibles) ; politique d'annulation copiée. */
+  refundedAmount?: number;
+  cancellationPolicy?: CancellationPolicy | null;
   paymentId?: string;
   /** Étape 5h : paiement par virement — référence à indiquer (la place reste bloquée jusqu'à holdExpiresAt). */
   paymentMethod?: "bank_transfer";

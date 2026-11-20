@@ -1,4 +1,7 @@
-import { DEFAULT_CANCELLATION_POLICY } from "@thecommunity/shared";
+import { describePolicy } from "@thecommunity/shared";
+import { PaymentModelsForm, PolicyForm } from "@/components/admin/policy-forms";
+import { getCancellationPolicies } from "@/lib/data/policies";
+import { organizerPaymentModels } from "@/lib/pro-forms";
 import { Badge, Card, PageHeader } from "@/components/admin/ui";
 import { CompanyForm } from "@/components/admin/company-form";
 import { CategoryForm, CityForm } from "@/components/admin/place-forms";
@@ -19,6 +22,7 @@ export default async function SettingsAdminPage() {
     getServiceFee(),
     getPaymentSettings(),
   ]);
+  const [policies, models] = await Promise.all([getCancellationPolicies(), organizerPaymentModels()]);
   const byOrder = (a: { order?: number }, b: { order?: number }) => (a.order ?? 0) - (b.order ?? 0);
   const mains = categories.filter((c) => !c.parentId).sort(byOrder);
   const orderedCategories = mains.flatMap((m) => [m, ...categories.filter((c) => c.parentId === m.id).sort(byOrder)]);
@@ -99,12 +103,24 @@ export default async function SettingsAdminPage() {
           )}
           <p className="mt-3 text-xs text-muted">Les cinq univers d&apos;origine gardent leurs adresses (/casablanca/eat…). Une nouvelle catégorie apparaît dans le menu, sur l&apos;accueil et dans le formulaire des expériences dès qu&apos;elle est visible ; une sous-catégorie a sa propre page (/casablanca/padel) et se choisit sur la fiche de l&apos;expérience. {!company && "Démonstration : les modifications se font sur le site en ligne (super-admin)."}</p>
         </Card>
-        <Card title="Politique d'annulation par défaut">
-          <p className="text-sm font-medium">{DEFAULT_CANCELLATION_POLICY.label.fr}</p>
-          <ul className="mt-2 list-disc ps-5 text-sm text-muted">
-            {DEFAULT_CANCELLATION_POLICY.rules.map((r) => <li key={r.hoursBefore}>{r.hoursBefore > 0 ? `${r.hoursBefore} h ou plus avant` : "Moins de 48 h avant"} : remboursement {r.refundPercent} %</li>)}
-            <li>Annulation par The Host Club : remboursement 100 %</li>
+        <Card title="Politiques d'annulation" className="xl:col-span-2">
+          {/* Étape 22 : politiques à paliers, choisies sur chaque activité et copiées sur chaque réservation. */}
+          <ul className="mb-4 divide-y divide-line text-sm" data-testid="policies">
+            {policies.map((p) => (
+              <li key={p.id} className="py-2">
+                <span className="font-medium">{p.label.fr}</span> <span className="font-mono text-xs text-muted">{p.id}</span>
+                <p className="text-muted">{describePolicy(p.rules)} · annulation par l&apos;organisateur ou par The Host Club : 100 %</p>
+              </li>
+            ))}
           </ul>
+          <details className="rounded-xl border border-dashed border-line p-3">
+            <summary className="cursor-pointer text-sm font-semibold text-plum-900">+ Nouvelle politique</summary>
+            <div className="mt-3"><PolicyForm live={Boolean(company)} canEdit={!company || me?.role === "superadmin"} /></div>
+          </details>
+        </Card>
+        <Card title="Modes de paiement des organisateurs" className="xl:col-span-2">
+          <p className="mb-3 text-sm text-muted">À n&apos;ouvrir en réel qu&apos;avec un contrat de paiement qui autorise l&apos;encaissement pour le compte des organisateurs (docs/16). En mode test, les trois sont proposés.</p>
+          <PaymentModelsForm initial={models} live={Boolean(company)} canEdit={!company || me?.role === "superadmin"} />
         </Card>
         <Card title="Réservations et frais de service">
           <dl className="mb-4 grid grid-cols-2 gap-3 text-sm">

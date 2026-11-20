@@ -1,5 +1,5 @@
 import "server-only";
-import type { Category, City, Experience, Session } from "@thecommunity/shared";
+import type { CancellationPolicy, Category, City, Experience, Session } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase/admin";
 import type { AdminGroup, AdminPayment, AdminReservation, AdminUser, Partner, PromoCode } from "./demo-admin";
@@ -99,6 +99,8 @@ export async function fsAdminData(now: Date) {
         : {}),
       ...(r.questionnaire?.answers ? { answers: r.questionnaire.answers as Record<string, number> } : {}),
       ...(r.physicalTerms?.version ? { physicalTermsVersion: String(r.physicalTerms.version) } : {}),
+      ...(r.cancellationPolicy?.rules?.length ? { cancellationPolicy: plain<CancellationPolicy>(r.cancellationPolicy) } : {}),
+      ...(r.refundedAmount ? { refundedAmount: Number(r.refundedAmount) } : {}),
     };
   });
   const payments: AdminPayment[] = paySnap.docs.map((d) => {

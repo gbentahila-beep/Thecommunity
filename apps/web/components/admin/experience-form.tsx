@@ -1,8 +1,15 @@
 "use client";
 
 import {
+  DEFAULT_COMMISSION_PERCENT,
+  DEPOSIT_MAX,
+  DEPOSIT_MIN,
   experienceInputSchema,
   formatMoney,
+  PAYMENT_MODEL_LABELS,
+  PAYMENT_MODELS,
+  splitForModel,
+  type PaymentModel,
   seatEconomics,
   MOROCCO_TIMEZONE,
   planSessionDates,
@@ -24,7 +31,9 @@ import type { QuestionDraft } from "@/lib/questionnaire-draft";
 import { firebase } from "@/lib/firebase/client";
 
 type Option = { id: string; label: string; disabled?: boolean; /** 18c : état de l'assurance du lieu partenaire. */ insurance?: "valid" | "expiring" | "expired" | "missing"; /** Étape 19 : sous-catégorie de… */ parentId?: string };
-export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "onSiteCommissionPercent" | "minAge" | "level" | "questionnaire" | "proposalId"> & {
+export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "onSiteCommissionPercent" | "minAge" | "level" | "questionnaire" | "proposalId" | "depositPercent"> & {
+  /** Étape 22 : acompte en % (mode B). */
+  depositPercent: string;
   /** 18b : âge minimum (vide = 18 ans), niveau attendu (vide = non précisé) ; 18a : questionnaire ; 18d : proposition d'origine. */
   minAge: string; level: "" | ActivityLevel; questionnaire: QuestionDraft[]; proposalId?: string;
   groupMin: string; groupTarget: string; groupMax: string; costPerSeatDh: string; commissionPercent: string;
@@ -34,6 +43,7 @@ export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin"
 
 const MESSAGES: Record<string, string> = {
   required: "Champ obligatoire.", tooShort: "Trop court.", tooLong: "Trop long.", tooMany: "Valeur trop élevée.",
+  depositRange: "Acompte entre 10 et 90 %.", paymentModelDisabled: "Ce mode de paiement n'est pas proposé pour l'instant.",
   min0: "Doit être positif.", min1: "Au moins 1.", min2: "Au moins 2.", min15: "Au moins 15 minutes.", max100: "100 % maximum.",
   pickOne: "Choisissez au moins une langue.", groupOrder: "Il faut min ≤ cible ≤ max.", capacityBelowGroup: "La capacité doit permettre au moins un groupe complet.",
   seatsPerBookingMode: "Plus de 2 places par réservation : seulement en mode libre ou privatisé.", partnerRequired: "Le modèle commission nécessite un partenaire.",
@@ -119,7 +129,16 @@ export function ExperienceForm({
    * Étape 20 : formulaire de l'espace organisateur. Mêmes champs, sans le modèle économique, les lieux partenaires
    * ni les avantages membres ; photos dans le dossier public de l'organisateur ; « Envoyer pour validation ».
    */
-  organizer?: { orgId: string; currentStatus?: string; /** L'équipe modifie l'activité d'un organisateur (back-office). */ asTeam?: boolean };
+  organizer?: {
+    orgId: string;
+    currentStatus?: string;
+    /** L'équipe modifie l'activité d'un organisateur (back-office). */
+    asTeam?: boolean;
+    /** Étape 22 : modes de paiement activés par l'équipe, taux de commission en vigueur (aperçu). */
+    models?: PaymentModel[];
+    ratePercent?: number;
+    fixedPerSeat?: number;
+  };
 }) {
   const pro = Boolean(organizer);
   const proSelf = Boolean(organizer && !organizer.asTeam);
@@ -157,7 +176,8 @@ export function ExperienceForm({
       groupTarget: grouped ? opt(v.groupTarget) : undefined,
       groupMax: grouped ? opt(v.groupMax) : undefined,
       // Activité d'un organisateur : modèle économique géré par le contrat (commission), jamais saisi ici.
-      ...(pro ? { economicsModel: "own" as const, partnerId: "", pricingModel: "online_only" as const } : {}),
+      ...(pro ? { economicsModel: "own" as const, partnerId: "", pricingModel: "online_only" as const } : { paymentModel: "full_online" as const }),
+      depositPercent: pro && v.paymentModel === "deposit" ? opt(v.depositPercent) : undefined,
       costPerSeatDh: pro ? 0 : v.economicsModel === "own" ? opt(v.costPerSeatDh) : undefined,
       commissionPercent: !pro && v.economicsModel === "commission" ? opt(v.commissionPercent) : undefined,
       onSiteCommissionPercent: !pro && v.pricingModel !== "online_only" ? opt(v.onSiteCommissionPercent) : undefined,
@@ -246,6 +266,12 @@ export function ExperienceForm({
   }, [v.priceDh, v.partnerPriceDh, v.pricingModel, v.partnerId, v.partnerDescription, partnerName]);
 
   const onSiteMode = v.pricingModel !== "online_only";
+  /** Étape 22 : aperçu de la part en ligne / sur place selon le mode choisi (activités d'organisateurs). */
+  const proSplit = useMemo(() => {
+    const total = dhToCents(v.priceDh);
+    if (!pro || total == null) return null;
+    return splitForModel(v.paymentModel ?? "full_online", total, { depositPercent: Number(v.depositPercent) || undefined, ratePercent: organizer?.ratePercent ?? DEFAULT_COMMISSION_PERCENT, fixedPerSeat: organizer?.fixedPerSeat ?? 0 });
+  }, [pro, v.priceDh, v.paymentModel, v.depositPercent, organizer?.ratePercent, organizer?.fixedPerSeat]);
   /** 11g : ce que rapporte une place, en direct (la part sur place n'est jamais un coût). */
   const eco = useMemo(() => {
     const online = dhToCents(v.priceDh);
@@ -468,9 +494,40 @@ export function ExperienceForm({
         </fieldset>
         </>)}
 
+        {pro && (
+          <fieldset className="sm:col-span-2" data-testid="payment-model">
+            <legend className="mb-2 text-sm font-medium text-ink">Comment vos participants paient-ils ?</legend>
+            <div className="grid gap-2 sm:grid-cols-3" role="radiogroup">
+              {(organizer?.models ?? PAYMENT_MODELS).map((m) => {
+                const on = v.paymentModel === m;
+                return (
+                  <label key={m} className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3 text-sm ${on ? "border-plum-900 bg-plum-50 ring-2 ring-plum-100" : "border-line bg-white"}`}>
+                    <span className="flex items-center gap-2 font-semibold text-ink">
+                      <input type="radio" name="paymentModel" value={m} checked={on} onChange={() => set("paymentModel", m)} className="size-4 accent-plum-900" />
+                      {PAYMENT_MODEL_LABELS[m].title}
+                    </span>
+                    <span className="text-xs text-muted">{PAYMENT_MODEL_LABELS[m].text}</span>
+                  </label>
+                );
+              })}
+            </div>
+            {err("paymentModel")}
+          </fieldset>
+        )}
+        {pro && v.paymentModel === "deposit" && (
+          <div><Label k="depositPercent" hint={`Entre ${DEPOSIT_MIN} et ${DEPOSIT_MAX} % du prix ; jamais moins que la commission.`}>Acompte payé en ligne (%)</Label><input {...field("depositPercent")} inputMode="numeric" value={v.depositPercent} onChange={(e) => set("depositPercent", e.target.value)} />{err("depositPercent")}</div>
+        )}
+        {pro && proSplit && (
+          <p className="rounded-xl bg-cream px-4 py-3 text-sm text-ink sm:col-span-2" data-testid="payment-preview">
+            {v.paymentModel === "full_online"
+              ? `Le participant paie ${formatMoney({ amount: proSplit.onlineUnit, currency: "MAD" })} en ligne.`
+              : `Le participant paie ${formatMoney({ amount: proSplit.onlineUnit, currency: "MAD" })} en ligne, puis ${formatMoney({ amount: proSplit.onSiteUnit, currency: "MAD" })} sur place${organizer?.asTeam ? " à l'organisateur" : ", directement à vous"}.`}{" "}
+            <span className="text-muted">(commission actuelle : {organizer?.ratePercent ?? DEFAULT_COMMISSION_PERCENT} %)</span>
+          </p>
+        )}
         <div className="grid gap-4 rounded-xl border border-line p-4 sm:col-span-2 sm:grid-cols-2" data-testid="part-online">
-          <p className="text-sm font-semibold text-ink sm:col-span-2">{pro ? "Payé en ligne à la réservation" : "Payé en ligne, encaissé par The Host Club"}</p>
-          <div><Label k="priceDh" hint="Ce que le client paie à la réservation.">Prix par place (DH)</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
+          <p className="text-sm font-semibold text-ink sm:col-span-2">{pro ? "Prix de l'activité" : "Payé en ligne, encaissé par The Host Club"}</p>
+          <div><Label k="priceDh" hint={pro ? "Prix total de l'activité pour une place (en ligne et sur place compris)." : "Ce que le client paie à la réservation."}>{pro ? "Prix total par place (DH)" : "Prix par place (DH)"}</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
           {!pro && <div><Label k="memberPriceDh" hint="Facultatif. Vide = réduction de l'abonnement (réglée dans « Abonnement »).">Prix membre (DH)</Label><input {...field("memberPriceDh")} inputMode="decimal" value={v.memberPriceDh} onChange={(e) => set("memberPriceDh", e.target.value)} />{err("memberPriceDh")}</div>}
           {proSelf && <p className="text-xs text-muted sm:col-span-2">La commission de The Host Club et le calendrier de reversement figurent dans votre contrat organisateur et dans « Finances ».</p>}
         </div>

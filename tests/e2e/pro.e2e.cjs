@@ -38,6 +38,16 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   await page.goto(base + '/pro/activites/exp-diner-inconnus', { waitUntil: 'load' });
   assert(await page.getByText('Page introuvable').isVisible() || (await page.title()).includes('404') || await page.getByText(/introuvable/i).first().isVisible(), 'activité d\'un autre (The Host Club) : introuvable');
   await page.goto(base + '/pro/activites/nouvelle', { waitUntil: 'load' });
+  // Étape 22 : mode de paiement (A/B/C) avec aperçu « en ligne / sur place »
+  assert((await page.getByTestId('payment-model').getByRole('radio').count()) === 3, 'nouvelle activité : 3 modes de paiement proposés');
+  await page.locator('#f-priceDh').fill('200');
+  await page.getByTestId('payment-model').getByText('Acompte en ligne').click();
+  await page.locator('#f-depositPercent').fill('30');
+  assert(/60 DH en ligne, puis 140 DH sur place/.test((await page.getByTestId('payment-preview').textContent()).replace(/\u202f|\u00a0/g, ' ')), 'acompte 30 % : 60 DH en ligne, 140 DH sur place');
+  await page.getByTestId('payment-model').getByText('Frais de réservation en ligne').click();
+  assert(/24 DH en ligne, puis 176 DH sur place/.test((await page.getByTestId('payment-preview').textContent()).replace(/\u202f|\u00a0/g, ' ')), 'frais de réservation = commission (12 % Sport) : 24 DH en ligne');
+  await page.getByTestId('payment-model').getByText('Tout en ligne').click();
+  await page.locator('#f-priceDh').fill('');
   assert((await page.locator('#f-status option').allTextContents()).join('|') === 'Brouillon (non visible)|Envoyer pour validation', 'nouvelle activité : brouillon ou « Envoyer pour validation »');
   await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();
   assert(await visible(page.getByRole('alert').filter({ hasText: 'champ' })), 'nouvelle activité : champs obligatoires signalés');

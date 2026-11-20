@@ -19,3 +19,4 @@ export * from "./questionnaire";
 export * from "./activity";
 export * from "./organizer";
 export * from "./commission";
+export * from "./marketplace";

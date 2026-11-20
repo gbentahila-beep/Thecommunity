@@ -1,5 +1,4 @@
 import {
-  DEFAULT_CANCELLATION_POLICY,
   LOW_SEATS_THRESHOLD,
   formatMoney,
   pricingOf,
@@ -20,6 +19,7 @@ import { routing } from "@/i18n/routing";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
 import { memberAmountFor, PriceTag } from "@/components/price-tag";
+import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
 import { getArchivedExperience, getCategory, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublishedExperiences, getReviews, getUpcomingSessions } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
@@ -89,7 +89,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     if (!retired) notFound();
     return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} />;
   }
-  const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan] = await Promise.all([
+  const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan, policies] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),
     getTranslations("twoPart"),
@@ -99,7 +99,10 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     getReviews(exp.id),
     getPastSessions(exp.id),
     getMembershipPlan(),
+    getCancellationPolicies(),
   ]);
+  // Étape 22 : politique d'annulation propre à l'activité.
+  const policy = policyOf(policies, exp.cancellationPolicyId);
   const memberAmount = memberAmountFor(plan, exp.price, exp);
   const twoPart = pricingOf(exp);
   const lang = locale as "fr" | "ar" | "en";
@@ -233,7 +236,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
             )}
 
             <Section title={t("cancellation")}>
-              <p className="text-ink/85">{tr(DEFAULT_CANCELLATION_POLICY.label, locale)}.</p>
+              <p className="text-ink/85">{tr(policy.label, locale)}.</p>
             </Section>
 
             {past.length > 0 && (

@@ -345,6 +345,19 @@ describe("organisateurs : cloisonnement (19)", () => {
     await assertFails(setDoc(doc(orgA(), "payouts/pX"), { organizerId: "orgA", amount: 1 }));
     await assertFails(setDoc(doc(admin(), "commissionRules/r2"), { scope: "global", ratePercent: 1 }));
   });
+  it("demandes de remboursement (22) : le participant, l'organisateur concerné et l'équipe ; aucune écriture", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "refundRequests/rA"), { userId: "salma", organizerId: "orgA", status: "pending", paidAmount: 20000 });
+    });
+    await assertSucceeds(getDoc(doc(salma(), "refundRequests/rA")));
+    await assertSucceeds(getDoc(doc(orgA(), "refundRequests/rA")));
+    await assertSucceeds(getDoc(doc(admin(), "refundRequests/rA")));
+    await assertFails(getDoc(doc(karim(), "refundRequests/rA")));
+    await assertFails(getDoc(doc(orgB(), "refundRequests/rA")));
+    await assertFails(setDoc(doc(salma(), "refundRequests/rX"), { userId: "salma", status: "pending" }));
+    await assertFails(updateDoc(doc(salma(), "refundRequests/rA"), { status: "refunded" }));
+    await assertFails(updateDoc(doc(admin(), "refundRequests/rA"), { status: "refunded" }));
+  });
   it("un organisateur ne lit ni les profils des clients, ni les paiements, ni le journal", async () => {
     await assertFails(getDoc(doc(orgA(), "users/salma")));
     await assertFails(getDoc(doc(orgA(), "payments/p1")));

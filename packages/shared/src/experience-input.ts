@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DEPOSIT_MAX, DEPOSIT_MIN, PAYMENT_MODELS } from "./marketplace";
 import { BOOKING_MODES, CATEGORY_ID_PATTERN } from "./constants";
 import { SPOKEN_LANGUAGES } from "./profile";
 import { ACTIVITY_LEVELS, MIN_AGE_FLOOR, MIN_AGE_MAX } from "./activity";
@@ -67,6 +68,9 @@ export const experienceInputSchema = z
     /** 11g : commission éventuelle sur la part réglée sur place, facturée au partenaire hors site (jamais encaissée en ligne). */
     onSiteCommissionPercent: z.coerce.number().min(0, "min0").max(100, "max100").optional(),
     /** Étape 11 : comment le client paie (section « Tarification et paiement client »). */
+    /** Étape 22 : mode de paiement d'une activité d'organisateur (A tout en ligne, B acompte, C frais de réservation). */
+    paymentModel: z.enum(PAYMENT_MODELS).default("full_online"),
+    depositPercent: z.coerce.number().int().min(DEPOSIT_MIN, "depositRange").max(DEPOSIT_MAX, "depositRange").optional(),
     pricingModel: z.enum(["online_only", "fixed_partner", "variable_consumption"]).default("online_only"),
     partnerPriceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany").optional(),
     partnerDescription: z.string().trim().max(300, "tooLong").optional().or(z.literal("")),

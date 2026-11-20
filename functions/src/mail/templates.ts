@@ -211,3 +211,16 @@ export function organizerMail(o: { heading: string; paragraphs: string[]; ctaLab
     }),
   };
 }
+
+/** Étape 22 — e-mail simple au participant (suivi d'une demande), en français. */
+export function noticeMail(o: { heading: string; paragraphs: string[]; ctaLabel: string; path: string }) {
+  return {
+    subject: o.heading,
+    ...layout("fr", {
+      heading: o.heading,
+      paragraphs: o.paragraphs,
+      cta: { label: o.ctaLabel, href: `${SITE_URL}${o.path}` },
+      footer: "Vous recevez cet e-mail au sujet d'une réservation faite sur The Host Club.",
+    }),
+  };
+}

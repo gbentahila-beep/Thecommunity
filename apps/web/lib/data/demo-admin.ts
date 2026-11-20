@@ -9,6 +9,7 @@ import {
   marginPerSeat,
   onSiteAmount,
   pricingOf,
+  type CancellationPolicy,
   type Experience,
   type Gender,
   type Interest,
@@ -173,6 +174,9 @@ export type AdminReservation = {
   /** 18a : réponses au questionnaire ; 18c : version des conditions d'activité physique acceptée. */
   answers?: Record<string, number>;
   physicalTermsVersion?: string;
+  /** Étape 22 : politique d'annulation copiée à la réservation, et déjà remboursé (centimes). */
+  cancellationPolicy?: CancellationPolicy;
+  refundedAmount?: number;
 };
 
 export type AdminOnSite = {

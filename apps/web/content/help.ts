@@ -154,16 +154,20 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     slug: "annuler-une-reservation",
     category: "bookings",
     title: { fr: "Annuler une réservation et être remboursé", en: "Cancelling a booking and getting a refund" },
-    summary: { fr: "Gratuit jusqu'à 48 h avant le début ; intégralement remboursé si nous annulons.", en: "Free up to 48 hours before the start; fully refunded if we cancel." },
+    summary: { fr: "Le plus souvent gratuit jusqu'à 48 h avant ; intégralement remboursé si l'activité est annulée.", en: "Usually free up to 48 hours before; fully refunded if the activity is cancelled." },
     body: {
       fr: [
         "Ouvrez la réservation dans [Mes réservations](/espace/reservations) puis « Annuler ma réservation ». Le montant remboursé est affiché avant que vous confirmiez.",
-        ["Plus de 48 heures avant le début : annulation gratuite, remboursement intégral sur votre moyen de paiement.", "Moins de 48 heures avant : l'annulation reste possible (la place est proposée à la liste d'attente) mais elle n'est pas remboursée.", "Si nous annulons une date, vous êtes prévenu et intégralement remboursé. Si nous la déplaçons et que la nouvelle date ne vous convient pas, écrivez-nous : nous annulons votre place avec remboursement intégral."],
+        "Chaque activité affiche sa politique d'annulation sur sa fiche, avant la réservation ; c'est celle du jour de votre réservation qui s'applique. La plus courante :",
+        ["Plus de 48 heures avant le début : annulation gratuite, remboursement intégral sur votre moyen de paiement.", "Moins de 48 heures avant : l'annulation reste possible (la place est proposée à la liste d'attente) mais elle n'est pas remboursée.", "Si une date est annulée, vous êtes prévenu et intégralement remboursé. Si elle est déplacée et que la nouvelle date ne vous convient pas, écrivez-nous : nous annulons votre place avec remboursement intégral."],
+        "L'activité n'a pas eu lieu, ou était très différente de sa description ? Dans les 7 jours qui suivent, ouvrez la réservation et utilisez « Un problème avec cette activité ? ». L'équipe étudie chaque demande et peut vous rembourser tout ou partie ; vous recevez la réponse par notification et par e-mail.",
         "Le délai d'apparition du remboursement sur votre compte dépend de votre banque. Le détail figure dans les [conditions générales de vente](/cgv).",
       ],
       en: [
         "Open the booking in [My bookings](/espace/reservations) then “Cancel my booking”. The refund amount is shown before you confirm.",
-        ["More than 48 hours before the start: free cancellation, full refund to your payment method.", "Less than 48 hours before: you can still cancel (the seat goes to the waiting list) but it isn't refunded.", "If we cancel a date, you're informed and fully refunded. If we move it and the new date doesn't suit you, write to us: we cancel your seat with a full refund."],
+        "Each activity shows its cancellation policy on its page, before you book; the one in force on the day you booked applies. The most common:",
+        ["More than 48 hours before the start: free cancellation, full refund to your payment method.", "Less than 48 hours before: you can still cancel (the seat goes to the waiting list) but it isn't refunded.", "If a date is cancelled, you're informed and fully refunded. If it's moved and the new date doesn't suit you, write to us: we cancel your seat with a full refund."],
+        "The activity didn't take place, or was very different from its description? Within 7 days, open the booking and use “A problem with this activity?”. The team reviews every request and may refund all or part of it; you get the answer by notification and email.",
         "How long the refund takes to appear depends on your bank. Full details are in the [terms of sale](/cgv).",
       ],
     },

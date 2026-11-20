@@ -1,4 +1,4 @@
-import { ageBand, ageOn, DEFAULT_CANCELLATION_POLICY, pricingOf, refundAmountFor, seatsAvailable } from "@thecommunity/shared";
+import { ageBand, ageOn, pricingOf, refundAmountFor, seatsAvailable } from "@thecommunity/shared";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CsvExportButton } from "@/components/admin/csv-export";
@@ -6,12 +6,13 @@ import { CancelSessionButton, ReservationAdminActions } from "@/components/admin
 import { DIET_LABELS, LANGUAGE_LABELS, MODE_LABELS, RESERVATION_STATUS } from "@/components/admin/labels";
 import { adminDate, Badge, Card, dh, PageHeader, StatTile, Table } from "@/components/admin/ui";
 import { getAdminData } from "@/lib/data/admin";
+import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
 
 export const metadata = { title: "Participants" };
 
 export default async function SessionDetailPage({ params }: PageProps<"/admin/sessions/[id]">) {
   const { id } = await params;
-  const d = await getAdminData();
+  const [d, policies] = await Promise.all([getAdminData(), getCancellationPolicies()]);
   const s = d.sessions.find((x) => x.id === id) ?? d.recentSessions.find((x) => x.id === id);
   if (!s) notFound();
   const e = d.experiences.get(s.experienceId)!;
@@ -129,8 +130,8 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
                       .filter((x) => seatsAvailable(x) >= r.seats)
                       .map((x) => ({ id: x.id, label: `${adminDate(x.startAt)} · ${seatsAvailable(x)} place${seatsAvailable(x) > 1 ? "s" : ""} libre${seatsAvailable(x) > 1 ? "s" : ""}` }))}
                     amounts={{
-                      full: dh(r.total),
-                      policy: dh(refundAmountFor(DEFAULT_CANCELLATION_POLICY, r.total, start, d.now)),
+                      full: dh(r.total - (r.refundedAmount ?? 0)),
+                      policy: dh(Math.min(r.total - (r.refundedAmount ?? 0), refundAmountFor(r.cancellationPolicy ?? policyOf(policies, e.cancellationPolicyId), r.total, start, d.now))),
                       paid: r.status === "confirmed" && r.total > 0,
                     }}
                     onSite={r.onSite}

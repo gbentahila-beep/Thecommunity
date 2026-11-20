@@ -1,3 +1,4 @@
+import { PAYMENT_MODELS } from "@thecommunity/shared";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExperienceActions } from "@/components/admin/experience-actions";
@@ -7,12 +8,13 @@ import { adminDate, Card, FillBar, PageHeader } from "@/components/admin/ui";
 import { experienceToValues, formOptions } from "@/lib/admin-forms";
 import { requireAdmin } from "@/lib/auth/admin";
 import { getAdminData } from "@/lib/data/admin";
+import { getCancellationPolicies } from "@/lib/data/policies";
 
 export const metadata = { title: "Modifier une expérience" };
 
 export default async function EditExperiencePage({ params }: PageProps<"/admin/experiences/[id]">) {
   const { id } = await params;
-  const d = await getAdminData();
+  const [d, policies] = await Promise.all([getAdminData(), getCancellationPolicies()]);
   const e = d.experiences.get(id);
   if (!e) notFound();
   const sessions = d.sessions.filter((s) => s.experienceId === e.id);
@@ -58,8 +60,8 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
         existingImages={e.images ?? []}
         bookedSeats={bookedSeats}
         initial={experienceToValues(e, d.economics[e.id], d.now)}
-        {...formOptions(d)}
-        {...(e.organizerId ? { organizer: { orgId: e.organizerId, currentStatus: e.status, asTeam: true } } : {})}
+        {...formOptions(d, policies)}
+        {...(e.organizerId ? { organizer: { orgId: e.organizerId, currentStatus: e.status, asTeam: true, models: [...PAYMENT_MODELS] } } : {})}
       />
     </div>
   );

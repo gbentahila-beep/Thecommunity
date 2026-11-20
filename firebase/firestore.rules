@@ -277,6 +277,12 @@ service cloud.firestore {
       allow read: if isAdmin() || isOrganizerOf(resource.data.get('organizerId', null));
       allow write: if false;
     }
+    // Étape 22 : demandes de remboursement — lues par le participant, l'organisateur concerné et l'équipe ;
+    // créées et décidées par le serveur seulement (montants jamais du navigateur).
+    match /refundRequests/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid) || isOrganizerOf(resource.data.get('organizerId', null));
+      allow write: if false;
+    }
     match /reports/{id} {
       // Création via callable (vérifie que les deux personnes ont participé à la même session).
       allow read: if isAdmin();

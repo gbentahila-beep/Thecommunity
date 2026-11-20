@@ -2059,3 +2059,118 @@ describe("commissions et reversements (21)", () => {
     expect(notes.size).toBe(1);
   }, 120_000);
 });
+
+describe("paiements A/B/C, politiques d'annulation, remboursements (22)", () => {
+  let sup: Client;
+  let team: Client;
+  let pro: Client;
+  let orgId = "";
+  const plan = (days: number) => {
+    const d = new Date(Date.now() + days * 86_400_000);
+    return { firstDate: d.toISOString().slice(0, 10), time: "18:00", weeks: 1, capacity: 10 };
+  };
+  const activity = (title: string, extra: Record<string, unknown> = {}) => ({
+    titleFr: title, summaryFr: "Balade guidée en petit groupe dans le centre-ville.", descriptionFr: "Deux heures à pied avec une guide passionnée, à la découverte des façades Art déco du centre-ville.",
+    categoryId: "discover", cityId: "casablanca", district: "Centre-ville", venueName: "Point de rendez-vous", address: "Boulevard Mohammed V, Casablanca",
+    revealPolicy: "immediate", bookingMode: "individual", maxSeatsPerBooking: 2, admission: "direct", requestMessageRequired: false,
+    priceDh: 200, durationMinutes: 120, languages: ["fr"], alcoholServed: false, cancellationPolicyId: "standard-48h",
+    economicsModel: "own", costPerSeatDh: 0, status: "published", sessions: plan(10), ...extra,
+  });
+  const publish = async (data: Record<string, unknown>) => {
+    const { experienceId } = await pro.call("organizerSaveExperience", { data, addSessions: true, images: [] });
+    await team.call("adminReviewExperience", { experienceId, decision: "publish" });
+    const s = (await db().collection("sessions").where("experienceId", "==", experienceId).get()).docs[0]!;
+    await s.ref.update({ createdAt: Timestamp.fromMillis(Date.now() - 96 * 3_600_000) });
+    return { experienceId: String(experienceId), sessionId: s.id };
+  };
+  const buy = async (sessionId: string, seats = 1) => {
+    const u = await member();
+    const { reservationId } = await u.call("createReservation", { sessionId, seats });
+    const c = await u.call("startCheckout", { reservationId });
+    await u.call("sandboxCompletePayment", { paymentId: c.paymentId, outcome: "succeeded" });
+    return { u, reservationId: String(reservationId) };
+  };
+
+  beforeAll(async () => {
+    sup = await member({ role: "superadmin" });
+    team = await member({ role: "admin" });
+    pro = await member();
+    await db().doc("categories/discover").set({ isActive: true }, { merge: true });
+    const { organizerId } = await pro.call("applyAsOrganizer", {
+      businessName: `Balades Test ${run}`, contactName: "Leila Test", email: "leila@example.com", phone: "+212 600 000 000", cityId: "casablanca",
+      address: "Boulevard Mohammed V, Casablanca", categoryIds: ["discover"], description: "Balades guidées dans le centre-ville de Casablanca, en petit groupe.", documents: [], acceptTerms: true,
+    });
+    orgId = String(organizerId);
+    await team.call("adminDecideOrganizer", { organizerId: orgId, decision: "approve" });
+    // Règle de commission propre à cet organisateur (15 %) et politique « souple » ; le cache des fonctions dure 1 min.
+    await sup.call("adminSaveCommissionRule", { scope: "organizer", targetId: orgId, ratePercent: 15, effectiveFrom: new Date(Date.now() - 86_400_000).toISOString().slice(0, 10) });
+    await sup.call("adminSaveCancellationPolicy", { id: "souple-24h", labelFr: "Annulation gratuite jusqu'à 24 h avant", rules: [{ hoursBefore: 24, refundPercent: 100 }, { hoursBefore: 0, refundPercent: 0 }] });
+    await new Promise((r) => setTimeout(r, 61_000));
+  }, 120_000);
+
+  it("modes B et C : part en ligne et part sur place calculées par le serveur ; mode désactivé refusé", async () => {
+    const b = await publish(activity(`Acompte ${run}`, { paymentModel: "deposit", depositPercent: 30 }));
+    const eb = (await db().doc(`experiences/${b.experienceId}`).get()).data()!;
+    expect(eb).toMatchObject({ paymentModel: "deposit", depositPercent: 30, totalPrice: { amount: 20000 }, price: { amount: 6000 } });
+    expect(eb.pricing).toMatchObject({ model: "fixed_partner", partner: { name: `Balades Test ${run}`, price: { amount: 14000 } } });
+    expect((await session(b.sessionId)).price.amount).toBe(6000);
+    const c = await publish(activity(`Frais ${run}`, { paymentModel: "booking_fee" }));
+    expect((await db().doc(`experiences/${c.experienceId}`).get()).data()).toMatchObject({ paymentModel: "booking_fee", price: { amount: 3000 }, pricing: { partner: { price: { amount: 17000 } } } });
+    // Commission sur le prix total, jamais plus que l'encaissé ; l'organisateur reçoit le reste de l'acompte.
+    const { reservationId } = await buy(b.sessionId, 1);
+    expect((await reservation(reservationId)).commission).toMatchObject({ base: 6000, amount: 3000, paymentModel: "deposit", activityTotal: 20000 });
+    expect((await db().doc(`commissionLedger/sale_${reservationId}`).get()).data()).toMatchObject({ gross: 6000, commission: 3000, payable: 3000 });
+    const fee = await buy(c.sessionId, 1);
+    expect((await db().doc(`commissionLedger/sale_${fee.reservationId}`).get()).data()).toMatchObject({ gross: 3000, commission: 3000, payable: 0 });
+    // Mode désactivé par l'équipe : refusé.
+    expect(await refusal(team.call("adminSaveOrganizerPaymentModels", { models: ["full_online"] }))).toBe("permission-denied:");
+    await sup.call("adminSaveOrganizerPaymentModels", { models: ["full_online"] });
+    expect(await refusal(pro.call("organizerSaveExperience", { data: activity(`Refusé ${run}`, { paymentModel: "deposit", depositPercent: 30 }), addSessions: false, images: [] }))).toBe("invalid-argument:");
+    await sup.call("adminSaveOrganizerPaymentModels", { models: ["full_online", "deposit", "booking_fee"] });
+  }, 120_000);
+
+  it("politique d'annulation : copiée sur la réservation, appliquée à l'annulation ; la standard ne se modifie pas", async () => {
+    expect(await refusal(team.call("adminSaveCancellationPolicy", { id: "x-test", labelFr: "Test", rules: [{ hoursBefore: 0, refundPercent: 0 }] }))).toBe("permission-denied:");
+    expect(await refusal(sup.call("adminSaveCancellationPolicy", { id: "standard-48h", labelFr: "Changée", rules: [{ hoursBefore: 0, refundPercent: 100 }] }))).toBe("failed-precondition:default_policy");
+    expect(await refusal(sup.call("adminSaveCancellationPolicy", { id: "envers", labelFr: "À l'envers", rules: [{ hoursBefore: 48, refundPercent: 0 }, { hoursBefore: 0, refundPercent: 100 }] }))).toBe("invalid-argument:");
+    // Date dans 36 h : la politique standard (48 h) ne rembourserait rien, la « souple » (24 h) rembourse tout.
+    const sid = await makeSession({ price: 20000, startInHours: 36, createdHoursAgo: 96, extra: { cancellationPolicyId: "souple-24h" } });
+    const { u, reservationId } = await buy(sid, 1);
+    expect((await reservation(reservationId)).cancellationPolicy).toMatchObject({ id: "souple-24h" });
+    // Même si la politique change ensuite, la copie fait foi.
+    await sup.call("adminSaveCancellationPolicy", { id: "souple-24h", labelFr: "Souple modifiée", rules: [{ hoursBefore: 72, refundPercent: 100 }, { hoursBefore: 0, refundPercent: 0 }] });
+    await u.call("cancelReservation", { reservationId });
+    expect((await reservation(reservationId)).cancellation).toMatchObject({ refundAmount: 20000 });
+  }, 120_000);
+
+  it("demande de remboursement : une par réservation ; partiel puis total plafonné ; refus motivé ; registre corrigé", async () => {
+    const a = await publish(activity(`Remboursement ${run}`));
+    const { u, reservationId } = await buy(a.sessionId, 1);
+    const other = await member();
+    expect(await refusal(other.call("requestRefund", { reservationId, reason: "different", message: "Ce n'était pas du tout ce qui était décrit." }))).toBe("not-found:not_found");
+    expect(await refusal(u.call("requestRefund", { reservationId, reason: "different", message: "court" }))).toBe("invalid-argument:");
+    await u.call("requestRefund", { reservationId, reason: "different", message: "Le parcours a duré 30 minutes au lieu de deux heures." });
+    expect(await refusal(u.call("requestRefund", { reservationId, reason: "other", message: "Je redemande une seconde fois pour voir." }))).toBe("failed-precondition:already_requested");
+    expect(await refusal(u.call("adminDecideRefund", { requestId: reservationId, decision: "full" }))).toBe("permission-denied:");
+    expect(await refusal(team.call("adminDecideRefund", { requestId: reservationId, decision: "decline" }))).toBe("invalid-argument:");
+    const res = await team.call("adminDecideRefund", { requestId: reservationId, decision: "partial", amountDh: 50, message: "Geste commercial pour la durée écourtée." });
+    expect(res).toMatchObject({ status: "partially_refunded", amount: 5000 });
+    expect(await refusal(team.call("adminDecideRefund", { requestId: reservationId, decision: "full" }))).toBe("failed-precondition:already_decided");
+    const r = await reservation(reservationId);
+    expect(r.refundedAmount).toBe(5000);
+    expect((await payment(String(r.paymentId))).status).toBe("partially_refunded");
+    const entry = (await db().collection("commissionLedger").where("reservationId", "==", reservationId).where("kind", "==", "refund").get()).docs[0]!.data();
+    expect(entry).toMatchObject({ gross: -5000, commission: -750, payable: -4250 });
+    // Annulation ensuite : le remboursement est plafonné à ce qui reste (15 000 au plus), jamais plus que l'encaissé.
+    await u.call("cancelReservation", { reservationId });
+    expect((await reservation(reservationId)).cancellation.refundAmount).toBe(15000);
+    expect((await payment(String(r.paymentId))).status).toBe("refunded");
+    const notes = await db().collection(`users/${u.uid}/notifications`).where("type", "==", "refund_accepted").get();
+    expect(notes.size).toBe(1);
+    // Refus motivé sur une autre réservation.
+    const b = await buy(a.sessionId, 1);
+    await b.u.call("requestRefund", { reservationId: b.reservationId, reason: "safety", message: "Le groupe a traversé une route sans passage piéton." });
+    expect(await team.call("adminDecideRefund", { requestId: b.reservationId, decision: "decline", message: "Après vérification avec l'organisateur, le parcours était sécurisé." })).toMatchObject({ status: "declined" });
+    expect((await reservation(b.reservationId)).refundedAmount ?? 0).toBe(0);
+  }, 120_000);
+});

@@ -3,7 +3,7 @@ import { toDraft } from "@/lib/questionnaire-draft";
 import type { ExperienceFormValues } from "@/components/admin/experience-form";
 import type { AdminData } from "@/lib/data/admin";
 
-export function formOptions(d: Pick<AdminData, "categories" | "cities" | "partners">) {
+export function formOptions(d: Pick<AdminData, "categories" | "cities" | "partners">, policies: { id: string; label: { fr: string } }[] = [DEFAULT_CANCELLATION_POLICY]) {
   return {
     // Étape 19 : catégories principales et sous-catégories (parentId), masquées signalées.
     categories: [...d.categories]
@@ -11,7 +11,8 @@ export function formOptions(d: Pick<AdminData, "categories" | "cities" | "partne
       .map((c) => ({ id: c.id, label: c.isActive === false ? `${c.name.fr} (masquée)` : c.name.fr, parentId: c.parentId ?? undefined })),
     cities: d.cities.map((c) => ({ id: c.id, label: c.isActive ? c.name.fr : `${c.name.fr} (bientôt)`, disabled: !c.isActive })),
     partners: d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, label: p.name, insurance: insuranceState(p.insurance, new Date()) })),
-    policies: [{ id: DEFAULT_CANCELLATION_POLICY.id, label: DEFAULT_CANCELLATION_POLICY.label.fr }],
+    // Étape 22 : politiques d'annulation définies dans Paramètres.
+    policies: policies.map((p) => ({ id: p.id, label: p.label.fr })),
   };
 }
 
@@ -30,6 +31,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
     included: "", practicalInfo: "", cancellationPolicyId: DEFAULT_CANCELLATION_POLICY.id,
     partnerId: "", economicsModel: "own", costPerSeatDh: "", commissionPercent: "",
     pricingModel: "online_only", partnerPriceDh: "", partnerDescription: "", onSiteCommissionPercent: "",
+    paymentModel: "full_online", depositPercent: "30",
     status: "draft",
     sessions: { firstDate: nextWeekDate(now), time: "19:30", weeks: "1", capacity: "12" },
     level: "", equipmentProvided: "", whatToBring: "", dressCode: "", minAge: "", outdoor: false, physicalActivity: false, questionnaire: [],
@@ -46,14 +48,16 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     groupMin: String(e.groupConfig?.minSize ?? 5), groupTarget: String(e.groupConfig?.targetSize ?? 6), groupMax: String(e.groupConfig?.maxSize ?? 7),
     admission: e.admission ?? "direct", requestMessageRequired: Boolean(e.requestMessageRequired), requestInstagramRequired: Boolean(e.requestInstagramRequired),
     memberPriceDh: e.memberPrice ? String(e.memberPrice.amount / 100) : "", membersOnly: Boolean(e.membersOnly),
-    maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String(e.price.amount / 100), durationMinutes: String(e.durationMinutes),
+    // Étape 22 : pour une activité d'organisateur, le prix saisi est le prix TOTAL (la part en ligne en découle).
+    maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String((e.totalPrice?.amount ?? e.price.amount) / 100), durationMinutes: String(e.durationMinutes),
     languages: e.languages.filter((l): l is ExperienceFormValues["languages"][number] => ["fr", "ar", "darija", "en", "es"].includes(l)),
     alcoholServed: Boolean(e.alcoholServed), included: includedLines(e).join("\n"), practicalInfo: e.practicalInfo?.fr ?? "",
     partnerId: eco?.partnerId ?? "", economicsModel: eco?.model ?? "own",
     costPerSeatDh: eco?.costPerSeat != null ? String(eco.costPerSeat / 100) : "",
     commissionPercent: eco?.commissionPercent != null ? String(eco.commissionPercent) : "",
     onSiteCommissionPercent: eco?.onSiteCommissionPercent != null ? String(eco.onSiteCommissionPercent) : "",
-    ...pricingValues(e),
+    ...(e.organizerId ? {} : pricingValues(e)),
+    paymentModel: e.paymentModel ?? "full_online", depositPercent: String(e.depositPercent ?? 30),
     status: e.status === "published" ? "published" : "draft",
     level: e.level ?? "", equipmentProvided: e.equipmentProvided ?? "", whatToBring: e.whatToBring ?? "", dressCode: e.dressCode ?? "",
     minAge: e.minAge ? String(e.minAge) : "", outdoor: Boolean(e.outdoor), physicalActivity: Boolean(e.physicalActivity),

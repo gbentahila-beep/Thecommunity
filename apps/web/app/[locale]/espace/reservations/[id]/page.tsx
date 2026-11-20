@@ -1,4 +1,4 @@
-import { canReview, DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences } from "@thecommunity/shared";
+import { canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -11,7 +11,9 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { Stars } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getReservationInvoices } from "@/lib/data/invoices";
-import { getMemberReservation, getMemberSpace } from "@/lib/data/member";
+import { getMemberReservation, getMemberSpace, getRefundRequest } from "@/lib/data/member";
+import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
+import { RefundRequestForm } from "@/components/account/refund-request-form";
 import { InvoiceList } from "@/components/account/invoice-list";
 import { PreferencesEditor } from "@/components/booking/preferences-editor";
 import { QuestionnaireForm } from "@/components/account/questionnaire-form";
@@ -47,6 +49,9 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
     space.session ? getReservationInvoices(space.session.uid, id) : Promise.resolve([]),
     getExperienceBySlug(r.sessionSnapshot.slug).catch(() => null),
   ]);
+  // Étape 22 : politique d'annulation copiée sur la réservation (sinon celle de l'activité) ; demande de remboursement.
+  const [policies, refundRequest, tr2] = await Promise.all([getCancellationPolicies(), getRefundRequest(space.session?.uid, r.id), getTranslations("refund")]);
+  const policy = r.cancellationPolicy?.rules?.length ? r.cancellationPolicy : policyOf(policies, experience?.cancellationPolicyId);
   // 18a : questionnaire de l'expérience (s'il y en a un), rempli après la réservation.
   const questions = experience?.questionnaire ?? [];
   const lang = locale as "fr" | "ar" | "en";
@@ -54,7 +59,8 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const title = tr(s.title, locale);
   const isUpcoming = new Date(s.startAt).getTime() > now.getTime();
   const isActive = r.status === "confirmed";
-  const refund = refundAmountFor(DEFAULT_CANCELLATION_POLICY, r.pricing.total, new Date(s.startAt), now);
+  const refund = refundAmountFor(policy, r.pricing.total, new Date(s.startAt), now);
+  const refundable = Boolean(r.paymentId) && canRequestRefund({ status: r.status, sessionStartAt: s.startAt, paidAmount: r.pricing.total, refundedAmount: r.refundedAmount }, now);
   const review = data.review;
   const venueText = r.venue ? `${r.venue.name}, ${r.venue.address}` : `${s.district}, Casablanca`;
   const ics = buildIcs({ uid: r.id, title, startAt: s.startAt, endAt: s.endAt, location: venueText, url: `${SITE_URL}/espace/reservations/${r.id}` });
@@ -384,6 +390,14 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </section>
       )}
 
+      {refundRequest ? (
+        <section className="rounded-[var(--radius-card)] border border-line bg-white/70 p-5" data-testid="refund-status">
+          <p className="text-sm text-ink">{tr2(`status_${refundRequest.status}` as "status_pending", { amount: formatMoney({ amount: refundRequest.amount ?? 0, currency: r.pricing.currency }, lang) })}</p>
+          {refundRequest.message && <p className="mt-1 text-sm text-muted">{tr2("teamMessage")} {refundRequest.message}</p>}
+        </section>
+      ) : (
+        refundable && !isUpcoming && <RefundRequestForm reservationId={r.id} live={FIREBASE_ENABLED} />
+      )}
       {(review || canReview(r, now)) && (
         <section id="avis" className="scroll-mt-28 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
           <h2 className="font-display text-2xl font-medium text-plum-900">{t("reviewTitle")}</h2>

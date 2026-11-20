@@ -38,7 +38,8 @@ export async function cancelReservationCore(o: {
   const resRef = db.doc(`reservations/${o.reservationId}`);
   const pre = (await resRef.get()).data();
   if (!pre) throw new HttpsError("not-found", "Réservation introuvable.", { reason: "not_found" });
-  const policy = await policyFor(pre.cancellationPolicyId);
+  // Étape 22 : la politique copiée sur la réservation fait foi (sinon celle de l'activité, ou la standard).
+  const policy = (pre.cancellationPolicy as CancellationPolicy | undefined)?.rules?.length ? (pre.cancellationPolicy as CancellationPolicy) : await policyFor(pre.cancellationPolicyId);
 
   const result = await db.runTransaction(async (tx) => {
     const res = await tx.get(resRef);
@@ -57,7 +58,9 @@ export async function cancelReservationCore(o: {
 
     const paid = r.status === "confirmed" && Boolean(r.paymentId);
     const total = r.pricing.total as number;
-    const refundAmount = !paid ? 0 : o.refundMode === "full" ? total : o.refundMode === "none" ? 0 : refundAmountFor(policy, total, startAt, new Date(now));
+    // Étape 22 : jamais plus que ce qui reste après d'éventuels remboursements partiels déjà faits.
+    const remaining = Math.max(0, total - Number(r.refundedAmount ?? 0));
+    const refundAmount = Math.min(remaining, !paid ? 0 : o.refundMode === "full" ? total : o.refundMode === "none" ? 0 : refundAmountFor(policy, total, startAt, new Date(now)));
     tx.update(resRef, {
       status: "cancelled",
       cancellation: {

@@ -3,13 +3,14 @@ import { ExperienceForm } from "@/components/admin/experience-form";
 import { PageHeader } from "@/components/admin/ui";
 import { emptyExperienceValues, formOptions, proposalToValues } from "@/lib/admin-forms";
 import { getAdminData } from "@/lib/data/admin";
+import { getCancellationPolicies } from "@/lib/data/policies";
 import { getPendingProposal } from "@/lib/data/proposals";
 
 export const metadata = { title: "Nouvelle expérience" };
 
 export default async function NewExperiencePage({ searchParams }: PageProps<"/admin/experiences/nouvelle">) {
   const sp = await searchParams;
-  const d = await getAdminData();
+  const [d, policies] = await Promise.all([getAdminData(), getCancellationPolicies()]);
   // 18d : création à partir de la sortie proposée par un membre de confiance (formulaire pré-rempli).
   const proposal = typeof sp.proposition === "string" ? await getPendingProposal(sp.proposition) : null;
   const initial = proposal ? proposalToValues(proposal, d.now) : emptyExperienceValues(d.now);
@@ -23,7 +24,7 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
           rien n&apos;est publié avant votre enregistrement, et {proposal.firstName} est prévenu·e quand la fiche est créée. Dates envisagées : {proposal.datesIdea}.
         </p>
       )}
-      <ExperienceForm mode="create" live={!d.isDemo} initial={initial} {...formOptions(d)} />
+      <ExperienceForm mode="create" live={!d.isDemo} initial={initial} {...formOptions(d, policies)} />
     </div>
   );
 }

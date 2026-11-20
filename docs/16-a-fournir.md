@@ -90,7 +90,10 @@ Conséquence pratique : le site d'essai reste réservé à des **testeurs** (don
 - [ ] **Avocat** : relire le **contrat organisateur** et les **conditions de vente des activités des organisateurs** (The Host Club intermédiaire), en plus des CGV de The Host Club. Points clés : mandat d'encaissement, délai de reversement, annulations et remboursements, responsabilité de l'organisateur (assurance, sécurité), loi 31-08 (protection du consommateur), facturation (qui facture le participant ?).
 - [ ] **Expert-comptable** : traitement de la commission (chiffre d'affaires de The Host Club) et des sommes encaissées pour le compte des organisateurs (à reverser, pas du chiffre d'affaires) ; TVA sur la commission.
 - [ ] **CNDP** : la déclaration doit mentionner la transmission aux organisateurs du prénom, de l'initiale du nom, et, si la personne l'accepte, du régime et des allergies des participants de leurs activités.
-- [ ] **Catégories préparées** : rendre visibles « Rencontres & activités sociales » et « Culture & apprentissage » (Paramètres → Catégories) quand des activités y sont publiées ; ajouter une image et vérifier les traductions.
+- [x] **Catégories préparées** : « Rencontres & activités sociales » et « Culture & apprentissage » sont visibles depuis le 20 novembre (21b) ; reste à leur donner une vraie image et à vérifier les traductions.
+- [ ] **Avant le paiement réel** (étape 22) : Back-office → Paramètres → **Modes de paiement des organisateurs** : ne laisser que **C — frais de réservation** tant que le contrat CMI n'autorise pas l'encaissement pour le compte de tiers. Les trois modes sont ouverts sur le site d'essai, où les paiements sont des tests.
+- [ ] **CMI — remboursements** : vérifier que le contrat permet les **remboursements partiels** et **plusieurs remboursements** sur un même paiement (le site les gère déjà) et dans quel délai l'argent revient sur la carte (à indiquer dans les CGV).
+- [ ] **Avocat — politiques d'annulation** : valider les trois politiques proposées (standard 48 h ; souple 24 h ; stricte 100 % à 7 jours et 50 % à 48 h), le délai de **7 jours après l'activité** pour demander un remboursement, et le fait que **l'équipe** (pas l'organisateur) décide des remboursements.
 
 ## Expériences inventées (21b, 20 novembre)
 

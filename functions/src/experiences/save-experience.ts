@@ -1,4 +1,5 @@
-import { cleanQuestion, experienceInputSchema, MOROCCO_TIMEZONE, planSessionDates } from "@thecommunity/shared";
+import { cleanQuestion, experienceInputSchema, MOROCCO_TIMEZONE, PAYMENT_MODELS, planSessionDates, resolveCommission, splitForModel } from "@thecommunity/shared";
+import { commissionRules, moroccoToday } from "../commissions/ledger";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -137,6 +138,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
             : "draft";
   const grouped = v.bookingMode === "group" || v.bookingMode === "social_dinner";
   const price = { amount: Math.round(v.priceDh * 100), currency: "MAD" as const };
+  const sellPrice = () => (marketplace ? { amount: marketplace.onlineUnit, currency: "MAD" as const } : price);
   const slug = isCreate ? await uniqueSlug(slugify(`${v.titleFr} ${v.cityId}`)) : (existing.data()?.slug as string);
   const imageDocs = images.map((i) => ({ path: i.path, alt: { fr: i.alt || v.titleFr } }));
   const keepImages = !isCreate && images.length === 0 ? (existing.data()?.images ?? []) : imageDocs;
@@ -150,10 +152,26 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     admission: v.admission,
   };
 
+  // Étape 22 : activité d'un organisateur — mode de paiement A (tout en ligne), B (acompte) ou C (frais de
+  // réservation) parmi ceux activés par l'équipe. Le prix saisi est le prix TOTAL par place ; la part en ligne et
+  // la part sur place (à l'organisateur) sont calculées ici, la commission de la règle en vigueur incluse.
+  let marketplace: { paymentModel: string; depositPercent: number | null; totalUnit: number; onlineUnit: number; onSiteUnit: number } | null = null;
+  if (ownerOrgId) {
+    const enabled = ((await db.doc("settings/payment").get()).get("organizerPaymentModels") as string[] | undefined) ?? [...PAYMENT_MODELS];
+    if (!enabled.includes(v.paymentModel)) invalidArgument([{ path: ["paymentModel"], message: "paymentModelDisabled" }]);
+    const totalUnit = Math.round(v.priceDh * 100);
+    const c = resolveCommission(await commissionRules(), { experienceId: id, organizerId: ownerOrgId, categoryId: v.categoryId, at: moroccoToday() });
+    const split = splitForModel(v.paymentModel, totalUnit, { depositPercent: v.depositPercent, ratePercent: c.ratePercent, fixedPerSeat: c.fixedPerSeat });
+    marketplace = { paymentModel: v.paymentModel, depositPercent: v.paymentModel === "deposit" ? (v.depositPercent ?? 30) : null, totalUnit, ...split };
+  }
+  const orgName = org?.name ?? ((existing.data()?.organizerSnapshot?.name as string | undefined) ?? "");
+
   // Étape 11 : comment le client paie. La part organisation reste `price` (payée en ligne) ;
   // la part partenaire (prix fixe ou consommation libre) est toujours réglée sur place, jamais encaissée.
   const pricing =
-    v.pricingModel === "online_only" || !partner?.exists
+    marketplace && marketplace.paymentModel !== "full_online"
+      ? { model: "fixed_partner", currency: "MAD", partner: { name: orgName, paymentMode: "on_site", pricingType: "fixed", price: { amount: marketplace.onSiteUnit, currency: "MAD" }, description: "" } }
+      : v.pricingModel === "online_only" || !partner?.exists
       ? { model: "online_only", currency: "MAD", partner: null }
       : {
           model: v.pricingModel,
@@ -182,7 +200,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     venue: { name: v.venueName, address: v.address, revealPolicy: v.revealPolicy },
     images: keepImages,
     durationMinutes: v.durationMinutes,
-    price,
+    price: sellPrice(),
     bookingMode: v.bookingMode,
     groupConfig: grouped ? { minSize: v.groupMin, targetSize: v.groupTarget, maxSize: v.groupMax } : null,
     maxSeatsPerBooking: v.maxSeatsPerBooking,
@@ -206,6 +224,8 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     physicalActivity: v.physicalActivity,
     // 18a : questionnaire (traductions vides retirées).
     questionnaire: v.questionnaire.map(cleanQuestion),
+    // Étape 22 : mode de paiement et prix total (activités d'organisateurs).
+    ...(marketplace ? { paymentModel: marketplace.paymentModel, depositPercent: marketplace.depositPercent, totalPrice: { amount: marketplace.totalUnit, currency: "MAD" } } : {}),
     ...(proposal ? { proposedBy: { uid: proposal.userId, firstName: String(proposal.firstName ?? "") }, proposalId: v.proposalId } : {}),
     // Une expérience archivée le reste tant qu'elle n'est pas réactivée (bouton « Réactiver »).
     status: effectiveStatus,
@@ -239,7 +259,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
       categoryId: v.categoryId,
       startAt: Timestamp.fromDate(new Date(d.startAt)),
       endAt: Timestamp.fromDate(new Date(d.endAt)),
-      price,
+      price: sellPrice(),
       capacity: v.sessions.capacity,
       seatsConfirmed: 0,
       seatsHeld: 0,
