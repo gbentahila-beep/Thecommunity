@@ -16,7 +16,7 @@ export const HOME_SECTION_LABELS: Record<HomeSectionId, string> = {
   weekend: "Ce week-end (automatique)",
   new: "Nouveautés (automatique : publiées depuis moins de 30 jours)",
   popular: "Populaires (automatique : très bien notées ou presque complètes)",
-  trust: "Réassurance (3 engagements)",
+  trust: "Venir seul·e (3 repères : rencontres, groupes composés, lieux vérifiés)",
   how: "Comment ça marche",
   universes: "Univers",
   reviews: "Pourquoi venir (avis)",
@@ -38,12 +38,12 @@ export type HomeSettings = {
 export const DEFAULT_HOME_SETTINGS: HomeSettings = {
   banner: null,
   sections: [
+    { id: "trust", enabled: true },
     { id: "featured", enabled: true },
     { id: "thisWeek", enabled: true },
     { id: "weekend", enabled: false },
     { id: "new", enabled: false },
     { id: "popular", enabled: false },
-    { id: "trust", enabled: true },
     { id: "how", enabled: true },
     { id: "universes", enabled: true },
     { id: "reviews", enabled: true },

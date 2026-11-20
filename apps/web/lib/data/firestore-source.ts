@@ -212,3 +212,12 @@ export const fsHomeSettings = cached(fsHomeSettingsRaw, "fsHomeSettings");
 export const fsPublicOrganizers = cached(fsPublicOrganizersRaw, "fsPublicOrganizers");
 /** Back-office : réglages de l'accueil relus sans cache. */
 export const fsHomeSettingsFresh = fsHomeSettingsRaw;
+
+/* ——— Étape 28 : moyen de paiement ouvert (textes cohérents partout) ——— */
+async function fsPaymentMethodRaw(): Promise<"card" | "bank_transfer" | "none"> {
+  const provider = (await adminDb().doc("settings/payment").get()).get("provider") as string | undefined;
+  if (provider === "bank_transfer") return "bank_transfer";
+  if (provider && provider !== "none") return "card"; // « sandbox » (test) ou prestataire de carte
+  return "none";
+}
+export const fsPaymentMethod = cached(fsPaymentMethodRaw, "fsPaymentMethod");

@@ -111,9 +111,9 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await d.goto(base + '/admin/accueil', { waitUntil: 'load' });
   const sections = d.getByTestId('home-sections').locator('li');
   assert(await sections.count() === 11, 'back-office : 11 sections');
-  assert(await sections.nth(0).getAttribute('data-section') === 'featured', 'back-office : « Coups de cœur » en premier');
+  assert(await sections.nth(0).getAttribute('data-section') === 'trust' && await sections.nth(1).getAttribute('data-section') === 'featured', 'back-office : « Venir seul·e » puis « Coups de cœur » en premier');
   await d.getByRole('button', { name: /Descendre : Coups de cœur/ }).click();
-  assert(await sections.nth(1).getAttribute('data-section') === 'featured', 'back-office : flèche « descendre »');
+  assert(await sections.nth(2).getAttribute('data-section') === 'featured', 'back-office : flèche « descendre »');
   await d.getByRole('checkbox', { name: 'Afficher la bannière' }).check();
   await d.getByRole('button', { name: "Enregistrer l'accueil" }).click();
   assert(await visible(d.getByRole('alert').filter({ hasText: 'Texte de la bannière obligatoire' })), 'bannière sans texte refusée');

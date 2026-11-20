@@ -307,3 +307,9 @@ export async function getSearchSuggestions(q: string, locale: "fr" | "ar" | "en"
 export function publicLogo(path: string | null | undefined): string | null {
   return path && (path.startsWith("organizers/") || path.startsWith("/")) ? path : null;
 }
+
+/** Étape 28 : moyen de paiement ouvert sur le site (les textes d'aide et « À propos » en dépendent). */
+export async function getPaymentMethod(): Promise<"card" | "bank_transfer" | "none"> {
+  if (FIREBASE_ENABLED) return fs.fsPaymentMethod();
+  return "none";
+}

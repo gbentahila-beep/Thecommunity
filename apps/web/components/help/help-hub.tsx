@@ -26,7 +26,7 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
     title: a.title[lang],
     summary: a.summary[lang],
     category: catTitle[a.category]!,
-    text: plainText(a.body[lang].flat().join(" ")),
+    text: plainText(a.body[lang].flat().join(" ").replace(/\[\[\w+\]\]/g, "")),
   }));
   const categories = HELP_CATEGORIES.filter((c) => c.audience === audience);
   const tab = (active: boolean) =>

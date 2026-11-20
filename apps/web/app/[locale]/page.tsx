@@ -1,4 +1,4 @@
-import { CalendarCheck, ShieldCheck, Users } from "lucide-react";
+import { HeartHandshake, ShieldCheck, Users } from "lucide-react";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CategoryChips } from "@/components/category-chips";
@@ -96,12 +96,12 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       </PageShell>
     ),
     trust: (
-      <PageShell key="trust" className="py-6">
+      <PageShell key="trust" className="py-6" data-testid="home-trust">
         <ul className="grid gap-4 rounded-[var(--radius-card)] bg-cream-deep p-6 sm:grid-cols-3 sm:p-8">
           {[
             { icon: Users, label: t("trust1") },
-            { icon: ShieldCheck, label: t("trust2") },
-            { icon: CalendarCheck, label: t("trust3") },
+            { icon: HeartHandshake, label: t("trust2") },
+            { icon: ShieldCheck, label: t("trust3") },
           ].map(({ icon: Icon, label }) => (
             <li key={label} className="flex items-center gap-4">
               <Icon className="size-8 shrink-0 text-plum-900" strokeWidth={1.5} aria-hidden />

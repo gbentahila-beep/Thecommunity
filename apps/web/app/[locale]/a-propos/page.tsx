@@ -5,7 +5,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ToolsCarousel } from "@/components/about/tools-carousel";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
+import { getPaymentMethod } from "@/lib/data";
 import { AYA_INSTAGRAM } from "@/lib/legal-info";
+
+// Étape 28 : le texte de paiement suit le réglage du site (relu au plus toutes les heures, et à chaque changement dans le back-office).
+export const revalidate = 3600;
 
 /** Photos fournies par Rita (8 novembre ; 09 et 10 ajoutées ensuite), dimensions réelles pour éviter les sauts de mise en page. */
 const GALLERY = [
@@ -35,7 +39,9 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
     { icon: Shapes, title: ta("value3Title"), text: ta("value3") },
     { icon: Sprout, title: ta("value4Title"), text: ta("value4") },
   ];
-  const tools = [1, 2, 3, 4, 5, 6, 7, 8].map((i) => ({ title: ta(`tool${i}Title`), text: ta(`tool${i}`) }));
+  // Étape 28 : le texte de paiement suit le moyen réellement ouvert (plus de « bientôt par carte » écrit en dur).
+  const method = await getPaymentMethod();
+  const tools = [1, 2, 3, 4, 5, 6, 7, 8].map((i) => ({ title: ta(`tool${i}Title`), text: i === 2 ? ta(`tool2_${method}`) : ta(`tool${i}`) }));
   return (
     <PageShell className="py-8 sm:py-12">
       {/* 1. En-tête : accroche à gauche, grande photo à droite */}

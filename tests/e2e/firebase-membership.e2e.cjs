@@ -61,15 +61,16 @@ async function login(page, who, suite) {
   const errs = [];
   const open = async (opts) => { const p = await (await b.newContext(opts)).newPage(); p.on('pageerror', (e) => errs.push(e.message)); p.on('dialog', (d) => { errs.push('fenêtre système : ' + d.message()); d.dismiss(); }); return p; };
 
-  // 1. Visiteur : prix barrés
+  // 1. Visiteur : prix public en grand, prix membre en mention discrète (étape 28 : abonnement proposé après la 1re expérience)
   const v = await open({ ...devices['iPhone 13'] });
   globalThis.__page = v;
   await v.goto(`${base}/experiences/${target.e.fields.slug.stringValue}`);
-  assert(await visible(v.locator('s', { hasText: dh(price) })), `fiche : prix public barré (${dh(price)})`);
-  assert(norm(await v.locator('main').textContent()).includes(dh(memberPrice)), `fiche : prix membre affiché (${dh(memberPrice)})`);
-  assert(await v.getByRole('link', { name: 'Devenir membre' }).first().isVisible(), 'fiche : « Devenir membre »');
+  assert(norm(await v.locator('main').textContent()).includes(dh(price)), `fiche : prix public affiché (${dh(price)})`);
+  assert(await visible(v.getByTestId('member-price').filter({ hasText: dh(memberPrice) })), `fiche : mention du prix membre (${dh(memberPrice)})`);
+  assert(await v.locator('s').count() === 0, 'fiche : plus de prix barré');
+  assert(await v.getByRole('link', { name: 'Devenir membre' }).count() === 0, 'fiche : pas de « Devenir membre » (expérience ouverte à tous)');
   await v.goto(`${base}/experiences`);
-  assert(await v.locator('article s').count() > 0, 'catalogue : prix barrés sur les cartes');
+  assert(await v.getByTestId('member-price').count() > 0, 'catalogue : mention du prix membre sur les cartes');
 
   // 2. Souscription
   const yas = await makeMember('Yasmine');

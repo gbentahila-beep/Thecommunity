@@ -314,7 +314,8 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                   {twoPart.partner.description && <p className="mt-1 text-muted">{t2("whatOnSite", { description: twoPart.partner.description })}</p>}
                 </div>
               )}
-              {plan && (memberAmount !== null || exp.membersOnly) && (
+              {/* Étape 28 : l'abonnement n'est proposé ici que si l'expérience est réservée aux membres (sinon : après la 1re expérience). */}
+              {plan && exp.membersOnly && (
                 <Link href="/abonnement" className="mt-2 inline-block text-sm font-semibold text-plum-900 underline underline-offset-4">
                   {t("becomeMember")}
                 </Link>

@@ -5,11 +5,15 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HelpFeedback } from "@/components/help/help-feedback";
 import { HelpContactCards } from "@/components/help/help-hub";
 import { PageShell } from "@/components/ui";
-import { articleBySlug, categoryOf, HELP_ARTICLES, helpLang } from "@/content/help";
+import { articleBySlug, categoryOf, forPaymentMethod, HELP_ARTICLES, helpLang } from "@/content/help";
+import { getPaymentMethod } from "@/lib/data";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { richText } from "@/lib/rich-text";
+
+// Étape 28 : le texte de paiement suit le réglage du site (relu au plus toutes les heures, et à chaque changement dans le back-office).
+export const revalidate = 3600;
 
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) => HELP_ARTICLES.map((a) => ({ locale, slug: a.slug })));
@@ -48,7 +52,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
         <h1 className="font-display text-4xl font-medium text-plum-900 sm:text-5xl">{a.title[lang]}</h1>
         <p className="mt-4 text-lg leading-relaxed text-ink/80">{a.summary[lang]}</p>
         <div className="mt-8 space-y-5">
-          {a.body[lang].map((b, i) =>
+          {forPaymentMethod(a.body[lang], await getPaymentMethod()).map((b, i) =>
             Array.isArray(b) ? (
               <ul key={i} className="list-disc space-y-2 ps-5 leading-relaxed text-ink/85">
                 {b.map((li, k) => <li key={k}>{richText(li, missing)}</li>)}

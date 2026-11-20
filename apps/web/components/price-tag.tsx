@@ -11,8 +11,8 @@ export function memberAmountFor(plan: MembershipPlan | null, publicPrice: Money,
 export type TwoPartT = (key: "now" | "onSite" | "plusConsumption" | "consumptionOnSite", values?: { amount: string }) => string;
 
 /**
- * Prix affiché : le prix public BARRÉ à côté du prix membre (argument de vente de l'abonnement),
- * ou le prix public seul s'il n'y a pas de prix membre.
+ * Prix affiché : le prix public en grand ; le prix membre, s'il existe, en mention discrète à côté
+ * (étape 28 : l'abonnement n'est plus mis en avant avant la première réservation — auparavant, prix public barré).
  * Tarification en deux parts (étape 11) :
  * - prix fixe chez le partenaire → total par personne, puis « 250 DH maintenant · 200 DH sur place » ;
  * - consommation libre → « 150 DH + consommation » (jamais de faux total).
@@ -49,15 +49,14 @@ export function PriceTag({
       <span className={`${big} font-bold text-ink`}>{fmt(shown)}</span>
     ) : (
       <span className="inline-flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <s className={`${size === "lg" ? "text-lg" : "text-sm"} text-muted decoration-plum-700/60`} aria-label={fmt(shown)}>
-          {fmt(shown)}
-        </s>
-        <span className={`${big} font-bold text-plum-900`}>{fmt(memberAmount + onSite)}</span>
-        <span className="rounded-full bg-plum-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-plum-900">{memberLabel}</span>
+        <span className={`${big} font-bold text-ink`}>{fmt(shown)}</span>
+        <span className="text-xs font-medium text-plum-800" data-testid="member-price">
+          {fmt(memberAmount + onSite)} {memberLabel}
+        </span>
       </span>
     );
   if (!twoPart || !t2) return main;
-  const now = memberAmount ?? price.amount;
+  const now = price.amount;
   return (
     <span className="inline-flex flex-col gap-0.5" data-two-part={split.model}>
       <span className="inline-flex flex-wrap items-baseline gap-x-1.5">

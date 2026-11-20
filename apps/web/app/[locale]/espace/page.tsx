@@ -5,7 +5,8 @@ import { ExperienceCard } from "@/components/experience-card";
 import { ReservationCard } from "@/components/account/reservation-card";
 import { PrimaryLink } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { getNextSessionPerExperience } from "@/lib/data";
+import { isMemberActive } from "@thecommunity/shared";
+import { getMembershipPlan, getNextSessionPerExperience } from "@/lib/data";
 import { getMemberSpace } from "@/lib/data/member";
 import { formatLongDate, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
@@ -18,7 +19,9 @@ const INTEREST_TO_CATEGORY: Record<string, string[]> = {
 export default async function DashboardPage({ params }: PageProps<"/[locale]/espace">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, loc, space] = await Promise.all([getTranslations("account"), getLocale(), getMemberSpace()]);
+  const [t, loc, space, plan] = await Promise.all([getTranslations("account"), getLocale(), getMemberSpace(), getMembershipPlan()]);
+  // Étape 28 : l'abonnement est proposé APRÈS une première expérience (plus mis en avant avant).
+  const suggestMembership = Boolean(plan) && space.past.length > 0 && !isMemberActive(space.membership ?? null, space.now);
   const next = space.upcoming[0];
   const days = next ? Math.max(0, Math.floor((new Date(next.sessionSnapshot.startAt).getTime() - space.now.getTime()) / 86_400_000)) : 0;
   const bookedExperienceIds = new Set(space.reservations.map((r) => r.experienceId));
@@ -90,6 +93,16 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {suggestMembership && (
+        <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-plum-900 p-5 text-white sm:flex-row sm:items-center" data-testid="membership-suggestion">
+          <p className="flex-1">
+            <span className="block font-display text-xl">{t("memberSuggestTitle")}</span>
+            <span className="text-sm text-plum-100">{t("memberSuggestText")}</span>
+          </p>
+          <Link href="/abonnement" className="shrink-0 rounded-full bg-white px-4 py-2 text-sm font-semibold text-plum-900">{t("memberSuggestCta")}</Link>
         </section>
       )}
 

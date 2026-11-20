@@ -129,22 +129,24 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     slug: "payer-ma-reservation",
     category: "bookings",
     title: { fr: "Payer ma réservation", en: "Paying for my booking" },
-    summary: { fr: "Par virement bancaire avec une référence unique (la place est bloquée jusqu'à l'échéance) ; la carte arrivera ensuite.", en: "By bank transfer with a unique reference (your seat is held until the deadline); card payment will follow." },
+    summary: { fr: "Uniquement sur le site, avec le moyen de paiement indiqué au moment de réserver.", en: "Only on the website, with the payment method shown when you book." },
     body: {
       fr: [
-        "Par virement bancaire : après « Réserver », vous recevez une référence (THC-…) et nos coordonnées bancaires, à l'écran et par e-mail. Faites le virement du montant exact en indiquant la référence dans le motif. Votre place est bloquée jusqu'à l'échéance (48 h au plus, au plus tard 24 h avant l'expérience) ; dès réception, nous confirmons et vous recevez votre billet et votre facture.",
-        "Par carte (bientôt) : sur une page de paiement sécurisée. Nous ne voyons ni ne conservons jamais votre numéro de carte.",
-        `Si le paiement est refusé, votre place reste bloquée jusqu'à la fin du délai de ${HOLD_MINUTES} minutes : vous pouvez réessayer depuis la page de votre réservation.`,
+        "[[bank_transfer]]Par virement bancaire : après « Réserver », vous recevez une référence (THC-…) et nos coordonnées bancaires, à l'écran et par e-mail. Faites le virement du montant exact en indiquant la référence dans le motif. Votre place est bloquée jusqu'à l'échéance (48 h au plus, au plus tard 24 h avant l'expérience) ; dès réception, nous confirmons et vous recevez votre billet et votre facture.",
+        "[[card]]Par carte : sur une page de paiement sécurisée. Nous ne voyons ni ne conservons jamais votre numéro de carte.",
+        "[[none]]Le paiement en ligne n'est pas encore ouvert sur ce site : le moyen de paiement est indiqué au moment de réserver dès qu'il l'est.",
+        `[[card]]Si le paiement est refusé, votre place reste bloquée jusqu'à la fin du délai de ${HOLD_MINUTES} minutes : vous pouvez réessayer depuis la page de votre réservation.`,
         "Tant que le paiement en ligne n'est pas ouvert, le site l'indique clairement (« mode test ») et aucune somme n'est débitée.",
-        "Membre ? Le prix membre est appliqué automatiquement : vous voyez le prix public barré et votre prix à côté.",
+        "Membre ? Le prix membre (indiqué à côté du prix public) est appliqué automatiquement au moment de réserver.",
         "Un code promo ? Saisissez-le avant de payer (« Vous avez un code promo ? ») : chaque code s'utilise une fois par personne. Les éventuels frais de service sont toujours affichés avant le paiement.",
       ],
       en: [
-        "By bank transfer: after “Book”, you get a reference (THC-…) and our bank details, on screen and by email. Transfer the exact amount and write the reference in the description. Your seat is held until the deadline (48 hours at most, no later than 24 hours before the experience); once it arrives, we confirm and send your ticket and invoice.",
-        "By card (coming soon): on a secure payment page. We never see or store your card number.",
-        `If a payment is declined, your seat stays held until the end of the ${HOLD_MINUTES}-minute window: you can try again from your booking page.`,
+        "[[bank_transfer]]By bank transfer: after “Book”, you get a reference (THC-…) and our bank details, on screen and by email. Transfer the exact amount and write the reference in the description. Your seat is held until the deadline (48 hours at most, no later than 24 hours before the experience); once it arrives, we confirm and send your ticket and invoice.",
+        "[[card]]By card: on a secure payment page. We never see or store your card number.",
+        "[[none]]Online payment isn't open on this site yet: the payment method is shown when you book as soon as it is.",
+        `[[card]]If a payment is declined, your seat stays held until the end of the ${HOLD_MINUTES}-minute window: you can try again from your booking page.`,
         "Until online payment is open, the site says so clearly (“test mode”) and nothing is charged.",
-        "A member? The member price is applied automatically: you'll see the public price struck through with your price next to it.",
+        "A member? The member price (shown next to the public price) is applied automatically when you book.",
         "Got a promo code? Enter it before paying (“Got a promo code?”): each code can be used once per person. Any service fee is always shown before payment.",
       ],
     },
@@ -239,12 +241,12 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     body: {
       fr: [
         "L'abonnement est une formule annuelle, valable 12 mois à partir du paiement. Ses avantages et son prix sont détaillés sur la page [Abonnement](/abonnement).",
-        ["Un prix membre sur les expériences : le prix public apparaît barré, votre prix à côté.", "Un accès anticipé aux nouvelles dates, avant leur ouverture à tous.", "L'accès aux expériences réservées aux membres."],
+        ["Un prix membre sur les expériences : il est indiqué à côté du prix public et appliqué automatiquement.", "Un accès anticipé aux nouvelles dates, avant leur ouverture à tous.", "L'accès aux expériences réservées aux membres."],
         "Il n'y a pas de renouvellement automatique : rien n'est prélevé sans votre action.",
       ],
       en: [
         "Membership is an annual plan, valid for 12 months from payment. Its benefits and price are on the [Membership](/abonnement) page.",
-        ["A member price on experiences: the public price is struck through with your price next to it.", "Early access to new dates, before they open to everyone.", "Access to members-only experiences."],
+        ["A member price on experiences: it's shown next to the public price and applied automatically.", "Early access to new dates, before they open to everyone.", "Access to members-only experiences."],
         "There's no automatic renewal: nothing is charged without you taking action.",
       ],
     },
@@ -713,4 +715,23 @@ export const HELP_ARTICLES: HelpArticle[] = HELP_ARTICLES_RAW.map((a) => {
 
 export const helpLang = (locale: string): HelpLang => (locale === "en" || locale === "ar" ? locale : "fr");
 export const articleBySlug = (slug: string) => HELP_ARTICLES.find((a) => a.slug === slug);
+
+/**
+ * Étape 28 : paragraphes propres à un moyen de paiement, marqués « [[card]] », « [[bank_transfer]] » ou « [[none]] » :
+ * seuls ceux du moyen ouvert sur le site sont affichés (plus de « bientôt par carte » contradictoire).
+ */
+export function forPaymentMethod<T extends string | string[]>(items: T[], method: "card" | "bank_transfer" | "none"): T[] {
+  const keep = (line: string) => {
+    const m = /^\[\[(card|bank_transfer|none)\]\]/.exec(line);
+    return m ? (m[1] === method ? line.slice(m[0].length) : null) : line;
+  };
+  return items.flatMap((it) => {
+    if (Array.isArray(it)) {
+      const lines = it.flatMap((l) => (keep(l) === null ? [] : [keep(l)!]));
+      return lines.length ? [lines as T] : [];
+    }
+    const l = keep(it);
+    return l === null ? [] : [l as T];
+  });
+}
 export const categoryOf = (key: HelpCategoryKey) => HELP_CATEGORIES.find((c) => c.key === key)!;

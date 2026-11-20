@@ -55,6 +55,7 @@ export function PaymentSettingsForm({ initial, canEdit }: { initial: PaymentSett
         try {
           await firebase().auth.authStateReady();
           await httpsCallable(firebase().functions, "adminSavePaymentSettings")(parsed.data);
+          await fetch("/api/admin/revalidate", { method: "POST" }).catch(() => undefined); // textes de paiement du site (étape 28)
           setState("saved");
           router.refresh();
         } catch {
