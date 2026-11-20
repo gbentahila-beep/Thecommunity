@@ -2,6 +2,7 @@ import { Timestamp, type DocumentSnapshot, type Transaction } from "firebase-adm
 import { logger } from "firebase-functions/v2";
 import { nextMembershipPeriod } from "@thecommunity/shared";
 import { db, FieldValue } from "../lib/admin";
+import { commissionRules, commissionSnapshot, writeSaleEntry } from "../commissions/ledger";
 import { afterPaymentSettled } from "../invoices/issue";
 import { issueRefund } from "./refund";
 import { redeemPromo } from "../reservations/create-reservation";
@@ -48,6 +49,7 @@ function confirmFields(exp: DocumentSnapshot, paymentId: string) {
  */
 export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: ApplyOutcome; reservationId?: string; purpose?: "reservation" | "membership" }> {
   type Decision = { outcome: ApplyOutcome; reservationId?: string; purpose?: "reservation" | "membership"; refund?: { amount: number; reason: string } };
+  const rules = await commissionRules();
   const decision = await db.runTransaction<Decision>(async (tx: Transaction) => {
     const evRef = db.doc(`paymentEvents/${ev.provider}_${ev.id}`);
     const payRef = db.doc(`payments/${ev.paymentId}`);
@@ -72,6 +74,10 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
     const countPromo = () => {
       if (promoCode && !redemption?.exists) redeemPromo(tx, promoCode, r.userId, res.id);
     };
+    // Étape 21 : commission (figée à la réservation ; calculée maintenant si elle manque) et écriture au registre.
+    const commission = r.commission ?? (r.organizerId && exp.exists ? commissionSnapshot(rules, exp.data()!, r.experienceId, (r.pricing?.total ?? 0) - (r.pricing?.fees ?? 0), r.seats ?? 1) : null);
+    const settle = () => writeSaleEntry(tx, res.id, { ...r, commission });
+    const commissionField = commission && !r.commission ? { commission } : {};
 
     const logged = Object.fromEntries(Object.entries(ev).filter(([, v]) => v !== undefined));
     tx.set(evRef, { ...logged, receivedAt: FieldValue.serverTimestamp() });
@@ -104,8 +110,9 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
         ...(["validated", "revealed"].includes(sess.data()?.groupsStatus) ? { groupsNeedReview: true } : {}),
         updatedAt: FieldValue.serverTimestamp(),
       });
-      tx.update(resRef, confirmFields(exp, pay.id));
+      tx.update(resRef, { ...confirmFields(exp, pay.id), ...commissionField });
       countPromo();
+      settle();
       return { outcome: "confirmed", reservationId: res.id };
     }
 
@@ -122,8 +129,9 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
           updatedAt: FieldValue.serverTimestamp(),
         });
         tx.set(lockRef, { reservationId: res.id, createdAt: FieldValue.serverTimestamp() });
-        tx.update(resRef, { ...confirmFields(exp, pay.id), latePayment: true });
+        tx.update(resRef, { ...confirmFields(exp, pay.id), latePayment: true, ...commissionField });
         countPromo();
+        settle();
         return { outcome: "confirmed", reservationId: res.id };
       }
     }

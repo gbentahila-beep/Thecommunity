@@ -18,3 +18,4 @@ export * from "./bank-transfer";
 export * from "./questionnaire";
 export * from "./activity";
 export * from "./organizer";
+export * from "./commission";

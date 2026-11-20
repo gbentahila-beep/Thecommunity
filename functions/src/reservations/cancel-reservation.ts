@@ -1,7 +1,9 @@
 import { DEFAULT_CANCELLATION_POLICY, refundAmountFor, type CancellationPolicy } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
+import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
+import { recordRefundEntry } from "../commissions/ledger";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth } from "../lib/guards";
 import { issueRefund } from "../payments/refund";
@@ -89,6 +91,8 @@ export async function cancelReservationCore(o: {
   });
 
   let refundStatus: "none" | "succeeded" | "pending" = "none";
+  // Étape 21 : la part remboursée n'est pas reversée à l'organisateur ; commission rendue au prorata.
+  if (result.refundAmount > 0 && result.paymentId) await recordRefundEntry(o.reservationId, result.refundAmount).catch((e) => logger.error("Registre des commissions", e));
   if (result.refundAmount > 0 && result.paymentId) {
     refundStatus = (await issueRefund(result.paymentId, result.refundAmount, o.by === "user" ? "member_cancellation" : `admin_${o.reason}`)).status;
     if (refundStatus === "succeeded") {

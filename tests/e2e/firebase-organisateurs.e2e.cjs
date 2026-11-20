@@ -174,6 +174,30 @@ async function member(tag, firstName) {
   assert(await visible(pro.getByTestId('pro-participant').filter({ hasText: 'Karim O.' })), 'organisateur : participant de la date');
   assert(await pro.getByText('Pointage 3 h avant le début').isVisible(), 'pointage : ouvert 3 h avant');
 
+  // 5 bis. Étape 21 : commission copiée, registre visible par l'organisateur, reversements et règles côté équipe
+  const r1 = resv.fields;
+  assert(r1.commission?.mapValue?.fields?.ratePercent, 'réservation : commission copiée');
+  await pro.goto(`${base}/pro/finances`, { waitUntil: 'load' });
+  assert(await visible(pro.getByTestId('pro-ledger').filter({ hasText: `Padel découverte ${stamp}` })), 'finances : la vente apparaît au registre');
+  assert(await pro.getByTestId('pro-ledger').filter({ hasText: 'À recevoir' }).count() >= 1, 'finances : « à recevoir » (activité à venir)');
+  await pro.locator('#bank-holder').fill(`${name} SARL`);
+  await pro.locator('#bank-name').fill('Banque Test');
+  await pro.locator('#bank-rib').fill('0011 1100 0000 1234 5678 9012');
+  await pro.getByRole('button', { name: 'Enregistrer le RIB' }).click();
+  assert(await visible(pro.getByRole('status').filter({ hasText: 'Enregistré' })), 'RIB enregistré');
+  globalThis.__page = admin;
+  await admin.goto(`${base}/admin/reversements`, { waitUntil: 'load' });
+  const row = admin.getByTestId('payout-organizer').filter({ hasText: name });
+  assert(await visible(row) && /•••• 9012/.test(await row.textContent()), "reversements : l'organisateur, son RIB masqué");
+  assert(await row.getByRole('button', { name: 'Préparer le reversement' }).isDisabled(), "reversement impossible avant l'activité");
+  await admin.goto(`${base}/admin/commissions`, { waitUntil: 'load' });
+  await admin.locator('#rule-scope').selectOption('organizer');
+  await admin.locator('#rule-target').selectOption(orgId);
+  await admin.locator('#rule-rate').fill('11');
+  await admin.locator('#rule-note').fill('Taux négocié (test)');
+  await admin.getByRole('button', { name: 'Ajouter la règle' }).click();
+  assert(await visible(admin.getByTestId('commission-rule').filter({ hasText: 'Taux négocié (test)' }), 20000), 'commissions : règle créée par le super-admin');
+
   // 6. Cloisonnement : le club de démonstration ne voit que ses données ; un organisateur n'entre pas au back-office
   const club = await (await b.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
   watch(club);

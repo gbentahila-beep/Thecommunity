@@ -1957,3 +1957,105 @@ describe("organisateurs (20)", () => {
   });
 });
 
+describe("commissions et reversements (21)", () => {
+  let sup: Client;
+  let team: Client;
+  let pro: Client;
+  let orgId = "";
+  const plan = (days: number) => {
+    const d = new Date(Date.now() + days * 86_400_000);
+    return { firstDate: d.toISOString().slice(0, 10), time: "18:00", weeks: 1, capacity: 10 };
+  };
+  const activity = (title: string) => ({
+    titleFr: title, summaryFr: "Atelier de céramique en petit groupe, cuisson comprise.", descriptionFr: "Deux heures au tour avec une céramiste, tous niveaux, terre et cuisson comprises.",
+    categoryId: "create", cityId: "casablanca", district: "Maarif", venueName: "Atelier Test", address: "10 rue de la Terre, Casablanca",
+    revealPolicy: "immediate", bookingMode: "individual", maxSeatsPerBooking: 2, admission: "direct", requestMessageRequired: false,
+    priceDh: 200, durationMinutes: 120, languages: ["fr"], alcoholServed: false, cancellationPolicyId: "standard-48h",
+    economicsModel: "own", costPerSeatDh: 0, status: "published", sessions: plan(10),
+  });
+  const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  const publishActivity = async (title: string) => {
+    const { experienceId } = await pro.call("organizerSaveExperience", { data: activity(title), addSessions: true, images: [] });
+    await team.call("adminReviewExperience", { experienceId, decision: "publish" });
+    const s = (await db().collection("sessions").where("experienceId", "==", experienceId).get()).docs[0]!;
+    await s.ref.update({ createdAt: Timestamp.fromMillis(Date.now() - 96 * 3_600_000) }); // hors accès anticipé
+    return { experienceId: String(experienceId), sessionId: s.id };
+  };
+  const buy = async (sessionId: string, seats = 1) => {
+    const u = await member();
+    const { reservationId } = await u.call("createReservation", { sessionId, seats });
+    const c = await u.call("startCheckout", { reservationId });
+    await u.call("sandboxCompletePayment", { paymentId: c.paymentId, outcome: "succeeded" });
+    return { u, reservationId: String(reservationId) };
+  };
+
+  beforeAll(async () => {
+    sup = await member({ role: "superadmin" });
+    team = await member({ role: "admin" });
+    pro = await member();
+    await db().doc("categories/create").set({ isActive: true }, { merge: true });
+    const { organizerId } = await pro.call("applyAsOrganizer", {
+      businessName: `Atelier Commission ${run}`, contactName: "Yasmine Test", email: "yasmine@example.com", phone: "+212 600 000 000", cityId: "casablanca",
+      address: "10 rue de la Terre, Casablanca", categoryIds: ["create"], description: "Atelier de céramique à Maârif, initiations au tour et au modelage.", documents: [], acceptTerms: true,
+    });
+    orgId = String(organizerId);
+    await team.call("adminDecideOrganizer", { organizerId: orgId, decision: "approve" });
+  });
+
+  it("règles : super-admin seulement, cible vérifiée, journalisées", async () => {
+    expect(await refusal(team.call("adminSaveCommissionRule", { scope: "global", ratePercent: 15, effectiveFrom: yesterday }))).toBe("permission-denied:");
+    expect(await refusal(sup.call("adminSaveCommissionRule", { scope: "organizer", targetId: "inexistant", ratePercent: 10, effectiveFrom: yesterday }))).toBe("invalid-argument:");
+    const { ruleId } = await sup.call("adminSaveCommissionRule", { scope: "organizer", targetId: orgId, ratePercent: 10, fixedPerSeatDh: 5, effectiveFrom: yesterday, note: "Contrat test" });
+    expect((await db().doc(`commissionRules/${ruleId}`).get()).data()).toMatchObject({ scope: "organizer", targetId: orgId, ratePercent: 10, fixedPerSeat: 500, active: true });
+    const log = await db().collection("auditLogs").where("targetId", "==", ruleId).get();
+    expect(log.docs.map((d) => d.get("action"))).toContain("commission.rule.create");
+  });
+
+  it("réservation : taux copié, écriture « vente » au paiement ; rien pour une expérience de The Host Club", async () => {
+    // Le cache des règles (1 min) peut garder l'ancienne liste dans une autre instance de l'émulateur : on attend.
+    await new Promise((r) => setTimeout(r, 61_000));
+    const { sessionId } = await publishActivity(`Céramique ${run}`);
+    const { reservationId } = await buy(sessionId, 2);
+    const r = await reservation(reservationId);
+    expect(r.commission).toMatchObject({ scope: "organizer", ratePercent: 10, fixedPerSeat: 500, base: 40000, amount: 5000 });
+    const sale = (await db().doc(`commissionLedger/sale_${reservationId}`).get()).data()!;
+    expect(sale).toMatchObject({ kind: "sale", organizerId: orgId, gross: 40000, commission: 5000, payable: 35000, status: "due" });
+    const thc = await makeSession({ price: 10000 });
+    const t = await buy(thc);
+    expect((await reservation(t.reservationId)).commission).toBeUndefined();
+    expect((await db().doc(`commissionLedger/sale_${t.reservationId}`).get()).exists).toBe(false);
+  }, 120_000);
+
+  it("remboursement : la part remboursée n'est pas reversée, commission rendue ; reversement après l'activité", async () => {
+    const { sessionId } = await publishActivity(`Céramique bis ${run}`);
+    const kept = await buy(sessionId, 1);
+    const cancelled = await buy(sessionId, 1);
+    await cancelled.u.call("cancelReservation", { reservationId: cancelled.reservationId });
+    const refund = (await db().collection("commissionLedger").where("reservationId", "==", cancelled.reservationId).where("kind", "==", "refund").get()).docs[0]!.data();
+    expect(refund).toMatchObject({ gross: -20000, commission: -2500, payable: -17500, status: "due" });
+    // Activité encore à venir : rien à reverser.
+    expect(await refusal(team.call("adminCreatePayout", { organizerId: orgId }))).toBe("failed-precondition:missing_bank_details");
+    expect(await refusal(pro.call("organizerSaveBankDetails", { holder: "Atelier Test SARL", bankName: "Banque Test", rib: "123" }))).toBe("invalid-argument:");
+    await pro.call("organizerSaveBankDetails", { holder: "Atelier Test SARL", bankName: "Banque Test", rib: "0011 1100 0000 1234 5678 9012" });
+    expect(await refusal(team.call("adminCreatePayout", { organizerId: orgId }))).toBe("failed-precondition:nothing_to_pay");
+    // L'activité est passée (simulé) : toutes les écritures dues deviennent reversables.
+    const due = await db().collection("commissionLedger").where("organizerId", "==", orgId).where("status", "==", "due").get();
+    await Promise.all(due.docs.map((d) => d.ref.update({ sessionStartAt: Timestamp.fromMillis(Date.now() - 3 * 86_400_000) })));
+    const expected = due.docs.reduce((a, d) => a + Number(d.get("payable")), 0);
+    expect(await refusal(pro.call("adminCreatePayout", { organizerId: orgId }))).toBe("permission-denied:");
+    const { payoutId, amount, entries } = await team.call("adminCreatePayout", { organizerId: orgId });
+    expect(amount).toBe(expected);
+    expect(entries).toBe(due.size);
+    const p = (await db().doc(`payouts/${payoutId}`).get()).data()!;
+    expect(p).toMatchObject({ organizerId: orgId, status: "pending", bank: { ribLast4: "9012" } });
+    expect(JSON.stringify(p)).not.toContain("0011110000001234");
+    expect((await db().doc(`commissionLedger/sale_${kept.reservationId}`).get()).data()).toMatchObject({ status: "in_payout", payoutId });
+    expect(await refusal(team.call("adminCreatePayout", { organizerId: orgId }))).toBe("failed-precondition:nothing_to_pay");
+    await team.call("adminMarkPayoutPaid", { payoutId, reference: "VIR-TEST-001" });
+    expect((await db().doc(`payouts/${payoutId}`).get()).data()).toMatchObject({ status: "paid", reference: "VIR-TEST-001" });
+    expect((await db().doc(`commissionLedger/sale_${kept.reservationId}`).get()).get("status")).toBe("paid");
+    expect(await refusal(team.call("adminMarkPayoutPaid", { payoutId, reference: "VIR-TEST-002" }))).toBe("failed-precondition:already_paid");
+    const notes = await db().collection(`users/${pro.uid}/notifications`).where("type", "==", "payout_paid").get();
+    expect(notes.size).toBe(1);
+  }, 120_000);
+});

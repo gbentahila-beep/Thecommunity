@@ -21,7 +21,7 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   assert(await page.getByText('Espace organisateur de démonstration').isVisible(), 'bandeau démonstration');
   assert(await page.getByTestId('pro-stats').getByText('Réservations payées').isVisible(), 'chiffres clés');
   const nav = page.getByRole('navigation', { name: 'Espace organisateur' }).first();
-  for (const l of ['Tableau de bord', 'Mes activités', 'Dates', 'Réservations', 'Demandes', 'Billets (pointage)', 'Profil public']) assert(await nav.getByRole('link', { name: l }).isVisible(), `menu : ${l}`);
+  for (const l of ['Tableau de bord', 'Mes activités', 'Dates', 'Réservations', 'Demandes', 'Billets (pointage)', 'Finances', 'Profil public']) assert(await nav.getByRole('link', { name: l }).isVisible(), `menu : ${l}`);
 
   // 2. Activités : seulement celles du club, formulaire sans réglages de l'équipe
   await nav.getByRole('link', { name: 'Mes activités' }).click();
@@ -114,7 +114,36 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   await page.goto(base + '/admin/experiences?vue=review', { waitUntil: 'load' });
   assert(await page.getByText('Rien à valider.').isVisible(), 'filtre « À valider » (vide en démonstration)');
 
-  // 6. Textes juridiques (3 langues) et mobile
+  // 6. Étape 21 : finances de l'organisateur, commissions et reversements côté équipe
+  await page.goto(base + '/pro/finances', { waitUntil: 'load' });
+  assert(await page.getByTestId('pro-finance-kpis').getByText('Commission The Host Club').isVisible(), 'finances : chiffres clés');
+  assert(/Sport & bien-être : 12 %/.test(await page.getByTestId('pro-rates').textContent()), 'finances : taux applicable (règle « Sport » 12 %)');
+  const ledger = await page.getByTestId('pro-ledger').allTextContents();
+  assert(ledger.length >= 1 && ledger.every((t) => /Padel entre inconnus/.test(t)), `finances : ${ledger.length} écritures, toutes sur le padel`);
+  assert(await page.getByTestId('pro-payout').filter({ hasText: 'Viré' }).count() === 1, 'finances : un reversement « viré »');
+  await page.locator('#bank-holder').fill('Club Padel Anfa SARL');
+  await page.locator('#bank-name').fill('Banque démo');
+  await page.locator('#bank-rib').fill('1234');
+  await page.getByRole('button', { name: 'Enregistrer le RIB' }).click();
+  assert(await visible(page.getByRole('alert').filter({ hasText: '24 chiffres' })), 'RIB : 24 chiffres exigés');
+  await page.locator('#bank-rib').fill('0011 1100 0000 1234 5678 9012');
+  await page.getByRole('button', { name: 'Enregistrer le RIB' }).click();
+  assert(await visible(page.getByRole('status').filter({ hasText: 'Enregistré' })), 'RIB valide accepté (démonstration)');
+  await page.goto(base + '/admin/commissions', { waitUntil: 'load' });
+  assert(await page.getByTestId('commission-rule').count() === 2, 'commissions : 2 règles (générale 15 %, Sport 12 %)');
+  await page.locator('#rule-scope').selectOption('organizer');
+  await page.getByRole('button', { name: 'Ajouter la règle' }).click();
+  assert(await visible(page.getByRole('alert').filter({ hasText: 'cible obligatoire' })), 'nouvelle règle : organisateur à choisir');
+  await page.locator('#rule-target').selectOption('org-club-padel-anfa');
+  await page.locator('#rule-rate').fill('10');
+  await page.getByRole('button', { name: 'Ajouter la règle' }).click();
+  assert(await visible(page.getByRole('status').filter({ hasText: 'Démonstration' })), 'nouvelle règle valide (démonstration)');
+  await page.goto(base + '/admin/reversements', { waitUntil: 'load' });
+  assert(await page.getByTestId('finance-kpis').getByText('Commissions').isVisible(), 'reversements : chiffres clés');
+  assert(await page.getByTestId('payout-organizer').filter({ hasText: 'Club Padel Anfa' }).count() === 1, 'reversements : ligne du club');
+  assert(await page.getByTestId('payout').filter({ hasText: 'VIR-DEMO-0001' }).count() === 1, 'reversements : virement de démonstration');
+
+  // 7. Textes juridiques (3 langues) et mobile
   for (const [path, title, dir] of [['/contrat-organisateur', 'Contrat organisateur', 'ltr'], ['/en/contrat-organisateur', 'Organizer agreement', 'ltr'], ['/ar/contrat-organisateur', 'عقد المنظّم', 'rtl'], ['/conditions-organisateurs', 'Conditions de vente des activités des organisateurs', 'ltr'], ['/en/conditions-organisateurs', "Sales terms for organizers' activities", 'ltr'], ['/ar/conditions-organisateurs', 'شروط بيع أنشطة المنظّمين', 'rtl']]) {
     await page.goto(base + path, { waitUntil: 'load' });
     assert(await page.getByRole('heading', { level: 1, name: title }).isVisible(), `${path} : « ${title} »`);
@@ -123,7 +152,7 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   assert(await page.locator('footer').getByRole('link', { name: 'عقد المنظّم' }).isVisible(), 'pied de page arabe : contrat organisateur');
   const m = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage();
   m.on('pageerror', (e) => errs.push(e.message));
-  for (const path of ['/pro', '/pro/activites', '/pro/dates', '/pro/reservations', '/pro/billets', '/pro/profil', '/pro/inscription', '/admin/organisateurs', '/admin/organisateurs/org-club-padel-anfa', '/contrat-organisateur']) {
+  for (const path of ['/pro', '/pro/activites', '/pro/dates', '/pro/reservations', '/pro/billets', '/pro/profil', '/pro/finances', '/pro/inscription', '/admin/organisateurs', '/admin/organisateurs/org-club-padel-anfa', '/admin/commissions', '/admin/reversements', '/contrat-organisateur']) {
     await m.goto(base + path, { waitUntil: 'load' });
     assert(await m.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), `mobile sans débordement : ${path}`);
   }
