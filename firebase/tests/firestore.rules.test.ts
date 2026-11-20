@@ -376,6 +376,23 @@ describe("organisateurs : cloisonnement (19)", () => {
     await assertFails(updateDoc(doc(orgA(), "reviews/rvA"), { reply: { text: "Merci" } }));
     await assertFails(updateDoc(doc(salma(), "reviews/rvA"), { photo: { path: "x", status: "approved" } }));
   });
+  it("« Mes rencontres » (31) : souhaits et « ne plus être réuni » privés ; connexion lue par les deux seulement", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, "meetWishes/salma_karim"), { from: "salma", to: "karim" });
+      await setDoc(doc(db, "avoids/salma"), { uids: ["omar"] });
+      await setDoc(doc(db, "connections/karim_salma"), { uids: ["karim", "salma"], names: { karim: "Karim", salma: "Salma" } });
+    });
+    for (const who of [salma(), karim(), admin()]) {
+      await assertFails(getDoc(doc(who, "meetWishes/salma_karim")));
+      await assertFails(getDoc(doc(who, "avoids/salma")));
+    }
+    await assertSucceeds(getDoc(doc(salma(), "connections/karim_salma")));
+    await assertSucceeds(getDoc(doc(karim(), "connections/karim_salma")));
+    await assertFails(getDoc(doc(orgA(), "connections/karim_salma")));
+    await assertFails(setDoc(doc(salma(), "meetWishes/salma_omar"), { from: "salma", to: "omar" }));
+    await assertFails(setDoc(doc(salma(), "connections/omar_salma"), { uids: ["omar", "salma"] }));
+  });
   it("un organisateur ne lit ni les profils des clients, ni les paiements, ni le journal", async () => {
     await assertFails(getDoc(doc(orgA(), "users/salma")));
     await assertFails(getDoc(doc(orgA(), "payments/p1")));

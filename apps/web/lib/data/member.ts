@@ -4,7 +4,7 @@
  * - Mode Firebase : utilisateur authentifié par le cookie de session (vérifié côté serveur) ;
  *   sinon redirection vers la connexion. Les données sont lues par le serveur pour CET utilisateur.
  */
-import { canReview, type Reservation } from "@thecommunity/shared";
+import { canReview, meetWindowOpen, otherOf, type Connection, type Reservation } from "@thecommunity/shared";
 import { getLocale } from "next-intl/server";
 import { connection } from "next/server";
 import { cache } from "react";
@@ -90,4 +90,62 @@ export async function getRefundRequest(uid: string | undefined, reservationId: s
   const d = (await adminDb().doc(`refundRequests/${reservationId}`).get()).data();
   if (!d || d.userId !== uid) return null;
   return { status: String(d.status), amount: typeof d.amount === "number" ? d.amount : undefined, message: d.message ?? null };
+}
+
+/* ——— Étape 31 : « Mes rencontres » ——— */
+
+export type MeetGroup = {
+  id: string;
+  label: string;
+  title: string;
+  startAt: string;
+  endAt: string;
+  windowOpen: boolean;
+  members: { uid: string; firstName: string; interests: string[]; wished: boolean; avoided: boolean; matched: boolean }[];
+};
+export type MeetData = { groups: MeetGroup[]; connections: Connection[]; trustedHost: boolean; isDemo: boolean };
+
+/** Mes groupes passés (révélés), mes souhaits « revoir » (privés), mes connexions réciproques, mes « ne plus être réuni ». */
+export async function getMeetData(): Promise<MeetData> {
+  const space = await getMemberSpace();
+  const me = space.profile.uid;
+  let wishes = new Set<string>();
+  let avoids = new Set<string>();
+  let connections: Connection[] = [];
+  if (FIREBASE_ENABLED) {
+    const db = adminDb();
+    const [w, a, c] = await Promise.all([
+      db.collection("meetWishes").where("from", "==", me).get(),
+      db.doc(`avoids/${me}`).get(),
+      db.collection("connections").where("uids", "array-contains", me).get(),
+    ]);
+    wishes = new Set(w.docs.map((d) => String(d.get("to"))));
+    avoids = new Set(((a.get("uids") as string[] | undefined) ?? []));
+    connections = c.docs.map((d) => {
+      const x = d.data();
+      const iso = (v: unknown) => (v && typeof (v as { toDate?: () => Date }).toDate === "function" ? (v as { toDate: () => Date }).toDate().toISOString() : String(v ?? ""));
+      return { id: d.id, uids: x.uids, names: x.names ?? {}, groupId: x.groupId, sessionId: x.sessionId, experienceTitle: x.experienceTitle ?? "", metAt: iso(x.metAt), matchedAt: iso(x.matchedAt) };
+    });
+  } else {
+    // Démonstration : Lina et Salma se sont choisies, Salma aimerait aussi revoir Omar (il ne le sait pas).
+    wishes = new Set(["u-lina", "u-omar"]);
+    const g = space.groups[0];
+    const r = g ? space.reservations.find((x) => x.groupId === g.id) : undefined;
+    connections = g && r ? [{ id: "demo-conn", uids: [me, "u-lina"].sort(), names: { [me]: space.profile.firstName, "u-lina": "Lina" }, groupId: g.id, sessionId: g.sessionId, experienceTitle: r.sessionSnapshot.title.fr, metAt: r.sessionSnapshot.startAt, matchedAt: r.sessionSnapshot.endAt }] : [];
+  }
+  const matchedWith = new Set(connections.map((c) => otherOf(c, me).uid));
+  const groups: MeetGroup[] = space.groups.flatMap((g) => {
+    const r = space.reservations.find((x) => x.groupId === g.id);
+    if (!r || new Date(r.sessionSnapshot.endAt).getTime() > space.now.getTime()) return [];
+    return [{
+      id: g.id,
+      label: g.label,
+      title: r.sessionSnapshot.title.fr,
+      startAt: r.sessionSnapshot.startAt,
+      endAt: r.sessionSnapshot.endAt,
+      windowOpen: meetWindowOpen(r.sessionSnapshot.endAt, space.now),
+      members: g.members.filter((m) => m.uid !== me).map((m) => ({ uid: m.uid, firstName: m.firstName, interests: m.interests, wished: wishes.has(m.uid), avoided: avoids.has(m.uid), matched: matchedWith.has(m.uid) })),
+    }];
+  }).sort((a, b) => b.startAt.localeCompare(a.startAt));
+  return { groups, connections, trustedHost: space.profile.trustedHost === true, isDemo: !FIREBASE_ENABLED };
 }

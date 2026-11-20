@@ -2298,3 +2298,85 @@ describe("activités réservées aux femmes (29)", () => {
     expect(await refusal(him.call("requestBooking", { sessionId: onRequest, seats: 1 }))).toBe("failed-precondition:audience_women_only");
   }, 60_000);
 });
+
+describe("« Mes rencontres » (31)", () => {
+  /** Trois personnes présentes à une expérience terminée il y a `daysAgo` jours, réunies dans un groupe révélé. */
+  async function pastGroup(daysAgo = 2) {
+    const [a, b, c] = [await member(), await member(), await member()];
+    const sid = await makeSession({ capacity: 10, startInHours: 72 });
+    for (const u of [a, b, c]) {
+      const { reservationId } = await paidReservation(u, sid);
+      await db().doc(`reservations/${reservationId}`).update({ status: "attended" });
+    }
+    const start = Timestamp.fromMillis(Date.now() - daysAgo * 86_400_000);
+    await db().doc(`sessions/${sid}`).update({ startAt: start, endAt: Timestamp.fromMillis(start.toMillis() + 7_200_000) });
+    const gid = `g-${run}-${seq++}`;
+    await db().doc(`groups/${gid}`).set({
+      sessionId: sid, status: "revealed", label: "Table 1", memberIds: [a.uid, b.uid, c.uid],
+      members: [{ uid: a.uid, firstName: "Amal", interests: [] }, { uid: b.uid, firstName: "Badr", interests: [] }, { uid: c.uid, firstName: "Chama", interests: [] }],
+    });
+    return { a, b, c, sid, gid };
+  }
+  const conn = (x: string, y: string) => db().doc(`connections/${(x < y ? `${x}_${y}` : `${y}_${x}`)}`).get();
+  const notes = async (uid: string, type: string) => (await db().collection(`users/${uid}/notifications`).where("type", "==", type).get()).size;
+
+  it("souhait privé, réciprocité, invitation ; « ne plus être réuni » efface le lien", async () => {
+    const { a, b, c, gid } = await pastGroup();
+    const outsider = await member();
+    expect(await refusal(outsider.call("setMeetAgain", { groupId: gid, otherUid: a.uid, wish: true }))).toBe("not-found:not_found");
+    expect(await a.call("setMeetAgain", { groupId: gid, otherUid: b.uid, wish: true })).toEqual({ ok: true, matched: false });
+    expect((await conn(a.uid, b.uid)).exists).toBe(false);
+    expect(await notes(b.uid, "meet_match")).toBe(0); // b ne sait rien
+    expect(await b.call("setMeetAgain", { groupId: gid, otherUid: a.uid, wish: true })).toEqual({ ok: true, matched: true });
+    expect((await conn(a.uid, b.uid)).data()).toMatchObject({ uids: [a.uid, b.uid].sort(), names: { [a.uid]: "Amal", [b.uid]: "Badr" }, groupId: gid });
+    expect(await notes(a.uid, "meet_match")).toBe(1);
+    expect(await notes(b.uid, "meet_match")).toBe(1);
+
+    // Invitation : seulement les contacts réciproques, à une date ouverte.
+    const future = await makeSession({ startInHours: 96 });
+    expect(await refusal(a.call("inviteToSession", { sessionId: future, toUids: [c.uid] }))).toBe("failed-precondition:not_connected");
+    expect(await a.call("inviteToSession", { sessionId: future, toUids: [b.uid] })).toEqual({ ok: true, invited: 1 });
+    expect(await notes(b.uid, "meet_invite")).toBe(1);
+
+    // c ne veut plus être réunie avec a : le souhait de a vers c ne crée jamais de lien, et c ne peut plus souhaiter a.
+    await c.call("setAvoid", { otherUid: a.uid, avoid: true });
+    expect(await a.call("setMeetAgain", { groupId: gid, otherUid: c.uid, wish: true })).toEqual({ ok: true, matched: false });
+    expect(await refusal(c.call("setMeetAgain", { groupId: gid, otherUid: a.uid, wish: true }))).toBe("failed-precondition:avoided");
+    expect((await db().doc(`avoids/${c.uid}`).get()).get("uids")).toEqual([a.uid]);
+    // a ne veut plus être réuni avec b : la connexion disparaît.
+    await a.call("setAvoid", { otherUid: b.uid, avoid: true });
+    expect((await conn(a.uid, b.uid)).exists).toBe(false);
+    expect(await refusal(outsider.call("setAvoid", { otherUid: a.uid, avoid: true }))).toBe("not-found:not_found");
+  }, 120_000);
+
+  it("plus de 60 jours après : trop tard ; sortie proposée à l'ancien groupe, qui est prévenu à la publication", async () => {
+    const old = await pastGroup(70);
+    expect(await refusal(old.a.call("setMeetAgain", { groupId: old.gid, otherUid: old.b.uid, wish: true }))).toBe("failed-precondition:meet_window");
+
+    const { a, b, c, gid } = await pastGroup();
+    await db().doc(`users/${a.uid}`).set({ firstName: "Amal", trustedHost: true }, { merge: true });
+    await c.call("setAvoid", { otherUid: a.uid, avoid: true });
+    const outsider = await member();
+    await db().doc(`users/${outsider.uid}`).set({ trustedHost: true }, { merge: true });
+    const proposal = { title: "Rando du dimanche", categoryId: "move", description: "Une petite randonnée pour se retrouver entre anciens de la table 1.", district: "Bouskoura", datesIdea: "Un dimanche matin", capacity: 8, forGroupId: gid };
+    expect(await refusal(outsider.call("submitOutingProposal", proposal))).toBe("invalid-argument:");
+    const { proposalId } = await a.call("submitOutingProposal", proposal);
+    expect((await db().doc(`outingProposals/${proposalId}`).get()).data()).toMatchObject({ forGroupId: gid, forGroupSize: 3 });
+    const team = await member({ role: "admin" });
+    await db().doc("categories/move").set({ isActive: true }, { merge: true });
+    const data = {
+      titleFr: "Rando du dimanche", summaryFr: "Une petite randonnée pour se retrouver.", descriptionFr: "Une randonnée tranquille dans la forêt, ouverte à tous les niveaux.",
+      categoryId: "move", cityId: "casablanca", district: "Bouskoura", venueName: "Entrée de la forêt", address: "Route de Bouskoura, Casablanca", revealPolicy: "immediate",
+      bookingMode: "open", maxSeatsPerBooking: 2, priceDh: 80, durationMinutes: 150, languages: ["fr"], alcoholServed: false,
+      cancellationPolicyId: "standard-48h", partnerId: "", economicsModel: "own", costPerSeatDh: 20, status: "published",
+      sessions: { firstDate: "2027-02-07", time: "09:00", weeks: 1, capacity: 12 }, proposalId,
+    };
+    const { experienceId } = await team.call("adminSaveExperience", { data, addSessions: false, images: [] });
+    expect(await notes(b.uid, "outing_for_group")).toBe(1);
+    expect(await notes(c.uid, "outing_for_group")).toBe(0); // a demandé à ne plus être réunie avec la personne qui propose
+    expect(await notes(a.uid, "outing_for_group")).toBe(0);
+    // Pas de seconde notification à la modification suivante.
+    await team.call("adminSaveExperience", { experienceId, data, addSessions: false, images: [] });
+    expect(await notes(b.uid, "outing_for_group")).toBe(1);
+  }, 120_000);
+});

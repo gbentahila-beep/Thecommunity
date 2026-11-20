@@ -12,7 +12,7 @@ type Values = { title: string; categoryId: CategoryKey; description: string; dis
 const EMPTY: Values = { title: "", categoryId: "move", description: "", district: "", venueIdea: "", datesIdea: "", capacity: "8", priceIdeaDh: "", level: "", willHost: true, notes: "" };
 
 /** 18d — Formulaire « Proposer une sortie » (membres de confiance). Relu par l'équipe avant toute publication. */
-export function ProposalForm({ live, categories }: { live: boolean; /** Étape 19 : catégories visibles (dynamiques). */ categories: { id: string; label: string }[] }) {
+export function ProposalForm({ live, categories, forGroup }: { live: boolean; /** Étape 19 : catégories visibles (dynamiques). */ categories: { id: string; label: string }[]; /** Étape 31 : sortie proposée à un ancien groupe. */ forGroup?: { id: string; label: string } }) {
   const t = useTranslations("propose");
   const router = useRouter();
   const [v, setV] = useState<Values>(() => ({ ...EMPTY, categoryId: categories.some((c) => c.id === "move") ? "move" : (categories[0]?.id ?? "move") }));
@@ -23,7 +23,7 @@ export function ProposalForm({ live, categories }: { live: boolean; /** Étape 1
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const data = { ...v, priceIdeaDh: v.priceIdeaDh.trim() === "" ? undefined : v.priceIdeaDh, level: v.level || undefined };
+    const data = { ...v, priceIdeaDh: v.priceIdeaDh.trim() === "" ? undefined : v.priceIdeaDh, level: v.level || undefined, ...(forGroup ? { forGroupId: forGroup.id } : {}) };
     const parsed = outingProposalSchema.safeParse(data);
     if (!parsed.success) {
       const next: Record<string, string> = {};
@@ -66,6 +66,7 @@ export function ProposalForm({ live, categories }: { live: boolean; /** Étape 1
   }
   return (
     <form onSubmit={submit} noValidate className="space-y-5 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="proposal-form">
+      {forGroup && <p className="rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900" data-testid="proposal-for-group">{t("forGroup", { label: forGroup.label })}</p>}
       <div>{label("title", t("titleLabel"))}<input {...fieldProps("title")} value={v.title} maxLength={80} onChange={(e) => set("title", e.target.value)} placeholder={t("titlePlaceholder")} />{err("title")}</div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>{label("categoryId", t("categoryLabel"))}

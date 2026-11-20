@@ -35,6 +35,15 @@ async function loadSession(sessionId: string) {
   return { sessRef: sess.ref, s, e, participants };
 }
 
+/** Étape 31 : paires de personnes dont l'une a demandé à ne plus être réunie avec l'autre. */
+async function avoidPairs(uids: string[]): Promise<Set<string>> {
+  const out = new Set<string>();
+  if (!uids.length) return out;
+  const docs = await db.getAll(...uids.map((u) => db.doc(`avoids/${u}`)));
+  docs.forEach((d, i) => ((d.get("uids") as string[] | undefined) ?? []).forEach((o) => uids.includes(o) && out.add(pairKey(uids[i]!, o))));
+  return out;
+}
+
 /** Paires de personnes déjà réunies à une même table (groupes révélés d'autres dates). */
 async function pastPairs(uids: string[], sessionId: string): Promise<Set<string>> {
   const out = new Set<string>();
@@ -104,7 +113,8 @@ export const adminProposeGroups = onCall({ region: REGION, timeoutSeconds: 120 }
     ...(p.reservation.questionnaire?.answers ? { answers: p.reservation.questionnaire.answers as Record<string, number> } : {}),
   }));
   const questions = ((e.questionnaire ?? []) as MatchQuestion[]).map((q) => ({ id: q.id, kind: q.kind, match: q.match }));
-  const groups = composeGroups(people, e.groupConfig, { pastPairs: await pastPairs(people.map((p) => p.uid), sessRef.id), questions });
+  const uids = people.map((p) => p.uid);
+  const groups = composeGroups(people, e.groupConfig, { pastPairs: await pastPairs(uids, sessRef.id), questions, avoidPairs: await avoidPairs(uids) });
   const byUid = new Map(participants.map((p) => [p.uid, p]));
   const prefix = labelPrefix(e);
   await writeGroups(sessRef.id, s.experienceId, groups.map((m, i) => ({ label: `${prefix} ${i + 1}`, memberIds: m })), "proposed", byUid, actor.uid);

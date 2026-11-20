@@ -317,6 +317,36 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   }
   await batch.commit();
 
+  // Étape 31 : sortie proposée pour un ancien groupe → à la première publication, les autres membres du groupe sont
+  // prévenus (sauf qui a demandé à ne plus être réuni avec la personne qui propose, ou l'inverse).
+  if (proposal?.forGroupId && v.status === "published" && v.proposalId) {
+    const pRef = db.doc(`outingProposals/${v.proposalId}`);
+    const already = (await pRef.get()).get("groupNotifiedAt");
+    const g = already ? undefined : (await db.doc(`groups/${proposal.forGroupId}`).get()).data();
+    if (g) {
+      const others = (g.memberIds as string[]).filter((m) => m !== proposal!.userId);
+      const avoidDocs = await db.getAll(db.doc(`avoids/${proposal.userId}`), ...others.map((m) => db.doc(`avoids/${m}`)));
+      const proposerAvoids = (avoidDocs[0]!.get("uids") as string[] | undefined) ?? [];
+      const nb = db.batch();
+      others.forEach((m, i) => {
+        if (proposerAvoids.includes(m) || ((avoidDocs[i + 1]!.get("uids") as string[] | undefined) ?? []).includes(proposal!.userId)) return;
+        nb.set(db.collection(`users/${m}/notifications`).doc(), {
+          type: "outing_for_group",
+          title: { fr: "Une sortie pour votre groupe", en: "An outing for your group", ar: "خرجة لمجموعتك" },
+          body: {
+            fr: `${String(proposal!.firstName ?? "")}, de votre groupe, propose « ${v.titleFr} ». Rejoignez-la si le cœur vous en dit !`,
+            en: `${String(proposal!.firstName ?? "")}, from your group, suggests “${v.titleEn || v.titleFr}”. Join if you feel like it!`,
+            ar: `يقترح ${String(proposal!.firstName ?? "")}، من مجموعتك، «${v.titleAr || v.titleFr}». انضم إن رغبت!`,
+          },
+          link: `/experiences/${slug}`,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      });
+      nb.update(pRef, { groupNotifiedAt: FieldValue.serverTimestamp() });
+      await nb.commit();
+    }
+  }
+
   // Lieu modifié : les personnes à qui il avait déjà été communiqué reçoivent le nouveau (notification + e-mail).
   const before = existing.data()?.venue;
   if (!isCreate && before && (before.name !== v.venueName || before.address !== v.address)) {

@@ -59,6 +59,7 @@ function ProposalCard({ p, live, categoryName }: { p: OutingProposal; live: bool
           <p className="text-sm text-muted">Proposée par {p.firstName} · {adminDate(p.createdAt)} · {categoryName}</p>
         </div>
         {p.willHost && <Badge tone="plum">Le membre accueille le groupe</Badge>}
+        {p.forGroupSize ? <Badge tone="green">Pour son ancien groupe ({p.forGroupSize} personnes), prévenu à la publication</Badge> : null}
       </header>
       <p className="whitespace-pre-line text-[15px] text-ink/90">{p.description}</p>
       <dl className="mt-3 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">

@@ -30,6 +30,7 @@ function toProposal(d: DocumentSnapshot): OutingProposal {
     level: p.level ?? null,
     willHost: p.willHost !== false,
     notes: String(p.notes ?? ""),
+    forGroupSize: typeof p.forGroupSize === "number" ? p.forGroupSize : null,
     status: p.status ?? "pending",
     ...(p.experienceId ? { experienceId: String(p.experienceId) } : {}),
     ...(p.decisionMessage ? { decisionMessage: String(p.decisionMessage) } : {}),

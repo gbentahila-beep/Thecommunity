@@ -509,7 +509,8 @@
     "navPropose": "Proposer une sortie",
     "memberSuggestTitle": "Vous avez aimé ? Devenez membre",
     "memberSuggestText": "Un prix membre sur les expériences et des avantages réservés aux membres.",
-    "memberSuggestCta": "Voir l'abonnement"
+    "memberSuggestCta": "Voir l'abonnement",
+    "navMeet": "Mes rencontres"
   },
   "reservation": {
     "back": "Mes réservations",
@@ -1102,7 +1103,8 @@
       "tooManyProposals": "Vous avez déjà envoyé 3 propositions aujourd'hui : réessayez demain.",
       "notTrusted": "Les propositions sont réservées aux membres de confiance.",
       "generic": "Envoi impossible pour le moment."
-    }
+    },
+    "forGroup": "Pour votre groupe : {label}. Une fois la sortie publiée par l'équipe, les autres membres du groupe seront prévenus."
   },
   "refund": {
     "title": "Un problème avec cette activité ?",
@@ -1238,5 +1240,38 @@
     "crowdAge": "de {min} à {max} ans environ",
     "crowdInterests": "aiment souvent : {list}",
     "newPeople": "Nous évitons de vous replacer avec les mêmes personnes d'une fois sur l'autre"
+  },
+  "meet": {
+    "title": "Mes rencontres",
+    "intro": "Après une expérience en groupe, dites qui vous aimeriez revoir. C'est privé : la personne ne le sait que si c'est réciproque. Vous pouvez alors vous inviter à une prochaine expérience.",
+    "contacts": "C'est réciproque",
+    "noContacts": "Pas encore de rencontre réciproque. Indiquez dans vos groupes ci-dessous qui vous aimeriez revoir.",
+    "metAt": "Rencontré·e à « {title} », le {date}",
+    "invite": "Inviter {name} à une expérience",
+    "whichSession": "Quelle date ?",
+    "pickSession": "Choisissez une date",
+    "sendInvite": "Envoyer l'invitation",
+    "invited": "Invitation envoyée à {name}.",
+    "tooMany": "Trop d'invitations aujourd'hui : réessayez demain.",
+    "groups": "Mes groupes",
+    "groupsIntro": "Jusqu'à 60 jours après l'expérience. Personne ne voit votre choix, sauf si c'est réciproque.",
+    "noGroups": "Vos groupes apparaîtront ici après votre première expérience en groupe.",
+    "discover": "Découvrir les expériences",
+    "wish": "J'aimerais revoir {name}",
+    "wished": "Vous aimeriez revoir {name} (privé)",
+    "matched": "C'est réciproque",
+    "justMatched": "C'est réciproque : {name} aimerait aussi vous revoir !",
+    "avoid": "Ne plus être réuni·e",
+    "avoidLabel": "Ne plus être réuni·e avec {name}",
+    "avoidConfirm": "Ne plus jamais être dans le même groupe que {name} ?",
+    "avoidYes": "Confirmer",
+    "avoided": "Vous ne serez plus réuni·e·s.",
+    "unavoid": "Annuler",
+    "cancel": "Annuler",
+    "windowClosed": "Plus de 60 jours après l'expérience : il n'est plus possible d'indiquer qui revoir.",
+    "proposeToGroup": "Proposer une sortie à ce groupe",
+    "demo": "Démonstration : rien n'est enregistré.",
+    "error": "Action impossible. Réessayez.",
+    "privacy": "Nous ne partageons jamais vos coordonnées. Pour un souci avec une personne, écrivez à l'équipe depuis la page Contact."
   }
 }

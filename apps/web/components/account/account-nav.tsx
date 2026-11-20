@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, Bell, CalendarDays, History, LayoutDashboard, Lightbulb, ReceiptText, SlidersHorizontal, UserRound } from "lucide-react";
+import { BadgeCheck, Bell, CalendarDays, HeartHandshake, History, LayoutDashboard, Lightbulb, ReceiptText, SlidersHorizontal, UserRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -10,6 +10,7 @@ export function AccountNav({ unreadCount, trustedHost = false }: { unreadCount: 
   const items = [
     { href: "/espace", label: t("navDashboard"), icon: LayoutDashboard, exact: true },
     { href: "/espace/reservations", label: t("navBookings"), icon: CalendarDays },
+    { href: "/espace/rencontres", label: t("navMeet"), icon: HeartHandshake },
     { href: "/espace/notifications", label: t("navNotifications"), icon: Bell, badge: unreadCount },
     { href: "/espace/historique", label: t("navHistory"), icon: History },
     { href: "/espace/factures", label: t("navInvoices"), icon: ReceiptText },

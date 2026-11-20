@@ -14,12 +14,17 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/espace/p
 }
 
 /** 18d — Proposer une sortie (membres de confiance) et suivre ses propositions. */
-export default async function ProposePage({ params }: PageProps<"/[locale]/espace/proposer">) {
+export default async function ProposePage({ params, searchParams }: PageProps<"/[locale]/espace/proposer">) {
   const { locale: localeParam } = await params;
+  const groupParam = (await searchParams).groupe;
   setRequestLocale(localeParam);
   const [t, space, locale, categories] = await Promise.all([getTranslations("propose"), getMemberSpace(), getLocale(), getCategories()]);
   const trusted = space.profile.trustedHost === true;
   const mine = trusted ? await getMyProposals(space.session?.uid ?? space.profile.uid) : [];
+  // Étape 31 : sortie proposée à un de mes anciens groupes (vérifié aussi par le serveur).
+  const g = typeof groupParam === "string" ? space.groups.find((x) => x.id === groupParam) : undefined;
+  const gr = g ? space.reservations.find((r) => r.groupId === g.id) : undefined;
+  const forGroup = g && gr ? { id: g.id, label: `${tr(gr.sessionSnapshot.title, locale)} · ${formatLongDate(gr.sessionSnapshot.startAt, locale)} · ${g.label}` } : undefined;
   return (
     <div className="space-y-6">
       <header>
@@ -33,7 +38,7 @@ export default async function ProposePage({ params }: PageProps<"/[locale]/espac
         </section>
       ) : (
         <>
-          <ProposalForm live={!space.isDemo} categories={categories.map((c) => ({ id: c.id, label: tr(c.name, locale) }))} />
+          <ProposalForm live={!space.isDemo} forGroup={forGroup} categories={categories.map((c) => ({ id: c.id, label: tr(c.name, locale) }))} />
           {mine.length > 0 && (
             <section aria-labelledby="my-proposals" className="space-y-3">
               <h2 id="my-proposals" className="font-display text-2xl font-medium text-plum-900">{t("mine")}</h2>

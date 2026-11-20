@@ -509,7 +509,8 @@
     "navPropose": "Propose an outing",
     "memberSuggestTitle": "Enjoyed it? Become a member",
     "memberSuggestText": "A member price on experiences and members-only perks.",
-    "memberSuggestCta": "See membership"
+    "memberSuggestCta": "See membership",
+    "navMeet": "My connections"
   },
   "reservation": {
     "back": "My bookings",
@@ -1102,7 +1103,8 @@
       "tooManyProposals": "You've already sent 3 proposals today: try again tomorrow.",
       "notTrusted": "Proposals are for trusted members only.",
       "generic": "Couldn't send right now."
-    }
+    },
+    "forGroup": "For your group: {label}. Once the team publishes the outing, the other group members will be notified."
   },
   "refund": {
     "title": "A problem with this activity?",
@@ -1238,5 +1240,38 @@
     "crowdAge": "roughly {min} to {max} years old",
     "crowdInterests": "often into: {list}",
     "newPeople": "We avoid putting you with the same people from one time to the next"
+  },
+  "meet": {
+    "title": "My connections",
+    "intro": "After a group experience, say who you'd like to see again. It's private: the person only finds out if it's mutual. You can then invite each other to a next experience.",
+    "contacts": "It's mutual",
+    "noContacts": "No mutual connection yet. Say who you'd like to see again in your groups below.",
+    "metAt": "Met at “{title}”, on {date}",
+    "invite": "Invite {name} to an experience",
+    "whichSession": "Which date?",
+    "pickSession": "Choose a date",
+    "sendInvite": "Send invitation",
+    "invited": "Invitation sent to {name}.",
+    "tooMany": "Too many invitations today: try again tomorrow.",
+    "groups": "My groups",
+    "groupsIntro": "Up to 60 days after the experience. Nobody sees your choice unless it's mutual.",
+    "noGroups": "Your groups will appear here after your first group experience.",
+    "discover": "Discover experiences",
+    "wish": "I'd like to see {name} again",
+    "wished": "You'd like to see {name} again (private)",
+    "matched": "It's mutual",
+    "justMatched": "It's mutual: {name} would also like to see you again!",
+    "avoid": "Don't group us again",
+    "avoidLabel": "Don't group me with {name} again",
+    "avoidConfirm": "Never be in the same group as {name} again?",
+    "avoidYes": "Confirm",
+    "avoided": "You won't be grouped together again.",
+    "unavoid": "Undo",
+    "cancel": "Cancel",
+    "windowClosed": "More than 60 days after the experience: you can no longer say who to see again.",
+    "proposeToGroup": "Suggest an outing to this group",
+    "demo": "Demo: nothing is saved.",
+    "error": "Couldn't do that. Please try again.",
+    "privacy": "We never share your contact details. For an issue with someone, write to the team from the Contact page."
   }
 }

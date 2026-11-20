@@ -27,6 +27,12 @@ export const submitOutingProposal = onCall({ region: REGION }, async (req) => {
   // Étape 19 : catégories dynamiques — une catégorie principale visible.
   const category = await db.doc(`categories/${v.categoryId}`).get();
   if (!category.exists || category.get("isActive") === false || category.get("parentId")) invalidArgument([{ path: ["categoryId"], message: "required" }]);
+  // Étape 31 : sortie pour un ancien groupe — seulement un groupe révélé dont la personne faisait partie.
+  let group: FirebaseFirestore.DocumentData | undefined;
+  if (v.forGroupId) {
+    group = (await db.doc(`groups/${v.forGroupId}`).get()).data();
+    if (!group || group.status !== "revealed" || !(group.memberIds as string[]).includes(uid)) invalidArgument([{ path: ["forGroupId"], message: "required" }]);
+  }
   const ref = db.collection("outingProposals").doc();
   await ref.set({
     userId: uid,
@@ -43,6 +49,7 @@ export const submitOutingProposal = onCall({ region: REGION }, async (req) => {
     level: v.level ?? null,
     willHost: v.willHost,
     notes: v.notes ?? "",
+    ...(group ? { forGroupId: v.forGroupId, forGroupSize: (group.memberIds as string[]).length } : {}),
     status: "pending",
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),

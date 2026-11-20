@@ -75,6 +75,8 @@ export const outingProposalSchema = z.object({
   /** Le membre sera présent et accueillera le groupe. */
   willHost: z.boolean().default(true),
   notes: z.string().trim().max(500, "tooLong").optional().or(z.literal("")),
+  /** Étape 31 : sortie proposée à un ancien groupe (prévenu à la publication, sauf qui a demandé à ne plus être réuni). */
+  forGroupId: z.string().trim().max(128).regex(/^[A-Za-z0-9_-]+$/).optional().or(z.literal("")),
 });
 export type OutingProposalInput = z.input<typeof outingProposalSchema>;
 

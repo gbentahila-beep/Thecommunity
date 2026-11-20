@@ -29,7 +29,8 @@ export type MatchPerson = {
 /** Question du questionnaire utile au calcul (18a). */
 export type MatchQuestion = { id: string; kind: QuestionKind; match: QuestionMatch };
 export type MatchConfig = { minSize: number; targetSize: number; maxSize: number };
-export type MatchOptions = { pastPairs?: Set<string>; questions?: MatchQuestion[] };
+/** avoidPairs (étape 31) : personnes qui ont demandé à ne plus être réunies — jamais à la même table si possible. */
+export type MatchOptions = { pastPairs?: Set<string>; questions?: MatchQuestion[]; avoidPairs?: Set<string> };
 
 export const pairKey = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
@@ -61,6 +62,9 @@ export function groupCost(g: MatchPerson[], c: MatchConfig, o: MatchOptions = {}
   if (!hasCommonLanguage(g)) cost += 150;
   if (o.pastPairs) {
     for (let i = 0; i < g.length; i++) for (let j = i + 1; j < g.length; j++) if (o.pastPairs.has(pairKey(g[i]!.uid, g[j]!.uid))) cost += 40;
+  }
+  if (o.avoidPairs) {
+    for (let i = 0; i < g.length; i++) for (let j = i + 1; j < g.length; j++) if (o.avoidPairs.has(pairKey(g[i]!.uid, g[j]!.uid))) cost += 2000;
   }
   const ages = g.map((p) => p.age).filter((a): a is number => a !== null);
   if (ages.length > 1) cost += 2 * Math.max(0, Math.max(...ages) - Math.min(...ages) - 12);
@@ -167,6 +171,7 @@ export function groupWarnings(g: MatchPerson[], c: MatchConfig, o: MatchOptions 
   if (size < c.minSize) out.push("too_small");
   if (!hasCommonLanguage(g)) out.push("no_common_language");
   if (o.pastPairs && g.some((p, i) => g.some((q, j) => j > i && o.pastPairs!.has(pairKey(p.uid, q.uid))))) out.push("already_met");
+  if (o.avoidPairs && g.some((p, i) => g.some((q, j) => j > i && o.avoidPairs!.has(pairKey(p.uid, q.uid))))) out.push("avoid_pair");
   const ages = g.map((p) => p.age).filter((a): a is number => a !== null);
   if (ages.length > 1 && Math.max(...ages) - Math.min(...ages) > 20) out.push("age_gap");
   // 18a : niveaux trop éloignés (ex. débutant avec confirmé) sur une question « réunir les réponses proches ».

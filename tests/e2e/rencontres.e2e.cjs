@@ -54,6 +54,35 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await p.goto(base + '/admin/experiences/exp-the-patisseries', { waitUntil: 'load' });
   assert(await p.locator('#f-audience').inputValue() === 'women' && await p.locator('#f-targetAgeMin').inputValue() === '25', '29 : formulaire — public et tranche d\'âge visée');
 
+  // ——— 31 ———
+  await p.goto(base + '/espace', { waitUntil: 'load' });
+  assert(await p.locator('a[href="/espace/rencontres"]:visible').count() > 0, '31 : menu « Mes rencontres »');
+  await p.goto(base + '/espace/rencontres', { waitUntil: 'load' });
+  assert(await p.getByRole('heading', { level: 1, name: 'Mes rencontres' }).isVisible(), '31 : page « Mes rencontres »');
+  const contact = p.getByTestId('meet-contact').filter({ hasText: 'Lina' });
+  assert(await contact.isVisible(), '31 : contact réciproque (Lina)');
+  await contact.getByRole('button', { name: 'Inviter Lina à une expérience' }).click();
+  await contact.getByRole('button', { name: "Envoyer l'invitation" }).click();
+  assert(await visible(contact.getByRole('alert').filter({ hasText: 'Choisissez une date' })), '31 : invitation sans date refusée');
+  await contact.locator('select').selectOption({ index: 1 });
+  await contact.getByRole('button', { name: "Envoyer l'invitation" }).click();
+  assert(await visible(contact.getByRole('status').filter({ hasText: 'Démonstration' })), '31 : invitation (démonstration)');
+  const group = p.getByTestId('meet-group').first();
+  assert(await group.getByTestId('meet-member').count() === 5, '31 : les 5 autres membres du groupe');
+  assert(await group.getByTestId('meet-member').filter({ hasText: 'Lina' }).getByTestId('meet-matched').isVisible(), '31 : « C\'est réciproque » pour Lina');
+  const omar = group.getByTestId('meet-member').filter({ hasText: 'Omar' });
+  assert(await omar.getByRole('button', { name: /Vous aimeriez revoir Omar/ }).getAttribute('aria-pressed') === 'true', '31 : souhait privé déjà exprimé (Omar)');
+  const karim = group.getByTestId('meet-member').filter({ hasText: 'Karim' });
+  await karim.getByRole('button', { name: "J'aimerais revoir Karim" }).click();
+  assert(await visible(karim.getByRole('status').filter({ hasText: 'Démonstration' })) && await karim.getByRole('button', { name: /Vous aimeriez revoir Karim/ }).getAttribute('aria-pressed') === 'true', '31 : « J\'aimerais revoir » (démonstration)');
+  const yassine = group.getByTestId('meet-member').filter({ hasText: 'Yassine' });
+  await yassine.getByRole('button', { name: 'Ne plus être réuni·e avec Yassine' }).click();
+  await yassine.getByRole('button', { name: 'Confirmer' }).click();
+  assert(await visible(yassine.getByTestId('meet-avoided')), '31 : « Ne plus être réuni·e » avec confirmation');
+  await group.getByRole('link', { name: 'Proposer une sortie à ce groupe' }).click();
+  await p.waitForURL(/\/espace\/proposer\?groupe=/);
+  assert(await visible(p.getByTestId('proposal-for-group')), '31 : proposer une sortie à l\'ancien groupe (membre de confiance)');
+
   assert(errs.length === 0, 'aucune erreur navigateur' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();
   console.log('TOUT EST OK');

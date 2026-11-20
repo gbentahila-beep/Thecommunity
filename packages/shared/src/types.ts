@@ -376,6 +376,9 @@ export type NotificationType =
   | "questionnaire"
   | "proposal_published"
   | "proposal_declined"
+  | "meet_match"
+  | "meet_invite"
+  | "outing_for_group"
   | "welcome";
 
 export type AppNotification = {
@@ -392,6 +395,8 @@ export type AppNotification = {
 /** 18d : sortie proposée par un membre de confiance (lisible par son auteur et l'équipe). */
 export type OutingProposal = {
   id: string;
+  /** Étape 31 : sortie proposée à un ancien groupe (taille du groupe), sinon null. */
+  forGroupSize?: number | null;
   userId: string;
   firstName: string;
   cityId: string;
