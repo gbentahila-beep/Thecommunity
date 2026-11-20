@@ -136,7 +136,7 @@ async function main() {
     }
     for (const r of DEMO_REVIEWS.filter((x) => x.experienceId === id)) {
       const { id: rid, ...rrest } = r;
-      demo.set(db.doc(`reviews/${rid}`), { ...rrest, status: "published", createdAt: ts(r.createdAt), isDemo: true });
+      demo.set(db.doc(`reviews/${rid}`), { ...rrest, ...(rrest.reply ? { reply: { ...rrest.reply, at: ts(rrest.reply.at) } } : {}), status: "published", createdAt: ts(r.createdAt), isDemo: true });
     }
     registry.add(id);
   }

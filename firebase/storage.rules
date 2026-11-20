@@ -52,6 +52,18 @@ service firebase.storage {
       allow delete: if isAdmin() || (signedIn() && request.auth.token.get('role', 'user') == 'organizer' && request.auth.token.get('orgId', '') == orgId);
     }
 
+    // Étape 24 : photo d'un avis. Envoyée dans le dossier privé de la personne (lisible par elle et l'équipe) ;
+    // publiée par le serveur dans reviews/{id}/ seulement après vérification par l'équipe.
+    match /review-uploads/{uid}/{fileName} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow write: if signedIn() && request.auth.uid == uid && isImage(5);
+      allow delete: if (signedIn() && request.auth.uid == uid) || isAdmin();
+    }
+    match /reviews/{reviewId}/{fileName} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // Exports : générés par le serveur, distribués par URL signée temporaire.
     // Factures PDF : jamais lues directement par le navigateur (téléchargement via le site, après contrôle).
     match /invoices/{all=**} {

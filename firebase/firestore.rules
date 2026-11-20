@@ -164,6 +164,11 @@ service cloud.firestore {
         allow read: if isAdmin();
         allow write: if false;
       }
+      // Étape 24 : signalements (un par personne) — lus par l'équipe seulement, écrits par le serveur.
+      match /reports/{uid} {
+        allow read: if isAdmin();
+        allow write: if false;
+      }
     }
 
     // ---------- Abonnement annuel ----------

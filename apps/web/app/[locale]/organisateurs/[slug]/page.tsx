@@ -1,9 +1,11 @@
+import { organizerRating } from "@thecommunity/shared";
 import { AtSign, BadgeCheck, Globe, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ExperienceCard } from "@/components/experience-card";
 import { MediaImage as Image } from "@/components/media";
+import { ReviewItem } from "@/components/reviews/review-item";
 import { PageShell, Stars } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -53,8 +55,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
   const undated = undatedAll.filter((e) => ids.has(e.id));
   const myReviews = reviews.filter((r) => ids.has(r.experienceId)).slice(0, 6);
   // Note de l'organisateur : moyenne des avis de toutes ses activités (pondérée par leur nombre).
-  const count = mine.reduce((a, e) => a + e.ratingCount, 0);
-  const avg = count ? mine.reduce((a, e) => a + e.ratingAvg * e.ratingCount, 0) / count : 0;
+  const { avg, count } = organizerRating(mine);
   const logo = publicLogo(o.logoPath);
   const cats = categories.filter((c) => o.categoryIds.includes(c.id));
   const insta = o.instagram ? o.instagram.replace(/^@/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//, "").replace(/\/$/, "") : "";
@@ -141,11 +142,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
             <h2 id="org-reviews" className="font-display text-2xl font-medium text-plum-900">{t("reviews")}</h2>
             <ul className="grid gap-4 sm:grid-cols-2">
               {myReviews.map((r) => (
-                <li key={r.id} className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-                  <Stars value={r.rating} />
-                  <p className="mt-2 text-ink/85">« {r.comment} »</p>
-                  <p className="mt-2 text-sm text-muted">{r.publicName}</p>
-                </li>
+                <ReviewItem key={r.id} review={r} locale={locale} />
               ))}
             </ul>
           </section>

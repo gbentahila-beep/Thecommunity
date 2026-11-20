@@ -544,7 +544,11 @@
     "adminCancelRefund": "Cette réservation a été annulée par l'équipe : {amount} vous ont été remboursés.",
     "reviewHidden": "Merci pour votre avis. Il a été masqué par l'équipe.",
     "publicPrice": "Prix public",
-    "memberDiscount": "Réduction membre"
+    "memberDiscount": "Réduction membre",
+    "reviewPhoto_pending": "Votre photo sera publiée après vérification par l'équipe.",
+    "reviewPhoto_approved": "Votre photo est publiée avec votre avis.",
+    "reviewPhoto_rejected": "Votre photo n'a pas été publiée (voir vos notifications).",
+    "reviewReplyFrom": "Réponse de {name}"
   },
   "profilePage": {
     "title": "Mon profil",
@@ -726,8 +730,13 @@
     "errors": {
       "already_reviewed": "Vous avez déjà donné votre avis sur cette réservation.",
       "not_reviewable": "Il n'est plus possible de donner un avis sur cette réservation.",
-      "generic": "Une erreur est survenue. Réessayez."
-    }
+      "generic": "Une erreur est survenue. Réessayez.",
+      "invalid_photo": "Photo introuvable ou invalide : ajoutez-la de nouveau."
+    },
+    "photoAdd": "Ajouter une photo (facultatif)",
+    "photoChange": "Changer de photo",
+    "photoNote": "JPEG, PNG ou WebP, 5 Mo au plus. Publiée après vérification par l'équipe ; évitez les visages sans l'accord des personnes.",
+    "photoInvalid": "Photo JPEG, PNG ou WebP de {mb} Mo au plus."
   },
   "membership": {
     "metaTitle": "Abonnement annuel",
@@ -1171,5 +1180,29 @@
     "rating": "{avg} sur 5 · {count, plural, one {# avis} other {# avis}}",
     "categories": "Univers",
     "back": "Toutes les expériences"
+  },
+  "reviewsPublic": {
+    "replyFrom": "Réponse de {name}",
+    "photoAlt": "Photo partagée par {name}",
+    "report": "Signaler",
+    "reportTitle": "Signaler cet avis",
+    "reason": "Motif",
+    "reasons": {
+      "offensive": "Propos insultants ou discriminatoires",
+      "personal_info": "Informations personnelles",
+      "false_info": "Faux ou sans rapport avec l'activité",
+      "spam": "Publicité ou spam",
+      "other": "Autre"
+    },
+    "message": "Précisions (facultatif, obligatoire pour « Autre »)",
+    "messageRequired": "Expliquez en quelques mots (5 caractères au moins).",
+    "send": "Envoyer le signalement",
+    "cancel": "Annuler",
+    "sent": "Merci : l'équipe va vérifier cet avis.",
+    "demo": "Démonstration : rien n'est envoyé.",
+    "alreadyReported": "Vous avez déjà signalé cet avis.",
+    "ownReview": "Vous ne pouvez pas signaler votre propre avis.",
+    "loginToReport": "Connectez-vous pour signaler un avis.",
+    "error": "Envoi impossible. Réessayez."
   }
 }

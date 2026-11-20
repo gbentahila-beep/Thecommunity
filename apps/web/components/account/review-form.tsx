@@ -1,13 +1,15 @@
 "use client";
 
-import { REVIEW_COMMENT_MAX } from "@thecommunity/shared";
+import { REVIEW_COMMENT_MAX, REVIEW_PHOTO_MAX_MB } from "@thecommunity/shared";
 import { httpsCallable } from "firebase/functions";
-import { Star } from "lucide-react";
+import { ref, uploadBytes } from "firebase/storage";
+import { ImagePlus, Star } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { authReady } from "@/lib/booking-client";
 import { firebase } from "@/lib/firebase/client";
+import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 
 /** Avis après l'expérience : note de 1 à 5 et commentaire facultatif. Publié sur la fiche de l'expérience. */
 export function ReviewForm({ reservationId }: { reservationId: string }) {
@@ -17,6 +19,8 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Étape 24 : photo facultative, publiée seulement une fois acceptée par l'équipe.
+  const [photo, setPhoto] = useState<File | null>(null);
 
   return (
     <form
@@ -28,11 +32,18 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
         setError(null);
         try {
           await authReady();
-          await httpsCallable(firebase().functions, "submitReview")({ reservationId, rating, comment: comment.trim() });
+          let photoPath = "";
+          if (photo && FIREBASE_ENABLED) {
+            const uid = firebase().auth.currentUser?.uid;
+            const safe = photo.name.normalize("NFD").replace(/[^\w.-]+/g, "-").slice(-80) || "photo.jpg";
+            photoPath = `review-uploads/${uid}/${Date.now().toString(36)}-${safe}`;
+            await uploadBytes(ref(firebase().storage, photoPath), photo, { contentType: photo.type });
+          }
+          await httpsCallable(firebase().functions, "submitReview")({ reservationId, rating, comment: comment.trim(), ...(photoPath ? { photoPath } : {}) });
           router.refresh();
         } catch (err) {
           const reason = (err as { details?: { reason?: string } }).details?.reason;
-          setError(reason === "already_reviewed" || reason === "not_reviewable" ? t(`errors.${reason}`) : t("errors.generic"));
+          setError(reason === "already_reviewed" || reason === "not_reviewable" || reason === "invalid_photo" ? t(`errors.${reason}`) : t("errors.generic"));
           setBusy(false);
         }
       }}
@@ -71,6 +82,29 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
           className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-plum-700 focus:outline-none"
         />
         <p className="mt-1 text-xs text-muted">{t("publicNote")}</p>
+      </div>
+      <div>
+        <label htmlFor={`review-photo-${reservationId}`} className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-plum-900">
+          <ImagePlus className="size-4" aria-hidden />
+          {photo ? t("photoChange") : t("photoAdd")}
+        </label>
+        <input
+          id={`review-photo-${reservationId}`}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="sr-only"
+          onChange={(e) => {
+            const f = e.target.files?.[0] ?? null;
+            if (f && (!/^image\/(jpeg|png|webp)$/.test(f.type) || f.size > REVIEW_PHOTO_MAX_MB * 1024 * 1024)) {
+              setPhoto(null);
+              return setError(t("photoInvalid", { mb: REVIEW_PHOTO_MAX_MB }));
+            }
+            setError(null);
+            setPhoto(f);
+          }}
+        />
+        {photo && <p className="mt-1 text-sm text-ink/80" data-testid="review-photo-name">{photo.name}</p>}
+        <p className="mt-1 text-xs text-muted">{t("photoNote")}</p>
       </div>
       {error && <p role="alert" className="text-sm text-red-800">{error}</p>}
       <button type="submit" disabled={busy} className="rounded-full bg-plum-900 px-6 py-3 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-60">

@@ -231,6 +231,13 @@ export type Review = {
   status?: "published" | "hidden";
   createdAt: string;
   isDemo?: boolean;
+  /** Étape 24 : réponse publique de l'organisateur ou de l'équipe. */
+  reply?: { text: string; authorName: string; authorRole: "organizer" | "team"; at: string } | null;
+  /** Étape 24 : photo facultative, publiée seulement une fois acceptée par l'équipe. */
+  photo?: { path: string; status: "pending" | "approved" | "rejected" } | null;
+  /** Étape 24 : signalements reçus / encore à traiter. */
+  reportCount?: number;
+  reportsOpen?: number;
 };
 
 export type Gender = "female" | "male" | "undisclosed";

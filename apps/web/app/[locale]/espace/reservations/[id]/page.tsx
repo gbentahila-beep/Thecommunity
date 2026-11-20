@@ -406,6 +406,15 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
               <Stars value={review.rating} />
               {review.comment && <p className="text-ink/85">{review.comment}</p>}
               <p className="text-sm text-emerald-800">{review.status === "hidden" ? t("reviewHidden") : t("reviewThanks")}</p>
+              {review.photo?.status && (
+                <p className="text-sm text-muted" data-testid="review-photo-status">{t(`reviewPhoto_${review.photo.status}`)}</p>
+              )}
+              {review.reply?.text && (
+                <div className="rounded-xl bg-plum-50 px-4 py-3" data-testid="review-reply-member">
+                  <p className="text-sm font-semibold text-plum-900">{t("reviewReplyFrom", { name: review.reply.authorName })}</p>
+                  <p className="mt-1 whitespace-pre-line text-sm text-ink/85">{review.reply.text}</p>
+                </div>
+              )}
             </div>
           ) : FIREBASE_ENABLED ? (
             <ReviewForm reservationId={r.id} />

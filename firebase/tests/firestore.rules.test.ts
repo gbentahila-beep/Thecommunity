@@ -358,6 +358,24 @@ describe("organisateurs : cloisonnement (19)", () => {
     await assertFails(updateDoc(doc(salma(), "refundRequests/rA"), { status: "refunded" }));
     await assertFails(updateDoc(doc(admin(), "refundRequests/rA"), { status: "refunded" }));
   });
+  it("avis (24) : signalements et historique lus par l'équipe seulement ; réponse et signalement par le serveur seulement", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, "reviews/rvA"), { userId: "salma", experienceId: "expA", organizerId: "orgA", status: "published", rating: 5, comment: "Super" });
+      await setDoc(doc(db, "reviews/rvA/reports/karim"), { uid: "karim", reason: "spam", status: "open" });
+      await setDoc(doc(db, "reviews/rvA/private/history"), { events: [{ action: "created" }] });
+    });
+    await assertSucceeds(getDoc(doc(anon(), "reviews/rvA")));
+    await assertSucceeds(getDoc(doc(admin(), "reviews/rvA/reports/karim")));
+    await assertSucceeds(getDoc(doc(admin(), "reviews/rvA/private/history")));
+    for (const who of [karim(), salma(), orgA()]) {
+      await assertFails(getDoc(doc(who, "reviews/rvA/reports/karim")));
+      await assertFails(getDoc(doc(who, "reviews/rvA/private/history")));
+    }
+    await assertFails(setDoc(doc(karim(), "reviews/rvA/reports/karim"), { uid: "karim", reason: "spam" }));
+    await assertFails(updateDoc(doc(orgA(), "reviews/rvA"), { reply: { text: "Merci" } }));
+    await assertFails(updateDoc(doc(salma(), "reviews/rvA"), { photo: { path: "x", status: "approved" } }));
+  });
   it("un organisateur ne lit ni les profils des clients, ni les paiements, ni le journal", async () => {
     await assertFails(getDoc(doc(orgA(), "users/salma")));
     await assertFails(getDoc(doc(orgA(), "payments/p1")));

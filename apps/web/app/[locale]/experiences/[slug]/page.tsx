@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
 import { VenueMap } from "@/components/venue-map";
+import { ReviewItem } from "@/components/reviews/review-item";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoriteButton } from "@/components/favorite-button";
@@ -286,15 +287,9 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
             )}
             {reviews.length > 0 && (
               <Section title={t("reviews")}>
-                <ul className="space-y-4">
+                <ul className="space-y-4" id="avis">
                   {reviews.map((r) => (
-                    <li key={r.id} className="rounded-2xl border border-line bg-white/70 p-5">
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-ink">{r.publicName}</span>
-                        <Stars value={r.rating} />
-                      </div>
-                      <p className="mt-2 text-ink/85">{r.comment}</p>
-                    </li>
+                    <ReviewItem key={r.id} review={r} locale={locale} />
                   ))}
                 </ul>
               </Section>

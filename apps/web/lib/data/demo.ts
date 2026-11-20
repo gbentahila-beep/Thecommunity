@@ -609,5 +609,8 @@ export const DEMO_REVIEWS: Review[] = [
   { id: "r3", experienceId: "exp-pilates-brunch", rating: 5, publicName: "Inès K.", comment: "Le combo parfait pour un samedi matin. Le brunch est délicieux.", createdAt: "2026-10-26T12:00:00Z", isDemo: true },
   { id: "r4", experienceId: "exp-escape-game", rating: 4, publicName: "Mehdi R.", comment: "On ne se connaissait pas et on est sortis avec 4 minutes d'avance !", createdAt: "2026-10-24T22:00:00Z", isDemo: true },
   { id: "r5", experienceId: "exp-ceramique", rating: 5, publicName: "Nadia T.", comment: "Moment hors du temps, et la céramiste est adorable.", createdAt: "2026-10-20T18:00:00Z", isDemo: true },
+  // Étape 24 : avis sur l'activité de l'organisateur de démonstration, dont un avec sa réponse.
+  { id: "rp1", experienceId: "exp-padel", rating: 5, publicName: "Omar K.", comment: "Niveau bien équilibré, on a enchaîné trois matchs. Le coach donne de bons conseils.", createdAt: "2026-11-15T20:00:00Z", isDemo: true, reply: { text: "Merci Omar ! Ravi que les matchs aient été équilibrés, à très vite sur les terrains.", authorName: "Club Padel Anfa", authorRole: "organizer", at: "2026-11-16T09:00:00Z" } },
+  { id: "rp2", experienceId: "exp-padel", rating: 4, publicName: "Leïla S.", comment: "Super ambiance. Les raquettes prêtées étaient un peu usées.", createdAt: "2026-11-08T20:00:00Z", isDemo: true },
   ...DEMO_MORE_REVIEWS,
 ];

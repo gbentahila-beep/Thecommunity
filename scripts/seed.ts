@@ -127,7 +127,7 @@ async function main() {
   }
   for (const r of DEMO_REVIEWS) {
     const { id, ...rest } = r;
-    entries.push([`reviews/${id}`, { ...rest, status: "published", createdAt: ts(r.createdAt) }]);
+    entries.push([`reviews/${id}`, { ...rest, ...(rest.reply ? { reply: { ...rest.reply, at: ts(rest.reply.at) } } : {}), status: "published", createdAt: ts(r.createdAt) }]);
   }
 
   // Comptes : 64 membres fictifs + 2 comptes de connexion pour tester (émulateur uniquement).

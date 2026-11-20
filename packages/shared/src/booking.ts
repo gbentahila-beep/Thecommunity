@@ -130,6 +130,8 @@ export const reviewInputSchema = z.object({
   reservationId: reservationRequestSchema.shape.sessionId,
   rating: z.number().int().min(1, "rating").max(5, "rating"),
   comment: z.string().trim().max(REVIEW_COMMENT_MAX, "tooLong").default(""),
+  /** Étape 24 : photo facultative déjà envoyée dans review-uploads/{uid}/… (vérifiée par le serveur). */
+  photoPath: z.string().max(300).regex(/^review-uploads\/[A-Za-z0-9_-]{1,128}\/[\w.-]{1,120}$/, "invalidImage").optional().or(z.literal("")),
 });
 
 /** Peut-on laisser un avis sur cette réservation à `now` ? (présent·e, ou confirmé·e et expérience terminée) */

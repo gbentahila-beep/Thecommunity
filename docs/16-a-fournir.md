@@ -107,3 +107,8 @@ Conséquence pratique : le site d'essai reste réservé à des **testeurs** (don
 - [ ] **Coordonnées GPS des lieux publics** (points de rendez-vous, parcs, plages…) : à saisir dans chaque activité pour afficher la carte. Celles des activités de démonstration sont **approximatives**.
 - [ ] **« Non inclus »** : à compléter sur les vraies activités (boissons, transport, location de matériel…).
 - [ ] **Avocat / CNDP** : la politique de confidentialité mentionne désormais la carte OpenStreetMap (chargée seulement sur clic) et le lien vers Google Maps.
+
+## Avis (étape 24, 20 novembre)
+
+- [ ] **Charte de modération** : valider les motifs de signalement et la règle « pas de masquage automatique » ; désigner qui traite les signalements et les photos (back-office → Avis → « Signalés » et « Photos à vérifier »), et dans quel délai.
+- [ ] **Avocat / CNDP** : les photos jointes aux avis (avec, parfois, des personnes reconnaissables) — accord des personnes, durée de conservation ; CGU article 11 et politique de confidentialité complétées, à relire.

@@ -2203,3 +2203,79 @@ describe("accueil modifiable par l'équipe (23)", () => {
     expect((await db().doc("settings/home").get()).get("banner")).toBeNull();
   }, 60_000);
 });
+
+describe("avis : réponse, signalement, photo, historique (24)", () => {
+  const bucket = () => adminStorage(admin).bucket(`${PROJECT}.appspot.com`);
+  it("l'organisateur répond, un membre signale, l'équipe traite ; la photo n'est publiée qu'après vérification", async () => {
+    const team = await member({ role: "admin" });
+    const pro = await member();
+    const u = await member();
+    const k = await member();
+    await db().doc(`users/${u.uid}`).update({ firstName: "Nadia", lastName: "test" });
+    await db().doc("categories/discover").set({ isActive: true }, { merge: true });
+    const { organizerId } = await pro.call("applyAsOrganizer", {
+      businessName: `Avis Test ${run}`, contactName: "Lina Test", email: "lina@example.com", phone: "+212 600 000 000", cityId: "casablanca",
+      address: "Boulevard d'Anfa, Casablanca", categoryIds: ["discover"], description: "Visites guidées en petit groupe dans le centre de Casablanca.", documents: [], acceptTerms: true,
+    });
+    const orgId = String(organizerId);
+    await team.call("adminDecideOrganizer", { organizerId: orgId, decision: "approve" });
+    const sid = await makeSession({ startInHours: 72, extra: { organizerId: orgId } });
+    const { reservationId } = await paidReservation(u, sid);
+    const past = { start: Timestamp.fromMillis(Date.now() - 5 * 3_600_000), end: Timestamp.fromMillis(Date.now() - 3 * 3_600_000) };
+    await db().doc(`reservations/${reservationId}`).update({ "sessionSnapshot.startAt": past.start, "sessionSnapshot.endAt": past.end, status: "attended" });
+    const expId = String((await reservation(reservationId)).experienceId);
+
+    // Photo : seulement depuis son propre dossier, et réellement envoyée.
+    await bucket().file(`review-uploads/${u.uid}/p.jpg`).save(Buffer.from("photo"), { contentType: "image/jpeg" });
+    expect(await refusal(u.call("submitReview", { reservationId, rating: 4, comment: "Très bien", photoPath: `review-uploads/${k.uid}/p.jpg` }))).toBe("failed-precondition:invalid_photo");
+    expect(await refusal(u.call("submitReview", { reservationId, rating: 4, comment: "Très bien", photoPath: `review-uploads/${u.uid}/absente.jpg` }))).toBe("failed-precondition:invalid_photo");
+    await u.call("submitReview", { reservationId, rating: 4, comment: "Très bien", photoPath: `review-uploads/${u.uid}/p.jpg` });
+    const rv = () => db().doc(`reviews/${reservationId}`).get().then((d) => d.data()!);
+    expect(await rv()).toMatchObject({ organizerId: orgId, photo: { path: `review-uploads/${u.uid}/p.jpg`, status: "pending" } });
+
+    // Réponse : l'organisateur de l'activité ou l'équipe, jamais un membre.
+    expect(await refusal(k.call("replyToReview", { reviewId: reservationId, text: "Merci" }))).toBe("permission-denied:");
+    expect(await refusal(pro.call("replyToReview", { reviewId: reservationId, text: "x" }))).toBe("invalid-argument:");
+    await pro.call("replyToReview", { reviewId: reservationId, text: "Merci Nadia, à bientôt !" });
+    expect((await rv()).reply).toMatchObject({ text: "Merci Nadia, à bientôt !", authorName: `Avis Test ${run}`, authorRole: "organizer" });
+    expect((await db().collection(`users/${u.uid}/notifications`).where("type", "==", "review_reply").get()).size).toBe(1);
+    await team.call("replyToReview", { reviewId: reservationId, text: "Merci de votre retour." });
+    expect((await rv()).reply).toMatchObject({ authorRole: "team", authorName: "L'équipe The Host Club" });
+    await team.call("replyToReview", { reviewId: reservationId, text: "" });
+    expect((await rv()).reply).toBeUndefined();
+
+    // Signalement : une fois par personne, jamais son propre avis ; rien n'est masqué automatiquement.
+    expect(await refusal(u.call("reportReview", { reviewId: reservationId, reason: "spam" }))).toBe("failed-precondition:own_review");
+    expect(await refusal(k.call("reportReview", { reviewId: reservationId, reason: "other" }))).toBe("invalid-argument:");
+    await k.call("reportReview", { reviewId: reservationId, reason: "false_info", message: "Je n'ai jamais vu cette personne." });
+    expect(await refusal(k.call("reportReview", { reviewId: reservationId, reason: "spam" }))).toBe("failed-precondition:already_reported");
+    await pro.call("reportReview", { reviewId: reservationId, reason: "offensive" });
+    expect(await rv()).toMatchObject({ status: "published", reportCount: 2, reportsOpen: 2 });
+    expect((await db().doc(`reviews/${reservationId}/reports/${pro.uid}`).get()).data()).toMatchObject({ byOrganizer: true, status: "open" });
+    expect(await refusal(k.call("adminResolveReviewReports", { reviewId: reservationId, outcome: "hide" }))).toBe("permission-denied:");
+    await team.call("adminResolveReviewReports", { reviewId: reservationId, outcome: "keep", note: "Avis conforme." });
+    expect(await rv()).toMatchObject({ status: "published", reportsOpen: 0, reportCount: 2 });
+    expect((await db().doc(`reviews/${reservationId}/reports/${k.uid}`).get()).get("status")).toBe("dismissed");
+
+    // Photo : refus motivé obligatoire ; acceptation = copie publique, original supprimé.
+    expect(await refusal(team.call("adminDecideReviewPhoto", { reviewId: reservationId, decision: "reject" }))).toBe("invalid-argument:");
+    await team.call("adminDecideReviewPhoto", { reviewId: reservationId, decision: "approve" });
+    const photo = (await rv()).photo;
+    expect(photo.status).toBe("approved");
+    expect(photo.path).toMatch(new RegExp(`^reviews/${reservationId}/photo-\\d+\\.jpg$`));
+    expect((await bucket().file(photo.path).exists())[0]).toBe(true);
+    expect((await bucket().file(`review-uploads/${u.uid}/p.jpg`).exists())[0]).toBe(false);
+    expect(await refusal(team.call("adminDecideReviewPhoto", { reviewId: reservationId, decision: "approve" }))).toBe("failed-precondition:no_pending_photo");
+
+    // Masquage après nouveau signalement : note de l'activité recalculée ; historique complet.
+    const before = (await db().doc(`experiences/${expId}`).get()).data()!;
+    const z = await member();
+    await z.call("reportReview", { reviewId: reservationId, reason: "personal_info" });
+    await team.call("adminResolveReviewReports", { reviewId: reservationId, outcome: "hide", note: "Nom d'une autre personne." });
+    expect((await rv()).status).toBe("hidden");
+    expect((await db().doc(`experiences/${expId}`).get()).get("ratingCount")).toBe(before.ratingCount - 1);
+    expect(await refusal(z.call("reportReview", { reviewId: reservationId, reason: "spam" }))).toBe("failed-precondition:not_published");
+    const events = ((await db().doc(`reviews/${reservationId}/private/history`).get()).get("events") as { action: string }[]).map((e) => e.action);
+    expect(events).toEqual(["created", "reply", "reply", "reply_removed", "reported", "reported", "reports_kept", "photo_approved", "reported", "hidden"]);
+  }, 120_000);
+});

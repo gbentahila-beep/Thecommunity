@@ -544,7 +544,11 @@
     "adminCancelRefund": "ألغى الفريق هذا الحجز: تم استرجاع {amount}.",
     "reviewHidden": "شكرًا على رأيك. قام الفريق بإخفائه.",
     "publicPrice": "السعر العام",
-    "memberDiscount": "خصم العضو"
+    "memberDiscount": "خصم العضو",
+    "reviewPhoto_pending": "ستُنشر صورتك بعد تحقق الفريق منها.",
+    "reviewPhoto_approved": "صورتك منشورة مع رأيك.",
+    "reviewPhoto_rejected": "لم تُنشر صورتك (راجع إشعاراتك).",
+    "reviewReplyFrom": "ردّ {name}"
   },
   "profilePage": {
     "title": "ملفي",
@@ -726,8 +730,13 @@
     "errors": {
       "already_reviewed": "لقد شاركت رأيك في هذا الحجز من قبل.",
       "not_reviewable": "لم يعد ممكنًا إبداء الرأي في هذا الحجز.",
-      "generic": "حدث خطأ. أعد المحاولة."
-    }
+      "generic": "حدث خطأ. أعد المحاولة.",
+      "invalid_photo": "الصورة غير موجودة أو غير صالحة: أضفها من جديد."
+    },
+    "photoAdd": "إضافة صورة (اختياري)",
+    "photoChange": "تغيير الصورة",
+    "photoNote": "JPEG أو PNG أو WebP، 5 ميغابايت كحد أقصى. تُنشر بعد تحقق الفريق؛ تجنّب الوجوه دون موافقة أصحابها.",
+    "photoInvalid": "صورة JPEG أو PNG أو WebP، {mb} ميغابايت كحد أقصى."
   },
   "membership": {
     "metaTitle": "الاشتراك السنوي",
@@ -1171,5 +1180,29 @@
     "rating": "{avg} من 5 · {count, plural, one {# رأي} other {# آراء}}",
     "categories": "العوالم",
     "back": "كل التجارب"
+  },
+  "reviewsPublic": {
+    "replyFrom": "ردّ {name}",
+    "photoAlt": "صورة شاركها {name}",
+    "report": "إبلاغ",
+    "reportTitle": "الإبلاغ عن هذا الرأي",
+    "reason": "السبب",
+    "reasons": {
+      "offensive": "كلام مسيء أو تمييزي",
+      "personal_info": "معلومات شخصية",
+      "false_info": "كاذب أو لا علاقة له بالنشاط",
+      "spam": "إشهار أو رسائل مزعجة",
+      "other": "آخر"
+    },
+    "message": "توضيحات (اختياري، وإلزامي لـ«آخر»)",
+    "messageRequired": "اشرح ببضع كلمات (5 أحرف على الأقل).",
+    "send": "إرسال الإبلاغ",
+    "cancel": "إلغاء",
+    "sent": "شكراً: سيتحقق الفريق من هذا الرأي.",
+    "demo": "عرض تجريبي: لا يُرسَل أي شيء.",
+    "alreadyReported": "سبق أن أبلغت عن هذا الرأي.",
+    "ownReview": "لا يمكنك الإبلاغ عن رأيك.",
+    "loginToReport": "سجّل الدخول للإبلاغ عن رأي.",
+    "error": "تعذّر الإرسال. أعد المحاولة."
   }
 }

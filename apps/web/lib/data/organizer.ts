@@ -1,5 +1,5 @@
 import "server-only";
-import { ticketCode, type Experience, type Organizer, type OrganizerStatus } from "@thecommunity/shared";
+import { ticketCode, type Experience, type Organizer, type OrganizerStatus, type Review } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
@@ -7,7 +7,7 @@ import { cache } from "react";
 import { getSessionUser } from "@/lib/auth/session";
 import { adminDb } from "@/lib/firebase/admin";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
-import { DEMO_EXPERIENCES } from "./demo";
+import { DEMO_EXPERIENCES, DEMO_REVIEWS } from "./demo";
 import { buildAdminData } from "./demo-admin";
 import { DEMO_ORGANIZER, DEMO_ORGANIZER_DETAILS } from "./demo-organizer";
 
@@ -208,4 +208,21 @@ export function proStats(d: ProData) {
     published: d.experiences.filter((e) => e.status === "published").length,
     inReview: d.experiences.filter((e) => e.status === "pending_review").length,
   };
+}
+
+/** Étape 24 — avis publiés sur les activités de l'organisateur (les plus récents d'abord). */
+export async function getProReviews(experiences: Pick<Experience, "id" | "title">[]): Promise<(Review & { title: string })[]> {
+  await connection();
+  const titles = new Map(experiences.map((e) => [e.id, e.title.fr]));
+  const ids = [...titles.keys()];
+  if (!FIREBASE_ENABLED) return DEMO_REVIEWS.filter((r) => titles.has(r.experienceId)).map((r) => ({ ...r, title: titles.get(r.experienceId)! }));
+  const chunks: string[][] = [];
+  for (let i = 0; i < ids.length; i += 30) chunks.push(ids.slice(i, i + 30));
+  const snaps = await Promise.all(chunks.map((c) => adminDb().collection("reviews").where("experienceId", "in", c).get()));
+  return snaps
+    .flatMap((s) => s.docs)
+    .map((d) => plain<Review>({ id: d.id, ...d.data() }))
+    .filter((r) => r.status === "published")
+    .map((r) => ({ ...r, title: titles.get(r.experienceId) ?? "" }))
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }

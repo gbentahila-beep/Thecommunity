@@ -544,7 +544,11 @@
     "adminCancelRefund": "This booking was cancelled by our team: {amount} has been refunded.",
     "reviewHidden": "Thank you for your review. It has been hidden by our team.",
     "publicPrice": "Public price",
-    "memberDiscount": "Member discount"
+    "memberDiscount": "Member discount",
+    "reviewPhoto_pending": "Your photo will be published once the team has checked it.",
+    "reviewPhoto_approved": "Your photo is published with your review.",
+    "reviewPhoto_rejected": "Your photo was not published (see your notifications).",
+    "reviewReplyFrom": "Reply from {name}"
   },
   "profilePage": {
     "title": "My profile",
@@ -726,8 +730,13 @@
     "errors": {
       "already_reviewed": "You've already reviewed this booking.",
       "not_reviewable": "It's no longer possible to review this booking.",
-      "generic": "Something went wrong. Please try again."
-    }
+      "generic": "Something went wrong. Please try again.",
+      "invalid_photo": "Photo missing or invalid: please add it again."
+    },
+    "photoAdd": "Add a photo (optional)",
+    "photoChange": "Change photo",
+    "photoNote": "JPEG, PNG or WebP, 5 MB max. Published after the team checks it; avoid faces without people's consent.",
+    "photoInvalid": "JPEG, PNG or WebP photo, {mb} MB max."
   },
   "membership": {
     "metaTitle": "Annual membership",
@@ -1171,5 +1180,29 @@
     "rating": "{avg} out of 5 · {count, plural, one {# review} other {# reviews}}",
     "categories": "Universes",
     "back": "All experiences"
+  },
+  "reviewsPublic": {
+    "replyFrom": "Reply from {name}",
+    "photoAlt": "Photo shared by {name}",
+    "report": "Report",
+    "reportTitle": "Report this review",
+    "reason": "Reason",
+    "reasons": {
+      "offensive": "Insulting or discriminatory",
+      "personal_info": "Personal information",
+      "false_info": "False or unrelated to the activity",
+      "spam": "Advertising or spam",
+      "other": "Other"
+    },
+    "message": "Details (optional, required for “Other”)",
+    "messageRequired": "Explain in a few words (at least 5 characters).",
+    "send": "Send report",
+    "cancel": "Cancel",
+    "sent": "Thank you: the team will check this review.",
+    "demo": "Demo: nothing is sent.",
+    "alreadyReported": "You have already reported this review.",
+    "ownReview": "You can't report your own review.",
+    "loginToReport": "Log in to report a review.",
+    "error": "Couldn't send. Please try again."
   }
 }

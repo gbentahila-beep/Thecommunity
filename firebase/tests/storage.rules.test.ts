@@ -19,6 +19,8 @@ beforeAll(async () => {
     await uploadBytes(ref(ctx.storage() as unknown as FirebaseStorage, "users/salma/avatar/a.webp"), bytes(10), { contentType: "image/webp" });
     await uploadBytes(ref(ctx.storage() as unknown as FirebaseStorage, "organizer-uploads/olive/documents/rc.pdf"), bytes(10), { contentType: "application/pdf" });
     await uploadBytes(ref(ctx.storage() as unknown as FirebaseStorage, "organizers/orgA/public/logo.webp"), bytes(10), { contentType: "image/webp" });
+    await uploadBytes(ref(ctx.storage() as unknown as FirebaseStorage, "review-uploads/salma/p.jpg"), bytes(10), { contentType: "image/jpeg" });
+    await uploadBytes(ref(ctx.storage() as unknown as FirebaseStorage, "reviews/rv1/photo.jpg"), bytes(10), { contentType: "image/jpeg" });
   });
 });
 afterAll(async () => env.cleanup());
@@ -59,6 +61,19 @@ describe("stockage des fichiers", () => {
     await assertFails(uploadBytes(ref(store("olive", "organizer", "orgA"), "organizers/orgA/public/doc.pdf"), bytes(1000), { contentType: "application/pdf" }));
     await assertFails(uploadBytes(ref(store("olive", "organizer", "orgA"), "experiences/e1/4.jpg"), bytes(1000), { contentType: "image/jpeg" }));
     await assertSucceeds(uploadBytes(ref(store("ada", "admin"), "organizers/orgA/public/equipe.jpg"), bytes(1000), { contentType: "image/jpeg" }));
+  });
+  it("photo d'avis (24) : envoyée dans son dossier privé (image, 5 Mo max), publique seulement une fois publiée par le serveur", async () => {
+    await assertSucceeds(uploadBytes(ref(store("salma"), "review-uploads/salma/q.webp"), bytes(1 * MB), { contentType: "image/webp" }));
+    await assertFails(uploadBytes(ref(store("salma"), "review-uploads/salma/big.jpg"), bytes(6 * MB), { contentType: "image/jpeg" }));
+    await assertFails(uploadBytes(ref(store("salma"), "review-uploads/salma/x.pdf"), bytes(1000), { contentType: "application/pdf" }));
+    await assertFails(uploadBytes(ref(store("karim"), "review-uploads/salma/k.jpg"), bytes(1000), { contentType: "image/jpeg" }));
+    await assertSucceeds(getBytes(ref(store("salma"), "review-uploads/salma/p.jpg")));
+    await assertSucceeds(getBytes(ref(store("ada", "admin"), "review-uploads/salma/p.jpg")));
+    await assertFails(getBytes(ref(store("karim"), "review-uploads/salma/p.jpg")));
+    await assertFails(getBytes(ref(store(), "review-uploads/salma/p.jpg")));
+    await assertSucceeds(getBytes(ref(store(), "reviews/rv1/photo.jpg")));
+    await assertFails(uploadBytes(ref(store("salma"), "reviews/rv1/autre.jpg"), bytes(1000), { contentType: "image/jpeg" }));
+    await assertFails(uploadBytes(ref(store("ada", "admin"), "reviews/rv1/autre.jpg"), bytes(1000), { contentType: "image/jpeg" }));
   });
   it("exports et dossiers non prévus : refusés", async () => {
     await assertFails(getBytes(ref(store("ada", "superadmin"), "exports/x.csv")));

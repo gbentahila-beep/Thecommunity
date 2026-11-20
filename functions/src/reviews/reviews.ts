@@ -8,6 +8,8 @@ import { db, FieldValue, REGION } from "../lib/admin";
 import { audit } from "../lib/audit";
 import { invalidArgument, requireAuth, requireRole, roleOf } from "../lib/guards";
 import { refuse } from "../reservations/create-reservation";
+import { getStorage } from "firebase-admin/storage";
+import { addHistory, setReviewStatus } from "./moderation";
 
 const iso = (v: unknown) => (v instanceof Timestamp ? v.toDate().toISOString() : String(v ?? ""));
 
@@ -21,8 +23,14 @@ export const submitReview = onCall({ region: REGION }, async (req) => {
   const { uid } = requireAuth(req);
   const parsed = reviewInputSchema.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { reservationId, rating, comment } = parsed.data;
+  const { reservationId, rating, comment, photoPath } = parsed.data;
   const user = (await db.doc(`users/${uid}`).get()).data() ?? {};
+  // Étape 24 : photo facultative, seulement depuis le dossier de la personne, et réellement envoyée.
+  if (photoPath) {
+    if (!photoPath.startsWith(`review-uploads/${uid}/`)) refuse("invalid_photo", "Photo invalide.");
+    const [exists] = await getStorage().bucket().file(photoPath).exists();
+    if (!exists) refuse("invalid_photo", "Photo introuvable : envoyez-la de nouveau.");
+  }
 
   return db.runTransaction(async (tx) => {
     const resRef = db.doc(`reservations/${reservationId}`);
@@ -44,6 +52,8 @@ export const submitReview = onCall({ region: REGION }, async (req) => {
       comment,
       publicName: publicNameOf(user.firstName, user.lastName),
       status: "published",
+      organizerId: e.organizerId ?? null,
+      ...(photoPath ? { photo: { path: photoPath, status: "pending" } } : {}),
       sessionStartAt: r.sessionSnapshot?.startAt ?? null,
       createdAt: FieldValue.serverTimestamp(),
     });
@@ -52,6 +62,9 @@ export const submitReview = onCall({ region: REGION }, async (req) => {
     const sum = ((e.ratingSum as number) ?? ((e.ratingAvg as number) ?? 0) * ((e.ratingCount as number) ?? 0)) + rating;
     tx.update(expRef, { ratingCount: count, ratingSum: sum, ratingAvg: Math.round((sum / count) * 100) / 100 });
     return { ok: true, reviewId: reservationId };
+  }).then(async (res) => {
+    await addHistory(reservationId, "created", "member", undefined, photoPath ? "avec une photo à vérifier" : undefined);
+    return res;
   });
 });
 
@@ -61,19 +74,8 @@ export const adminSetReviewStatus = onCall({ region: REGION }, async (req) => {
   const parsed = z.object({ reviewId: z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/), status: z.enum(["published", "hidden"]) }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { reviewId, status } = parsed.data;
-  await db.runTransaction(async (tx) => {
-    const ref = db.doc(`reviews/${reviewId}`);
-    const rv = (await tx.get(ref)).data();
-    if (!rv) throw new HttpsError("not-found", "Avis introuvable.", { reason: "not_found" });
-    if (rv.status === status) return;
-    const expRef = db.doc(`experiences/${rv.experienceId}`);
-    const e = (await tx.get(expRef)).data() ?? {};
-    const sign = status === "hidden" ? -1 : 1;
-    const count = Math.max(0, ((e.ratingCount as number) ?? 0) + sign);
-    const sum = Math.max(0, ((e.ratingSum as number) ?? 0) + sign * (rv.rating as number));
-    tx.update(ref, { status, moderatedBy: actor.uid, moderatedAt: FieldValue.serverTimestamp() });
-    tx.update(expRef, { ratingCount: count, ratingSum: sum, ratingAvg: count ? Math.round((sum / count) * 100) / 100 : 0 });
-  });
+  const changed = await setReviewStatus(reviewId, status, actor.uid);
+  if (changed) await addHistory(reviewId, status, "team");
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: `review.${status === "hidden" ? "hide" : "publish"}`, targetType: "review", targetId: reviewId });
   return { ok: true };
 });
