@@ -583,7 +583,11 @@
     "profession": "المهنة",
     "bio": "تقديم",
     "visibility": "ما يراه المشاركون الآخرون: اسمك وصورتك واهتماماتك فقط. لا يرون أبداً اسم عائلتك أو عمرك أو هاتفك أو بريدك.",
-    "memberSince": "عضو منذ {date}"
+    "memberSince": "عضو منذ {date}",
+    "district": "الحي",
+    "favoriteCategories": "العوالم المفضلة",
+    "sportLevel": "المستوى الرياضي",
+    "agePreference": "سن المجموعة"
   },
   "preferences": {
     "title": "التفضيلات",
@@ -672,7 +676,18 @@
     },
     "saving": "جارٍ الحفظ…",
     "saveError": "تعذر الحفظ. تحقق من المعلومات وأعد المحاولة.",
-    "photoUploadError": "تعذر إرسال الصورة، لكن ملفك محفوظ."
+    "photoUploadError": "تعذر إرسال الصورة، لكن ملفك محفوظ.",
+    "district": "حيّك (اختياري)",
+    "districtPlaceholder": "المعاريف، غوتييه، أنفا…",
+    "favoriteCategories": "عوالمك المفضلة (اختياري)",
+    "sportLevel": "مستواك الرياضي (اختياري)",
+    "sportLevelNone": "غير محدد",
+    "sportLevel_beginner": "مبتدئ",
+    "sportLevel_intermediate": "متوسط",
+    "sportLevel_advanced": "متمرّس",
+    "agePreference": "في مجموعتك، تفضّل…",
+    "agePreference_any": "لا يهم السن",
+    "agePreference_similar": "أشخاصاً من سني (إن أمكن)"
   },
   "testPayment": {
     "bannerTitle": "دفع تجريبي",
@@ -1273,5 +1288,9 @@
     "demo": "عرض تجريبي: لا يُحفظ أي شيء.",
     "error": "تعذّر ذلك. أعد المحاولة.",
     "privacy": "لا نشارك أبداً معلومات الاتصال الخاصة بك. لأي مشكلة مع شخص ما، راسل الفريق من صفحة الاتصال."
+  },
+  "forYou": {
+    "title": "لك",
+    "subtitle": "حسب عوالمك المفضلة واهتماماتك وحيّك."
   }
 }

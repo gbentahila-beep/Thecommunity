@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  AGE_PREFERENCES,
   BIO_MAX,
   INTERESTS,
   profileAboutSchema,
@@ -9,6 +10,7 @@ import {
   profileInterestsSchema,
   SOCIAL_GOALS,
   SPOKEN_LANGUAGES,
+  SPORT_LEVELS,
   type ProfileInput,
 } from "@thecommunity/shared";
 import { Camera, Check, Info, X } from "lucide-react";
@@ -42,6 +44,10 @@ const EMPTY: Values = {
   socialGoals: [],
   profession: "",
   bio: "",
+  district: "",
+  favoriteCategories: [],
+  sportLevel: undefined,
+  agePreference: "any",
 };
 
 const inputClass =
@@ -49,11 +55,14 @@ const inputClass =
 
 export function Questionnaire({
   cities,
+  categories = [],
   initial,
   editing,
   uid,
 }: {
   cities: CityOption[];
+  /** Étape 30 : univers proposés pour « vos univers préférés ». */
+  categories?: { id: string; name: string }[];
   initial?: Partial<Values>;
   editing: boolean;
   /** Présent en mode Firebase : les réponses sont enregistrées dans le compte. */
@@ -108,7 +117,7 @@ export function Questionnaire({
     save(next, step);
   };
 
-  const toggle = (key: "languages" | "interests" | "socialGoals", item: string) => {
+  const toggle = (key: "languages" | "interests" | "socialGoals" | "favoriteCategories", item: string) => {
     const list = values[key] as string[];
     set(key, (list.includes(item) ? list.filter((x) => x !== item) : [...list, item]) as never);
   };
@@ -360,6 +369,43 @@ export function Questionnaire({
               {...aria("bio")}
             />
             {err("bio")}
+          </div>
+          {/* Étape 30 : préférences facultatives (suggestions « Pour vous », composition des groupes). */}
+          <div>
+            <label htmlFor="f-district" className="mb-1.5 block text-sm font-medium">{t("district")}</label>
+            <input className={`${inputClass} ${border("district")}`} id="f-district" value={values.district ?? ""} maxLength={60} placeholder={t("districtPlaceholder")} onChange={(e) => set("district", e.target.value)} {...aria("district")} />
+            {err("district")}
+          </div>
+          {categories.length > 0 && (
+            <fieldset {...aria("favoriteCategories")}>
+              <legend className="mb-2 text-sm font-medium">{t("favoriteCategories")}</legend>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((c) => (
+                  <Chip key={c.id} selected={(values.favoriteCategories ?? []).includes(c.id)} onClick={() => toggle("favoriteCategories", c.id)}>
+                    {c.name}
+                  </Chip>
+                ))}
+              </div>
+              {err("favoriteCategories")}
+            </fieldset>
+          )}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="f-sportLevel" className="mb-1.5 block text-sm font-medium">{t("sportLevel")}</label>
+              <select id="f-sportLevel" className={`${inputClass} ${border("sportLevel")}`} value={values.sportLevel ?? ""} onChange={(e) => set("sportLevel", (e.target.value || undefined) as Values["sportLevel"])}>
+                <option value="">{t("sportLevelNone")}</option>
+                {SPORT_LEVELS.map((l) => <option key={l} value={l}>{t(`sportLevel_${l}`)}</option>)}
+              </select>
+            </div>
+            <fieldset>
+              <legend className="mb-1.5 block text-sm font-medium">{t("agePreference")}</legend>
+              {AGE_PREFERENCES.map((a) => (
+                <label key={a} className="flex items-center gap-2 py-1 text-sm">
+                  <input type="radio" name="agePreference" value={a} checked={(values.agePreference ?? "any") === a} onChange={() => set("agePreference", a)} className="size-4 accent-plum-900" />
+                  {t(`agePreference_${a}`)}
+                </label>
+              ))}
+            </fieldset>
           </div>
           {!uid && (
             <p className="flex items-start gap-2 rounded-2xl bg-plum-50 p-3.5 text-sm text-plum-900">

@@ -123,6 +123,21 @@ const put = (path, fields) => fetch(doc(path), { method: 'PATCH', headers: { ...
   assert(await visible(ma.getByTestId('meet-avoided'), 20000), 'Chama : « ne plus être réunie »');
   assert(await until(async () => (await fsGet(`avoids/${chama.uid}`))?.fields?.uids?.arrayValue?.values?.[0]?.stringValue === amal.uid), 'Firestore : demande privée enregistrée');
 
+  // 5. Étape 30 — « Pour vous » : univers préféré « Jeux », hors activités déjà réservées
+  await fetch(doc(`users/${amal.uid}`) + '?updateMask.fieldPaths=favoriteCategories&updateMask.fieldPaths=gender', { method: 'PATCH', headers: { ...OWNER, 'content-type': 'application/json' }, body: JSON.stringify({ fields: { favoriteCategories: { arrayValue: { values: [str('play')] } }, gender: str('female') } }) });
+  globalThis.__page = pa;
+  await pa.goto(base + '/experiences', { waitUntil: 'load' });
+  const fy = pa.getByTestId('for-you');
+  assert(await visible(fy, 20000) && await fy.getByRole('link').count() > 0, '« Pour vous » sur le catalogue (personne connectée)');
+  const links = await fy.getByRole('link').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
+  const play = new Set(['/experiences/escape-game-en-equipe-maarif', '/experiences/quiz-blind-test-gauthier', '/experiences/soiree-jeux-de-societe-maarif', '/experiences/karaoke-entre-inconnus-gauthier', '/experiences/paintball-entre-inconnus-bouskoura']);
+  assert(links.some((h) => play.has(h)), `« Pour vous » : des jeux en tête (${links.join(', ')})`);
+  await pa.goto(base + '/', { waitUntil: 'load' });
+  assert(await visible(pa.getByTestId('for-you'), 20000), '« Pour vous » sur l\'accueil');
+  const anon = await (await b.newContext()).newPage();
+  await anon.goto(base + '/experiences', { waitUntil: 'networkidle' });
+  assert(!(await anon.getByTestId('for-you').count()), 'rien pour une personne non connectée');
+
   assert(errs.length === 0, 'aucune erreur navigateur' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();
   console.log('TOUT EST OK');

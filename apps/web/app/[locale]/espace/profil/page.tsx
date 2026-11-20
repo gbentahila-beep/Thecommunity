@@ -3,7 +3,7 @@ import { Eye, Pencil } from "lucide-react";
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { getCity } from "@/lib/data";
+import { getCategories, getCity } from "@/lib/data";
 import { getMemberSpace } from "@/lib/data/member";
 import { formatCalendarDate, formatLongDate } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
@@ -37,7 +37,8 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
   setRequestLocale(localeParam);
   const [t, tl, locale, space] = await Promise.all([getTranslations("profilePage"), getTranslations("labels"), getLocale(), getMemberSpace()]);
   const p = space.profile;
-  const city = await getCity(p.cityId);
+  const [city, cats] = await Promise.all([getCity(p.cityId), getCategories()]);
+  const t2 = await getTranslations("onboarding");
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-center gap-4">
@@ -76,6 +77,10 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
           <Row label={t("languages")}><Chips items={p.languages.map((l) => tl(`languages.${l}`))} /></Row>
           <Row label={t("interests")}><Chips items={p.interests.map((i) => tl(`interests.${i}`))} /></Row>
           <Row label={t("goals")}><Chips items={p.socialGoals.map((g) => tl(`goals.${g}`))} /></Row>
+          <Row label={t("favoriteCategories")}><Chips items={(p.favoriteCategories ?? []).map((c) => { const k = cats.find((x) => x.id === c); return k ? tr(k.shortName, locale) : c; })} /></Row>
+          <Row label={t("district")}>{p.district}</Row>
+          <Row label={t("sportLevel")}>{p.sportLevel ? t2(`sportLevel_${p.sportLevel}`) : ""}</Row>
+          <Row label={t("agePreference")}>{t2(`agePreference_${p.agePreference ?? "any"}`)}</Row>
         </dl>
       </section>
 

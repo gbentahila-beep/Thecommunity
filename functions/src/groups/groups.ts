@@ -109,6 +109,9 @@ export const adminProposeGroups = onCall({ region: REGION, timeoutSeconds: 120 }
     gender: p.user.gender,
     languages: p.languages,
     interests: (p.user.interests ?? []) as string[],
+    // Étape 30 : préférence d'âge (souple) et niveau sportif déclaré (activités physiques seulement).
+    agePreference: p.user.agePreference === "similar" ? "similar" : "any",
+    sportLevel: e.physicalActivity === true && typeof p.user.sportLevel === "string" ? ({ beginner: 1, intermediate: 2, advanced: 3 } as Record<string, number>)[p.user.sportLevel] ?? null : null,
     // 18a : réponses au questionnaire de l'expérience (niveau, allure, envies…).
     ...(p.reservation.questionnaire?.answers ? { answers: p.reservation.questionnaire.answers as Record<string, number> } : {}),
   }));

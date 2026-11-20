@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AutoSubmitSelect, FiltersPanel } from "@/components/catalog-filters";
 import { CategoryChips } from "@/components/category-chips";
 import { ExperienceCard } from "@/components/experience-card";
+import { ForYou } from "@/components/for-you";
 import { PageShell, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getCatalog, getCategories, getPublishedExperiences, type WhenFilter } from "@/lib/data";
@@ -89,6 +90,8 @@ export default async function CatalogPage({ params, searchParams }: PageProps<"/
         <SectionHeading as="h1" title={filters.q ? tf("resultsFor", { q: filters.q }) : tc("title")} />
         <p className="mt-2 text-muted">{tc("subtitle")}</p>
       </div>
+
+      {!filters.q && n === 0 && !category && <ForYou />}
 
       <form action={`${prefix}/experiences`} method="get" className="space-y-5" data-testid="catalog-form">
         {category && <input type="hidden" name="categorie" value={category} />}

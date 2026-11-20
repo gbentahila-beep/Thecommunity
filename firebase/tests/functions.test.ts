@@ -77,6 +77,14 @@ describe("inscription et profil", () => {
     const data = (await adminDb(admin).doc(`users/${uid}`).get()).data();
     expect(data).toMatchObject({ firstName: "Rita", onboardingCompleted: true, role: "user", interests: ["gastronomy", "art", "music"] });
   });
+  it("30 : préférences facultatives enregistrées (quartier, univers, niveau, âge) ; valeurs inconnues refusées", async () => {
+    await call("completeProfile")({ ...profile, district: "Maârif", favoriteCategories: ["eat", "play"], sportLevel: "beginner", agePreference: "similar" });
+    expect((await adminDb(admin).doc(`users/${uid}`).get()).data()).toMatchObject({ district: "Maârif", favoriteCategories: ["eat", "play"], sportLevel: "beginner", agePreference: "similar" });
+    expect(await errorCode(call("completeProfile")({ ...profile, sportLevel: "pro" }))).toBe("functions/invalid-argument");
+    expect(await errorCode(call("completeProfile")({ ...profile, favoriteCategories: ["eat", "play", "move", "create", "discover", "meet"] }))).toBe("functions/invalid-argument");
+    await call("completeProfile")(profile);
+    expect((await adminDb(admin).doc(`users/${uid}`).get()).data()).toMatchObject({ favoriteCategories: [], agePreference: "any", sportLevel: null });
+  });
   it("le genre est facultatif : absent ou null accepté", async () => {
     expect((await call("completeProfile")({ ...profile, gender: null })).data).toEqual({ ok: true });
     expect((await call("completeProfile")({ ...profile, gender: undefined })).data).toEqual({ ok: true });

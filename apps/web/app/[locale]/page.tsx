@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CategoryChips } from "@/components/category-chips";
 import { CityMenu } from "@/components/city-menu";
 import { ExperienceCard } from "@/components/experience-card";
+import { ForYou } from "@/components/for-you";
 import { HomeFaq } from "@/components/home/home-faq";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { ReviewsShowcase } from "@/components/home/reviews-showcase";
@@ -208,6 +209,9 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           <CityMenu />
         </div>
         <CategoryChips hrefFor={(id) => (id ? `/${DEFAULT_CITY}/${id}` : "/experiences")} />
+        <div className="mt-8 empty:hidden">
+          <ForYou />
+        </div>
       </PageShell>
 
       {home.sections.filter((x) => x.enabled).map((x) => sectionsById[x.id])}

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { composeGroups, groupWarnings, pairKey, type MatchPerson } from "./matching";
 import { inviteSchema, meetAgainSchema, meetWindowOpen, otherOf } from "./meet";
+import { recommendFor } from "./recommend";
 
 const person = (uid: string): MatchPerson => ({ uid, seats: 1, age: 30, gender: "undisclosed", languages: ["fr"], interests: [] });
 
@@ -31,5 +32,39 @@ describe("« Mes rencontres » (31)", () => {
       expect(g.includes("u2") && g.includes("u3")).toBe(false);
     }
     expect(groupWarnings([person("u0"), person("u1")], cfg, { avoidPairs: avoid })).toContain("avoid_pair");
+  });
+});
+
+describe("composition et profil (30)", () => {
+  const cfg = { minSize: 3, targetSize: 3, maxSize: 3 };
+  it("préférence « personnes de mon âge » : les âges sont regroupés", () => {
+    const ages = [22, 23, 24, 40, 41, 42];
+    const people = ages.map((age, i) => ({ ...person(`u${i}`), age, agePreference: "similar" as const }));
+    const groups = composeGroups(people, cfg);
+    for (const g of groups) {
+      const a = g.map((uid) => people.find((p) => p.uid === uid)!.age!);
+      expect(Math.max(...a) - Math.min(...a)).toBeLessThanOrEqual(4);
+    }
+  });
+  it("niveau sportif : débutants et confirmés séparés quand c'est possible", () => {
+    const levels = [1, 1, 1, 3, 3, 3];
+    const people = levels.map((sportLevel, i) => ({ ...person(`u${i}`), sportLevel }));
+    for (const g of composeGroups(people, cfg)) {
+      const l = g.map((uid) => people.find((p) => p.uid === uid)!.sportLevel!);
+      expect(Math.max(...l) - Math.min(...l)).toBe(0);
+    }
+  });
+});
+
+describe("suggestions « Pour vous » (30)", () => {
+  const s = (id: string, categoryId: string, o: Record<string, unknown> = {}) =>
+    ({ id: `s-${id}`, experienceId: id, categoryId, startAt: `2026-12-0${id.length}T10:00:00Z`, status: "published", capacity: 10, seatsConfirmed: 0, seatsHeld: 0, experience: { id, categoryId, district: "Maarif", ...o } }) as never;
+  it("univers préférés d'abord, puis centres d'intérêt ; jamais une activité réservée aux femmes pour un homme", () => {
+    const list = [s("a", "eat"), s("bb", "move"), s("ccc", "play"), s("dddd", "move", { audience: "women" })];
+    const r = recommendFor({ favoriteCategories: ["play"], interests: ["sport"], gender: "male" }, list);
+    expect(r.map((x: { experienceId: string }) => x.experienceId)).toEqual(["ccc", "bb"]);
+    const her = recommendFor({ favoriteCategories: ["play"], interests: ["sport"], gender: "female" }, list);
+    expect(her.map((x: { experienceId: string }) => x.experienceId)).toContain("dddd");
+    expect(recommendFor({ interests: ["sport"] }, list, { exclude: new Set(["bb"]) }).map((x: { experienceId: string }) => x.experienceId)).toEqual([]);
   });
 });

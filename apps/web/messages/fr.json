@@ -583,7 +583,11 @@
     "profession": "Profession",
     "bio": "Présentation",
     "visibility": "Ce que voient les autres participants : votre prénom, votre photo et vos centres d'intérêt. Jamais votre nom, âge, téléphone ou e-mail.",
-    "memberSince": "Membre depuis {date}"
+    "memberSince": "Membre depuis {date}",
+    "district": "Quartier",
+    "favoriteCategories": "Univers préférés",
+    "sportLevel": "Niveau sportif",
+    "agePreference": "Âge du groupe"
   },
   "preferences": {
     "title": "Préférences",
@@ -672,7 +676,18 @@
     },
     "saving": "Enregistrement…",
     "saveError": "Enregistrement impossible. Vérifiez les informations et réessayez.",
-    "photoUploadError": "La photo n'a pas pu être envoyée ; votre profil est tout de même enregistré."
+    "photoUploadError": "La photo n'a pas pu être envoyée ; votre profil est tout de même enregistré.",
+    "district": "Votre quartier (facultatif)",
+    "districtPlaceholder": "Maarif, Gauthier, Anfa…",
+    "favoriteCategories": "Vos univers préférés (facultatif)",
+    "sportLevel": "Votre niveau sportif (facultatif)",
+    "sportLevelNone": "Non précisé",
+    "sportLevel_beginner": "Débutant·e",
+    "sportLevel_intermediate": "Intermédiaire",
+    "sportLevel_advanced": "Confirmé·e",
+    "agePreference": "Dans votre groupe, plutôt…",
+    "agePreference_any": "Peu importe l'âge",
+    "agePreference_similar": "Des personnes de mon âge (si possible)"
   },
   "testPayment": {
     "bannerTitle": "Paiement de TEST",
@@ -1273,5 +1288,9 @@
     "demo": "Démonstration : rien n'est enregistré.",
     "error": "Action impossible. Réessayez.",
     "privacy": "Nous ne partageons jamais vos coordonnées. Pour un souci avec une personne, écrivez à l'équipe depuis la page Contact."
+  },
+  "forYou": {
+    "title": "Pour vous",
+    "subtitle": "D'après vos univers préférés, vos centres d'intérêt et votre quartier."
   }
 }

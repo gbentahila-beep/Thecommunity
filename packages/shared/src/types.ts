@@ -261,6 +261,11 @@ export type UserProfile = {
   languages: SpokenLanguage[];
   interests: Interest[];
   socialGoals: SocialGoal[];
+  /** Étape 30 (facultatif). */
+  district?: string | null;
+  favoriteCategories?: string[];
+  sportLevel?: "beginner" | "intermediate" | "advanced" | null;
+  agePreference?: "any" | "similar";
   profession?: string;
   bio?: string;
   locale: Locale;

@@ -5,16 +5,12 @@ import { ExperienceCard } from "@/components/experience-card";
 import { ReservationCard } from "@/components/account/reservation-card";
 import { PrimaryLink } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { isMemberActive } from "@thecommunity/shared";
+import { isMemberActive, recommendFor } from "@thecommunity/shared";
 import { getMembershipPlan, getNextSessionPerExperience } from "@/lib/data";
 import { getMemberSpace } from "@/lib/data/member";
 import { formatLongDate, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 
-const INTEREST_TO_CATEGORY: Record<string, string[]> = {
-  gastronomy: ["eat"], sport: ["move"], wellness: ["move"], games: ["play"], art: ["create"],
-  culture: ["create", "discover"], music: ["discover", "play"], nightlife: ["discover"], discovery: ["discover"], travel: ["discover"],
-};
 
 export default async function DashboardPage({ params }: PageProps<"/[locale]/espace">) {
   const { locale } = await params;
@@ -25,10 +21,8 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
   const next = space.upcoming[0];
   const days = next ? Math.max(0, Math.floor((new Date(next.sessionSnapshot.startAt).getTime() - space.now.getTime()) / 86_400_000)) : 0;
   const bookedExperienceIds = new Set(space.reservations.map((r) => r.experienceId));
-  const wanted = new Set(space.profile.interests.flatMap((i) => INTEREST_TO_CATEGORY[i] ?? []));
-  const recommended = (await getNextSessionPerExperience({ cityId: space.profile.cityId }))
-    .filter((s) => !bookedExperienceIds.has(s.experienceId) && wanted.has(s.categoryId) && s.status !== "full")
-    .slice(0, 3);
+  // Étape 30 : univers préférés, centres d'intérêt, quartier ; jamais déjà réservé ni réservé aux femmes pour qui ne l'est pas.
+  const recommended = recommendFor(space.profile, await getNextSessionPerExperience({ cityId: space.profile.cityId }), { exclude: bookedExperienceIds, limit: 3 });
 
   return (
     <div className="space-y-10">

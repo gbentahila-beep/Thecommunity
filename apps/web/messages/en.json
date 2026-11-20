@@ -583,7 +583,11 @@
     "profession": "Profession",
     "bio": "About me",
     "visibility": "What other participants see: your first name, photo and interests. Never your surname, age, phone or email.",
-    "memberSince": "Member since {date}"
+    "memberSince": "Member since {date}",
+    "district": "Neighbourhood",
+    "favoriteCategories": "Favourite universes",
+    "sportLevel": "Sports level",
+    "agePreference": "Group age"
   },
   "preferences": {
     "title": "Preferences",
@@ -672,7 +676,18 @@
     },
     "saving": "Saving…",
     "saveError": "Couldn't save. Please check the details and try again.",
-    "photoUploadError": "The photo couldn't be uploaded; your profile has still been saved."
+    "photoUploadError": "The photo couldn't be uploaded; your profile has still been saved.",
+    "district": "Your neighbourhood (optional)",
+    "districtPlaceholder": "Maarif, Gauthier, Anfa…",
+    "favoriteCategories": "Your favourite universes (optional)",
+    "sportLevel": "Your sports level (optional)",
+    "sportLevelNone": "Not specified",
+    "sportLevel_beginner": "Beginner",
+    "sportLevel_intermediate": "Intermediate",
+    "sportLevel_advanced": "Advanced",
+    "agePreference": "In your group, preferably…",
+    "agePreference_any": "Any age",
+    "agePreference_similar": "People my age (if possible)"
   },
   "testPayment": {
     "bannerTitle": "TEST payment",
@@ -1273,5 +1288,9 @@
     "demo": "Demo: nothing is saved.",
     "error": "Couldn't do that. Please try again.",
     "privacy": "We never share your contact details. For an issue with someone, write to the team from the Contact page."
+  },
+  "forYou": {
+    "title": "For you",
+    "subtitle": "Based on your favourite universes, interests and neighbourhood."
   }
 }

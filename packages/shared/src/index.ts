@@ -26,3 +26,4 @@ export * from "./home";
 export * from "./review-moderation";
 export * from "./meeting";
 export * from "./meet";
+export * from "./recommend";

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { INTERESTS, SOCIAL_GOALS } from "./constants";
+import { CATEGORY_ID_PATTERN, INTERESTS, SOCIAL_GOALS } from "./constants";
 import type { Interest, SocialGoal, SpokenLanguage } from "./types";
 
 export const SPOKEN_LANGUAGES: readonly SpokenLanguage[] = ["fr", "ar", "darija", "en", "es"];
@@ -62,9 +62,19 @@ export const profileGoalsSchema = z.object({
   socialGoals: z.array(z.enum(SOCIAL_GOALS as [SocialGoal, ...SocialGoal[]])).min(1, "pickOne"),
 });
 
+export const SPORT_LEVELS = ["beginner", "intermediate", "advanced"] as const;
+export type SportLevel = (typeof SPORT_LEVELS)[number];
+export const AGE_PREFERENCES = ["any", "similar"] as const;
+export type AgePreference = (typeof AGE_PREFERENCES)[number];
+
 export const profileAboutSchema = z.object({
   profession: z.string().trim().max(80, "tooLong").optional().or(z.literal("")),
   bio: z.string().trim().max(BIO_MAX, "tooLong").optional().or(z.literal("")),
+  /** Étape 30 (facultatif) : quartier, univers préférés, niveau sportif, préférence d'âge pour son groupe (souple). */
+  district: z.string().trim().max(60, "tooLong").optional().or(z.literal("")),
+  favoriteCategories: z.array(z.string().regex(CATEGORY_ID_PATTERN)).max(5, "tooMany").default([]),
+  sportLevel: z.enum(SPORT_LEVELS).nullish(),
+  agePreference: z.enum(AGE_PREFERENCES).default("any"),
 });
 
 export const profileSchema = profileIdentitySchema

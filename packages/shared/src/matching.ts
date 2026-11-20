@@ -25,6 +25,9 @@ export type MatchPerson = {
   interests: string[];
   /** Réponses au questionnaire de l'expérience (numéro de la réponse par question). */
   answers?: Record<string, number>;
+  /** Étape 30 : « plutôt des personnes de mon âge » (préférence souple) ; niveau sportif 1 à 3 (activités physiques). */
+  agePreference?: "any" | "similar";
+  sportLevel?: number | null;
 };
 /** Question du questionnaire utile au calcul (18a). */
 export type MatchQuestion = { id: string; kind: QuestionKind; match: QuestionMatch };
@@ -67,7 +70,13 @@ export function groupCost(g: MatchPerson[], c: MatchConfig, o: MatchOptions = {}
     for (let i = 0; i < g.length; i++) for (let j = i + 1; j < g.length; j++) if (o.avoidPairs.has(pairKey(g[i]!.uid, g[j]!.uid))) cost += 2000;
   }
   const ages = g.map((p) => p.age).filter((a): a is number => a !== null);
-  if (ages.length > 1) cost += 2 * Math.max(0, Math.max(...ages) - Math.min(...ages) - 12);
+  if (ages.length > 1) {
+    // Étape 30 : si quelqu'un préfère des personnes de son âge, l'écart toléré se resserre.
+    const similar = g.some((p) => p.agePreference === "similar");
+    cost += (similar ? 4 : 2) * Math.max(0, Math.max(...ages) - Math.min(...ages) - (similar ? 8 : 12));
+  }
+  const levels = g.map((p) => p.sportLevel).filter((l): l is number => typeof l === "number");
+  if (levels.length > 1) cost += 15 * Math.max(0, Math.max(...levels) - Math.min(...levels) - 1);
   const women = g.filter((p) => p.gender === "female").reduce((a, p) => a + p.seats, 0);
   const men = g.filter((p) => p.gender === "male").reduce((a, p) => a + p.seats, 0);
   if (women + men >= 4) cost += 3 * Math.max(0, Math.abs(women - men) - 2);

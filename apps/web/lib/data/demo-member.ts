@@ -19,6 +19,11 @@ export const DEMO_MEMBER: UserProfile = {
   languages: ["fr", "darija", "en"],
   interests: ["gastronomy", "culture", "wellness", "music", "travel"],
   socialGoals: ["meet_new_people", "discover_activities"],
+  // Étape 30 : préférences facultatives.
+  district: "Maârif",
+  favoriteCategories: ["eat", "create"],
+  sportLevel: "beginner",
+  agePreference: "any",
   profession: "Architecte d'intérieur",
   bio: "Nouvelle à Casablanca depuis un an, j'aime les bonnes tables, le yoga du dimanche et les expos.",
   locale: "fr",

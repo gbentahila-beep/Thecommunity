@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { Questionnaire } from "@/components/onboarding/questionnaire";
 import { PageShell } from "@/components/ui";
-import { getCities } from "@/lib/data";
+import { getCategories, getCities } from "@/lib/data";
 import { fsMemberData } from "@/lib/data/firestore-source";
 import { getMemberSpace, requireMember } from "@/lib/data/member";
 import { adminAuth } from "@/lib/firebase/admin";
@@ -15,9 +15,10 @@ export default async function OnboardingPage({ params, searchParams }: PageProps
   const { locale: localeParam } = await params;
   setRequestLocale(localeParam);
   const editing = (await searchParams).edition === "1";
-  const [t, locale, cities] = await Promise.all([getTranslations("onboarding"), getLocale(), getCities()]);
-  const pick = ({ firstName, lastName, phone, birthDate, cityId, gender, languages, interests, socialGoals, profession, bio }: Awaited<ReturnType<typeof getMemberSpace>>["profile"]) => ({
+  const [t, locale, cities, categories] = await Promise.all([getTranslations("onboarding"), getLocale(), getCities(), getCategories()]);
+  const pick = ({ firstName, lastName, phone, birthDate, cityId, gender, languages, interests, socialGoals, profession, bio, district, favoriteCategories, sportLevel, agePreference }: Awaited<ReturnType<typeof getMemberSpace>>["profile"]) => ({
     firstName, lastName, phone: phone ?? "", birthDate, cityId, gender: gender ?? undefined, languages, interests, socialGoals, profession: profession ?? "", bio: bio ?? "",
+    district: district ?? "", favoriteCategories: favoriteCategories ?? [], sportLevel: sportLevel ?? undefined, agePreference: agePreference ?? "any",
   });
   let uid: string | undefined;
   let initial: ReturnType<typeof pick> | undefined;
@@ -44,6 +45,7 @@ export default async function OnboardingPage({ params, searchParams }: PageProps
         uid={uid}
         initial={initial}
         cities={cities.map((c) => ({ id: c.id, name: tr(c.name, locale), isActive: c.isActive }))}
+        categories={categories.map((c) => ({ id: c.id, name: tr(c.shortName, locale) }))}
       />
     </PageShell>
   );
