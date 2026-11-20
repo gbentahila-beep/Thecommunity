@@ -1,4 +1,4 @@
-import { canReview, DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor, ticketCode, ticketPath, type BookingPreferences } from "@thecommunity/shared";
+import { canReview, DEFAULT_CANCELLATION_POLICY, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -69,7 +69,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const total = formatMoney({ amount: r.pricing.total, currency: r.pricing.currency }, lang);
   // Étape 11d : billet avec QR code dès la confirmation (ouvre la fiche du billet dans le back-office).
   const showTicket = r.status === "confirmed" && isUpcoming;
-  const qr = showTicket ? await qrSvg(`${SITE_URL}${ticketPath(r.id)}`) : null;
+  const qr = showTicket ? await qrSvg(`${SITE_URL}${ticketScanPath(r.id)}`) : null;
 
   return (
     <div className="space-y-6">

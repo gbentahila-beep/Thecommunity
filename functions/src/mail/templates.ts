@@ -196,3 +196,18 @@ export function transferExpiredMail(o: { locale: string; firstName: string; titl
   }[l];
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
 }
+
+/**
+ * Étape 20 : e-mails aux organisateurs (espace /pro, en français) : décision sur le compte ou sur une activité.
+ */
+export function organizerMail(o: { heading: string; paragraphs: string[]; ctaLabel: string; path: string }) {
+  return {
+    subject: o.heading,
+    ...layout("fr", {
+      heading: o.heading,
+      paragraphs: o.paragraphs,
+      cta: { label: o.ctaLabel, href: `${SITE_URL}${o.path}` },
+      footer: "Vous recevez cet e-mail car vous avez un compte organisateur sur The Host Club.",
+    }),
+  };
+}

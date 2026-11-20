@@ -8,6 +8,7 @@ export const metadata = { title: "Expériences" };
 
 const FILTERS = [
   { key: "current", label: "En cours" },
+  { key: "review", label: "À valider (organisateurs)" },
   { key: "archived", label: "Archivées" },
 ] as const;
 
@@ -15,17 +16,22 @@ const STATUS: Record<string, { label: string; tone: "green" | "gray" | "amber" }
   published: { label: "Publiée", tone: "green" },
   draft: { label: "Brouillon", tone: "gray" },
   archived: { label: "Archivée", tone: "amber" },
+  pending_review: { label: "À valider", tone: "amber" },
+  rejected: { label: "Refusée", tone: "gray" },
 };
 
 export default async function ExperiencesAdminPage({ searchParams }: PageProps<"/admin/experiences">) {
   const sp = await searchParams;
-  const filter = sp.vue === "archived" ? "archived" : "current";
+  const filter = sp.vue === "archived" ? "archived" : sp.vue === "review" ? "review" : "current";
   const d = await getAdminData();
   // Étape 19 : noms des catégories lus dans la base (catégories dynamiques).
   const catName = new Map(d.categories.map((c) => [c.id, c.name.fr]));
   const all = [...d.experiences.values()];
   const archivedCount = all.filter((e) => e.status === "archived").length;
-  const list = all.filter((e) => (filter === "archived" ? e.status === "archived" : e.status !== "archived"));
+  // Étape 20 : « À valider » = activités envoyées par un organisateur ou publiées puis modifiées par lui.
+  const toReview = (e: (typeof all)[number]) => e.status === "pending_review" || Boolean(e.reviewFlag);
+  const list = all.filter((e) => (filter === "archived" ? e.status === "archived" : filter === "review" ? toReview(e) : e.status !== "archived"));
+  const reviewCount = all.filter(toReview).length;
   return (
     <>
       <PageHeader
@@ -38,16 +44,16 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
         {FILTERS.map((f) => (
           <Link
             key={f.key}
-            href={f.key === "current" ? "/admin/experiences" : "/admin/experiences?vue=archived"}
+            href={f.key === "current" ? "/admin/experiences" : `/admin/experiences?vue=${f.key}`}
             aria-current={filter === f.key ? "page" : undefined}
             className={`rounded-full px-4 py-2 text-sm font-medium ${filter === f.key ? "bg-plum-900 text-white" : "bg-white text-ink hover:bg-cream"}`}
           >
-            {f.label}
+            {f.label}{f.key === "review" && reviewCount > 0 ? ` (${reviewCount})` : ""}
           </Link>
         ))}
       </nav>
       {list.length === 0 ? (
-        <Card><p className="text-sm text-muted">{filter === "archived" ? "Aucune expérience archivée." : "Aucune expérience : créez la première."}</p></Card>
+        <Card><p className="text-sm text-muted">{filter === "archived" ? "Aucune expérience archivée." : filter === "review" ? "Rien à valider." : "Aucune expérience : créez la première."}</p></Card>
       ) : (
       <Card>
         <Table head={["Expérience", "Univers", "Mode", "Prix", "Modèle", "Prochaines dates", "Statut", ""]} caption="Expériences">
@@ -60,13 +66,13 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
                 <td>
                   <span className="flex items-center gap-3">
                     <span className="relative size-11 shrink-0 overflow-hidden rounded-lg bg-cream-deep">{e.images[0] && <Image src={e.images[0].path} alt="" fill sizes="44px" className="object-cover" />}</span>
-                    <span><span className="block font-medium text-ink">{e.title.fr}</span><span className="text-xs text-muted">{e.district}{partner ? ` · ${partner.name}` : ""}</span></span>
+                    <span><span className="block font-medium text-ink">{e.title.fr}</span><span className="text-xs text-muted">{e.district}{partner ? ` · ${partner.name}` : ""}{e.organizerSnapshot ? ` · par ${e.organizerSnapshot.name}` : ""}</span></span>
                   </span>
                 </td>
                 <td>{catName.get(e.categoryId) ?? e.categoryId}{e.subcategoryId ? ` · ${catName.get(e.subcategoryId) ?? e.subcategoryId}` : ""}</td>
                 <td className="text-muted">{MODE_LABELS[e.bookingMode]}</td>
                 <td className="tabular-nums">{dh(e.price.amount)}</td>
-                <td className="text-muted">{eco?.model === "commission" ? `Commission ${eco.commissionPercent} %` : `Coût ${dh(eco?.costPerSeat ?? 0)}`}</td>
+                <td className="text-muted">{e.organizerId ? "Organisateur" : eco?.model === "commission" ? `Commission ${eco.commissionPercent} %` : `Coût ${dh(eco?.costPerSeat ?? 0)}`}</td>
                 <td className="tabular-nums">
                   {count > 0 ? count : (
                     <Link href={`/admin/experiences/${e.id}#dates`} className="text-xs font-semibold text-amber-800 underline">
@@ -74,7 +80,7 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
                     </Link>
                   )}
                 </td>
-                <td><Badge tone={(STATUS[e.status] ?? STATUS.draft!).tone}>{(STATUS[e.status] ?? STATUS.draft!).label}</Badge></td>
+                <td><Badge tone={(STATUS[e.status] ?? STATUS.draft!).tone}>{(STATUS[e.status] ?? STATUS.draft!).label}</Badge>{e.reviewFlag ? <span className="ms-1"><Badge tone="amber">Modifiée</Badge></span> : null}</td>
                 <td className="whitespace-nowrap text-end">
                   <Link href={`/admin/experiences/${e.id}`} className="font-medium text-plum-900">Modifier</Link> ·{" "}
                   {e.status === "published" ? <Link href={`/experiences/${e.slug}`} className="font-medium text-plum-900">Voir</Link> : <span className="text-muted">Hors ligne</span>}

@@ -119,9 +119,10 @@ export function ExperienceForm({
    * Étape 20 : formulaire de l'espace organisateur. Mêmes champs, sans le modèle économique, les lieux partenaires
    * ni les avantages membres ; photos dans le dossier public de l'organisateur ; « Envoyer pour validation ».
    */
-  organizer?: { orgId: string; currentStatus?: string };
+  organizer?: { orgId: string; currentStatus?: string; /** L'équipe modifie l'activité d'un organisateur (back-office). */ asTeam?: boolean };
 }) {
   const pro = Boolean(organizer);
+  const proSelf = Boolean(organizer && !organizer.asTeam);
   const [v, setV] = useState(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [result, setResult] = useState<ExperienceInput | null>(null);
@@ -155,14 +156,16 @@ export function ExperienceForm({
       groupMin: grouped ? opt(v.groupMin) : undefined,
       groupTarget: grouped ? opt(v.groupTarget) : undefined,
       groupMax: grouped ? opt(v.groupMax) : undefined,
-      costPerSeatDh: v.economicsModel === "own" ? opt(v.costPerSeatDh) : undefined,
-      commissionPercent: v.economicsModel === "commission" ? opt(v.commissionPercent) : undefined,
-      onSiteCommissionPercent: v.pricingModel !== "online_only" ? opt(v.onSiteCommissionPercent) : undefined,
+      // Activité d'un organisateur : modèle économique géré par le contrat (commission), jamais saisi ici.
+      ...(pro ? { economicsModel: "own" as const, partnerId: "", pricingModel: "online_only" as const } : {}),
+      costPerSeatDh: pro ? 0 : v.economicsModel === "own" ? opt(v.costPerSeatDh) : undefined,
+      commissionPercent: !pro && v.economicsModel === "commission" ? opt(v.commissionPercent) : undefined,
+      onSiteCommissionPercent: !pro && v.pricingModel !== "online_only" ? opt(v.onSiteCommissionPercent) : undefined,
       minAge: opt(v.minAge),
       level: v.level || undefined,
       proposalId: v.proposalId || undefined,
-      memberPriceDh: opt(v.memberPriceDh),
-      partnerPriceDh: v.pricingModel === "fixed_partner" ? opt(v.partnerPriceDh) : undefined,
+      memberPriceDh: pro ? undefined : opt(v.memberPriceDh),
+      partnerPriceDh: !pro && v.pricingModel === "fixed_partner" ? opt(v.partnerPriceDh) : undefined,
       partnerDescription: "",
     });
     if (!parsed.success) {
@@ -188,7 +191,8 @@ export function ExperienceForm({
       const { db, storage, functions, auth } = firebase();
       const id = experienceId ?? doc(collection(db, "experiences")).id;
       // Organisateur : jeton rafraîchi (droits posés à la validation du compte) avant l'envoi des photos.
-      if (organizer && images.length > 0) await auth.currentUser?.getIdToken(true);
+      await auth.authStateReady();
+      if (proSelf && images.length > 0) await auth.currentUser?.getIdToken(true);
       const uploaded: { path: string; alt: string }[] = [];
       for (const [i, img] of images.entries()) {
         const ext = img.file.type === "image/png" ? "png" : img.file.type === "image/webp" ? "webp" : "jpg";
@@ -196,7 +200,7 @@ export function ExperienceForm({
         await uploadBytes(ref(storage, path), img.file, { contentType: img.file.type });
         uploaded.push({ path, alt: parsed.data.titleFr });
       }
-      const res = await httpsCallable(functions, organizer ? "organizerSaveExperience" : "adminSaveExperience")({
+      const res = await httpsCallable(functions, proSelf ? "organizerSaveExperience" : "adminSaveExperience")({
         ...(experienceId ? { experienceId } : { newId: id }),
         data: JSON.parse(JSON.stringify(parsed.data)), // retire les champs vides (undefined)
         addSessions,
@@ -321,9 +325,9 @@ export function ExperienceForm({
         <div><Label k="status">Statut</Label>
           <select {...field("status")} value={v.status} onChange={(e) => set("status", e.target.value as "draft" | "published")}>
             <option value="draft">Brouillon (non visible)</option>
-            <option value="published">{pro ? (organizer?.currentStatus === "published" ? "Publiée (reste en ligne)" : "Envoyer pour validation") : "Publiée"}</option>
+            <option value="published">{proSelf ? (organizer?.currentStatus === "published" ? "Publiée (reste en ligne)" : "Envoyer pour validation") : "Publiée"}</option>
           </select>
-          {pro && <p className="mt-1 text-xs text-muted">L&apos;équipe The Host Club relit chaque nouvelle activité avant sa publication. Une activité déjà en ligne le reste quand vous la modifiez.</p>}</div>
+          {proSelf && <p className="mt-1 text-xs text-muted">L&apos;équipe The Host Club relit chaque nouvelle activité avant sa publication. Une activité déjà en ligne le reste quand vous la modifiez.</p>}</div>
       </Section>
 
       <Section title="2. Lieu">
@@ -468,7 +472,7 @@ export function ExperienceForm({
           <p className="text-sm font-semibold text-ink sm:col-span-2">{pro ? "Payé en ligne à la réservation" : "Payé en ligne, encaissé par The Host Club"}</p>
           <div><Label k="priceDh" hint="Ce que le client paie à la réservation.">Prix par place (DH)</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
           {!pro && <div><Label k="memberPriceDh" hint="Facultatif. Vide = réduction de l'abonnement (réglée dans « Abonnement »).">Prix membre (DH)</Label><input {...field("memberPriceDh")} inputMode="decimal" value={v.memberPriceDh} onChange={(e) => set("memberPriceDh", e.target.value)} />{err("memberPriceDh")}</div>}
-          {pro && <p className="text-xs text-muted sm:col-span-2">La commission de The Host Club et le calendrier de reversement figurent dans votre contrat organisateur et dans « Finances ».</p>}
+          {proSelf && <p className="text-xs text-muted sm:col-span-2">La commission de The Host Club et le calendrier de reversement figurent dans votre contrat organisateur et dans « Finances ».</p>}
         </div>
 
         {!pro && onSiteMode && (
@@ -629,8 +633,8 @@ export function ExperienceForm({
           </p>
           <p className="mt-3 flex flex-wrap gap-4 font-medium">
             {saved.status === "published" && <Link href={`/experiences/${saved.slug}`} className="underline">Voir sur le site</Link>}
-            <Link href={pro ? "/pro/activites" : "/admin/experiences"} className="underline">{pro ? "Retour à mes activités" : "Retour aux expériences"}</Link>
-            {mode === "create" && <Link href={pro ? `/pro/activites/${saved.experienceId}` : `/admin/experiences/${saved.experienceId}`} className="underline">Continuer à modifier</Link>}
+            <Link href={proSelf ? "/pro/activites" : "/admin/experiences"} className="underline">{proSelf ? "Retour à mes activités" : "Retour aux expériences"}</Link>
+            {mode === "create" && <Link href={proSelf ? `/pro/activites/${saved.experienceId}` : `/admin/experiences/${saved.experienceId}`} className="underline">Continuer à modifier</Link>}
           </p>
         </section>
       )}

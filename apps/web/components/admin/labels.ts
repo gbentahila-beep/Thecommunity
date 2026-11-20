@@ -21,3 +21,6 @@ export const LANGUAGE_LABELS: Record<string, string> = { fr: "FR", ar: "AR", dar
 export const DIET_LABELS: Record<string, string> = {
   none: "—", vegetarian: "Végétarien", vegan: "Végan", pescatarian: "Pescétarien", gluten_free: "Sans gluten", lactose_free: "Sans lactose", other: "Autre",
 };
+
+/** Étape 20 — couleur du statut d'un compte organisateur. */
+export const ORGANIZER_STATUS_TONE: Record<string, "green" | "amber" | "red" | "gray"> = { approved: "green", pending: "amber", info_requested: "amber", rejected: "gray", suspended: "red" };

@@ -30,7 +30,11 @@ export async function requireTeamOrOrganizerOf(req: CallableRequest<unknown>, or
   const auth = requireAuth(req);
   const role = roleOf(req);
   if (role === "admin" || role === "superadmin") return { uid: auth.uid, role: role as string };
-  const o = await requireOrganizer(req, { approvedOnly: true });
+  // Ni équipe ni organisateur : même refus qu'avant l'étape 20 (on ne révèle rien).
+  const o = await requireOrganizer(req, { approvedOnly: true }).catch((e: HttpsError) => {
+    if ((e.details as { reason?: string } | undefined)?.reason === "not_organizer") throw new HttpsError("permission-denied", "Action réservée à l'équipe.");
+    throw e;
+  });
   if (!organizerId || o.orgId !== organizerId) throw new HttpsError("permission-denied", "Action réservée à l'équipe.", { reason: "not_owner" });
   return { uid: o.uid, role: "organizer" };
 }

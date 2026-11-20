@@ -454,6 +454,9 @@ export const DEMO_EXPERIENCES: Experience[] = [
     },
     categoryId: "move",
     subcategoryId: "padel",
+    // Étape 20 : activité proposée par un organisateur indépendant (démonstration).
+    organizerId: "org-club-padel-anfa",
+    organizerSnapshot: { name: "Club Padel Anfa", slug: "club-padel-anfa" },
     cityId: "casablanca",
     district: "Anfa",
     tags: ["padel", "sport", "week-end"],

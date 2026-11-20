@@ -11,6 +11,11 @@ export function ticketPath(reservationId: string): string {
   return `/admin/billets/${encodeURIComponent(reservationId)}`;
 }
 
+/** Étape 20 — adresse du QR code : redirige l'équipe, l'organisateur de l'activité ou le participant. */
+export function ticketScanPath(reservationId: string): string {
+  return `/billet/${encodeURIComponent(reservationId)}`;
+}
+
 /** Un billet ne donne accès que s'il est confirmé (ou déjà pointé présent). */
 export function ticketState(status: string): "valid" | "used" | "pending" | "void" {
   if (status === "confirmed") return "valid";

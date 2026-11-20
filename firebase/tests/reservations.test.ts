@@ -1785,3 +1785,175 @@ describe("toutes les activités (18)", () => {
     expect(issues.map((i) => i.code)).toContain("partner_insurance");
   });
 });
+
+describe("organisateurs (20)", () => {
+  let team: Client;
+  let pro: Client;
+  let other: Client;
+  let orgId = "";
+  let otherOrgId = "";
+  const application = (uid: string, name: string) => ({
+    businessName: name,
+    contactName: "Nadia Test",
+    email: "nadia@example.com",
+    phone: "+212 600 000 000",
+    cityId: "casablanca",
+    address: "12 boulevard d'Anfa, Casablanca",
+    categoryIds: ["move"],
+    description: "Club de padel avec quatre terrains couverts et des coachs diplômés pour tous les niveaux.",
+    documents: [{ path: `organizer-uploads/${uid}/documents/rc.pdf`, name: "RC.pdf" }],
+    acceptTerms: true,
+  });
+  const plan = (days: number) => {
+    const d = new Date(Date.now() + days * 86_400_000);
+    return { firstDate: d.toISOString().slice(0, 10), time: "10:00", weeks: 1, capacity: 8 };
+  };
+  const activity = {
+    titleFr: `Padel du samedi ${run}`,
+    summaryFr: "Des matchs en double, tous niveaux, au club.",
+    descriptionFr: "Quatre terrains couverts, matériel prêté, équipes équilibrées selon le niveau de chacun.",
+    categoryId: "move", cityId: "casablanca", district: "Anfa", venueName: "Club Test", address: "12 boulevard d'Anfa, Casablanca",
+    revealPolicy: "immediate", bookingMode: "individual", maxSeatsPerBooking: 2, admission: "direct", requestMessageRequired: false,
+    priceDh: 200, durationMinutes: 90, languages: ["fr"], alcoholServed: false, cancellationPolicyId: "standard-48h",
+    // Réglages réservés à l'équipe : ignorés pour un organisateur.
+    economicsModel: "own", costPerSeatDh: 999, membersOnly: true, memberPriceDh: 1,
+    status: "published",
+  };
+
+  beforeAll(async () => {
+    team = await member({ role: "admin" });
+    pro = await member();
+    other = await member();
+    await db().doc("categories/move").set({ isActive: true }, { merge: true });
+  });
+
+  it("inscription : contrat accepté, pièces dans son propre dossier, une seule demande ; refus d'un membre non vérifié", async () => {
+    const unverified = await member({ verified: false });
+    expect(await refusal(unverified.call("applyAsOrganizer", application(unverified.uid, "Club X")))).toBe("failed-precondition:email_not_verified");
+    expect(await refusal(pro.call("applyAsOrganizer", { ...application(pro.uid, "Club Padel Test"), documents: [{ path: `organizer-uploads/${other.uid}/documents/rc.pdf`, name: "x" }] }))).toBe("invalid-argument:");
+    expect(await refusal(pro.call("applyAsOrganizer", { ...application(pro.uid, "Club Padel Test"), acceptTerms: false }))).toBe("invalid-argument:");
+    const res = await pro.call("applyAsOrganizer", application(pro.uid, "Club Padel Test"));
+    orgId = String(res.organizerId);
+    expect(res.status).toBe("pending");
+    const org = (await db().doc(`organizers/${orgId}`).get()).data()!;
+    expect(org).toMatchObject({ name: "Club Padel Test", status: "pending", categoryIds: ["move"] });
+    expect(org.slug).toMatch(/^club-padel-test/);
+    const det = (await db().doc(`organizers/${orgId}/private/details`).get()).data()!;
+    expect(det.memberUids).toEqual([pro.uid]);
+    expect(det.terms.version).toBe("2026-11-20");
+    expect((await db().doc(`users/${pro.uid}`).get()).get("organizerId")).toBe(orgId);
+    expect(await refusal(pro.call("applyAsOrganizer", application(pro.uid, "Club Padel Test")))).toBe("failed-precondition:already_organizer");
+    // Pas encore validé : aucune activité possible.
+    expect(await refusal(pro.call("organizerSaveExperience", { data: { ...activity, sessions: plan(10) }, addSessions: true, images: [] }))).toBe("failed-precondition:organizer_pending");
+  });
+
+  it("décisions de l'équipe : complément (message obligatoire), renvoi, validation → droits d'organisateur", async () => {
+    expect(await refusal(pro.call("adminDecideOrganizer", { organizerId: orgId, decision: "approve" }))).toBe("permission-denied:");
+    expect(await refusal(team.call("adminDecideOrganizer", { organizerId: orgId, decision: "request_info" }))).toBe("invalid-argument:");
+    await team.call("adminDecideOrganizer", { organizerId: orgId, decision: "request_info", message: "Merci d'ajouter l'attestation d'assurance." });
+    expect((await db().doc(`organizers/${orgId}`).get()).get("status")).toBe("info_requested");
+    const notes = await db().collection(`users/${pro.uid}/notifications`).where("type", "==", "organizer_request_info").get();
+    expect(notes.size).toBe(1);
+    await pro.call("applyAsOrganizer", { ...application(pro.uid, "Club Padel Test"), documents: [{ path: `organizer-uploads/${pro.uid}/documents/rc.pdf`, name: "RC.pdf" }, { path: `organizer-uploads/${pro.uid}/documents/assurance.pdf`, name: "Assurance.pdf" }] });
+    expect((await db().doc(`organizers/${orgId}`).get()).get("status")).toBe("pending");
+    expect(await team.call("adminDecideOrganizer", { organizerId: orgId, decision: "approve" })).toMatchObject({ status: "approved" });
+    const claims = (await adminAuth(admin).getUser(pro.uid)).customClaims;
+    expect(claims).toMatchObject({ role: "organizer", orgId });
+    expect(await refusal(team.call("adminDecideOrganizer", { organizerId: orgId, decision: "approve" }))).toBe("failed-precondition:invalid_transition");
+    const history = (await db().doc(`organizers/${orgId}/private/details`).get()).get("history") as { action: string }[];
+    expect(history.map((h) => h.action)).toEqual(["submitted", "request_info", "resubmitted", "approve"]);
+  });
+
+  it("activité : envoyée pour validation (jamais publiée directement), réglages de l'équipe ignorés, dates en brouillon", async () => {
+    const res = await pro.call("organizerSaveExperience", { data: { ...activity, sessions: plan(10) }, addSessions: true, images: [] });
+    expect(res.status).toBe("pending_review");
+    const expId = String(res.experienceId);
+    const e = (await db().doc(`experiences/${expId}`).get()).data()!;
+    expect(e).toMatchObject({ status: "pending_review", organizerId: orgId, organizerSnapshot: { name: "Club Padel Test" }, membersOnly: false, memberPrice: null });
+    expect(e.pricing.model).toBe("online_only");
+    expect((await db().doc(`experiences/${expId}/private/economics`).get()).data()).toMatchObject({ model: "organizer", organizerId: orgId, costPerSeat: null, commissionPercent: null });
+    const sessions = await db().collection("sessions").where("experienceId", "==", expId).get();
+    expect(sessions.docs.map((d) => [d.get("status"), d.get("organizerId")])).toEqual([["draft", orgId]]);
+    // Photos : seulement dans son dossier public.
+    expect(await refusal(pro.call("organizerSaveExperience", { experienceId: expId, data: { ...activity, sessions: plan(10) }, addSessions: false, images: [{ path: `experiences/${expId}/x.jpg`, alt: "" }] }))).toBe("invalid-argument:");
+    // Un autre organisateur ne touche pas à cette activité.
+    const o2 = await other.call("applyAsOrganizer", application(other.uid, "Autre Club"));
+    otherOrgId = String(o2.organizerId);
+    await team.call("adminDecideOrganizer", { organizerId: otherOrgId, decision: "approve" });
+    expect(await refusal(other.call("organizerSaveExperience", { experienceId: expId, data: { ...activity, sessions: plan(10) }, addSessions: false, images: [] }))).toBe("permission-denied:not_owner");
+    // L'équipe refuse avec un message, l'organisateur corrige et renvoie, l'équipe publie.
+    expect(await refusal(team.call("adminReviewExperience", { experienceId: expId, decision: "reject" }))).toBe("invalid-argument:");
+    await team.call("adminReviewExperience", { experienceId: expId, decision: "reject", message: "Précisez le niveau attendu." });
+    expect((await db().doc(`experiences/${expId}`).get()).data()).toMatchObject({ status: "rejected", rejectionMessage: "Précisez le niveau attendu." });
+    await pro.call("organizerSaveExperience", { experienceId: expId, data: { ...activity, level: "all", sessions: plan(10) }, addSessions: false, images: [] });
+    expect((await db().doc(`experiences/${expId}`).get()).get("status")).toBe("pending_review");
+    await team.call("adminReviewExperience", { experienceId: expId, decision: "publish" });
+    expect((await db().doc(`experiences/${expId}`).get()).get("status")).toBe("published");
+    const after = await db().collection("sessions").where("experienceId", "==", expId).get();
+    expect(after.docs.map((d) => d.get("status"))).toEqual(["published"]);
+    // Publiée puis modifiée par l'organisateur : reste en ligne, signalée à l'équipe.
+    await pro.call("organizerSaveExperience", { experienceId: expId, data: { ...activity, summaryFr: "Des matchs en double, tous niveaux, au club, puis un café.", sessions: plan(10) }, addSessions: false, images: [] });
+    expect((await db().doc(`experiences/${expId}`).get()).data()).toMatchObject({ status: "published", reviewFlag: true });
+    await team.call("adminReviewExperience", { experienceId: expId, decision: "reviewed" });
+    expect((await db().doc(`experiences/${expId}`).get()).get("reviewFlag")).toBe(false);
+  });
+
+  it("réservations et actions : seulement sur SES activités (pointage, demandes, annulation de date)", async () => {
+    const res = await pro.call("organizerSaveExperience", { data: { ...activity, titleFr: `Padel du dimanche ${run}`, sessions: plan(12) }, addSessions: true, images: [] });
+    const expId = String(res.experienceId);
+    await team.call("adminReviewExperience", { experienceId: expId, decision: "publish" });
+    const sid = (await db().collection("sessions").where("experienceId", "==", expId).get()).docs[0]!.id;
+    const buyer = await member();
+    const { reservationId } = await buyer.call("createReservation", { sessionId: sid, seats: 1 });
+    expect((await reservation(String(reservationId))).organizerId).toBe(orgId);
+    const checkout = await buyer.call("startCheckout", { reservationId });
+    await buyer.call("sandboxCompletePayment", { paymentId: checkout.paymentId, outcome: "succeeded" });
+    expect((await reservation(String(reservationId))).status).toBe("confirmed");
+    // Pointage : trop tôt pour l'organisateur ; refusé à l'autre organisateur et à un membre.
+    expect(await refusal(pro.call("adminCheckIn", { reservationId, presence: "attended" }))).toBe("failed-precondition:too_early");
+    expect(await refusal(other.call("adminCheckIn", { reservationId, presence: "attended" }))).toBe("permission-denied:not_owner");
+    expect(await refusal(buyer.call("adminCheckIn", { reservationId, presence: "attended" }))).toBe("permission-denied:");
+    // Une date de The Host Club : jamais accessible à un organisateur.
+    const thc = await makeSession({ startInHours: 1 });
+    expect(await refusal(pro.call("adminCancelSession", { sessionId: thc, reason: "Essai interdit" }))).toBe("permission-denied:not_owner");
+    // Export journalisé : participants et réservations seulement.
+    expect(await pro.call("adminLogExport", { kind: "participants", targetId: sid, rows: 1 })).toEqual({ ok: true });
+    expect(await refusal(pro.call("adminLogExport", { kind: "users", rows: 10 }))).toBe("permission-denied:");
+    // L'organisateur annule sa date : remboursement intégral, réservation annulée.
+    expect(await refusal(other.call("adminCancelSession", { sessionId: sid, reason: "Météo" }))).toBe("permission-denied:not_owner");
+    const cancelled = await pro.call("adminCancelSession", { sessionId: sid, reason: "Terrain indisponible" });
+    expect(cancelled).toMatchObject({ ok: true, cancelled: 1 });
+    expect((await session(sid)).status).toBe("cancelled");
+    expect(["cancelled", "refunded"]).toContain((await reservation(String(reservationId))).status);
+    const log = await db().collection("auditLogs").where("targetId", "==", sid).where("action", "==", "session.cancel").get();
+    expect(log.docs[0]?.get("actorRole")).toBe("organizer");
+  });
+
+  it("demandes « sur demande » : l'organisateur décide pour ses activités seulement", async () => {
+    const res = await pro.call("organizerSaveExperience", { data: { ...activity, titleFr: `Padel sur demande ${run}`, admission: "on_request", sessions: plan(14) }, addSessions: true, images: [] });
+    const expId = String(res.experienceId);
+    await team.call("adminReviewExperience", { experienceId: expId, decision: "publish" });
+    const sid = (await db().collection("sessions").where("experienceId", "==", expId).get()).docs[0]!.id;
+    const asker = await member();
+    const { requestId } = await asker.call("requestBooking", { sessionId: sid, seats: 1, message: "Bonjour, je joue depuis un an." });
+    expect((await db().doc(`bookingRequests/${requestId}`).get()).get("organizerId")).toBe(orgId);
+    expect(await refusal(other.call("adminDecideRequest", { requestId, decision: "accept" }))).toBe("permission-denied:not_owner");
+    expect(await refusal(asker.call("adminDecideRequest", { requestId: "inexistante", decision: "accept" }))).toBe("permission-denied:");
+    expect(await pro.call("adminDecideRequest", { requestId, decision: "accept" })).toMatchObject({ ok: true });
+    expect((await db().doc(`bookingRequests/${requestId}`).get()).get("status")).toBe("accepted");
+  });
+
+  it("profil public ; suspension : droits retirés tout de suite, plus aucune action", async () => {
+    await pro.call("organizerUpdateProfile", { description: "Club de padel au cœur d'Anfa, quatre terrains couverts, coachs diplômés.", phone: "+212 600 000 001", address: "14 boulevard d'Anfa, Casablanca", instagram: "@clubtest", logoPath: `organizers/${orgId}/public/logo.webp` });
+    expect((await db().doc(`organizers/${orgId}`).get()).data()).toMatchObject({ instagram: "clubtest", logoPath: `organizers/${orgId}/public/logo.webp` });
+    expect(await refusal(pro.call("organizerUpdateProfile", { description: "Club de padel au cœur d'Anfa, quatre terrains couverts, coachs diplômés.", phone: "+212 600 000 001", address: "14 boulevard d'Anfa", logoPath: `organizers/${otherOrgId}/public/logo.webp` }))).toBe("invalid-argument:");
+    expect(await refusal(team.call("adminDecideOrganizer", { organizerId: otherOrgId, decision: "suspend" }))).toBe("invalid-argument:");
+    await team.call("adminDecideOrganizer", { organizerId: otherOrgId, decision: "suspend", message: "Plaintes répétées de participants." });
+    const claims = (await adminAuth(admin).getUser(other.uid)).customClaims ?? {};
+    expect(claims.role).toBeUndefined();
+    expect(claims.orgId).toBeUndefined();
+    // Même avec un ancien jeton, l'accès est relu dans la base : refus.
+    expect(await refusal(other.call("organizerUpdateProfile", { description: "Tentative après suspension, texte assez long pour passer.", phone: "+212 600 000 002", address: "Adresse quelconque" }))).toMatch(/^(failed-precondition:organizer_suspended|unauthenticated:)$/);
+  });
+});
+

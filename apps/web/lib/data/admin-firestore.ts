@@ -25,6 +25,11 @@ function estimateFinance(r: DocumentData, eco: Economics | undefined) {
   const gross = paid ? (r.pricing?.total ?? 0) : 0;
   const seats = r.seats ?? 1;
   if (!gross) return { gross: 0, cost: 0, margin: 0 };
+  // Étape 21 : activité d'un organisateur — notre marge est la commission figée (+ frais de service).
+  if (r.commission) {
+    const margin = Math.min(gross, Number(r.commission.amount ?? 0) + Number(r.pricing?.fees ?? 0));
+    return { gross, cost: gross - margin, margin };
+  }
   if (eco?.model === "commission") {
     const margin = Math.round((gross * (eco.commissionPercent ?? 0)) / 100);
     return { gross, cost: gross - margin, margin };

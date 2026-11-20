@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExperienceActions } from "@/components/admin/experience-actions";
 import { ExperienceForm } from "@/components/admin/experience-form";
+import { ExperienceReview } from "@/components/admin/organizer-actions";
 import { adminDate, Card, FillBar, PageHeader } from "@/components/admin/ui";
 import { experienceToValues, formOptions } from "@/lib/admin-forms";
 import { requireAdmin } from "@/lib/auth/admin";
@@ -22,6 +23,15 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
     <div className="max-w-3xl">
       <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-plum-900">← Expériences</Link></p>
       <PageHeader title={e.title.fr} subtitle="Modifiable même après publication : en cas de changement de date ou de lieu, les participants sont prévenus automatiquement (notification + e-mail)." />
+      {e.organizerId && (
+        <Card title={`Activité proposée par ${e.organizerSnapshot?.name ?? "un organisateur"}`} className="mb-5">
+          <p className="mb-3 text-sm text-muted">
+            {e.status === "pending_review" ? "Envoyée pour validation : publiez-la ou refusez-la avec un message (l'organisateur est prévenu)." : e.reviewFlag ? "Publiée, puis modifiée par l'organisateur : relisez la fiche ci-dessous." : e.status === "rejected" ? `Refusée : « ${e.rejectionMessage ?? ""} »` : "Les réglages économiques suivent le contrat organisateur (commission)."}{" "}
+            <Link href={`/admin/organisateurs/${e.organizerId}`} className="font-semibold text-plum-900 underline">Voir l&apos;organisateur</Link>
+          </p>
+          <ExperienceReview experienceId={e.id} status={e.status} reviewFlag={Boolean(e.reviewFlag)} live={!d.isDemo} />
+        </Card>
+      )}
       {archived && (
         <p role="status" className="mb-5 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-950">
           Expérience <strong>archivée</strong> : elle n&apos;apparaît plus sur le site. Réactivez-la pour la republier ou lui ajouter des dates.
@@ -49,6 +59,7 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
         bookedSeats={bookedSeats}
         initial={experienceToValues(e, d.economics[e.id], d.now)}
         {...formOptions(d)}
+        {...(e.organizerId ? { organizer: { orgId: e.organizerId, currentStatus: e.status, asTeam: true } } : {})}
       />
     </div>
   );

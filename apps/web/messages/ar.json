@@ -346,7 +346,10 @@
     "partner": "كن شريكًا",
     "blog": "المدوّنة",
     "press": "الصحافة",
-    "physical": "الأنشطة البدنية"
+    "physical": "الأنشطة البدنية",
+    "organizerTerms": "عقد المنظّم",
+    "marketplaceTerms": "أنشطة المنظّمين",
+    "organizerSpace": "فضاء المنظّمين"
   },
   "pages": {
     "howTitle": "كيف تعمل",

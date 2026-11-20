@@ -6,8 +6,11 @@
  */
 
 import { LEGAL_AR } from "./legal-ar";
+import { MARKETPLACE_LEGAL, type MarketplaceKey } from "./legal-marketplace";
 
-export type LegalKey = "terms" | "sales" | "privacy" | "safety" | "community" | "physical";
+export type BaseLegalKey = "terms" | "sales" | "privacy" | "safety" | "community" | "physical";
+/** Étape 20 : contrat organisateur et conditions de vente des activités des organisateurs (content/legal-marketplace.ts). */
+export type LegalKey = BaseLegalKey | MarketplaceKey;
 /** Bloc : paragraphe, liste à puces, ou tableau (affiché en fiches sur mobile). */
 export type LegalTable = { table: { head: string[]; rows: string[][] } };
 export type LegalBlock = string | string[] | LegalTable;
@@ -16,7 +19,7 @@ export type LegalDoc = { title: string; updated: string; intro: string; sections
 
 const UPDATED_FR = "Dernière mise à jour : 19 novembre 2026 · en vigueur à la même date";
 
-const fr: Record<LegalKey, LegalDoc> = {
+const fr: Record<BaseLegalKey, LegalDoc> = {
   physical: {
     "title": "Conditions de participation aux activités physiques",
     "updated": UPDATED_FR,
@@ -735,7 +738,7 @@ const fr: Record<LegalKey, LegalDoc> = {
 
 const UPDATED_EN = "Last updated: 19 November 2026 · effective the same day";
 
-const en: Record<LegalKey, LegalDoc> = {
+const en: Record<BaseLegalKey, LegalDoc> = {
   physical: {
     "title": "Terms for physical activities",
     "updated": UPDATED_EN,
@@ -1270,4 +1273,8 @@ const en: Record<LegalKey, LegalDoc> = {
   },
 };
 
-export const LEGAL_DOCS: Record<"fr" | "en" | "ar", Record<LegalKey, LegalDoc>> = { fr, en, ar: LEGAL_AR };
+export const LEGAL_DOCS: Record<"fr" | "en" | "ar", Record<LegalKey, LegalDoc>> = {
+  fr: { ...fr, ...MARKETPLACE_LEGAL.fr },
+  en: { ...en, ...MARKETPLACE_LEGAL.en },
+  ar: { ...LEGAL_AR, ...MARKETPLACE_LEGAL.ar },
+};

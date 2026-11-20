@@ -265,8 +265,9 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   else batch.update(ref, { ...experience, nextSessionAt });
   // Organisateur : modèle économique créé une fois (commission fixée par les règles de commission, étape 21),
   // jamais modifié par lui ensuite.
-  if (org) {
-    if (isCreate) batch.set(db.doc(`experiences/${id}/private/economics`), { partnerId: null, model: "organizer", organizerId: org.id, costPerSeat: null, commissionPercent: null, onSiteCommissionPercent: null, updatedAt: FieldValue.serverTimestamp() });
+  // Activité d'un organisateur (même modifiée par l'équipe) : modèle « organizer » conservé.
+  if (ownerOrgId) {
+    if (isCreate) batch.set(db.doc(`experiences/${id}/private/economics`), { partnerId: null, model: "organizer", organizerId: ownerOrgId, costPerSeat: null, commissionPercent: null, onSiteCommissionPercent: null, updatedAt: FieldValue.serverTimestamp() });
   } else batch.set(db.doc(`experiences/${id}/private/economics`), {
     partnerId: v.partnerId || null,
     model: v.economicsModel,

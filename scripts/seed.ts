@@ -12,6 +12,7 @@ import { DEFAULT_CANCELLATION_POLICY } from "@thecommunity/shared";
 import { DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES, DEMO_REVIEWS } from "../apps/web/lib/data/demo";
 import { buildAdminData, DEMO_ECONOMICS } from "../apps/web/lib/data/demo-admin";
 import { buildDemoMemberData, DEMO_MEMBER } from "../apps/web/lib/data/demo-member";
+import { DEMO_ORGANIZER, DEMO_ORGANIZER_DETAILS, DEMO_PENDING_ORGANIZER, DEMO_PENDING_ORGANIZER_DETAILS } from "../apps/web/lib/data/demo-organizer";
 
 const PROJECT = process.env.GCLOUD_PROJECT ?? "demo-thecommunity";
 if (!process.env.FIRESTORE_EMULATOR_HOST || !process.env.FIREBASE_AUTH_EMULATOR_HOST || !PROJECT.startsWith("demo-")) {
@@ -81,6 +82,7 @@ async function main() {
       startAt: ts(s.startAt),
       endAt: ts(s.endAt),
       experienceSnapshot: { title: e.title, slug: e.slug, coverImagePath: e.images[0]?.path ?? "", categoryId: e.categoryId, bookingMode: e.bookingMode, district: e.district },
+      organizerId: e.organizerId ?? null,
       groupsStatus: "none",
     }]);
   }
@@ -95,6 +97,7 @@ async function main() {
       ...rest,
       cityId: e.cityId,
       categoryId: e.categoryId,
+      organizerId: e.organizerId ?? null,
       createdAt: ts(r.createdAt),
       pricing: { unitAmount: s.price.amount, seats: r.seats, subtotal: s.price.amount * r.seats, discount: s.price.amount * r.seats - r.total, fees: 0, total: r.total, currency: "MAD" },
       sessionSnapshot: { title: e.title, slug: e.slug, startAt: ts(s.startAt), endAt: ts(s.endAt), district: e.district, coverImagePath: e.images[0]?.path ?? "", categoryId: e.categoryId, bookingMode: e.bookingMode },
@@ -111,6 +114,17 @@ async function main() {
     const members = g.memberIds.map((uid) => admin.users.find((u) => u.uid === uid)!).map((u) => ({ uid: u.uid, firstName: u.firstName, interests: u.interests.slice(0, 3) }));
     entries.push([`groups/${id}`, { ...rest, members, status: "proposed", source: "algorithm" }]);
   }
+  // Étape 20 : organisateurs (un validé, propriétaire du padel ; une demande en attente).
+  for (const [o, det] of [[DEMO_ORGANIZER, DEMO_ORGANIZER_DETAILS], [DEMO_PENDING_ORGANIZER, DEMO_PENDING_ORGANIZER_DETAILS]] as const) {
+    const { id, isDemo: _demo, ...pub } = o;
+    entries.push([`organizers/${id}`, { ...pub, createdAt: ts(o.createdAt), ...(o.status === "approved" ? { approvedAt: ts(o.createdAt) } : {}) }]);
+    entries.push([`organizers/${id}/private/details`, {
+      ...det,
+      submittedAt: det.submittedAt ? ts(det.submittedAt) : null,
+      terms: det.terms ? { version: det.terms.version, acceptedAt: ts(det.terms.acceptedAt) } : null,
+      history: det.history.map((h) => ({ ...h, at: ts(h.at) })),
+    }]);
+  }
   for (const r of DEMO_REVIEWS) {
     const { id, ...rest } = r;
     entries.push([`reviews/${id}`, { ...rest, status: "published", createdAt: ts(r.createdAt) }]);
@@ -122,18 +136,21 @@ async function main() {
     ...admin.users.map((u) => ({ uid: u.uid, email: u.email, displayName: `${u.firstName} ${u.lastName}`, role: u.role, profile: u })),
     { uid: "demo-superadmin", email: "admin@thecommunity.test", displayName: "Admin Démo", role: "superadmin" as const, profile: null },
     { uid: DEMO_MEMBER.uid, email: "salma@thecommunity.test", displayName: "Salma Benali", role: "user" as const, profile: null },
+    { uid: DEMO_ORGANIZER_DETAILS.ownerUid, email: "club@thecommunity.test", displayName: "Nadia Alaoui", role: "organizer" as const, profile: null },
   ];
   for (const a of accounts) {
     await auth.createUser({ uid: a.uid, email: a.email, password: PASSWORD, displayName: a.displayName, emailVerified: true }).catch(async (e) => {
       if ((e as { code?: string }).code !== "auth/uid-already-exists") throw e;
     });
-    if (a.role !== "user") await auth.setCustomUserClaims(a.uid, { role: a.role });
+    if (a.role !== "user") await auth.setCustomUserClaims(a.uid, { role: a.role, ...(a.role === "organizer" ? { orgId: DEMO_ORGANIZER.id } : {}) });
     const p = a.profile;
     entries.push([`users/${a.uid}`, p
       ? { firstName: p.firstName, lastName: p.lastName, email: p.email, phone: p.phone, birthDate: p.birthDate, gender: p.gender, cityId: "casablanca", languages: p.languages, interests: p.interests, socialGoals: ["meet_new_people"], locale: "fr", onboardingCompleted: true, role: p.role, status: p.status, notificationPrefs: { email: true, push: false, marketingEmail: false }, createdAt: ts(p.createdAt) }
       : a.uid === DEMO_MEMBER.uid
         ? { ...DEMO_MEMBER, email: a.email, role: "user", status: "active", createdAt: ts(DEMO_MEMBER.createdAt) }
-        : { firstName: "Admin", lastName: "Démo", email: a.email, role: "superadmin", status: "active", onboardingCompleted: true, locale: "fr", createdAt: Timestamp.fromDate(now) }]);
+        : a.role === "organizer"
+          ? { firstName: "Nadia", lastName: "Alaoui", email: a.email, role: "organizer", status: "active", onboardingCompleted: true, locale: "fr", organizerId: DEMO_ORGANIZER.id, createdAt: Timestamp.fromDate(now) }
+          : { firstName: "Admin", lastName: "Démo", email: a.email, role: "superadmin", status: "active", onboardingCompleted: true, locale: "fr", createdAt: Timestamp.fromDate(now) }]);
   }
 
   // Historique du membre de démonstration « Salma » (réservations, groupe révélé, notifications).
@@ -161,7 +178,7 @@ async function main() {
 
   const count = await writeAll(entries);
   console.log(`✅ ${count} documents et ${accounts.length} comptes de démonstration créés dans les émulateurs.`);
-  console.log(`   Connexion test : admin@thecommunity.test / salma@thecommunity.test — mot de passe « ${PASSWORD} » (émulateur uniquement).`);
+  console.log(`   Connexion test : admin@thecommunity.test / salma@thecommunity.test / club@thecommunity.test (organisateur) — mot de passe « ${PASSWORD} » (émulateur uniquement).`);
 }
 
 main().catch((e) => {

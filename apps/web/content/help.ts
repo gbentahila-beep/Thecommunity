@@ -376,7 +376,7 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
         "You don't handle sales or payment: we do, and we bring you a ready-made group.",
       ],
     },
-    related: ["criteres-de-selection", "remuneration-partenaire"],
+    related: ["criteres-de-selection", "remuneration-partenaire", "espace-organisateur"],
   },
   {
     slug: "criteres-de-selection",
@@ -413,6 +413,25 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
       ],
     },
     related: ["devenir-partenaire", "annulations-cote-partenaire"],
+  },
+  {
+    slug: "espace-organisateur",
+    category: "partner-join",
+    title: { fr: "Proposer vos activités vous-même : l'espace organisateur", en: "List your own activities: the organizer space" },
+    summary: { fr: "Inscription, validation, relecture des activités, commission et reversements.", en: "Sign-up, approval, activity review, commission and payouts." },
+    body: {
+      fr: [
+        "Clubs, ateliers, guides, coachs : vous pouvez aussi publier vos propres activités sur The Host Club, depuis l'[espace organisateur](/pro).",
+        ["Créez votre compte organisateur : présentation, catégories, pièces justificatives (registre de commerce ou statut d'auto-entrepreneur, attestation d'assurance) et acceptation du [contrat organisateur](/contrat-organisateur).", "L'équipe vérifie votre demande, en général sous 48 h ouvrées, et peut vous demander un complément.", "Créez vos activités et vos dates, puis « Envoyer pour validation » : chaque nouvelle activité est relue avant sa mise en ligne.", "Suivez vos réservations, pointez vos participants à l'entrée (code ou QR code du billet), acceptez ou refusez les demandes, annulez une date si besoin (chacun est remboursé intégralement)."],
+        "The Host Club encaisse le paiement en ligne pour votre compte, garde sa commission (taux indiqué dans « Finances ») et vous reverse le reste par virement, au plus tard 15 jours après chaque activité.",
+      ],
+      en: [
+        "Clubs, workshops, guides, coaches: you can also list your own activities on The Host Club, from the [organizer space](/pro).",
+        ["Create your organizer account: introduction, categories, supporting documents (trade register or self-employed status, insurance certificate) and acceptance of the [organizer agreement](/contrat-organisateur).", "The team reviews your application, usually within 2 working days, and may ask for more information.", "Create your activities and dates, then “Submit for review”: every new activity is checked before going live.", "Follow your bookings, check participants in at the door (ticket code or QR code), accept or decline requests, cancel a date if needed (everyone is fully refunded)."],
+        "The Host Club collects online payment on your behalf, keeps its commission (rate shown under “Finances”) and transfers the rest to you no later than 15 days after each activity.",
+      ],
+    },
+    related: ["devenir-partenaire", "remuneration-partenaire"],
   },
   // ——— Partenaires : accueillir un groupe ———
   {

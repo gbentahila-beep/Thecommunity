@@ -25,6 +25,7 @@ export async function SiteFooter() {
         { href: "/aide", label: t("help") },
         { href: "/faq", label: t("faq") },
         { href: "/devenir-partenaire", label: t("partner") },
+        { href: "/pro", label: t("organizerSpace") },
         { href: "/presse", label: t("press") },
         { href: "/contact", label: t("contact") },
       ],
@@ -38,6 +39,8 @@ export async function SiteFooter() {
         { href: "/securite", label: t("safety") },
         { href: "/charte", label: t("charter") },
         { href: "/conditions-activites-physiques", label: t("physical") },
+        { href: "/conditions-organisateurs", label: t("marketplaceTerms") },
+        { href: "/contrat-organisateur", label: t("organizerTerms") },
       ],
     },
   ];
@@ -59,9 +62,14 @@ export async function SiteFooter() {
             <ul className="mt-4 space-y-2.5">
               {col.links.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="text-sm text-muted hover:text-plum-900">
-                    {l.label}
-                  </Link>
+                  {l.href === "/pro" ? (
+                    // Espace organisateur : en français, hors routage par langue (comme le back-office).
+                    <a href="/pro" className="text-sm text-muted hover:text-plum-900">{l.label}</a>
+                  ) : (
+                    <Link href={l.href} className="text-sm text-muted hover:text-plum-900">
+                      {l.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

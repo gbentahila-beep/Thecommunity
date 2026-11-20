@@ -346,7 +346,10 @@
     "partner": "Become a partner",
     "blog": "Blog",
     "press": "Press",
-    "physical": "Physical activities"
+    "physical": "Physical activities",
+    "organizerTerms": "Organizer agreement",
+    "marketplaceTerms": "Organizers' activities",
+    "organizerSpace": "Organizer space"
   },
   "pages": {
     "howTitle": "How it works",

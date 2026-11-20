@@ -4,7 +4,8 @@ import { z } from "zod";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { audit } from "../lib/audit";
 import { notifyReservationChange } from "../notify/reminders";
-import { invalidArgument, requireRole, roleOf } from "../lib/guards";
+import { invalidArgument, requireAuth, requireRole, roleOf } from "../lib/guards";
+import { requireOrganizer, requireTeamOrOrganizerOf } from "../organizers/access";
 import { cancelReservationCore, idSchema } from "../reservations/cancel-reservation";
 import { refuse } from "../reservations/create-reservation";
 import { readWaitlist, writeOffers } from "../waitlist/offers";
@@ -48,11 +49,13 @@ export const adminCancelReservation = onCall({ region: REGION }, async (req) => 
  * tout le monde est prévenu. Journalisé.
  */
 export const adminCancelSession = onCall({ region: REGION, timeoutSeconds: 300 }, async (req) => {
-  const actor = requireTeam(req);
+  requireAuth(req);
   const parsed = z.object({ sessionId: idSchema, reason: reasonSchema }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { sessionId, reason } = parsed.data;
   const sessRef = db.doc(`sessions/${sessionId}`);
+  // Étape 20 : l'organisateur annule les dates de SES activités (même remboursement intégral).
+  const actor = await requireTeamOrOrganizerOf(req, (await sessRef.get()).get("organizerId"));
   await db.runTransaction(async (tx) => {
     const s = (await tx.get(sessRef)).data();
     if (!s) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
@@ -94,7 +97,7 @@ export const adminCancelSession = onCall({ region: REGION, timeoutSeconds: 300 }
   for (const w of waiting.docs) {
     await notify(w.id, "event_cancelled", { fr: "Expérience annulée", ar: "تم إلغاء التجربة" }, { fr: "La date pour laquelle vous étiez sur liste d'attente est annulée.", ar: "تم إلغاء الموعد الذي كنت على قائمة انتظاره." }, "/experiences");
   }
-  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "session.cancel", targetType: "session", targetId: sessionId, after: { reason, reservations: active.size, refunded, failures } });
+  await audit({ actorUid: actor.uid, actorRole: actor.role, action: "session.cancel", targetType: "session", targetId: sessionId, after: { reason, reservations: active.size, refunded, failures } });
   return { ok: true, cancelled: active.size - failures.length, refunded, failures };
 });
 
@@ -180,11 +183,13 @@ export const adminMoveReservation = onCall({ region: REGION }, async (req) => {
  * Possible à partir de 3 h avant le début. Les absences nourrissent l'historique vu par l'équipe.
  */
 export const adminCheckIn = onCall({ region: REGION }, async (req) => {
-  const actor = requireTeam(req);
+  requireAuth(req);
   const parsed = z.object({ reservationId: idSchema, presence: z.enum(["attended", "no_show", "confirmed"]) }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { reservationId, presence } = parsed.data;
   const resRef = db.doc(`reservations/${reservationId}`);
+  // Étape 20 : l'organisateur pointe les participants de SES activités.
+  const actor = await requireTeamOrOrganizerOf(req, (await resRef.get()).get("organizerId"));
   await db.runTransaction(async (tx) => {
     const r = (await tx.get(resRef)).data();
     if (!r) throw new HttpsError("not-found", "Réservation introuvable.", { reason: "not_found" });
@@ -197,7 +202,7 @@ export const adminCheckIn = onCall({ region: REGION }, async (req) => {
       updatedAt: FieldValue.serverTimestamp(),
     });
   });
-  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: `reservation.checkin.${presence}`, targetType: "reservation", targetId: reservationId });
+  await audit({ actorUid: actor.uid, actorRole: actor.role, action: `reservation.checkin.${presence}`, targetType: "reservation", targetId: reservationId });
   return { ok: true };
 });
 
@@ -229,9 +234,15 @@ export const adminSetPartnerPayment = onCall({ region: REGION }, async (req) => 
 
 /** Journalise un export de données personnelles (liste de participants, réservations) avant son téléchargement. */
 export const adminLogExport = onCall({ region: REGION }, async (req) => {
-  const actor = requireTeam(req);
+  requireAuth(req);
+  const team = ["admin", "superadmin"].includes(roleOf(req));
+  // Étape 20 : un organisateur validé journalise aussi ses exports (participants et réservations de SES activités,
+  // préparés par le serveur de l'espace /pro) ; les autres types d'export restent réservés à l'équipe.
+  const org = team ? null : await requireOrganizer(req, { approvedOnly: true });
   const parsed = z.object({ kind: z.enum(["participants", "reservations", "users", "two_part"]), targetId: z.string().max(128).default(""), rows: z.number().int().min(0).max(100_000) }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: `export.${parsed.data.kind}`, targetType: "export", targetId: parsed.data.targetId || parsed.data.kind, after: { rows: parsed.data.rows } });
+  if (org && !["participants", "reservations"].includes(parsed.data.kind)) throw new HttpsError("permission-denied", "Action réservée à l'équipe.");
+  const actor = { uid: req.auth!.uid };
+  await audit({ actorUid: actor.uid, actorRole: org ? "organizer" : roleOf(req), action: `export.${parsed.data.kind}`, targetType: "export", targetId: parsed.data.targetId || parsed.data.kind, after: { rows: parsed.data.rows, ...(org ? { organizerId: org.orgId } : {}) } });
   return { ok: true };
 });

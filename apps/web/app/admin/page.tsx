@@ -4,13 +4,14 @@ import Link from "next/link";
 import { adminDate, BarList, Card, dh, FillBar, PageHeader, pct, StatTile, Table } from "@/components/admin/ui";
 import { computeStats, getAdminData } from "@/lib/data/admin";
 import { countPendingRequests } from "@/lib/data/admin-requests";
+import { countOrganizerTodo } from "@/lib/data/admin-organizers";
 import { getSiteHealth } from "@/lib/data/admin-mail";
 import { SiteHealthCard } from "@/components/admin/site-health";
 
 export const metadata = { title: "Tableau de bord" };
 
 export default async function AdminDashboard() {
-  const [d, pendingRequests, health] = await Promise.all([getAdminData(), countPendingRequests(), getSiteHealth()]);
+  const [d, pendingRequests, health, orgTodo] = await Promise.all([getAdminData(), countPendingRequests(), getSiteHealth(), countOrganizerTodo()]);
   const s = computeStats(d);
   const upcoming = d.sessions.slice(0, 8);
   const weekEnd = d.now.getTime() + 7 * 86_400_000;
@@ -30,6 +31,18 @@ export default async function AdminDashboard() {
         <Link href="/admin/participations" className="mb-4 flex items-center gap-3 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-950 hover:bg-amber-100">
           <Inbox className="size-5 shrink-0" aria-hidden />
           {pendingRequests} demande{pendingRequests > 1 ? "s" : ""} de participation à traiter →
+        </Link>
+      )}
+      {orgTodo.organizers > 0 && (
+        <Link href="/admin/organisateurs" className="mb-4 flex items-center gap-3 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-950 hover:bg-amber-100" data-testid="todo-organizers">
+          <Inbox className="size-5 shrink-0" aria-hidden />
+          {orgTodo.organizers} demande{orgTodo.organizers > 1 ? "s" : ""} de compte organisateur à traiter →
+        </Link>
+      )}
+      {orgTodo.activities > 0 && (
+        <Link href="/admin/experiences?vue=review" className="mb-4 flex items-center gap-3 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-950 hover:bg-amber-100" data-testid="todo-activities">
+          <Inbox className="size-5 shrink-0" aria-hidden />
+          {orgTodo.activities} activité{orgTodo.activities > 1 ? "s" : ""} d&apos;organisateur à relire →
         </Link>
       )}
       {health && <SiteHealthCard health={health} />}

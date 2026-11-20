@@ -324,6 +324,27 @@ describe("organisateurs : cloisonnement (19)", () => {
     await assertFails(getDoc(doc(exOrg(), "experiences/expA")));
     await assertFails(getDoc(doc(orphan(), "organizers/orgB")));
   });
+  it("commissions (21) : registre et reversements de SON organisation seulement ; règles réservées à l'équipe ; aucune écriture", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, "commissionRules/r1"), { scope: "global", ratePercent: 15 });
+      await setDoc(doc(db, "commissionLedger/sale_rA"), { organizerId: "orgA", gross: 20000, commission: 3000, payable: 17000 });
+      await setDoc(doc(db, "commissionLedger/sale_rB"), { organizerId: "orgB", gross: 10000, commission: 1500, payable: 8500 });
+      await setDoc(doc(db, "payouts/pA"), { organizerId: "orgA", amount: 17000, status: "paid" });
+    });
+    await assertSucceeds(getDoc(doc(orgA(), "commissionLedger/sale_rA")));
+    await assertFails(getDoc(doc(orgA(), "commissionLedger/sale_rB")));
+    await assertSucceeds(getDocs(query(collection(orgA(), "commissionLedger"), where("organizerId", "==", "orgA"))));
+    await assertFails(getDocs(collection(orgA(), "commissionLedger")));
+    await assertSucceeds(getDoc(doc(orgA(), "payouts/pA")));
+    await assertFails(getDoc(doc(orgB(), "payouts/pA")));
+    await assertFails(getDoc(doc(orgA(), "commissionRules/r1")));
+    await assertFails(getDoc(doc(salma(), "commissionLedger/sale_rA")));
+    await assertSucceeds(getDoc(doc(admin(), "commissionRules/r1")));
+    await assertFails(updateDoc(doc(orgA(), "commissionLedger/sale_rA"), { payable: 20000 }));
+    await assertFails(setDoc(doc(orgA(), "payouts/pX"), { organizerId: "orgA", amount: 1 }));
+    await assertFails(setDoc(doc(admin(), "commissionRules/r2"), { scope: "global", ratePercent: 1 }));
+  });
   it("un organisateur ne lit ni les profils des clients, ni les paiements, ni le journal", async () => {
     await assertFails(getDoc(doc(orgA(), "users/salma")));
     await assertFails(getDoc(doc(orgA(), "payments/p1")));

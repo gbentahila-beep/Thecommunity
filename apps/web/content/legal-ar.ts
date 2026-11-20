@@ -2,11 +2,11 @@
  * Version arabe des textes juridiques, de la page Sécurité et des règles de la communauté.
  * Traduction de la version française (qui fait foi). Mêmes jetons {{…}} et mêmes liens internes [texte](/chemin).
  */
-import type { LegalDoc, LegalKey } from "./legal";
+import type { BaseLegalKey, LegalDoc } from "./legal";
 
 const UPDATED_AR = "آخر تحديث: 19 نونبر 2026 · ساري المفعول من التاريخ نفسه";
 
-export const LEGAL_AR: Record<LegalKey, LegalDoc> = {
+export const LEGAL_AR: Record<BaseLegalKey, LegalDoc> = {
   physical: {
     "title": "شروط المشاركة في الأنشطة البدنية",
     "updated": UPDATED_AR,

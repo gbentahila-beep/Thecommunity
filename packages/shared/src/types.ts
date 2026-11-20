@@ -130,6 +130,9 @@ export type Experience = {
   organizerId?: string | null;
   organizerSnapshot?: { name: string; slug: string } | null;
   subcategoryId?: string | null;
+  /** Étape 20 : activité publiée modifiée par l'organisateur (à relire) ; message de l'équipe en cas de refus. */
+  reviewFlag?: boolean;
+  rejectionMessage?: string | null;
   ratingAvg: number;
   ratingCount: number;
   /* 18b : précisions pour les activités (facultatives, en français ; affichées telles quelles). */

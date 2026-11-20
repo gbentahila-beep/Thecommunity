@@ -5,6 +5,7 @@ import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { audit } from "../lib/audit";
+import { requireTeamOrOrganizerOf } from "../organizers/access";
 import { invalidArgument, requireAuth, requireRole, roleOf } from "../lib/guards";
 import { memberFromDoc, membershipRef } from "../membership/state";
 import { refuse, requireMemberReady, runReservation } from "../reservations/create-reservation";
@@ -54,6 +55,7 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
       userId: uid,
       sessionId,
       experienceId: s.experienceId,
+      organizerId: (e!.organizerId as string | undefined) ?? null,
       cityId: s.cityId,
       seats,
       message,
@@ -110,13 +112,19 @@ const NOTIFY = {
  * 24 h pour payer ; gratuit : confirmé directement. Journalisé, et la personne est prévenue.
  */
 export const adminDecideRequest = onCall({ region: REGION }, async (req) => {
-  const actor = requireRole(req, ["admin", "superadmin"]);
+  requireAuth(req);
   const parsed = z.object({ requestId: idSchema, decision: z.enum(["accept", "decline"]) }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { requestId, decision } = parsed.data;
   const ref = db.doc(`bookingRequests/${requestId}`);
   const r = (await ref.get()).data();
-  if (!r) throw new HttpsError("not-found", "Demande introuvable.", { reason: "not_found" });
+  if (!r) {
+    // Ne rien révéler à un non-membre de l'équipe : même refus qu'un accès interdit.
+    if (!["admin", "superadmin"].includes(roleOf(req))) throw new HttpsError("permission-denied", "Action réservée à l'équipe.");
+    throw new HttpsError("not-found", "Demande introuvable.", { reason: "not_found" });
+  }
+  // Étape 20 : l'organisateur décide des demandes de SES activités.
+  const actor = await requireTeamOrOrganizerOf(req, r.organizerId);
 
   let reservationId: string | null = null;
   if (decision === "accept") {
@@ -148,7 +156,7 @@ export const adminDecideRequest = onCall({ region: REGION }, async (req) => {
   });
   await audit({
     actorUid: actor.uid,
-    actorRole: roleOf(req),
+    actorRole: actor.role,
     action: decision === "accept" ? "request.accept" : "request.decline",
     targetType: "bookingRequest",
     targetId: requestId,

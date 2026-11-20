@@ -263,6 +263,20 @@ service cloud.firestore {
         allow write: if false;
       }
     }
+    // Étape 21 : commissions. Règles lues par l'équipe ; registre et reversements lus par l'équipe et par
+    // l'organisateur concerné (les siens seulement). Écritures : serveur uniquement (montants jamais du navigateur).
+    match /commissionRules/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    match /commissionLedger/{id} {
+      allow read: if isAdmin() || isOrganizerOf(resource.data.get('organizerId', null));
+      allow write: if false;
+    }
+    match /payouts/{id} {
+      allow read: if isAdmin() || isOrganizerOf(resource.data.get('organizerId', null));
+      allow write: if false;
+    }
     match /reports/{id} {
       // Création via callable (vérifie que les deux personnes ont participé à la même session).
       allow read: if isAdmin();
