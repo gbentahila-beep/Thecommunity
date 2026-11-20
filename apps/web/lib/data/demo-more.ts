@@ -39,6 +39,10 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
     ...base,
     id: "exp-the-patisseries",
     slug: "degustation-the-patisseries-maarif",
+    // Étape 29 : exemple d'activité réservée aux femmes.
+    audience: "women" as const,
+    targetAgeMin: 25,
+    targetAgeMax: 45,
     title: { fr: "Dégustation thés & pâtisseries", ar: "تذوّق الشاي والحلويات", en: "Tea & pastry tasting" },
     summary: { fr: "Cinq thés, cinq pâtisseries, un maître de thé et une table de curieux.", ar: "خمسة أنواع شاي، خمس حلويات، خبير شاي ومائدة من الفضوليين.", en: "Five teas, five pastries, a tea master and a table of curious people." },
     description: { fr: "Du thé vert à la menthe au thé fumé, un maître de thé raconte chaque tasse pendant que les cornes de gazelle et les ghriba circulent. Idéal pour un premier rendez-vous avec la communauté, sans alcool et en douceur.", en: "From mint green tea to smoked tea, a tea master tells the story of each cup while gazelle horns and ghriba go round. A gentle, alcohol-free first meet-up with the community." },

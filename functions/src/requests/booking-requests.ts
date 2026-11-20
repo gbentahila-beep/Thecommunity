@@ -1,5 +1,5 @@
 import { preferencesDoc } from "../reservations/reservation-doc";
-import { ACCEPTED_HOLD_HOURS, bookingClosesAt, bookingRequestSchema, maxSeatsFor, normalizeInstagram, PHYSICAL_TERMS_VERSION, tooYoung } from "@thecommunity/shared";
+import { ACCEPTED_HOLD_HOURS, audienceRefusal, bookingClosesAt, bookingRequestSchema, maxSeatsFor, normalizeInstagram, PHYSICAL_TERMS_VERSION, tooYoung } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -48,6 +48,7 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
     if (existing.exists && existing.data()!.status === "declined") refuse("request_declined", "Demande non retenue pour cette date.");
     if (lock.exists) refuse("already_booked", "Vous avez déjà une place pour cette date.");
     if (tooYoung(e!.minAge, user.data()?.birthDate, new Date())) refuse("too_young", "Cette expérience est réservée aux personnes plus âgées.");
+    if (audienceRefusal(e!.audience, user.data()?.gender)) refuse("audience_women_only", "Cette expérience est réservée aux femmes.");
     if (e!.physicalActivity === true && physicalTermsAccepted !== true) refuse("physical_terms_required", "Acceptez les conditions de participation aux activités physiques.");
 
     const snap = s.experienceSnapshot ?? {};

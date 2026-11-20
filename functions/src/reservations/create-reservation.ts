@@ -1,4 +1,4 @@
-import { bookingClosesAt, bookingRefusal, HOLD_MINUTES, PHYSICAL_TERMS_VERSION, promoRefusal, readServiceFee, reservationRequestSchema, tooYoung, type BookingPreferences } from "@thecommunity/shared";
+import { audienceRefusal, bookingClosesAt, bookingRefusal, HOLD_MINUTES, PHYSICAL_TERMS_VERSION, promoRefusal, readServiceFee, reservationRequestSchema, tooYoung, type BookingPreferences } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db, FieldValue, REGION } from "../lib/admin";
@@ -109,6 +109,8 @@ async function runReservationOnce(o: ReservationRun) {
     if (!requestRef && e.admission === "on_request") refuse("approval_required", "Cette expérience est sur demande.");
     // 18b : âge minimum de l'expérience (au-delà de 18 ans), vérifié sur la date de naissance du profil.
     if (tooYoung(e.minAge, userSnap.data()?.birthDate, new Date(now))) refuse("too_young", "Cette expérience est réservée aux personnes plus âgées.");
+    // Étape 29 : activité réservée aux femmes (genre indiqué dans le profil).
+    if (audienceRefusal(e.audience, userSnap.data()?.gender)) refuse("audience_women_only", "Cette expérience est réservée aux femmes.");
     // 18c : activité physique → conditions de participation acceptées (à la réservation, ou déjà avec la demande).
     const acceptedWithRequest = request?.data()?.physicalTerms;
     if (e.physicalActivity === true && o.physicalTermsAccepted !== true && !acceptedWithRequest) refuse("physical_terms_required", "Acceptez les conditions de participation aux activités physiques.");

@@ -221,6 +221,9 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     whatToBring: v.whatToBring ?? "",
     dressCode: v.dressCode ?? "",
     minAge: v.minAge ?? null,
+    audience: v.audience,
+    targetAgeMin: v.targetAgeMin ?? null,
+    targetAgeMax: v.targetAgeMax ?? null,
     outdoor: v.outdoor,
     physicalActivity: v.physicalActivity,
     // 18a : questionnaire (traductions vides retirées).

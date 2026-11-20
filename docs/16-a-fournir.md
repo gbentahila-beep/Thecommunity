@@ -112,3 +112,8 @@ Conséquence pratique : le site d'essai reste réservé à des **testeurs** (don
 
 - [ ] **Charte de modération** : valider les motifs de signalement et la règle « pas de masquage automatique » ; désigner qui traite les signalements et les photos (back-office → Avis → « Signalés » et « Photos à vérifier »), et dans quel délai.
 - [ ] **Avocat / CNDP** : les photos jointes aux avis (avec, parfois, des personnes reconnaissables) — accord des personnes, durée de conservation ; CGU article 11 et politique de confidentialité complétées, à relire.
+
+## Audit du 20 novembre : étapes 28 à 32
+
+- [ ] **Avocat** : activités **réservées aux femmes** (décision de Rita du 20 novembre : possibles ; le serveur vérifie le genre indiqué dans le profil). Faire confirmer la formulation et la conformité (non-discrimination, loi 31-08).
+- [ ] **Blog** : les articles qui décrivent le paiement par virement seront à mettre à jour quand le paiement par carte (CMI) sera ouvert ; l'aide et « À propos » s'adaptent déjà tout seuls.

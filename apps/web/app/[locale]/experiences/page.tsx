@@ -78,6 +78,7 @@ export default async function CatalogPage({ params, searchParams }: PageProps<"/
     ...(filters.format ? [{ label: tf(`format_${filters.format}`), href: hrefOf(state, { filters: { format: null } }) }] : []),
     ...(filters.beginner ? [{ label: tf("beginner"), href: hrefOf(state, { filters: { beginner: false } }) }] : []),
     ...(filters.available ? [{ label: tf("available"), href: hrefOf(state, { filters: { available: false } }) }] : []),
+    ...(filters.women ? [{ label: tf("women"), href: hrefOf(state, { filters: { women: false } }) }] : []),
   ];
   const clearHref = hrefOf({ category, when: "all", filters: { ...parseCatalogParams({}), sort: filters.sort } });
   const total = results.dated.length;
@@ -160,6 +161,10 @@ export default async function CatalogPage({ params, searchParams }: PageProps<"/
               <label className="inline-flex items-center gap-2 text-sm text-ink">
                 <input type="checkbox" name="dispo" value="1" defaultChecked={filters.available} className="size-4 accent-plum-900" />
                 {tf("available")}
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm text-ink">
+                <input type="checkbox" name="public" value="femmes" defaultChecked={filters.women} className="size-4 accent-plum-900" />
+                {tf("women")}
               </label>
             </div>
           </div>

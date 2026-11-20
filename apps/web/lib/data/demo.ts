@@ -174,6 +174,8 @@ export const DEMO_EXPERIENCES: Experience[] = [
   {
     id: "exp-diner-inconnus",
     slug: "diner-entre-inconnus-casablanca",
+    targetAgeMin: 25,
+    targetAgeMax: 40,
     title: { fr: "Dîner entre inconnus", ar: "عشاء مع غرباء" },
     summary: {
       fr: "Rencontrez de nouvelles personnes autour d'un délicieux dîner.",

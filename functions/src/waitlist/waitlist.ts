@@ -1,4 +1,4 @@
-import { bookingClosesAt, maxSeatsFor, reservationRequestSchema, seatsAvailable } from "@thecommunity/shared";
+import { audienceRefusal, bookingClosesAt, maxSeatsFor, reservationRequestSchema, seatsAvailable } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -31,6 +31,7 @@ export const joinWaitlist = onCall({ region: REGION }, async (req) => {
     if (!e || e.status !== "published" || !["published", "full"].includes(s.status)) refuse("not_open", "Date non ouverte.");
     if (e!.admission === "on_request") refuse("approval_required", "Expérience sur demande.");
     if (e!.membersOnly === true && !memberFromDoc(mem.data())) refuse("members_only", "Expérience réservée aux membres.");
+    if (e!.audience === "women" && audienceRefusal(e!.audience, (await tx.get(db.doc(`users/${uid}`))).get("gender"))) refuse("audience_women_only", "Cette expérience est réservée aux femmes.");
     if (Date.now() >= bookingClosesAt((s.startAt as Timestamp).toDate(), e!.bookingMode).getTime()) refuse("closed", "Inscriptions fermées.");
     if (seats > maxSeatsFor(e!)) refuse("too_many_seats", "Trop de places.");
     if (lock.exists) refuse("already_booked", "Vous avez déjà une place pour cette date.");

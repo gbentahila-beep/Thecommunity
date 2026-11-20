@@ -87,6 +87,11 @@ export const experienceInputSchema = z
     dressCode: z.string().trim().max(200, "tooLong").optional().or(z.literal("")),
     /** Âge minimum au-delà de 18 ans (vérifié par le serveur à la réservation). */
     minAge: z.coerce.number().int().min(MIN_AGE_FLOOR, "minAge").max(MIN_AGE_MAX, "tooMany").optional(),
+    /** Étape 29 : public (« all » mixte, « women » réservé aux femmes : vérifié par le serveur à la réservation). */
+    audience: z.enum(["all", "women"]).default("all"),
+    /** Étape 29 : tranche d'âge visée, indicative (affichée sur la fiche, jamais bloquante). */
+    targetAgeMin: z.coerce.number().int().min(MIN_AGE_FLOOR, "minAge").max(99, "tooMany").optional(),
+    targetAgeMax: z.coerce.number().int().min(MIN_AGE_FLOOR, "minAge").max(99, "tooMany").optional(),
     /** En plein air : reportée ou annulée (remboursée) si la météo ne permet pas l'activité. */
     outdoor: z.boolean().default(false),
     /** 18c : activité physique → conditions de participation à accepter à la réservation. */
@@ -97,6 +102,7 @@ export const experienceInputSchema = z
     proposalId: z.string().regex(/^[A-Za-z0-9_-]{6,40}$/).optional(),
   })
   .superRefine((v, ctx) => {
+    if (v.targetAgeMin && v.targetAgeMax && v.targetAgeMin > v.targetAgeMax) ctx.addIssue({ code: "custom", path: ["targetAgeMax"], message: "ageOrder" });
     const grouped = v.bookingMode === "group" || v.bookingMode === "social_dinner";
     if (grouped) {
       for (const key of ["groupMin", "groupTarget", "groupMax"] as const) {

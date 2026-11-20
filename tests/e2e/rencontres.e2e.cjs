@@ -35,6 +35,25 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await p.goto(base + '/espace', { waitUntil: 'load' });
   assert(await visible(p.getByTestId('membership-suggestion')), '28 : abonnement proposé après une première expérience (espace membre)');
 
+  // ——— 29 ———
+  await p.goto(base + '/experiences/diner-entre-inconnus-casablanca', { waitUntil: 'load' });
+  const meet = p.getByTestId('meeting');
+  assert(await meet.getByRole('heading', { name: 'Qui allez-vous rencontrer ?' }).isVisible(), '29 : section « Qui allez-vous rencontrer ? »');
+  const mt = await meet.textContent();
+  assert(mt.includes("Vous pouvez venir seul·e") && /Petits groupes de \d+ à \d+ personnes/.test(mt) && mt.includes('Groupe mixte') && mt.includes('Pensé pour les 25 à 40 ans'), '29 : venir seul·e, taille des groupes, public, âge visé');
+  assert(mt.includes('Nous évitons de vous replacer avec les mêmes personnes'), '29 : nouvelles rencontres à chaque fois');
+  const crowd = await p.getByTestId('meeting-crowd').textContent().catch(() => '');
+  assert(/Déjà \d+ inscrits à la prochaine date · de \d+ à \d+ ans environ/.test(crowd), `29 : chiffres globaux sur les inscrits (${crowd})`);
+  assert(!/\b(19|20)\d\d-\d\d-\d\d\b/.test(await p.locator('main').textContent()), '29 : aucune date de naissance affichée');
+  await p.goto(base + '/experiences/degustation-the-patisseries-maarif', { waitUntil: 'load' });
+  assert(await p.getByTestId('meeting').getByText('Réservé aux femmes').isVisible(), '29 : fiche « Réservé aux femmes »');
+  await p.goto(base + '/experiences?public=femmes', { waitUntil: 'load' });
+  const cards = p.getByTestId('catalog-results').locator('article');
+  assert(await cards.count() >= 1 && await cards.count() === await p.getByTestId('catalog-results').getByTestId('card-women').count(), '29 : filtre « Réservé aux femmes »');
+  assert(await p.getByTestId('active-filters').getByRole('link', { name: 'Retirer le filtre : Réservé aux femmes' }).isVisible(), '29 : puce du filtre');
+  await p.goto(base + '/admin/experiences/exp-the-patisseries', { waitUntil: 'load' });
+  assert(await p.locator('#f-audience').inputValue() === 'women' && await p.locator('#f-targetAgeMin').inputValue() === '25', '29 : formulaire — public et tranche d\'âge visée');
+
   assert(errs.length === 0, 'aucune erreur navigateur' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();
   console.log('TOUT EST OK');

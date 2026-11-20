@@ -35,6 +35,13 @@ const issues = (input: unknown) => {
 };
 
 describe("formulaire expérience", () => {
+  it("29 : public mixte par défaut ; tranche d'âge visée min ≤ max, 18 ans au moins", () => {
+    expect(experienceInputSchema.parse(valid).audience).toBe("all");
+    expect(issues({ ...valid, audience: "women", targetAgeMin: 25, targetAgeMax: 35 })).toEqual([]);
+    expect(issues({ ...valid, targetAgeMin: 40, targetAgeMax: 30 })).toContain("targetAgeMax:ageOrder");
+    expect(issues({ ...valid, targetAgeMin: 16 })).toContain("targetAgeMin:minAge");
+    expect(issues({ ...valid, audience: "men" }).length).toBeGreaterThan(0);
+  });
   it("accepte un dîner social complet", () => {
     expect(issues(valid)).toEqual([]);
   });

@@ -5,6 +5,7 @@
  */
 import {
   applyCatalog,
+  crowdSummary,
   DEFAULT_HOME_SETTINGS,
   experienceSearchFields,
   MOROCCO_TIMEZONE,
@@ -14,6 +15,7 @@ import {
   zonedParts,
   type CatalogFilters,
   type Category,
+  type Crowd,
   type CategoryKey,
   type Experience,
   type HomeSettings,
@@ -312,4 +314,14 @@ export function publicLogo(path: string | null | undefined): string | null {
 export async function getPaymentMethod(): Promise<"card" | "bank_transfer" | "none"> {
   if (FIREBASE_ENABLED) return fs.fsPaymentMethod();
   return "none";
+}
+
+/** Étape 29 : chiffres globaux sur les inscrits d'une date (à partir de 4 inscrits). Démonstration : participants fictifs. */
+export async function getSessionCrowd(sessionId: string | null | undefined): Promise<Crowd | null> {
+  if (!sessionId) return null;
+  if (FIREBASE_ENABLED) return fs.fsSessionCrowd(sessionId);
+  const { buildAdminData } = await import("./demo-admin");
+  const d = buildAdminData(new Date());
+  const uids = new Set(d.reservations.filter((r) => r.sessionId === sessionId && (r.status === "confirmed" || r.status === "attended")).map((r) => r.userId));
+  return crowdSummary(d.users.filter((u) => uids.has(u.uid)).map((u) => ({ birthDate: u.birthDate, interests: u.interests })), new Date());
 }

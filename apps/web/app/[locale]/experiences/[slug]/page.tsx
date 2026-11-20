@@ -1,6 +1,7 @@
 import {
   LOW_SEATS_THRESHOLD,
   formatMoney,
+  meetingSummary,
   pricingOf,
   seatsAvailable,
   type CategoryKey,
@@ -12,6 +13,7 @@ import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
 import { VenueMap } from "@/components/venue-map";
 import { ReviewItem } from "@/components/reviews/review-item";
+import { MeetingSection } from "@/components/meeting-section";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoriteButton } from "@/components/favorite-button";
@@ -23,7 +25,7 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
 import { memberAmountFor, PriceTag } from "@/components/price-tag";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
-import { getArchivedExperience, getCategory, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublicOrganizer, getPublishedExperiences, getReviews, getUpcomingSessions, publicLogo } from "@/lib/data";
+import { getArchivedExperience, getCategory, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublicOrganizer, getPublishedExperiences, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { richText } from "@/lib/rich-text";
@@ -92,7 +94,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     if (!retired) notFound();
     return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} />;
   }
-  const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan, policies, organizer] = await Promise.all([
+  const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan, policies, organizer, tm, tInt] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),
     getTranslations("twoPart"),
@@ -104,6 +106,8 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     getMembershipPlan(),
     getCancellationPolicies(),
     getPublicOrganizer(exp.organizerId),
+    getTranslations("meeting"),
+    getTranslations("labels.interests"),
   ]);
   // Étape 22 : politique d'annulation propre à l'activité.
   const policy = policyOf(policies, exp.cancellationPolicyId);
@@ -111,6 +115,8 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
   const twoPart = pricingOf(exp);
   const lang = locale as "fr" | "ar" | "en";
   const next = sessions.find((s) => seatsAvailable(s) > 0) ?? sessions[0];
+  // Étape 29 : « Qui allez-vous rencontrer ? » (chiffres globaux sur les inscrits de la prochaine date, à partir de 4).
+  const meeting = meetingSummary(exp, next ?? null, await getSessionCrowd(next?.id));
   const hours = Math.floor(exp.durationMinutes / 60);
   const minutes = exp.durationMinutes % 60;
   const duration =
@@ -195,6 +201,22 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               {exp.level && <Fact icon={Gauge} label={t("levelLabel")} value={t(`level_${exp.level}`)} />}
               {exp.minAge != null && exp.minAge > 18 && <Fact icon={UserCheck} label={t("minAgeLabel")} value={t("minAgeValue", { age: exp.minAge })} />}
             </ul>
+            <MeetingSection
+              meeting={meeting}
+              t={{
+                title: tm("title"),
+                principle: tm("principle"),
+                comeAlone: tm("comeAlone"),
+                groupSize: meeting.groupSize ? tm("groupSize", { min: meeting.groupSize.min, max: meeting.groupSize.max }) : meeting.capacity ? tm("capacity", { count: meeting.capacity }) : "",
+                languages: tm("languages", { list: meeting.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ") }),
+                audience: tm(meeting.audience === "women" ? "audienceWomen" : "audienceAll"),
+                targetAge: meeting.targetAge ? tm("targetAge", { min: meeting.targetAge.min ?? 18, max: meeting.targetAge.max ?? 99 }) : "",
+                crowd: meeting.crowd ? tm("crowd", { count: meeting.crowd.count }) : "",
+                crowdAge: meeting.crowd?.ageMin != null ? tm("crowdAge", { min: meeting.crowd.ageMin, max: meeting.crowd.ageMax ?? meeting.crowd.ageMin + 5 }) : "",
+                crowdInterests: meeting.crowd?.topInterests.length ? tm("crowdInterests", { list: meeting.crowd.topInterests.map((i) => tInt(i)).join(", ") }) : "",
+                newPeople: meeting.composedGroups ? tm("newPeople") : "",
+              }}
+            />
             {exp.proposedBy?.firstName && (
               <p className="-mt-6 text-sm text-muted" data-testid="proposed-by">{t("proposedBy", { name: exp.proposedBy.firstName })}</p>
             )}

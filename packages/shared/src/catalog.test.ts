@@ -49,10 +49,10 @@ describe("recherche tolérante (23)", () => {
 
 describe("catalogue : paramètres, filtres, tri (23)", () => {
   it("lit et réécrit les paramètres d'adresse, ignore les valeurs inconnues", () => {
-    const f = parseCatalogParams({ q: " padel ", prix: "200", quartier: "Anfa", debutant: "1", format: "seul", dispo: "1", date: "2026-11-28", tri: "prix-croissant" });
-    expect(f).toEqual({ q: "padel", maxPrice: 200, district: "Anfa", beginner: true, format: "solo", available: true, date: "2026-11-28", sort: "price_asc" });
-    expect(catalogParams(f)).toEqual([["q", "padel"], ["prix", "200"], ["quartier", "Anfa"], ["debutant", "1"], ["format", "seul"], ["dispo", "1"], ["date", "2026-11-28"], ["tri", "prix-croissant"]]);
-    expect(activeFilterCount(f)).toBe(6);
+    const f = parseCatalogParams({ q: " padel ", prix: "200", quartier: "Anfa", debutant: "1", format: "seul", dispo: "1", public: "femmes", date: "2026-11-28", tri: "prix-croissant" });
+    expect(f).toEqual({ q: "padel", maxPrice: 200, district: "Anfa", beginner: true, format: "solo", available: true, women: true, date: "2026-11-28", sort: "price_asc" });
+    expect(catalogParams(f)).toEqual([["q", "padel"], ["prix", "200"], ["quartier", "Anfa"], ["debutant", "1"], ["format", "seul"], ["dispo", "1"], ["public", "femmes"], ["date", "2026-11-28"], ["tri", "prix-croissant"]]);
+    expect(activeFilterCount(f)).toBe(7);
     expect(parseCatalogParams({ prix: "250", format: "x", date: "2026-13-45", tri: "n'importe" })).toEqual(EMPTY_CATALOG_FILTERS);
   });
   it("prix comparable = en ligne + part fixe sur place", () => {

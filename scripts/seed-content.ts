@@ -95,12 +95,16 @@ async function main() {
     if (e.createdAt && snap.get("createdAt") === undefined) patch.createdAt = ts(e.createdAt);
     if (e.notIncluded?.length && snap.get("notIncluded") === undefined) patch.notIncluded = e.notIncluded;
     if (e.venue.geo && snap.get("venue.geo") === undefined && snap.get("venue.address") === e.venue.address) patch["venue.geo"] = e.venue.geo;
+    // Étape 29 : public et tranche d'âge visée (seulement s'ils manquent).
+    if (e.audience && snap.get("audience") === undefined) patch.audience = e.audience;
+    if (e.targetAgeMin && snap.get("targetAgeMin") === undefined) patch.targetAgeMin = e.targetAgeMin;
+    if (e.targetAgeMax && snap.get("targetAgeMax") === undefined) patch.targetAgeMax = e.targetAgeMax;
     if (Object.keys(patch).length) {
       await snap.ref.update(patch);
       completed++;
     }
   }
-  if (completed) console.log(`✅ Démonstration : ${completed} expérience(s) complétée(s) (champs de l'étape 23 manquants).`);
+  if (completed) console.log(`✅ Démonstration : ${completed} expérience(s) complétée(s) (champs des étapes 23 et 29 manquants).`);
   const demo = db.batch();
   // Lieux partenaires et organisateur de démonstration utilisés par ces expériences (créés s'ils manquent).
   for (const p of DEMO_PARTNERS) if (!(await db.doc(`partners/${p.id}`).get()).exists) demo.set(db.doc(`partners/${p.id}`), { ...p, isDemo: true });

@@ -91,7 +91,8 @@
     "membersOnly": "Members only",
     "badge_featured": "Team pick",
     "badge_new": "New",
-    "badge_popular": "Popular"
+    "badge_popular": "Popular",
+    "women": "Women only"
   },
   "filters": {
     "all": "All",
@@ -242,7 +243,8 @@
       "not_editable": "This booking can no longer be changed.",
       "transfer_too_late": "This date is too close for payment by bank transfer: please choose a later date.",
       "too_young": "This experience has a higher minimum age than yours.",
-      "physical_terms_required": "Accept the terms for physical activities to book."
+      "physical_terms_required": "Accept the terms for physical activities to book.",
+      "audience_women_only": "This experience is for women only. If your profile is wrong, you can change it in “My profile”."
     },
     "fullTextOnRequest": "All spots are taken for this date. Have a look at the other dates for this experience.",
     "seeMyBooking": "See my booking",
@@ -1167,7 +1169,8 @@
     "sort_price_asc": "Price: low to high",
     "sort_price_desc": "Price: high to low",
     "sort_rating": "Top rated",
-    "sort_new": "Newest"
+    "sort_new": "Newest",
+    "women": "Women only"
   },
   "gallery": {
     "title": "Photos",
@@ -1220,5 +1223,20 @@
     "ownReview": "You can't report your own review.",
     "loginToReport": "Log in to report a review.",
     "error": "Couldn't send. Please try again."
+  },
+  "meeting": {
+    "title": "Who will you meet?",
+    "principle": "How it works: you join people who don't know each other either. We put the groups together to make conversation easy, in a friendly, no-pressure setting.",
+    "comeAlone": "You can come on your own — that's the whole point",
+    "groupSize": "Small groups of {min} to {max} people",
+    "capacity": "Up to {count} participants",
+    "languages": "Spoken: {list}",
+    "audienceAll": "Mixed group",
+    "audienceWomen": "Women only",
+    "targetAge": "Designed for ages {min} to {max} (indicative)",
+    "crowd": "Already {count} people booked for the next date",
+    "crowdAge": "roughly {min} to {max} years old",
+    "crowdInterests": "often into: {list}",
+    "newPeople": "We avoid putting you with the same people from one time to the next"
   }
 }

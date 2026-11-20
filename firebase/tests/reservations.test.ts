@@ -2279,3 +2279,22 @@ describe("avis : réponse, signalement, photo, historique (24)", () => {
     expect(events).toEqual(["created", "reply", "reply", "reply_removed", "reported", "reported", "reports_kept", "photo_approved", "reported", "hidden"]);
   }, 120_000);
 });
+
+describe("activités réservées aux femmes (29)", () => {
+  it("réservation, demande et liste d'attente refusées si le profil n'indique pas « femme »", async () => {
+    const sid = await makeSession({ capacity: 1, extra: { audience: "women" } });
+    const him = await member();
+    await db().doc(`users/${him.uid}`).update({ gender: "male" });
+    const unknown = await member();
+    await db().doc(`users/${unknown.uid}`).update({ gender: "undisclosed" });
+    const her = await member();
+    await db().doc(`users/${her.uid}`).update({ gender: "female" });
+    expect(await refusal(him.call("createReservation", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:audience_women_only");
+    expect(await refusal(unknown.call("createReservation", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:audience_women_only");
+    await paidReservation(her, sid);
+    // Complet : la liste d'attente est aussi réservée aux femmes.
+    expect(await refusal(him.call("joinWaitlist", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:audience_women_only");
+    const onRequest = await makeSession({ onRequest: true, extra: { audience: "women" } });
+    expect(await refusal(him.call("requestBooking", { sessionId: onRequest, seats: 1 }))).toBe("failed-precondition:audience_women_only");
+  }, 60_000);
+});

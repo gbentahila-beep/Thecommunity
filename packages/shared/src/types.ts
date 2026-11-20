@@ -151,6 +151,10 @@ export type Experience = {
   whatToBring?: string;
   dressCode?: string;
   minAge?: number | null;
+  /** Étape 29 : public (mixte ou réservé aux femmes) et tranche d'âge visée (indicative). */
+  audience?: "all" | "women";
+  targetAgeMin?: number | null;
+  targetAgeMax?: number | null;
   outdoor?: boolean;
   /** 18c : activité physique, conditions de participation à accepter. */
   physicalActivity?: boolean;

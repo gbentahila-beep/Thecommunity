@@ -91,7 +91,8 @@
     "membersOnly": "Réservé aux membres",
     "badge_featured": "Coup de cœur",
     "badge_new": "Nouveau",
-    "badge_popular": "Populaire"
+    "badge_popular": "Populaire",
+    "women": "Entre femmes"
   },
   "filters": {
     "all": "Tout",
@@ -242,7 +243,8 @@
       "not_editable": "Cette réservation n'est plus modifiable.",
       "transfer_too_late": "Cette date est trop proche pour un paiement par virement : choisissez une date plus lointaine.",
       "too_young": "Cette expérience demande un âge minimum plus élevé que le vôtre.",
-      "physical_terms_required": "Acceptez les conditions de participation aux activités physiques pour réserver."
+      "physical_terms_required": "Acceptez les conditions de participation aux activités physiques pour réserver.",
+      "audience_women_only": "Cette expérience est réservée aux femmes. Si votre profil est incorrect, vous pouvez le modifier dans « Mon profil »."
     },
     "fullTextOnRequest": "Toutes les places sont prises pour cette date. Regardez les autres dates de cette expérience.",
     "seeMyBooking": "Voir ma réservation",
@@ -1167,7 +1169,8 @@
     "sort_price_asc": "Prix croissant",
     "sort_price_desc": "Prix décroissant",
     "sort_rating": "Mieux notées",
-    "sort_new": "Nouveautés"
+    "sort_new": "Nouveautés",
+    "women": "Réservé aux femmes"
   },
   "gallery": {
     "title": "Photos",
@@ -1220,5 +1223,20 @@
     "ownReview": "Vous ne pouvez pas signaler votre propre avis.",
     "loginToReport": "Connectez-vous pour signaler un avis.",
     "error": "Envoi impossible. Réessayez."
+  },
+  "meeting": {
+    "title": "Qui allez-vous rencontrer ?",
+    "principle": "Le principe : vous rejoignez des personnes qui ne se connaissent pas non plus. Nous composons les groupes pour faciliter les conversations, dans un cadre amical et sans pression.",
+    "comeAlone": "Vous pouvez venir seul·e : c'est fait pour ça",
+    "groupSize": "Petits groupes de {min} à {max} personnes",
+    "capacity": "{count} participants au plus",
+    "languages": "On y parle : {list}",
+    "audienceAll": "Groupe mixte",
+    "audienceWomen": "Réservé aux femmes",
+    "targetAge": "Pensé pour les {min} à {max} ans (indicatif)",
+    "crowd": "Déjà {count} inscrits à la prochaine date",
+    "crowdAge": "de {min} à {max} ans environ",
+    "crowdInterests": "aiment souvent : {list}",
+    "newPeople": "Nous évitons de vous replacer avec les mêmes personnes d'une fois sur l'autre"
   }
 }

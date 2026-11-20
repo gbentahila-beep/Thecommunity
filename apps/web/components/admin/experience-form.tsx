@@ -31,11 +31,11 @@ import type { QuestionDraft } from "@/lib/questionnaire-draft";
 import { firebase } from "@/lib/firebase/client";
 
 type Option = { id: string; label: string; disabled?: boolean; /** 18c : état de l'assurance du lieu partenaire. */ insurance?: "valid" | "expiring" | "expired" | "missing"; /** Étape 19 : sous-catégorie de… */ parentId?: string };
-export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "onSiteCommissionPercent" | "minAge" | "level" | "questionnaire" | "proposalId" | "depositPercent"> & {
+export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "onSiteCommissionPercent" | "minAge" | "targetAgeMin" | "targetAgeMax" | "level" | "questionnaire" | "proposalId" | "depositPercent"> & {
   /** Étape 22 : acompte en % (mode B). */
   depositPercent: string;
   /** 18b : âge minimum (vide = 18 ans), niveau attendu (vide = non précisé) ; 18a : questionnaire ; 18d : proposition d'origine. */
-  minAge: string; level: "" | ActivityLevel; questionnaire: QuestionDraft[]; proposalId?: string;
+  minAge: string; targetAgeMin: string; targetAgeMax: string; level: "" | ActivityLevel; questionnaire: QuestionDraft[]; proposalId?: string;
   groupMin: string; groupTarget: string; groupMax: string; costPerSeatDh: string; commissionPercent: string;
   priceDh: string; durationMinutes: string; maxSeatsPerBooking: string; memberPriceDh: string; partnerPriceDh: string; onSiteCommissionPercent: string;
   sessions: { firstDate: string; time: string; weeks: string; capacity: string };
@@ -43,7 +43,7 @@ export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin"
 
 const MESSAGES: Record<string, string> = {
   required: "Champ obligatoire.", tooShort: "Trop court.", tooLong: "Trop long.", tooMany: "Valeur trop élevée.",
-  depositRange: "Acompte entre 10 et 90 %.", invalidCoords: "Coordonnées illisibles : deux nombres séparés par une virgule (ex. 33.5951, -7.6187).", paymentModelDisabled: "Ce mode de paiement n'est pas proposé pour l'instant.",
+  depositRange: "Acompte entre 10 et 90 %.", ageOrder: "L'âge minimum visé doit être inférieur au maximum.", invalidCoords: "Coordonnées illisibles : deux nombres séparés par une virgule (ex. 33.5951, -7.6187).", paymentModelDisabled: "Ce mode de paiement n'est pas proposé pour l'instant.",
   min0: "Doit être positif.", min1: "Au moins 1.", min2: "Au moins 2.", min15: "Au moins 15 minutes.", max100: "100 % maximum.",
   pickOne: "Choisissez au moins une langue.", groupOrder: "Il faut min ≤ cible ≤ max.", capacityBelowGroup: "La capacité doit permettre au moins un groupe complet.",
   seatsPerBookingMode: "Plus de 2 places par réservation : seulement en mode libre ou privatisé.", partnerRequired: "Le modèle commission nécessite un partenaire.",
@@ -182,6 +182,8 @@ export function ExperienceForm({
       commissionPercent: !pro && v.economicsModel === "commission" ? opt(v.commissionPercent) : undefined,
       onSiteCommissionPercent: !pro && v.pricingModel !== "online_only" ? opt(v.onSiteCommissionPercent) : undefined,
       minAge: opt(v.minAge),
+      targetAgeMin: opt(v.targetAgeMin),
+      targetAgeMax: opt(v.targetAgeMax),
       level: v.level || undefined,
       proposalId: v.proposalId || undefined,
       memberPriceDh: pro ? undefined : opt(v.memberPriceDh),
@@ -443,6 +445,13 @@ export function ExperienceForm({
             <option value="">Non précisé</option>
             {(Object.keys(LEVEL_LABELS) as ActivityLevel[]).map((l) => <option key={l} value={l}>{LEVEL_LABELS[l]}</option>)}
           </select></div>
+        <div><Label k="audience" hint="« Réservé aux femmes » : seules les personnes dont le profil indique « femme » peuvent réserver (vérifié par le serveur).">Public</Label>
+          <select {...field("audience")} value={v.audience ?? "all"} onChange={(e) => set("audience", e.target.value as "all" | "women")}>
+            <option value="all">Mixte</option>
+            <option value="women">Réservé aux femmes</option>
+          </select></div>
+        <div><Label k="targetAgeMin" hint="Indicatif, affiché sur la fiche (« pensé pour les 25 à 35 ans ») ; ne bloque personne.">Tranche d&apos;âge visée</Label>
+          <span className="flex items-center gap-2"><input {...field("targetAgeMin")} inputMode="numeric" placeholder="25" value={v.targetAgeMin} onChange={(e) => set("targetAgeMin", e.target.value)} className="w-24 rounded-xl border border-line bg-white px-3 py-2.5" /> à <input id="f-targetAgeMax" aria-label="Tranche d'âge visée : maximum" inputMode="numeric" placeholder="35" value={v.targetAgeMax} onChange={(e) => set("targetAgeMax", e.target.value)} className="w-24 rounded-xl border border-line bg-white px-3 py-2.5" /> ans</span>{err("targetAgeMin")}{err("targetAgeMax")}</div>
         <div><Label k="minAge" hint="Vide = 18 ans (règle du site). Vérifié à la réservation avec la date de naissance.">Âge minimum</Label><input {...field("minAge")} inputMode="numeric" value={v.minAge} onChange={(e) => set("minAge", e.target.value)} />{err("minAge")}</div>
         <div><Label k="equipmentProvided" hint="Ex. raquettes et balles, masque et lanceur, tablier.">Matériel fourni</Label><textarea {...field("equipmentProvided")} rows={2} value={v.equipmentProvided ?? ""} onChange={(e) => set("equipmentProvided", e.target.value)} />{err("equipmentProvided")}</div>
         <div><Label k="whatToBring" hint="Ex. baskets propres, bouteille d'eau, serviette.">À apporter</Label><textarea {...field("whatToBring")} rows={2} value={v.whatToBring ?? ""} onChange={(e) => set("whatToBring", e.target.value)} />{err("whatToBring")}</div>

@@ -37,12 +37,14 @@ export type CatalogFilters = {
   beginner: boolean;
   format: CatalogFormat | null;
   available: boolean;
+  /** Étape 29 : activités réservées aux femmes seulement. */
+  women: boolean;
   /** Jour précis (AAAA-MM-JJ, heure de Casablanca). */
   date: string | null;
   sort: CatalogSort;
 };
 
-export const EMPTY_CATALOG_FILTERS: CatalogFilters = { q: "", maxPrice: null, district: null, beginner: false, format: null, available: false, date: null, sort: "recommended" };
+export const EMPTY_CATALOG_FILTERS: CatalogFilters = { q: "", maxPrice: null, district: null, beginner: false, format: null, available: false, women: false, date: null, sort: "recommended" };
 
 type Params = Record<string, string | string[] | undefined>;
 
@@ -62,6 +64,7 @@ export function parseCatalogParams(sp: Params): CatalogFilters {
     beginner: one("debutant") === "1",
     format,
     available: one("dispo") === "1",
+    women: one("public") === "femmes",
     date: /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(Date.parse(`${date}T12:00:00Z`)) ? date : null,
     sort,
   };
@@ -76,6 +79,7 @@ export function catalogParams(f: Partial<CatalogFilters>): [string, string][] {
   if (f.beginner) out.push(["debutant", "1"]);
   if (f.format) out.push(["format", FORMAT_PARAM[f.format]]);
   if (f.available) out.push(["dispo", "1"]);
+  if (f.women) out.push(["public", "femmes"]);
   if (f.date) out.push(["date", f.date]);
   if (f.sort && f.sort !== "recommended") out.push(["tri", SORT_PARAM[f.sort]]);
   return out;
@@ -86,7 +90,7 @@ export const formatParam = (f: CatalogFormat) => FORMAT_PARAM[f];
 
 /** Nombre de filtres actifs (hors recherche et tri), pour le bouton « Filtres (n) ». */
 export function activeFilterCount(f: CatalogFilters): number {
-  return [f.maxPrice, f.district, f.beginner, f.format, f.available, f.date].filter(Boolean).length;
+  return [f.maxPrice, f.district, f.beginner, f.format, f.available, f.women, f.date].filter(Boolean).length;
 }
 
 /** Prix comparable d'une place : total connu (en ligne + part fixe sur place), sinon la part en ligne. */
@@ -143,6 +147,7 @@ export function applyCatalog(input: {
     (f.maxPrice == null || perSeatPrice(e, s) <= f.maxPrice * 100) &&
     (!f.district || e.district === f.district) &&
     (!f.beginner || beginnerFriendly(e)) &&
+    (!f.women || e.audience === "women") &&
     (!f.format || (f.format === "solo" ? e.bookingMode === "social_dinner" || e.bookingMode === "group" : e.maxSeatsPerBooking >= 2)) &&
     score(e) > 0;
   const keepSession = (s: Session) => (!f.available || (s.status !== "full" && seatsAvailable(s) > 0)) && (!f.date || casablancaDay(s.startAt) === f.date);

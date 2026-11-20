@@ -24,3 +24,4 @@ export * from "./search";
 export * from "./catalog";
 export * from "./home";
 export * from "./review-moderation";
+export * from "./meeting";

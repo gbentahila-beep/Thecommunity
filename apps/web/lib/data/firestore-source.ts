@@ -13,7 +13,7 @@ import type {
   Session,
   UserProfile,
 } from "@thecommunity/shared";
-import { MEMBERSHIP_PLAN_ID, normalizeHomeSettings, type HomeSettings, type Membership, type MembershipPlan, type Organizer } from "@thecommunity/shared";
+import { crowdSummary, MEETING_MIN_PARTICIPANTS, MEMBERSHIP_PLAN_ID, normalizeHomeSettings, type Crowd, type Interest, type HomeSettings, type Membership, type MembershipPlan, type Organizer } from "@thecommunity/shared";
 import { Timestamp, type DocumentSnapshot } from "firebase-admin/firestore";
 import { unstable_cache } from "next/cache";
 import { adminDb } from "@/lib/firebase/admin";
@@ -221,3 +221,14 @@ async function fsPaymentMethodRaw(): Promise<"card" | "bank_transfer" | "none"> 
   return "none";
 }
 export const fsPaymentMethod = cached(fsPaymentMethodRaw, "fsPaymentMethod");
+
+/* ——— Étape 29 : chiffres globaux sur les inscrits d'une date (jamais de donnée individuelle) ——— */
+async function fsSessionCrowdRaw(sessionId: string): Promise<Crowd | null> {
+  const db = adminDb();
+  const res = await db.collection("reservations").where("sessionId", "==", sessionId).get();
+  const uids = [...new Set(res.docs.filter((d) => ["confirmed", "attended"].includes(String(d.get("status")))).map((d) => String(d.get("userId"))))];
+  if (uids.length < MEETING_MIN_PARTICIPANTS) return null;
+  const users = await db.getAll(...uids.map((u) => db.doc(`users/${u}`)));
+  return crowdSummary(users.map((u) => ({ birthDate: u.get("birthDate") ?? null, interests: (u.get("interests") as Interest[] | undefined) ?? [] })), new Date());
+}
+export const fsSessionCrowd = cached(fsSessionCrowdRaw, "fsSessionCrowd");
