@@ -1,6 +1,6 @@
 import { MediaImage as Image } from "@/components/media";
 import Link from "next/link";
-import { CATEGORY_LABELS, MODE_LABELS } from "@/components/admin/labels";
+import { MODE_LABELS } from "@/components/admin/labels";
 import { Badge, Card, dh, PageHeader, Table } from "@/components/admin/ui";
 import { getAdminData } from "@/lib/data/admin";
 
@@ -21,6 +21,8 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
   const sp = await searchParams;
   const filter = sp.vue === "archived" ? "archived" : "current";
   const d = await getAdminData();
+  // Étape 19 : noms des catégories lus dans la base (catégories dynamiques).
+  const catName = new Map(d.categories.map((c) => [c.id, c.name.fr]));
   const all = [...d.experiences.values()];
   const archivedCount = all.filter((e) => e.status === "archived").length;
   const list = all.filter((e) => (filter === "archived" ? e.status === "archived" : e.status !== "archived"));
@@ -61,7 +63,7 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
                     <span><span className="block font-medium text-ink">{e.title.fr}</span><span className="text-xs text-muted">{e.district}{partner ? ` · ${partner.name}` : ""}</span></span>
                   </span>
                 </td>
-                <td>{CATEGORY_LABELS[e.categoryId]}</td>
+                <td>{catName.get(e.categoryId) ?? e.categoryId}{e.subcategoryId ? ` · ${catName.get(e.subcategoryId) ?? e.subcategoryId}` : ""}</td>
                 <td className="text-muted">{MODE_LABELS[e.bookingMode]}</td>
                 <td className="tabular-nums">{dh(e.price.amount)}</td>
                 <td className="text-muted">{eco?.model === "commission" ? `Commission ${eco.commissionPercent} %` : `Coût ${dh(eco?.costPerSeat ?? 0)}`}</td>

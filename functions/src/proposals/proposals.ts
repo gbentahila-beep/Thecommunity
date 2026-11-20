@@ -24,6 +24,9 @@ export const submitOutingProposal = onCall({ region: REGION }, async (req) => {
   const recent = await db.collection("outingProposals").where("userId", "==", uid).where("createdAt", ">=", since).count().get();
   if (recent.data().count >= PROPOSALS_PER_DAY) refuse("too_many_proposals", "Trop de propositions aujourd'hui : réessayez demain.");
   const v = parsed.data;
+  // Étape 19 : catégories dynamiques — une catégorie principale visible.
+  const category = await db.doc(`categories/${v.categoryId}`).get();
+  if (!category.exists || category.get("isActive") === false || category.get("parentId")) invalidArgument([{ path: ["categoryId"], message: "required" }]);
   const ref = db.collection("outingProposals").doc();
   await ref.set({
     userId: uid,

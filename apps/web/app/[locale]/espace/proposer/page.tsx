@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { ProposalForm } from "@/components/account/proposal-form";
 import { Link } from "@/i18n/navigation";
+import { getCategories } from "@/lib/data";
 import { getMemberSpace } from "@/lib/data/member";
+import { tr } from "@/lib/i18n-text";
 import { getMyProposals } from "@/lib/data/proposals";
 import { formatLongDate } from "@/lib/format";
 
@@ -15,7 +17,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/espace/p
 export default async function ProposePage({ params }: PageProps<"/[locale]/espace/proposer">) {
   const { locale: localeParam } = await params;
   setRequestLocale(localeParam);
-  const [t, space, locale] = await Promise.all([getTranslations("propose"), getMemberSpace(), getLocale()]);
+  const [t, space, locale, categories] = await Promise.all([getTranslations("propose"), getMemberSpace(), getLocale(), getCategories()]);
   const trusted = space.profile.trustedHost === true;
   const mine = trusted ? await getMyProposals(space.session?.uid ?? space.profile.uid) : [];
   return (
@@ -31,7 +33,7 @@ export default async function ProposePage({ params }: PageProps<"/[locale]/espac
         </section>
       ) : (
         <>
-          <ProposalForm live={!space.isDemo} />
+          <ProposalForm live={!space.isDemo} categories={categories.map((c) => ({ id: c.id, label: tr(c.name, locale) }))} />
           {mine.length > 0 && (
             <section aria-labelledby="my-proposals" className="space-y-3">
               <h2 id="my-proposals" className="font-display text-2xl font-medium text-plum-900">{t("mine")}</h2>

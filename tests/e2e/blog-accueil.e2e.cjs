@@ -261,6 +261,21 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(foot.last <= foot.bar, 'fiche expérience : le bas du pied de page n\'est pas caché par la barre de réservation');
   await m.setViewportSize(devices['iPhone 13'].viewport);
 
+  // Étape 19 : catégories dynamiques — sous-catégorie « Padel » de Sport & bien-être, catégories masquées absentes
+  await d.goto(`${base}/casablanca/move`);
+  const chips = d.getByTestId('subcategory-chip');
+  assert((await chips.allTextContents()).join('|') === 'Tout|Padel', 'Sport : sous-catégories « Tout » et « Padel »');
+  await chips.filter({ hasText: 'Padel' }).click();
+  await d.waitForURL(/\/casablanca\/padel$/);
+  assert(await d.getByRole('heading', { level: 1, name: 'Padel à Casablanca' }).isVisible(), 'page de la sous-catégorie');
+  const padelCards = await d.locator('main article h3, main a h3').allTextContents();
+  assert(padelCards.length >= 1 && padelCards.every((t) => /padel/i.test(t)), 'sous-catégorie : seulement les activités padel');
+  await d.goto(`${base}/experiences/padel-entre-inconnus-anfa`);
+  assert(await d.getByRole('navigation', { name: "Fil d'Ariane" }).getByRole('link', { name: 'Padel' }).isVisible(), 'fiche : sous-catégorie dans le fil d\'Ariane');
+  assert((await d.goto(`${base}/casablanca/meet`)).status() === 404, 'catégorie préparée mais masquée : introuvable');
+  await d.goto(`${base}/`);
+  assert(!(await d.locator('header').getByText('Padel').count()), 'sous-catégorie absente du menu principal');
+
   assert(errs.length === 0, 'aucune erreur navigateur' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();
   console.log('TOUT EST OK');

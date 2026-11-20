@@ -1022,27 +1022,42 @@ describe("back-office : partenaires, villes, univers (5d, 5e)", () => {
     expect((await other.get()).data()!.status).toBe("declined");
   });
 
-  it("villes et univers : super-admin seulement, journalisé ; un univers inconnu est refusé", async () => {
+  it("villes et univers : super-admin seulement, journalisé ; création de catégories et sous-catégories (19)", async () => {
     const adm = await member({ role: "admin" });
     const sup = await member({ role: "superadmin" });
-    const city = { id: `ville-${run}`, nameFr: "Rabat", nameAr: "الرباط", nameEn: "", isActive: false, isComingSoon: true, order: 5, districts: ["Agdal", "Hassan"] };
+    const city = { id: `ville-${run}`, nameFr: "Rabat", nameAr: "الرباط", nameEn: "", isActive: false, isComingSoon: true, order: 5, districts: ["Agdal", "Hassan"], region: "Rabat-Salé-Kénitra", country: "Maroc", imagePath: "cities/rabat.webp" };
     expect(await refusal(adm.call("adminSaveCity", city))).toBe("permission-denied:");
     expect(await sup.call("adminSaveCity", city)).toEqual({ id: city.id, created: true });
-    expect((await db().doc(`cities/${city.id}`).get()).data()).toMatchObject({ name: { fr: "Rabat", ar: "الرباط" }, isActive: false, isComingSoon: true, timezone: "Africa/Casablanca", currency: "MAD", districts: ["Agdal", "Hassan"] });
-    await sup.call("adminSaveCity", { ...city, nameAr: "", isActive: true });
+    expect((await db().doc(`cities/${city.id}`).get()).data()).toMatchObject({ name: { fr: "Rabat", ar: "الرباط" }, isActive: false, isComingSoon: true, timezone: "Africa/Casablanca", currency: "MAD", districts: ["Agdal", "Hassan"], region: "Rabat-Salé-Kénitra", country: "Maroc", imagePath: "cities/rabat.webp" });
+    await sup.call("adminSaveCity", { ...city, nameAr: "", isActive: true, region: "", imagePath: "" });
     const c = (await db().doc(`cities/${city.id}`).get()).data()!;
-    expect(c).toMatchObject({ isActive: true, isComingSoon: false });
+    expect(c).toMatchObject({ isActive: true, isComingSoon: false, region: null, imagePath: null });
     expect(c.name).toEqual({ fr: "Rabat" });
+    expect(await refusal(sup.call("adminSaveCity", { ...city, imagePath: "https://exemple.com/x.jpg" }))).toBe("invalid-argument:");
     const cat = { id: "create", name: { fr: "Ateliers créatifs", ar: "", en: "Creative workshops" }, shortName: { fr: "Ateliers", ar: "", en: "Workshops" }, description: { fr: "Poterie, peinture, cuisine…", ar: "", en: "" }, order: 4, isActive: true, defaultBookingMode: "individual" };
     expect(await refusal(adm.call("adminSaveCategory", cat))).toBe("permission-denied:");
-    expect(await refusal(sup.call("adminSaveCategory", { ...cat, id: "casino" }))).toBe("invalid-argument:unknown_category");
     const before = (await db().doc("categories/create").get()).data();
+    const fresh = `rencontres-${run}`.slice(0, 24).toLowerCase().replace(/[^a-z0-9-]/g, "-");
+    const sub = `sous-${run}`.slice(0, 24).toLowerCase().replace(/[^a-z0-9-]/g, "-");
     try {
       await sup.call("adminSaveCategory", cat);
-      expect((await db().doc("categories/create").get()).data()).toMatchObject({ name: { fr: "Ateliers créatifs", en: "Creative workshops" }, order: 4 });
+      expect((await db().doc("categories/create").get()).data()).toMatchObject({ name: { fr: "Ateliers créatifs", en: "Creative workshops" }, order: 4, icon: "sparkles", parentId: null });
       expect(await auditActions("create")).toContain("category.update");
+      // Nouvelle catégorie principale : pictogramme, couleur, image.
+      expect(await sup.call("adminSaveCategory", { ...cat, id: fresh, icon: "users", color: "#3d6b8c", imagePath: "categories/r.webp" })).toEqual({ id: fresh, created: true });
+      expect((await db().doc(`categories/${fresh}`).get()).data()).toMatchObject({ icon: "users", color: "#3d6b8c", imagePath: "categories/r.webp", parentId: null });
+      expect(await auditActions(fresh)).toContain("category.create");
+      // Sous-catégorie : la parente doit exister et être principale ; un seul niveau.
+      expect(await refusal(sup.call("adminSaveCategory", { ...cat, id: sub, parentId: "inexistante" }))).toBe("invalid-argument:invalid_parent");
+      expect(await sup.call("adminSaveCategory", { ...cat, id: sub, parentId: fresh })).toEqual({ id: sub, created: true });
+      expect(await refusal(sup.call("adminSaveCategory", { ...cat, id: `${sub}-2`.slice(0, 24), parentId: sub }))).toBe("invalid-argument:invalid_parent");
+      expect(await refusal(sup.call("adminSaveCategory", { ...cat, id: fresh, parentId: "create" }))).toBe("failed-precondition:has_children");
+      expect(await refusal(sup.call("adminSaveCategory", { ...cat, id: sub, parentId: sub }))).toBe("invalid-argument:invalid_parent");
+      expect(await refusal(sup.call("adminSaveCategory", { ...cat, id: "Casino!" }))).toBe("invalid-argument:");
     } finally {
       if (before) await db().doc("categories/create").set(before);
+      await db().doc(`categories/${sub}`).delete();
+      await db().doc(`categories/${fresh}`).delete();
     }
   });
 });
@@ -1631,6 +1646,11 @@ describe("sauvegardes et bilan de santé (E)", () => {
 
 describe("toutes les activités (18)", () => {
   const padel = QUESTIONNAIRE_TEMPLATES.find((t) => t.id === "padel")!.questions;
+  // Étape 19 : une proposition doit viser une catégorie principale existante.
+  beforeAll(async () => {
+    await db().doc("categories/move").set({ isActive: true }, { merge: true });
+    await db().doc("categories/play").set({ isActive: true }, { merge: true });
+  });
   const born = (age: number) => `${new Date().getUTCFullYear() - age - 1}-01-15`;
 
   it("âge minimum vérifié par le serveur (réservation et demande)", async () => {

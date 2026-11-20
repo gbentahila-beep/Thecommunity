@@ -2,11 +2,11 @@ import type { OutingProposal } from "@thecommunity/shared";
 import Link from "next/link";
 import { ProposalActions } from "@/components/admin/proposal-actions";
 import { adminDate, Badge, Card, DemoNote, PageHeader } from "@/components/admin/ui";
+import { getAdminData } from "@/lib/data/admin";
 import { getAdminProposals } from "@/lib/data/proposals";
 
 export const metadata = { title: "Sorties proposées" };
 
-const CATEGORY: Record<string, string> = { eat: "Dîners", move: "Sport & bien-être", play: "Jeux", create: "Ateliers", discover: "Sorties" };
 const LEVEL: Record<string, string> = { all: "Tous niveaux", beginner: "Débutant", intermediate: "Intermédiaire", advanced: "Confirmé" };
 
 /**
@@ -15,7 +15,9 @@ const LEVEL: Record<string, string> = { all: "Tous niveaux", beginner: "Débutan
  * Le statut de membre de confiance se donne dans « Utilisateurs ».
  */
 export default async function ProposalsPage() {
-  const { pending, decided, isDemo } = await getAdminProposals();
+  const [{ pending, decided, isDemo }, { categories }] = await Promise.all([getAdminProposals(), getAdminData()]);
+  // Étape 19 : noms des catégories lus dans la base.
+  const CATEGORY = Object.fromEntries(categories.map((c) => [c.id, c.name.fr])) as Record<string, string>;
   return (
     <>
       <PageHeader title="Sorties proposées" subtitle={`${pending.length} en attente · par les membres de confiance (statut donné dans « Utilisateurs »)`} />
@@ -25,7 +27,7 @@ export default async function ProposalsPage() {
       ) : (
         <ul className="space-y-4">
           {pending.map((p) => (
-            <li key={p.id}><ProposalCard p={p} live={!isDemo} /></li>
+            <li key={p.id}><ProposalCard p={p} live={!isDemo} categoryName={CATEGORY[p.categoryId] ?? p.categoryId} /></li>
           ))}
         </ul>
       )}
@@ -48,13 +50,13 @@ export default async function ProposalsPage() {
   );
 }
 
-function ProposalCard({ p, live }: { p: OutingProposal; live: boolean }) {
+function ProposalCard({ p, live, categoryName }: { p: OutingProposal; live: boolean; categoryName: string }) {
   return (
     <article className="rounded-2xl bg-white p-5 shadow-card" data-testid="proposal">
       <header className="mb-2 flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-lg font-semibold text-ink">{p.title}</h2>
-          <p className="text-sm text-muted">Proposée par {p.firstName} · {adminDate(p.createdAt)} · {CATEGORY[p.categoryId] ?? p.categoryId}</p>
+          <p className="text-sm text-muted">Proposée par {p.firstName} · {adminDate(p.createdAt)} · {categoryName}</p>
         </div>
         {p.willHost && <Badge tone="plum">Le membre accueille le groupe</Badge>}
       </header>

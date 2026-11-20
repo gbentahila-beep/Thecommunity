@@ -70,7 +70,8 @@ export function UserActions({
             }}
             className="rounded-lg border border-line bg-white px-2 py-1 text-xs"
           >
-            {ROLES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            {/* Étape 19 : le rôle organisateur se donne en validant un compte dans « Organisateurs » (il est lié à une structure). */}
+            {ROLES.map(([value, label]) => <option key={value} value={value} disabled={value === "organizer"}>{value === "organizer" ? `${label} (via Organisateurs)` : label}</option>)}
           </select>
         </>
       )}

@@ -242,3 +242,92 @@ describe("formulaires publics", () => {
     await assertFails(addDoc(collection(salma(), "dataRequests"), { userId: "karim", type: "deletion", createdAt: serverTimestamp() }));
   });
 });
+
+describe("organisateurs : cloisonnement (19)", () => {
+  const orgA = () => env.authenticatedContext("olive", { role: "organizer", orgId: "orgA", email_verified: true }).firestore() as unknown as Firestore;
+  const orgB = () => env.authenticatedContext("omar", { role: "organizer", orgId: "orgB", email_verified: true }).firestore() as unknown as Firestore;
+  // Claim orgId sans le rôle (ex. compte redevenu membre) : aucun accès.
+  const exOrg = () => env.authenticatedContext("ex", { orgId: "orgA", email_verified: true }).firestore() as unknown as Firestore;
+  // Rôle sans structure : aucun accès.
+  const orphan = () => env.authenticatedContext("orph", { role: "organizer", email_verified: true }).firestore() as unknown as Firestore;
+
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, "organizers/orgA"), { name: "Atelier A", slug: "atelier-a", status: "approved" });
+      await setDoc(doc(db, "organizers/orgA/private/details"), { contactEmail: "a@example.com", memberUids: ["olive"] });
+      await setDoc(doc(db, "organizers/orgB"), { name: "Club B", slug: "club-b", status: "pending" });
+      await setDoc(doc(db, "organizers/orgB/private/details"), { contactEmail: "b@example.com", memberUids: ["omar"] });
+      await setDoc(doc(db, "experiences/expA"), { status: "draft", organizerId: "orgA", title: { fr: "Brouillon A" } });
+      await setDoc(doc(db, "experiences/expB"), { status: "pending_review", organizerId: "orgB", title: { fr: "En relecture B" } });
+      await setDoc(doc(db, "experiences/expA/private/economics"), { commissionPercent: 15 });
+      await setDoc(doc(db, "sessions/sA"), { status: "draft", organizerId: "orgA", capacity: 10 });
+      await setDoc(doc(db, "sessions/sB"), { status: "draft", organizerId: "orgB", capacity: 10 });
+      await setDoc(doc(db, "reservations/rA"), { userId: "salma", organizerId: "orgA", status: "confirmed" });
+      await setDoc(doc(db, "reservations/rB"), { userId: "karim", organizerId: "orgB", status: "confirmed" });
+      await setDoc(doc(db, "reservations/rA/private/payment"), { last4: "0000" });
+      await setDoc(doc(db, "bookingRequests/sA_karim"), { userId: "karim", organizerId: "orgA", status: "pending" });
+      await setDoc(doc(db, "bookingRequests/sB_salma"), { userId: "salma", organizerId: "orgB", status: "pending" });
+    });
+  });
+
+  it("profil public : visible de tous une fois validé ; en attente, seulement l'organisateur et l'équipe", async () => {
+    await assertSucceeds(getDoc(doc(anon(), "organizers/orgA")));
+    await assertFails(getDoc(doc(anon(), "organizers/orgB")));
+    await assertFails(getDoc(doc(orgA(), "organizers/orgB")));
+    await assertSucceeds(getDoc(doc(orgB(), "organizers/orgB")));
+    await assertSucceeds(getDoc(doc(admin(), "organizers/orgB")));
+  });
+  it("détails privés : l'organisateur et l'équipe seulement", async () => {
+    await assertSucceeds(getDoc(doc(orgA(), "organizers/orgA/private/details")));
+    await assertFails(getDoc(doc(orgB(), "organizers/orgA/private/details")));
+    await assertFails(getDoc(doc(salma(), "organizers/orgA/private/details")));
+    await assertFails(getDoc(doc(anon(), "organizers/orgA/private/details")));
+    await assertFails(getDoc(doc(exOrg(), "organizers/orgA/private/details")));
+    await assertSucceeds(getDoc(doc(admin(), "organizers/orgA/private/details")));
+  });
+  it("aucune écriture directe, même par l'organisateur (statut, nom, détails)", async () => {
+    await assertFails(updateDoc(doc(orgA(), "organizers/orgA"), { name: "Autre nom" }));
+    await assertFails(updateDoc(doc(orgB(), "organizers/orgB"), { status: "approved" }));
+    await assertFails(setDoc(doc(orgA(), "organizers/orgA/private/details"), { iban: "x" }));
+    await assertFails(setDoc(doc(salma(), "organizers/neuf"), { name: "Moi", status: "approved" }));
+    await assertFails(updateDoc(doc(admin(), "organizers/orgB"), { status: "approved" }));
+  });
+  it("activités et dates non publiées : seulement celles de SON organisation", async () => {
+    await assertSucceeds(getDoc(doc(orgA(), "experiences/expA")));
+    await assertFails(getDoc(doc(orgA(), "experiences/expB")));
+    await assertFails(getDoc(doc(orgB(), "experiences/expA")));
+    await assertFails(getDoc(doc(orgA(), "experiences/draft"))); // brouillon de The Host Club
+    await assertFails(getDoc(doc(orgA(), "experiences/expA/private/economics")));
+    await assertSucceeds(getDoc(doc(orgA(), "sessions/sA")));
+    await assertFails(getDoc(doc(orgA(), "sessions/sB")));
+    await assertFails(getDoc(doc(orgA(), "sessions/s2")));
+    await assertFails(updateDoc(doc(orgA(), "experiences/expA"), { status: "published" }));
+    await assertFails(updateDoc(doc(orgA(), "sessions/sA"), { capacity: 99 }));
+  });
+  it("réservations et demandes : seulement celles de ses activités, jamais celles des autres ni de The Host Club", async () => {
+    await assertSucceeds(getDoc(doc(orgA(), "reservations/rA")));
+    await assertFails(getDoc(doc(orgA(), "reservations/rB")));
+    await assertFails(getDoc(doc(orgA(), "reservations/r1"))); // réservation The Host Club (pas d'organisateur)
+    await assertFails(getDoc(doc(orgA(), "reservations/rA/private/payment")));
+    await assertSucceeds(getDocs(query(collection(orgA(), "reservations"), where("organizerId", "==", "orgA"))));
+    await assertFails(getDocs(query(collection(orgA(), "reservations"), where("organizerId", "==", "orgB"))));
+    await assertFails(getDocs(collection(orgA(), "reservations")));
+    await assertSucceeds(getDoc(doc(orgA(), "bookingRequests/sA_karim")));
+    await assertFails(getDoc(doc(orgA(), "bookingRequests/sB_salma")));
+    await assertFails(updateDoc(doc(orgA(), "reservations/rA"), { status: "cancelled" }));
+    await assertFails(updateDoc(doc(orgA(), "bookingRequests/sA_karim"), { status: "accepted" }));
+  });
+  it("sans structure (rôle seul) ou sans rôle (claim seul) : aucun accès organisateur", async () => {
+    await assertFails(getDoc(doc(orphan(), "reservations/rA")));
+    await assertFails(getDoc(doc(exOrg(), "reservations/rA")));
+    await assertFails(getDoc(doc(exOrg(), "experiences/expA")));
+    await assertFails(getDoc(doc(orphan(), "organizers/orgB")));
+  });
+  it("un organisateur ne lit ni les profils des clients, ni les paiements, ni le journal", async () => {
+    await assertFails(getDoc(doc(orgA(), "users/salma")));
+    await assertFails(getDoc(doc(orgA(), "payments/p1")));
+    await assertFails(getDoc(doc(orgA(), "auditLogs/a1")));
+    await assertFails(getDocs(collection(orgA(), "users")));
+  });
+});

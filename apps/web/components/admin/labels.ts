@@ -10,7 +10,6 @@ export const RESERVATION_STATUS = {
   no_show: ["Absent", "red"],
 } as const;
 
-export const CATEGORY_LABELS = { eat: "Dîners", move: "Sport & bien-être", play: "Jeux", create: "Ateliers", discover: "Sorties" } as const;
 
 export const INTEREST_LABELS: Record<string, string> = {
   gastronomy: "Gastronomie", sport: "Sport", travel: "Voyage", culture: "Culture", art: "Art",

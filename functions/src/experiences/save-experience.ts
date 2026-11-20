@@ -7,6 +7,7 @@ import { audit } from "../lib/audit";
 import { notifyReservationChange } from "../notify/reminders";
 import { notifyNewDates } from "./alerts";
 import { invalidArgument, requireRole, roleOf } from "../lib/guards";
+import { requireOrganizer } from "../organizers/access";
 import { refuse } from "../reservations/refuse";
 
 const ID = /^[A-Za-z0-9_-]{6,40}$/;
@@ -48,18 +49,42 @@ async function uniqueSlug(base: string, ignoreId?: string) {
   throw new HttpsError("already-exists", "Impossible de générer une adresse unique.");
 }
 
+/** Organisateur qui enregistre (étape 20) ; absent = l'équipe The Host Club. */
+type OrganizerActor = { id: string; name: string; slug: string };
+
 /**
  * Crée ou modifie une expérience, son modèle économique et (optionnellement) une série de dates.
  * Réservé aux admins. Validation complète avec le schéma partagé, écriture en un seul lot, journalisée.
  */
 export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   const actor = requireRole(req, ["admin", "superadmin"]);
-  const parsedInput = input.safeParse(req.data);
+  return saveExperience(req.data, { uid: actor.uid, role: roleOf(req), organizer: null });
+});
+
+/**
+ * Étape 20 : un organisateur validé crée ou modifie SES activités. Brouillon, puis « envoyer pour validation » :
+ * l'équipe relit avant publication (adminReviewExperience). Une activité déjà publiée reste en ligne quand
+ * l'organisateur la modifie, signalée « modifiée, à relire » dans le back-office. Pas d'accès au modèle économique,
+ * aux lieux partenaires, ni aux avantages membres (gérés par l'équipe).
+ */
+export const organizerSaveExperience = onCall({ region: REGION }, async (req) => {
+  const o = await requireOrganizer(req, { approvedOnly: true });
+  return saveExperience(req.data, { uid: o.uid, role: "organizer", organizer: { id: o.orgId, name: String(o.org.name ?? ""), slug: String(o.org.slug ?? "") } });
+});
+
+export async function saveExperience(raw: unknown, ctx: { uid: string; role: string; organizer: OrganizerActor | null }) {
+  const actor = { uid: ctx.uid };
+  const org = ctx.organizer;
+  const parsedInput = input.safeParse(raw);
   if (!parsedInput.success) invalidArgument(parsedInput.error.issues);
   const { experienceId, newId, addSessions, images } = parsedInput.data;
   const parsed = experienceInputSchema.safeParse(dropNulls(parsedInput.data.data));
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const v = parsed.data;
+  // Organisateur : les réglages réservés à l'équipe sont ignorés (prix membre, réservé membres, lieu partenaire,
+  // modèle économique, proposition d'un membre de confiance).
+  const v = org
+    ? { ...parsed.data, partnerId: "", pricingModel: "online_only" as const, partnerPriceDh: undefined, onSiteCommissionPercent: undefined, membersOnly: false, memberPriceDh: undefined, proposalId: undefined, economicsModel: "own" as const, costPerSeatDh: undefined, commissionPercent: undefined }
+    : parsed.data;
 
   const isCreate = !experienceId;
   const id = experienceId ?? newId ?? db.collection("experiences").doc().id;
@@ -69,19 +94,26 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   if (!isCreate && !existing.exists) throw new HttpsError("not-found", "Expérience introuvable.");
   // Une expérience peut être créée SANS date : « Prochaines dates bientôt », dates ajoutées plus tard.
 
-  // Les photos doivent avoir été envoyées dans le dossier de CETTE expérience.
+  // Étape 20 : un organisateur ne modifie que SES activités ; l'organisateur d'une activité ne change jamais.
+  const ownerOrgId = isCreate ? (org?.id ?? null) : ((existing.data()?.organizerId as string | undefined) ?? null);
+  if (org && ownerOrgId !== org.id) throw new HttpsError("permission-denied", "Cette activité ne vous appartient pas.", { reason: "not_owner" });
+  // Les photos doivent avoir été envoyées dans le dossier de CETTE expérience (équipe) ou de l'organisateur.
   for (const img of images) {
-    if (!img.path.startsWith(`experiences/${id}/`) || img.path.includes("..")) {
+    const okPath = (!org && img.path.startsWith(`experiences/${id}/`)) || (ownerOrgId !== null && img.path.startsWith(`organizers/${ownerOrgId}/public/`));
+    if (!okPath || img.path.includes("..")) {
       invalidArgument([{ path: ["images"], message: "invalidImagePath" }]);
     }
   }
-  const [city, category, partner] = await Promise.all([
+  const [city, category, subcategory, partner] = await Promise.all([
     db.doc(`cities/${v.cityId}`).get(),
     db.doc(`categories/${v.categoryId}`).get(),
+    v.subcategoryId ? db.doc(`categories/${v.subcategoryId}`).get() : Promise.resolve(null),
     v.partnerId ? db.doc(`partners/${v.partnerId}`).get() : Promise.resolve(null),
   ]);
   if (!city.exists || city.data()?.isActive !== true) invalidArgument([{ path: ["cityId"], message: "required" }]);
-  if (!category.exists) invalidArgument([{ path: ["categoryId"], message: "required" }]);
+  // Étape 19 : l'univers est une catégorie principale ; la sous-catégorie (facultative) en dépend.
+  if (!category.exists || category.get("parentId")) invalidArgument([{ path: ["categoryId"], message: "required" }]);
+  if (v.subcategoryId && (!subcategory?.exists || subcategory.get("parentId") !== v.categoryId)) invalidArgument([{ path: ["subcategoryId"], message: "required" }]);
   if (v.partnerId && !partner?.exists) invalidArgument([{ path: ["partnerId"], message: "required" }]);
   // 18d : expérience issue de la proposition d'un membre de confiance (encore en attente, ou déjà liée à CETTE expérience).
   let proposal: FirebaseFirestore.DocumentData | undefined;
@@ -90,6 +122,19 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     if (!proposal || (proposal.status !== "pending" && proposal.experienceId !== id)) invalidArgument([{ path: ["proposalId"], message: "proposalUnavailable" }]);
   }
 
+  // Statut réel : l'équipe publie directement ; un organisateur « envoie pour validation » (pending_review),
+  // sauf si l'activité est déjà publiée (elle le reste). Archivée : le reste jusqu'à « Réactiver ».
+  const previousStatus = existing.data()?.status as string | undefined;
+  const effectiveStatus: string =
+    previousStatus === "archived"
+      ? "archived"
+      : !org
+        ? v.status
+        : previousStatus === "published"
+          ? "published"
+          : v.status === "published"
+            ? "pending_review"
+            : "draft";
   const grouped = v.bookingMode === "group" || v.bookingMode === "social_dinner";
   const price = { amount: Math.round(v.priceDh * 100), currency: "MAD" as const };
   const slug = isCreate ? await uniqueSlug(slugify(`${v.titleFr} ${v.cityId}`)) : (existing.data()?.slug as string);
@@ -129,6 +174,7 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     summary: { fr: v.summaryFr, ...(v.summaryAr ? { ar: v.summaryAr } : {}), ...(v.summaryEn ? { en: v.summaryEn } : {}) },
     description: { fr: v.descriptionFr, ...(v.descriptionAr ? { ar: v.descriptionAr } : {}), ...(v.descriptionEn ? { en: v.descriptionEn } : {}) },
     categoryId: v.categoryId,
+    subcategoryId: v.subcategoryId || null,
     cityId: v.cityId,
     district: v.district,
     tags: [] as string[],
@@ -162,7 +208,15 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     questionnaire: v.questionnaire.map(cleanQuestion),
     ...(proposal ? { proposedBy: { uid: proposal.userId, firstName: String(proposal.firstName ?? "") }, proposalId: v.proposalId } : {}),
     // Une expérience archivée le reste tant qu'elle n'est pas réactivée (bouton « Réactiver »).
-    status: existing.data()?.status === "archived" ? "archived" : v.status,
+    status: effectiveStatus,
+    ...(org
+      ? {
+          organizerSnapshot: { name: org.name, slug: org.slug },
+          // Activité publiée modifiée par l'organisateur : reste en ligne, signalée à l'équipe.
+          ...(previousStatus === "published" ? { reviewFlag: true, reviewFlaggedAt: FieldValue.serverTimestamp() } : {}),
+          ...(effectiveStatus === "pending_review" && previousStatus !== "pending_review" ? { submittedAt: FieldValue.serverTimestamp(), rejectionMessage: null } : {}),
+        }
+      : {}),
     updatedAt: FieldValue.serverTimestamp(),
     updatedBy: actor.uid,
   };
@@ -173,10 +227,13 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   if (planned.some((d) => new Date(d.startAt).getTime() < now)) invalidArgument([{ path: ["sessions", "firstDate"], message: "inPast" }]);
   const archived = existing.data()?.status === "archived";
   if (archived && addSessions) refuse("archived", "Réactivez l'expérience avant d'ajouter des dates.");
-  const sessionStatus = v.status === "published" ? "published" : "draft";
+  const sessionStatus = effectiveStatus === "published" ? "published" : "draft";
+  // Étape 19 : l'organisateur (null = The Host Club) est recopié sur chaque date (règles d'accès, tableaux de bord).
+  const organizerId = ownerOrgId;
   for (const d of planned) {
     batch.set(db.collection("sessions").doc(), {
       experienceId: id,
+      organizerId,
       experienceSnapshot: snapshot,
       cityId: v.cityId,
       categoryId: v.categoryId,
@@ -198,15 +255,19 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
   const future = await db.collection("sessions").where("experienceId", "==", id).where("startAt", ">=", Timestamp.fromMillis(now)).get();
   for (const s of future.docs) {
     const status = s.data().status;
-    const nextStatus = archived ? status : status === "draft" && v.status === "published" ? "published" : status === "published" && v.status === "draft" && s.data().seatsConfirmed === 0 ? "draft" : status;
+    const nextStatus = archived ? status : status === "draft" && effectiveStatus === "published" ? "published" : status === "published" && effectiveStatus === "draft" && s.data().seatsConfirmed === 0 ? "draft" : status;
     batch.update(s.ref, { experienceSnapshot: snapshot, status: nextStatus });
   }
   const starts = [...future.docs.map((s) => (s.data().startAt as Timestamp).toMillis()), ...planned.map((d) => new Date(d.startAt).getTime())];
   const nextSessionAt = starts.length ? Timestamp.fromMillis(Math.min(...starts)) : null;
 
-  if (isCreate) batch.set(ref, { ...experience, nextSessionAt, ratingAvg: 0, ratingCount: 0, createdAt: FieldValue.serverTimestamp(), createdBy: actor.uid });
+  if (isCreate) batch.set(ref, { ...experience, organizerId: ownerOrgId, nextSessionAt, ratingAvg: 0, ratingCount: 0, createdAt: FieldValue.serverTimestamp(), createdBy: actor.uid });
   else batch.update(ref, { ...experience, nextSessionAt });
-  batch.set(db.doc(`experiences/${id}/private/economics`), {
+  // Organisateur : modèle économique créé une fois (commission fixée par les règles de commission, étape 21),
+  // jamais modifié par lui ensuite.
+  if (org) {
+    if (isCreate) batch.set(db.doc(`experiences/${id}/private/economics`), { partnerId: null, model: "organizer", organizerId: org.id, costPerSeat: null, commissionPercent: null, onSiteCommissionPercent: null, updatedAt: FieldValue.serverTimestamp() });
+  } else batch.set(db.doc(`experiences/${id}/private/economics`), {
     partnerId: v.partnerId || null,
     model: v.economicsModel,
     costPerSeat: v.economicsModel === "own" ? Math.round((v.costPerSeatDh ?? 0) * 100) : null,
@@ -243,7 +304,7 @@ export const adminSaveExperience = onCall({ region: REGION }, async (req) => {
     }
   }
   // Nouvelles dates publiées : prévenir les personnes qui l'avaient demandé.
-  const alerted = planned.length > 0 && v.status === "published" ? await notifyNewDates(id, v.titleFr, slug, planned.length) : 0;
-  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: isCreate ? "experience.create" : "experience.update", targetType: "experience", targetId: id, after: { title: v.titleFr, status: v.status, sessionsAdded: planned.length, alerted, pricingModel: pricing.model } });
-  return { ok: true, experienceId: id, slug, sessionsCreated: planned.length };
-});
+  const alerted = planned.length > 0 && effectiveStatus === "published" ? await notifyNewDates(id, v.titleFr, slug, planned.length) : 0;
+  await audit({ actorUid: actor.uid, actorRole: ctx.role, action: isCreate ? "experience.create" : "experience.update", targetType: "experience", targetId: id, after: { title: v.titleFr, status: effectiveStatus, sessionsAdded: planned.length, alerted, pricingModel: pricing.model, ...(org ? { organizerId: org.id } : {}) } });
+  return { ok: true, experienceId: id, slug, sessionsCreated: planned.length, status: effectiveStatus };
+}

@@ -18,7 +18,11 @@ export type Money = {
   currency: CurrencyCode;
 };
 
-export type CategoryKey = "eat" | "move" | "play" | "create" | "discover";
+/**
+ * Identifiant d'univers / de catégorie. Étape 19 : les catégories sont dynamiques (créées par le super-admin) ;
+ * les cinq historiques (eat, move, play, create, discover) gardent leurs adresses.
+ */
+export type CategoryKey = string;
 
 export type BookingMode = "individual" | "group" | "social_dinner" | "open" | "private";
 
@@ -51,6 +55,10 @@ export type City = {
   isComingSoon: boolean;
   order: number;
   districts: string[];
+  /** Étape 19 : région, pays et photo de la ville (facultatifs). */
+  region?: string;
+  country?: string;
+  imagePath?: string;
   isDemo?: boolean;
 };
 
@@ -62,6 +70,11 @@ export type Category = {
   order: number;
   isActive: boolean;
   defaultBookingMode: BookingMode;
+  /** Étape 19 : pictogramme (liste fermée), couleur, image, catégorie parente (sous-catégorie). */
+  icon?: string;
+  color?: string;
+  imagePath?: string;
+  parentId?: string | null;
 };
 
 export type ImageRef = { path: string; alt: LocalizedText };
@@ -111,7 +124,12 @@ export type Experience = {
   included: LocalizedText[];
   practicalInfo: LocalizedText;
   cancellationPolicyId: string;
-  status: "draft" | "published" | "archived";
+  /** Étape 20 : « pending_review » (envoyée par un organisateur, à valider) et « rejected » (refusée par l'équipe). */
+  status: "draft" | "pending_review" | "published" | "rejected" | "archived";
+  /** Étape 19 : organisateur (absent = The Host Club) et sous-catégorie. */
+  organizerId?: string | null;
+  organizerSnapshot?: { name: string; slug: string } | null;
+  subcategoryId?: string | null;
   ratingAvg: number;
   ratingCount: number;
   /* 18b : précisions pour les activités (facultatives, en français ; affichées telles quelles). */

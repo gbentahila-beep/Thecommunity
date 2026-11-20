@@ -7,6 +7,7 @@ import {
   MOROCCO_TIMEZONE,
   zonedDateTimeToUtc,
   zonedParts,
+  type Category,
   type CategoryKey,
   type Experience,
   type Session,
@@ -35,14 +36,30 @@ export async function getCity(id: string) {
   return DEMO_CITIES.find((c) => c.id === id) ?? null;
 }
 
-export async function getCategories() {
+/** Toutes les catégories visibles (principales et sous-catégories), triées. */
+async function activeCategories(): Promise<Category[]> {
   if (FIREBASE_ENABLED) return fs.fsCategories();
   return DEMO_CATEGORIES.filter((c) => c.isActive).sort((a, b) => a.order - b.order);
 }
 
+/** Univers / catégories principales visibles (menu, accueil, puces). Étape 19 : dynamiques. */
+export async function getCategories() {
+  return (await activeCategories()).filter((c) => !c.parentId);
+}
+
+/** Sous-catégories visibles d'une catégorie principale. */
+export async function getSubcategories(parentId: string) {
+  return (await activeCategories()).filter((c) => c.parentId === parentId);
+}
+
+/** Catégorie ou sous-catégorie visible (page /ville/catégorie). */
 export async function getCategory(id: string) {
-  if (FIREBASE_ENABLED) return (await fs.fsCategories()).find((c) => c.id === id) ?? null;
-  return DEMO_CATEGORIES.find((c) => c.id === id) ?? null;
+  return (await activeCategories()).find((c) => c.id === id) ?? null;
+}
+
+/** Toutes les catégories visibles, principales et sous-catégories (plan du site, libellés). */
+export async function getAllCategories() {
+  return activeCategories();
 }
 
 export async function getExperienceBySlug(slug: string) {
@@ -104,6 +121,8 @@ function windowFor(when: WhenFilter, now: Date): [number, number] {
 export async function getUpcomingSessions(filters: {
   cityId?: string;
   categoryId?: CategoryKey;
+  /** Étape 19 : sous-catégorie (filtrée sur l'expérience). */
+  subcategoryId?: string;
   experienceId?: string;
   when?: WhenFilter;
   limit?: number;
@@ -115,7 +134,8 @@ export async function getUpcomingSessions(filters: {
     // Début de fenêtre arrondi à la minute : la clé du cache reste stable entre deux visites.
     const sessions = await fs.fsUpcomingSessions({ cityId: filters.cityId, categoryId: filters.categoryId, experienceId: filters.experienceId, from: Math.floor(from / 60_000) * 60_000, to });
     const exps = await fs.fsExperiencesByIds(sessions.map((s) => s.experienceId));
-    const joined = sessions.flatMap((s) => (exps.has(s.experienceId) ? [{ ...s, experience: exps.get(s.experienceId)! }] : []));
+    const joined = sessions.flatMap((s) => (exps.has(s.experienceId) ? [{ ...s, experience: exps.get(s.experienceId)! }] : []))
+      .filter((s) => !filters.subcategoryId || s.experience.subcategoryId === filters.subcategoryId);
     return filters.limit ? joined.slice(0, filters.limit) : joined;
   }
   const result = withExperience(buildDemoSessions(now)).filter((s) => {
@@ -126,6 +146,7 @@ export async function getUpcomingSessions(filters: {
       t < to &&
       (!filters.cityId || s.cityId === filters.cityId) &&
       (!filters.categoryId || s.categoryId === filters.categoryId) &&
+      (!filters.subcategoryId || s.experience.subcategoryId === filters.subcategoryId) &&
       (!filters.experienceId || s.experienceId === filters.experienceId)
     );
   });

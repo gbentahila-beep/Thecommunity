@@ -1,6 +1,6 @@
 "use client";
 
-import { ACTIVITY_LEVELS, CATEGORY_KEYS, outingProposalSchema, type ActivityLevel, type CategoryKey } from "@thecommunity/shared";
+import { ACTIVITY_LEVELS, outingProposalSchema, type ActivityLevel, type CategoryKey } from "@thecommunity/shared";
 import { httpsCallable } from "firebase/functions";
 import { CheckCircle2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -12,11 +12,10 @@ type Values = { title: string; categoryId: CategoryKey; description: string; dis
 const EMPTY: Values = { title: "", categoryId: "move", description: "", district: "", venueIdea: "", datesIdea: "", capacity: "8", priceIdeaDh: "", level: "", willHost: true, notes: "" };
 
 /** 18d — Formulaire « Proposer une sortie » (membres de confiance). Relu par l'équipe avant toute publication. */
-export function ProposalForm({ live }: { live: boolean }) {
+export function ProposalForm({ live, categories }: { live: boolean; /** Étape 19 : catégories visibles (dynamiques). */ categories: { id: string; label: string }[] }) {
   const t = useTranslations("propose");
-  const tc = useTranslations("labels.categories");
   const router = useRouter();
-  const [v, setV] = useState<Values>(EMPTY);
+  const [v, setV] = useState<Values>(() => ({ ...EMPTY, categoryId: categories.some((c) => c.id === "move") ? "move" : (categories[0]?.id ?? "move") }));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [state, setState] = useState<"idle" | "busy" | "sent" | "error">("idle");
   const [error, setError] = useState("");
@@ -71,7 +70,7 @@ export function ProposalForm({ live }: { live: boolean }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <div>{label("categoryId", t("categoryLabel"))}
           <select {...fieldProps("categoryId")} value={v.categoryId} onChange={(e) => set("categoryId", e.target.value as CategoryKey)}>
-            {CATEGORY_KEYS.map((c) => <option key={c} value={c}>{tc(c)}</option>)}
+            {categories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select></div>
         <div>{label("level", t("levelLabel"))}
           <select {...fieldProps("level")} value={v.level} onChange={(e) => set("level", e.target.value as Values["level"])}>

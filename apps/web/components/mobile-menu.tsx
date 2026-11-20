@@ -3,7 +3,7 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { ChevronDown, Menu, UserRound, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { logout } from "@/lib/auth/client";
@@ -12,7 +12,7 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { LanguageSwitch } from "./language-switch";
 import { Logo } from "./logo";
 
-type Item = { href: string; label: string; dot?: string };
+type Item = { href: string; label: string; dot?: string; dotStyle?: CSSProperties };
 type City = { id: string; name: string; active: boolean };
 
 /** Connexion côté navigateur (Firebase) ; en mode démo, personne n'est connecté. */
@@ -163,7 +163,7 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
                   {discover.map((it, i) => (
                     <li key={it.href}>
                       <Link href={it.href} onClick={close} className={`${subLink} ${i === 0 ? "font-semibold text-plum-900" : ""}`}>
-                        {it.dot && <span className={`size-2.5 rounded-full ${it.dot}`} aria-hidden />}
+                        {it.dot && <span className={`size-2.5 rounded-full ${it.dot}`} style={it.dotStyle} aria-hidden />}
                         {it.label}
                       </Link>
                     </li>

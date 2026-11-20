@@ -127,6 +127,15 @@ describe("rôles", () => {
     const me = auth().currentUser!.uid;
     expect(await errorCode(call("setUserRole")({ uid: me, role: "user" }))).toBe("functions/failed-precondition");
   });
+  it("le rôle organisateur ne se donne pas à la main ; un organisateur redevenu membre perd son accès (19)", async () => {
+    const target = await adminAuth(admin).createUser({ email: `orga.${Date.now()}@example.com`, password: "MotDePasse!123" });
+    expect(await errorCode(call("setUserRole")({ uid: target.uid, role: "organizer" }))).toBe("functions/failed-precondition");
+    await adminAuth(admin).setCustomUserClaims(target.uid, { role: "organizer", orgId: "orgTest1" });
+    await call("setUserRole")({ uid: target.uid, role: "user" });
+    const claims = (await adminAuth(admin).getUser(target.uid)).customClaims ?? {};
+    expect(claims.role).toBeUndefined();
+    expect(claims.orgId).toBeUndefined();
+  });
 });
 
 describe("back-office : expériences et comptes", () => {

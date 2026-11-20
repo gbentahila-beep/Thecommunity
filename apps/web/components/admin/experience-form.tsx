@@ -23,7 +23,7 @@ import { QuestionnaireEditor } from "@/components/admin/questionnaire-editor";
 import type { QuestionDraft } from "@/lib/questionnaire-draft";
 import { firebase } from "@/lib/firebase/client";
 
-type Option = { id: string; label: string; disabled?: boolean; /** 18c : état de l'assurance du lieu partenaire. */ insurance?: "valid" | "expiring" | "expired" | "missing" };
+type Option = { id: string; label: string; disabled?: boolean; /** 18c : état de l'assurance du lieu partenaire. */ insurance?: "valid" | "expiring" | "expired" | "missing"; /** Étape 19 : sous-catégorie de… */ parentId?: string };
 export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "onSiteCommissionPercent" | "minAge" | "level" | "questionnaire" | "proposalId"> & {
   /** 18b : âge minimum (vide = 18 ans), niveau attendu (vide = non précisé) ; 18a : questionnaire ; 18d : proposition d'origine. */
   minAge: string; level: "" | ActivityLevel; questionnaire: QuestionDraft[]; proposalId?: string;
@@ -101,6 +101,7 @@ export function ExperienceForm({
   existingImages = [],
   live = false,
   bookedSeats = 0,
+  organizer,
 }: {
   initial: ExperienceFormValues;
   categories: Option[];
@@ -114,7 +115,13 @@ export function ExperienceForm({
   live?: boolean;
   /** Places déjà confirmées sur les dates à venir : leur prix est figé, on prévient l'équipe. */
   bookedSeats?: number;
+  /**
+   * Étape 20 : formulaire de l'espace organisateur. Mêmes champs, sans le modèle économique, les lieux partenaires
+   * ni les avantages membres ; photos dans le dossier public de l'organisateur ; « Envoyer pour validation ».
+   */
+  organizer?: { orgId: string; currentStatus?: string };
 }) {
+  const pro = Boolean(organizer);
   const [v, setV] = useState(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [result, setResult] = useState<ExperienceInput | null>(null);
@@ -178,22 +185,25 @@ export function ExperienceForm({
     // Enregistrement réel : photos d'abord (dans le dossier de l'expérience), puis la fonction serveur.
     setSaving(true);
     try {
-      const { db, storage, functions } = firebase();
+      const { db, storage, functions, auth } = firebase();
       const id = experienceId ?? doc(collection(db, "experiences")).id;
+      // Organisateur : jeton rafraîchi (droits posés à la validation du compte) avant l'envoi des photos.
+      if (organizer && images.length > 0) await auth.currentUser?.getIdToken(true);
       const uploaded: { path: string; alt: string }[] = [];
       for (const [i, img] of images.entries()) {
         const ext = img.file.type === "image/png" ? "png" : img.file.type === "image/webp" ? "webp" : "jpg";
-        const path = `experiences/${id}/${Date.now()}-${i}.${ext}`;
+        const path = organizer ? `organizers/${organizer.orgId}/public/${id}-${Date.now()}-${i}.${ext}` : `experiences/${id}/${Date.now()}-${i}.${ext}`;
         await uploadBytes(ref(storage, path), img.file, { contentType: img.file.type });
         uploaded.push({ path, alt: parsed.data.titleFr });
       }
-      const res = await httpsCallable(functions, "adminSaveExperience")({
+      const res = await httpsCallable(functions, organizer ? "organizerSaveExperience" : "adminSaveExperience")({
         ...(experienceId ? { experienceId } : { newId: id }),
         data: JSON.parse(JSON.stringify(parsed.data)), // retire les champs vides (undefined)
         addSessions,
         images: uploaded,
       });
-      setSaved({ ...(res.data as { experienceId: string; slug: string; sessionsCreated: number }), status: parsed.data.status });
+      const data = res.data as { experienceId: string; slug: string; sessionsCreated: number; status?: string };
+      setSaved({ ...data, status: data.status ?? parsed.data.status });
       setImages([]);
       await fetch("/api/admin/revalidate", { method: "POST" }).catch(() => undefined);
     } catch (err) {
@@ -295,16 +305,25 @@ export function ExperienceForm({
           <select {...field("categoryId")} value={v.categoryId} onChange={(e) => {
             const id = e.target.value as ExperienceFormValues["categoryId"];
             // 18c : une activité sportive est en principe une activité physique (modifiable juste après).
-            setV((x) => ({ ...x, categoryId: id, ...(mode === "create" && id === "move" ? { physicalActivity: true } : {}) }));
+            setV((x) => ({ ...x, categoryId: id, subcategoryId: "", ...(mode === "create" && id === "move" ? { physicalActivity: true } : {}) }));
             setResult(null);
           }}>
-            {categories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+            {categories.filter((c) => !c.parentId).map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select>{err("categoryId")}</div>
+        {/* Étape 19 : sous-catégorie facultative (créée dans Paramètres → Catégories). */}
+        {categories.some((c) => c.parentId === v.categoryId) && (
+          <div><Label k="subcategoryId">Sous-catégorie (facultatif)</Label>
+            <select {...field("subcategoryId")} value={v.subcategoryId ?? ""} onChange={(e) => set("subcategoryId", e.target.value)}>
+              <option value="">— Aucune —</option>
+              {categories.filter((c) => c.parentId === v.categoryId).map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+            </select>{err("subcategoryId")}</div>
+        )}
         <div><Label k="status">Statut</Label>
           <select {...field("status")} value={v.status} onChange={(e) => set("status", e.target.value as "draft" | "published")}>
             <option value="draft">Brouillon (non visible)</option>
-            <option value="published">Publiée</option>
-          </select></div>
+            <option value="published">{pro ? (organizer?.currentStatus === "published" ? "Publiée (reste en ligne)" : "Envoyer pour validation") : "Publiée"}</option>
+          </select>
+          {pro && <p className="mt-1 text-xs text-muted">L&apos;équipe The Host Club relit chaque nouvelle activité avant sa publication. Une activité déjà en ligne le reste quand vous la modifiez.</p>}</div>
       </Section>
 
       <Section title="2. Lieu">
@@ -351,10 +370,12 @@ export function ExperienceForm({
             <div><Label k="groupMax">Taille max</Label><input {...field("groupMax")} inputMode="numeric" value={v.groupMax} onChange={(e) => set("groupMax", e.target.value)} />{err("groupMax")}</div>
           </div>
         )}
-        <label className="flex items-center gap-2 self-end pb-3 text-sm">
-          <input type="checkbox" checked={v.membersOnly} onChange={(e) => set("membersOnly", e.target.checked)} className="size-4 accent-plum-900" />
-          Réservée aux membres abonnés
-        </label>
+        {!pro && (
+          <label className="flex items-center gap-2 self-end pb-3 text-sm">
+            <input type="checkbox" checked={v.membersOnly} onChange={(e) => set("membersOnly", e.target.checked)} className="size-4 accent-plum-900" />
+            Réservée aux membres abonnés
+          </label>
+        )}
         <div><Label k="durationMinutes">Durée (minutes)</Label><input {...field("durationMinutes")} inputMode="numeric" value={v.durationMinutes} onChange={(e) => set("durationMinutes", e.target.value)} />{err("durationMinutes")}</div>
         <div><Label k="maxSeatsPerBooking" hint="1 pour une réservation individuelle.">Places max par réservation</Label><input {...field("maxSeatsPerBooking")} inputMode="numeric" value={v.maxSeatsPerBooking} onChange={(e) => set("maxSeatsPerBooking", e.target.value)} />{err("maxSeatsPerBooking")}</div>
         <div><Label k="cancellationPolicyId">Conditions d&apos;annulation</Label>
@@ -414,7 +435,8 @@ export function ExperienceForm({
         <QuestionnaireEditor value={v.questionnaire} onChange={(q) => set("questionnaire", q)} error={Object.entries(errors).find(([k]) => k.startsWith("questionnaire"))?.[1]} />
       </Section>
 
-      <Section id="tarification" title="5. Prix, paiement et partenaire">
+      <Section id="tarification" title={pro ? "5. Prix" : "5. Prix, paiement et partenaire"}>
+        {!pro && (<>
         <div className="sm:col-span-2"><Label k="partnerId" hint="Le lieu ou le prestataire de l'expérience. Facultatif.">Partenaire</Label>
           <select {...field("partnerId")} value={v.partnerId ?? ""} onChange={(e) => choosePartner(e.target.value)}>
             <option value="">— Aucun (organisé entièrement par The Host Club)</option>
@@ -440,14 +462,16 @@ export function ExperienceForm({
           {!v.partnerId && <p className="mt-2 text-xs text-muted">Les formules avec une part sur place demandent un partenaire (choisi juste au-dessus).</p>}
           {err("pricingModel")}
         </fieldset>
+        </>)}
 
         <div className="grid gap-4 rounded-xl border border-line p-4 sm:col-span-2 sm:grid-cols-2" data-testid="part-online">
-          <p className="text-sm font-semibold text-ink sm:col-span-2">Payé en ligne, encaissé par The Host Club</p>
+          <p className="text-sm font-semibold text-ink sm:col-span-2">{pro ? "Payé en ligne à la réservation" : "Payé en ligne, encaissé par The Host Club"}</p>
           <div><Label k="priceDh" hint="Ce que le client paie à la réservation.">Prix par place (DH)</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
-          <div><Label k="memberPriceDh" hint="Facultatif. Vide = réduction de l'abonnement (réglée dans « Abonnement »).">Prix membre (DH)</Label><input {...field("memberPriceDh")} inputMode="decimal" value={v.memberPriceDh} onChange={(e) => set("memberPriceDh", e.target.value)} />{err("memberPriceDh")}</div>
+          {!pro && <div><Label k="memberPriceDh" hint="Facultatif. Vide = réduction de l'abonnement (réglée dans « Abonnement »).">Prix membre (DH)</Label><input {...field("memberPriceDh")} inputMode="decimal" value={v.memberPriceDh} onChange={(e) => set("memberPriceDh", e.target.value)} />{err("memberPriceDh")}</div>}
+          {pro && <p className="text-xs text-muted sm:col-span-2">La commission de The Host Club et le calendrier de reversement figurent dans votre contrat organisateur et dans « Finances ».</p>}
         </div>
 
-        {onSiteMode && (
+        {!pro && onSiteMode && (
           <div className="grid gap-4 rounded-xl border border-line p-4 sm:col-span-2 sm:grid-cols-2" data-testid="part-on-site">
             <p className="text-sm font-semibold text-ink sm:col-span-2">Payé sur place, directement {partnerName ? `à ${partnerName}` : "au partenaire"} — jamais encaissé par nous</p>
             {v.pricingModel === "fixed_partner" ? (
@@ -459,6 +483,7 @@ export function ExperienceForm({
           </div>
         )}
 
+        {!pro && (<>
         <div className="grid gap-4 rounded-xl border border-dashed border-plum-200 bg-plum-50/40 p-4 sm:col-span-2 sm:grid-cols-2" data-testid="economics">
           <p className="text-sm font-semibold text-ink sm:col-span-2">Ce que ça nous rapporte <span className="font-normal text-muted">(visible uniquement par l&apos;équipe)</span></p>
           {!onSiteMode && v.partnerId && (
@@ -520,6 +545,7 @@ export function ExperienceForm({
           </div>
         </div>
         <p className="text-xs text-muted sm:col-span-2">Prix membre, abonnement, codes promo et frais de service ne s&apos;appliquent qu&apos;à la part payée en ligne. The Host Club n&apos;encaisse jamais la part réglée au partenaire.</p>
+        </>)}
         {mode === "edit" && bookedSeats > 0 && (
           <p role="note" className="flex items-start gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-950 sm:col-span-2">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -596,15 +622,15 @@ export function ExperienceForm({
 
       {live && saved && (
         <section id="form-result" role="status" className="scroll-mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-950">
-          <h2 className="flex items-center gap-2 text-base font-semibold"><CheckCircle2 className="size-5" aria-hidden /> Expérience enregistrée</h2>
+          <h2 className="flex items-center gap-2 text-base font-semibold"><CheckCircle2 className="size-5" aria-hidden /> {pro ? "Activité enregistrée" : "Expérience enregistrée"}</h2>
           <p className="mt-2">
             {saved.sessionsCreated > 0 ? `${saved.sessionsCreated} date${saved.sessionsCreated > 1 ? "s" : ""} créée${saved.sessionsCreated > 1 ? "s" : ""}. ` : ""}
-            {saved.status === "published" ? "Elle est visible sur le site." : "Elle reste en brouillon (invisible du public)."}
+            {saved.status === "published" ? "Elle est visible sur le site." : saved.status === "pending_review" ? "Elle est envoyée à l'équipe pour validation : vous serez prévenu(e) dès sa publication." : "Elle reste en brouillon (invisible du public)."}
           </p>
           <p className="mt-3 flex flex-wrap gap-4 font-medium">
             {saved.status === "published" && <Link href={`/experiences/${saved.slug}`} className="underline">Voir sur le site</Link>}
-            <Link href="/admin/experiences" className="underline">Retour aux expériences</Link>
-            {mode === "create" && <Link href={`/admin/experiences/${saved.experienceId}`} className="underline">Continuer à modifier</Link>}
+            <Link href={pro ? "/pro/activites" : "/admin/experiences"} className="underline">{pro ? "Retour à mes activités" : "Retour aux expériences"}</Link>
+            {mode === "create" && <Link href={pro ? `/pro/activites/${saved.experienceId}` : `/admin/experiences/${saved.experienceId}`} className="underline">Continuer à modifier</Link>}
           </p>
         </section>
       )}

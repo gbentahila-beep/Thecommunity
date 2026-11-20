@@ -13,7 +13,7 @@ export async function CategoryChips({
   hrefFor: (categoryId?: string) => string;
 }) {
   const [categories, locale, t] = await Promise.all([getCategories(), getLocale(), getTranslations("filters")]);
-  const items = [{ id: undefined, label: t("all") }, ...categories.map((c) => ({ id: c.id, label: tr(c.shortName, locale) }))];
+  const items: { id?: string; icon?: string; label: string }[] = [{ id: undefined, label: t("all") }, ...categories.map((c) => ({ id: c.id, icon: c.icon, label: tr(c.shortName, locale) }))];
   return (
     <ul className="-mx-4 flex gap-2.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
       {items.map((item) => {
@@ -29,7 +29,7 @@ export async function CategoryChips({
                   : "border-line bg-white/60 text-plum-900 hover:border-plum-200 hover:bg-white"
               }`}
             >
-              {item.id && <CategoryIcon category={item.id} className="size-[18px]" />}
+              {item.id && <CategoryIcon category={item.id} icon={item.icon} className="size-[18px]" />}
               {item.label}
             </Link>
           </li>

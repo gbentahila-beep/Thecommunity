@@ -109,7 +109,8 @@
     "comingSoonTitle": "The Host Club arrive bientôt à {city}",
     "comingSoonText": "Nous préparons les premières expériences. En attendant, retrouvez-nous à Casablanca.",
     "backToCasablanca": "Voir les expériences à Casablanca",
-    "otherCategories": "Autres univers"
+    "otherCategories": "Autres univers",
+    "subcategories": "Sous-catégories"
   },
   "experience": {
     "breadcrumbHome": "Accueil",

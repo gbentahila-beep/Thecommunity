@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { BOOKING_MODES, CATEGORY_KEYS } from "./constants";
+import { BOOKING_MODES, CATEGORY_ID_PATTERN } from "./constants";
 import { SPOKEN_LANGUAGES } from "./profile";
 import { ACTIVITY_LEVELS, MIN_AGE_FLOOR, MIN_AGE_MAX } from "./activity";
 import { questionnaireSchema } from "./questionnaire";
 import { zonedDateTimeToUtc } from "./time";
-import type { BookingMode, CategoryKey, SpokenLanguage } from "./types";
+import type { BookingMode, SpokenLanguage } from "./types";
 
 /**
  * Formulaire admin « Créer une expérience ». Même schéma côté navigateur (phase 2)
@@ -33,7 +33,9 @@ export const experienceInputSchema = z
     descriptionEn: z.string().trim().max(3000, "tooLong").optional().or(z.literal("")),
     summaryFr: z.string().trim().min(10, "tooShort").max(160, "tooLong"),
     descriptionFr: z.string().trim().min(30, "tooShort").max(3000, "tooLong"),
-    categoryId: z.enum(CATEGORY_KEYS as [CategoryKey, ...CategoryKey[]], { message: "required" }),
+    categoryId: z.string().regex(CATEGORY_ID_PATTERN, "required"),
+    /** Étape 19 : sous-catégorie facultative (rattachée à la catégorie choisie, vérifié par le serveur). */
+    subcategoryId: z.string().regex(CATEGORY_ID_PATTERN, "required").optional().or(z.literal("")),
     cityId: z.string().min(1, "required"),
     district: z.string().trim().min(2, "required").max(60, "tooLong"),
     venueName: z.string().trim().min(2, "required").max(100, "tooLong"),

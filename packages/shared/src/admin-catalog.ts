@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BOOKING_MODES } from "./constants";
+import { BOOKING_MODES, CATEGORY_ICONS, CATEGORY_ID_PATTERN } from "./constants";
 import { partnerInsuranceSchema } from "./activity";
 
 /**
@@ -48,6 +48,10 @@ export const cityInputSchema = z.object({
   order: z.coerce.number().int().min(0).max(999),
   /** Quartiers, un par ligne ou séparés par des virgules. */
   districts: z.array(z.string().trim().min(1).max(60)).max(80),
+  /** Étape 19 : région, pays, photo (chemin dans le stockage ou fichier du site). */
+  region: z.string().trim().max(60, "tooLong").optional().or(z.literal("")),
+  country: z.string().trim().max(60, "tooLong").optional().or(z.literal("")),
+  imagePath: z.string().trim().max(300, "tooLong").regex(/^(\/images\/[\w./-]+|cities\/[\w./-]+)?$/, "invalidImage").optional().or(z.literal("")),
 });
 export type CityInput = z.infer<typeof cityInputSchema>;
 
@@ -57,13 +61,18 @@ const localized = (max: number) => ({
   en: z.string().trim().max(max, "tooLong"),
 });
 export const categoryInputSchema = z.object({
-  id: z.string().trim().min(1).max(20),
+  id: z.string().trim().regex(CATEGORY_ID_PATTERN, "slug"),
   name: z.object(localized(60)),
   shortName: z.object(localized(30)),
   description: z.object(localized(240)),
   order: z.coerce.number().int().min(0).max(999),
   isActive: z.boolean(),
   defaultBookingMode: z.enum(BOOKING_MODES as unknown as [string, ...string[]]),
+  /** Étape 19 : pictogramme, couleur, image, catégorie parente (vide = catégorie principale). */
+  icon: z.enum(CATEGORY_ICONS).default("sparkles"),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "color").optional().or(z.literal("")),
+  imagePath: z.string().trim().max(300, "tooLong").regex(/^(\/images\/[\w./-]+|categories\/[\w./-]+)?$/, "invalidImage").optional().or(z.literal("")),
+  parentId: z.string().trim().regex(CATEGORY_ID_PATTERN, "slug").optional().or(z.literal("")),
 });
 export type CategoryInput = z.infer<typeof categoryInputSchema>;
 

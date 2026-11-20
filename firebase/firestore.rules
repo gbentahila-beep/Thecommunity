@@ -20,6 +20,11 @@ service cloud.firestore {
     function changedKeys() { return request.resource.data.diff(resource.data).affectedKeys(); }
     function onlyChanges(keys) { return changedKeys().hasOnly(keys); }
     function isShortString(v, max) { return v is string && v.size() <= max; }
+    // Étape 19 : organisateur (rôle « organizer » + claim orgId, posés par le serveur à la validation du compte).
+    // Un organisateur ne voit que ce qui porte SON identifiant ; jamais les données de The Host Club ni d'un autre.
+    function isOrganizerOf(id) {
+      return role() == 'organizer' && id is string && id.size() > 0 && request.auth.token.get('orgId', '') == id;
+    }
 
     // ---------- Profils (privés) ----------
     // Le document est créé par le serveur à l'inscription (trigger Auth).
@@ -80,7 +85,7 @@ service cloud.firestore {
     // ---------- Expériences et sessions ----------
     // Écriture via Cloud Functions (validation complète, journalisation).
     match /experiences/{experienceId} {
-      allow read: if resource.data.status == 'published' || isAdmin();
+      allow read: if resource.data.status == 'published' || isAdmin() || isOrganizerOf(resource.data.get('organizerId', null));
       allow write: if false;
       match /private/{doc} {
         allow read: if isAdmin();
@@ -89,7 +94,7 @@ service cloud.firestore {
     }
 
     match /sessions/{sessionId} {
-      allow read: if resource.data.status in ['published', 'full', 'completed'] || isAdmin();
+      allow read: if resource.data.status in ['published', 'full', 'completed'] || isAdmin() || isOrganizerOf(resource.data.get('organizerId', null));
       allow write: if false;
       match /seatLocks/{uid} {
         allow read: if isAdmin();
@@ -103,7 +108,7 @@ service cloud.firestore {
 
     // ---------- Réservations, paiements (jamais écrits par le navigateur) ----------
     match /reservations/{reservationId} {
-      allow read: if (signedIn() && resource.data.userId == request.auth.uid) || isAdmin();
+      allow read: if (signedIn() && resource.data.userId == request.auth.uid) || isAdmin() || isOrganizerOf(resource.data.get('organizerId', null));
       allow write: if false;
       match /private/{doc} {
         allow read: if isAdmin();
@@ -112,7 +117,7 @@ service cloud.firestore {
     }
     // Demandes de participation (expériences « sur demande ») : créées et traitées par les Cloud Functions.
     match /bookingRequests/{requestId} {
-      allow read: if (signedIn() && resource.data.userId == request.auth.uid) || isAdmin();
+      allow read: if (signedIn() && resource.data.userId == request.auth.uid) || isAdmin() || isOrganizerOf(resource.data.get('organizerId', null));
       allow write: if false;
     }
     match /payments/{paymentId} {
@@ -247,6 +252,16 @@ service cloud.firestore {
     match /outingProposals/{id} {
       allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
       allow write: if false;
+    }
+    // Étape 19 : organisateurs. Profil public lisible quand le compte est validé ; détails (coordonnées, documents,
+    // décisions, plus tard coordonnées de reversement) lisibles par l'organisateur et l'équipe. Écritures : serveur.
+    match /organizers/{organizerId} {
+      allow read: if resource.data.status == 'approved' || isOrganizerOf(organizerId) || isAdmin();
+      allow write: if false;
+      match /private/{doc} {
+        allow read: if isOrganizerOf(organizerId) || isAdmin();
+        allow write: if false;
+      }
     }
     match /reports/{id} {
       // Création via callable (vérifie que les deux personnes ont participé à la même session).

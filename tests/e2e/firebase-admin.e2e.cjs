@@ -53,7 +53,8 @@ async function login(page, email, password = 'Demo2026!', suite = '/admin') {
   await login(page, 'admin@thecommunity.test');
   await page.waitForURL(/\/admin$/, { timeout: 20000 });
   assert(await visible(page.getByText('admin@thecommunity.test')), 'connexion admin → tableau de bord, compte affiché');
-  assert(await visible(page.getByRole('cell', { name: 'Dîner entre inconnus' })), 'tableau de bord lu depuis Firestore');
+  // Les sessions affichées dépendent du jour : n'importe quelle expérience de démonstration prouve la lecture Firestore.
+  assert(await visible(page.getByRole('cell', { name: /^(Dîner entre inconnus|Rooftop au coucher du soleil|Escape game en équipe|Pilates & brunch|Padel entre inconnus|Atelier cuisine marocaine|Yoga au lever du soleil|Brunch entre inconnus|Quiz & blind test|Atelier céramique|Paintball entre inconnus)/ })), 'tableau de bord lu depuis Firestore');
 
   // 2. Création d'une expérience avec photo et 2 dates
   const future = new Date(Date.now() + 9 * 86400000).toISOString().slice(0, 10);

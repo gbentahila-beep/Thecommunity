@@ -8,6 +8,19 @@ Légende : ✅ déjà fait · 🟡 existe, à améliorer · ➕ à ajouter
 
 ---
 
+## Décisions de Rita (20 novembre)
+
+1. Encaisser pour le compte des organisateurs : **oui**, modèles A (tout en ligne) et B (acompte) **en plus** du modèle actuel (C : frais en ligne, reste sur place).
+   À vérifier avant la mise en ligne réelle : le contrat CMI doit autoriser l'encaissement pour compte de tiers, et l'avocat valider le schéma (docs/16).
+2. Paiement réel : avec la **CMI**, bientôt.
+3. Côté social : **gardé en option** par activité.
+4. Catégories : **dynamiques**, adresses actuelles conservées.
+5. Noms techniques : **conservés**.
+6. Rôle juridique : **je rédige** contrat organisateur et CGV séparées (relecture avocat).
+7. Environnements : non précisé → hypothèse retenue (essai = préproduction, production créée au lancement).
+
+« Go » pour les étapes **19 à 24** (20 novembre).
+
 ## Points à trancher avant de commencer (avec mon hypothèse par défaut)
 
 1. **Encaisser pour le compte des organisateurs (modèles A « tout en ligne » et B « acompte »)**.

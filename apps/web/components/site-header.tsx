@@ -3,7 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCategories, getCities } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
-import { CATEGORY_STYLES, DEFAULT_CITY } from "@/lib/site";
+import { categoryTone, DEFAULT_CITY } from "@/lib/site";
 import { CityMenu } from "./city-menu";
 import { DiscoverMenu } from "./discover-menu";
 import { LanguageSwitch } from "./language-switch";
@@ -14,7 +14,7 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
   const [t, locale, categories, cities] = await Promise.all([getTranslations("nav"), getLocale(), getCategories(), getCities()]);
   const discover = [
     { href: "/experiences", label: t("allExperiences") },
-    ...categories.map((c) => ({ href: `/${cityId}/${c.id}`, label: tr(c.name, locale), dot: CATEGORY_STYLES[c.id]?.dot })),
+    ...categories.map((c) => ({ href: `/${cityId}/${c.id}`, label: tr(c.name, locale), dot: categoryTone(c).dot, dotStyle: categoryTone(c).style })),
   ];
   const links = [
     { href: "/a-propos", label: t("about") },

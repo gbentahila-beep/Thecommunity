@@ -1,11 +1,10 @@
-import { CATEGORY_KEYS, type CategoryKey } from "@thecommunity/shared";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CategoryChips } from "@/components/category-chips";
 import { ExperienceCard } from "@/components/experience-card";
 import { PageShell, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { getExperiencesWithoutUpcoming, getNextSessionPerExperience, type WhenFilter } from "@/lib/data";
+import { getCategories, getExperiencesWithoutUpcoming, getNextSessionPerExperience, type WhenFilter } from "@/lib/data";
 import { DEFAULT_CITY } from "@/lib/site";
 
 const WHEN_VALUES: WhenFilter[] = ["all", "today", "weekend", "week"];
@@ -29,7 +28,8 @@ export default async function CatalogPage({ params, searchParams }: PageProps<"/
   setRequestLocale(locale);
   const sp = await searchParams;
   const rawCategory = typeof sp.categorie === "string" ? sp.categorie : undefined;
-  const category = CATEGORY_KEYS.includes(rawCategory as CategoryKey) ? (rawCategory as CategoryKey) : undefined;
+  // Étape 19 : catégories dynamiques (une valeur inconnue est ignorée).
+  const category = rawCategory && (await getCategories()).some((c) => c.id === rawCategory) ? rawCategory : undefined;
   const rawWhen = typeof sp.quand === "string" ? sp.quand : "all";
   const when = WHEN_VALUES.includes(rawWhen as WhenFilter) ? (rawWhen as WhenFilter) : "all";
 

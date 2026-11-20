@@ -1,7 +1,6 @@
 import { z } from "zod";
-import { CATEGORY_KEYS } from "./constants";
+import { CATEGORY_ID_PATTERN } from "./constants";
 import { ageOn } from "./profile";
-import type { CategoryKey } from "./types";
 
 /**
  * Étape 18 — tout ce qui sert aux activités autres que le dîner : niveau attendu, matériel, tenue,
@@ -62,7 +61,7 @@ export const PROPOSALS_PER_DAY = 3;
 
 export const outingProposalSchema = z.object({
   title: z.string().trim().min(3, "tooShort").max(80, "tooLong"),
-  categoryId: z.enum(CATEGORY_KEYS as [CategoryKey, ...CategoryKey[]], { message: "required" }),
+  categoryId: z.string().regex(CATEGORY_ID_PATTERN, "required"),
   description: z.string().trim().min(30, "tooShort").max(1500, "tooLong"),
   district: z.string().trim().min(2, "required").max(60, "tooLong"),
   /** Lieu envisagé (nom ou idée) : l'équipe vérifie et contacte le lieu. */

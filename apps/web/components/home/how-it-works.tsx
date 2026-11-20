@@ -4,7 +4,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { CategoryIcon } from "@/components/category-icon";
 import { Link } from "@/i18n/navigation";
-import { CATEGORY_STYLES } from "@/lib/site";
+import { categoryTone } from "@/lib/site";
 
 /**
  * « Comment ça marche » en trois cartes légèrement inclinées et décalées (style The Host Club) :
@@ -23,10 +23,10 @@ export async function HowItWorks({ categories, showTitle = true }: { categories:
           <p className="mt-2 text-[15px] text-muted">{t("how1Text")}</p>
           <ul className="mt-5 flex flex-wrap gap-2" aria-hidden>
             {categories.map((c) => {
-              const style = CATEGORY_STYLES[c.id];
+              const style = categoryTone(c);
               return (
-                <li key={c.id} className={`grid size-11 place-items-center rounded-full ${style?.bg} ${style?.text}`}>
-                  <CategoryIcon category={c.id} className="size-5" />
+                <li key={c.id} className={`grid size-11 place-items-center rounded-full ${style.bg} ${style.text}`} style={style.style}>
+                  <CategoryIcon category={c.id} icon={c.icon} className="size-5" />
                 </li>
               );
             })}

@@ -109,7 +109,8 @@
     "comingSoonTitle": "The Host Club قريباً في {city}",
     "comingSoonText": "نحضّر التجارب الأولى. في الأثناء، نلتقي في الدار البيضاء.",
     "backToCasablanca": "تجارب الدار البيضاء",
-    "otherCategories": "عوالم أخرى"
+    "otherCategories": "عوالم أخرى",
+    "subcategories": "الفئات الفرعية"
   },
   "experience": {
     "breadcrumbHome": "الرئيسية",

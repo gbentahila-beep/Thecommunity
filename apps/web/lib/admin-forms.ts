@@ -5,7 +5,10 @@ import type { AdminData } from "@/lib/data/admin";
 
 export function formOptions(d: Pick<AdminData, "categories" | "cities" | "partners">) {
   return {
-    categories: d.categories.map((c) => ({ id: c.id, label: c.name.fr })),
+    // Étape 19 : catégories principales et sous-catégories (parentId), masquées signalées.
+    categories: [...d.categories]
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      .map((c) => ({ id: c.id, label: c.isActive === false ? `${c.name.fr} (masquée)` : c.name.fr, parentId: c.parentId ?? undefined })),
     cities: d.cities.map((c) => ({ id: c.id, label: c.isActive ? c.name.fr : `${c.name.fr} (bientôt)`, disabled: !c.isActive })),
     partners: d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, label: p.name, insurance: insuranceState(p.insurance, new Date()) })),
     policies: [{ id: DEFAULT_CANCELLATION_POLICY.id, label: DEFAULT_CANCELLATION_POLICY.label.fr }],
@@ -19,7 +22,7 @@ function nextWeekDate(now: Date) {
 export function emptyExperienceValues(now: Date): ExperienceFormValues {
   return {
     titleFr: "", titleAr: "", summaryAr: "", descriptionAr: "", summaryFr: "", descriptionFr: "", titleEn: "", summaryEn: "", descriptionEn: "",
-    categoryId: "eat", cityId: "casablanca", district: "", venueName: "", address: "",
+    categoryId: "eat", subcategoryId: "", cityId: "casablanca", district: "", venueName: "", address: "",
     revealPolicy: "immediate", bookingMode: "individual",
     groupMin: "5", groupTarget: "6", groupMax: "7", maxSeatsPerBooking: "1",
     admission: "direct", requestMessageRequired: false, requestInstagramRequired: false, memberPriceDh: "", membersOnly: false,
@@ -38,7 +41,7 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     ...emptyExperienceValues(now),
     titleFr: e.title.fr, titleAr: e.title.ar ?? "", summaryAr: e.summary.ar ?? "", descriptionAr: e.description.ar ?? "", summaryFr: e.summary.fr, descriptionFr: e.description.fr,
     titleEn: e.title.en ?? "", summaryEn: e.summary.en ?? "", descriptionEn: e.description.en ?? "",
-    categoryId: e.categoryId, cityId: e.cityId, district: e.district, venueName: e.venue.name, address: e.venue.address,
+    categoryId: e.categoryId, subcategoryId: e.subcategoryId ?? "", cityId: e.cityId, district: e.district, venueName: e.venue.name, address: e.venue.address,
     revealPolicy: e.venue.revealPolicy, bookingMode: e.bookingMode,
     groupMin: String(e.groupConfig?.minSize ?? 5), groupTarget: String(e.groupConfig?.targetSize ?? 6), groupMax: String(e.groupConfig?.maxSize ?? 7),
     admission: e.admission ?? "direct", requestMessageRequired: Boolean(e.requestMessageRequired), requestInstagramRequired: Boolean(e.requestInstagramRequired),

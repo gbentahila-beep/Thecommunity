@@ -1,11 +1,11 @@
 import type { Category } from "@thecommunity/shared";
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { CategoryIcon } from "@/components/category-icon";
 import { Link } from "@/i18n/navigation";
 import { tr } from "@/lib/i18n-text";
-import { CATEGORY_STYLES, DEFAULT_CITY } from "@/lib/site";
+import { MediaImage } from "@/components/media";
+import { categoryTone, DEFAULT_CITY } from "@/lib/site";
 
 const PHOTOS: Record<string, string> = {
   eat: "/images/photos/univers-diners.webp",
@@ -19,7 +19,7 @@ const PHOTOS: Record<string, string> = {
 const POSITION: Record<string, string> = { discover: "object-[50%_12%]" };
 
 /**
- * Les cinq univers, en alternance : photo d'un côté, texte et bouton de l'autre.
+ * Les univers, en alternance : photo d'un côté, texte et bouton de l'autre.
  * Utilisé sur l'accueil et sur « Comment ça marche » (titre « Les formats », étape 12b).
  */
 export async function Universes({ categories, title }: { categories: Category[]; title?: string }) {
@@ -30,15 +30,17 @@ export async function Universes({ categories, title }: { categories: Category[];
       <ul className="mt-10 space-y-10 sm:space-y-14">
         {categories.map((c, i) => {
           const name = tr(c.name, locale);
-          const style = CATEGORY_STYLES[c.id];
+          const style = categoryTone(c);
+          // Étape 19 : image choisie dans le back-office, sinon photo de l'univers historique, sinon pas d'image.
+          const photo = c.imagePath || PHOTOS[c.id];
           return (
             <li key={c.id} className="grid items-center gap-6 md:grid-cols-2 md:gap-12">
               <div className={`relative aspect-[4/3] overflow-hidden rounded-[2rem] shadow-card ${i % 2 ? "md:order-1" : "md:order-2"}`}>
-                {PHOTOS[c.id] && <Image src={PHOTOS[c.id]!} alt={t("universePhotoAlt", { name })} fill sizes="(min-width: 768px) 45vw, 100vw" className={`object-cover transition duration-500 hover:scale-[1.03] ${POSITION[c.id] ?? ""}`} />}
+                {photo && <MediaImage src={photo} alt={t("universePhotoAlt", { name })} fill sizes="(min-width: 768px) 45vw, 100vw" className={`object-cover transition duration-500 hover:scale-[1.03] ${POSITION[c.id] ?? ""}`} />}
               </div>
               <div className={i % 2 ? "md:order-2" : "md:order-1"}>
-                <span className={`inline-grid size-12 place-items-center rounded-full ${style?.bg} ${style?.text}`}>
-                  <CategoryIcon category={c.id} className="size-6" />
+                <span className={`inline-grid size-12 place-items-center rounded-full ${style.bg} ${style.text}`} style={style.style}>
+                  <CategoryIcon category={c.id} icon={c.icon} className="size-6" />
                 </span>
                 <h3 className="mt-4 font-display text-3xl font-medium text-plum-900 sm:text-4xl">{name}</h3>
                 <p className="mt-3 max-w-md text-[16px] leading-relaxed text-ink/80">{tr(c.description, locale)}</p>

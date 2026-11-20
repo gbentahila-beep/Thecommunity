@@ -89,11 +89,12 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     if (!retired) notFound();
     return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} />;
   }
-  const [t, tCard, t2, category, sessions, reviews, past, plan] = await Promise.all([
+  const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),
     getTranslations("twoPart"),
     getCategory(exp.categoryId),
+    exp.subcategoryId ? getCategory(exp.subcategoryId) : Promise.resolve(null),
     getUpcomingSessions({ experienceId: exp.id }),
     getReviews(exp.id),
     getPastSessions(exp.id),
@@ -145,6 +146,12 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
           <Link href={`/${exp.cityId}/${exp.categoryId}`} className="hover:text-plum-900">
             {category ? tr(category.name, locale) : ""}
           </Link>
+          {subcategory && (
+            <>
+              <span className="mx-2">/</span>
+              <Link href={`/${exp.cityId}/${subcategory.id}`} className="hover:text-plum-900">{tr(subcategory.name, locale)}</Link>
+            </>
+          )}
         </nav>
 
         <Gallery exp={exp} locale={locale} />
@@ -154,6 +161,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
             <header>
               <span className="inline-block rounded-full bg-badge px-3 py-1 text-xs font-medium text-plum-900">
                 {category ? tr(category.shortName, locale) : ""}
+                {subcategory ? ` · ${tr(subcategory.shortName, locale)}` : ""}
               </span>
               <h1 className="mt-3 font-display text-4xl leading-tight font-medium text-plum-900 sm:text-5xl">{tr(exp.title, locale)}</h1>
               <p className="mt-3 text-lg text-ink/80">{tr(exp.summary, locale)}</p>

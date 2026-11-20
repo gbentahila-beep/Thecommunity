@@ -115,6 +115,54 @@ export const DEMO_CATEGORIES: Category[] = [
     isActive: true,
     defaultBookingMode: "open",
   },
+  // Étape 19 : catégories dynamiques. Deux catégories du cahier des charges, préparées mais masquées tant
+  // qu'aucune activité n'y est publiée (le super-admin les rend visibles dans Paramètres).
+  {
+    id: "meet",
+    name: { fr: "Rencontres & activités sociales", ar: "لقاءات وأنشطة اجتماعية", en: "Social meetups" },
+    shortName: { fr: "Rencontres", ar: "لقاءات", en: "Meetups" },
+    description: {
+      fr: "Échanges de langues, clubs de lecture, apéros entre nouveaux arrivants.",
+      ar: "تبادل اللغات، نوادي القراءة، لقاءات للقادمين الجدد.",
+      en: "Language exchanges, book clubs, newcomer drinks.",
+    },
+    order: 6,
+    isActive: false,
+    defaultBookingMode: "open",
+    icon: "users",
+    color: "#3d6b8c",
+  },
+  {
+    id: "learn",
+    name: { fr: "Culture & apprentissage", ar: "ثقافة وتعلّم", en: "Culture & learning" },
+    shortName: { fr: "Culture", ar: "ثقافة", en: "Culture" },
+    description: {
+      fr: "Visites guidées, conférences, initiations et masterclasses.",
+      ar: "زيارات مرفقة، محاضرات، دروس أولى وورشات متقدمة.",
+      en: "Guided tours, talks, introductions and masterclasses.",
+    },
+    order: 7,
+    isActive: false,
+    defaultBookingMode: "individual",
+    icon: "book",
+    color: "#6a5a8e",
+  },
+  // Sous-catégorie (un seul niveau) : /casablanca/padel liste les activités padel de « Sport & bien-être ».
+  {
+    id: "padel",
+    name: { fr: "Padel", ar: "بادل", en: "Padel" },
+    shortName: { fr: "Padel", ar: "بادل", en: "Padel" },
+    description: {
+      fr: "Matchs en double, tous niveaux, équipes composées selon le niveau.",
+      ar: "مباريات زوجية لجميع المستويات، والفرق حسب المستوى.",
+      en: "Doubles matches for every level, teams balanced by level.",
+    },
+    order: 1,
+    isActive: true,
+    defaultBookingMode: "group",
+    icon: "dumbbell",
+    parentId: "move",
+  },
 ];
 
 const policy = DEFAULT_CANCELLATION_POLICY.id;
@@ -405,6 +453,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
       en: "Book alone: after booking, a short questionnaire tells us your level, and we put four players of the same level on each court. Ninety minutes of matches with rotating teams, then a drink together at the club.",
     },
     categoryId: "move",
+    subcategoryId: "padel",
     cityId: "casablanca",
     district: "Anfa",
     tags: ["padel", "sport", "week-end"],

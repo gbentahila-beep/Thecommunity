@@ -1,4 +1,3 @@
-import { CATEGORY_KEYS } from "@thecommunity/shared";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
@@ -8,16 +7,16 @@ import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
-import { getCategory, getCities, getCity, getNextSessionPerExperience } from "@/lib/data";
+import { getAllCategories, getCategory, getCities, getCity, getNextSessionPerExperience, getSubcategories } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
 
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
   if (FIREBASE_ENABLED) return []; // mode Firebase : pages rendues à la visite
-  const cities = (await getCities()).filter((c) => c.isActive);
+  const [cities, categories] = await Promise.all([getCities(), getAllCategories()]);
   return routing.locales.flatMap((locale) =>
-    cities.flatMap((c) => CATEGORY_KEYS.map((category) => ({ locale, city: c.id, category }))),
+    cities.filter((c) => c.isActive).flatMap((c) => categories.map((category) => ({ locale, city: c.id, category: category.id }))),
   );
 }
 
@@ -44,11 +43,14 @@ export default async function CategoryPage({ params }: PageProps<"/[locale]/[cit
   const data = await load(cityId, categoryId);
   if (!data) notFound();
   const { city, category } = data;
-  const [t, tf, locale, sessions] = await Promise.all([
+  // Étape 19 : une sous-catégorie (/casablanca/padel) liste les activités de sa catégorie principale qui la portent.
+  const mainId = category.parentId || category.id;
+  const [t, tf, locale, sessions, subcategories] = await Promise.all([
     getTranslations("city"),
     getTranslations("filters"),
     getLocale(),
-    getNextSessionPerExperience({ cityId: city.id, categoryId: category.id }),
+    getNextSessionPerExperience({ cityId: city.id, categoryId: mainId, ...(category.parentId ? { subcategoryId: category.id } : {}) }),
+    getSubcategories(mainId),
   ]);
 
   return (
@@ -59,7 +61,25 @@ export default async function CategoryPage({ params }: PageProps<"/[locale]/[cit
         </h1>
         <p className="max-w-2xl text-lg text-ink/80">{tr(category.description, locale)}</p>
       </header>
-      <CategoryChips active={category.id} hrefFor={(id) => (id ? `/${city.id}/${id}` : `/${city.id}`)} />
+      <CategoryChips active={mainId} hrefFor={(id) => (id ? `/${city.id}/${id}` : `/${city.id}`)} />
+      {subcategories.length > 0 && (
+        <nav aria-label={t("subcategories")}>
+          <ul className="flex flex-wrap gap-2">
+            {[{ id: mainId, label: tf("all") }, ...subcategories.map((c) => ({ id: c.id, label: tr(c.shortName, locale) }))].map((it) => (
+              <li key={it.id}>
+                <Link
+                  href={`/${city.id}/${it.id}`}
+                  aria-current={it.id === category.id ? "page" : undefined}
+                  data-testid="subcategory-chip"
+                  className={`inline-block rounded-full px-3.5 py-1.5 text-[13px] font-medium transition ${it.id === category.id ? "bg-plum-100 text-plum-900" : "bg-white/60 text-ink/80 hover:bg-white"}`}
+                >
+                  {it.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
       <p className="text-sm text-muted">{tf("results", { count: sessions.length })}</p>
       {sessions.length > 0 ? (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

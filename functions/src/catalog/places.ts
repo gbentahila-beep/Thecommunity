@@ -1,4 +1,4 @@
-import { categoryInputSchema, cityInputSchema, CATEGORY_KEYS } from "@thecommunity/shared";
+import { categoryInputSchema, cityInputSchema } from "@thecommunity/shared";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { audit } from "../lib/audit";
 import { db, FieldValue, REGION } from "../lib/admin";
@@ -19,6 +19,10 @@ export const adminSaveCity = onCall({ region: REGION }, async (req) => {
     isComingSoon: c.isActive ? false : c.isComingSoon,
     order: c.order,
     districts: c.districts,
+    // Étape 19 : région, pays, photo (vides = effacés).
+    region: c.region || null,
+    country: c.country || null,
+    imagePath: c.imagePath || null,
     updatedAt: FieldValue.serverTimestamp(),
     updatedBy: actor.uid,
     ...(before.exists ? {} : { countryCode: "MA", timezone: "Africa/Casablanca", currency: "MAD", createdAt: FieldValue.serverTimestamp() }),
@@ -29,16 +33,28 @@ export const adminSaveCity = onCall({ region: REGION }, async (req) => {
   return { id: c.id, created: !before.exists };
 });
 
-/** Paramètres → Univers (super-admin) : noms, description, ordre, visibilité, mode de réservation par défaut. Journalisé. */
+/**
+ * Paramètres → Catégories (super-admin) : créer une catégorie ou une sous-catégorie, ou la modifier (noms, description,
+ * ordre, visibilité, mode de réservation par défaut, pictogramme, couleur, image). Journalisé.
+ * Étape 19 : les catégories sont dynamiques ; les cinq historiques gardent leurs adresses (/casablanca/eat…).
+ * Un seul niveau de sous-catégories : la parente doit être une catégorie principale, et une catégorie qui a des
+ * sous-catégories ne peut pas devenir elle-même une sous-catégorie.
+ */
 export const adminSaveCategory = onCall({ region: REGION }, async (req) => {
   const actor = requireRole(req, ["superadmin"]);
   const v = categoryInputSchema.safeParse(req.data);
   if (!v.success) invalidArgument(v.error.issues);
   const c = v.data;
-  // Les univers sont fixes (couleurs et pictogrammes du site) : on les modifie, on n'en crée pas.
-  if (!(CATEGORY_KEYS as readonly string[]).includes(c.id)) throw new HttpsError("invalid-argument", "Univers inconnu.", { reason: "unknown_category" });
   const ref = db.doc(`categories/${c.id}`);
   const before = await ref.get();
+  const parentId = c.parentId || null;
+  if (parentId) {
+    if (parentId === c.id) throw new HttpsError("invalid-argument", "Une catégorie ne peut pas être sa propre parente.", { reason: "invalid_parent" });
+    const parent = await db.doc(`categories/${parentId}`).get();
+    if (!parent.exists || parent.get("parentId")) throw new HttpsError("invalid-argument", "La catégorie parente doit être une catégorie principale.", { reason: "invalid_parent" });
+    const children = await db.collection("categories").where("parentId", "==", c.id).limit(1).get();
+    if (!children.empty) throw new HttpsError("failed-precondition", "Cette catégorie a des sous-catégories : elle reste principale.", { reason: "has_children" });
+  }
   const loc = (o: { fr: string; ar: string; en: string }) => ({ fr: o.fr, ...(o.ar ? { ar: o.ar } : {}), ...(o.en ? { en: o.en } : {}) });
   const doc = {
     name: loc(c.name),
@@ -47,10 +63,15 @@ export const adminSaveCategory = onCall({ region: REGION }, async (req) => {
     order: c.order,
     isActive: c.isActive,
     defaultBookingMode: c.defaultBookingMode,
+    icon: c.icon,
+    color: c.color || null,
+    imagePath: c.imagePath || null,
+    parentId,
     updatedAt: FieldValue.serverTimestamp(),
     updatedBy: actor.uid,
+    ...(before.exists ? {} : { createdAt: FieldValue.serverTimestamp() }),
   };
   await ref.set(doc, { mergeFields: Object.keys(doc) });
-  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "category.update", targetType: "category", targetId: c.id, before: before.data() ?? null, after: c });
-  return { id: c.id };
+  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: before.exists ? "category.update" : "category.create", targetType: "category", targetId: c.id, before: before.data() ?? null, after: c });
+  return { id: c.id, created: !before.exists };
 });

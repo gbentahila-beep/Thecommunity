@@ -37,6 +37,8 @@ export function reservationDoc(o: {
     userId: uid,
     sessionId,
     experienceId: s.experienceId,
+    // Étape 19 : organisateur de l'activité (null = The Host Club), pour son espace et les règles d'accès.
+    organizerId: (e.organizerId as string | undefined) ?? (s.organizerId as string | undefined) ?? null,
     cityId: s.cityId,
     categoryId: s.categoryId,
     seats,

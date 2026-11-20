@@ -93,7 +93,7 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   await page.goto(`${base}/admin/parametres`);
   await page.getByText('+ Ajouter une ville').click();
   const cityId = `ville-${stamp}`;
-  await page.getByLabel('Identifiant (adresse web)').fill(cityId);
+  await page.locator('#city-new-id').fill(cityId);
   await page.locator('#city-new-fr').fill('Rabat');
   await page.locator('#city-new-ar').fill('الرباط');
   await page.locator('#city-new-districts').fill('Agdal, Hassan\nSouissi');
@@ -108,7 +108,7 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
     const box = page.locator('details', { has: page.locator('#cat-eat-name-fr') });
     await box.locator('summary').click();
     await box.locator('#cat-eat-name-fr').fill(to);
-    await box.getByRole('button', { name: "Enregistrer l'univers" }).click();
+    await box.getByRole('button', { name: 'Enregistrer la catégorie' }).click();
     const ok = await visible(box.getByRole('status').filter({ hasText: 'Enregistré.' }), 10000);
     if (!ok) console.log('[univers]', await box.locator('[role=alert]').allTextContents(), from);
     return ok;
@@ -118,8 +118,55 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   assert(await visible(page.locator('footer').getByRole('link', { name: 'Tables & gastronomie' })), 'nouveau nom visible sur le site public');
   await shot(page, 'parametres-2-public');
   assert(await renameEat('Tables & gastronomie', 'Dîners & gastronomie'), 'nom d\'origine remis');
+
+  // 8. Catégories dynamiques (19) : créer une catégorie et une sous-catégorie, visibles sur le site, puis les masquer
+  const catId = `rencontres-${stamp.toString(36)}`;
+  const subId = `langues-${stamp.toString(36)}`;
+  const addCategory = async (id, name, parent) => {
+    await page.goto(`${base}/admin/parametres`);
+    const add = page.locator('details', { has: page.locator('#cat-new-id') });
+    await add.locator('summary').click();
+    await add.locator('#cat-new-id').fill(id);
+    await add.locator('#cat-new-name-fr').fill(name);
+    await add.locator('#cat-new-shortName-fr').fill(name);
+    await add.locator('#cat-new-desc-fr').fill(`${name} : de nouvelles personnes, chaque semaine.`);
+    await add.locator('#cat-new-icon').selectOption('users');
+    if (parent) await add.locator('#cat-new-parent').selectOption(parent);
+    await add.getByLabel('Visible sur le site').check();
+    await add.getByRole('button', { name: 'Ajouter la catégorie' }).click();
+    const ok = await visible(add.getByRole('status').filter({ hasText: 'Enregistré.' }), 10000);
+    if (!ok) console.log('[catégorie]', await add.locator('[role=alert]').allTextContents());
+    return ok;
+  };
+  assert(await addCategory(catId, 'Rencontres du soir'), 'catégorie créée');
+  assert(await addCategory(subId, 'Échanges de langues', catId), 'sous-catégorie créée');
+  const cat = await fsGet(`categories/${catId}`);
+  const sub = await fsGet(`categories/${subId}`);
+  assert(cat.fields.icon.stringValue === 'users' && cat.fields.parentId.nullValue !== undefined && sub.fields.parentId.stringValue === catId, 'Firestore : pictogramme, catégorie principale, sous-catégorie rattachée');
+  await page.goto(`${base}/admin/parametres`);
+  assert(await visible(page.locator('summary', { hasText: 'Échanges de langues' }).getByText('Sous-catégorie')), 'sous-catégorie listée sous sa catégorie');
+  await page.goto(`${base}/casablanca/${catId}`);
+  assert(await visible(page.getByRole('heading', { level: 1, name: /Rencontres du soir/ })), 'page publique de la nouvelle catégorie');
+  assert(await visible(page.getByTestId('subcategory-chip').filter({ hasText: 'Échanges de langues' })), 'sous-catégorie proposée sur la page de la catégorie');
+  await page.goto(`${base}/casablanca/${subId}`);
+  assert(await visible(page.getByRole('heading', { level: 1, name: /Échanges de langues/ })), 'page publique de la sous-catégorie');
+  await page.goto(`${base}/`);
+  assert(await visible(page.locator('#universes-title ~ ul').getByRole('heading', { name: 'Rencontres du soir' })), 'nouvelle catégorie sur l\'accueil');
+  await shot(page, 'parametres-3-categorie');
+  const hide = async (id) => {
+    await page.goto(`${base}/admin/parametres`);
+    const box = page.locator('details', { has: page.locator(`#cat-${id}-name-fr`) });
+    await box.locator('summary').click();
+    await box.getByLabel('Visible sur le site').uncheck();
+    await box.getByRole('button', { name: 'Enregistrer la catégorie' }).click();
+    return visible(box.getByRole('status').filter({ hasText: 'Enregistré.' }), 10000);
+  };
+  assert((await hide(subId)) && (await hide(catId)), 'catégories masquées');
+  const gone = await page.goto(`${base}/casablanca/${catId}`);
+  assert(gone.status() === 404, 'catégorie masquée : page introuvable');
+
   const logs = (await fsList('auditLogs')).map((d) => d.fields.action?.stringValue);
-  assert(['partner.create', 'partner.update', 'partner.archive', 'partner.delete', 'partnerApplication.convert', 'city.create', 'category.update'].every((a) => logs.includes(a)), 'toutes les actions sont journalisées');
+  assert(['partner.create', 'partner.update', 'partner.archive', 'partner.delete', 'partnerApplication.convert', 'city.create', 'category.update', 'category.create'].every((a) => logs.includes(a)), 'toutes les actions sont journalisées');
 
   assert(errs.length === 0, 'aucune erreur navigateur' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();

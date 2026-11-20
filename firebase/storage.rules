@@ -36,6 +36,22 @@ service firebase.storage {
         && request.resource.contentType.matches('application/pdf|image/(jpeg|png|webp)');
     }
 
+    // Étape 19-20 : candidature organisateur. Pièces (registre de commerce, assurance…) et logo envoyés AVANT la
+    // validation, dans le dossier de la personne : lisibles par elle et l'équipe, jamais publics.
+    match /organizer-uploads/{uid}/{kind}/{fileName} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow write: if signedIn() && request.auth.uid == uid && kind in ['documents', 'logo']
+        && request.resource.size <= 10 * 1024 * 1024
+        && request.resource.contentType.matches(kind == 'logo' ? 'image/(jpeg|png|webp)' : 'application/pdf|image/(jpeg|png|webp)');
+      allow delete: if (signedIn() && request.auth.uid == uid) || isAdmin();
+    }
+    // Organisateur validé : logo et photos de SES activités (publics), écrits par ses membres (claim orgId) et l'équipe.
+    match /organizers/{orgId}/public/{fileName} {
+      allow read: if true;
+      allow write: if (isAdmin() || (signedIn() && request.auth.token.get('role', 'user') == 'organizer' && request.auth.token.get('orgId', '') == orgId)) && isImage(8);
+      allow delete: if isAdmin() || (signedIn() && request.auth.token.get('role', 'user') == 'organizer' && request.auth.token.get('orgId', '') == orgId);
+    }
+
     // Exports : générés par le serveur, distribués par URL signée temporaire.
     // Factures PDF : jamais lues directement par le navigateur (téléchargement via le site, après contrôle).
     match /invoices/{all=**} {

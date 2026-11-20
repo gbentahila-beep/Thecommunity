@@ -83,3 +83,11 @@ Conséquence pratique : le site d'essai reste réservé à des **testeurs** (don
 - **Photos** : de vraies photos de padel et de paintball (avec l'accord écrit des personnes reconnaissables). Le site utilise en attendant deux illustrations sans personnes (`public/images/illustrations/`).
 - **Membres de confiance** : décider plus tard d'une éventuelle contrepartie pour les membres qui proposent et accueillent des sorties (aujourd'hui : aucune, écrit dans les CGU).
 
+
+## Marketplace : organisateurs et encaissement pour leur compte (étapes 19 à 24, 20 novembre)
+
+- [ ] **Contrat CMI (ou autre prestataire)** : vérifier que le contrat autorise **l'encaissement pour le compte de tiers** (les organisateurs, modèles A « tout en ligne » et B « acompte »). Sans cette autorisation, seul le modèle C (frais de service en ligne, reste payé sur place à l'organisateur) peut être utilisé. Question précise à poser à la banque : « Pouvons-nous encaisser le prix d'activités vendues par des organisateurs indépendants, prélever notre commission et leur reverser le solde ? »
+- [ ] **Avocat** : relire le **contrat organisateur** et les **conditions de vente des activités des organisateurs** (The Host Club intermédiaire), en plus des CGV de The Host Club. Points clés : mandat d'encaissement, délai de reversement, annulations et remboursements, responsabilité de l'organisateur (assurance, sécurité), loi 31-08 (protection du consommateur), facturation (qui facture le participant ?).
+- [ ] **Expert-comptable** : traitement de la commission (chiffre d'affaires de The Host Club) et des sommes encaissées pour le compte des organisateurs (à reverser, pas du chiffre d'affaires) ; TVA sur la commission.
+- [ ] **CNDP** : la déclaration doit mentionner la transmission aux organisateurs du prénom, de l'initiale du nom, et, si la personne l'accepte, du régime et des allergies des participants de leurs activités.
+- [ ] **Catégories préparées** : rendre visibles « Rencontres & activités sociales » et « Culture & apprentissage » (Paramètres → Catégories) quand des activités y sont publiées ; ajouter une image et vérifier les traductions.

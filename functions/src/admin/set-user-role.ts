@@ -18,6 +18,11 @@ export const setUserRole = onCall({ region: REGION }, async (req) => {
   const parsed = input.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { uid, role } = parsed.data;
+  // Étape 19 : le rôle organisateur est lié à une structure (claim orgId) : il se donne en validant le compte
+  // dans « Organisateurs » (adminDecideOrganizer), jamais à la main.
+  if (role === "organizer") {
+    throw new HttpsError("failed-precondition", "Le rôle organisateur se donne en validant un compte organisateur.", { reason: "use_organizers" });
+  }
   if (uid === actor.uid && role !== "superadmin") {
     throw new HttpsError("failed-precondition", "Un super-admin ne peut pas se retirer ses propres droits.");
   }
@@ -25,7 +30,9 @@ export const setUserRole = onCall({ region: REGION }, async (req) => {
     throw new HttpsError("not-found", "Utilisateur introuvable.");
   });
   const before = (target.customClaims?.role as string | undefined) ?? "user";
-  await auth.setCustomUserClaims(uid, { ...(target.customClaims ?? {}), role: role === "user" ? undefined : role });
+  // Un compte qui redevient membre perd aussi son accès d'organisateur (claim orgId).
+  const { orgId: _orgId, ...otherClaims } = target.customClaims ?? {};
+  await auth.setCustomUserClaims(uid, { ...(role === "user" ? otherClaims : target.customClaims ?? {}), role: role === "user" ? undefined : role });
   await auth.revokeRefreshTokens(uid);
   await db.doc(`users/${uid}`).set({ role, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "user.setRole", targetType: "user", targetId: uid, before, after: role });

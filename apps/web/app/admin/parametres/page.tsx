@@ -19,6 +19,12 @@ export default async function SettingsAdminPage() {
     getServiceFee(),
     getPaymentSettings(),
   ]);
+  const byOrder = (a: { order?: number }, b: { order?: number }) => (a.order ?? 0) - (b.order ?? 0);
+  const mains = categories.filter((c) => !c.parentId).sort(byOrder);
+  const orderedCategories = mains.flatMap((m) => [m, ...categories.filter((c) => c.parentId === m.id).sort(byOrder)]);
+  // Sous-catégories dont la parente a disparu : listées à la fin pour rester modifiables.
+  orderedCategories.push(...categories.filter((c) => c.parentId && !mains.some((m) => m.id === c.parentId)));
+  const parents = mains.map((c) => ({ id: c.id, label: c.name.fr }));
   return (
     <>
       <PageHeader title="Paramètres" subtitle={me?.role === "superadmin" ? "Modifications réservées aux super-admins, journalisées." : "Lecture seule : modifications réservées aux super-admins."} />
@@ -64,25 +70,34 @@ export default async function SettingsAdminPage() {
           )}
           {!company && <p className="mt-3 text-xs text-muted">Démonstration : les modifications se font sur le site en ligne (super-admin).</p>}
         </Card>
-        <Card title="Univers" className="xl:col-span-2">
+        <Card title="Catégories (univers)" className="xl:col-span-2">
+          {/* Étape 19 : catégories dynamiques ; les sous-catégories sont listées sous leur catégorie principale. */}
           <ul className="divide-y divide-line">
-            {[...categories].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((c) => (
-              <li key={c.id}>
+            {orderedCategories.map((c) => (
+              <li key={c.id} className={c.parentId ? "ps-6" : undefined}>
                 <details className="py-3">
                   <summary className="flex cursor-pointer list-none flex-wrap items-center gap-3 [&::-webkit-details-marker]:hidden">
+                    {c.parentId && <span aria-hidden className="text-muted">↳</span>}
                     <span className="font-medium">{c.name.fr}</span>
-                    <span className="font-mono text-xs text-muted">{c.id}</span>
-                    {c.isActive === false && <Badge tone="gray">Masqué</Badge>}
+                    <span className="font-mono text-xs text-muted">/{c.id}</span>
+                    {c.parentId && <Badge tone="gray">Sous-catégorie</Badge>}
+                    {c.isActive === false && <Badge tone="gray">Masquée</Badge>}
                     <span className="ms-auto text-sm font-semibold text-plum-900">{company && me?.role === "superadmin" ? "Modifier" : "Voir"}</span>
                   </summary>
                   <div className="mt-3">
-                    <CategoryForm category={c} canEdit={Boolean(company) && me?.role === "superadmin"} />
+                    <CategoryForm category={c} canEdit={Boolean(company) && me?.role === "superadmin"} parents={parents} hasChildren={categories.some((x) => x.parentId === c.id)} />
                   </div>
                 </details>
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-xs text-muted">Les cinq univers sont fixes (couleurs et pictogrammes du site) : on peut les renommer, les décrire, les ordonner ou les masquer.</p>
+          {company && me?.role === "superadmin" && (
+            <details className="mt-3 rounded-xl border border-dashed border-line p-3">
+              <summary className="cursor-pointer text-sm font-semibold text-plum-900">+ Ajouter une catégorie ou une sous-catégorie</summary>
+              <div className="mt-3"><CategoryForm canEdit parents={parents} nextOrder={categories.length + 1} /></div>
+            </details>
+          )}
+          <p className="mt-3 text-xs text-muted">Les cinq univers d&apos;origine gardent leurs adresses (/casablanca/eat…). Une nouvelle catégorie apparaît dans le menu, sur l&apos;accueil et dans le formulaire des expériences dès qu&apos;elle est visible ; une sous-catégorie a sa propre page (/casablanca/padel) et se choisit sur la fiche de l&apos;expérience. {!company && "Démonstration : les modifications se font sur le site en ligne (super-admin)."}</p>
         </Card>
         <Card title="Politique d'annulation par défaut">
           <p className="text-sm font-medium">{DEFAULT_CANCELLATION_POLICY.label.fr}</p>
