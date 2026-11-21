@@ -28,10 +28,10 @@ export function ReviewsShowcase({ reviews, title, subtitle, photoAlt, prevLabel,
   };
   return (
     <section aria-labelledby="reviews-title" className="py-16">
-      <h2 id="reviews-title" className="text-center font-display text-[1.75rem] leading-tight font-medium text-plum-900 sm:text-[2.25rem]">{title}</h2>
+      <h2 id="reviews-title" className="section-title text-center">{title}</h2>
       <p className="mx-auto mt-2 max-w-xl text-center text-ink/75">{subtitle}</p>
       <div className="relative mt-8">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] shadow-card sm:aspect-[16/9] lg:aspect-[21/9]">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-card sm:aspect-[16/9] lg:aspect-[21/9]">
           <Image src="/images/photos/pourquoi-venir.webp" alt={photoAlt} fill sizes="100vw" className="object-cover object-[50%_30%]" />
         </div>
         <ul

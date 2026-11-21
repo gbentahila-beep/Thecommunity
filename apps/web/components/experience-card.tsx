@@ -76,7 +76,7 @@ export async function ExperienceCard({
         </div>
         <FavoriteButton experienceId={experience.id} className="absolute end-3 top-3 z-10" />
         {experience.membersOnly && (
-          <span className="absolute bottom-3 end-3 rounded-full bg-plum-900 px-3 py-1 text-xs font-semibold text-white">{t("membersOnly")}</span>
+          <span className="btn btn-primary btn-sm absolute bottom-3 end-3">{t("membersOnly")}</span>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-4">

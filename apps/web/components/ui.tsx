@@ -13,7 +13,7 @@ export function SectionHeading({
 }) {
   return (
     <div className="flex items-end justify-between gap-4">
-      <Tag className="font-display text-[1.75rem] leading-tight font-medium text-plum-900 sm:text-[2rem]">{title}</Tag>
+      <Tag className="section-title">{title}</Tag>
       {action && (
         <Link href={action.href} className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-plum-900 sm:flex">
           {action.label}
@@ -28,7 +28,7 @@ export function PrimaryLink({ href, children, className = "" }: { href: string; 
   return (
     <Link
       href={href}
-      className={`group inline-flex items-center justify-center gap-2 rounded-full bg-plum-900 px-6 py-3.5 text-[15px] font-semibold text-white shadow-float transition hover:bg-plum-800 active:scale-[0.98] ${className}`}
+      className={`group btn btn-primary ${className}`}
     >
       {children}
       <ArrowRight className="size-4 transition group-hover:translate-x-0.5 rtl:-scale-x-100" aria-hidden />

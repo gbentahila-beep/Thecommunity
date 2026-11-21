@@ -49,7 +49,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
         </ol>
       </nav>
       <article className="mt-6">
-        <h1 className="font-display text-4xl font-medium text-plum-900 sm:text-5xl">{a.title[lang]}</h1>
+        <h1 className="page-title">{a.title[lang]}</h1>
         <p className="mt-4 text-lg leading-relaxed text-ink/80">{a.summary[lang]}</p>
         <div className="mt-8 space-y-5">
           {forPaymentMethod(a.body[lang], await getPaymentMethod()).map((b, i) =>

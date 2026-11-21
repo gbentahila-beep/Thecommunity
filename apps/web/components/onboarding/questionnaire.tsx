@@ -323,7 +323,7 @@ export function Questionnaire({
                 )}
               </span>
               <div className="space-y-1">
-                <label className="inline-flex cursor-pointer items-center rounded-full border border-plum-900 px-4 py-2 text-sm font-semibold text-plum-900 hover:bg-plum-50">
+                <label className="btn btn-secondary btn-sm cursor-pointer">
                   {t("choosePhoto")}
                   <input
                     type="file"
@@ -423,7 +423,7 @@ export function Questionnaire({
             {t("back")}
           </button>
         )}
-        <button type="submit" disabled={saving} className="ms-auto rounded-full bg-plum-900 px-8 py-3.5 font-semibold text-white shadow-float transition hover:bg-plum-800 active:scale-[0.98] disabled:opacity-60">
+        <button type="submit" disabled={saving} className="btn btn-primary ms-auto shadow-float active:scale-[0.98]">
           {saving ? t("saving") : step < STEPS.length - 1 ? t("next") : t("finish")}
         </button>
       </div>

@@ -37,7 +37,7 @@ export function ContactForm() {
       <label className="block"><span className="mb-1.5 block text-sm font-medium">{t("contactMessage")}</span><textarea name="message" required minLength={10} maxLength={3000} rows={5} className={input} /></label>
       <Honeypot />
       {state === "error" && <p role="alert" className="text-sm text-red-700">{t("contactError")}</p>}
-      <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-6 py-3 font-semibold text-white hover:bg-plum-800 disabled:opacity-60">{t("contactSend")}</button>
+      <button type="submit" disabled={state === "busy"} className="btn btn-primary">{t("contactSend")}</button>
     </form>
   );
 }

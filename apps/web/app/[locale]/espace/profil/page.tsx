@@ -46,10 +46,10 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
           {p.firstName.charAt(0)}
         </span>
         <div className="flex-1">
-          <h1 className="font-display text-4xl font-medium text-plum-900">{p.firstName} {p.lastName}</h1>
+          <h1 className="page-title">{p.firstName} {p.lastName}</h1>
           <p className="text-sm text-muted">{t("memberSince", { date: formatLongDate(p.createdAt, locale) })}</p>
         </div>
-        <Link href="/bienvenue?edition=1" className="inline-flex items-center gap-2 rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">
+        <Link href="/bienvenue?edition=1" className="btn btn-primary btn-sm">
           <Pencil className="size-4" aria-hidden />
           {t("edit")}
         </Link>

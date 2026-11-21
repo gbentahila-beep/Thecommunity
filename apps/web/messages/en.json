@@ -41,7 +41,9 @@
     "membership": "Membership",
     "questions": "Questions",
     "reviews": "Reviews",
-    "more": "More"
+    "more": "More",
+    "yourProfile": "Your profile",
+    "myProfile": "My profile"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -142,7 +144,12 @@
         "factValue": "A guide or an expert",
         "cta": "See culture"
       }
-    }
+    },
+    "thisWeekAt": "This week in",
+    "weekEmpty": "Nothing in this category this week. See all upcoming dates.",
+    "howMoreUniverses": "+ {count, plural, one {# more category} other {# more categories}}",
+    "tileThisWeek": "{count} this week",
+    "tileSeeDates": "See dates"
   },
   "card": {
     "people": "{count} people",
@@ -180,7 +187,8 @@
     "undatedTitle": "Already lived — new dates on the way",
     "undatedText": "Read their reviews and ask to be notified as soon as new dates are scheduled.",
     "tabsLabel": "Universes",
-    "calendarLabel": "Date calendar"
+    "calendarLabel": "Date calendar",
+    "discover": "Discover"
   },
   "city": {
     "title": "Experiences in {city}",
@@ -581,7 +589,14 @@
     "memberSuggestTitle": "Enjoyed it? Become a member",
     "memberSuggestText": "A member price on experiences and members-only perks.",
     "memberSuggestCta": "See membership",
-    "navMeet": "My group"
+    "navMeet": "My group",
+    "memberSince": "Member since {date}",
+    "hubAccount": "Account",
+    "hubNotifications": "Notifications",
+    "hubHistory": "History",
+    "hubMemberActive": "Active",
+    "hubDetails": "My details",
+    "universesHeading": "Our categories"
   },
   "reservation": {
     "back": "My bookings",
@@ -1401,7 +1416,7 @@
   },
   "alerts": {
     "title": "Get alerts for new tables and activities",
-    "text": "Get an email as soon as a new experience is published. Free, no commitment: stop whenever you like.",
+    "text": "Get an email as soon as a new experience is published in your city. Free, no commitment.",
     "emailLabel": "Your email address",
     "emailPlaceholder": "Your email address",
     "submit": "Alert me",
@@ -1422,7 +1437,11 @@
     "invalid": "This link is no longer valid. You can sign up again from the home page.",
     "noToken": "To get alerts, sign up from the home page, below “See all experiences”.",
     "seeExperiences": "See the experiences",
-    "backHome": "Back to home"
+    "backHome": "Back to home",
+    "close": "Close",
+    "cityLabel": "City",
+    "citySoon": "{city} (coming soon)",
+    "onlyNew": "Only emails about new experiences. Stop in one click."
   },
   "catalogRow": {
     "book": "Book",
@@ -1483,5 +1502,20 @@
     "ctaTitle": "Been to an experience?",
     "ctaText": "Leave a review from your bookings: it helps other members and helps us put better groups together.",
     "ctaButton": "Leave a review"
+  },
+  "audiences": {
+    "partnersEyebrow": "Work with us",
+    "partnersTitle": "For cafés, restaurants and venues",
+    "partnersText": "On the dates you choose, we bring you a small group of people who don’\t know you yet. Everyone pays for their own order: you simply keep a table or a space free.",
+    "partnersCta": "Become a partner venue",
+    "organizersEyebrow": "Organisers",
+    "organizersTitle": "For people who run activities",
+    "organizersText": "Workshop, sports outing, tour, games night: publish your dates on The Host Club. Bookings, online payment and reminders are handled, so you can focus on the experience.",
+    "organizersCta": "List my activities",
+    "closingTitle1": "Strangers when you arrive,",
+    "closingTitle2": "friends when you leave.",
+    "closingSignup": "Sign up",
+    "closingDiscover": "See experiences",
+    "closingBookings": "My bookings"
   }
 }

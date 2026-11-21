@@ -31,7 +31,7 @@ export default async function ReservationsPage({ params, searchParams }: PagePro
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-4xl font-medium text-plum-900">{t("navBookings")}</h1>
+      <h1 className="page-title">{t("navBookings")}</h1>
       {space.openRequests.length > 0 && (
         <section aria-labelledby="requests-title" className="space-y-3">
           <h2 id="requests-title" className="font-semibold text-ink">{tq("listTitle")}</h2>

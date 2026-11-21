@@ -18,14 +18,6 @@ export type OfferView = {
   best: boolean;
 };
 
-/** Teinte de chaque durée (du plus court au plus long). */
-const TONES = [
-  "from-[#e9f3e4] to-[#f7f1dc]", // 1 mois
-  "from-[#f6e6ea] to-[#efe2f3]", // 3 mois
-  "from-[#ece6f6] to-[#f3e4ee]", // 6 mois
-  "from-[#f7e7dc] to-[#f2dfe4]", // 12 mois
-];
-
 /**
  * Choix de la formule (cartes à faire défiler sur téléphone, grille sur ordinateur) et bouton collant
  * « Devenir membre pour … ». `cta` : ce qui remplace le bouton quand on ne peut pas souscrire (connexion, profil…).
@@ -37,7 +29,7 @@ export function OfferPicker({ offers, initialId, mode, cta, renew }: { offers: O
   return (
     <>
       <div role="radiogroup" aria-label={t("chooseOffer")} className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pt-3 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-4" data-testid="membership-offers">
-        {offers.map((o, i) => {
+        {offers.map((o) => {
           const on = o.id === selected;
           return (
             <button
@@ -46,10 +38,10 @@ export function OfferPicker({ offers, initialId, mode, cta, renew }: { offers: O
               role="radio"
               aria-checked={on}
               onClick={() => setSelected(o.id)}
-              className={`relative flex w-[78%] shrink-0 snap-center flex-col items-start rounded-[1.75rem] bg-gradient-to-br p-5 text-start shadow-card transition sm:w-auto ${TONES[i % TONES.length]} ${on ? "ring-[3px] ring-plum-800" : "ring-1 ring-white/70 hover:ring-plum-200"}`}
+              className={`relative flex w-[78%] shrink-0 snap-center flex-col items-start rounded-3xl bg-white p-5 text-start shadow-card transition sm:w-auto ${on ? "ring-[3px] ring-plum-800" : "ring-1 ring-line hover:ring-plum-200"}`}
               data-testid="membership-offer"
             >
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${o.highlight ? "bg-plum-900 text-white" : o.best ? "bg-emerald-800 text-white" : "bg-white/80 text-ink"}`}>
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${o.highlight ? "bg-plum-900 text-white" : o.best ? "bg-plum-100 text-plum-900" : "bg-cream-deep text-ink"}`}>
                 {o.highlight ? t("badgeRecommended") : o.best ? t("badgeBest") : o.months === 1 ? t("badgeFlexible") : t("badgeSave", { percent: o.savingPercent })}
               </span>
               <span className="mt-4 font-display text-2xl font-medium text-plum-900">{t("months", { count: o.months })}</span>
@@ -58,7 +50,7 @@ export function OfferPicker({ offers, initialId, mode, cta, renew }: { offers: O
                 <span className="text-sm text-muted">{t("perMonth")}</span>
               </span>
               <span className="mt-2 text-sm text-ink/80">
-                {o.reference && <s className="me-1.5 text-red-700/80">{o.reference}</s>}
+                {o.reference && <s className="me-1.5 text-muted">{o.reference}</s>}
                 {o.months === 1 ? t("paidMonth", { price: o.price }) : t("paidOnce", { price: o.price, count: o.months })}
               </span>
               {o.saving && <span className="mt-1 text-sm font-semibold text-plum-800">{t("youSave", { amount: o.saving })}</span>}
@@ -76,7 +68,7 @@ export function OfferPicker({ offers, initialId, mode, cta, renew }: { offers: O
         {mode === "subscribe" ? (
           <SubscribeButton offerId={current.id} label={renew ? t("renewOffer", { price: current.price, count: current.months }) : t("subscribeOffer", { price: current.price })} />
         ) : mode === "disabled" ? (
-          <button type="button" disabled className="w-full cursor-not-allowed rounded-full bg-plum-900/50 px-6 py-4 font-semibold text-white shadow-float">{t("subscribeOffer", { price: current.price })}</button>
+          <button type="button" disabled className="btn btn-primary w-full py-4">{t("subscribeOffer", { price: current.price })}</button>
         ) : (
           cta
         )}

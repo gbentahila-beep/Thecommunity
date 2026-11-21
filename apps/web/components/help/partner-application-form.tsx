@@ -71,7 +71,7 @@ export function PartnerApplicationForm() {
         {t("privacy")} <Link href="/confidentialite" className="underline underline-offset-2">{tf("privacy")}</Link>
       </p>
       {state === "error" && <p role="alert" className="text-sm text-red-700">{t("error")}</p>}
-      <button type="submit" disabled={state === "busy"} className="w-full rounded-full bg-plum-900 px-6 py-3.5 font-semibold text-white hover:bg-plum-800 disabled:opacity-60 sm:w-auto">
+      <button type="submit" disabled={state === "busy"} className="btn btn-primary w-full sm:w-auto">
         {state === "busy" ? t("sending") : t("submit")}
       </button>
     </form>

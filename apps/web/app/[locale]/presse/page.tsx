@@ -28,14 +28,14 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
   return (
     <PageShell className="py-10 sm:py-14">
       <header className="mx-auto max-w-2xl text-center">
-        <h1 className="font-display text-4xl font-medium text-plum-900 sm:text-5xl">{P.title[l]}</h1>
+        <h1 className="page-title">{P.title[l]}</h1>
         <p className="mt-4 text-lg leading-relaxed text-ink/80">{P.intro[l]}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <a href="#logos" className="inline-flex items-center gap-2 rounded-full bg-plum-900 px-5 py-3 text-sm font-semibold text-white hover:bg-plum-800">
+          <a href="#logos" className="btn btn-primary btn-sm">
             <Download className="size-4" aria-hidden />
             {P.ctaLogos[l]}
           </a>
-          <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-plum-900 px-5 py-3 text-sm font-semibold text-plum-900 hover:bg-plum-50">
+          <Link href="/contact" className="btn btn-secondary btn-sm">
             <Mail className="size-4" aria-hidden />
             {P.ctaContact[l]}
           </Link>
@@ -152,8 +152,8 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
           <p className="mt-3 text-sm text-muted">{P.photosNote[l]}</p>
         </section>
 
-        <section aria-labelledby="contact-presse" className="rounded-[2rem] bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] p-6 text-cream sm:p-10">
-          <h2 id="contact-presse" className="font-display text-3xl font-medium">{P.contactTitle[l]}</h2>
+        <section aria-labelledby="contact-presse" className="rounded-3xl bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] p-6 text-cream sm:p-10">
+          <h2 id="contact-presse" className="section-title">{P.contactTitle[l]}</h2>
           <p className="mt-3 max-w-2xl leading-relaxed text-cream/85">{P.contactText[l]}</p>
           <Link href="/contact" className="mt-6 inline-flex items-center gap-2 rounded-full bg-cream px-5 py-3 text-sm font-semibold text-plum-900 hover:bg-white">
             <Mail className="size-4" aria-hidden />

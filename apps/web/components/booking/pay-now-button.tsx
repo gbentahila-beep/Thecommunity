@@ -30,7 +30,7 @@ export function PayNowButton({ reservationId, label }: { reservationId: string; 
             router.refresh();
           }
         }}
-        className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-60"
+        className="btn btn-primary btn-sm"
       >
         {busy ? t("working") : label}
       </button>

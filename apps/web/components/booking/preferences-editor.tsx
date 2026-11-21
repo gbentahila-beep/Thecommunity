@@ -36,7 +36,7 @@ export function PreferencesEditor({ reservationId, initial, editable }: { reserv
       <PreferencesFields idPrefix="edit-pref" value={v} onChange={(x) => { setV(x); setState("idle"); setConsentError(false); }} disabled={!editable || state === "busy"} consentError={consentError} />
       {editable && (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" disabled={state === "busy"} className="rounded-full border border-plum-900 px-5 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-900 hover:text-white disabled:opacity-60">{t("save")}</button>
+          <button type="submit" disabled={state === "busy"} className="btn btn-secondary btn-sm">{t("save")}</button>
           {state === "saved" && <p role="status" className="text-sm text-emerald-800">{t("saved")}</p>}
           {state === "error" && <p role="alert" className="text-sm text-red-800">{t("error")}</p>}
         </div>

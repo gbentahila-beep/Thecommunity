@@ -39,7 +39,7 @@ export function SubscribeButton({ label, offerId }: { label: string; offerId?: s
             setBusy(false);
           }
         }}
-        className="w-full rounded-full bg-gradient-to-r from-plum-900 to-plum-700 px-6 py-4 font-semibold text-white shadow-float hover:from-plum-800 disabled:opacity-60"
+        className="btn btn-primary w-full py-4 shadow-float"
       >
         {busy ? tb("working") : label}
       </button>

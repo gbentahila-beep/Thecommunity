@@ -35,7 +35,7 @@ export function ExperienceAlertButton({ experienceId, slug }: { experienceId: st
   if (state === "loading") return null;
   if (state === "anonymous") {
     return (
-      <Link href={`/connexion?suite=${encodeURIComponent(`/experiences/${slug}`)}`} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-plum-900 px-5 py-3 text-sm font-semibold text-white">
+      <Link href={`/connexion?suite=${encodeURIComponent(`/experiences/${slug}`)}`} className="btn btn-primary btn-sm mt-4 w-full">
         <BellRing className="size-4" aria-hidden />
         {t("alertCta")}
       </Link>

@@ -1,38 +1,45 @@
 import type { Category } from "@thecommunity/shared";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { CategoryIcon } from "@/components/category-icon";
 import { Link } from "@/i18n/navigation";
+import { tr } from "@/lib/i18n-text";
 import { categoryTone } from "@/lib/site";
 
 /**
  * « Comment ça marche » en trois cartes légèrement inclinées et décalées (style The Host Club) :
- * 1) les univers, 2) un bouton vers les expériences, 3) trois photos de groupe.
+ * 1) un aperçu du choix des univers, 2) un bouton vers les expériences, 3) trois photos de groupe.
  */
 export async function HowItWorks({ categories, showTitle = true }: { categories: Category[]; showTitle?: boolean }) {
-  const t = await getTranslations("home");
-  const card = "relative rounded-[2rem] p-6 shadow-float transition duration-300 hover:rotate-0 sm:p-7";
+  const [t, locale] = await Promise.all([getTranslations("home"), getLocale()]);
+  const card = "relative rounded-3xl p-6 shadow-float transition duration-300 hover:rotate-0 sm:p-7";
   return (
     <section aria-labelledby={showTitle ? "how-title" : undefined} aria-label={showTitle ? undefined : t("howTitle")} className={showTitle ? "py-16" : "pb-16"}>
-      <h2 id="how-title" hidden={!showTitle} className="text-center font-display text-[1.75rem] leading-tight font-medium text-plum-900 sm:text-[2.25rem]">{t("howTitle")}</h2>
+      <h2 id="how-title" hidden={!showTitle} className="section-title text-center">{t("howTitle")}</h2>
       <ol className="mx-auto mt-10 grid max-w-6xl gap-8 px-2 md:grid-cols-3 md:gap-6 md:pt-6">
         <li className={`${card} -rotate-2 bg-white md:translate-y-6`}>
           <span className="font-display text-5xl text-plum-100">1</span>
           <h3 className="mt-1 text-xl font-semibold text-ink">{t("how1Title")}</h3>
           <p className="mt-2 text-[15px] text-muted">{t("how1Text")}</p>
-          <ul className="mt-5 flex flex-wrap gap-2" aria-hidden>
-            {categories.map((c) => {
+          {/* Aperçu du choix : trois univers en lignes (comme dans l'application), puis « + N autres ». */}
+          <ul className="mt-5 space-y-2" aria-hidden>
+            {categories.slice(0, 3).map((c, i) => {
               const style = categoryTone(c);
               return (
-                <li key={c.id} className={`grid size-11 place-items-center rounded-full ${style.bg} ${style.text}`} style={style.style}>
-                  <CategoryIcon category={c.id} icon={c.icon} className="size-5" />
+                <li key={c.id} className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 ${i === 0 ? "bg-white shadow-card ring-2 ring-plum-800" : "bg-cream"}`}>
+                  <span className={`grid size-8 shrink-0 place-items-center rounded-full ${style.bg} ${style.text}`} style={style.style}>
+                    <CategoryIcon category={c.id} icon={c.icon} className="size-4" />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm font-semibold text-ink">{tr(c.shortName, locale)}</span>
+                  {i === 0 && <Check className="size-4 shrink-0 text-plum-800" strokeWidth={3} />}
                 </li>
               );
             })}
           </ul>
+          {categories.length > 3 && <p className="mt-2.5 text-center text-xs font-medium text-muted" aria-hidden>{t("howMoreUniverses", { count: categories.length - 3 })}</p>}
         </li>
-        <li className={`${card} rotate-2 bg-gradient-to-br from-plum-900 via-plum-800 to-plum-700 text-white md:-translate-y-2`}>
+        <li className={`${card} rotate-2 bg-plum-900 text-white md:-translate-y-2`}>
           <span className="font-display text-5xl text-white/30">2</span>
           <h3 className="mt-1 text-xl font-semibold">{t("how2Title")}</h3>
           <p className="mt-2 text-[15px] text-white/85">{t("how2Text")}</p>

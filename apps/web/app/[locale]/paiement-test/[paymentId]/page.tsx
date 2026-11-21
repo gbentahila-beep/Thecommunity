@@ -43,7 +43,7 @@ export default async function TestPaymentPage({ params }: PageProps<"/[locale]/p
     return (
       <PageShell className="max-w-xl py-8">
         <TestBanner title={t("bannerTitle")} text={t("bannerText")} />
-        <h1 className="mt-6 font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
+        <h1 className="page-title mt-6">{t("title")}</h1>
         <section className="mt-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
           <p className="font-semibold text-ink">{plan ? tr(plan.name, locale) : ""}</p>
           <p className="mt-1 text-sm text-muted">{t("membershipPeriod")}</p>
@@ -54,7 +54,7 @@ export default async function TestPaymentPage({ params }: PageProps<"/[locale]/p
         ) : (
           <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
             <p className="text-ink">{t("alreadyProcessed")}</p>
-            <Link href="/abonnement" className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">{t("seeMembership")}</Link>
+            <Link href="/abonnement" className="btn btn-primary btn-sm mt-4">{t("seeMembership")}</Link>
           </section>
         )}
       </PageShell>
@@ -70,7 +70,7 @@ export default async function TestPaymentPage({ params }: PageProps<"/[locale]/p
     <PageShell className="max-w-xl py-8">
       <TestBanner title={t("bannerTitle")} text={t("bannerText")} />
 
-      <h1 className="mt-6 font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
+      <h1 className="page-title mt-6">{t("title")}</h1>
       <section className="mt-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
         <p className="font-semibold text-ink">{tr(r.sessionSnapshot.title, locale)}</p>
         <p className="mt-1 text-sm text-muted">
@@ -85,7 +85,7 @@ export default async function TestPaymentPage({ params }: PageProps<"/[locale]/p
       ) : (
         <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
           <p className="text-ink">{t("alreadyProcessed")}</p>
-          <Link href={`/espace/reservations/${pay.reservationId}`} className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">
+          <Link href={`/espace/reservations/${pay.reservationId}`} className="btn btn-primary btn-sm mt-4">
             {t("seeReservation")}
           </Link>
         </section>

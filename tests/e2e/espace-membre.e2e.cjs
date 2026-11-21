@@ -88,7 +88,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   const [dl] = await Promise.all([page.waitForEvent('download'), page.getByRole('link', { name: 'Ajouter à mon agenda' }).click()]);
   const fs = require('fs'); const ics = fs.readFileSync(await dl.path(), 'utf8');
   assert(ics.includes('BEGIN:VEVENT') && ics.includes('Pilates'), 'fichier agenda .ics valide');
-  assert(await page.getByText(/remboursé de 149/).isVisible() || await page.getByText(/plus remboursée/).isVisible(), 'montant de remboursement affiché');
+  assert(await page.getByText(/remboursé(·e)? de 149/).isVisible() || await page.getByText(/plus remboursée/).isVisible(), 'montant de remboursement affiché');
 
   // Groupe révélé
   await page.goto(base + '/espace/reservations/res-demo-escape', { waitUntil: 'load' });

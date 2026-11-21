@@ -59,7 +59,7 @@ export function WaitlistBox({ sessionId, maxSeats, position }: { sessionId: stri
               </div>
             </div>
           )}
-          <button type="button" disabled={busy} onClick={() => run("joinWaitlist", { sessionId, seats })} className="mt-4 w-full rounded-full bg-plum-900 px-6 py-3.5 font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+          <button type="button" disabled={busy} onClick={() => run("joinWaitlist", { sessionId, seats })} className="btn btn-primary mt-4 w-full">
             {busy ? tb("working") : t("join")}
           </button>
         </>

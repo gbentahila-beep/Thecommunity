@@ -1,8 +1,9 @@
 import { activeFilterCount, CATALOG_FORMATS, CATALOG_MAX_PRICES, CATALOG_SORTS, catalogDistricts, catalogParams, formatParam, MOROCCO_TIMEZONE, parseCatalogParams, sortParam, zonedParts, type CatalogFilters } from "@thecommunity/shared";
-import { MapPin, Search, X } from "lucide-react";
+import { X } from "lucide-react";
 import type { Category } from "@thecommunity/shared";
 import { getTranslations } from "next-intl/server";
-import { AutoSubmitSelect, FiltersPanel } from "@/components/catalog-filters";
+import { FiltersPanel } from "@/components/catalog-filters";
+import { CityMenu } from "@/components/city-menu";
 import { CategoryIcon } from "@/components/category-icon";
 import { ExperienceCard } from "@/components/experience-card";
 import { ExperienceRow } from "@/components/experience-row";
@@ -10,7 +11,7 @@ import { ActiveTabScroller } from "./active-tab-scroller";
 import { ForYou } from "@/components/for-you";
 import { PageShell, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { getCatalog, getCategories, getCity, getPublishedExperiences, getSubcategories, type WhenFilter } from "@/lib/data";
+import { getCatalog, getCategories, getPublishedExperiences, getSubcategories, type WhenFilter } from "@/lib/data";
 import { dayKey, formatDayCell, formatDayHeading, formatLongDate } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { DEFAULT_CITY } from "@/lib/site";
@@ -50,14 +51,13 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
   const state: State = { category, sub, when, filters };
   const bySub = <T extends { experience: { subcategoryId?: string | null } }>(xs: T[]) => (sub ? xs.filter((x) => x.experience.subcategoryId === sub) : xs);
 
-  const [t, tc, tcity, tf, rawResults, published, city, subcategories] = await Promise.all([
+  const [t, tc, tcity, tf, rawResults, published, subcategories] = await Promise.all([
     getTranslations("filters"),
     getTranslations("catalog"),
     getTranslations("city"),
     getTranslations("catalogFilters"),
     getCatalog({ cityId: DEFAULT_CITY, categoryId: category, when, filters }),
     getPublishedExperiences(),
-    getCity(DEFAULT_CITY),
     category ? getSubcategories(category) : Promise.resolve([]),
   ]);
   const categories = allCategories;
@@ -72,7 +72,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
   const p = zonedParts(new Date(), MOROCCO_TIMEZONE);
   const today = `${p.year}-${String(p.month).padStart(2, "0")}-${String(p.day).padStart(2, "0")}`;
   const prefix = locale === "fr" ? "" : `/${locale}`;
-  const select = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-sm text-ink";
+  const select = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[16px] text-ink";
 
   // Filtres actifs, retirables un par un.
   const chips: { label: string; href: string }[] = [
@@ -87,7 +87,6 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
     ...(filters.women ? [{ label: tf("women"), href: hrefOf(state, { filters: { women: false } }) }] : []),
   ];
   const clearHref = hrefOf({ category, sub, when: "all", filters: { ...parseCatalogParams({}), sort: filters.sort } });
-  const cityName = city ? tr(city.name, locale) : "Casablanca";
   const shownCategory = sub ? routeCategory : current;
   const total = results.dated.length;
   // Vue « agenda » (regroupée par jour) pour le tri par défaut ou par date ; liste simple pour les autres tris.
@@ -111,17 +110,70 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
   }
 
   return (
-    <PageShell className="space-y-6 py-10">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <SectionHeading as="h1" title={filters.q ? tf("resultsFor", { q: filters.q }) : shownCategory ? tcity("categoryTitle", { category: tr(shownCategory.name, locale), city: cityName }) : tc("title")} />
-          <p className="mt-2 hidden max-w-2xl text-muted sm:block">{shownCategory ? tr(shownCategory.description, locale) : tc("subtitle")}</p>
+    <PageShell className="space-y-5 py-6 sm:py-10">
+      <form action={`${prefix}${pathOf(state)}`} method="get" className="flex items-center justify-between gap-3" data-testid="catalog-form">
+        <SectionHeading as="h1" title={filters.q ? tf("resultsFor", { q: filters.q }) : shownCategory ? tr(shownCategory.name, locale) : tc("discover")} />
+        {when !== "all" && <input type="hidden" name="quand" value={when} />}
+        {filters.q && <input type="hidden" name="q" value={filters.q} />}
+        <div className="flex shrink-0 items-center gap-1">
+          <CityMenu variant="label" />
+          <FiltersPanel
+            count={n}
+            clearHref={clearHref}
+            labels={{ open: tf("open"), title: tf("title"), apply: tf("apply"), clear: tf("clear"), close: tf("close") }}
+          >
+            <div className="space-y-4">
+              <label className="block text-sm">
+                <span className="mb-1 block font-medium text-ink">{tf("sort")}</span>
+                <select name="tri" defaultValue={sortParam(filters.sort)} className={select}>
+                  {CATALOG_SORTS.map((s) => <option key={s} value={sortParam(s)}>{sortLabels[s]}</option>)}
+                </select>
+              </label>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium text-ink">{tf("price")}</span>
+                  <select name="prix" defaultValue={filters.maxPrice ?? ""} className={select}>
+                    <option value="">{tf("priceAny")}</option>
+                    {CATALOG_MAX_PRICES.map((v) => <option key={v} value={v}>{tf("priceMax", { amount: v })}</option>)}
+                  </select>
+                </label>
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium text-ink">{tf("district")}</span>
+                  <select name="quartier" defaultValue={filters.district ?? ""} className={select}>
+                    <option value="">{tf("districtAny")}</option>
+                    {districts.map((d) => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </label>
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium text-ink">{tf("date")}</span>
+                  <input type="date" name="date" min={today} defaultValue={filters.date ?? ""} className={select} />
+                </label>
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium text-ink">{tf("format")}</span>
+                  <select name="format" defaultValue={filters.format ? formatParam(filters.format) : ""} className={select}>
+                    <option value="">{tf("formatAny")}</option>
+                    {CATALOG_FORMATS.map((f) => <option key={f} value={formatParam(f)}>{tf(`format_${f}`)}</option>)}
+                  </select>
+                </label>
+              </div>
+              <div className="space-y-3 pt-1">
+                <label className="flex items-center gap-2.5 text-sm text-ink">
+                  <input type="checkbox" name="debutant" value="1" defaultChecked={filters.beginner} className="size-4 accent-plum-900" />
+                  {tf("beginner")}
+                </label>
+                <label className="flex items-center gap-2.5 text-sm text-ink">
+                  <input type="checkbox" name="dispo" value="1" defaultChecked={filters.available} className="size-4 accent-plum-900" />
+                  {tf("available")}
+                </label>
+                <label className="flex items-center gap-2.5 text-sm text-ink">
+                  <input type="checkbox" name="public" value="femmes" defaultChecked={filters.women} className="size-4 accent-plum-900" />
+                  {tf("women")}
+                </label>
+              </div>
+            </div>
+          </FiltersPanel>
         </div>
-        <Link href="/experiences" className="mt-1.5 inline-flex shrink-0 items-center gap-1.5 rounded-full px-1 py-1 text-[15px] font-semibold text-plum-800 hover:text-plum-900">
-          <MapPin className="size-[18px]" aria-hidden />
-          {cityName}
-        </Link>
-      </div>
+      </form>
 
       <nav aria-label={tc("tabsLabel")} className="-mx-4 border-b border-line sm:mx-0" data-testid="catalog-tabs">
         <ActiveTabScroller className="flex gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:px-0">
@@ -161,89 +213,6 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
           </ul>
         </nav>
       )}
-
-      
-      <form action={`${prefix}${pathOf(state)}`} method="get" className="space-y-4" data-testid="catalog-form">
-        {when !== "all" && <input type="hidden" name="quand" value={when} />}
-        <div className="flex flex-wrap items-start gap-2">
-        <div role="search" className="flex min-w-0 flex-1 gap-2">
-          <label htmlFor="catalog-q" className="sr-only">{tf("searchLabel")}</label>
-          <input
-            id="catalog-q"
-            type="search"
-            name="q"
-            defaultValue={filters.q}
-            maxLength={80}
-            placeholder={tf("searchPlaceholder")}
-            className="h-12 min-w-0 flex-1 rounded-full border border-line bg-white px-5 text-base shadow-card placeholder:text-ink/45 focus:border-plum-700 focus:outline-none focus:ring-2 focus:ring-plum-200"
-          />
-          <button type="submit" aria-label={tf("searchButton")} className="grid h-12 shrink-0 place-items-center rounded-full bg-plum-900 px-4 text-sm font-semibold text-white sm:px-5">
-            <Search className="size-5 sm:hidden" aria-hidden />
-            <span className="hidden sm:inline">{tf("searchButton")}</span>
-          </button>
-        </div>
-
-        <FiltersPanel
-          className="lg:basis-full"
-          count={n}
-          clearHref={clearHref}
-          labels={{ open: tf("open"), title: tf("title"), apply: tf("apply"), clear: tf("clear"), close: tf("close") }}
-        >
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_auto] lg:items-end lg:gap-3">
-            <label className="block text-sm">
-              <span className="mb-1 block font-medium text-ink">{tf("price")}</span>
-              <select name="prix" defaultValue={filters.maxPrice ?? ""} className={select}>
-                <option value="">{tf("priceAny")}</option>
-                {CATALOG_MAX_PRICES.map((v) => <option key={v} value={v}>{tf("priceMax", { amount: v })}</option>)}
-              </select>
-            </label>
-            <label className="block text-sm">
-              <span className="mb-1 block font-medium text-ink">{tf("district")}</span>
-              <select name="quartier" defaultValue={filters.district ?? ""} className={select}>
-                <option value="">{tf("districtAny")}</option>
-                {districts.map((d) => <option key={d} value={d}>{d}</option>)}
-              </select>
-            </label>
-            <label className="block text-sm">
-              <span className="mb-1 block font-medium text-ink">{tf("date")}</span>
-              <input type="date" name="date" min={today} defaultValue={filters.date ?? ""} className={select} />
-            </label>
-            <label className="block text-sm">
-              <span className="mb-1 block font-medium text-ink">{tf("format")}</span>
-              <select name="format" defaultValue={filters.format ? formatParam(filters.format) : ""} className={select}>
-                <option value="">{tf("formatAny")}</option>
-                {CATALOG_FORMATS.map((f) => <option key={f} value={formatParam(f)}>{tf(`format_${f}`)}</option>)}
-              </select>
-            </label>
-            <button type="submit" className="hidden rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white lg:block">{tf("applyShort")}</button>
-            <div className="flex flex-wrap gap-x-6 gap-y-3 sm:col-span-2 lg:col-span-5">
-              <label className="inline-flex items-center gap-2 text-sm text-ink">
-                <input type="checkbox" name="debutant" value="1" defaultChecked={filters.beginner} className="size-4 accent-plum-900" />
-                {tf("beginner")}
-              </label>
-              <label className="inline-flex items-center gap-2 text-sm text-ink">
-                <input type="checkbox" name="dispo" value="1" defaultChecked={filters.available} className="size-4 accent-plum-900" />
-                {tf("available")}
-              </label>
-              <label className="inline-flex items-center gap-2 text-sm text-ink">
-                <input type="checkbox" name="public" value="femmes" defaultChecked={filters.women} className="size-4 accent-plum-900" />
-                {tf("women")}
-              </label>
-            </div>
-          </div>
-        </FiltersPanel>
-        </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-muted" aria-live="polite" data-testid="catalog-count">{t("results", { count: total })}</p>
-          <label className="inline-flex items-center gap-2 text-sm">
-            <span className="text-muted">{tf("sort")}</span>
-            <AutoSubmitSelect name="tri" defaultValue={sortParam(filters.sort)} className="rounded-full border border-line bg-white px-3 py-1.5 text-sm font-medium text-ink" aria-label={tf("sort")}>
-              {CATALOG_SORTS.map((s) => <option key={s} value={sortParam(s)}>{sortLabels[s]}</option>)}
-            </AutoSubmitSelect>
-          </label>
-        </div>
-      </form>
 
       {chips.length > 0 && (
         <ul className="flex flex-wrap items-center gap-2" aria-label={tf("active")} data-testid="active-filters">

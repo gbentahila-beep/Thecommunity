@@ -95,7 +95,7 @@ export function ProposalForm({ live, categories, forGroup }: { live: boolean; /*
       </label>
       <div>{label("notes", t("notesLabel"))}<textarea {...fieldProps("notes")} rows={2} maxLength={500} value={v.notes} onChange={(e) => set("notes", e.target.value)} />{err("notes")}</div>
       <p className="rounded-xl bg-plum-50 p-3 text-sm text-plum-900">{t("reviewNote")}</p>
-      <button type="submit" disabled={state === "busy"} className="w-full rounded-full bg-plum-900 px-6 py-4 font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+      <button type="submit" disabled={state === "busy"} className="btn btn-primary w-full">
         {state === "busy" ? t("sending") : t("submit")}
       </button>
       {error && <p role="alert" className="text-sm text-red-800">{error}</p>}

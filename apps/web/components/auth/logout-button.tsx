@@ -20,7 +20,7 @@ export function LogoutButton() {
         router.replace("/");
         router.refresh();
       }}
-      className="flex w-full items-center gap-3 rounded-full bg-white/70 px-4 py-2.5 text-sm font-medium text-muted hover:text-ink lg:rounded-xl lg:bg-transparent"
+      className="btn btn-secondary w-full"
     >
       <LogOut className="size-[18px]" strokeWidth={1.8} aria-hidden />
       {t("logout")}

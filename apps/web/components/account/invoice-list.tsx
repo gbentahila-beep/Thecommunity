@@ -34,7 +34,7 @@ export async function InvoiceList({ invoices }: { invoices: MemberInvoice[] }) {
                 href={`/api/factures/${i.id}`}
                 download
                 aria-label={t("downloadLabel", { number: i.number })}
-                className="inline-flex items-center gap-2 rounded-full border border-plum-900 px-4 py-2 text-sm font-semibold text-plum-900 transition hover:bg-plum-900 hover:text-white"
+                className="btn btn-secondary btn-sm"
               >
                 <Download className="size-4" aria-hidden />
                 {t("download")}

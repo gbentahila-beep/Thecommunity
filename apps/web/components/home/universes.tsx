@@ -10,7 +10,7 @@ import { tr } from "@/lib/i18n-text";
 import { StickyStack } from "./sticky-stack";
 import { DEFAULT_CATEGORY_COLOR, DEFAULT_CITY } from "@/lib/site";
 
-const PHOTOS: Record<string, string> = {
+export const PHOTOS: Record<string, string> = {
   eat: "/images/photos/univers-diners.webp",
   move: "/images/photos/univers-sport-bien-etre.webp",
   play: "/images/photos/univers-jeux-vinyles.webp",
@@ -25,7 +25,7 @@ const COLORS: Record<string, string> = { eat: "#b5563a", move: "#5f7f5e", play: 
 const POSITION: Record<string, string> = { discover: "object-[50%_12%]" };
 
 /** Textes enrichis connus (messages home.universe.<id>) ; une catégorie créée plus tard garde sa description du back-office. */
-const RICH = ["eat", "move", "play", "create", "discover", "meet", "learn"] as const;
+export const RICH = ["eat", "move", "play", "create", "discover", "meet", "learn"] as const;
 
 /** Taille de groupe réelle d'un univers, à partir de ses expériences publiées (tables, équipes). */
 function groupRange(c: Category, experiences: Experience[]): { min: number; max: number } | null {
@@ -44,8 +44,8 @@ export async function Universes({ categories, title }: { categories: Category[];
   const [t, locale, experiences] = await Promise.all([getTranslations("home"), getLocale(), getPublishedExperiences()]);
   return (
     <section aria-labelledby="universes-title" className="py-12">
-      <p className="text-center text-xs font-semibold tracking-[0.18em] text-muted uppercase">{t("universesEyebrow")}</p>
-      <h2 id="universes-title" className="mt-2 text-center font-display text-[1.75rem] leading-tight font-medium text-plum-900 sm:text-[2.25rem]">{title ?? t("universesTitle")}</h2>
+      <p className="eyebrow text-center">{t("universesEyebrow")}</p>
+      <h2 id="universes-title" className="section-title mt-2 text-center">{title ?? t("universesTitle")}</h2>
       <StickyStack className="mx-auto mt-10 max-w-5xl space-y-6 pb-4" testId="universes-stack">
         {categories.map((c, i) => {
           const name = tr(c.name, locale);
@@ -61,7 +61,7 @@ export async function Universes({ categories, title }: { categories: Category[];
               className="sticky top-[calc(4.75rem+var(--i)*0.6rem)] lg:top-[calc(6rem+var(--i)*0.9rem)]"
               data-testid="universe-card"
             >
-              <article className="universe-card relative overflow-hidden rounded-[2rem] border border-white/70 p-5 shadow-[0_-10px_30px_-18px_rgba(42,29,31,0.35),0_18px_40px_-28px_rgba(42,29,31,0.4)] sm:p-8 md:grid md:grid-cols-[1fr_1.05fr] md:gap-x-10 md:gap-y-0">
+              <article className="universe-card relative overflow-hidden rounded-3xl border border-white/70 p-5 shadow-[0_-10px_30px_-18px_rgba(42,29,31,0.35),0_18px_40px_-28px_rgba(42,29,31,0.4)] sm:p-8 md:grid md:grid-cols-[1fr_1.05fr] md:gap-x-10 md:gap-y-0">
                 <div className="md:col-start-1 md:row-start-1 md:self-end">
                   <h3 className="font-display text-[1.6rem] leading-tight font-medium text-ink sm:text-4xl">{name}</h3>
                   <p className="universe-accent mt-1 text-[16px] leading-snug font-semibold sm:text-lg">{rich ? t(`universe.${rich}.tagline`) : tr(c.description, locale)}</p>
@@ -105,7 +105,7 @@ export async function Universes({ categories, title }: { categories: Category[];
                   <Link
                     href={`/${DEFAULT_CITY}/${c.id}`}
                     aria-label={t("universeCtaLabel", { name })}
-                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[15px] font-semibold text-white transition hover:bg-plum-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-plum-700"
+                    className="btn btn-primary mt-4 w-full"
                   >
                     {rich ? t(`universe.${rich}.cta`) : t("universeCta")}
                     <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />

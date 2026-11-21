@@ -15,7 +15,7 @@ export async function BlogHero({ as = "h1" }: { as?: "h1" | "p" }) {
     <header className="max-w-3xl">
       <p className="text-sm font-semibold tracking-[0.18em] text-plum-700 uppercase">{t("title")}</p>
       <Title className="mt-3 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-plum-900 sm:text-6xl lg:text-7xl">
-        {t("heroTitleA")} <span className="bg-gradient-to-r from-plum-500 to-[#c9705f] bg-clip-text text-transparent italic rtl:not-italic">{t("heroTitleB")}</span>
+        {t("heroTitleA")} <span className="text-plum-700 italic rtl:not-italic">{t("heroTitleB")}</span>
       </Title>
       <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink/80">{t("heroText")}</p>
       <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{t("intro")}</p>
@@ -55,7 +55,7 @@ export async function FeaturedArticle({ a, locale }: { a: BlogArticle; locale: s
   const t = await getTranslations("blog");
   const lang = blogLang(locale);
   return (
-    <article className="group relative mt-8 grid overflow-hidden rounded-[2rem] bg-white shadow-card md:grid-cols-[1.15fr_1fr]">
+    <article className="group relative mt-8 grid overflow-hidden rounded-3xl bg-white shadow-card md:grid-cols-[1.15fr_1fr]">
       <div className="relative aspect-[16/11] overflow-hidden md:aspect-auto md:min-h-[22rem]">
         <Image src={a.cover} alt="" fill priority sizes="(min-width: 768px) 55vw, 100vw" className={`object-cover transition duration-500 group-hover:scale-[1.03] ${a.coverPosition ?? ""}`} />
       </div>
@@ -63,7 +63,7 @@ export async function FeaturedArticle({ a, locale }: { a: BlogArticle; locale: s
         <p className="text-sm text-muted">
           <span className="font-semibold text-ink">{t("startHere")}</span> · {catTitle(a.category, locale)} · {t("readTime", { minutes: a.minutes })}
         </p>
-        <h2 className="mt-3 font-display text-[1.85rem] leading-tight font-medium text-plum-900 sm:text-4xl">
+        <h2 className="section-title mt-3">
           <Link href={`/blog/${a.slug}`} className="after:absolute after:inset-0">{a.title[lang]}</Link>
         </h2>
         <p className="mt-3 text-[16px] leading-relaxed text-ink/75">{a.excerpt[lang]}</p>
@@ -107,7 +107,7 @@ export async function UsefulAlso({ articles, locale, title }: { articles: BlogAr
   const lang = blogLang(locale);
   if (!articles.length) return null;
   return (
-    <section aria-labelledby="useful-also" className="mt-14 rounded-[2rem] bg-white p-6 shadow-card sm:p-8">
+    <section aria-labelledby="useful-also" className="mt-14 rounded-3xl bg-white p-6 shadow-card sm:p-8">
       <h2 id="useful-also" className="text-lg font-semibold text-ink">{title ?? t("usefulAlso")}</h2>
       <ul className="mt-2 divide-y divide-line">
         {articles.map((a) => (
@@ -132,14 +132,14 @@ export async function UsefulAlso({ articles, locale, title }: { articles: BlogAr
 export async function CityCard() {
   const t = await getTranslations("blog");
   return (
-    <aside className="mt-8 rounded-[2rem] bg-white p-6 shadow-card sm:p-8">
+    <aside className="mt-8 rounded-3xl bg-white p-6 shadow-card sm:p-8">
       <span className="inline-flex items-center gap-1.5 rounded-full bg-cream-deep px-3 py-1.5 text-sm font-semibold text-ink">
         <MapPin className="size-4" aria-hidden /> Casablanca
       </span>
-      <h2 className="mt-4 font-display text-[2rem] leading-tight font-medium text-plum-900 sm:text-4xl">{t("cityCardTitle")}</h2>
+      <h2 className="section-title mt-4">{t("cityCardTitle")}</h2>
       <p className="mt-3 max-w-xl text-[16px] leading-relaxed text-ink/75">{t("cityCardText")}</p>
       <div className="mt-6 grid gap-3 sm:flex">
-        <Link href="/experiences" className="inline-flex min-h-12 items-center justify-center rounded-full bg-plum-900 px-6 font-semibold text-white shadow-card transition hover:bg-plum-800">
+        <Link href="/experiences" className="btn btn-primary">
           {t("findGroup")}
         </Link>
         <Link href="/#villes" className="inline-flex min-h-12 items-center justify-center rounded-full border border-line bg-white px-6 font-semibold text-ink transition hover:border-plum-700">
@@ -182,8 +182,8 @@ export function ArticleBody({ blocks, summaryLabel }: { blocks: BlogBlock[]; sum
 export async function BlogCta() {
   const t = await getTranslations("blog");
   return (
-    <section className="mt-16 rounded-[2rem] bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] px-6 py-10 text-center text-white sm:px-10">
-      <h2 className="font-display text-3xl font-medium">{t("ctaTitle")}</h2>
+    <section className="mt-16 rounded-3xl bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] px-6 py-10 text-center text-white sm:px-10">
+      <h2 className="section-title">{t("ctaTitle")}</h2>
       <p className="mx-auto mt-3 max-w-xl text-white/80">{t("ctaText")}</p>
       <Link href="/experiences" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-6 font-semibold text-plum-900 transition hover:bg-cream">
         {t("ctaButton")}

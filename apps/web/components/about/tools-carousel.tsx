@@ -47,8 +47,8 @@ export function ToolsCarousel({ tools, prevLabel, nextLabel, title, text, eyebro
     <section aria-labelledby="tools-title" className="py-16">
       <div className="flex items-end justify-between gap-6">
         <div>
-          <span className="inline-flex rounded-full bg-gradient-to-r from-plum-100 to-[#f6d9c9] px-4 py-1.5 text-sm font-semibold text-plum-900">{eyebrow}</span>
-          <h2 id="tools-title" className="mt-4 font-display text-[2rem] leading-tight font-medium text-plum-900 sm:text-5xl">{title}</h2>
+          <span className="inline-flex rounded-full bg-plum-100 px-4 py-1.5 text-sm font-semibold text-plum-900">{eyebrow}</span>
+          <h2 id="tools-title" className="section-title mt-4">{title}</h2>
           <p className="mt-3 max-w-2xl text-lg text-ink/75">{text}</p>
         </div>
         <div className="hidden shrink-0 gap-2 sm:flex">
@@ -64,7 +64,7 @@ export function ToolsCarousel({ tools, prevLabel, nextLabel, title, text, eyebro
         {tools.map((tool, i) => (
           <li key={tool.title} className="w-[82%] shrink-0 snap-start rounded-[var(--radius-card)] border border-line bg-cream p-6 sm:w-[46%] sm:p-7 lg:w-[31%]">
             <p className="flex items-baseline gap-3">
-              <span aria-hidden className="bg-gradient-to-br from-plum-500 to-[#d98a7a] bg-clip-text font-display text-4xl text-transparent">{String(i + 1).padStart(2, "0")}</span>
+              <span aria-hidden className="font-display text-4xl text-plum-500">{String(i + 1).padStart(2, "0")}</span>
               <span className="text-lg font-semibold text-ink">{tool.title}</span>
             </p>
             <p className="mt-4 leading-relaxed text-ink/75">{tool.text}</p>

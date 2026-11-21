@@ -22,7 +22,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   for (const l of ['Abonnement', 'Avis', 'Se connecter', "S'inscrire"]) assert(await header.getByRole('link', { name: l, exact: true }).isVisible(), `menu : ${l}`);
   await header.getByRole('button', { name: 'Plus' }).first().click();
   for (const l of ['Comment ça marche', 'À propos', 'Blog', 'Questions-réponses']) assert(await visible(header.getByRole('link', { name: l, exact: true }).first()), `menu « Plus » : ${l}`);
-  assert(await header.getByRole('link', { name: 'Questions-réponses', exact: true }).first().getAttribute('href') === '/aide', 'Questions-réponses → centre d\'aide');
+  assert(await header.getByRole('link', { name: 'Questions-réponses', exact: true }).first().getAttribute('href') === '/faq', 'Questions-réponses → FAQ (qui renvoie au centre d\'aide)');
   await d.keyboard.press('Escape');
   const discover = header.getByRole('button', { name: 'Découvrir' });
   assert(await discover.getAttribute('aria-expanded') === 'false', 'Découvrir fermé au départ');
@@ -41,15 +41,33 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   // Sections de l'accueil
   await d.goto(`${base}/`);
   // Alertes « nouvelles tables et activités », sous « Voir toutes les expériences » (démonstration : rien n'est envoyé)
+  // Accueil : accroche → encadré de confiance → « Cette semaine à Casablanca ▾ » → pastilles + liste compacte.
+  assert(await d.getByTestId('home-trust').isVisible(), 'encadré de confiance sous « Découvrir les expériences »');
+  const week = d.getByTestId('home-thisWeek');
+  assert(await week.getByTestId('city-select').isVisible() && /Casablanca/.test(await week.getByTestId('city-select').textContent()), '« Cette semaine à Casablanca ▾ »');
+  await week.getByTestId('city-select').click();
+  assert(await visible(week.getByText('Bientôt').first()), 'le chevron ouvre la liste des villes (« bientôt »)');
+  await week.getByTestId('city-select').click();
+  const rows = await week.getByTestId('compact-row').count();
+  await week.getByTestId('week-chips').getByRole('button', { name: 'Jeux' }).click();
+  const games = await week.getByTestId('compact-row').count();
+  assert(rows > 0 && games > 0 && games < rows && (await week.getByTestId('compact-row').allTextContents()).every((t) => t.includes('Jeux')), `pastilles : filtre sur place (${games} sur ${rows})`);
+  // Alertes : une ligne qui ouvre une fenêtre (ville + e-mail ; démonstration : rien n'est envoyé)
   const alerts = d.getByTestId('home-alerts');
-  assert(await alerts.getByRole('heading', { name: 'Soyez prévenu·e des nouvelles tables et activités' }).isVisible(), 'accueil : bloc d\'alertes');
-  await alerts.getByRole('textbox', { name: 'Votre adresse e-mail' }).fill('test@example.com');
-  await alerts.getByRole('button', { name: "M'alerter" }).click();
-  assert(await visible(alerts.getByRole('status').filter({ hasText: 'Démonstration' })), 'alertes : démonstration, rien n\'est envoyé');
+  await alerts.getByRole('button', { name: 'Soyez prévenu·e des nouvelles tables et activités' }).click();
+  const sheet = d.getByTestId('alerts-sheet');
+  assert(await visible(sheet) && await sheet.getByRole('combobox', { name: 'Ville' }).isVisible(), 'accueil : la ligne d\'alerte ouvre une fenêtre avec la ville');
+  await sheet.getByRole('textbox', { name: 'Votre adresse e-mail' }).fill('test@example.com');
+  await sheet.getByRole('button', { name: "M'alerter" }).click();
+  assert(await visible(sheet.getByRole('status').filter({ hasText: 'Démonstration' })), 'alertes : démonstration, rien n\'est envoyé');
+  await d.keyboard.press('Escape');
+  assert(!(await sheet.count()), 'Échap ferme la fenêtre');
+  assert(await d.getByTestId('audience-cards').getByRole('link', { name: /Devenir lieu partenaire/ }).isVisible() && await d.getByTestId('audience-cards').getByRole('link', { name: /Proposer mes activités/ }).isVisible(), 'encadrés lieux partenaires et organisateurs');
+  assert(await d.getByTestId('home-closing').getByRole('link', { name: "S’inscrire" }).isVisible(), 'phrase de clôture avec deux boutons');
   await d.goto(`${base}/alertes`);
   assert(await visible(d.getByTestId('alerts-status').filter({ hasText: 'inscrivez-vous depuis l\'accueil' })), '/alertes sans lien : explication');
   await d.goto(`${base}/en/`);
-  assert(await d.getByTestId('home-alerts').getByRole('heading', { name: 'Get alerts for new tables and activities' }).isVisible(), 'home (EN): alerts block');
+  assert(await d.getByTestId('home-alerts').getByRole('button', { name: 'Get alerts for new tables and activities' }).isVisible(), 'home (EN): alerts line');
   await d.goto(`${base}/`);
   const how = d.locator('section', { has: d.getByRole('heading', { name: 'Comment ça marche', exact: true }) });
   assert(await how.getByRole('link', { name: /Découvrir les expériences/ }).getAttribute('href') === '/experiences', 'carte 2 : bouton vers les expériences');
@@ -287,7 +305,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert((await chips.allTextContents()).join('|') === 'Tout|Padel', 'Sport : sous-catégories « Tout » et « Padel »');
   await chips.filter({ hasText: 'Padel' }).click();
   await d.waitForURL(/\/casablanca\/padel$/);
-  assert(await d.getByRole('heading', { level: 1, name: 'Padel à Casablanca' }).isVisible(), 'page de la sous-catégorie');
+  assert(await d.getByRole('heading', { level: 1, name: 'Padel', exact: true }).isVisible(), 'page de la sous-catégorie');
   const padelCards = await d.locator('main article h3, main a h3').allTextContents();
   assert(padelCards.length >= 1 && padelCards.every((t) => /padel/i.test(t)), 'sous-catégorie : seulement les activités padel');
   await d.goto(`${base}/experiences/padel-entre-inconnus-anfa`);

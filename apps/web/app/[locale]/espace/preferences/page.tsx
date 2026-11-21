@@ -19,7 +19,7 @@ export default async function PreferencesPage({ params }: PageProps<"/[locale]/e
   const { profile, reservations, notifications } = space;
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
+      <h1 className="page-title">{t("title")}</h1>
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
         <h2 className="font-display text-2xl font-medium text-plum-900">{t("notifications")}</h2>
         <PreferencesForm initial={profile.notificationPrefs} uid={space.session?.uid} />
@@ -32,7 +32,7 @@ export default async function PreferencesPage({ params }: PageProps<"/[locale]/e
         <h2 className="font-display text-2xl font-medium text-plum-900">{t("myData")}</h2>
         <p className="text-sm text-muted">{t("myDataText")}</p>
         {space.session ? (
-          <a href="/api/account/export" download className="inline-flex items-center gap-2 rounded-full border border-plum-900 px-5 py-2.5 text-sm font-semibold text-plum-900 transition hover:bg-plum-900 hover:text-white">
+          <a href="/api/account/export" download className="btn btn-secondary btn-sm">
             {t("export")}
           </a>
         ) : (

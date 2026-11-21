@@ -1,42 +1,45 @@
 import { ArrowRight, Star, Users } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
-import { ExperienceCard } from "@/components/experience-card";
+import { ThisWeek } from "@/components/home/this-week";
+import { UniverseTiles } from "@/components/home/universe-tiles";
 import { ReservationCard } from "@/components/account/reservation-card";
-import { PrimaryLink } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { isMemberActive, recommendFor } from "@thecommunity/shared";
-import { getMembershipPlan, getNextSessionPerExperience } from "@/lib/data";
+import { CompactRow } from "@/components/compact-row";
+import { getCategories, getCities, getMembershipPlan, getNextSessionPerExperience } from "@/lib/data";
 import { getMemberSpace } from "@/lib/data/member";
 import { formatLongDate, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
+import { DEFAULT_CITY } from "@/lib/site";
 
 
 export default async function DashboardPage({ params }: PageProps<"/[locale]/espace">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, loc, space, plan] = await Promise.all([getTranslations("account"), getLocale(), getMemberSpace(), getMembershipPlan()]);
+  const [t, loc, space, plan, categories, cities] = await Promise.all([getTranslations("account"), getLocale(), getMemberSpace(), getMembershipPlan(), getCategories(), getCities()]);
+  // La ville du membre si elle est ouverte, sinon la ville par défaut.
+  const cityId = cities.find((c) => c.id === space.profile.cityId && c.isActive)?.id ?? DEFAULT_CITY;
+  // Étape 30 : univers préférés, centres d'intérêt, quartier ; jamais déjà réservé ni réservé aux femmes pour qui ne l'est pas.
+  const booked = new Set(space.reservations.map((r) => r.experienceId));
+  const recommended = recommendFor(space.profile, await getNextSessionPerExperience({ cityId }), { exclude: booked, limit: 3 });
   // Étape 28 : l'abonnement est proposé APRÈS une première expérience (plus mis en avant avant).
   const suggestMembership = Boolean(plan) && space.past.length > 0 && !isMemberActive(space.membership ?? null, space.now);
   const next = space.upcoming[0];
   const days = next ? Math.max(0, Math.floor((new Date(next.sessionSnapshot.startAt).getTime() - space.now.getTime()) / 86_400_000)) : 0;
-  const bookedExperienceIds = new Set(space.reservations.map((r) => r.experienceId));
-  // Étape 30 : univers préférés, centres d'intérêt, quartier ; jamais déjà réservé ni réservé aux femmes pour qui ne l'est pas.
-  const recommended = recommendFor(space.profile, await getNextSessionPerExperience({ cityId: space.profile.cityId }), { exclude: bookedExperienceIds, limit: 3 });
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10" data-testid="member-home">
       <header>
-        <h1 className="font-display text-4xl font-medium text-plum-900">{t("hello", { name: space.profile.firstName })}</h1>
-        <p className="mt-1 text-muted">
-          {t("helloSubtitle")} · {t("stats", { count: space.past.length })}
-        </p>
+        <h1 className="page-title">{t("hello", { name: space.profile.firstName })}</h1>
+
       </header>
 
+      {next && (
       <section aria-labelledby="next-title">
-        <h2 id="next-title" className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">{t("nextExperience")}</h2>
+        <h2 id="next-title" className="eyebrow mb-3">{t("nextExperience")}</h2>
         {next ? (
-          <article className="overflow-hidden rounded-[var(--radius-card)] bg-white shadow-float sm:flex">
+          <article className="overflow-hidden card sm:flex">
             <div className="relative h-48 sm:h-auto sm:w-72 sm:shrink-0">
               <Image src={next.sessionSnapshot.coverImagePath} alt="" fill sizes="(min-width: 640px) 288px, 100vw" className="object-cover" priority />
               <span className="absolute start-3 top-3 rounded-full bg-white/95 px-3 py-1 text-sm font-semibold text-plum-900">
@@ -60,28 +63,24 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
               </Link>
             </div>
           </article>
-        ) : (
-          <div className="rounded-[var(--radius-card)] border border-dashed border-line p-8 text-center">
-            <p className="text-muted">{t("noUpcoming")}</p>
-            <PrimaryLink href="/experiences" className="mt-4">{t("findExperience")}</PrimaryLink>
-          </div>
-        )}
+        ) : null}
         {space.upcoming.length > 1 && (
           <div className="mt-4 space-y-3">
-            {space.upcoming.slice(1).map((r) => <ReservationCard key={r.id} reservation={r} />)}
+            {space.upcoming.slice(1, 3).map((r) => <ReservationCard key={r.id} reservation={r} />)}
           </div>
         )}
       </section>
+      )}
 
       {space.toReview.length > 0 && (
         <section aria-labelledby="review-title">
-          <h2 id="review-title" className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">{t("toReview")}</h2>
+          <h2 id="review-title" className="eyebrow mb-3">{t("toReview")}</h2>
           <ul className="space-y-3">
             {space.toReview.map((r) => (
               <li key={r.id} className="flex items-center gap-4 rounded-[var(--radius-card)] border border-line bg-white/70 p-4">
                 <Star className="size-6 shrink-0 text-plum-700" aria-hidden />
                 <p className="flex-1 text-ink">{t("toReviewText", { title: tr(r.sessionSnapshot.title, loc) })}</p>
-                <Link href={`/espace/reservations/${r.id}#avis`} className="shrink-0 rounded-full bg-plum-900 px-4 py-2 text-sm font-semibold text-white">
+                <Link href={`/espace/reservations/${r.id}#avis`} className="btn btn-primary btn-sm shrink-0">
                   {t("giveReview")}
                 </Link>
               </li>
@@ -96,21 +95,32 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
             <span className="block font-display text-xl">{t("memberSuggestTitle")}</span>
             <span className="text-sm text-plum-100">{t("memberSuggestText")}</span>
           </p>
-          <Link href="/abonnement" className="shrink-0 rounded-full bg-white px-4 py-2 text-sm font-semibold text-plum-900">{t("memberSuggestCta")}</Link>
+          <Link href="/abonnement" className="btn btn-secondary btn-sm shrink-0 ring-0">{t("memberSuggestCta")}</Link>
         </section>
       )}
+
+      <section aria-labelledby="universes-title" className="space-y-3">
+        <h2 id="universes-title" className="sr-only">{t("universesHeading")}</h2>
+        <UniverseTiles categories={categories} cityId={cityId} />
+      </section>
 
       {recommended.length > 0 && (
         <section aria-labelledby="reco-title" className="space-y-4">
           <div>
-            <h2 id="reco-title" className="font-display text-2xl font-medium text-plum-900">{t("recommended")}</h2>
+            <h2 id="reco-title" className="section-title">{t("recommended")}</h2>
             <p className="text-sm text-muted">{t("recommendedText")}</p>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {recommended.map((s) => <ExperienceCard key={s.id} session={s} experience={s.experience} />)}
-          </div>
+          <ul className="card divide-y divide-line/70 overflow-hidden">
+            {recommended.map((s) => (
+              <li key={s.id}>
+                <CompactRow experience={s.experience} session={s} />
+              </li>
+            ))}
+          </ul>
         </section>
       )}
+
+      <ThisWeek limit={15} cityId={cityId} />
     </div>
   );
 }

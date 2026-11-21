@@ -83,7 +83,7 @@ export function QuestionnaireForm({ reservationId, questions, initial, editable 
       })}
       {editable ? (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" disabled={busy} className="rounded-full bg-plum-900 px-6 py-3 font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+          <button type="submit" disabled={busy} className="btn btn-primary">
             {busy ? t("saving") : saved ? t("update") : t("submit")}
           </button>
           {justSaved && <p role="status" className="flex items-center gap-1.5 text-sm text-emerald-800"><CheckCircle2 className="size-4" aria-hidden /> {t("saved")}</p>}

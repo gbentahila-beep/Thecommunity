@@ -20,7 +20,7 @@ export function RefundRequestForm({ reservationId, live }: { reservationId: stri
     <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="refund-request">
       <h2 className="font-display text-xl font-medium text-plum-900">{t("title")}</h2>
       {!open ? (
-        <button type="button" onClick={() => setOpen(true)} className="mt-3 rounded-full border border-plum-900 px-4 py-2 text-sm font-semibold text-plum-900">{t("submit")}…</button>
+        <button type="button" onClick={() => setOpen(true)} className="btn btn-secondary btn-sm mt-3">{t("submit")}…</button>
       ) : (
         <form
           noValidate
@@ -50,7 +50,7 @@ export function RefundRequestForm({ reservationId, live }: { reservationId: stri
           <label className="block text-sm"><span className="mb-1 block font-medium">{t("message")}</span>
             <textarea id="refund-message" rows={4} maxLength={1000} value={message} onChange={(e) => { setMessage(e.target.value); setState("idle"); }} className="w-full rounded-xl border border-line bg-white px-3 py-2.5" />
           </label>
-          <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{t("submit")}</button>
+          <button type="submit" disabled={state === "busy"} className="btn btn-primary btn-sm">{t("submit")}</button>
           {state === "error" && <p role="alert" className="text-sm text-red-800">{t("error")}</p>}
         </form>
       )}

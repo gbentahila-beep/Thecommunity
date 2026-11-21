@@ -56,7 +56,7 @@ export async function queueNewlyPublished(): Promise<number> {
   return baseline ? 0 : fresh.length;
 }
 
-type Recipient = { email: string; locale: L; stopHref: string | null };
+type Recipient = { email: string; locale: L; stopHref: string | null; cityId: string | null };
 
 async function recipients(): Promise<Recipient[]> {
   const out = new Map<string, Recipient>();
@@ -64,14 +64,14 @@ async function recipients(): Promise<Recipient[]> {
   for (const d of members.docs) {
     const u = d.data();
     if (u.status === "suspended" || typeof u.email !== "string" || !u.email) continue;
-    out.set(u.email.toLowerCase(), { email: u.email, locale: lang(u.locale), stopHref: null });
+    out.set(u.email.toLowerCase(), { email: u.email, locale: lang(u.locale), stopHref: null, cityId: null });
   }
   const subs = await db.collection("alertSubscribers").where("status", "==", "confirmed").get();
   for (const d of subs.docs) {
     const s = d.data();
     const l = lang(s.locale);
     const key = String(s.email).toLowerCase();
-    if (!out.has(key)) out.set(key, { email: s.email, locale: l, stopHref: `${SITE_URL}${prefix(l)}/alertes?arreter=${encodeURIComponent(s.token)}` });
+    if (!out.has(key)) out.set(key, { email: s.email, locale: l, stopHref: `${SITE_URL}${prefix(l)}/alertes?arreter=${encodeURIComponent(s.token)}`, cityId: typeof s.cityId === "string" ? s.cityId : null });
   }
   return [...out.values()];
 }
@@ -89,10 +89,10 @@ export async function sendPendingNewExperienceAlerts(now = Date.now()): Promise<
   await queueNewlyPublished();
   const queued = await db.collection("newExperienceAlerts").where("sentAt", "==", null).limit(30).get();
   if (queued.empty) return { experiences: 0, emails: 0 };
-  const items: { title: DocumentData; slug: string }[] = [];
+  const items: { title: DocumentData; slug: string; cityId: string | null }[] = [];
   for (const q of queued.docs) {
     const e = (await db.doc(`experiences/${q.id}`).get()).data();
-    if (e && e.status === "published" && typeof e.slug === "string") items.push({ title: e.title, slug: e.slug });
+    if (e && e.status === "published" && typeof e.slug === "string") items.push({ title: e.title, slug: e.slug, cityId: typeof e.cityId === "string" ? e.cityId : null });
   }
   // Marquées avant l'envoi : une relance de la tâche ne renvoie jamais deux fois le même e-mail.
   const mark = db.batch();
@@ -102,7 +102,10 @@ export async function sendPendingNewExperienceAlerts(now = Date.now()): Promise<
 
   let emails = 0;
   for (const r of await recipients()) {
-    const mail = newExperiencesMail({ locale: r.locale, items: items.map((i) => ({ title: titleIn(i.title, r.locale), slug: i.slug })), stopHref: r.stopHref });
+    // Visiteur inscrit pour une ville : uniquement les expériences de cette ville.
+    const mine = r.cityId ? items.filter((i) => !i.cityId || i.cityId === r.cityId) : items;
+    if (mine.length === 0) continue;
+    const mail = newExperiencesMail({ locale: r.locale, items: mine.map((i) => ({ title: titleIn(i.title, r.locale), slug: i.slug })), stopHref: r.stopHref });
     await sendMail({ to: r.email, locale: r.locale, ...mail, kind: "new_experiences" });
     emails++;
   }
@@ -122,25 +125,28 @@ const token = z.string().trim().regex(/^[a-f0-9]{48}$/);
  * une adresse est déjà inscrite) ; l'e-mail de confirmation n'est renvoyé qu'une fois toutes les 10 minutes.
  */
 export const subscribeNewExperienceAlerts = onCall(OPTIONS, async (req) => {
-  const parsed = z.object({ email, locale: z.enum(["fr", "en", "ar"]), website: z.string().max(200).optional() }).safeParse(req.data);
+  const parsed = z.object({ email, cityId: z.string().trim().regex(/^[a-z0-9-]{1,60}$/).optional(), locale: z.enum(["fr", "en", "ar"]), website: z.string().max(200).optional() }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { website, locale } = parsed.data;
   if (website) return { ok: true };
   await consumeRateLimit(clientKey(req, "alerts"));
-  await subscribeVisitor(parsed.data.email, locale);
+  await subscribeVisitor(parsed.data.email, locale, parsed.data.cityId);
   return { ok: true };
 });
 
 /** Inscription « en attente » + e-mail de confirmation (sauf adresse déjà confirmée ou envoi de moins de 10 min). */
-export async function subscribeVisitor(rawEmail: string, locale: L): Promise<"sent" | "already" | "recent"> {
+export async function subscribeVisitor(rawEmail: string, locale: L, cityId?: string): Promise<"sent" | "already" | "recent"> {
   const address = rawEmail.trim().toLowerCase();
   const ref = db.doc(`alertSubscribers/${subscriberId(address)}`);
   const current = (await ref.get()).data();
-  if (current?.status === "confirmed") return "already";
+  if (current?.status === "confirmed") {
+    if (cityId && current.cityId !== cityId) await ref.update({ cityId });
+    return "already";
+  }
   const recent = (current?.createdAt as Timestamp | undefined)?.toMillis() ?? 0;
   if (current && Date.now() - recent < 10 * 60_000) return "recent";
   const fresh = randomBytes(24).toString("hex");
-  await ref.set({ email: address, locale, status: "pending", token: fresh, createdAt: FieldValue.serverTimestamp(), consentAt: FieldValue.serverTimestamp() });
+  await ref.set({ email: address, locale, ...(cityId ? { cityId } : {}), status: "pending", token: fresh, createdAt: FieldValue.serverTimestamp(), consentAt: FieldValue.serverTimestamp() });
   await sendMail({ to: address, locale, ...alertConfirmMail({ locale, token: fresh }), kind: "alerts_confirm" });
   return "sent";
 }

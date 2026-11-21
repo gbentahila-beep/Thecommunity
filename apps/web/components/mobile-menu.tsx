@@ -1,30 +1,18 @@
 "use client";
 
-import { onAuthStateChanged } from "firebase/auth";
-import { ChevronDown, Menu, UserRound, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { logout } from "@/lib/auth/client";
-import { firebase } from "@/lib/firebase/client";
-import { FIREBASE_ENABLED } from "@/lib/firebase/config";
+import { useMember } from "@/lib/use-member";
 import { LanguageSwitch } from "./language-switch";
 import { Logo } from "./logo";
-import { SearchBox } from "./search-box";
+import { ProfileCard } from "./profile-card";
 
 type Item = { href: string; label: string; dot?: string; dotStyle?: CSSProperties };
 type City = { id: string; name: string; active: boolean };
-
-/** Connexion côté navigateur (Firebase) ; en mode démo, personne n'est connecté. */
-function useSignedIn() {
-  const [signedIn, setSignedIn] = useState(false);
-  useEffect(() => {
-    if (!FIREBASE_ENABLED) return;
-    return onAuthStateChanged(firebase().auth, (u) => setSignedIn(Boolean(u)));
-  }, []);
-  return signedIn;
-}
 
 /** Section dépliable du menu (Découvrir, Villes). */
 function Disclosure({ label, children }: { label: string; children: React.ReactNode }) {
@@ -58,7 +46,8 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
   const t = useTranslations("nav");
   const ta = useTranslations("auth");
   const [open, setOpen] = useState(false);
-  const signedIn = useSignedIn();
+  const member = useMember();
+  const signedIn = Boolean(member);
   const pathname = usePathname();
   const router = useRouter();
   const panel = useRef<HTMLDivElement>(null);
@@ -111,12 +100,8 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
 
   return (
     <div className="flex items-center gap-2 lg:hidden">
-      {signedIn ? (
-        <Link href="/espace" aria-label={t("account")} className="grid size-10 place-items-center rounded-full bg-cream-deep text-plum-900">
-          <UserRound className="size-5" aria-hidden />
-        </Link>
-      ) : (
-        <Link href="/inscription" className="inline-flex h-10 shrink-0 items-center whitespace-nowrap rounded-full bg-plum-900 px-4 text-sm font-semibold max-[379px]:px-3 max-[379px]:text-[13px] text-white shadow-card transition hover:bg-plum-800">
+      {member === null && (
+        <Link href="/inscription" className="btn btn-primary btn-sm h-10 shrink-0 whitespace-nowrap max-[379px]:px-3 max-[379px]:text-[13px]">
           {t("signup")}
         </Link>
       )}
@@ -141,7 +126,7 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="absolute inset-x-3 top-2 max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain rounded-[2rem] border border-line/60 bg-white px-6 pt-4 pb-6 shadow-float motion-safe:animate-[menu-in_180ms_ease-out]"
+            className="absolute inset-x-3 top-2 max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain rounded-3xl border border-line/60 bg-white px-6 pt-4 pb-6 shadow-float motion-safe:animate-[menu-in_180ms_ease-out]"
           >
             <h2 id={titleId} className="sr-only">{t("menuTitle")}</h2>
             <div className="flex h-12 items-center justify-between">
@@ -158,11 +143,21 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
                 <X className="size-6" aria-hidden />
               </button>
             </div>
-            <div className="mt-3">
-              <SearchBox variant="menu" />
-            </div>
-            <nav aria-label={t("mainNav")} className="mt-3">
+            {member && <ProfileCard member={member} onNavigate={close} className="mt-3 border-b border-line pb-4" />}
+            <nav aria-label={t("mainNav")} className="mt-2">
               <ul>
+                {member &&
+                  [
+                    { href: "/", label: t("home") },
+                    { href: "/espace/reservations", label: t("bookings") },
+                    { href: "/espace/rencontres", label: t("meet") },
+                  ].map((l) => (
+                    <li key={l.href} className="border-b border-line">
+                      <Link href={l.href} onClick={close} aria-current={pathname === l.href ? "page" : undefined} className={rowLink}>
+                        {l.label}
+                      </Link>
+                    </li>
+                  ))}
                 <Disclosure label={t("discover")}>
                   {discover.map((it, i) => (
                     <li key={it.href}>
@@ -196,36 +191,29 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
                 </Disclosure>
               </ul>
             </nav>
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              {signedIn ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      close();
-                      await logout();
-                      router.replace("/");
-                      router.refresh();
-                    }}
-                    className="inline-flex min-h-12 items-center justify-center rounded-full border border-line px-4 font-semibold text-ink transition hover:border-plum-700"
-                  >
-                    {ta("logout")}
-                  </button>
-                  <Link href="/espace" onClick={close} className="inline-flex min-h-12 items-center justify-center rounded-full bg-plum-900 px-4 font-semibold text-white transition hover:bg-plum-800">
-                    {t("account")}
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link href="/connexion" onClick={close} className="inline-flex min-h-12 items-center justify-center rounded-full border border-line px-4 font-semibold text-ink transition hover:border-plum-700">
-                    {t("login")}
-                  </Link>
-                  <Link href="/inscription" onClick={close} className="inline-flex min-h-12 items-center justify-center rounded-full bg-plum-900 px-4 font-semibold text-white transition hover:bg-plum-800">
-                    {t("signup")}
-                  </Link>
-                </>
-              )}
-            </div>
+            {signedIn ? (
+              <button
+                type="button"
+                onClick={async () => {
+                  close();
+                  await logout();
+                  router.replace("/");
+                  router.refresh();
+                }}
+                className="btn btn-secondary mt-6 w-full"
+              >
+                {ta("logout")}
+              </button>
+            ) : (
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <Link href="/connexion" onClick={close} className="btn btn-secondary px-4">
+                  {t("login")}
+                </Link>
+                <Link href="/inscription" onClick={close} className="btn btn-primary px-4">
+                  {t("signup")}
+                </Link>
+              </div>
+            )}
             <div className="mt-5 flex justify-center" onClickCapture={close}>
               <LanguageSwitch />
             </div>

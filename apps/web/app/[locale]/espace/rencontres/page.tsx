@@ -19,7 +19,7 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
   return (
     <div className="space-y-10">
       <header>
-        <h1 className="font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
+        <h1 className="page-title">{t("title")}</h1>
         <p className="mt-2 max-w-2xl text-muted">{t("intro")}</p>
       </header>
 

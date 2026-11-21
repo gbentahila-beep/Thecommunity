@@ -7,6 +7,14 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { logout } from "@/lib/auth/client";
 import { firebase } from "@/lib/firebase/client";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
+import { useMember } from "@/lib/use-member";
+import { ProfileCard } from "./profile-card";
+
+/** Haut de la page Menu : la carte « Votre profil » d'une personne connectée. */
+export function MenuProfile() {
+  const member = useMember();
+  return member ? <ProfileCard member={member} className="card px-4" /> : null;
+}
 
 /** Bas de la page Menu : « Se connecter » / « Créer un compte », ou « Se déconnecter » pour une personne connectée. */
 export function MenuAuth() {
@@ -28,7 +36,7 @@ export function MenuAuth() {
           router.replace("/");
           router.refresh();
         }}
-        className={`${primary} border border-line bg-white text-ink hover:border-plum-700`}
+        className="btn btn-secondary w-full"
       >
         {ta("logout")}
       </button>
@@ -36,7 +44,7 @@ export function MenuAuth() {
   }
   return (
     <div className="space-y-3">
-      <Link href="/connexion" className={`${primary} bg-gradient-to-r from-plum-900 to-plum-700 text-white shadow-float hover:from-plum-800`}>{t("login")}</Link>
+      <Link href="/connexion" className={`${primary} bg-plum-900 text-white hover:bg-plum-800`}>{t("login")}</Link>
       <Link href="/inscription" className={`${primary} border border-line bg-white text-plum-900 hover:border-plum-700`}>{t("signup")}</Link>
     </div>
   );

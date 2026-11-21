@@ -20,7 +20,7 @@ export default async function AlertsPage({ params, searchParams }: PageProps<"/[
   const stop = typeof q.arreter === "string" && TOKEN.test(q.arreter) ? q.arreter : null;
   return (
     <PageShell className="max-w-2xl space-y-6 py-12">
-      <h1 className="font-display text-4xl font-medium text-plum-900">{t("pageTitle")}</h1>
+      <h1 className="page-title">{t("pageTitle")}</h1>
       <AlertsLanding action={confirm ? "confirm" : stop ? "stop" : null} token={confirm ?? stop} />
     </PageShell>
   );

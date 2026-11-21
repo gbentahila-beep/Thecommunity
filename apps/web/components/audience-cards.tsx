@@ -1,0 +1,59 @@
+import { ArrowRight, CalendarHeart, Coffee } from "lucide-react";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+
+/**
+ * Deux encadrés « Travaillons ensemble » (accueil et centre d'aide) : lieux partenaires qui accueillent nos
+ * groupes, et organisateurs qui publient leurs activités. Même style que « Vous avez d'autres questions ? ».
+ */
+export async function AudienceCards({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3" }) {
+  const t = await getTranslations("audiences");
+  const H = headingLevel;
+  const cards = [
+    { key: "partners", icon: Coffee, href: "/devenir-partenaire", external: false },
+    { key: "organizers", icon: CalendarHeart, href: "/pro/inscription", external: true },
+  ] as const;
+  return (
+    <div className="grid gap-5 md:grid-cols-2" data-testid="audience-cards">
+      {cards.map(({ key, icon: Icon, href, external }) => {
+        const cta = (
+          <>
+            {t(`${key}Cta`)}
+            <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
+          </>
+        );
+        return (
+          <div key={key} className="info-box flex flex-col items-start text-start">
+            <span className="grid size-11 place-items-center rounded-full bg-white text-plum-900 shadow-card">
+              <Icon className="size-5" aria-hidden />
+            </span>
+            <p className="eyebrow mt-5">{t(`${key}Eyebrow`)}</p>
+            <H className="mt-1.5 font-display text-[1.45rem] leading-tight font-medium text-plum-900">{t(`${key}Title`)}</H>
+            <p className="mt-2 flex-1 text-[15px] leading-relaxed text-ink/80">{t(`${key}Text`)}</p>
+            {external ? (
+              <a href={href} className="btn btn-primary btn-sm mt-5">{cta}</a>
+            ) : (
+              <Link href={href} className="btn btn-primary btn-sm mt-5">{cta}</Link>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Phrase de clôture de l'accueil, avec deux boutons. */
+export async function ClosingCta({ signedIn = false }: { signedIn?: boolean }) {
+  const t = await getTranslations("audiences");
+  return (
+    <section aria-labelledby="closing-title" className="py-16 text-center" data-testid="home-closing">
+      <h2 id="closing-title" className="mx-auto max-w-2xl font-display text-[2.1rem] leading-[1.08] font-medium text-balance text-plum-900 sm:text-[3rem]">
+        {t("closingTitle1")} <em className="text-plum-700 not-italic sm:italic">{t("closingTitle2")}</em>
+      </h2>
+      <div className="mx-auto mt-8 grid max-w-md grid-cols-2 gap-3">
+        <Link href={signedIn ? "/espace/reservations" : "/inscription"} className="btn btn-primary px-4">{signedIn ? t("closingBookings") : t("closingSignup")}</Link>
+        <Link href="/experiences" className="btn btn-secondary px-4">{t("closingDiscover")}</Link>
+      </div>
+    </section>
+  );
+}

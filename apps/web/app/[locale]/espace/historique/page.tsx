@@ -34,7 +34,7 @@ export default async function HistoryPage({ params }: PageProps<"/[locale]/espac
   ];
   return (
     <div className="space-y-10">
-      <h1 className="font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
+      <h1 className="page-title">{t("title")}</h1>
       <section className="space-y-3">
         <h2 className="font-display text-2xl font-medium text-plum-900">{t("past")}</h2>
         {space.past.map((r) => (

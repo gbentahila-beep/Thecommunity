@@ -63,13 +63,13 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
           </ol>
         </nav>
         <article className="mt-6">
-          <h1 className="font-display text-[2.2rem] leading-[1.1] font-medium text-plum-900 sm:text-5xl">{a.title[lang]}</h1>
+          <h1 className="page-title">{a.title[lang]}</h1>
           <p className="mt-4 text-lg leading-relaxed text-ink/80">{a.excerpt[lang]}</p>
           <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
             <span className="inline-flex items-center gap-1.5"><Clock className="size-4" aria-hidden />{t("readTime", { minutes: a.minutes })}</span>
             <time dateTime={a.date}>{formatCalendarDate(a.date, locale)}</time>
           </p>
-          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-[2rem] shadow-card">
+          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-3xl shadow-card">
             <Image src={a.cover} alt="" fill priority sizes="(min-width: 768px) 768px, 100vw" className={`object-cover ${a.coverPosition ?? ""}`} />
           </div>
           <div className="mt-8">

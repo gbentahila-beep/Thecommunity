@@ -127,7 +127,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           {holdOpen && (
             <div className="mt-4 flex flex-wrap items-center gap-4">
               {transfer && r.paymentId ? (
-                <Link href={`/paiement/virement/${r.paymentId}`} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">{tv("seeInstructions")}</Link>
+                <Link href={`/paiement/virement/${r.paymentId}`} className="btn btn-primary btn-sm">{tv("seeInstructions")}</Link>
               ) : (
                 <PayNowButton reservationId={r.id} label={t("payNow", { amount: total })} />
               )}
@@ -165,7 +165,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </div>
         <div className="space-y-4 p-5">
           <StatusBadge status={r.status} />
-          <h1 className="font-display text-3xl font-medium text-plum-900">{title}</h1>
+          <h1 className="page-title">{title}</h1>
           <dl className="space-y-3">
             <div className="flex gap-3">
               <CalendarDays className="mt-0.5 size-5 shrink-0 text-plum-700" aria-hidden />
@@ -198,7 +198,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
               <a
                 href={icsDataUri(ics)}
                 download={`the-community-${s.slug}.ics`}
-                className="inline-flex items-center gap-2 rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800"
+                className="btn btn-primary btn-sm"
               >
                 <CalendarPlus className="size-4" aria-hidden />
                 {t("addToCalendar")}

@@ -33,7 +33,7 @@ export function ForgotForm() {
     >
       <Field label={t("email")} type="email" name="email" autoComplete="email" required />
       {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">{t(`errors.${error}` as "errors.generic")}</p>}
-      <button type="submit" disabled={state === "busy"} className="w-full rounded-full bg-plum-900 px-6 py-4 font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+      <button type="submit" disabled={state === "busy"} className="btn btn-primary w-full">
         {state === "busy" ? t("loading") : t("forgotCta")}
       </button>
     </form>

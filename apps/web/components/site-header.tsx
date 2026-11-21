@@ -24,7 +24,7 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
     { href: "/comment-ca-marche", label: t("how") },
     { href: "/blog", label: t("blog") },
     { href: "/abonnement", label: t("membership") },
-    { href: "/aide", label: t("questions") },
+    { href: "/faq", label: t("questions") },
     { href: "/avis", label: t("reviews") },
   ];
   const navLink = "whitespace-nowrap rounded-full px-2.5 py-2 text-[15px] text-ink/85 hover:bg-cream-deep hover:text-ink xl:px-3";
@@ -32,7 +32,7 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
     ...(withHow ? [{ href: "/comment-ca-marche", label: t("how") }] : []),
     { href: "/a-propos", label: t("about") },
     { href: "/blog", label: t("blog") },
-    { href: "/aide", label: t("questions") },
+    { href: "/faq", label: t("questions") },
   ];
   const cityItems = cities.map((c) => ({ id: c.id, name: tr(c.name, locale), active: c.isActive }));
   return (

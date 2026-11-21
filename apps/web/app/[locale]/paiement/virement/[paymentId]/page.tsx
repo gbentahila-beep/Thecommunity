@@ -54,9 +54,9 @@ export default async function TransferPage({ params }: PageProps<"/[locale]/paie
     return (
       <PageShell className="max-w-xl py-8">
         <section role="status" className="rounded-[var(--radius-card)] bg-emerald-50 p-5 text-emerald-950">
-          <h1 className="flex items-center gap-2 font-display text-3xl font-medium"><CheckCircle2 className="size-7" aria-hidden />{t("receivedTitle")}</h1>
+          <h1 className="page-title flex items-center gap-2"><CheckCircle2 className="size-7" aria-hidden />{t("receivedTitle")}</h1>
           <p className="mt-2">{t("receivedText")}</p>
-          <Link href={back.href} className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">{back.label}</Link>
+          <Link href={back.href} className="btn btn-primary btn-sm mt-4">{back.label}</Link>
         </section>
       </PageShell>
     );
@@ -65,9 +65,9 @@ export default async function TransferPage({ params }: PageProps<"/[locale]/paie
     return (
       <PageShell className="max-w-xl py-8">
         <section role="status" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-          <h1 className="font-display text-3xl font-medium text-plum-900">{t("closedTitle")}</h1>
+          <h1 className="page-title">{t("closedTitle")}</h1>
           <p className="mt-2 text-ink">{t("closedText")}</p>
-          <Link href={back.href} className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">{back.label}</Link>
+          <Link href={back.href} className="btn btn-primary btn-sm mt-4">{back.label}</Link>
         </section>
       </PageShell>
     );
@@ -90,7 +90,7 @@ export default async function TransferPage({ params }: PageProps<"/[locale]/paie
 
   return (
     <PageShell className="max-w-xl py-8">
-      <h1 className="flex items-center gap-3 font-display text-4xl font-medium text-plum-900">
+      <h1 className="page-title flex items-center gap-3">
         <Landmark className="size-8 shrink-0" aria-hidden />
         {t("title")}
       </h1>

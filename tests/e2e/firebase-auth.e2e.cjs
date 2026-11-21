@@ -100,8 +100,8 @@ const waitFor = async (fn, ms = 15000) => { const end = Date.now() + ms; while (
   await page.getByRole('button', { name: 'Ajouter aux favoris' }).first().click();
   assert(await waitFor(async () => (await fsList(`users/${uid}/favorites`)).length === 1, 8000), 'favori enregistré dans le compte');
 
-  // Déconnexion
-  await go('/espace');
+  // Déconnexion (depuis « Mon profil » : plus de bouton en bas de chaque page)
+  await go('/espace/compte');
   await page.getByRole('button', { name: 'Se déconnecter' }).click();
   await page.waitForTimeout(1500);
   await go('/espace');
@@ -137,6 +137,7 @@ const waitFor = async (fn, ms = 15000) => { const end = Date.now() + ms; while (
   assert(bad.status() === 401, 'cookie de session refusé pour un jeton invalide');
 
   // Mot de passe oublié
+  await go('/espace/compte').catch(() => undefined);
   await page.getByRole('button', { name: 'Se déconnecter' }).first().click().catch(() => undefined);
   await go('/mot-de-passe-oublie');
   await page.getByLabel('Adresse e-mail').fill('salma@thecommunity.test');

@@ -74,7 +74,7 @@ export function ReportReviewButton({ reviewId }: { reviewId: string }) {
       <textarea id={`${id}-message`} rows={2} maxLength={500} value={message} onChange={(e) => setMessage(e.target.value)} className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm" />
       {state === "error" && <p role="alert" className="text-sm text-red-800">{error}</p>}
       <div className="flex gap-3">
-        <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">{t("send")}</button>
+        <button type="submit" disabled={state === "busy"} className="btn btn-primary btn-sm">{t("send")}</button>
         <button type="button" onClick={() => setOpen(false)} className="text-sm font-medium text-muted underline">{t("cancel")}</button>
       </div>
     </form>

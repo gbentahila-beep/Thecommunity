@@ -319,3 +319,24 @@ Tests : 6 tests d'intégration et 4 unitaires (formule, souscription et renouvel
 - Un code est compté au paiement (ou tout de suite si la place devient gratuite) : deux paiements quasi simultanés peuvent dépasser le plafond d'une unité.
 - Frais de service : sur toutes les réservations payantes (directes, demandes acceptées, liste d'attente), remboursés avec la place.
 - Allergies (donnée de santé) : transmises au lieu seulement avec l'accord coché, daté ; visibles par l'équipe.
+
+## Refonte UX/UI — phases 1 à 5 (21 novembre 2026, docs/16)
+
+- **Un seul style** : briques communes dans `globals.css` (`page-title`, `section-title`, `eyebrow`, `btn` +
+  `btn-primary|secondary|ghost|sm`, `card`, `info-box`, `chip`), fenêtre commune `components/sheet.tsx`. Titres de
+  page et de section normalisés, boutons unifiés (prune), un seul rayon de carte (24 px), plus de dégradés pastel
+  ni de texte en dégradé.
+- **Navigation** : menu burger sans recherche, carte « Votre profil » pour les membres (puis Accueil,
+  Réservations, Mon groupe), plus d'icône personnage ; « Questions-réponses » → FAQ. Sur ordinateur, un membre
+  voit Réservations, Mon groupe et ses initiales (→ Mon profil). Espace membre sans barre de pastilles ni bouton
+  de déconnexion en bas des pages ; nouvelle page **Mon profil** (`/espace/compte`) avec la déconnexion.
+- **Accueil visiteur** : accroche → encadré de confiance → « Cette semaine à Casablanca ▾ » (liste des villes,
+  « bientôt ») → pastilles qui filtrent sur place → lignes compactes → « Voir toutes les expériences » → une ligne
+  d'alerte qui ouvre une fenêtre (ville + e-mail ; la ville est enregistrée et filtre les e-mails). Carte 1 de
+  « Comment ça marche » redessinée. Fin de page : encadrés lieux partenaires et organisateurs, phrase de clôture
+  et deux boutons. Centre d'aide : mêmes encadrés.
+- **Accueil membre** : `proxy.ts` réécrit « / » vers le tableau de bord quand un cookie de session non expiré est
+  présent. Tableau de bord : Bonjour Prénom, prochaine expérience, avis à donner, un bloc par univers (« N cette
+  semaine › »), Pour vous, « Cette semaine à … » (15 expériences).
+- **Catalogue** : titre, ville ▾ et icône filtres (panneau : tri, prix, quartier, jour, format, cases). Plus de
+  barre de recherche, de compteur ni de « Trier par » ; un seul badge par ligne.

@@ -41,12 +41,15 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
               {tr(experience.title, locale)}
             </Link>
           </h3>
-          {experience.audience === "women" && <span className={`${pill} bg-plum-100 text-plum-900`} data-testid="card-women">{t("women")}</span>}
-          {badge && <span className={`${pill} ${badge === "featured" ? "bg-plum-900 text-white" : "bg-badge text-plum-900"}`} data-testid="card-badge">{t(`badge_${badge}`)}</span>}
-          {full ? (
+          {/* Un seul badge par ligne (le plus utile) : la liste reste compacte. */}
+          {experience.audience === "women" ? (
+            <span className={`${pill} bg-plum-100 text-plum-900`} data-testid="card-women">{t("women")}</span>
+          ) : full ? (
             <span className={`${pill} bg-ink/80 text-white`}>{t("full")}</span>
           ) : left <= LOW_SEATS_THRESHOLD ? (
             <span className={`${pill} bg-white text-plum-800 ring-1 ring-plum-200`}>{t("lastSeats", { count: left })}</span>
+          ) : badge ? (
+            <span className={`${pill} ${badge === "featured" ? "bg-plum-900 text-white" : "bg-badge text-plum-900"}`} data-testid="card-badge">{t(`badge_${badge}`)}</span>
           ) : null}
         </div>
         <p className="mt-1 truncate text-[15px] text-ink/80">

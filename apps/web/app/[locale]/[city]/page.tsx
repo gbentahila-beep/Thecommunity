@@ -31,7 +31,7 @@ export default async function CityPage({ params, searchParams }: PageProps<"/[lo
   if (!city.isActive) {
     return (
       <PageShell className="py-24 text-center">
-        <h1 className="font-display text-4xl font-medium text-plum-900 sm:text-5xl">{t("comingSoonTitle", { city: name })}</h1>
+        <h1 className="page-title">{t("comingSoonTitle", { city: name })}</h1>
         <p className="mx-auto mt-4 max-w-lg text-muted">{t("comingSoonText")}</p>
         <PrimaryLink href="/casablanca" className="mt-8">
           {t("backToCasablanca")}

@@ -144,7 +144,7 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
         <p className="mt-1 text-xs text-muted">{t("photoNote")}</p>
       </div>
       {error && <p role="alert" className="text-sm text-red-800">{error}</p>}
-      <button type="submit" disabled={busy} className="rounded-full bg-plum-900 px-6 py-3 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+      <button type="submit" disabled={busy} className="btn btn-primary btn-sm">
         {busy ? t("sending") : t("submit")}
       </button>
     </form>

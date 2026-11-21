@@ -1,16 +1,14 @@
 import { HeartHandshake, ShieldCheck, Users } from "lucide-react";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { CategoryChips } from "@/components/category-chips";
-import { CityMenu } from "@/components/city-menu";
-import { ExperienceCard } from "@/components/experience-card";
-import { ForYou } from "@/components/for-you";
+import { AudienceCards, ClosingCta } from "@/components/audience-cards";
+import { CompactRow } from "@/components/compact-row";
+import { ThisWeek } from "@/components/home/this-week";
 import { HomeFaq } from "@/components/home/home-faq";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { ReviewsShowcase } from "@/components/home/reviews-showcase";
 import { Universes } from "@/components/home/universes";
 import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
-import { NewExperienceAlerts } from "@/components/new-experience-alerts";
 import { Link } from "@/i18n/navigation";
 import { experienceBadge, NEW_EXPERIENCE_DAYS, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
 import { getCategories, getCities, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences, getReviews } from "@/lib/data";
@@ -22,10 +20,9 @@ export const revalidate = 3600;
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, city, sessions, categories, reviews, cities, home, upcomingAll, undated, published, weekend] = await Promise.all([
+  const [t, city, categories, reviews, cities, home, upcomingAll, undated, published, weekend] = await Promise.all([
     getTranslations("home"),
     getCity(DEFAULT_CITY),
-    getNextSessionPerExperience({ cityId: DEFAULT_CITY, when: "week" }),
     getCategories(),
     getReviews(),
     getCities(),
@@ -36,18 +33,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     getNextSessionPerExperience({ cityId: DEFAULT_CITY, when: "weekend" }),
   ]);
   const cityName = city ? tr(city.name, locale) : "";
-  // Si la semaine est calme, on complète avec les prochaines dates.
-  const pool = sessions.length >= 4 ? sessions : upcomingAll;
-  // Mises en avant d'abord, sessions complètes en dernier, puis ordre chronologique.
-  const featured = [...pool]
-    .sort(
-      (a, b) =>
-        Number(b.isFeatured) - Number(a.isFeatured) ||
-        Number(a.status === "full") - Number(b.status === "full") ||
-        a.startAt.localeCompare(b.startAt),
-    )
-    .slice(0, 4);
-
+  const trustOn = home.sections.some((x) => x.id === "trust" && x.enabled);
   // Étape 23 : sections de l'accueil choisies et ordonnées par l'équipe (Back-office → Accueil).
   const now = new Date();
   const nextOf = new Map(upcomingAll.map((x) => [x.experienceId, x]));
@@ -65,15 +51,24 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     .sort((a, b) => b.ratingAvg - a.ratingAvg || b.ratingCount - a.ratingCount)
     .slice(0, 4)
     .map(entry);
-  const cards = (id: string, title: string, items: { experience: Experience; session?: Session }[]) =>
-    items.length > 0 && (
-      <PageShell key={id} className="space-y-8 py-6" data-testid={`home-${id}`}>
-        <SectionHeading title={title} action={{ href: "/experiences", label: t("seeAll") }} />
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          {items.map((x) => <ExperienceCard key={x.experience.id} session={x.session} experience={x.experience} />)}
-        </div>
-      </PageShell>
+  // Sections secondaires (mises en avant, week-end, nouveautés…) : même liste compacte que « Cette semaine ».
+  const cards = (id: string, title: string, items: { experience: Experience; session?: Session }[]) => {
+    const dated = items.filter((x): x is { experience: Experience; session: Session } => Boolean(x.session));
+    return (
+      dated.length > 0 && (
+        <PageShell key={id} className="max-w-3xl space-y-5 py-8" data-testid={`home-${id}`}>
+          <SectionHeading title={title} action={{ href: "/experiences", label: t("seeAll") }} />
+          <ul className="card divide-y divide-line/70 overflow-hidden">
+            {dated.map((x) => (
+              <li key={x.experience.id}>
+                <CompactRow experience={x.experience} session={x.session} />
+              </li>
+            ))}
+          </ul>
+        </PageShell>
+      )
     );
+  };
   const banner = home.banner?.enabled ? home.banner : null;
 
   const sectionsById: Record<HomeSectionId, React.ReactNode> = {
@@ -82,38 +77,12 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     new: cards("new", t("newTitle"), fresh),
     popular: cards("popular", t("popularTitle"), popular),
     thisWeek: (
-      <PageShell key="thisWeek" className="space-y-8 py-6">
-        <SectionHeading
-          title={t("thisWeek", { city: cityName })}
-          action={{ href: `/${DEFAULT_CITY}`, label: t("seeAll") }}
-        />
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          {featured.map((s, i) => (
-            <ExperienceCard key={s.id} session={s} experience={s.experience} priority={i < 2} />
-          ))}
-        </div>
-        <Link href={`/${DEFAULT_CITY}`} className="block text-center text-sm font-medium text-plum-900 underline underline-offset-4 sm:hidden">
-          {t("seeAll")}
-        </Link>
-        <NewExperienceAlerts />
+      <PageShell key="thisWeek" className="max-w-3xl py-8">
+        <ThisWeek limit={6} />
       </PageShell>
     ),
-    trust: (
-      <PageShell key="trust" className="py-6" data-testid="home-trust">
-        <ul className="grid gap-4 rounded-[var(--radius-card)] bg-cream-deep p-6 sm:grid-cols-3 sm:p-8">
-          {[
-            { icon: Users, label: t("trust1") },
-            { icon: HeartHandshake, label: t("trust2") },
-            { icon: ShieldCheck, label: t("trust3") },
-          ].map(({ icon: Icon, label }) => (
-            <li key={label} className="flex items-center gap-4">
-              <Icon className="size-8 shrink-0 text-plum-900" strokeWidth={1.5} aria-hidden />
-              <span className="text-[15px] text-ink">{label}</span>
-            </li>
-          ))}
-        </ul>
-      </PageShell>
-    ),
+    // L'encadré de confiance est affiché sous le bouton « Découvrir les expériences » (voir plus bas).
+    trust: null,
     how: (
       <PageShell key="how">
         <HowItWorks categories={categories} />
@@ -138,7 +107,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       ),
     cities: (
       <PageShell key="cities" className="pb-8">
-        <div id="villes" className="scroll-mt-24 rounded-[2rem] bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] px-6 py-12 text-center text-white sm:px-12">
+        <div id="villes" className="scroll-mt-24 rounded-3xl bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] px-6 py-12 text-center text-white sm:px-12">
           <h2 className="font-display text-3xl font-medium sm:text-4xl">{t("citiesTitle")}</h2>
           <p className="mx-auto mt-3 max-w-xl text-plum-100">{t("citiesText")}</p>
           <ul className="mt-8 flex flex-wrap justify-center gap-2.5">
@@ -157,6 +126,10 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     faq: (
       <PageShell key="faq">
         <HomeFaq />
+        <div className="mx-auto max-w-4xl">
+          <AudienceCards />
+        </div>
+        <ClosingCta />
       </PageShell>
     ),
   };
@@ -190,6 +163,20 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             <div className="mt-8 [animation-delay:220ms] animate-fade-up">
               <PrimaryLink href="/experiences">{t("heroCta")}</PrimaryLink>
             </div>
+            {trustOn && (
+              <ul className="mt-8 max-w-md space-y-3 rounded-3xl bg-cream-deep p-5 [animation-delay:300ms] animate-fade-up" data-testid="home-trust">
+                {[
+                  { icon: Users, label: t("trust1") },
+                  { icon: HeartHandshake, label: t("trust2") },
+                  { icon: ShieldCheck, label: t("trust3") },
+                ].map(({ icon: Icon, label }) => (
+                  <li key={label} className="flex items-center gap-3">
+                    <Icon className="size-6 shrink-0 text-plum-900" strokeWidth={1.5} aria-hidden />
+                    <span className="text-[15px] leading-snug text-ink">{label}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div className="relative order-1 h-[46vh] min-h-72 lg:order-2 lg:h-auto lg:min-h-[520px]">
             <Image
@@ -205,18 +192,9 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </div>
       </section>
 
-      {/* CATÉGORIES */}
-      <PageShell className="pt-6">
-        <div className="mb-6 flex justify-center sm:hidden">
-          <CityMenu />
-        </div>
-        <CategoryChips hrefFor={(id) => (id ? `/${DEFAULT_CITY}/${id}` : "/experiences")} />
-        <div className="mt-8 empty:hidden">
-          <ForYou />
-        </div>
-      </PageShell>
-
-      {home.sections.filter((x) => x.enabled).map((x) => sectionsById[x.id])}
+      {/* « Cette semaine » vient toujours juste après l'accroche ; les autres sections suivent l'ordre du back-office. */}
+      {home.sections.some((x) => x.id === "thisWeek" && x.enabled) && sectionsById.thisWeek}
+      {home.sections.filter((x) => x.enabled && x.id !== "thisWeek").map((x) => sectionsById[x.id])}
     </>
   );
 }

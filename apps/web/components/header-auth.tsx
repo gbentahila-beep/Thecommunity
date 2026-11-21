@@ -1,32 +1,29 @@
 "use client";
 
-import { onAuthStateChanged } from "firebase/auth";
-import { UserRound } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { firebase } from "@/lib/firebase/client";
-import { FIREBASE_ENABLED } from "@/lib/firebase/config";
+import { initialsOf, useMember } from "@/lib/use-member";
 
-/** En-tête (ordinateur) : « Se connecter » et « S'inscrire », ou l'accès au compte une fois connecté·e. */
+/** En-tête (ordinateur) : « Se connecter » et « S'inscrire », ou les initiales (page Mon profil) une fois connecté·e. */
 export function HeaderAuth() {
   const t = useTranslations("nav");
-  const [signedIn, setSignedIn] = useState(false);
-  useEffect(() => {
-    if (!FIREBASE_ENABLED) return;
-    return onAuthStateChanged(firebase().auth, (u) => setSignedIn(Boolean(u)));
-  }, []);
-  if (signedIn) {
+  const member = useMember();
+  if (member === undefined) return null;
+  if (member) {
     return (
-      <Link href="/espace" aria-label={t("account")} className="relative grid size-11 place-items-center rounded-full bg-cream-deep text-plum-900 transition hover:bg-sand">
-        <UserRound className="size-5" aria-hidden />
-      </Link>
+      <div className="flex items-center gap-1">
+        <Link href="/espace/reservations" className="rounded-full px-3 py-2 text-[15px] font-medium whitespace-nowrap text-ink hover:bg-cream-deep">{t("bookings")}</Link>
+        <Link href="/espace/rencontres" className="rounded-full px-3 py-2 text-[15px] font-medium whitespace-nowrap text-ink hover:bg-cream-deep">{t("meet")}</Link>
+        <Link href="/espace/compte" aria-label={t("myProfile")} className="ms-1 grid size-10 place-items-center rounded-full bg-plum-100 text-sm font-semibold text-plum-900 transition hover:bg-plum-200">
+          {initialsOf(member)}
+        </Link>
+      </div>
     );
   }
   return (
     <div className="flex items-center gap-1">
       <Link href="/connexion" className="hidden rounded-full px-3 py-2 text-[15px] font-medium whitespace-nowrap text-ink hover:bg-cream-deep xl:inline-flex">{t("login")}</Link>
-      <Link href="/inscription" className="inline-flex h-10 items-center rounded-full bg-plum-900 px-4 text-sm font-semibold whitespace-nowrap text-white shadow-card hover:bg-plum-800">{t("signup")}</Link>
+      <Link href="/inscription" className="btn btn-primary btn-sm h-10 whitespace-nowrap">{t("signup")}</Link>
     </div>
   );
 }

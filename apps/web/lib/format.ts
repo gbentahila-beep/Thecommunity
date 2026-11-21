@@ -60,3 +60,10 @@ export function formatDayHeading(iso: string, locale: string) {
 export function formatDayCell(iso: string, locale: string) {
   return { weekday: fmt(iso, locale, { weekday: "short" }).replace(".", ""), day: fmt(iso, locale, { day: "numeric" }) };
 }
+
+/** « Sam. 21 nov. · 10h30 » — lignes compactes de l'accueil. */
+export function formatDaySlot(iso: string, locale: string) {
+  const d = fmt(iso, locale, { weekday: "short", day: "numeric", month: "short" });
+  const label = locale === "fr" ? d.charAt(0).toUpperCase() + d.slice(1) : d;
+  return `${label} · ${formatTime(iso, locale)}`;
+}

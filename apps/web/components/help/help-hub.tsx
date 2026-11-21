@@ -1,4 +1,5 @@
-import { ArrowRight, BadgeCheck, CalendarCheck, Compass, Handshake, MessageCircle, ShieldCheck, Store, UserRound, Utensils } from "lucide-react";
+import { ArrowRight, BadgeCheck, CalendarCheck, Compass, Handshake, MessageCircle, ShieldCheck, UserRound, Utensils } from "lucide-react";
+import { AudienceCards } from "@/components/audience-cards";
 import { getTranslations } from "next-intl/server";
 import { HELP_ARTICLES, HELP_CATEGORIES, helpLang, type HelpAudience, type HelpCategoryKey } from "@/content/help";
 import { Link } from "@/i18n/navigation";
@@ -36,7 +37,7 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
       <section className="bg-plum-900 pb-16 pt-12 text-white">
         <PageShell className="max-w-4xl text-center">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-white/70">{t("title")}</p>
-          <h1 className="mt-3 font-display text-4xl font-medium sm:text-5xl">{t("heroTitle")}</h1>
+          <h1 className="page-title mt-3">{t("heroTitle")}</h1>
           <p className="mx-auto mt-4 max-w-xl text-white/80">{t("heroText")}</p>
         </PageShell>
       </section>
@@ -84,31 +85,22 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
   );
 }
 
-/** Bas de page commun : écrire à l'équipe, et (côté membres) l'appel aux partenaires. */
+/** Bas de page commun : écrire à l'équipe, puis les encadrés lieux partenaires et organisateurs. */
 export async function HelpContactCards({ audience }: { audience: HelpAudience }) {
   const t = await getTranslations("help");
   return (
-    <div className="mt-12 grid gap-5 md:grid-cols-2">
-      <div className="rounded-[var(--radius-card)] bg-cream-deep p-6">
-        <MessageCircle className="size-6 text-plum-900" aria-hidden />
-        <h2 className="mt-3 font-display text-2xl font-medium text-plum-900">{t("contactTitle")}</h2>
+    <div className="mt-12 space-y-5" data-testid="help-contact-cards">
+      <div className="info-box flex flex-col items-center">
+        <MessageCircle className="size-7 text-plum-900" aria-hidden />
+        <h2 className="mt-3 font-display text-[1.45rem] leading-tight font-medium text-plum-900">{t("contactTitle")}</h2>
         <p className="mt-2 text-ink/80">{t("contactText")}</p>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <Link href="/contact" className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">{t("contactCta")}</Link>
-          <Link href="/faq" className="rounded-full border border-plum-900 px-5 py-2.5 text-sm font-semibold text-plum-900 hover:bg-white">{t("faqCta")}</Link>
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          <Link href="/contact" className="btn btn-primary btn-sm">{t("contactCta")}</Link>
+          <Link href="/faq" className="btn btn-secondary btn-sm">{t("faqCta")}</Link>
+          {audience === "clients" && <Link href="/aide/partenaires" className="btn btn-secondary btn-sm">{t("tabPartners")}</Link>}
         </div>
       </div>
-      <div className="rounded-[var(--radius-card)] bg-cream-deep p-6">
-        <Store className="size-6 text-plum-900" aria-hidden />
-        <h2 className="mt-3 font-display text-2xl font-medium text-plum-900">{t("partnerTitle")}</h2>
-        <p className="mt-2 text-ink/80">{t("partnerText")}</p>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <Link href="/devenir-partenaire" className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">{t("partnerCta")}</Link>
-          {audience === "clients" && (
-            <Link href="/aide/partenaires" className="rounded-full border border-plum-900 px-5 py-2.5 text-sm font-semibold text-plum-900 hover:bg-white">{t("tabPartners")}</Link>
-          )}
-        </div>
-      </div>
+      <AudienceCards headingLevel="h2" />
     </div>
   );
 }

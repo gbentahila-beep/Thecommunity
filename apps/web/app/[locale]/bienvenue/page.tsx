@@ -36,7 +36,7 @@ export default async function OnboardingPage({ params, searchParams }: PageProps
   return (
     <PageShell className="py-10">
       <header className="mx-auto mb-8 max-w-xl">
-        <h1 className="font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
+        <h1 className="page-title">{t("title")}</h1>
         <p className="mt-2 text-muted">{t("subtitle")}</p>
       </header>
       <Questionnaire

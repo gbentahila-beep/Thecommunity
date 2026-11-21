@@ -22,12 +22,12 @@ export function AuthCard({
 }) {
   return (
     <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:items-center lg:px-8 lg:py-16">
-      <div className="relative hidden h-[560px] overflow-hidden rounded-[2rem] lg:block">
+      <div className="relative hidden h-[560px] overflow-hidden rounded-3xl lg:block">
         <Image src="/demo/diner-inconnus.webp" alt="" fill sizes="50vw" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-plum-900/60 to-transparent" />
       </div>
       <div className="mx-auto w-full max-w-md">
-        <h1 className="font-display text-4xl font-medium text-plum-900">{title}</h1>
+        <h1 className="page-title">{title}</h1>
         <p className="mt-2 text-muted">{subtitle}</p>
         <div className="mt-8 space-y-4">{children}</div>
         {notice && (

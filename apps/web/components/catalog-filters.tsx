@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 
 /**
- * Étape 23 — panneau des filtres du catalogue : en ligne sur ordinateur, plein écran sur téléphone (bouton
- * « Filtres (n) », Échap ou la croix ferment). Les champs vides ne sont pas envoyés : l'adresse reste lisible
+ * Filtres du catalogue (docs/16, phase 5) : une petite icône à côté de la ville ouvre un panneau (monte du bas sur
+ * téléphone, fenêtre centrée sur ordinateur) ; Échap, la croix ou un clic à côté ferment. Les champs vides ne sont pas envoyés : l'adresse reste lisible
  * (/experiences?prix=200&debutant=1).
  */
 export function FiltersPanel({
@@ -43,6 +43,7 @@ export function FiltersPanel({
     if (!open) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    ref.current?.querySelector<HTMLElement>("[data-panel] select, [data-panel] input")?.focus();
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -57,30 +58,35 @@ export function FiltersPanel({
         type="button"
         onClick={() => setOpen(true)}
         aria-expanded={open}
-        className="inline-flex h-12 items-center gap-2 rounded-full border border-line bg-white px-4 text-sm font-semibold text-ink shadow-card lg:hidden"
+        aria-label={count > 0 ? `${labels.open} (${count})` : labels.open}
+        className="relative grid size-10 place-items-center rounded-full text-plum-900 transition hover:bg-white"
         data-testid="filters-open"
       >
-        <SlidersHorizontal className="size-4" aria-hidden />
-        {labels.open}
-        {count > 0 && <span className="grid size-5 place-items-center rounded-full bg-plum-900 text-[11px] text-white">{count}</span>}
+        <SlidersHorizontal className="size-5" aria-hidden />
+        {count > 0 && <span className="absolute -end-0.5 -top-0.5 grid size-[18px] place-items-center rounded-full bg-plum-900 text-[10px] font-semibold text-white">{count}</span>}
       </button>
-      <div
-        role={open ? "dialog" : undefined}
-        aria-modal={open ? true : undefined}
-        aria-label={labels.title}
-        className={`${open ? "fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-white" : "hidden"} lg:static lg:z-auto lg:flex lg:overflow-visible lg:bg-transparent`}
-        data-testid="filters-panel"
-      >
-        <div className="flex items-center justify-between border-b border-line px-5 py-4 lg:hidden">
-          <p className="font-display text-xl font-medium text-plum-900">{labels.title}</p>
-          <button type="button" onClick={() => setOpen(false)} aria-label={labels.close} className="grid size-11 place-items-center rounded-full hover:bg-cream-deep">
-            <X className="size-6" aria-hidden />
-          </button>
-        </div>
-        <div className="flex-1 px-5 py-5 lg:p-0">{children}</div>
-        <div className="sticky bottom-0 flex items-center justify-between gap-3 border-t border-line bg-white px-5 py-4 lg:hidden">
-          <Link href={clearHref} className="text-sm font-semibold text-plum-900 underline underline-offset-4">{labels.clear}</Link>
-          <button type="submit" className="rounded-full bg-plum-900 px-6 py-3 text-sm font-semibold text-white">{labels.apply}</button>
+      {/* Le panneau reste dans le formulaire (pas de portail) : « Voir les résultats » l'envoie. */}
+      <div className={open ? "fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-6" : "hidden"}>
+        <button type="button" tabIndex={-1} aria-hidden onClick={() => setOpen(false)} className="absolute inset-0 cursor-default bg-ink/30 backdrop-blur-[2px]" />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={labels.title}
+          data-panel
+          className="relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-float sm:max-w-lg sm:rounded-3xl"
+          data-testid="filters-panel"
+        >
+          <div className="flex items-center justify-between px-6 pt-5 pb-3">
+            <p className="font-display text-[1.45rem] font-medium text-plum-900">{labels.title}</p>
+            <button type="button" onClick={() => setOpen(false)} aria-label={labels.close} className="-me-2 grid size-10 place-items-center rounded-full hover:bg-cream-deep">
+              <X className="size-5" aria-hidden />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto px-6 pb-5">{children}</div>
+          <div className="flex items-center justify-between gap-3 border-t border-line px-6 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pb-4">
+            <Link href={clearHref} className="text-sm font-semibold text-plum-900 underline underline-offset-4">{labels.clear}</Link>
+            <button type="submit" className="btn btn-primary">{labels.apply}</button>
+          </div>
         </div>
       </div>
     </div>

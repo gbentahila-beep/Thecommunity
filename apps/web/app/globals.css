@@ -29,7 +29,7 @@
   --font-sans: var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-fraunces), var(--font-arabic), ui-serif, Georgia, serif;
 
-  --radius-card: 1.25rem;
+  --radius-card: 1.5rem;
   --shadow-card: 0 1px 2px rgb(86 26 41 / 0.04), 0 8px 24px -12px rgb(86 26 41 / 0.18);
   --shadow-float: 0 12px 40px -12px rgb(86 26 41 / 0.35);
 
@@ -108,4 +108,50 @@
 }
 .universe-badge {
   color: var(--cat);
+}
+
+/*
+ * Briques communes (docs/16, phase 1) : une seule façon d'écrire un titre, un bouton, une carte, un encadré.
+ * Toute nouvelle page les utilise ; pas de tailles, rayons ou couleurs de bouton « à la main ».
+ */
+@layer components {
+  .page-title {
+    @apply font-display text-[2rem] leading-[1.1] font-medium text-balance text-plum-900 sm:text-[2.6rem];
+  }
+  .section-title {
+    @apply font-display text-[1.6rem] leading-tight font-medium text-balance text-plum-900 sm:text-[2rem];
+  }
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.16em] text-muted uppercase;
+  }
+  .lead {
+    @apply text-[16px] leading-relaxed text-muted sm:text-[17px];
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-[15px] font-semibold transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+  .btn-primary {
+    @apply bg-plum-900 text-white hover:bg-plum-800;
+  }
+  .btn-secondary {
+    @apply bg-white text-plum-900 ring-1 ring-line hover:ring-plum-200;
+  }
+  .btn-ghost {
+    @apply text-plum-900 hover:bg-plum-50;
+  }
+  .card {
+    @apply rounded-3xl bg-white shadow-card;
+  }
+  .info-box {
+    @apply rounded-3xl bg-cream-deep px-6 py-8 text-center sm:px-10;
+  }
+  .chip {
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium text-ink ring-1 ring-line transition hover:ring-plum-200;
+  }
+  .chip-on {
+    @apply bg-plum-900 text-white ring-plum-900 hover:ring-plum-900;
+  }
 }

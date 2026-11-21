@@ -56,7 +56,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
 
   // ——— 31 ———
   await p.goto(base + '/espace', { waitUntil: 'load' });
-  assert(await p.locator('a[href="/espace/rencontres"]:visible').count() > 0, '31 : menu « Mon groupe »');
+  assert(await p.locator('[data-mobile-tab-bar] a[href="/espace/rencontres"]').count() > 0, '31 : « Mon groupe » dans la barre du bas');
   await p.goto(base + '/espace/rencontres', { waitUntil: 'load' });
   assert(await p.getByRole('heading', { level: 1, name: 'Mon groupe' }).isVisible(), '31 : page « Mon groupe »');
   const contact = p.getByTestId('meet-contact').filter({ hasText: 'Lina' });
@@ -92,7 +92,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   assert(await visible(p.locator('#f-district')) && await p.locator('#f-district').inputValue() === 'Maârif', '30 : questionnaire — quartier pré-rempli');
   assert(await p.getByRole('radio', { name: 'Des personnes de mon âge (si possible)' }).isVisible() && await p.locator('#f-sportLevel').inputValue() === 'beginner', '30 : questionnaire — préférence d\'âge et niveau sportif');
   await p.goto(base + '/espace', { waitUntil: 'load' });
-  const reco = p.locator('section[aria-labelledby=reco-title] article');
+  const reco = p.locator('section[aria-labelledby=reco-title] [data-testid=compact-row]');
   assert(await reco.count() > 0, '30 : suggestions de l\'espace membre');
 
   // ——— 32 ———

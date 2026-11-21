@@ -18,7 +18,7 @@ export function DataExport({ data }: { data: unknown }) {
         a.click();
         URL.revokeObjectURL(url);
       }}
-      className="inline-flex items-center gap-2 rounded-full border border-plum-900 px-5 py-2.5 text-sm font-semibold text-plum-900 transition hover:bg-plum-900 hover:text-white"
+      className="btn btn-secondary btn-sm"
     >
       <Download className="size-4" aria-hidden />
       {t("export")}

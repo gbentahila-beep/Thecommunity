@@ -50,15 +50,15 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
           <p className="text-sm font-semibold text-ink/80">{ta("heroEyebrow")}</p>
           <h1 className="mt-4 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-plum-900 sm:text-6xl">
             {ta("heroLine1")}
-            <span className="block bg-gradient-to-r from-plum-500 to-[#c9705f] bg-clip-text text-transparent italic rtl:not-italic">{ta("heroLine2")}</span>
+            <span className="block text-plum-700 italic rtl:not-italic">{ta("heroLine2")}</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink/80">{t("aboutText")}</p>
-          <Link href="/experiences" className="mt-7 inline-flex min-h-12 items-center gap-2 rounded-full bg-plum-900 px-6 font-semibold text-white shadow-card transition hover:bg-plum-800">
+          <Link href="/experiences" className="btn btn-primary mt-7">
             {th("heroCta")}
             <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
           </Link>
         </div>
-        <div className="relative order-1 aspect-[4/3] overflow-hidden rounded-[2rem] shadow-card lg:order-2 lg:aspect-[5/4]">
+        <div className="relative order-1 aspect-[4/3] overflow-hidden rounded-3xl shadow-card lg:order-2 lg:aspect-[5/4]">
           <Image src="/images/photos/a-propos-hero.webp" alt={ta("heroPhotoAlt")} fill priority sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover object-[50%_35%]" />
         </div>
       </section>
@@ -66,12 +66,12 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
       {/* 2. La créatrice : photo à gauche, texte à droite */}
       <section aria-labelledby="founder" className="mt-20 grid items-center gap-8 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
         {/* Photo tirée de l'article CULTIQ (choix de Rita, 8 nov.) : accord de CULTIQ / original en haute définition à obtenir (docs/16). */}
-        <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[2rem] shadow-card">
+        <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-3xl shadow-card">
           <Image src="/images/aya-snoussi.webp" alt={ta("photoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
         </div>
         <div>
           <p className="text-sm font-semibold tracking-[0.2em] text-plum-700 uppercase">{ta("founderEyebrow")}</p>
-          <h2 id="founder" className="mt-3 font-display text-4xl font-medium text-plum-900 sm:text-5xl">{ta("founderName")}</h2>
+          <h2 id="founder" className="section-title mt-3">{ta("founderName")}</h2>
           <p className="mt-1 text-muted">{ta("founderRole")}</p>
           <div className="mt-6 space-y-4 text-[17px] leading-relaxed text-ink/85">
             <p>{ta("founderP1")}</p>
@@ -82,7 +82,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
             href={AYA_INSTAGRAM.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-7 inline-flex min-h-11 items-center gap-2 rounded-full border border-plum-900 px-5 text-sm font-semibold text-plum-900 transition hover:bg-plum-900 hover:text-white"
+            className="btn btn-secondary btn-sm mt-7 min-h-11"
           >
             <svg viewBox="0 0 24 24" className="size-4" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" /></svg>
             {ta("followAya")} <span dir="ltr">(@{AYA_INSTAGRAM.handle})</span>
@@ -92,7 +92,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
 
       {/* 3. Ce qui compte pour elle */}
       <section aria-labelledby="values" className="mt-20">
-        <h2 id="values" className="font-display text-[2rem] leading-tight font-medium text-plum-900 sm:text-5xl">{ta("valuesTitle")}</h2>
+        <h2 id="values" className="section-title">{ta("valuesTitle")}</h2>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {values.map(({ icon: Icon, title, text }) => (
             <li key={title} className="rounded-[var(--radius-card)] bg-white p-6 shadow-card">
@@ -112,12 +112,12 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
       {/* 5. Galerie */}
       <section aria-labelledby="gallery" className="py-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 id="gallery" className="font-display text-[2rem] leading-tight font-medium text-plum-900 sm:text-5xl">{ta("galleryTitle")}</h2>
+          <h2 id="gallery" className="section-title">{ta("galleryTitle")}</h2>
           <p className="mt-4 text-lg leading-relaxed text-ink/75">{ta("galleryText")}</p>
         </div>
         <ul className="mt-10 columns-2 gap-3 sm:gap-5 md:columns-3">
           {GALLERY.map(({ src, w, h }, i) => (
-            <li key={src} className="mb-3 break-inside-avoid overflow-hidden rounded-[1.5rem] shadow-card sm:mb-5 sm:rounded-[2rem]">
+            <li key={src} className="mb-3 break-inside-avoid overflow-hidden rounded-3xl shadow-card sm:mb-5 sm:rounded-3xl">
               <Image src={src} alt={ta("galleryAlt", { n: i + 1 })} width={w} height={h} sizes="(min-width: 768px) 32vw, 48vw" className="h-auto w-full transition duration-500 hover:scale-[1.03]" />
             </li>
           ))}
@@ -125,7 +125,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
       </section>
 
       <div className="mt-10 flex justify-center">
-        <Link href="/experiences" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-plum-900 px-7 font-semibold text-white shadow-card transition hover:bg-plum-800">
+        <Link href="/experiences" className="btn btn-primary">
           {th("heroCta")}
           <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
         </Link>

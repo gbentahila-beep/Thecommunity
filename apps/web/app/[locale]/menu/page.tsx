@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { CategoryIcon } from "@/components/category-icon";
 import { LanguageSwitch } from "@/components/language-switch";
-import { MenuAuth } from "@/components/menu-auth";
+import { MenuAuth, MenuProfile } from "@/components/menu-auth";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getCategories } from "@/lib/data";
@@ -21,7 +21,7 @@ function Group({ title, rows }: { title?: string; rows: Row[] }) {
   return (
     <section>
       {title && <h2 className="mb-2 px-2 text-sm font-medium text-muted">{title}</h2>}
-      <ul className="overflow-hidden rounded-[1.75rem] bg-white shadow-card">
+      <ul className="overflow-hidden rounded-3xl bg-white shadow-card">
         {rows.map((r, i) => (
           <li key={r.href}>
             <Link href={r.href} className="flex min-h-14 items-center gap-4 ps-5 transition hover:bg-cream">
@@ -50,7 +50,8 @@ export default async function MenuPage({ params }: PageProps<"/[locale]/menu">) 
   const [t, tf, tm, categories, loc] = await Promise.all([getTranslations("nav"), getTranslations("footer"), getTranslations("menuPage"), getCategories(), getLocale()]);
   return (
     <PageShell className="max-w-2xl space-y-6 py-8">
-      <h1 className="font-display text-4xl font-medium text-ink">{t("menu")}</h1>
+      <h1 className="page-title">{t("menu")}</h1>
+      <MenuProfile />
 
       <Group
         rows={[
@@ -61,7 +62,7 @@ export default async function MenuPage({ params }: PageProps<"/[locale]/menu">) 
       <Group
         title={tm("account")}
         rows={[
-          { href: "/espace", label: t("account"), icon: ico(UserRound) },
+          { href: "/espace/compte", label: t("myProfile"), icon: ico(UserRound) },
           { href: "/espace/notifications", label: t("notifications"), icon: ico(Bell) },
           { href: "/espace/preferences", label: tm("preferences"), icon: ico(Settings2) },
         ]}

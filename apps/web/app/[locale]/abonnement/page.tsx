@@ -59,7 +59,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   if (!plan || offers.length === 0) {
     return (
       <PageShell className="max-w-2xl py-12">
-        <h1 className="font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
+        <h1 className="page-title">{t("title")}</h1>
         <p className="mt-4 text-muted">{t("soon")}</p>
       </PageShell>
     );
@@ -92,7 +92,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   const initial = pickOffer(plan)?.id ?? views[0]!.id;
   const cheapest = Math.min(...offers.map((o) => offerEconomics(o, offers).perMonth));
   const canBuy = me && me.emailVerified && me.onboarded && !me.transfer && !(me.active && me.period && !canRenewMembership(me.period));
-  const ctaClass = "block w-full rounded-full bg-gradient-to-r from-plum-900 to-plum-700 px-6 py-4 text-center font-semibold text-white shadow-float";
+  const ctaClass = "btn btn-primary w-full shadow-float";
 
   return (
     <PageShell className="max-w-5xl space-y-6 py-8 sm:py-10">
@@ -101,11 +101,11 @@ export default async function MembershipPage({ params, searchParams }: PageProps
       )}
       {failed && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">{t("paymentFailed")}</p>}
 
-      <h1 className="font-display text-3xl font-medium text-ink sm:text-4xl">{t("title")}</h1>
+      <h1 className="page-title">{t("title")}</h1>
 
-      <section className="rounded-[2rem] bg-gradient-to-br from-[#f7e4e8] via-[#f3e6f1] to-[#ece6f6] p-6 text-center shadow-card sm:p-10" aria-labelledby="membership-hero">
+      <section className="card p-6 text-center sm:p-10" aria-labelledby="membership-hero">
         <Sparkles className="mx-auto size-7 text-plum-800" aria-hidden />
-        <h2 id="membership-hero" className="mx-auto mt-3 max-w-xl font-display text-[1.9rem] leading-tight font-medium text-ink sm:text-[2.6rem]">
+        <h2 id="membership-hero" className="section-title mx-auto mt-3 max-w-xl">
           {t("heroTitle", { price: money(cheapest) })}
         </h2>
         <p className="mx-auto mt-4 inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 rounded-full bg-white/85 px-5 py-2.5 text-[15px] font-semibold text-ink shadow-card">
@@ -136,7 +136,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
               when: me.transfer.deadline ? formatLongDate(me.transfer.deadline, locale) : "",
             })}
           </p>
-          <Link href={`/paiement/virement/${me.transfer.id}`} className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">{tv("seeInstructions")}</Link>
+          <Link href={`/paiement/virement/${me.transfer.id}`} className="btn btn-primary btn-sm mt-4">{tv("seeInstructions")}</Link>
         </div>
       )}
       {me && !me.emailVerified && <VerifyEmailBanner />}
@@ -174,7 +174,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
         <p className="mt-4 text-sm text-muted">{t("howPriceShows")}</p>
       </section>
 
-      <section className="rounded-[var(--radius-card)] bg-gradient-to-br from-[#e6f2e8] to-[#f2f6e2] p-6 text-center shadow-card">
+      <section className="info-box">
         <p className="text-[16px] text-ink">{t("notReady")}</p>
         <Link href="/experiences" className="mt-4 inline-flex rounded-full border border-emerald-800/30 bg-white px-6 py-3 font-semibold text-emerald-900 hover:border-emerald-800">{t("notReadyCta")}</Link>
       </section>

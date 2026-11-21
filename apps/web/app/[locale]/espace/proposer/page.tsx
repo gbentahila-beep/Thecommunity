@@ -28,7 +28,7 @@ export default async function ProposePage({ params, searchParams }: PageProps<"/
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="font-display text-4xl font-medium text-plum-900">{t("title")}</h1>
+        <h1 className="page-title">{t("title")}</h1>
         <p className="mt-2 text-ink/80">{t("intro")}</p>
       </header>
       {!trusted ? (

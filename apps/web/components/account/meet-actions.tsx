@@ -92,7 +92,7 @@ export function InviteForm({ toUid, firstName, sessions, live }: { toUid: string
   if (!open)
     return (
       <div className="space-y-1">
-        <button type="button" onClick={() => { setOpen(true); setMsg(null); }} className="rounded-full bg-plum-900 px-4 py-2 text-sm font-semibold text-white">{t("invite", { name: firstName })}</button>
+        <button type="button" onClick={() => { setOpen(true); setMsg(null); }} className="btn btn-primary btn-sm">{t("invite", { name: firstName })}</button>
         {msg && <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-emerald-800" : "text-red-800"}`}>{msg.text}</p>}
       </div>
     );
@@ -122,7 +122,7 @@ export function InviteForm({ toUid, firstName, sessions, live }: { toUid: string
           {sessions.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
         </select>
       </label>
-      <button type="submit" disabled={busy} className="rounded-full bg-plum-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">{t("sendInvite")}</button>
+      <button type="submit" disabled={busy} className="btn btn-primary btn-sm">{t("sendInvite")}</button>
       {msg && <p role={msg.ok ? "status" : "alert"} className={`w-full text-sm ${msg.ok ? "text-emerald-800" : "text-red-800"}`}>{msg.text}</p>}
     </form>
   );

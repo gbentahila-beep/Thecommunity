@@ -32,7 +32,7 @@ export function AlertsLanding({ action, token }: { action: "confirm" | "stop" | 
     <div className="space-y-6">
       <p role="status" aria-live="polite" data-testid="alerts-status" className="rounded-2xl bg-white p-5 text-plum-900 shadow-card">{message}</p>
       <div className="flex flex-wrap gap-3">
-        <Link href="/experiences" className="rounded-full bg-plum-900 px-6 py-3 text-sm font-semibold text-white hover:bg-plum-800">{t("seeExperiences")}</Link>
+        <Link href="/experiences" className="btn btn-primary btn-sm">{t("seeExperiences")}</Link>
         <Link href="/" className="rounded-full border border-line px-6 py-3 text-sm font-semibold text-plum-900">{t("backHome")}</Link>
       </div>
     </div>

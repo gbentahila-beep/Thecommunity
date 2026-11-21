@@ -41,7 +41,9 @@
     "membership": "Abonnement",
     "questions": "Questions-réponses",
     "reviews": "Avis",
-    "more": "Plus"
+    "more": "Plus",
+    "yourProfile": "Votre profil",
+    "myProfile": "Mon profil"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -142,7 +144,12 @@
         "factValue": "Un guide ou un expert",
         "cta": "Voir la culture"
       }
-    }
+    },
+    "thisWeekAt": "Cette semaine à",
+    "weekEmpty": "Rien dans cet univers cette semaine. Voyez toutes les dates à venir.",
+    "howMoreUniverses": "+ {count, plural, one {# autre univers} other {# autres univers}}",
+    "tileThisWeek": "{count, plural, one {# cette semaine} other {# cette semaine}}",
+    "tileSeeDates": "Voir les dates"
   },
   "card": {
     "people": "{count} pers.",
@@ -180,7 +187,8 @@
     "undatedTitle": "Déjà vécues — de nouvelles dates arrivent",
     "undatedText": "Retrouvez leurs avis et demandez à être prévenu·e dès que de nouvelles dates sont programmées.",
     "tabsLabel": "Univers",
-    "calendarLabel": "Calendrier des dates"
+    "calendarLabel": "Calendrier des dates",
+    "discover": "Découvrir"
   },
   "city": {
     "title": "Expériences à {city}",
@@ -581,7 +589,14 @@
     "memberSuggestTitle": "Vous avez aimé ? Devenez membre",
     "memberSuggestText": "Un prix membre sur les expériences et des avantages réservés aux membres.",
     "memberSuggestCta": "Voir l'abonnement",
-    "navMeet": "Mon groupe"
+    "navMeet": "Mon groupe",
+    "memberSince": "Membre depuis {date}",
+    "hubAccount": "Compte",
+    "hubNotifications": "Notifications",
+    "hubHistory": "Historique",
+    "hubMemberActive": "Active",
+    "hubDetails": "Mes informations",
+    "universesHeading": "Nos univers"
   },
   "reservation": {
     "back": "Mes réservations",
@@ -1401,7 +1416,7 @@
   },
   "alerts": {
     "title": "Soyez prévenu·e des nouvelles tables et activités",
-    "text": "Recevez un e-mail dès qu'une nouvelle expérience est publiée. Gratuit, sans engagement : vous arrêtez quand vous voulez.",
+    "text": "Recevez un e-mail dès qu'une nouvelle expérience est publiée dans votre ville. Gratuit, sans engagement.",
     "emailLabel": "Votre adresse e-mail",
     "emailPlaceholder": "Votre adresse e-mail",
     "submit": "M'alerter",
@@ -1422,7 +1437,11 @@
     "invalid": "Ce lien n'est plus valable. Vous pouvez vous réinscrire depuis l'accueil.",
     "noToken": "Pour recevoir les alertes, inscrivez-vous depuis l'accueil, sous « Voir toutes les expériences ».",
     "seeExperiences": "Voir les expériences",
-    "backHome": "Retour à l'accueil"
+    "backHome": "Retour à l'accueil",
+    "close": "Fermer",
+    "cityLabel": "Ville",
+    "citySoon": "{city} (bientôt)",
+    "onlyNew": "Uniquement des e-mails sur les nouvelles expériences. Arrêt en un clic."
   },
   "catalogRow": {
     "book": "Réserver",
@@ -1483,5 +1502,20 @@
     "ctaTitle": "Vous avez vécu une expérience ?",
     "ctaText": "Donnez votre avis depuis vos réservations : il aide les autres membres et nous aide à composer de meilleurs groupes.",
     "ctaButton": "Donner mon avis"
+  },
+  "audiences": {
+    "partnersEyebrow": "Travaillons ensemble",
+    "partnersTitle": "Pour les cafés, restaurants et lieux",
+    "partnersText": "Aux dates que vous choisissez, nous vous amenons un petit groupe de personnes qui ne vous connaissent pas encore. Chacun règle sa consommation : vous gardez simplement une table ou un espace libre.",
+    "partnersCta": "Devenir lieu partenaire",
+    "organizersEyebrow": "Organisateurs",
+    "organizersTitle": "Pour celles et ceux qui animent des activités",
+    "organizersText": "Atelier, sortie sportive, visite, soirée jeux : publiez vos dates sur The Host Club. Réservations, paiement en ligne et rappels sont pris en charge, vous vous concentrez sur l’expérience.",
+    "organizersCta": "Proposer mes activités",
+    "closingTitle1": "Des inconnus en arrivant,",
+    "closingTitle2": "des amis en repartant.",
+    "closingSignup": "S’inscrire",
+    "closingDiscover": "Voir les expériences",
+    "closingBookings": "Mes réservations"
   }
 }

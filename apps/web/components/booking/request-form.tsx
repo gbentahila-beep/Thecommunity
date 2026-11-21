@@ -128,7 +128,7 @@ export function RequestForm({ sessionId, maxSeats, messageRequired, instagramReq
           )}
         </div>
       )}
-      <button type="submit" disabled={busy} className="w-full rounded-full bg-plum-900 px-6 py-4 font-semibold text-white shadow-card hover:bg-plum-800 disabled:opacity-60">
+      <button type="submit" disabled={busy} className="btn btn-primary w-full">
         {busy ? tb("working") : t("submit")}
       </button>
       <p className="text-center text-xs text-muted">{t("noPaymentYet")}</p>
@@ -170,7 +170,7 @@ export function CancelRequestButton({ requestId }: { requestId: string }) {
             setBusy(false);
             router.refresh();
           }}
-          className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+          className="btn btn-primary btn-sm"
         >
           {busy ? tb("working") : t("cancelYes")}
         </button>

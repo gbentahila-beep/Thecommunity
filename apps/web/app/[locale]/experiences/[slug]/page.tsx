@@ -64,7 +64,7 @@ async function RetiredExperience({ title, categoryId }: { title: string; categor
     <PageShell className="py-14">
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-sm font-semibold tracking-[0.18em] text-plum-700 uppercase">{t("retiredEyebrow")}</p>
-        <h1 className="mt-3 font-display text-4xl font-medium text-plum-900 sm:text-5xl">{title}</h1>
+        <h1 className="page-title mt-3">{title}</h1>
         <p className="mt-4 text-lg text-ink/75">{t("retiredText")}</p>
         <PrimaryLink href="/experiences" className="mt-7">{t("retiredCta")}</PrimaryLink>
       </div>
@@ -181,7 +181,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 {category ? tr(category.shortName, locale) : ""}
                 {subcategory ? ` · ${tr(subcategory.shortName, locale)}` : ""}
               </span>
-              <h1 className="mt-3 font-display text-4xl leading-tight font-medium text-plum-900 sm:text-5xl">{tr(exp.title, locale)}</h1>
+              <h1 className="page-title mt-3">{tr(exp.title, locale)}</h1>
               <p className="mt-3 text-lg text-ink/80">{tr(exp.summary, locale)}</p>
               {exp.ratingCount > 0 && (
                 <p className="mt-3 flex items-center gap-2 text-sm text-muted">
@@ -385,7 +385,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               {next && (
                 <Link
                   href={`/reserver/${next.id}`}
-                  className="mt-5 hidden w-full items-center justify-center rounded-full bg-plum-900 px-6 py-3.5 font-semibold text-white transition hover:bg-plum-800 lg:flex"
+                  className="btn btn-primary mt-5 hidden w-full lg:flex"
                 >
                   {exp.admission === "on_request" ? t("requestCta") : t("bookCta")}
                 </Link>
@@ -403,7 +403,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <p className="leading-tight"><PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} detail={false} /></p>
               <p className="text-xs text-muted">{formatShortSlot(next.startAt, locale)}</p>
             </div>
-            <Link href={`/reserver/${next.id}`} className="inline-flex h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-plum-900 px-5 text-[15px] font-semibold text-white">
+            <Link href={`/reserver/${next.id}`} className="btn btn-primary h-12 shrink-0 whitespace-nowrap">
               {exp.admission === "on_request" ? t("requestCta") : t("bookCta")}
             </Link>
           </div>

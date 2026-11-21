@@ -121,7 +121,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         <ArrowLeft className="size-4 rtl:-scale-x-100" aria-hidden />
         {t("back")}
       </Link>
-      <h1 className="mt-4 font-display text-4xl font-medium text-plum-900">{onRequest ? tr2("pageTitle") : t("title")}</h1>
+      <h1 className="page-title mt-4">{onRequest ? tr2("pageTitle") : t("title")}</h1>
 
       <section className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card">
         <div className="flex gap-4 p-4">
@@ -206,7 +206,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           </h2>
           <p className="mt-1 text-sm text-muted">{t("signInText")}</p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <Link href={`/connexion?suite=${encodeURIComponent(here)}`} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">
+            <Link href={`/connexion?suite=${encodeURIComponent(here)}`} className="btn btn-primary btn-sm">
               {t("signInCta")}
             </Link>
             <Link href={`/inscription?suite=${encodeURIComponent(here)}`} className="rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-plum-900">
@@ -226,7 +226,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
           <h2 className="font-semibold text-ink">{t("profileTitle")}</h2>
           <p className="mt-1 text-sm text-muted">{t("profileText")}</p>
-          <Link href="/bienvenue" className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">
+          <Link href="/bienvenue" className="btn btn-primary btn-sm mt-4">
             {t("profileCta")}
           </Link>
         </section>
@@ -246,7 +246,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
               <h2 className="font-semibold text-emerald-900">{tr2("acceptedTitle")}</h2>
               <p className="mt-1 text-sm text-muted">{tr2("acceptedText")}</p>
               {visitor.request.reservationId && (
-                <Link href={`/espace/reservations/${visitor.request.reservationId}`} className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">
+                <Link href={`/espace/reservations/${visitor.request.reservationId}`} className="btn btn-primary btn-sm mt-4">
                   {tr2("seeReservation")}
                 </Link>
               )}
@@ -262,7 +262,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
       ) : visitor.booked ? (
         <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
           <h2 className="font-semibold text-ink">{visitor.booked.pending ? t("pendingPaymentTitle") : t("errors.already_booked")}</h2>
-          <Link href={`/espace/reservations/${visitor.booked.id}`} className="mt-4 inline-block rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">
+          <Link href={`/espace/reservations/${visitor.booked.id}`} className="btn btn-primary btn-sm mt-4">
             {visitor.booked.pending ? t("finishPayment") : t("seeMyBooking")}
           </Link>
         </section>

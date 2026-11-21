@@ -69,8 +69,8 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
     <PageShell className="max-w-5xl space-y-10 py-10">
       <header>
         <p className="text-xs font-semibold tracking-[0.18em] text-muted uppercase">{t("eyebrow")}</p>
-        <h1 className="mt-2 font-display text-[2.2rem] leading-tight font-medium text-ink sm:text-5xl">
-          {t("titleA")} <em className="bg-gradient-to-r from-[#c9705f] to-plum-700 bg-clip-text text-transparent">{t("titleB")}</em>
+        <h1 className="page-title mt-2">
+          {t("titleA")} <em className="text-plum-700">{t("titleB")}</em>
         </h1>
         <p className="mt-4 max-w-2xl text-[17px] text-muted">{t("intro")}</p>
       </header>
@@ -80,7 +80,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
       ) : (
         <>
           <section aria-labelledby="overall-title" className="grid gap-4 md:grid-cols-[1.1fr_1fr]">
-            <div className="rounded-[2rem] bg-gradient-to-br from-[#f7e1dc] via-[#f3e3ee] to-[#e9e3f6] p-6 shadow-card sm:p-8" data-testid="reviews-overall">
+            <div className="card p-6 sm:p-8" data-testid="reviews-overall">
               <h2 id="overall-title" className="sr-only">{t("overallTitle")}</h2>
               <div className="flex items-end gap-4">
                 <span className="font-display text-7xl leading-none font-medium text-ink">{overall.toFixed(1)}</span>
@@ -101,7 +101,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
               </ul>
             </div>
             {photos.length > 0 && (
-              <div className="rounded-[2rem] bg-white p-5 shadow-card" data-testid="reviews-photos">
+              <div className="rounded-3xl bg-white p-5 shadow-card" data-testid="reviews-photos">
                 <h2 className="font-display text-2xl font-medium text-ink">{t("photosTitle")}</h2>
                 <ul className="mt-4 grid grid-cols-2 gap-2">
                   {photos.slice(0, 4).map((r) => (
@@ -115,7 +115,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
           </section>
 
           <section aria-labelledby="all-title" className="space-y-5">
-            <h2 id="all-title" className="font-display text-3xl font-medium text-ink">{t("allTitle")}</h2>
+            <h2 id="all-title" className="section-title">{t("allTitle")}</h2>
             <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label={t("filterUniverse")}>
               <Link href={href({ univers: undefined, tout: undefined })} className={chip(!category)} aria-current={!category ? "true" : undefined}>{t("all")} <span className="opacity-70">{total}</span></Link>
               {usedCats.map((c) => (
@@ -146,7 +146,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
                   const cat = exp ? catById.get(exp.categoryId) : undefined;
                   const long = r.comment.length > 200;
                   return (
-                    <li key={r.id} className="flex flex-col rounded-[1.75rem] bg-white p-5 shadow-card ring-1 ring-line/60" data-testid="review-card">
+                    <li key={r.id} className="flex flex-col rounded-3xl bg-white p-5 shadow-card ring-1 ring-line/60" data-testid="review-card">
                       <div className="flex items-start gap-3">
                         <span className={`grid size-11 shrink-0 place-items-center rounded-full text-lg font-semibold ${AVATARS[i % AVATARS.length]}`} aria-hidden>{r.publicName.charAt(0)}</span>
                         <div className="min-w-0 flex-1">
@@ -201,15 +201,15 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
           </section>
 
           <section aria-labelledby="questions-title" className="space-y-4">
-            <h2 id="questions-title" className="font-display text-3xl font-medium text-ink">{t("questionsTitle")}</h2>
+            <h2 id="questions-title" className="section-title">{t("questionsTitle")}</h2>
             <p className="text-muted">{t("questionsIntro")}</p>
             <div className="grid gap-4 md:grid-cols-3">
               {[
-                { title: t("qExperience"), tone: "from-[#f8e0dc] to-[#efe0f3]", rows: [{ label: t("qGroup"), value: detailAvg.group }, { label: t("qOrganisation"), value: detailAvg.organisation }] },
-                { title: t("qVenue"), tone: "from-[#dfe7f8] to-[#ece0f4]", rows: [{ label: t("qVenueItself"), value: detailAvg.venue }] },
-                { title: t("qOverall"), tone: "from-[#dff2e3] to-[#f5f2d8]", rows: [{ label: t("qComeAgain"), value: againPct, pct: true }, { label: t("qOverallRating"), value: overall }] },
+                { title: t("qExperience"), rows: [{ label: t("qGroup"), value: detailAvg.group }, { label: t("qOrganisation"), value: detailAvg.organisation }] },
+                { title: t("qVenue"), rows: [{ label: t("qVenueItself"), value: detailAvg.venue }] },
+                { title: t("qOverall"), rows: [{ label: t("qComeAgain"), value: againPct, pct: true }, { label: t("qOverallRating"), value: overall }] },
               ].map((card) => (
-                <div key={card.title} className={`rounded-[2rem] bg-gradient-to-br ${card.tone} p-6 shadow-card`} data-testid="reviews-question-card">
+                <div key={card.title} className="card p-6" data-testid="reviews-question-card">
                   <h3 className="font-display text-2xl font-medium text-ink">{card.title}</h3>
                   <dl className="mt-3 divide-y divide-ink/10">
                     {card.rows.map((row) => (
@@ -228,8 +228,8 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
         </>
       )}
 
-      <section className="rounded-[2rem] bg-cream-deep p-6 text-center sm:p-8">
-        <h2 className="font-display text-2xl font-medium text-ink sm:text-3xl">{t("ctaTitle")}</h2>
+      <section className="rounded-3xl bg-cream-deep p-6 text-center sm:p-8">
+        <h2 className="section-title">{t("ctaTitle")}</h2>
         <p className="mt-2 text-muted">{t("ctaText")}</p>
         <Link href="/espace/reservations" className="mt-5 inline-flex rounded-full border-2 border-ink px-6 py-3 font-semibold text-ink hover:bg-ink hover:text-white">{t("ctaButton")}</Link>
       </section>

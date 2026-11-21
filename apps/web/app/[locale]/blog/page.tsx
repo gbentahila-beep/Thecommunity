@@ -32,11 +32,11 @@ export default async function BlogPage({ params }: PageProps<"/[locale]/blog">) 
       <FeaturedArticle a={featured} locale={locale} />
       <div className="mx-auto mt-16 max-w-4xl">
         <section aria-labelledby="most-read">
-          <h2 id="most-read" className="mb-5 font-display text-[2.2rem] leading-tight font-medium text-plum-900 sm:text-5xl">{t("mostRead")}</h2>
+          <h2 id="most-read" className="section-title mb-5">{t("mostRead")}</h2>
           <CompactList articles={mostRead} locale={locale} />
         </section>
         <section aria-labelledby="browse" className="mt-16">
-          <h2 id="browse" className="mb-6 font-display text-[2.2rem] leading-tight font-medium text-plum-900 sm:text-5xl">{t("browse")}</h2>
+          <h2 id="browse" className="section-title mb-6">{t("browse")}</h2>
           <BlogBrowser popular={byPopularity(BLOG_ARTICLES).map(entry)} recent={byRecency(BLOG_ARTICLES).map(entry)} />
         </section>
       </div>

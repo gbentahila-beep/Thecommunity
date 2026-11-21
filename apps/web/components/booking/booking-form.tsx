@@ -207,7 +207,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
                 className="w-full rounded-2xl border border-line px-4 py-3 text-[15px] uppercase focus:border-plum-700 focus:outline-none"
               />
             </div>
-            <button type="submit" disabled={busy || !promoInput.trim()} className="rounded-full border border-plum-900 px-5 py-3 text-sm font-semibold text-plum-900 disabled:opacity-50">{t("promoApply")}</button>
+            <button type="submit" disabled={busy || !promoInput.trim()} className="btn btn-secondary btn-sm">{t("promoApply")}</button>
           </form>
         )}
         {promoError && <p id="promo-err" role="alert" className="mt-2 text-sm text-red-800">{t(`promoErrors.${promoError}`)}</p>}
@@ -244,7 +244,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
         type="button"
         onClick={submit}
         disabled={busy}
-        className="w-full rounded-full bg-plum-900 px-6 py-4 font-semibold text-white shadow-card transition hover:bg-plum-800 disabled:opacity-60"
+        className="btn btn-primary w-full"
       >
         {busy ? t("working") : free ? t("freeCta") : transfer ? t("payCtaTransfer", { amount: money(total) }) : t("payCtaAmount", { amount: money(total) })}
       </button>

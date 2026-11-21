@@ -79,7 +79,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
           </div>
           <div className="min-w-0 space-y-2">
             <p className="text-sm font-semibold tracking-[0.18em] text-plum-700 uppercase">{t("eyebrow")}</p>
-            <h1 className="font-display text-4xl font-medium text-plum-900">{o.name}</h1>
+            <h1 className="page-title">{o.name}</h1>
             <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
               <span className="inline-flex items-center gap-1.5"><MapPin className="size-4 text-plum-700" aria-hidden />{city ? tr(city.name, locale) : "Casablanca"}</span>
               <span className="inline-flex items-center gap-1.5"><BadgeCheck className="size-4 text-plum-700" aria-hidden />{t("verified")}</span>
