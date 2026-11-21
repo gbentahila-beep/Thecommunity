@@ -349,7 +349,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 </Link>
               )}
               {exp.admission === "on_request" && <p className="mt-3 rounded-xl bg-plum-50 px-3 py-2 text-sm text-plum-900">{t("onRequestNote")}</p>}
-              <h2 className="mt-5 text-sm font-semibold uppercase tracking-wide text-muted">{t("nextDates")}</h2>
+              <h2 id="alerte" className="mt-5 scroll-mt-28 text-sm font-semibold uppercase tracking-wide text-muted">{t("nextDates")}</h2>
               {sessions.length === 0 ? (
                 <>
                   <p className="mt-3 text-sm text-muted">{t("noDates")}</p>

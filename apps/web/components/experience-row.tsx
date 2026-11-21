@@ -11,7 +11,7 @@ import { groupLabel } from "./experience-card";
  * Ligne du catalogue en vue « agenda » : vignette, titre (+ badges), heure · quartier · groupe, univers · langues · prix,
  * et un bouton « Réserver » (ou « Demander » / « Liste d'attente »). Toute la ligne ouvre la fiche.
  */
-export async function ExperienceRow({ experience, session, showDay = false, priority = false }: { experience: Experience; session: Session; showDay?: boolean; priority?: boolean }) {
+export async function ExperienceRow({ experience, session, showDay = false, priority = false }: { experience: Experience; session?: Session; showDay?: boolean; priority?: boolean }) {
   const [locale, t, tl, tr2, category, home] = await Promise.all([
     getLocale(),
     getTranslations("card"),
@@ -21,13 +21,14 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
     getHomeSettings(),
   ]);
   const lang = locale as "fr" | "ar" | "en";
-  const left = seatsAvailable(session);
-  const full = session.status === "full" || left === 0;
+  // Sans date (« Déjà vécues ») : même ligne, « Prochaines dates bientôt » et un bouton « M'alerter » vers la fiche.
+  const left = session ? seatsAvailable(session) : Infinity;
+  const full = session ? session.status === "full" || left === 0 : false;
   const badge = full ? null : experienceBadge(experience, session, new Date(), home.featuredExperienceIds);
   const cover = experience.images[0];
-  const price = session.price ?? experience.price;
+  const price = session?.price ?? experience.price;
   const languages = experience.languages.slice(0, 2).map((l) => (tl.has(l) ? tl(l) : l)).join(", ");
-  const action = full ? tr2("waitlist") : experience.admission === "on_request" ? tr2("request") : tr2("book");
+  const action = !session ? tr2("alert") : full ? tr2("waitlist") : experience.admission === "on_request" ? tr2("request") : tr2("book");
   const pill = "rounded-full px-2.5 py-0.5 text-[12px] font-semibold";
   return (
     <article className="group relative flex items-center gap-4 py-4" data-testid="catalog-row">
@@ -53,7 +54,15 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
           ) : null}
         </div>
         <p className="mt-1 truncate text-[15px] text-ink/80">
-          {showDay ? formatShortSlot(session.startAt, locale) : formatTime(session.startAt, locale)} · {experience.district} · {await groupLabel(experience, session)}
+          {session ? (
+            <>
+              {showDay ? formatShortSlot(session.startAt, locale) : formatTime(session.startAt, locale)} · {experience.district} · {await groupLabel(experience, session)}
+            </>
+          ) : (
+            <>
+              {t("datesSoon")} · {experience.district}
+            </>
+          )}
         </p>
         <p className="mt-0.5 truncate text-sm text-muted">
           {category ? tr(category.shortName, locale) : ""}
@@ -61,7 +70,7 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
         </p>
       </div>
       <Link
-        href={`/reserver/${session.id}`}
+        href={session ? `/reserver/${session.id}` : `/experiences/${experience.slug}#alerte`}
         className="relative z-10 shrink-0 rounded-full bg-white px-3.5 py-2 text-[13px] font-semibold sm:px-4 sm:text-sm text-ink shadow-card ring-1 ring-line transition hover:bg-plum-900 hover:text-white hover:ring-plum-900 inline-flex max-[359px]:hidden"
         aria-label={`${action} : ${tr(experience.title, locale)}`}
       >

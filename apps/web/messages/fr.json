@@ -1753,7 +1753,8 @@
   "catalogRow": {
     "book": "Réserver",
     "request": "Demander",
-    "waitlist": "Liste d'attente"
+    "waitlist": "Liste d'attente",
+    "alert": "M’alerter"
   },
   "menuPage": {
     "account": "Mon compte",

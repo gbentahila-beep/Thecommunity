@@ -5,7 +5,6 @@ import { getTranslations } from "next-intl/server";
 import { FiltersPanel } from "@/components/catalog-filters";
 import { CityMenu } from "@/components/city-menu";
 import { CategoryIcon } from "@/components/category-icon";
-import { CompactRow } from "@/components/compact-row";
 import { ExperienceRow } from "@/components/experience-row";
 import { ActiveTabScroller } from "./active-tab-scroller";
 import { ForYou } from "@/components/for-you";
@@ -306,13 +305,11 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
             <h2 id="undated-title" className="section-title">{tc("undatedTitle")}</h2>
             <p className="mt-1 text-sm text-muted">{tc("undatedText")}</p>
           </div>
-          <ul className="card divide-y divide-line/70 overflow-hidden" data-testid="undated-list">
+          <div className="divide-y divide-line" data-testid="undated-list">
             {results.undated.map((x) => (
-              <li key={x.experience.id}>
-                <CompactRow experience={x.experience} />
-              </li>
+              <ExperienceRow key={x.experience.id} experience={x.experience} />
             ))}
-          </ul>
+          </div>
         </section>
       )}
     </PageShell>
