@@ -56,9 +56,9 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
 
   // ——— 31 ———
   await p.goto(base + '/espace', { waitUntil: 'load' });
-  assert(await p.locator('a[href="/espace/rencontres"]:visible').count() > 0, '31 : menu « Mes rencontres »');
+  assert(await p.locator('a[href="/espace/rencontres"]:visible').count() > 0, '31 : menu « Mon groupe »');
   await p.goto(base + '/espace/rencontres', { waitUntil: 'load' });
-  assert(await p.getByRole('heading', { level: 1, name: 'Mes rencontres' }).isVisible(), '31 : page « Mes rencontres »');
+  assert(await p.getByRole('heading', { level: 1, name: 'Mon groupe' }).isVisible(), '31 : page « Mon groupe »');
   const contact = p.getByTestId('meet-contact').filter({ hasText: 'Lina' });
   assert(await contact.isVisible(), '31 : contact réciproque (Lina)');
   await contact.getByRole('button', { name: 'Inviter Lina à une expérience' }).click();
@@ -101,12 +101,12 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   globalThis.__page = m;
   await m.goto(base + '/', { waitUntil: 'load' });
   const bar = m.getByRole('navigation', { name: 'Navigation mobile' });
-  assert(JSON.stringify(await bar.getByRole('link').allTextContents()) === JSON.stringify(['Découvrir', 'Mes rencontres', 'Réservations', 'Profil']), '32 : barre du bas Découvrir · Mes rencontres · Réservations · Profil');
+  assert(JSON.stringify(await bar.getByRole('link').allTextContents()) === JSON.stringify(['Découvrir', 'Mon groupe', 'Réservations', 'Profil']), '32 : barre du bas Découvrir · Mes rencontres · Réservations · Profil');
   assert(!(await m.locator('[data-testid=header-bell]:visible').count()), '32 : téléphone non connecté — pas de cloche (le bouton « S\'inscrire » reste visible)');
-  await bar.getByRole('link', { name: 'Mes rencontres' }).click();
+  await bar.getByRole('link', { name: 'Mon groupe' }).click();
   await m.waitForURL('**/espace/rencontres');
-  assert(await bar.getByRole('link', { name: 'Mes rencontres' }).getAttribute('aria-current') === 'page', '32 : onglet actif');
-  assert(await m.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), '32 : pas de défilement horizontal (Mes rencontres, téléphone)');
+  assert(await bar.getByRole('link', { name: 'Mon groupe' }).getAttribute('aria-current') === 'page', '32 : onglet actif');
+  assert(await m.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), '32 : pas de défilement horizontal (Mon groupe, téléphone)');
   await p.goto(base + '/', { waitUntil: 'load' });
   const bell = p.locator('[data-testid=header-bell]:visible');
   assert(await bell.count() === 1 && await bell.getAttribute('href') === '/espace/notifications', '32 : cloche des notifications dans l\'en-tête (ordinateur, démonstration)');

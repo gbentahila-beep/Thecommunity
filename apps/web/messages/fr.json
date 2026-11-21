@@ -35,7 +35,7 @@
     "login": "Se connecter",
     "unreadCount": "{count, plural, one {# non lue} other {# non lues}}",
     "search": "Rechercher",
-    "meet": "Mes rencontres"
+    "meet": "Mon groupe"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -511,7 +511,7 @@
     "memberSuggestTitle": "Vous avez aimé ? Devenez membre",
     "memberSuggestText": "Un prix membre sur les expériences et des avantages réservés aux membres.",
     "memberSuggestCta": "Voir l'abonnement",
-    "navMeet": "Mes rencontres"
+    "navMeet": "Mon groupe"
   },
   "reservation": {
     "back": "Mes réservations",
@@ -1258,7 +1258,7 @@
     "newPeople": "Nous évitons de vous replacer avec les mêmes personnes d'une fois sur l'autre"
   },
   "meet": {
-    "title": "Mes rencontres",
+    "title": "Mon groupe",
     "intro": "Après une expérience en groupe, dites avec qui vous aimeriez refaire une sortie. C'est privé : la personne ne le sait que si l'envie est partagée. Vous pouvez alors vous inviter à une prochaine expérience.",
     "contacts": "Envie partagée de se revoir",
     "noContacts": "Pas encore d'envie partagée. Indiquez dans vos groupes ci-dessous avec qui vous aimeriez refaire une sortie.",
@@ -1269,8 +1269,8 @@
     "sendInvite": "Envoyer l'invitation",
     "invited": "Invitation envoyée à {name}.",
     "tooMany": "Trop d'invitations aujourd'hui : réessayez demain.",
-    "groups": "Mes groupes",
-    "groupsIntro": "Jusqu'à 60 jours après l'expérience. Personne ne voit votre choix, sauf si c'est réciproque.",
+    "groups": "Mes groupes passés",
+    "groupsIntro": "Jusqu'à 60 jours après l'expérience. Personne ne voit votre choix, sauf si l'envie est partagée.",
     "noGroups": "Vos groupes apparaîtront ici après votre première expérience en groupe.",
     "discover": "Découvrir les expériences",
     "wish": "J'aimerais revoir {name}",

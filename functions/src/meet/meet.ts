@@ -68,11 +68,11 @@ export const setMeetAgain = onCall({ region: REGION }, async (req) => {
     for (const [to, other] of [[uid, otherUid], [otherUid, uid]] as const) {
       tx.set(db.collection(`users/${to}/notifications`).doc(), {
         type: "meet_match",
-        title: { fr: "C'est réciproque !", en: "It's mutual!", ar: "الإعجاب متبادل!" },
+        title: { fr: "Envie partagée !", en: "You both want to meet again!", ar: "رغبة مشتركة!" },
         body: {
-          fr: `${names[other] ?? ""} aimerait aussi vous revoir. Invitez-vous à une prochaine expérience depuis « Mes rencontres ».`,
-          en: `${names[other] ?? ""} would also like to see you again. Invite each other to a next experience from “My connections”.`,
-          ar: `${names[other] ?? ""} يرغب أيضاً في لقائك مجدداً. ادعوا بعضكما إلى تجربة قادمة من «لقاءاتي».`,
+          fr: `${names[other] ?? ""} aimerait aussi refaire une sortie avec vous. Invitez-vous à une prochaine expérience depuis « Mon groupe ».`,
+          en: `${names[other] ?? ""} would also like to go out with you again. Invite each other to a next experience from “My group”.`,
+          ar: `${names[other] ?? ""} يرغب أيضاً في الخروج معك مجدداً. ادعوا بعضكما إلى تجربة قادمة من «مجموعتي».`,
         },
         link: "/espace/rencontres",
         createdAt: FieldValue.serverTimestamp(),

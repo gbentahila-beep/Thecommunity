@@ -35,7 +35,7 @@
     "login": "Log in",
     "unreadCount": "{count} unread",
     "search": "Search",
-    "meet": "Connections"
+    "meet": "My group"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -511,7 +511,7 @@
     "memberSuggestTitle": "Enjoyed it? Become a member",
     "memberSuggestText": "A member price on experiences and members-only perks.",
     "memberSuggestCta": "See membership",
-    "navMeet": "My connections"
+    "navMeet": "My group"
   },
   "reservation": {
     "back": "My bookings",
@@ -1258,7 +1258,7 @@
     "newPeople": "We avoid putting you with the same people from one time to the next"
   },
   "meet": {
-    "title": "My connections",
+    "title": "My group",
     "intro": "After a group experience, say who you'd like to go out with again. It's private: the person only finds out if you both feel the same. You can then invite each other to a next experience.",
     "contacts": "You both want to meet again",
     "noContacts": "Nobody yet who wants to meet again on both sides. Say who you'd like to go out with again in your groups below.",
@@ -1269,8 +1269,8 @@
     "sendInvite": "Send invitation",
     "invited": "Invitation sent to {name}.",
     "tooMany": "Too many invitations today: try again tomorrow.",
-    "groups": "My groups",
-    "groupsIntro": "Up to 60 days after the experience. Nobody sees your choice unless it's mutual.",
+    "groups": "My past groups",
+    "groupsIntro": "Up to 60 days after the experience. Nobody sees your choice unless you both feel the same.",
     "noGroups": "Your groups will appear here after your first group experience.",
     "discover": "Discover experiences",
     "wish": "I'd like to see {name} again",
