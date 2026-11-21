@@ -43,7 +43,11 @@
     "reviews": "Avis",
     "more": "Plus",
     "yourProfile": "Votre profil",
-    "myProfile": "Mon profil"
+    "myProfile": "Mon profil",
+    "mySpace": "Mon espace",
+    "clubGroup": "The Host Club",
+    "helpGroup": "Aide",
+    "helpCenter": "Centre d’aide"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -727,7 +731,8 @@
     "hubHistory": "Historique",
     "hubMemberActive": "Active",
     "hubDetails": "Mes informations",
-    "universesHeading": "Nos univers"
+    "universesHeading": "Explorer par univers",
+    "universesText": "Choisissez un univers pour voir ses prochaines dates."
   },
   "reservation": {
     "back": "Mes réservations",
@@ -847,7 +852,8 @@
     "notReviewed": "Avis à donner",
     "favNext": "Prochaine date : {date}",
     "favNoDate": "Prochaines dates bientôt",
-    "favArchived": "N'est plus proposée"
+    "favArchived": "N'est plus proposée",
+    "pastEmpty": "Vos expériences passées apparaîtront ici."
   },
   "onboarding": {
     "title": "Faisons connaissance",
@@ -1353,7 +1359,10 @@
     "saved": "Enregistré.",
     "error": "Enregistrement impossible.",
     "none": "Rien de particulier signalé.",
-    "shared": "Transmis au lieu"
+    "shared": "Transmis au lieu",
+    "titleLanguages": "Langue de votre groupe (facultatif)",
+    "introLanguages": "Nous en tenons compte pour composer votre groupe.",
+    "editTitleLanguages": "Langue de votre groupe"
   },
   "blog": {
     "title": "Blog",

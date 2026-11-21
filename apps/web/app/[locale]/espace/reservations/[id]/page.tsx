@@ -1,5 +1,5 @@
 import { SelfCheckIn } from "@/components/account/self-check-in";
-import { canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState } from "@thecommunity/shared";
+import { canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -17,6 +17,7 @@ import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
 import { RefundRequestForm } from "@/components/account/refund-request-form";
 import { InvoiceList } from "@/components/account/invoice-list";
 import { PreferencesEditor } from "@/components/booking/preferences-editor";
+import { welcomeTitleKeys } from "@/components/booking/welcome-keys";
 import { QuestionnaireForm } from "@/components/account/questionnaire-form";
 import { getCity, getExperienceBySlug } from "@/lib/data";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
@@ -78,7 +79,9 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
     : "";
   const total = formatMoney({ amount: r.pricing.total, currency: r.pricing.currency }, lang);
   // Étape 11d : billet avec QR code dès la confirmation (ouvre la fiche du billet dans le back-office).
-  const showTicket = r.status === "confirmed" && isUpcoming;
+  // docs/16 : pas de billet sans accueil sur place (les participants indiquent eux-mêmes leur arrivée).
+  const showTicket = r.status === "confirmed" && isUpcoming && needsTicket(experience, r);
+  const needs = welcomeNeeds({ categoryId: experience?.categoryId ?? s.categoryId, bookingMode: experience?.bookingMode ?? s.bookingMode, foodServed: experience?.foodServed });
   const qr = showTicket ? await qrSvg(`${SITE_URL}${ticketScanPath(r.id)}`) : null;
 
   return (
@@ -340,11 +343,12 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </section>
       )}
 
-      {(isActive || r.status === "pending_payment") && (
+      {(isActive || r.status === "pending_payment") && (needs.food || needs.languages) && (
         <section aria-labelledby="prefs" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-          <h2 id="prefs" className="font-display text-2xl font-medium text-plum-900">{tp("editTitle")}</h2>
-          <p className="mb-4 mt-1 text-sm text-muted">{tp("intro")}</p>
+          <h2 id="prefs" className="font-display text-2xl font-medium text-plum-900">{tp(welcomeTitleKeys(needs).edit)}</h2>
+          <p className="mb-4 mt-1 text-sm text-muted">{tp(welcomeTitleKeys(needs).intro)}</p>
           <PreferencesEditor
+            needs={needs}
             reservationId={r.id}
             editable={FIREBASE_ENABLED && isUpcoming}
             initial={{

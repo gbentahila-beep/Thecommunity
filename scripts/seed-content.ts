@@ -99,6 +99,10 @@ async function main() {
     if (e.audience && snap.get("audience") === undefined) patch.audience = e.audience;
     if (e.targetAgeMin && snap.get("targetAgeMin") === undefined) patch.targetAgeMin = e.targetAgeMin;
     if (e.targetAgeMax && snap.get("targetAgeMax") === undefined) patch.targetAgeMax = e.targetAgeMax;
+    // docs/16 : questionnaire de niveau, accueil sur place, plats servis (seulement s'ils manquent).
+    if (e.questionnaire?.length && snap.get("questionnaire") === undefined) patch.questionnaire = e.questionnaire;
+    if (e.onSiteHost && snap.get("onSiteHost") === undefined) patch.onSiteHost = true;
+    if (e.foodServed && snap.get("foodServed") === undefined) patch.foodServed = true;
     if (Object.keys(patch).length) {
       await snap.ref.update(patch);
       completed++;

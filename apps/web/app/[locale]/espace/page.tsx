@@ -29,7 +29,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
   const days = next ? Math.max(0, Math.floor((new Date(next.sessionSnapshot.startAt).getTime() - space.now.getTime()) / 86_400_000)) : 0;
 
   return (
-    <div className="space-y-10" data-testid="member-home">
+    <div className="space-y-12" data-testid="member-home">
       <header>
         <h1 className="page-title">{t("hello", { name: space.profile.firstName })}</h1>
 
@@ -37,7 +37,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
 
       {next && (
       <section aria-labelledby="next-title">
-        <h2 id="next-title" className="eyebrow mb-3">{t("nextExperience")}</h2>
+        <h2 id="next-title" className="section-title mb-4">{t("nextExperience")}</h2>
         {next ? (
           <article className="overflow-hidden card sm:flex">
             <div className="relative h-48 sm:h-auto sm:w-72 sm:shrink-0">
@@ -74,7 +74,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
 
       {space.toReview.length > 0 && (
         <section aria-labelledby="review-title">
-          <h2 id="review-title" className="eyebrow mb-3">{t("toReview")}</h2>
+          <h2 id="review-title" className="section-title mb-4">{t("toReview")}</h2>
           <ul className="space-y-3">
             {space.toReview.map((r) => (
               <li key={r.id} className="flex items-center gap-4 rounded-[var(--radius-card)] border border-line bg-white/70 p-4">
@@ -99,8 +99,11 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
         </section>
       )}
 
-      <section aria-labelledby="universes-title" className="space-y-3">
-        <h2 id="universes-title" className="sr-only">{t("universesHeading")}</h2>
+      <section aria-labelledby="universes-title" className="space-y-4 border-t border-line pt-10">
+        <div>
+          <h2 id="universes-title" className="section-title">{t("universesHeading")}</h2>
+          <p className="text-sm text-muted">{t("universesText")}</p>
+        </div>
         <UniverseTiles categories={categories} cityId={cityId} />
       </section>
 

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoritesList } from "@/components/account/favorites-list";
-import { ReservationCard } from "@/components/account/reservation-card";
+import { MediaImage as Image } from "@/components/media";
+import { Link } from "@/i18n/navigation";
 import { getArchivedExperiences, getNextSessionPerExperience, getPublishedExperiences } from "@/lib/data";
 import { formatLongDate } from "@/lib/format";
 import { getMemberSpace } from "@/lib/data/member";
@@ -33,21 +34,35 @@ export default async function HistoryPage({ params }: PageProps<"/[locale]/espac
     ...archived.map((e) => ({ id: e.id, slug: e.slug, title: tr(e.title, locale), district: e.district, image: e.images[0]?.path ?? "", status: "archived" as const, when: null })),
   ];
   return (
-    <div className="space-y-10">
+    <div className="space-y-10" data-testid="history">
       <h1 className="page-title">{t("title")}</h1>
       <section className="space-y-3">
-        <h2 className="font-display text-2xl font-medium text-plum-900">{t("past")}</h2>
-        {space.past.map((r) => (
-          <div key={r.id} className="space-y-1">
-            <ReservationCard reservation={r} />
-            <p className={`ps-3 text-xs font-medium ${r.reviewId ? "text-emerald-800" : "text-plum-700"}`}>
-              {r.reviewId ? t("reviewed") : t("notReviewed")}
-            </p>
-          </div>
-        ))}
+        <h2 className="section-title">{t("past")}</h2>
+        {space.past.length === 0 ? (
+          <p className="card px-5 py-6 text-sm text-muted">{t("pastEmpty")}</p>
+        ) : (
+          <ul className="card divide-y divide-line/70 overflow-hidden" data-testid="past-list">
+            {space.past.map((r) => (
+              <li key={r.id} className="relative flex min-w-0 items-center gap-3.5 px-4 py-3.5">
+                <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-cream-deep">
+                  <Image src={r.sessionSnapshot.coverImagePath} alt="" fill sizes="64px" className="object-cover" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <Link href={`/espace/reservations/${r.id}`} className="block truncate text-[15px] font-semibold text-ink after:absolute after:inset-0">
+                    {tr(r.sessionSnapshot.title, locale)}
+                  </Link>
+                  <p className="truncate text-sm text-muted">{formatLongDate(r.sessionSnapshot.startAt, locale)} · {r.sessionSnapshot.district}</p>
+                  <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${r.reviewId ? "bg-emerald-50 text-emerald-800" : "bg-plum-50 text-plum-800"}`}>
+                    {r.reviewId ? t("reviewed") : t("notReviewed")}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
       <section className="space-y-3">
-        <h2 className="font-display text-2xl font-medium text-plum-900">{t("favorites")}</h2>
+        <h2 className="section-title">{t("favorites")}</h2>
         <FavoritesList experiences={candidates} />
       </section>
     </div>

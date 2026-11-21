@@ -373,3 +373,20 @@ Tests : 6 tests d'intégration et 4 unitaires (formule, souscription et renouvel
   critères essentiels (taille, langue commune, déjà rencontrés, âge, équilibre).
 - Confidentialité (FR/EN/AR) mise à jour. Tests : schéma, `profileCost`, parcours e2e (démo) ; le parcours
   `firebase-auth` est adapté mais à relancer avec les émulateurs complets.
+
+## Retours du 21 novembre (après-midi)
+
+- Réservation : régime et allergies demandés seulement quand on mange ou boit (univers Dîners, dîner composé, ou
+  option « Des plats ou boissons sont servis » — `foodServed`), langue du groupe seulement pour les groupes composés
+  (`welcomeNeeds`) ; sinon le bloc disparaît, à la réservation comme sur la réservation.
+- Billet à QR code seulement s'il y a quelqu'un pour le scanner (`needsTicket` : option « Un accueil est assuré sur
+  place » ou part à régler au lieu partenaire) ; sinon arrivée autonome.
+- Questionnaires de niveau ajoutés aux activités sportives de démonstration (running : allure ; randonnée et yoga :
+  niveau) ; le contenu de départ complète les expériences existantes (questionnaire, accueil, plats servis).
+- Tableau de bord : un titre « Explorer par univers » et une séparation entre la prochaine expérience et les univers.
+- « Cette semaine à Casablanca ▾ » : la liste des villes s'ouvre sous le titre, sans sortir de l'écran.
+- Mon profil : plus de doublon (la carte ouvre « Mes informations ») ; « ‹ Mon profil » sur la page Abonnement quand
+  on vient du profil.
+- Factures sur téléphone : montant aligné avec le titre, numéro sur sa ligne, bouton de téléchargement en icône.
+- Historique, favoris et « Déjà vécues » : même liste compacte que le reste du site.
+- Menu burger : rubriques en cartes (Mon espace si connecté, Découvrir, The Host Club, Aide, Villes).

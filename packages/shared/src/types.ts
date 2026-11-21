@@ -131,6 +131,8 @@ export type Experience = {
   alcoholServed?: boolean;
   /** Une hôtesse accueille les participants sur place (option de l'organisateur) ; sinon, arrivée autonome. */
   onSiteHost?: boolean;
+  /** Des plats ou boissons sont servis (atelier cuisine, dégustation…) : régime et allergies demandés. */
+  foodServed?: boolean;
   included: LocalizedText[];
   /** Étape 23 : ce qui n'est pas compris dans le prix. */
   notIncluded?: LocalizedText[];

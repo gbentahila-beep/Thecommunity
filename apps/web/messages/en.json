@@ -43,7 +43,11 @@
     "reviews": "Reviews",
     "more": "More",
     "yourProfile": "Your profile",
-    "myProfile": "My profile"
+    "myProfile": "My profile",
+    "mySpace": "My space",
+    "clubGroup": "The Host Club",
+    "helpGroup": "Help",
+    "helpCenter": "Help centre"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -727,7 +731,8 @@
     "hubHistory": "History",
     "hubMemberActive": "Active",
     "hubDetails": "My details",
-    "universesHeading": "Our categories"
+    "universesHeading": "Explore by category",
+    "universesText": "Pick a category to see its upcoming dates."
   },
   "reservation": {
     "back": "My bookings",
@@ -847,7 +852,8 @@
     "notReviewed": "Review to give",
     "favNext": "Next date: {date}",
     "favNoDate": "New dates coming soon",
-    "favArchived": "No longer offered"
+    "favArchived": "No longer offered",
+    "pastEmpty": "Your past experiences will appear here."
   },
   "onboarding": {
     "title": "Let's get to know you",
@@ -1353,7 +1359,10 @@
     "saved": "Saved.",
     "error": "Couldn't save.",
     "none": "Nothing specific reported.",
-    "shared": "Shared with the venue"
+    "shared": "Shared with the venue",
+    "titleLanguages": "Your group’s language (optional)",
+    "introLanguages": "We take it into account when putting your group together.",
+    "editTitleLanguages": "Your group’s language"
   },
   "blog": {
     "title": "Blog",

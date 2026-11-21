@@ -9,14 +9,15 @@ import { DEFAULT_CITY } from "@/lib/site";
  * Sélecteur de ville sans JavaScript (élément <details>). Le chevron ouvre la liste des villes ; celles qui ne
  * sont pas encore ouvertes sont marquées « bientôt ».
  * - « pill » : pastille de l'en-tête (épingle + chevron) ;
- * - « title » : dans un titre (« Cette semaine à Casablanca ▾ »), même police que le titre ;
+ * - « title » : dans un titre (« Cette semaine à Casablanca ▾ »), même police que le titre ; la liste s'ouvre sous
+ *   le titre entier (le titre doit être « relative »), pour ne jamais sortir de l'écran ;
  * - « label » : épingle + nom + chevron (en-tête du catalogue).
  */
 export async function CityMenu({ currentCityId = DEFAULT_CITY, variant = "pill", align = "end" }: { currentCityId?: string; variant?: "pill" | "title" | "label"; align?: "start" | "end" }) {
   const [cities, locale, t] = await Promise.all([getCities(), getLocale(), getTranslations("nav")]);
   const current = cities.find((c) => c.id === currentCityId) ?? cities[0];
   return (
-    <details className={`group relative ${variant === "pill" ? "" : "inline-block"}`}>
+    <details className={`group ${variant === "title" ? "inline-block" : variant === "label" ? "relative inline-block" : "relative"}`}>
       {variant === "pill" ? (
         <summary
           className="flex cursor-pointer list-none items-center gap-2 rounded-full bg-cream-deep px-3 py-2 xl:px-4 text-sm font-medium text-ink transition hover:bg-sand [&::-webkit-details-marker]:hidden"
@@ -37,7 +38,7 @@ export async function CityMenu({ currentCityId = DEFAULT_CITY, variant = "pill",
           <ChevronDown className={`${variant === "title" ? "size-6" : "size-4"} shrink-0 transition group-open:rotate-180`} aria-hidden />
         </summary>
       )}
-      <ul className={`absolute z-40 mt-2 w-60 overflow-hidden rounded-2xl border border-line bg-white p-1.5 font-sans text-base font-normal shadow-float ${variant === "pill" ? "start-1/2 -translate-x-1/2 rtl:translate-x-1/2 sm:start-auto sm:end-0 sm:translate-x-0 rtl:sm:translate-x-0" : align === "start" ? "start-0" : "end-0"}`}>
+      <ul className={`absolute z-40 mt-2 w-60 overflow-hidden rounded-2xl border border-line bg-white p-1.5 font-sans text-base font-normal shadow-float ${variant === "pill" ? "start-1/2 -translate-x-1/2 rtl:translate-x-1/2 sm:start-auto sm:end-0 sm:translate-x-0 rtl:sm:translate-x-0" : variant === "title" ? "start-0 top-full max-w-[calc(100vw-2rem)]" : align === "start" ? "start-0" : "end-0"}`}>
         {cities.map((city) => (
           <li key={city.id}>
             {city.isActive ? (

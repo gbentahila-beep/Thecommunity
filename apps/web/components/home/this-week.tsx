@@ -36,7 +36,7 @@ export async function ThisWeek({ limit, cityId = DEFAULT_CITY }: { limit: number
   );
   return (
     <section aria-labelledby="this-week-title" className="space-y-5" data-testid="home-thisWeek">
-      <h2 id="this-week-title" className="section-title flex flex-wrap items-baseline gap-x-2">
+      <h2 id="this-week-title" className="section-title relative flex flex-wrap items-baseline gap-x-2">
         {t("thisWeekAt")} <CityMenu variant="title" align="start" currentCityId={cityId} />
       </h2>
       <WeekList

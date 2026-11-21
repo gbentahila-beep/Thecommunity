@@ -437,8 +437,15 @@ export function ExperienceForm({
         <label className="flex items-start gap-2 text-sm sm:col-span-2">
           <input type="checkbox" checked={Boolean(v.onSiteHost)} onChange={(e) => set("onSiteHost", e.target.checked)} className="mt-0.5 size-4 accent-plum-900" />
           <span>
-            Une hôtesse accueille les participants sur place
-            <span className="block text-xs text-muted">Sinon, chacun indique son arrivée dans l&apos;application et retrouve son groupe seul (affiché sur la fiche).</span>
+            Un accueil est assuré sur place (hôtesse ou équipe du lieu)
+            <span className="block text-xs text-muted">Les participants reçoivent alors un billet à QR code à présenter. Sinon, pas de billet : chacun indique son arrivée dans l&apos;application et retrouve son groupe seul.</span>
+          </span>
+        </label>
+        <label className="flex items-start gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" checked={Boolean(v.foodServed)} onChange={(e) => set("foodServed", e.target.checked)} className="mt-0.5 size-4 accent-plum-900" />
+          <span>
+            Des plats ou boissons sont servis
+            <span className="block text-xs text-muted">Régime et allergies demandés à la réservation (toujours le cas pour l&apos;univers Dîners et les dîners composés).</span>
           </span>
         </label>
         <div className="sm:col-span-2"><Label k="included" hint="Tout ce que comprend le prix total, payé en ligne et sur place. Un élément par ligne, affiché sur la fiche.">Ce qui est inclus</Label><textarea {...field("included")} rows={3} value={v.included ?? ""} onChange={(e) => set("included", e.target.value)} /></div>

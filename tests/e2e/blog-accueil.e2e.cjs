@@ -247,12 +247,11 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await visible(dialog), 'menu burger ouvert');
   assert(await m.evaluate(() => document.body.style.overflow) === 'hidden', 'page bloquée derrière le menu');
   for (const l of ['À propos', 'Comment ça marche', 'Blog', 'Se connecter', "S'inscrire"]) assert(await dialog.getByRole('link', { name: l, exact: true }).isVisible(), `menu burger : ${l}`);
-  const disc = dialog.getByRole('button', { name: 'Découvrir' });
-  assert(!(await dialog.getByRole('link', { name: 'Jeux' }).isVisible()), 'Découvrir replié au départ');
-  await disc.click();
-  assert(await disc.getAttribute('aria-expanded') === 'true' && await dialog.getByRole('link', { name: 'Jeux' }).isVisible(), 'Découvrir se déplie');
-  await dialog.getByRole('button', { name: 'Villes' }).click();
-  assert(await dialog.getByText('Bientôt').first().isVisible(), 'Villes : villes « bientôt »');
+  // Rubriques en cartes (Découvrir, The Host Club, Aide, Villes) ; « Mon espace » seulement une fois connecté.
+  for (const h of ['Découvrir', 'The Host Club', 'Aide', 'Villes']) assert(await dialog.getByRole('heading', { name: h, exact: true }).count() === 1, `menu burger : rubrique « ${h} »`);
+  assert(!(await dialog.getByRole('heading', { name: 'Mon espace' }).count()), 'menu burger : pas de « Mon espace » sans connexion');
+  assert(await dialog.getByRole('link', { name: 'Jeux' }).count() === 1 && !(await dialog.locator('input[role=combobox]').count()), 'Découvrir : univers listés, plus de barre de recherche');
+  assert(await dialog.getByText('Bientôt').count() >= 1, 'Villes : villes « bientôt »');
   const topEl = await m.evaluate(() => { const r = document.querySelector('[role=dialog]').getBoundingClientRect(); const el = document.elementFromPoint(r.left + r.width / 2, Math.min(r.bottom - 10, innerHeight - 10)); return !!el.closest('[role=dialog]'); });
   assert(topEl, 'le menu passe au-dessus de la barre du bas');
   await m.keyboard.press('Escape');

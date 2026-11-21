@@ -9,10 +9,10 @@ import { useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { authReady, bookingErrorOf, type BookingError } from "@/lib/booking-client";
 import { firebase } from "@/lib/firebase/client";
-import { EMPTY_PREFERENCES, needsConsent, PreferencesFields } from "./preferences-fields";
+import { EMPTY_PREFERENCES, needsConsent, PreferencesFields, welcomeTitleKeys, type WelcomeNeeds } from "./preferences-fields";
 
 /** Demande de participation (expérience « sur demande ») : rien n'est payé ni bloqué à ce stade. */
-export function RequestForm({ sessionId, maxSeats, messageRequired, instagramRequired = false, defaultLanguages = [], physical = false }: { sessionId: string; maxSeats: number; messageRequired: boolean; instagramRequired?: boolean; defaultLanguages?: BookingPreferences["languages"]; physical?: boolean }) {
+export function RequestForm({ sessionId, maxSeats, messageRequired, instagramRequired = false, defaultLanguages = [], physical = false, needs = { food: true, languages: true } }: { sessionId: string; maxSeats: number; messageRequired: boolean; instagramRequired?: boolean; defaultLanguages?: BookingPreferences["languages"]; physical?: boolean; needs?: WelcomeNeeds }) {
   const t = useTranslations("request");
   const tb = useTranslations("booking");
   const router = useRouter();
@@ -109,15 +109,17 @@ export function RequestForm({ sessionId, maxSeats, messageRequired, instagramReq
         <p className="mt-1 text-xs text-muted">{t("instagramHint")}</p>
         {fieldErrors.instagram && <p className="text-sm text-red-800">{fieldErrors.instagram}</p>}
       </div>
+      {(needs.food || needs.languages) && (
       <details className="rounded-2xl border border-line p-4">
         <summary className="cursor-pointer list-none font-medium text-ink [&::-webkit-details-marker]:hidden">
-          {tp("title")}
-          <span className="mt-0.5 block text-xs font-normal text-muted">{tp("intro")}</span>
+          {tp(welcomeTitleKeys(needs).title)}
+          <span className="mt-0.5 block text-xs font-normal text-muted">{tp(welcomeTitleKeys(needs).intro)}</span>
         </summary>
         <div className="mt-4">
-          <PreferencesFields idPrefix="req-pref" value={prefs} onChange={(v) => { setPrefs(v); setConsentError(false); }} disabled={busy} consentError={consentError} />
+          <PreferencesFields idPrefix="req-pref" value={prefs} onChange={(v) => { setPrefs(v); setConsentError(false); }} disabled={busy} consentError={consentError} needs={needs} />
         </div>
       </details>
+      )}
       {consentError && <p role="alert" className="text-sm text-red-800">{tp("consentRequired")}</p>}
       {physical && <PhysicalTermsCheckbox checked={physicalOk} onChange={(v) => { setPhysicalOk(v); setPhysicalError(false); }} error={physicalError} disabled={busy} />}
       {error && (

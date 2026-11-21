@@ -213,6 +213,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
   },
   {
     id: "exp-pilates-brunch",
+    foodServed: true,
     slug: "pilates-brunch-anfa",
     title: { fr: "Pilates & brunch", ar: "بيلاتس وفطور متأخر" },
     summary: { fr: "Une heure de Pilates puis un brunch partagé avec le groupe.", ar: "ساعة بيلاتس ثم فطور متأخر مع المجموعة." },
@@ -373,6 +374,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
   },
   {
     id: "exp-yoga-sunrise",
+    questionnaire: QUESTIONNAIRE_TEMPLATES.find((t) => t.id === "level")!.questions,
     slug: "yoga-au-lever-du-soleil-ain-diab",
     title: { fr: "Yoga au lever du soleil", ar: "يوغا عند شروق الشمس" },
     summary: { fr: "Séance de yoga face à l'océan, suivie d'un café.", ar: "حصة يوغا أمام المحيط ثم قهوة." },
@@ -424,6 +426,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
   },
   {
     id: "exp-cuisine",
+    foodServed: true,
     slug: "atelier-cuisine-marocaine-habous",
     title: { fr: "Atelier cuisine marocaine", ar: "ورشة الطبخ المغربي" },
     summary: { fr: "Préparez un tajine et des pastillas, puis dégustez-les ensemble.", ar: "حضّر الطاجين والبسطيلة ثم تذوّقها مع المجموعة." },
@@ -449,6 +452,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
   },
   {
     id: "exp-padel",
+    onSiteHost: true,
     slug: "padel-entre-inconnus-anfa",
     title: { fr: "Padel entre inconnus", ar: "بادل مع غرباء", en: "Padel with strangers" },
     summary: { fr: "Des doubles composés par niveau, puis un verre au club.", ar: "مباريات زوجية حسب المستوى، ثم مشروب في النادي.", en: "Doubles matched by level, then a drink at the club." },
@@ -491,6 +495,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
   },
   {
     id: "exp-paintball",
+    onSiteHost: true,
     slug: "paintball-entre-inconnus-bouskoura",
     title: { fr: "Paintball entre inconnus", ar: "بينتبول مع غرباء", en: "Paintball with strangers" },
     summary: { fr: "Deux équipes mélangées par nous, en plein air, puis un goûter tous ensemble.", ar: "فريقان نمزجهما نحن، في الهواء الطلق، ثم وجبة خفيفة معاً.", en: "Two teams mixed by us, outdoors, then a snack all together." },

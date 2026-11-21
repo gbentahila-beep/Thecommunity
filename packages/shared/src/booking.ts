@@ -163,6 +163,25 @@ export function selfCheckInState(startAt: string, now: Date = new Date()): "earl
   return "open";
 }
 
+/**
+ * Ce qu'il est utile de demander pour bien recevoir chacun (docs/16) : régime et allergies seulement quand on
+ * mange ou boit (univers « Dîners », dîner composé, ou option « plats servis »), langue du groupe seulement pour les
+ * expériences en groupe composé. Rien du tout pour un atelier ou une course en accès libre.
+ */
+export function welcomeNeeds(e: { categoryId: string; bookingMode: string; foodServed?: boolean }): { food: boolean; languages: boolean } {
+  return {
+    food: e.foodServed === true || e.categoryId === "eat" || e.bookingMode === "social_dinner",
+    languages: e.bookingMode === "social_dinner" || e.bookingMode === "group",
+  };
+}
+
+/**
+ * Billet à présenter seulement s'il y a quelqu'un pour le scanner : accueil sur place (hôtesse ou équipe du lieu)
+ * ou part à régler au lieu partenaire. Sinon, arrivée autonome (« Je suis arrivé·e »).
+ */
+export const needsTicket = (e: { onSiteHost?: boolean } | null | undefined, r?: { partnerPaymentStatus?: string }) =>
+  e?.onSiteHost === true || r?.partnerPaymentStatus === "due_on_site";
+
 /** Nom public d'un avis : prénom + initiale du nom (« Sara B. »). */
 export function publicNameOf(firstName?: string, lastName?: string): string {
   const f = (firstName ?? "").trim() || "Membre";

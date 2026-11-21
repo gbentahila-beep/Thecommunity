@@ -14,16 +14,16 @@ export function FavoritesList({ experiences }: { experiences: FavoriteCandidate[
   const tc = useTranslations("card");
   const ids = useFavorites();
   const items = experiences.filter((e) => ids.includes(e.id));
-  if (items.length === 0) return <p className="rounded-2xl border border-dashed border-line p-6 text-sm text-muted">{t("noFavorites")}</p>;
+  if (items.length === 0) return <p className="card px-5 py-6 text-sm text-muted">{t("noFavorites")}</p>;
   return (
-    <ul className="grid gap-3 sm:grid-cols-2">
+    <ul className="card divide-y divide-line/70 overflow-hidden" data-testid="favorites-list">
       {items.map((e) => (
-        <li key={e.id} className={`relative flex items-center gap-3 rounded-2xl p-2.5 shadow-card ${e.status === "archived" ? "bg-white/60" : "bg-white"}`}>
-          <div className={`relative size-16 shrink-0 overflow-hidden rounded-xl ${e.status === "archived" ? "opacity-60 grayscale" : ""}`}>
+        <li key={e.id} className="relative flex min-w-0 items-center gap-3.5 px-4 py-3.5">
+          <div className={`relative size-16 shrink-0 overflow-hidden rounded-xl bg-cream-deep ${e.status === "archived" ? "opacity-60 grayscale" : ""}`}>
             <Image src={e.image} alt="" fill sizes="64px" className="object-cover" />
           </div>
           <Link href={`/experiences/${e.slug}`} className="min-w-0 flex-1">
-            <span className="block truncate font-semibold text-ink">{e.title}</span>
+            <span className="block truncate text-[15px] font-semibold text-ink">{e.title}</span>
             <span className="block text-sm text-muted">{e.district}</span>
             {e.status === "archived" ? (
               <span className="mt-1 inline-block rounded-full bg-stone-200 px-2 py-0.5 text-[11px] font-semibold text-stone-700">{t("favArchived")}</span>

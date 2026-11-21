@@ -1,4 +1,4 @@
-import { bookingRefusal, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage } from "@thecommunity/shared";
+import { bookingRefusal, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -282,7 +282,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
       ) : visitor.transfer && transferClosed(new Date(session.startAt), visitor.transfer) && !onRequest ? (
         <Notice title={t("transferTooLateTitle")} text={t("transferTooLateText", { cutoff: visitor.transfer.cutoff })} />
       ) : onRequest ? (
-        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} instagramRequired={Boolean(exp.requestInstagramRequired)} defaultLanguages={profileLanguages(visitor.languages)} physical={exp.physicalActivity === true} />
+        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} instagramRequired={Boolean(exp.requestInstagramRequired)} defaultLanguages={profileLanguages(visitor.languages)} physical={exp.physicalActivity === true} needs={welcomeNeeds(exp)} />
       ) : (
         <BookingForm
           sessionId={session.id}
@@ -293,6 +293,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           transfer={visitor.transfer}
           defaultLanguages={profileLanguages(visitor.languages)}
           physical={exp.physicalActivity === true}
+          needs={welcomeNeeds(exp)}
         />
       )}
     </PageShell>

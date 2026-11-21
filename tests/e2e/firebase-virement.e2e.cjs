@@ -128,9 +128,11 @@ async function login(page, email, password, suite) {
   assert(await until(async () => (await row.count()) === 0), 'Virements : la ligne disparaît des virements à valider');
   assert(await until(async () => (await fsGet(`invoices/inv_${paymentId}`)) !== null), 'facture émise à la validation');
 
-  // 5. Membre : billet
+  // 5. Membre : billet (seulement s'il y a un accueil sur place ou une part à régler au lieu ; sinon arrivée autonome)
   await page.goto(`${base}/espace/reservations/${rid}`, { waitUntil: 'load' });
-  assert(await visible(page.getByTestId('ticket')), 'réservation : billet avec QR code après validation');
+  const resNow = await fsGet(`reservations/${rid}`);
+  const expectTicket = target.exp.fields.onSiteHost?.booleanValue === true || resNow.fields.partnerPaymentStatus?.stringValue === 'due_on_site';
+  assert(expectTicket ? await visible(page.getByTestId('ticket')) : (await page.getByTestId('ticket').count()) === 0, `réservation : ${expectTicket ? 'billet avec QR code' : 'pas de billet (arrivée autonome)'} après validation`);
   await page.goto(`${base}/paiement/virement/${paymentId}`, { waitUntil: 'load' });
   assert(await visible(page.getByText('Virement reçu')), 'instructions : « Virement reçu »');
 

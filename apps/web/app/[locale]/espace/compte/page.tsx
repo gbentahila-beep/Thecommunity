@@ -1,5 +1,5 @@
 import { isMemberActive } from "@thecommunity/shared";
-import { BadgeCheck, Bell, ChevronRight, History, Lightbulb, ReceiptText, SlidersHorizontal, UserRound, type LucideIcon } from "lucide-react";
+import { BadgeCheck, Bell, ChevronRight, History, Lightbulb, ReceiptText, SlidersHorizontal, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { LogoutButton } from "@/components/auth/logout-button";
@@ -65,9 +65,8 @@ export default async function AccountHubPage({ params }: PageProps<"/[locale]/es
       <Group
         title={t("hubAccount")}
         rows={[
-          { href: "/espace/profil", label: t("hubDetails"), icon: UserRound },
           { href: "/espace/preferences", label: t("navPreferences"), icon: SlidersHorizontal },
-          { href: "/abonnement", label: t("navMembership"), icon: BadgeCheck, hint: member ? t("hubMemberActive") : undefined },
+          { href: "/abonnement?depuis=profil", label: t("navMembership"), icon: BadgeCheck, hint: member ? t("hubMemberActive") : undefined },
           ...(p.trustedHost ? [{ href: "/espace/proposer", label: t("navPropose"), icon: Lightbulb }] : []),
         ]}
       />

@@ -1,4 +1,4 @@
-import { DEFAULT_CANCELLATION_POLICY, type Experience, type Review } from "@thecommunity/shared";
+import { DEFAULT_CANCELLATION_POLICY, QUESTIONNAIRE_TEMPLATES, type Experience, type Review } from "@thecommunity/shared";
 
 /**
  * Expériences INVENTÉES pour la démonstration (demande de Rita, 20 novembre) : au moins deux par catégorie,
@@ -38,6 +38,7 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
   {
     ...base,
     id: "exp-the-patisseries",
+    foodServed: true,
     slug: "degustation-the-patisseries-maarif",
     // Étape 29 : exemple d'activité réservée aux femmes.
     audience: "women" as const,
@@ -64,6 +65,7 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
   {
     ...base,
     id: "exp-running-corniche",
+    questionnaire: QUESTIONNAIRE_TEMPLATES.find((t) => t.id === "running")!.questions,
     slug: "running-club-corniche-ain-diab",
     title: { fr: "Running club de la Corniche", ar: "نادي الجري على الكورنيش", en: "Corniche running club" },
     summary: { fr: "6 km face à l'océan, à votre allure, puis un jus pressé ensemble.", ar: "6 كيلومترات أمام المحيط بإيقاعك، ثم عصير طازج معاً.", en: "6 km along the ocean at your own pace, then a fresh juice together." },
@@ -91,6 +93,7 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
   {
     ...base,
     id: "exp-randonnee-bouskoura",
+    questionnaire: QUESTIONNAIRE_TEMPLATES.find((t) => t.id === "level")!.questions,
     slug: "randonnee-foret-bouskoura",
     title: { fr: "Randonnée en forêt de Bouskoura", ar: "مشي في غابة بوسكورة", en: "Bouskoura forest hike" },
     summary: { fr: "Une boucle de 10 km sous les eucalyptus, pique-nique compris.", ar: "مسار دائري بطول 10 كلم تحت أشجار الأوكاليبتوس مع نزهة.", en: "A 10 km loop under the eucalyptus trees, picnic included." },
@@ -323,6 +326,7 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
   {
     ...base,
     id: "exp-cafe-specialite",
+    foodServed: true,
     slug: "initiation-cafe-de-specialite-gauthier",
     title: { fr: "Initiation au café de spécialité", ar: "مدخل إلى القهوة المختصة", en: "Specialty coffee masterclass" },
     summary: { fr: "Origines, torréfaction, méthodes douces : un barista vous apprend à goûter.", ar: "الأصول، التحميص، الطرق اليدوية: باريستا يعلّمك التذوّق.", en: "Origins, roasting, pour-over: a barista teaches you how to taste." },

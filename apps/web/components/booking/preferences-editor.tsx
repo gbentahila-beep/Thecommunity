@@ -6,10 +6,10 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { firebase } from "@/lib/firebase/client";
-import { needsConsent, PreferencesFields } from "./preferences-fields";
+import { needsConsent, PreferencesFields, type WelcomeNeeds } from "./preferences-fields";
 
 /** Modifier son régime, ses allergies ou ses langues de table depuis la réservation (jusqu'au début). */
-export function PreferencesEditor({ reservationId, initial, editable }: { reservationId: string; initial: BookingPreferences; editable: boolean }) {
+export function PreferencesEditor({ reservationId, initial, editable, needs }: { reservationId: string; initial: BookingPreferences; editable: boolean; needs?: WelcomeNeeds }) {
   const t = useTranslations("prefs");
   const router = useRouter();
   const [v, setV] = useState(initial);
@@ -33,7 +33,7 @@ export function PreferencesEditor({ reservationId, initial, editable }: { reserv
         }
       }}
     >
-      <PreferencesFields idPrefix="edit-pref" value={v} onChange={(x) => { setV(x); setState("idle"); setConsentError(false); }} disabled={!editable || state === "busy"} consentError={consentError} />
+      <PreferencesFields idPrefix="edit-pref" value={v} onChange={(x) => { setV(x); setState("idle"); setConsentError(false); }} disabled={!editable || state === "busy"} consentError={consentError} needs={needs} />
       {editable && (
         <div className="flex flex-wrap items-center gap-3">
           <button type="submit" disabled={state === "busy"} className="btn btn-secondary btn-sm">{t("save")}</button>

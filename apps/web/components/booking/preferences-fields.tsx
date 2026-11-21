@@ -2,6 +2,10 @@
 
 import { DIETS, SPOKEN_LANGUAGES, type BookingPreferences } from "@thecommunity/shared";
 import { useTranslations } from "next-intl";
+import type { WelcomeNeeds } from "./welcome-keys";
+
+export type { WelcomeNeeds } from "./welcome-keys";
+export { welcomeTitleKeys } from "./welcome-keys";
 
 export const EMPTY_PREFERENCES: BookingPreferences = { diet: "none", allergies: "", languages: [], consent: false };
 export const needsConsent = (p: BookingPreferences) => p.diet !== "none" || p.allergies.trim() !== "";
@@ -9,7 +13,9 @@ export const needsConsent = (p: BookingPreferences) => p.diet !== "none" || p.al
 const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-plum-700 focus:outline-none";
 
 /** Régime, allergies, langues de table (facultatif). L'accord n'est demandé que s'il y a quelque chose à transmettre. */
-export function PreferencesFields({ value, onChange, disabled, consentError, idPrefix = "pref" }: {
+export function PreferencesFields({ value, onChange, disabled, consentError, idPrefix = "pref", needs = { food: true, languages: true } }: {
+  /** Ce qu'il est utile de demander pour cette expérience (welcomeNeeds) : régime et allergies, langue du groupe. */
+  needs?: WelcomeNeeds;
   value: BookingPreferences;
   onChange: (v: BookingPreferences) => void;
   disabled?: boolean;
@@ -21,6 +27,8 @@ export function PreferencesFields({ value, onChange, disabled, consentError, idP
   const set = (patch: Partial<BookingPreferences>) => onChange({ ...value, ...patch });
   return (
     <div className="space-y-4">
+      {needs.food && (
+      <>
       <div>
         <label htmlFor={`${idPrefix}-diet`} className="mb-1.5 block text-sm font-medium">{t("diet")}</label>
         <select id={`${idPrefix}-diet`} className={input} value={value.diet} disabled={disabled} onChange={(e) => set({ diet: e.target.value as BookingPreferences["diet"] })}>
@@ -32,6 +40,9 @@ export function PreferencesFields({ value, onChange, disabled, consentError, idP
         <input id={`${idPrefix}-allergies`} className={input} maxLength={200} value={value.allergies} disabled={disabled} aria-describedby={`${idPrefix}-allergies-hint`} onChange={(e) => set({ allergies: e.target.value })} />
         <span id={`${idPrefix}-allergies-hint`} className="mt-1 block text-xs text-muted">{t("allergiesHint")}</span>
       </div>
+      </>
+      )}
+      {needs.languages && (
       <fieldset>
         <legend className="mb-1.5 text-sm font-medium">{t("languages")}</legend>
         <div className="flex flex-wrap gap-2">
@@ -52,7 +63,8 @@ export function PreferencesFields({ value, onChange, disabled, consentError, idP
           })}
         </div>
       </fieldset>
-      {needsConsent(value) && (
+      )}
+      {needs.food && needsConsent(value) && (
         <div>
           <label className="flex items-start gap-2 text-sm">
             <input type="checkbox" className="mt-1" checked={value.consent} disabled={disabled} onChange={(e) => set({ consent: e.target.checked })} aria-invalid={consentError || undefined} aria-describedby={consentError ? `${idPrefix}-consent-err` : undefined} />

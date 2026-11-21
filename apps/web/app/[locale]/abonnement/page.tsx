@@ -1,5 +1,5 @@
 import { canRenewMembership, formatMoney, isMemberActive, offerEconomics, pickOffer, planOffers } from "@thecommunity/shared";
-import { BadgeCheck, Check, Sparkles } from "lucide-react";
+import { BadgeCheck, Check, ChevronLeft, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -51,7 +51,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   setRequestLocale(locale);
   await connection();
   const sp = await searchParams;
-  const [t, tv, plan, experiences] = await Promise.all([getTranslations("membership"), getTranslations("transfer"), getMembershipPlan(), getPublishedExperiences()]);
+  const [t, tv, tn, plan, experiences] = await Promise.all([getTranslations("membership"), getTranslations("transfer"), getTranslations("nav"), getMembershipPlan(), getPublishedExperiences()]);
   const lang = locale as "fr" | "ar" | "en";
   const me = FIREBASE_ENABLED ? await myMembership() : null;
   const offers = plan ? planOffers(plan) : [];
@@ -96,6 +96,12 @@ export default async function MembershipPage({ params, searchParams }: PageProps
 
   return (
     <PageShell className="max-w-5xl space-y-6 py-8 sm:py-10">
+      {sp.depuis === "profil" && (
+        <Link href="/espace/compte" className="-ms-1 inline-flex items-center gap-1 rounded-full py-1 pe-3 text-sm font-semibold text-plum-900 hover:bg-white" data-testid="account-back">
+          <ChevronLeft className="size-4 rtl:-scale-x-100" aria-hidden />
+          {tn("myProfile")}
+        </Link>
+      )}
       {paid && me?.active && (
         <p role="status" className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900">{t("welcome")}</p>
       )}

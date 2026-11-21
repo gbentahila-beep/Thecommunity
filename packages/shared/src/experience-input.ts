@@ -62,6 +62,8 @@ export const experienceInputSchema = z
     alcoholServed: z.boolean(),
     /** docs/16 : pas d'hôte par défaut ; l'organisateur peut indiquer qu'une hôtesse accueille sur place. */
     onSiteHost: z.boolean().default(false),
+    /** Plats ou boissons servis hors univers « Dîners » (atelier cuisine…) : régime et allergies demandés. */
+    foodServed: z.boolean().default(false),
     included: z.string().max(1000, "tooLong").optional().or(z.literal("")),
     /** Étape 23 : ce qui n'est pas compris dans le prix (un élément par ligne). */
     notIncluded: z.string().max(1000, "tooLong").optional().or(z.literal("")),

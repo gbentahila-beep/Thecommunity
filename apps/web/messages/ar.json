@@ -43,7 +43,11 @@
     "reviews": "الآراء",
     "more": "المزيد",
     "yourProfile": "ملفك الشخصي",
-    "myProfile": "ملفي الشخصي"
+    "myProfile": "ملفي الشخصي",
+    "mySpace": "فضائي",
+    "clubGroup": "The Host Club",
+    "helpGroup": "المساعدة",
+    "helpCenter": "مركز المساعدة"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -727,7 +731,8 @@
     "hubHistory": "السجل",
     "hubMemberActive": "مفعّل",
     "hubDetails": "معلوماتي",
-    "universesHeading": "عوالمنا"
+    "universesHeading": "استكشف حسب العالم",
+    "universesText": "اختر عالماً لترى مواعيده القادمة."
   },
   "reservation": {
     "back": "حجوزاتي",
@@ -847,7 +852,8 @@
     "notReviewed": "رأي بانتظارك",
     "favNext": "الموعد القادم: {date}",
     "favNoDate": "مواعيد جديدة قريباً",
-    "favArchived": "لم تعد متاحة"
+    "favArchived": "لم تعد متاحة",
+    "pastEmpty": "ستظهر تجاربك السابقة هنا."
   },
   "onboarding": {
     "title": "لنتعارف",
@@ -1353,7 +1359,10 @@
     "saved": "تم الحفظ.",
     "error": "تعذّر الحفظ.",
     "none": "لم يُذكر شيء خاص.",
-    "shared": "أُرسل إلى المكان"
+    "shared": "أُرسل إلى المكان",
+    "titleLanguages": "لغة مجموعتك (اختياري)",
+    "introLanguages": "نأخذها بعين الاعتبار عند تكوين مجموعتك.",
+    "editTitleLanguages": "لغة مجموعتك"
   },
   "blog": {
     "title": "المدوّنة",

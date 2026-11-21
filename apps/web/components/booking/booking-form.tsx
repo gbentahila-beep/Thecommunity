@@ -8,7 +8,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { PhysicalTermsCheckbox } from "@/components/booking/physical-terms";
 import { authReady, bookingErrorOf, createReservation, previewPricing, promoErrorOf, startCheckout, type BookingError } from "@/lib/booking-client";
 import { goToCheckout } from "./go-to-checkout";
-import { EMPTY_PREFERENCES, needsConsent, PreferencesFields } from "./preferences-fields";
+import { EMPTY_PREFERENCES, needsConsent, PreferencesFields, welcomeTitleKeys, type WelcomeNeeds } from "./preferences-fields";
 
 type Props = {
   sessionId: string;
@@ -30,7 +30,7 @@ type Props = {
  * Choix du nombre de places, code promo, préférences pour l'accueil, puis réservation.
  * Le prix affiché vient du serveur (prix membre, code, frais) ; la réservation le recalcule.
  */
-export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite = null, transfer = null, defaultLanguages = [], physical = false }: Props) {
+export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite = null, transfer = null, defaultLanguages = [], physical = false, needs = { food: true, languages: true } }: Props & { needs?: WelcomeNeeds }) {
   const t = useTranslations("booking");
   const t2 = useTranslations("twoPart");
   const tp = useTranslations("prefs");
@@ -213,15 +213,17 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
         {promoError && <p id="promo-err" role="alert" className="mt-2 text-sm text-red-800">{t(`promoErrors.${promoError}`)}</p>}
       </div>
 
+      {(needs.food || needs.languages) && (
       <details className="group rounded-[var(--radius-card)] bg-white p-4 shadow-card">
         <summary className="cursor-pointer list-none font-medium text-ink [&::-webkit-details-marker]:hidden">
-          {tp("title")}
-          <span className="mt-0.5 block text-xs font-normal text-muted">{tp("intro")}</span>
+          {tp(welcomeTitleKeys(needs).title)}
+          <span className="mt-0.5 block text-xs font-normal text-muted">{tp(welcomeTitleKeys(needs).intro)}</span>
         </summary>
         <div className="mt-4">
-          <PreferencesFields value={prefs} onChange={(v) => { setPrefs(v); setConsentError(false); }} disabled={busy} consentError={consentError} />
+          <PreferencesFields value={prefs} onChange={(v) => { setPrefs(v); setConsentError(false); }} disabled={busy} consentError={consentError} needs={needs} />
         </div>
       </details>
+      )}
       {consentError && <p role="alert" className="text-sm text-red-800">{tp("consentRequired")}</p>}
       {physical && <PhysicalTermsCheckbox checked={physicalOk} onChange={(v) => { setPhysicalOk(v); setPhysicalError(false); }} error={physicalError} disabled={busy} />}
 
