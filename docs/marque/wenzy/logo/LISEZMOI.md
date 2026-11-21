@@ -30,3 +30,7 @@ Demande : un logo fun et jeune, avec des changements de police, de taille ou de 
 ## Révision du 21 novembre : pro, vivant, mémorable, autour de la rencontre
 
 Lettrages fun jugés trop enfantins. Nouvelle demande : niveau des grandes applications sociales (référence citée : Timeleft, sans copier), professionnel, avec un élément qui évoque la rencontre et le lien. `rencontre/` : nom en Outfit minuscules, palette grenade `#E4473A`, aubergine `#2B1633`, abricot `#FFB37A`, pistache `#C9DB8A`, crème `#FFF7EE`, et trois symboles : `tablee-*` (six points en cercle, recommandé), `lien-*` (deux points et un sourire), `wdeux-*` (deux têtes dans les creux du w). Page `../etape-2f-rencontre.html`. Régénérer : `python3 mklien.py fonts rencontre` puis `python3 page7.py rencontre ../etape-2f-rencontre.html` (le script génère aussi une piste « duo » écartée, à supprimer).
+
+## Révision du 21 novembre : trois directions complètes au niveau des références
+
+Références fournies (à ne pas copier, pour le niveau) : `docs/maquettes/2026-11-21-wenzy/ref-*.png` (Timeleft, Socials, Sahbi). Page `../etape-2g-directions.html` : Coucher de soleil (wen + zy manuscrit, dégradé corail → violet, Instrument Serif), Menthe (tablée, vert + citron vert, Young Serif), Électrique (groupe de trois cercles, bleu électrique + lilas, Sora), chacune sur un écran de téléphone. Maquettes en HTML (`directions.src.html`, photos injectées depuis `apps/web/public`) ; le logo choisi sera ensuite redessiné en vectoriel.
