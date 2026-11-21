@@ -58,7 +58,7 @@ jobs:
           check /abonnement
           check /connexion
           # Toutes les fiches d'expérience du plan du site (pas seulement les premières du catalogue).
-          for P in $(curl -s "$SITE/sitemap.xml" | grep -o "$SITE/experiences/[a-z0-9-]*" | sed "s#$SITE##" | sort -u); do check "$P"; done
+          for P in $(curl -s "$SITE/sitemap.xml" | grep -o '/experiences/[a-z0-9-]*' | sort -u); do check "$P"; done
           for P in $(curl -s "$SITE/experiences" | grep -o 'href="/experiences/[a-z0-9-]*"' | cut -d'"' -f2 | sort -u | head -1); do
             for R in $(curl -s "$SITE$P" | grep -o '/reserver/[A-Za-z0-9_-]*' | sort -u | head -2); do check "$R"; done
           done
@@ -67,8 +67,8 @@ jobs:
         if: always() && steps.creds.outputs.ok == 'true'
         run: |
           # Dernières erreurs du site (Cloud Run d'App Hosting), pour comprendre une page en erreur 500.
-          gcloud logging read 'resource.type="cloud_run_revision" AND severity>=ERROR' --freshness=2h --limit=15 \
-            --format='value(timestamp,textPayload,jsonPayload.message)' 2>&1 | cut -c1-600 || true
+          gcloud logging read 'resource.type="cloud_run_revision" AND severity>=ERROR' --freshness=1h --limit=8 --format=json 2>&1 \
+            | jq -r '.[] | "\(.timestamp) \(.textPayload // .jsonPayload.message // .jsonPayload.stack // (.jsonPayload | tostring))"' 2>&1 | cut -c1-1500 || true
       - name: Suppression de la clé temporaire
         if: always()
         run: rm -f "$RUNNER_TEMP/sa.json"
