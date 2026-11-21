@@ -42,3 +42,7 @@ Choix : couleurs Midi (cobalt `#1340A8`, safran `#F5C242`, chaux `#FBFAF6`, nuit
 ## Ajout du 21 novembre : la tablée avec le duo
 
 Demande : ajouter la tablée (six points en cercle, un point de couleur = vous). `duo/tablee-<écriture>-<fond>.svg` : tablée devant le duo, sur cobalt, chaux, safran et nuit ; `duo/icone-tablee-*.svg` : la tablée seule comme icône. Même page `../etape-2h-duo.html` (section « Avec la tablée »).
+
+## Choix du 21 novembre : direction « Coucher de soleil »
+
+Direction retenue : crème `#F6F1EA`, encre `#141414`, dégradé corail `#FF6A4D` → violet `#C25BE8` ; titres Instrument Serif, texte Inter ; logo duo « wen » (Outfit) + « zy » manuscrit en dégradé. Demande : souder « wen » et « zy », qui paraissaient décollés. `coucher-de-soleil/` : six versions (A serré, B lié, C signature, D équilibré, E pinceau, F le fil), sur crème, sur encre, et icône « zy » sur dégradé. Page `../etape-2i-coucher-de-soleil.html`. Régénérer : `python3 mkd1.py fonts coucher-de-soleil` puis `python3 page9.py coucher-de-soleil ../etape-2i-coucher-de-soleil.html`.
