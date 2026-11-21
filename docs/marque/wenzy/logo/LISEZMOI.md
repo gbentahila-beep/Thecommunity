@@ -10,3 +10,7 @@ Logotype vectorisé à partir de **Bricolage Grotesque** (licence OFL, usage com
 - `point-*` : variante 3, point final sur la ligne de base.
 
 Régénérer : `pip install fonttools uharfbuzz`, polices `bri-96-800.ttf` et `readex-600.ttf` (Google Fonts) dans un dossier `fonts/`, puis `python3 mklogo.py fonts propositions`. Page de présentation : `python3 page2.py propositions ../etape-2-logo.html`.
+
+## Révision du 21 novembre : nouvelle police
+
+Bricolage Grotesque refusée (« je n'aime pas la police »). `polices/` : le logo « Soleil levé » dans six polices OFL (Outfit, Fredoka, Unbounded, Sora, Plus Jakarta Sans, DM Serif Display), page `../etape-2b-polices.html`. Régénérer : `python3 mkfonts.py fonts polices` puis `python3 page3.py polices ../etape-2b-polices.html`.
