@@ -17,6 +17,32 @@ for k, n, name, fnt, desc in V:
   <div class="row"><img src="{uri(k+'-chaux.svg')}" alt="Sur chaux"><img src="{uri(k+'-safran.svg')}" alt="Sur safran"><img src="{uri(k+'-nuit.svg')}" alt="Sur nuit"></div>
   <div class="meta"><img class="ico" src="{uri(k+'-icone.svg')}" alt="Icône"><div><p class="num">Duo {n} · {fnt}</p><h3 id="v{n}">{name}</h3><p class="desc">{desc}</p></div></div>
 </article>'''
+import math
+def seats(taken, total=6, size=56, on="#1340A8", off="#E7E3D6", you="#F28BA8"):
+    R, r, c = size * .34, size * .125, size / 2
+    out = ""
+    for i in range(total):
+        a = -math.pi / 2 + i * 2 * math.pi / total
+        col = (you if i == 0 else on) if i < taken else off
+        out += f'<circle cx="{c + R*math.cos(a):.1f}" cy="{c + R*math.sin(a):.1f}" r="{r:.1f}" fill="{col}"/>'
+    return f'<svg viewBox="0 0 {size} {size}" width="{size}" height="{size}" aria-hidden="true">{out}</svg>'
+
+small = "".join(f'<figure><img src="{uri("tablee-"+k+"-cobalt.svg")}" alt="Tablée et duo {name}"><figcaption>{n} · {name}</figcaption></figure>' for k, n, name, _, _ in V)
+tab = f'''
+<section class="tab" aria-labelledby="tab">
+  <p class="eyebrow">Avec la tablée</p>
+  <h2 id="tab">Six points autour de la table</h2>
+  <p class="lede">Six points en cercle : six personnes autour d'une table, vues d'en haut. Le point de couleur, c'est vous qui arrivez. Placée devant le duo, la tablée raconte ce que fait Wenzy ; seule, elle devient l'icône de l'application, l'avatar Instagram et le favicon.</p>
+  <div class="tmain"><img src="{uri('tablee-kaushan-cobalt.svg')}" alt="Logo Wenzy, tablée et duo Pinceau, sur cobalt"></div>
+  <div class="trow"><img src="{uri('tablee-kaushan-chaux.svg')}" alt="Sur chaux"><img src="{uri('tablee-kaushan-safran.svg')}" alt="Sur safran"><img src="{uri('tablee-kaushan-nuit.svg')}" alt="Sur nuit"></div>
+  <div class="tsplit">
+    <div class="tbox"><p class="k">Icônes</p><div class="icos"><img src="{uri('icone-tablee-cobalt.svg')}" alt="Icône tablée cobalt"><img src="{uri('icone-tablee-safran.svg')}" alt="Icône tablée safran"><img src="{uri('icone-tablee-chaux.svg')}" alt="Icône tablée chaux"><img src="{uri('icone-tablee-nuit.svg')}" alt="Icône tablée nuit"></div></div>
+    <div class="tbox"><p class="k">Sur le site : les places qui se remplissent</p><div class="seats"><div>{seats(2)}<span>2 / 6 inscrits</span></div><div>{seats(5)}<span>Dernière place</span></div><div>{seats(6, on="#10162B", you="#10162B")}<span>Complet</span></div></div></div>
+  </div>
+  <p class="k2">La tablée avec les quatre écritures</p>
+  <div class="tsmall">{small}</div>
+</section>'''
+
 html = f'''<title>Wenzy, logo duo</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Kaushan+Script&family=Inter:wght@400;500;600&display=swap">
@@ -92,6 +118,26 @@ header h1 em {{ font: 400 1.15em/1 "Kaushan Script", cursive; color: var(--cobal
 .tile .k {{ font: 600 .7rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; opacity: .75 }}
 .tile.s {{ background: #F5C242; color: #10162B }} .tile.f {{ background: #F28BA8; color: #10162B }}
 .tile .b {{ font: 800 1.5rem/1.1 var(--display); letter-spacing: -.03em }}
+.tab {{ background: var(--panel); border: 1px solid var(--line); border-radius: 26px; padding: clamp(1.1rem, 3vw, 2rem); display: grid; gap: 1rem }}
+.tab h2 {{ font-size: clamp(1.8rem, 4.5vw, 2.6rem) }}
+.tmain img {{ width: 100%; border-radius: 16px; display: block }}
+.trow {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem }}
+.trow img {{ width: 100%; border-radius: 12px; display: block; box-shadow: inset 0 0 0 1px #e7e3d6 }}
+.tsplit {{ display: grid; grid-template-columns: auto 1fr; gap: 1rem }}
+@media (max-width: 760px) {{ .tsplit {{ grid-template-columns: 1fr }} }}
+.tbox {{ background: #FBFAF6; border-radius: 16px; padding: 1rem 1.2rem; display: grid; gap: .7rem; box-shadow: inset 0 0 0 1px #e7e3d6; color: #10162B }}
+.tbox .k, .k2 {{ font: 600 .7rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; color: #5a6072 }}
+.k2 {{ color: var(--muted); margin-top: .4rem }}
+.icos {{ display: flex; gap: .6rem; flex-wrap: wrap }}
+.icos img {{ width: 64px; height: 64px; border-radius: 14px; box-shadow: 0 0 0 1px #e7e3d6 }}
+.seats {{ display: flex; flex-wrap: wrap; gap: 1.4rem }}
+.seats div {{ display: flex; align-items: center; gap: .55rem; font-size: .85rem }}
+.tsmall {{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem }}
+@media (max-width: 760px) {{ .tsmall {{ grid-template-columns: repeat(2, minmax(0, 1fr)) }} }}
+.tsmall figure {{ margin: 0; display: grid; gap: .3rem }}
+.tsmall img {{ width: 100%; border-radius: 10px; display: block }}
+.tsmall figcaption {{ font-size: .8rem; color: var(--muted) }}
+.ph-seat {{ display: flex; align-items: center; gap: .45rem; font-size: .74rem; color: #5a6072; margin-top: .15rem }}
 .reco {{ background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 1.6rem 1.8rem; display: grid; gap: .7rem; max-width: 800px }}
 .reco h2 {{ font-size: 1.8rem }}
 .reco p {{ color: var(--muted) }}
@@ -105,16 +151,17 @@ header h1 em {{ font: 400 1.15em/1 "Kaushan Script", cursive; color: var(--cobal
 </header>
 <div class="grid">{cards}
 </div>
+{tab}
 <section style="display:grid;gap:1.25rem" aria-labelledby="sit">
-  <h2 id="sit" style="font-size:clamp(1.6rem,4vw,2.2rem)">En situation, avec le duo 1</h2>
+  <h2 id="sit" style="font-size:clamp(1.6rem,4vw,2.2rem)">En situation : tablée et duo Pinceau</h2>
   <div class="sit">
     <div class="phone"><div class="screen">
       <div class="hero"><img src="{img('images/photos/univers-sorties-soiree.webp')}" alt="">
-        <div class="nav"><img src="{uri('kaushan-chaux-transparent.svg')}" alt="Wenzy"><span class="r"><span class="s">S'inscrire</span><span class="burger"></span></span></div>
+        <div class="nav"><img src="{uri('tablee-kaushan-chaux-transparent.svg')}" alt="Wenzy"><span class="r"><span class="s">S'inscrire</span><span class="burger"></span></span></div>
         <div class="card"><span class="city">Casablanca</span><p class="h">Your people are <em>out there.</em></p><span class="cta">Réserver ma place</span></div>
       </div>
       <div class="list"><p class="lt">Cette semaine</p>
-        <div class="item"><img src="{img('images/photos/rencontre-groupe-diner.webp')}" alt=""><div><b>Dîner entre inconnus</b><span class="pill">Table de 6</span><small>Jeu. 20 h · Maarif</small></div><span class="book">Réserver</span></div>
+        <div class="item"><img src="{img('images/photos/rencontre-groupe-diner.webp')}" alt=""><div><b>Dîner entre inconnus</b><small>Jeu. 20 h · Maarif</small><span class="ph-seat">{seats(4, size=26)}4 / 6 inscrits</span></div><span class="book">Réserver</span></div>
       </div>
     </div></div>
     <div class="side">
@@ -128,8 +175,8 @@ header h1 em {{ font: 400 1.15em/1 "Kaushan Script", cursive; color: var(--cobal
 </section>
 <section class="reco" aria-labelledby="reco">
   <p class="eyebrow">Ma recommandation</p>
-  <h2 id="reco">Duo 1, Pinceau</h2>
-  <p><strong>Le meilleur équilibre entre énergie et sérieux.</strong> Le coup de pinceau donne du mouvement, il reste lisible en petit, et le safran sur cobalt claque sans faire penser à une enseigne : le nom n'est plus un W isolé, et l'écriture manuscrite change complètement la lecture. Le « zy » seul fait une icône immédiatement reconnaissable.</p>
+  <h2 id="reco">La tablée + le duo Pinceau</h2>
+  <p><strong>Le meilleur équilibre entre énergie et sérieux.</strong> Le coup de pinceau donne du mouvement, il reste lisible en petit, et le safran sur cobalt claque sans faire penser à une enseigne : le nom n'est plus un W isolé, et l'écriture manuscrite change complètement la lecture. Avec la tablée devant, le logo raconte en plus la rencontre, et la tablée seule fait une icône plus forte que le « zy » : elle se lit en tout petit et devient un repère sur le site (les places qui se remplissent).</p>
   <p>Dites-moi le duo qui vous plaît. Je le redessine ensuite au détail près (liaison entre « n » et « z », épaisseurs, crénage), puis je prépare tous les fichiers et le brand book.</p>
 </section>
 </div>

@@ -90,3 +90,52 @@ for key in DUOS:
     open(f"{OUT}/{key}-chaux-transparent.svg", "w").write(svg2(duo(key, COBALT, FIGUE), pad=20))
     open(f"{OUT}/{key}-icone.svg", "w").write(icon(key, COBALT, SAFRAN))
 print("ok")
+
+
+# ---------- la tablée : six points en cercle, un point de couleur (vous) ----------
+import math as _m
+TAB_COLORS = {  # fond, wen, zy, points, point « vous »
+    "cobalt": (COBALT, CHAUX, SAFRAN, CHAUX, SAFRAN),
+    "chaux": (CHAUX, COBALT, FIGUE, COBALT, FIGUE),
+    "nuit": (NUIT, CHAUX, SAFRAN, CHAUX, SAFRAN),
+    "safran": (SAFRAN, NUIT, COBALT, NUIT, COBALT),
+}
+
+
+def tablee_svg(cx, cy, D, dot, you):
+    R, r = D * 0.34, D * 0.125
+    return "".join(f'<circle cx="{cx + R*_m.cos(a):.1f}" cy="{cy + R*_m.sin(a):.1f}" r="{r:.1f}" fill="{you if i == 0 else dot}"/>'
+                   for i, a in enumerate(_m.pi / 2 - k * _m.pi / 3 for k in range(6)))
+
+
+def lockup_tablee(key, bg, a, b, dot, you, pad=170):
+    items = duo(key, a, b)
+    D = 520 * 1.75; gap = 520 * 0.38
+    x_left = min(it["box"][0] for it in items)
+    cx = x_left - gap - D / 2; cy = 520 / 2
+    xs = [cx - D / 2]; ys = [cy - D / 2, cy + D / 2]
+    for it in items:
+        x0, y0, x1, y1 = it["box"]; m = 30 + abs(it["rot"]) * 6
+        xs += [x0 - m, x1 + m]; ys += [y0 - m, y1 + m]
+    x0, y0, x1, y1 = min(xs), min(ys), max(xs), max(ys)
+    W, H = x1 - x0 + 2 * pad, y1 - y0 + 2 * pad; vx, vy = x0 - pad, -(y1 + pad)
+    body = "".join(f'<g transform="rotate({-it["rot"]} {it["cx"]:.1f} {it["cy"]:.1f})"><path d="{it["d"]}" fill="{it["c"]}" transform="{it["tf"]}"/></g>' for it in items)
+    bgr = f'<rect x="{vx:.0f}" y="{vy:.0f}" width="{W:.0f}" height="{H:.0f}" fill="{bg}"/>' if bg else ""
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vx:.0f} {vy:.0f} {W:.0f} {H:.0f}" role="img" aria-label="Wenzy"><title>Wenzy</title>{bgr}'
+            f'<g transform="scale(1,-1)">{tablee_svg(cx, cy, D, dot, you)}{body}</g></svg>')
+
+
+def icon_tablee(bg, dot, you):
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Wenzy"><title>Wenzy</title>'
+            f'<rect width="100" height="100" rx="22" fill="{bg}"/>{tablee_svg(50, 50, 66, dot, you).replace("cy=", "cy=")}</svg>')
+
+
+for key in DUOS:
+    for cw, (bg, a, b, dot, you) in TAB_COLORS.items():
+        open(f"{OUT}/tablee-{key}-{cw}.svg", "w").write(lockup_tablee(key, bg, a, b, dot, you))
+    open(f"{OUT}/tablee-{key}-chaux-transparent.svg", "w").write(lockup_tablee(key, None, COBALT, FIGUE, COBALT, FIGUE, pad=20))
+open(f"{OUT}/icone-tablee-cobalt.svg", "w").write(icon_tablee(COBALT, CHAUX, SAFRAN))
+open(f"{OUT}/icone-tablee-safran.svg", "w").write(icon_tablee(SAFRAN, NUIT, COBALT))
+open(f"{OUT}/icone-tablee-chaux.svg", "w").write(icon_tablee(CHAUX, COBALT, FIGUE))
+open(f"{OUT}/icone-tablee-nuit.svg", "w").write(icon_tablee(NUIT, CHAUX, SAFRAN))
+print("tablée ok")

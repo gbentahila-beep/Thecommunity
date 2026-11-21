@@ -38,3 +38,7 @@ Références fournies (à ne pas copier, pour le niveau) : `docs/maquettes/2026-
 ## Révision du 21 novembre : retour aux couleurs Midi, logo en duo
 
 Choix : couleurs Midi (cobalt `#1340A8`, safran `#F5C242`, chaux `#FBFAF6`, nuit `#10162B`, figue `#F28BA8`, capture `docs/maquettes/2026-11-21-wenzy/choix-couleurs-midi.png`) et logo « duo » : « wen » en Outfit 700, « zy » manuscrit. `duo/` : quatre écritures pour le « zy » (Kaushan Script recommandée, Caveat, Dancing Script, Yellowtail), sur cobalt, chaux, safran et nuit, plus l'icône « zy ». Page `../etape-2h-duo.html`. Régénérer : `python3 mkduo.py fonts duo` puis `python3 page8.py duo ../etape-2h-duo.html`.
+
+## Ajout du 21 novembre : la tablée avec le duo
+
+Demande : ajouter la tablée (six points en cercle, un point de couleur = vous). `duo/tablee-<écriture>-<fond>.svg` : tablée devant le duo, sur cobalt, chaux, safran et nuit ; `duo/icone-tablee-*.svg` : la tablée seule comme icône. Même page `../etape-2h-duo.html` (section « Avec la tablée »).
