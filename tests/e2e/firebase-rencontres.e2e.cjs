@@ -97,7 +97,7 @@ const put = (path, fields) => fetch(doc(path), { method: 'PATCH', headers: { ...
   assert(!(await pb.getByTestId('meet-contact').count()), 'Badr : ne voit rien du souhait d\'Amal');
   const gb = pb.getByTestId('meet-group').filter({ hasText: 'Balade street art' });
   await gb.getByTestId('meet-member').filter({ hasText: 'Amal' }).getByRole('button', { name: "J'aimerais revoir Amal" }).click();
-  assert(await visible(gb.getByRole('status').filter({ hasText: "C'est réciproque" }), 20000), 'Badr : « C\'est réciproque »');
+  assert(await visible(gb.getByRole('status').filter({ hasText: 'Envie partagée' }), 20000), 'Badr : « Envie partagée »');
   await pb.reload({ waitUntil: 'load' });
   const contact = pb.getByTestId('meet-contact').filter({ hasText: 'Amal' });
   assert(await visible(contact), 'Badr : Amal dans « C\'est réciproque »');

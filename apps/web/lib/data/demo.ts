@@ -120,8 +120,8 @@ export const DEMO_CATEGORIES: Category[] = [
   // d'expériences inventées pour la démonstration (21b).
   {
     id: "meet",
-    name: { fr: "Rencontres & activités sociales", ar: "لقاءات وأنشطة اجتماعية", en: "Social meetups" },
-    shortName: { fr: "Rencontres", ar: "لقاءات", en: "Meetups" },
+    name: { fr: "Échanges & vie sociale", ar: "تبادل وحياة اجتماعية", en: "Social life & exchanges" },
+    shortName: { fr: "Vie sociale", ar: "حياة اجتماعية", en: "Social life" },
     description: {
       fr: "Échanges de langues, clubs de lecture, apéros entre nouveaux arrivants.",
       ar: "تبادل اللغات، نوادي القراءة، لقاءات للقادمين الجدد.",
@@ -140,7 +140,7 @@ export const DEMO_CATEGORIES: Category[] = [
     shortName: { fr: "Culture", ar: "ثقافة", en: "Culture" },
     description: {
       fr: "Visites guidées, conférences, initiations et masterclasses.",
-      ar: "زيارات مرفقة، محاضرات، دروس أولى وورشات متقدمة.",
+      ar: "جولات إرشادية، محاضرات، دروس أولى وورشات متقدمة.",
       en: "Guided tours, talks, introductions and masterclasses.",
     },
     order: 7,

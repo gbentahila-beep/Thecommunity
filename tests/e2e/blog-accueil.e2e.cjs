@@ -26,7 +26,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await d.keyboard.press('ArrowDown');
   const menu = d.getByRole('navigation', { name: /univers/i });
   assert(await visible(menu), 'Découvrir ouvert au clavier');
-  for (const l of ['Dîners & gastronomie', 'Sport & bien-être', 'Jeux', 'Ateliers', 'Sorties', 'Rencontres & activités sociales', 'Culture & apprentissage']) assert(await menu.getByRole('link', { name: l }).isVisible(), `menu Découvrir : ${l}`);
+  for (const l of ['Dîners & gastronomie', 'Sport & bien-être', 'Jeux', 'Ateliers', 'Sorties', 'Échanges & vie sociale', 'Culture & apprentissage']) assert(await menu.getByRole('link', { name: l }).isVisible(), `menu Découvrir : ${l}`);
   await d.keyboard.press('Escape');
   assert(await discover.getAttribute('aria-expanded') === 'false', 'Échap referme le menu');
   await discover.hover();

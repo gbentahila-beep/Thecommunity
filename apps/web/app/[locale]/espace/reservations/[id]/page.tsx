@@ -17,7 +17,7 @@ import { RefundRequestForm } from "@/components/account/refund-request-form";
 import { InvoiceList } from "@/components/account/invoice-list";
 import { PreferencesEditor } from "@/components/booking/preferences-editor";
 import { QuestionnaireForm } from "@/components/account/questionnaire-form";
-import { getExperienceBySlug } from "@/lib/data";
+import { getCity, getExperienceBySlug } from "@/lib/data";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { buildIcs, icsDataUri } from "@/lib/ics";
@@ -62,7 +62,9 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const refund = refundAmountFor(policy, r.pricing.total, new Date(s.startAt), now);
   const refundable = Boolean(r.paymentId) && canRequestRefund({ status: r.status, sessionStartAt: s.startAt, paidAmount: r.pricing.total, refundedAmount: r.refundedAmount }, now);
   const review = data.review;
-  const venueText = r.venue ? `${r.venue.name}, ${r.venue.address}` : `${s.district}, Casablanca`;
+  const city = await getCity(experience?.cityId ?? "casablanca");
+  const cityName = city ? tr(city.name, locale) : "Casablanca";
+  const venueText = r.venue ? `${r.venue.name}, ${r.venue.address}` : `${s.district}, ${cityName}`;
   const ics = buildIcs({ uid: r.id, title, startAt: s.startAt, endAt: s.endAt, location: venueText, url: `${SITE_URL}/espace/reservations/${r.id}` });
   const dateFmt = (iso: string) => formatLongDate(iso, locale);
   const holdOpen = r.status === "pending_payment" && r.holdExpiresAt !== undefined && new Date(r.holdExpiresAt).getTime() > now.getTime();
@@ -184,7 +186,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                   </>
                 ) : (
                   <>
-                    <dd className="font-medium text-ink">{s.district}, Casablanca</dd>
+                    <dd className="font-medium text-ink">{s.district}, {cityName}</dd>
                     <dd className="text-sm text-muted">{t("venueHidden")}</dd>
                   </>
                 )}

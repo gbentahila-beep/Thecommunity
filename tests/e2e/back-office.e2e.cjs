@@ -161,7 +161,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   // Étape 19 : Paramètres → catégories dynamiques (démo : lecture seule)
   await page.goto(`${base}/admin/parametres`);
   assert(await page.locator('summary', { hasText: 'Padel' }).getByText('Sous-catégorie').isVisible(), 'Paramètres : Padel listée comme sous-catégorie');
-  assert(await page.locator('summary', { hasText: 'Rencontres & activités sociales' }).getByText('Masquée').count() === 0, 'Paramètres : Rencontres visible (expériences de démonstration, 21b)');
+  assert(await page.locator('summary', { hasText: 'Échanges & vie sociale' }).getByText('Masquée').count() === 0, 'Paramètres : Vie sociale visible (expériences de démonstration, 21b)');
   assert(await page.locator('#cat-padel-parent').inputValue() === 'move', 'Padel rattachée à Sport & bien-être');
   // Étape 22 : politiques d'annulation, modes de paiement des organisateurs, demandes de remboursement
   assert(await page.getByTestId('policies').locator('li').count() === 3, 'Paramètres : 3 politiques d\'annulation (démonstration)');

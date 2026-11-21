@@ -25,7 +25,7 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
 import { memberAmountFor, PriceTag } from "@/components/price-tag";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
-import { getArchivedExperience, getCategory, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublicOrganizer, getPublishedExperiences, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
+import { getArchivedExperience, getCategory, getCity, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublicOrganizer, getPublishedExperiences, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { richText } from "@/lib/rich-text";
@@ -46,7 +46,8 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/experien
     const retired = await getArchivedExperience(slug);
     return retired ? { title: tr(retired.title, locale), robots: { index: false, follow: true } } : {};
   }
-  const title = `${tr(exp.title, locale)} — ${exp.district}, Casablanca`;
+  const city = await getCity(exp.cityId);
+  const title = `${tr(exp.title, locale)} — ${exp.district}, ${city ? tr(city.name, locale) : "Casablanca"}`;
   return {
     title,
     description: tr(exp.summary, locale),
@@ -94,7 +95,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     if (!retired) notFound();
     return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} />;
   }
-  const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan, policies, organizer, tm, tInt] = await Promise.all([
+  const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan, policies, organizer, tm, tInt, city] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),
     getTranslations("twoPart"),
@@ -108,7 +109,9 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     getPublicOrganizer(exp.organizerId),
     getTranslations("meeting"),
     getTranslations("labels.interests"),
+    getCity(exp.cityId),
   ]);
+  const cityName = city ? tr(city.name, locale) : "Casablanca";
   // Étape 22 : politique d'annulation propre à l'activité.
   const policy = policyOf(policies, exp.cancellationPolicyId);
   const memberAmount = memberAmountFor(plan, exp.price, exp);
@@ -137,7 +140,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
       eventStatus: "https://schema.org/EventScheduled",
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       image: exp.images.map((i) => `${SITE_URL}${i.path}`),
-      location: { "@type": "Place", name: exp.venue.name, address: { "@type": "PostalAddress", addressLocality: "Casablanca", addressCountry: "MA" } },
+      location: { "@type": "Place", name: exp.venue.name, address: { "@type": "PostalAddress", addressLocality: cityName, addressCountry: "MA" } },
       offers: {
         "@type": "Offer",
         price: (s.price.amount / 100).toFixed(2),
@@ -193,7 +196,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               {next && (
                 <Fact icon={CalendarDays} label={formatLongDate(next.startAt, locale)} value={formatTimeRange(next.startAt, next.endAt, locale)} />
               )}
-              <Fact icon={MapPin} label={exp.district} value="Casablanca" />
+              <Fact icon={MapPin} label={exp.district} value={cityName} />
               <Fact icon={Users} label={t("groupSize")} value={formatLabel(exp, t, next?.capacity ?? 0)} />
               <Fact icon={Clock} label={t("duration")} value={duration} />
               <Fact icon={Languages} label={t("languages")} value={exp.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ")} />

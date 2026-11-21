@@ -37,7 +37,7 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     body: {
       fr: [
         "The Host Club organise à Casablanca des expériences en petit groupe : dîners, ateliers, sport, jeux, sorties. Vous choisissez une date, nous nous occupons du lieu, du groupe et de l'accueil.",
-        ["Choisissez une expérience dans le [catalogue](/experiences).", "Réservez votre place (seul, c'est très bien).", "Le jour J, retrouvez votre groupe dans un lieu public ou chez un partenaire sélectionné."],
+        ["Choisissez une expérience dans le [catalogue](/experiences).", "Réservez votre place (venir seul·e, c'est très bien).", "Le jour J, retrouvez votre groupe dans un lieu public ou chez un partenaire sélectionné."],
         "Ce n'est pas une application de rencontre amoureuse : l'idée est d'élargir son cercle et de découvrir sa ville autrement.",
       ],
       en: [
@@ -57,12 +57,12 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
       fr: [
         "Pour réserver, il faut un compte. Créez-le depuis la page [Inscription](/inscription) avec votre adresse e-mail et un mot de passe.",
         ["Confirmez votre adresse e-mail grâce au lien reçu : c'est obligatoire avant de réserver.", "Répondez au court questionnaire de profil (prénom, date de naissance, langues parlées, centres d'intérêt).", "Vous devez avoir 18 ans ou plus."],
-        "Ces réponses nous servent uniquement à composer des groupes équilibrés. Au sein d'un groupe, seuls votre prénom et vos centres d'intérêt sont visibles.",
+        "Ces réponses nous servent uniquement à composer des groupes équilibrés. Au sein d'un groupe, seuls votre prénom, votre photo (si vous en avez mis une) et vos centres d'intérêt sont visibles.",
       ],
       en: [
         "You need an account to book. Create one from the [Sign up](/inscription) page with your email address and a password.",
         ["Confirm your email address with the link we send you: this is required before booking.", "Answer the short profile questionnaire (first name, date of birth, languages spoken, interests).", "You must be 18 or older."],
-        "We only use these answers to put balanced groups together. Within a group, only your first name and interests are visible.",
+        "We only use these answers to put balanced groups together. Within a group, only your first name, your photo (if you added one) and your interests are visible.",
       ],
     },
     related: ["mot-de-passe-et-e-mail", "mes-donnees-personnelles"],
@@ -70,15 +70,15 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
   {
     slug: "venir-seul",
     category: "start",
-    title: { fr: "Puis-je venir seul(e) ?", en: "Can I come on my own?" },
-    summary: { fr: "Oui, c'est même le principe : la plupart des membres réservent seuls.", en: "Yes, that's the whole idea: most members book on their own." },
+    title: { fr: "Puis-je venir seul·e ?", en: "Can I come on my own?" },
+    summary: { fr: "Oui, c'est même le principe : nos expériences sont pensées pour celles et ceux qui viennent seuls.", en: "Yes, that's the whole idea: our experiences are designed for people who come on their own." },
     body: {
       fr: [
-        "Oui. La plupart des membres viennent seuls, et nos groupes sont pensés pour ça : notre équipe compose chaque table ou chaque équipe en tenant compte des langues parlées, des centres d'intérêt et de l'équilibre du groupe.",
+        "Oui. Nos expériences sont pensées pour celles et ceux qui viennent seuls : pour les dîners et les activités en groupe, notre équipe compose chaque table ou chaque équipe en tenant compte des langues parlées, des centres d'intérêt et de l'équilibre du groupe.",
         "Vous venez à deux ? Selon l'expérience, vous pouvez réserver plusieurs places en une seule fois (le nombre maximum est indiqué au moment de réserver).",
       ],
       en: [
-        "Yes. Most members come alone, and our groups are designed for it: our team puts each table or team together based on languages spoken, interests and group balance.",
+        "Yes. Our experiences are designed for people who come alone: for dinners and group activities, our team puts each table or team together based on languages spoken, interests and group balance.",
         "Coming with someone? Depending on the experience, you can book several seats at once (the maximum is shown when you book).",
       ],
     },
@@ -156,7 +156,7 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     slug: "annuler-une-reservation",
     category: "bookings",
     title: { fr: "Annuler une réservation et être remboursé", en: "Cancelling a booking and getting a refund" },
-    summary: { fr: "Le plus souvent gratuit jusqu'à 48 h avant ; intégralement remboursé si l'activité est annulée.", en: "Usually free up to 48 hours before; fully refunded if the activity is cancelled." },
+    summary: { fr: "Le plus souvent gratuit jusqu'à 48 h avant (chaque fiche indique ses conditions) ; intégralement remboursé si l'activité est annulée.", en: "Usually free up to 48 hours before (each page shows its own terms); fully refunded if the activity is cancelled." },
     body: {
       fr: [
         "Ouvrez la réservation dans [Mes réservations](/espace/reservations) puis « Annuler ma réservation ». Le montant remboursé est affiché avant que vous confirmiez.",
@@ -281,7 +281,7 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
       fr: [
         "Mot de passe oublié : depuis la page [Connexion](/connexion), choisissez « Mot de passe oublié » et suivez le lien reçu par e-mail.",
         "E-mail de confirmation introuvable : vérifiez vos courriers indésirables et l'onglet « Promotions », puis demandez un nouvel envoi depuis la page de réservation.",
-        "Toujours bloqué ? Écrivez-nous via la page [Contact](/contact) avec l'adresse utilisée pour le compte.",
+        "Toujours bloqué·e ? Écrivez-nous via la page [Contact](/contact) avec l'adresse utilisée pour le compte.",
       ],
       en: [
         "Forgotten password: on the [Sign in](/connexion) page, choose “Forgot password” and follow the link we email you.",
@@ -335,11 +335,11 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     summary: { fr: "Lieux publics, petits groupes, aucune coordonnée partagée, liberté de partir.", en: "Public places, small groups, no contact details shared, free to leave." },
     body: {
       fr: [
-        ["Les expériences ont lieu dans des lieux publics ou chez des partenaires sélectionnés, jamais chez un participant.", "Au sein du groupe, seuls le prénom et les centres d'intérêt sont visibles : ni téléphone, ni e-mail, ni nom de famille.", "Vous pouvez partir à tout moment, sans vous justifier.", "L'alcool n'est jamais obligatoire ; des boissons sans alcool sont toujours proposées."],
+        ["Les expériences ont lieu dans des lieux publics ou chez des partenaires sélectionnés, jamais chez un participant.", "Au sein du groupe, seuls le prénom, la photo de profil et les centres d'intérêt sont visibles : ni téléphone, ni e-mail, ni nom de famille.", "Vous pouvez partir à tout moment, sans vous justifier.", "L'alcool n'est jamais obligatoire ; des boissons sans alcool sont toujours proposées."],
         "En cas d'urgence au Maroc : Police 19, Gendarmerie royale 177, Protection civile 15. Toutes nos règles sont sur la page [Sécurité](/securite).",
       ],
       en: [
-        ["Experiences take place in public places or at selected partner venues, never at a participant's home.", "Within the group, only first names and interests are visible: no phone numbers, emails or last names.", "You can leave at any time without giving a reason.", "Alcohol is never compulsory; alcohol-free drinks are always available."],
+        ["Experiences take place in public places or at selected partner venues, never at a participant's home.", "Within the group, only first names, profile photos and interests are visible: no phone numbers, emails or last names.", "You can leave at any time without giving a reason.", "Alcohol is never compulsory; alcohol-free drinks are always available."],
         "In an emergency in Morocco: Police 19, Royal Gendarmerie 177, Civil Protection 15. All our rules are on the [Safety](/securite) page.",
       ],
     },
@@ -374,12 +374,12 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
       fr: [
         "Vous tenez un restaurant, un café, un studio de sport ou de bien-être, un atelier créatif, un lieu atypique, ou vous animez des activités ? Nous cherchons des partenaires pour accueillir nos petits groupes à Casablanca.",
         ["Remplissez le [formulaire de candidature](/devenir-partenaire) (5 minutes).", "Notre équipe vous recontacte pour un échange et, si possible, une visite.", "Nous construisons ensemble le format : contenu, horaires, nombre de places, prix."],
-        "Vous ne gérez ni la vente ni le paiement : nous nous en chargeons, et nous vous amenons un groupe constitué.",
+        "Comme lieu partenaire, vous ne gérez ni la vente ni le paiement : nous nous en chargeons, et nous vous amenons un groupe constitué. Vous préférez publier et gérer vos propres activités ? Voyez [l'espace organisateur](/aide/espace-organisateur).",
       ],
       en: [
         "Do you run a restaurant, café, sport or wellness studio, creative workshop or unusual venue, or do you lead activities? We're looking for partners to host our small groups in Casablanca.",
         ["Fill in the [application form](/devenir-partenaire) (5 minutes).", "Our team gets back to you for a chat and, where possible, a visit.", "Together we design the format: content, times, number of seats, price."],
-        "You don't handle sales or payment: we do, and we bring you a ready-made group.",
+        "As a partner venue, you don't handle sales or payment: we do, and we bring you a ready-made group. Would you rather publish and manage your own activities? See [the organiser area](/aide/espace-organisateur).",
       ],
     },
     related: ["criteres-de-selection", "remuneration-partenaire", "espace-organisateur"],
@@ -449,12 +449,12 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
       fr: [
         "Avant chaque date, notre équipe vous communique le nombre de participants confirmés et les besoins particuliers (régimes, allergies), sans autre donnée personnelle.",
         ["Prévoyez la table ou l'espace convenu à l'heure indiquée.", "Accueillez le groupe sous le nom « The Host Club ».", "Prévenez-nous immédiatement en cas d'imprévu (retard, fermeture, problème technique)."],
-        "Un espace partenaire en ligne est prévu dans une version ultérieure ; d'ici là, tout passe par votre interlocuteur The Host Club.",
+        "Lieu partenaire qui accueille nos groupes : tout passe par votre interlocuteur The Host Club. Organisateur qui publie ses propres activités : vous retrouvez vos dates, vos participants (régimes et allergies compris, avec leur accord) et le pointage à l'entrée dans l'[espace organisateur](/pro).",
       ],
       en: [
         "Before each date, our team sends you the number of confirmed participants and any special needs (diets, allergies), with no other personal data.",
         ["Have the agreed table or space ready at the stated time.", "Welcome the group under the name “The Host Club”.", "Tell us immediately if anything comes up (delay, closure, technical problem)."],
-        "An online partner area is planned for a later version; until then, everything goes through your The Host Club contact.",
+        "Partner venue hosting our groups: everything goes through your The Host Club contact. Organiser publishing your own activities: your dates, participants (diets and allergies included, with their consent) and check-in are in the [organiser area](/pro).",
       ],
     },
     related: ["annulations-cote-partenaire", "incident-avec-un-participant"],
@@ -467,12 +467,12 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     body: {
       fr: [
         "Si vous ne pouvez plus accueillir une date, prévenez-nous au plus tôt. Nous déplaçons la date ou l'annulons, et nous nous chargeons d'informer les participants et de les rembourser.",
-        "Les annulations côté participants (gratuites jusqu'à 48 h avant) sont gérées par nous ; le nombre final de participants vous est confirmé avant la date.",
+        "Les annulations côté participants (selon les conditions d'annulation de l'activité, le plus souvent gratuites jusqu'à 48 h avant) sont gérées par nous ; le nombre final de participants vous est confirmé avant la date.",
         "Les conséquences d'une annulation tardive de part et d'autre sont prévues dans l'accord de partenariat.",
       ],
       en: [
         "If you can no longer host a date, tell us as early as possible. We move or cancel the date, and we take care of informing and refunding participants.",
-        "Participant cancellations (free up to 48 hours before) are handled by us; the final headcount is confirmed to you before the date.",
+        "Participant cancellations (under the activity's cancellation terms, usually free up to 48 hours before) are handled by us; the final headcount is confirmed to you before the date.",
         "What happens after a late cancellation on either side is set out in the partnership agreement.",
       ],
     },

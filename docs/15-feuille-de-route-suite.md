@@ -121,6 +121,21 @@ Décisions de Rita (20 novembre) :
 - Ordre : 28 → 29 → 31 → 30 → 32.
 - **Hors code, avant le lancement** : de vraies expériences avec des dates, les informations légales, le paiement par carte (CMI) ; le bandeau « démonstration » disparaît à la mise en production (étape 27).
 
+## Audit des textes du 21 novembre — corrigé (demande de Hamza)
+
+Relecture de tous les textes (interface FR / EN / AR, centre d'aide, blog, pages légales, presse, démo) comparés aux vraies règles du site :
+
+- **Photo de profil** : elle est partagée avec le groupe ; confidentialité, sécurité, charte, aide et blog le disent désormais.
+- **Annulation** : plus de « 48 h » présenté comme règle unique ; chaque fiche a ses conditions (48 h reste « la plus courante »). Écran de réservation : message neutre quand rien n'est remboursé.
+- **Paiement dans le blog** : plus de « virement aujourd'hui, carte ensuite » ; le moyen indiqué au moment de réserver fait foi.
+- **Lieux partenaires et organisateurs** : deux façons de travailler avec nous (accueillir nos groupes, ou publier ses activités dans `/pro`) ; « espace partenaire prévu plus tard » retiré.
+- **Pas de ton « dating »** : « C'est réciproque » → « Envie partagée » ; arabe « إعجاب متبادل » → « رغبة مشتركة » ; catégorie démo « Rencontres & activités sociales » → « Échanges & vie sociale ». Le libellé « Mes rencontres » (validé à l'étape 32) est gardé.
+- **Univers** : plus de « cinq univers » (le nombre change avec le back-office).
+- **Restes de développement** (« phase 3 », « bientôt disponible ») retirés ; « Déjà membre ? » → « Déjà un compte ? » (« membre » = abonné) ; vocabulaire « expérience » ; écriture « seul·e / prévenu·e » harmonisée ; affirmations non vérifiables (« la plupart des membres… ») reformulées.
+- **Arabe** : nom de la ville traduit (الدار البيضاء) sur les fiches, la réservation et le détail de réservation ; « Enter » ; « جولة إرشادية » ; pluriels corrigés.
+
+À faire hors code : renommer la catégorie « Rencontres » dans le back-office si elle a déjà été modifiée en ligne ; informations légales (docs/16).
+
 ## Ajouts du 7 novembre (exemples Sahbi et Timeleft)
 
 Inspirations à reprendre **à notre façon** (sans copier) :

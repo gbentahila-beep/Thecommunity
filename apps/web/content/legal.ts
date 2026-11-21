@@ -120,9 +120,9 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         body: [
           [
             "Toujours dans des lieux publics ou chez des partenaires sélectionnés (restaurants, studios, ateliers) — jamais au domicile d'un participant.",
-            "En petits groupes composés et relus par notre équipe : moins de pression, personne d'isolé.",
+            "Pour les dîners et les activités en groupe, des petits groupes composés et relus par notre équipe : moins de pression, personne d'isolé.",
             "Certaines expériences sont « sur demande » : l'équipe valide chaque participant.",
-            "Le strict minimum partagé : votre groupe ne voit que votre prénom et vos centres d'intérêt. Ni téléphone, ni e-mail, ni nom de famille.",
+            "Le strict minimum partagé : votre groupe ne voit que votre prénom, votre photo de profil (si vous en avez mis une) et vos centres d'intérêt. Ni téléphone, ni e-mail, ni nom de famille.",
             "Pas de messagerie privée entre participants : on se découvre d'abord en vrai, dans un lieu public.",
             "Chaque membre accepte nos [règles de la communauté](/charte) avant de réserver, et chaque signalement est lu par une personne de l'équipe.",
           ],
@@ -597,7 +597,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
           [
             "Nous collectons uniquement ce qui est utile pour organiser des expériences en petit groupe, en sécurité.",
             "Nous ne vendons jamais vos données et n'utilisons aucun cookie publicitaire ni votre position GPS.",
-            "Au sein d'un groupe, seuls votre prénom et vos centres d'intérêt sont partagés.",
+            "Au sein d'un groupe, seuls votre prénom, votre photo de profil (si vous en avez mis une) et vos centres d'intérêt sont partagés.",
             "Votre régime et vos allergies ne sont transmis au lieu qu'avec votre accord explicite.",
             "Aucune photo où vous êtes reconnaissable n'est publiée sans votre accord.",
             "Vous pouvez à tout moment consulter, corriger ou télécharger vos données et supprimer votre compte.",
@@ -685,7 +685,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         body: [
           [
             "Notre équipe, uniquement les personnes qui en ont besoin (assistance, sécurité, modération, technique), selon leur rôle ; ces accès sont enregistrés.",
-            "Les autres participants de votre groupe : uniquement votre prénom et vos centres d'intérêt, une fois le groupe révélé.",
+            "Les autres participants de votre groupe : uniquement votre prénom, votre photo de profil (si vous en avez mis une) et vos centres d'intérêt, une fois le groupe révélé.",
             "Le lieu qui accueille l'expérience : le nombre de participants, les prénoms pour l'accueil et les marque-places et, avec votre accord, votre régime, vos allergies et vos langues de table. Jamais vos coordonnées.",
             "Les autorités, lorsque la loi l'exige.",
           ],
@@ -842,9 +842,9 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         body: [
           [
             "Always in public places or at selected partners (restaurants, studios, workshops) — never at a participant's home.",
-            "Small groups put together and reviewed by our team: less pressure, nobody left out.",
+            "For dinners and group activities, small groups put together and reviewed by our team: less pressure, nobody left out.",
             "Some experiences are “on request”: the team approves each participant.",
-            "The bare minimum is shared: your group only sees your first name and interests. No phone number, email or surname.",
+            "The bare minimum is shared: your group only sees your first name, your profile photo (if you added one) and your interests. No phone number, email or surname.",
             "No private messaging between participants: you meet in person first, in a public place.",
             "Every member accepts our [community rules](/charte) before booking, and every report is read by a person on our team.",
           ],
@@ -1210,7 +1210,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
     updated: UPDATED_EN,
     intro: "This policy explains what data we collect, how, why, how long we keep it, who it is shared with and how to exercise your rights, in accordance with Moroccan Law 09-08 on the protection of individuals with regard to the processing of personal data. It applies to The Host Club website, the member area and every service available through them. The French version prevails.",
     sections: [
-      { title: "1. Key points", body: [["We only collect what is useful to organise small-group experiences safely.", "We never sell your data and use no advertising cookies or GPS location.", "Within a group, only your first name and interests are shared.", "Your diet and allergies are only passed on to the venue with your explicit consent.", "No photo in which you can be recognised is published without your agreement.", "You can view, correct or download your data and delete your account at any time."]] },
+      { title: "1. Key points", body: [["We only collect what is useful to organise small-group experiences safely.", "We never sell your data and use no advertising cookies or GPS location.", "Within a group, only your first name, your profile photo (if you added one) and your interests are shared.", "Your diet and allergies are only passed on to the venue with your explicit consent.", "No photo in which you can be recognised is published without your agreement.", "You can view, correct or download your data and delete your account at any time."]] },
       { title: "2. Data controller", body: ["{{publisher}}, {{address}} (ICE {{ice}}), is responsible for the data processed on the site. For any question about your data: {{privacyEmail}}.", "Declaration to the CNDP: {{cndpDeclaration}}. Authorisation to transfer data outside Morocco: {{cndpTransfer}}.", "It is up to you to give us accurate information and keep it up to date from your member area."] },
       { title: "3. Data we collect", body: [["Account: first name, last name, email address, phone (optional). Your password is handled by our authentication provider and never stored in plain text.", "Profile and questionnaire: date of birth (to check you are an adult), city, languages, interests, goals; gender (optional; needed to book a women-only activity), profession, bio, photo, neighbourhood, favourite universes, sports level and group age preference (optional; used to put groups together and for “For you” suggestions). The questionnaire is neither a medical nor a psychological assessment.", "Approximate location: your city and, if you provide it, your neighbourhood. No GPS tracking.", "Experiences: bookings, participation requests (message, optional Instagram account), waitlists, tables or teams, attendance on the day, no-shows, reviews (and an attached photo, published only after the team checks it), “My connections” (people you'd like to see again — never shown to them unless it's mutual — and people you don't want to be grouped with again), membership, promo codes used.", "Welcome preferences: diet, allergies and table language(s), if you provide them, with the date of your consent to share them with the venue.", "Payments and invoices: amount, date, status, provider reference, documents issued. Card details are entered and processed only by the payment provider: we never receive them.", "Safety and support: reports, messages sent to the team, moderation decisions and appeals.", "Technical data: IP address, connection and security logs, strictly necessary cookies.", "Experience questionnaire: your answers (multiple choice only: level, pace, preferences…), if the experience has one.", "Physical activities: the version of the participation terms you accepted and its date.", "Outing proposals (trusted members): the content of your proposals and the team's reply."]] },
       { title: "4. How we collect it", body: [["Directly from you: account creation, questionnaire, booking, participation request, contact or partner application form, report, review.", "Automatically: technical logs and strictly necessary cookies when you use the site.", "From our providers: the payment provider confirms the status and reference of each payment.", "From our team: attendance on the day, table line-ups, moderation decisions."]] },
@@ -1245,7 +1245,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "8. Who can access it",
         body: [
-          ["Our team, only people who need it (support, safety, moderation, technical), according to their role; this access is logged.", "Other participants in your group: only your first name and interests, once the group is revealed.", "The venue hosting the experience: the number of participants, first names for the welcome and place cards and, with your consent, your diet, allergies and table languages. Never your contact details.", "Authorities, where required by law."],
+          ["Our team, only people who need it (support, safety, moderation, technical), according to their role; this access is logged.", "Other participants in your group: only your first name, your profile photo (if you added one) and your interests, once the group is revealed.", "The venue hosting the experience: the number of participants, first names for the welcome and place cards and, with your consent, your diet, allergies and table languages. Never your contact details.", "Authorities, where required by law."],
           "Our providers process data on our behalf, following our instructions and with security safeguards:",
           {
             table: {

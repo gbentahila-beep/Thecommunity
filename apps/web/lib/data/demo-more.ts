@@ -252,7 +252,7 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
     ratingAvg: 4.9,
     ratingCount: 19,
   },
-  // ——— Rencontres & activités sociales ———
+  // ——— Échanges & vie sociale ———
   {
     ...base,
     id: "exp-echange-langues",
@@ -302,7 +302,7 @@ export const DEMO_MORE_EXPERIENCES: Experience[] = [
     ...base,
     id: "exp-art-deco",
     slug: "visite-guidee-casablanca-art-deco",
-    title: { fr: "Visite guidée : Casablanca Art déco", ar: "جولة مرفقة: الدار البيضاء آرت ديكو", en: "Guided tour: Art Deco Casablanca" },
+    title: { fr: "Visite guidée : Casablanca Art déco", ar: "جولة إرشادية: الدار البيضاء آرت ديكو", en: "Guided tour: Art Deco Casablanca" },
     summary: { fr: "Deux heures pour lire les façades du centre-ville comme un livre d'histoire.", ar: "ساعتان لقراءة واجهات وسط المدينة ككتاب تاريخ.", en: "Two hours to read the downtown façades like a history book." },
     description: { fr: "Une architecte vous fait découvrir les immeubles Art déco et néo-mauresques du centre-ville : leurs architectes, leurs ornements, leurs histoires. Petit groupe, questions bienvenues.", en: "An architect shows you the Art Deco and neo-Moorish buildings of downtown: their architects, ornaments and stories. Small group, questions welcome." },
     categoryId: "learn",

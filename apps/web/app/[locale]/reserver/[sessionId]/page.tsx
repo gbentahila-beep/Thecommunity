@@ -13,7 +13,7 @@ import { memberAmountFor, PriceTag } from "@/components/price-tag";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAccountState, getSessionUser } from "@/lib/auth/session";
-import { getMembershipPlan, getSessionForBooking } from "@/lib/data";
+import { getCity, getMembershipPlan, getSessionForBooking } from "@/lib/data";
 import { adminAuth, adminDb } from "@/lib/firebase/admin";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
@@ -93,6 +93,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   if (!session) notFound();
   const t = await getTranslations("booking");
   const exp = session.experience;
+  const city = await getCity(exp.cityId);
   const lang = locale as "fr" | "ar" | "en";
   const cover = exp.images[0];
   const refusal = bookingRefusal({ ...session, startAt: new Date(session.startAt) }, exp, 1);
@@ -137,7 +138,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             </p>
             <p className="flex items-center gap-2 text-sm text-muted">
               <MapPin className="size-4 shrink-0 text-plum-700" aria-hidden />
-              {exp.district}, Casablanca
+              {exp.district}, {city ? tr(city.name, locale) : "Casablanca"}
             </p>
           </div>
         </div>
