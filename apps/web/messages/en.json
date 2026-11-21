@@ -74,7 +74,69 @@
     "featuredTitle": "Team picks",
     "weekendTitle": "This weekend in {city}",
     "newTitle": "New",
-    "popularTitle": "Popular right now"
+    "popularTitle": "Popular right now",
+    "universesEyebrow": "Our universes",
+    "groupLabel": "Group",
+    "groupRange": "{min} to {max} people",
+    "groupExact": "{n} people",
+    "universe": {
+      "eat": {
+        "tagline": "One table, new faces, a great spot",
+        "text": "New in town, or your friends are always busy? Join a table of people who also want to meet someone new. We put the table together and book the restaurant: come alone or as two.",
+        "group": "Tables put together",
+        "factLabel": "Matched by",
+        "factValue": "Languages, ages, interests",
+        "cta": "See dinners"
+      },
+      "move": {
+        "tagline": "Get moving with people at your level",
+        "text": "Fancy padel, yoga or a run, but nobody to come along? Join a small group that wants to do the same thing. The court or studio is booked: all you have to do is show up.",
+        "group": "Small groups",
+        "factLabel": "Level",
+        "factValue": "Matched to yours",
+        "cta": "See sport & wellbeing"
+      },
+      "play": {
+        "tagline": "Team up with strangers",
+        "text": "Escape game, quiz, paintball or board games: playing breaks the ice in minutes. We build balanced teams so everyone has a good time.",
+        "group": "In teams",
+        "factLabel": "Teams",
+        "factValue": "Balanced by us",
+        "cta": "See games"
+      },
+      "create": {
+        "tagline": "Make something, together",
+        "text": "Pottery, Moroccan cooking, perfume, zellige painting: your hands are busy and the conversation flows on its own. You leave with what you made… and new contacts.",
+        "group": "Small workshops",
+        "factLabel": "Level",
+        "factValue": "Beginners welcome",
+        "cta": "See workshops"
+      },
+      "discover": {
+        "tagline": "Meet lots of people in one night",
+        "text": "A sunset rooftop, a Gnawa night, a street art walk: outings open to everyone, to see the city differently and cross paths with new faces.",
+        "group": "Open to everyone",
+        "factLabel": "Format",
+        "factValue": "Solo or with friends",
+        "cta": "See outings"
+      },
+      "meet": {
+        "tagline": "Meet-ups to talk and settle in",
+        "text": "Language exchanges, book clubs, newcomer get-togethers: formats built for conversation, perfect when you've just moved to Casablanca.",
+        "group": "Open to everyone",
+        "factLabel": "For",
+        "factValue": "Newcomers welcome",
+        "cta": "See meet-ups"
+      },
+      "learn": {
+        "tagline": "Learn something new, together",
+        "text": "An Art Deco tour, a specialty coffee class, a talk: you learn with a guide or an expert, and share the discovery with other curious people.",
+        "group": "Small groups",
+        "factLabel": "With",
+        "factValue": "A guide or an expert",
+        "cta": "See culture"
+      }
+    }
   },
   "card": {
     "people": "{count} people",

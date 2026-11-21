@@ -96,3 +96,16 @@
     padding-bottom: calc(15rem + env(safe-area-inset-bottom));
   }
 }
+
+/* Accueil, « Des univers pour sortir de sa routine » : cartes empilées teintées par la couleur de l'univers (--cat). */
+.universe-card {
+  background:
+    radial-gradient(120% 80% at 100% 0%, color-mix(in oklab, var(--cat) 22%, transparent) 0%, transparent 60%),
+    linear-gradient(160deg, color-mix(in oklab, var(--cat) 14%, #fff) 0%, color-mix(in oklab, var(--cat) 8%, var(--color-cream)) 100%);
+}
+.universe-accent {
+  color: color-mix(in oklab, var(--cat) 78%, #000);
+}
+.universe-badge {
+  color: var(--cat);
+}

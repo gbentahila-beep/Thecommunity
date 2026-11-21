@@ -53,8 +53,11 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   const uni = d.locator('section[aria-labelledby="universes-title"]');
   assert(await uni.locator('li').count() === 7, 'sept univers (dont Rencontres et Culture, 21b)');
   assert((await uni.locator('li').nth(5).locator('img').getAttribute('src')).includes('langues.webp'), 'Rencontres : illustration de la catégorie');
-  const boxes = await uni.locator('li').evaluateAll((lis) => lis.map((li) => { const img = li.querySelector('img').getBoundingClientRect(); const h = li.querySelector('h3').getBoundingClientRect(); return img.left > h.left; }));
-  assert(boxes.every((right, i) => right === (i % 2 === 0)), 'univers en alternance photo à droite / à gauche');
+  assert((await uni.locator('li').evaluateAll((lis) => lis.map((li) => getComputedStyle(li).position))).every((p) => p === 'sticky'), 'univers : cartes empilées (sticky)');
+  const eat = uni.locator('li').first();
+  assert(await eat.getByText('Une table, de nouvelles têtes, une bonne adresse').isVisible(), 'carte Dîners : accroche');
+  assert(await eat.getByText('De 5 à 10 personnes').isVisible(), 'carte Dîners : taille de groupe calculée sur les expériences');
+  assert(await eat.getByRole('link', { name: /Dîners/ }).getAttribute('href') === '/casablanca/eat', 'carte Dîners : bouton vers l\'univers');
   assert(await d.getByRole('heading', { level: 2, name: 'Pourquoi venir' }).isVisible(), 'section « Pourquoi venir »');
   assert(await d.getByRole('heading', { name: 'Questions fréquentes' }).isVisible(), 'FAQ sur l\'accueil');
   assert(await d.getByRole('link', { name: /Consulter le centre d'aide/ }).getAttribute('href') === '/aide', 'renvoi vers le centre d\'aide');

@@ -137,6 +137,12 @@ Relecture de tous les textes (interface FR / EN / AR, centre d'aide, blog, pages
 
 À faire hors code : renommer la catégorie « Rencontres » dans le back-office si elle a déjà été modifiée en ligne ; informations légales (docs/16).
 
+## Univers de l'accueil en cartes empilées (demande de Hamza, 21 novembre) — livré
+
+- « Des univers pour sortir de sa routine » : chaque univers devient une carte teintée de sa couleur — nom, accroche, photo, texte, deux repères (**Groupe** calculé sur les vraies expériences, ex. « De 5 à 10 personnes », et un repère propre à l'univers) et un bouton « Voir les dîners », « Voir les jeux »…
+- En faisant défiler, chaque carte reste accrochée en haut et la suivante glisse par-dessus ; sur un petit écran, une carte s'accroche seulement quand son bouton est visible.
+- Textes FR / EN / AR dans `messages/*.json` (`home.universe.<id>`) ; une catégorie créée plus tard dans le back-office s'affiche avec sa description. Même présentation sur « Comment ça marche ».
+
 ## Alertes « nouvelles tables et activités » (demande de Hamza, 21 novembre) — livré
 
 - **Où** : accueil, juste sous « Voir toutes les expériences » (section « Cette semaine ») ; aussi dans **Préférences** (« Nouvelles expériences par e-mail »).

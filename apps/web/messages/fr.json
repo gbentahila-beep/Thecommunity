@@ -74,7 +74,69 @@
     "featuredTitle": "Coups de cœur de l'équipe",
     "weekendTitle": "Ce week-end à {city}",
     "newTitle": "Nouveautés",
-    "popularTitle": "Populaires en ce moment"
+    "popularTitle": "Populaires en ce moment",
+    "universesEyebrow": "Nos univers",
+    "groupLabel": "Groupe",
+    "groupRange": "De {min} à {max} personnes",
+    "groupExact": "{n} personnes",
+    "universe": {
+      "eat": {
+        "tagline": "Une table, de nouvelles têtes, une bonne adresse",
+        "text": "Nouveau en ville, ou des amis toujours pris ? Rejoignez une table de personnes qui ont, elles aussi, envie de rencontrer du monde. Nous composons la table et réservons le restaurant : venez seul·e ou à deux.",
+        "group": "Tables composées",
+        "factLabel": "Critères",
+        "factValue": "Langues, âges, intérêts",
+        "cta": "Voir les dîners"
+      },
+      "move": {
+        "tagline": "Bougez avec des personnes de votre niveau",
+        "text": "Envie d'un padel, d'un yoga ou d'une course, mais personne pour suivre ? Rejoignez un petit groupe qui veut faire la même chose. Le terrain ou le studio est réservé : il ne reste qu'à venir.",
+        "group": "Petits groupes",
+        "factLabel": "Niveau",
+        "factValue": "Selon le vôtre",
+        "cta": "Voir le sport & bien-être"
+      },
+      "play": {
+        "tagline": "Faites équipe avec des inconnus",
+        "text": "Escape game, quiz, paintball ou jeux de société : le jeu brise la glace en quelques minutes. Nous formons des équipes équilibrées pour que chacun passe un bon moment.",
+        "group": "En équipes",
+        "factLabel": "Les équipes",
+        "factValue": "Équilibrées par nos soins",
+        "cta": "Voir les jeux"
+      },
+      "create": {
+        "tagline": "Créez quelque chose, ensemble",
+        "text": "Céramique, cuisine marocaine, parfum, peinture sur zellige : les mains sont occupées, la conversation vient toute seule. Vous repartez avec votre création… et de nouveaux contacts.",
+        "group": "Petits ateliers",
+        "factLabel": "Niveau",
+        "factValue": "Débutants bienvenus",
+        "cta": "Voir les ateliers"
+      },
+      "discover": {
+        "tagline": "Rencontrez beaucoup de monde en une soirée",
+        "text": "Rooftop au coucher du soleil, soirée gnaoua, balade street art : des sorties ouvertes à tous, pour découvrir la ville autrement et croiser de nouvelles têtes.",
+        "group": "Ouvert à tous",
+        "factLabel": "Format",
+        "factValue": "Seul·e ou entre amis",
+        "cta": "Voir les sorties"
+      },
+      "meet": {
+        "tagline": "Des rendez-vous pour parler et s'intégrer",
+        "text": "Échanges de langues, clubs de lecture, rendez-vous des nouveaux arrivants : des formats pensés pour la conversation, parfaits quand on vient de s'installer à Casablanca.",
+        "group": "Ouvert à tous",
+        "factLabel": "Pour qui",
+        "factValue": "Nouveaux arrivants bienvenus",
+        "cta": "Voir les rendez-vous"
+      },
+      "learn": {
+        "tagline": "Apprenez quelque chose de nouveau, à plusieurs",
+        "text": "Visite Art déco, initiation au café de spécialité, conférence : on apprend avec un guide ou un expert, et on partage la découverte avec d'autres curieux.",
+        "group": "Petits groupes",
+        "factLabel": "Avec",
+        "factValue": "Un guide ou un expert",
+        "cta": "Voir la culture"
+      }
+    }
   },
   "card": {
     "people": "{count} pers.",
