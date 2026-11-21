@@ -1,6 +1,6 @@
 "use client";
 
-import { REVIEW_COMMENT_MAX, REVIEW_PHOTO_MAX_MB } from "@thecommunity/shared";
+import { REVIEW_COMMENT_MAX, REVIEW_DETAIL_KEYS, REVIEW_PHOTO_MAX_MB, type ReviewDetailKey } from "@thecommunity/shared";
 import { httpsCallable } from "firebase/functions";
 import { ref, uploadBytes } from "firebase/storage";
 import { ImagePlus, Star } from "lucide-react";
@@ -21,6 +21,9 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
   const [error, setError] = useState<string | null>(null);
   // Étape 24 : photo facultative, publiée seulement une fois acceptée par l'équipe.
   const [photo, setPhoto] = useState<File | null>(null);
+  // Questions détaillées, toutes facultatives (page publique « Avis »).
+  const [details, setDetails] = useState<Partial<Record<ReviewDetailKey, number>>>({});
+  const [comeAgain, setComeAgain] = useState<boolean | null>(null);
 
   return (
     <form
@@ -39,7 +42,14 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
             photoPath = `review-uploads/${uid}/${Date.now().toString(36)}-${safe}`;
             await uploadBytes(ref(firebase().storage, photoPath), photo, { contentType: photo.type });
           }
-          await httpsCallable(firebase().functions, "submitReview")({ reservationId, rating, comment: comment.trim(), ...(photoPath ? { photoPath } : {}) });
+          await httpsCallable(firebase().functions, "submitReview")({
+            reservationId,
+            rating,
+            comment: comment.trim(),
+            ...(photoPath ? { photoPath } : {}),
+            ...(Object.keys(details).length ? { details } : {}),
+            ...(comeAgain !== null ? { comeAgain } : {}),
+          });
           router.refresh();
         } catch (err) {
           const reason = (err as { details?: { reason?: string } }).details?.reason;
@@ -66,6 +76,33 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
               <Star className={`size-8 ${n <= rating ? "fill-current" : "text-plum-200"}`} aria-hidden />
             </button>
           ))}
+        </div>
+      </fieldset>
+      <fieldset className="rounded-2xl bg-cream/70 p-4">
+        <legend className="text-sm font-medium text-ink">{t("detailsLabel")} <span className="font-normal text-muted">({t("optional")})</span></legend>
+        <div className="mt-2 space-y-2">
+          {REVIEW_DETAIL_KEYS.map((k) => (
+            <div key={k} className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-sm text-ink/85">{t(`detail_${k}`)}</span>
+              <div className="flex" role="group" aria-label={t(`detail_${k}`)}>
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button key={n} type="button" aria-pressed={details[k] === n} aria-label={`${t(`detail_${k}`)} : ${t("stars", { count: n })}`} onClick={() => setDetails((d) => ({ ...d, [k]: d[k] === n ? undefined : n }))} className="p-0.5 text-plum-700">
+                    <Star className={`size-6 ${n <= (details[k] ?? 0) ? "fill-current" : "text-plum-200"}`} aria-hidden />
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+            <span className="text-sm text-ink/85">{t("comeAgain")}</span>
+            <div className="flex gap-2">
+              {[true, false].map((v) => (
+                <button key={String(v)} type="button" aria-pressed={comeAgain === v} onClick={() => setComeAgain((c) => (c === v ? null : v))} className={`rounded-full px-4 py-1.5 text-sm font-semibold ring-1 ${comeAgain === v ? "bg-plum-900 text-white ring-plum-900" : "bg-white text-ink ring-line"}`}>
+                  {v ? t("yes") : t("no")}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </fieldset>
       <div>

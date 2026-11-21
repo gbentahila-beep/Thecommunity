@@ -26,7 +26,7 @@ export function membershipTerms(o: {
   now: number;
   /** Acceptation d'une demande par l'équipe : pas de contrôle d'accès anticipé. */
   byTeam?: boolean;
-}): { member: boolean; memberUnitAmount?: number } {
+}): { member: boolean; memberUnitAmount?: number; waiveFees?: boolean } {
   const member = memberFromDoc(o.membership, new Date(o.now));
   if (o.e.membersOnly === true && !member) refuse("members_only", "Expérience réservée aux membres.");
   const early = o.plan?.isActive === true ? Number(o.plan.earlyAccessHours ?? 0) : 0;
@@ -36,5 +36,6 @@ export function membershipTerms(o: {
   }
   if (!member) return { member };
   const memberUnitAmount = memberUnitPrice(o.s.price.amount, { discountPercent: Number(o.plan?.discountPercent ?? 0) }, o.e.memberPrice?.amount ?? null);
-  return { member, memberUnitAmount };
+  // Avantage réglable : frais de service offerts aux membres.
+  return { member, memberUnitAmount, waiveFees: o.plan?.waiveServiceFee === true };
 }

@@ -23,7 +23,7 @@ export const submitReview = onCall({ region: REGION }, async (req) => {
   const { uid } = requireAuth(req);
   const parsed = reviewInputSchema.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { reservationId, rating, comment, photoPath } = parsed.data;
+  const { reservationId, rating, comment, photoPath, details, comeAgain } = parsed.data;
   const user = (await db.doc(`users/${uid}`).get()).data() ?? {};
   // Étape 24 : photo facultative, seulement depuis le dossier de la personne, et réellement envoyée.
   if (photoPath) {
@@ -54,6 +54,8 @@ export const submitReview = onCall({ region: REGION }, async (req) => {
       status: "published",
       organizerId: e.organizerId ?? null,
       ...(photoPath ? { photo: { path: photoPath, status: "pending" } } : {}),
+      ...(details && Object.values(details).some((v) => v != null) ? { details: Object.fromEntries(Object.entries(details).filter(([, v]) => v != null)) } : {}),
+      ...(typeof comeAgain === "boolean" ? { comeAgain } : {}),
       sessionStartAt: r.sessionSnapshot?.startAt ?? null,
       createdAt: FieldValue.serverTimestamp(),
     });

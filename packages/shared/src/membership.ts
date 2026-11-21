@@ -11,10 +11,22 @@ export const MEMBERSHIP_MONTHS = 12;
 /** On peut renouveler à partir de 30 jours avant l'échéance ; la nouvelle période commence à l'échéance. */
 export const MEMBERSHIP_RENEW_WINDOW_DAYS = 30;
 
+/** Durées proposées (en mois). Chaque durée se paie en une fois, sans renouvellement automatique. */
+export const MEMBERSHIP_DURATIONS = [1, 3, 6, 12] as const;
+export type MembershipDuration = (typeof MEMBERSHIP_DURATIONS)[number];
+
+/** Une offre de la formule : une durée, son prix, sa visibilité. `highlight` = offre mise en avant (« Recommandée »). */
+export type MembershipOffer = { id: string; months: MembershipDuration; price: { amount: number; currency: "MAD" }; isActive: boolean; highlight?: boolean };
+
 export type MembershipPlan = {
   id: string;
   name: LocalizedText;
+  /** Prix de l'offre 12 mois (compatibilité ; les prix font foi dans `offers`). */
   price: { amount: number; currency: "MAD" };
+  /** Offres par durée ; absentes sur les anciennes formules (= une seule offre de 12 mois au prix `price`). */
+  offers?: MembershipOffer[];
+  /** Les membres ne paient pas les frais de service. */
+  waiveServiceFee?: boolean;
   /** Réduction par défaut sur le prix public des expériences (en %). */
   discountPercent: number;
   /** Les nouvelles dates sont réservées aux membres pendant ce nombre d'heures (0 = pas d'accès anticipé). */
@@ -49,13 +61,35 @@ export function memberUnitPrice(publicAmount: number, plan: Pick<MembershipPlan,
   return Math.min(publicAmount, Math.round((publicAmount * (100 - plan.discountPercent)) / 100 / 100) * 100);
 }
 
-/** Fin d'une nouvelle période : 12 mois à partir de maintenant, ou de l'échéance en cours si on renouvelle en avance. */
-export function nextMembershipPeriod(current: { endAt: string | Date; status: string } | null, now: Date = new Date()) {
+/** Fin d'une nouvelle période : `months` mois (12 par défaut) à partir de maintenant, ou de l'échéance en cours si on renouvelle en avance. */
+export function nextMembershipPeriod(current: { endAt: string | Date; status: string } | null, now: Date = new Date(), months: number = MEMBERSHIP_MONTHS) {
   const currentEnd = current && current.status === "active" ? new Date(current.endAt) : null;
   const start = currentEnd && currentEnd.getTime() > now.getTime() ? currentEnd : now;
   const end = new Date(start);
-  end.setUTCMonth(end.getUTCMonth() + MEMBERSHIP_MONTHS);
+  end.setUTCMonth(end.getUTCMonth() + months);
   return { startAt: start, endAt: end };
+}
+
+/** Offres visibles, de la plus courte à la plus longue (ancienne formule : une offre de 12 mois). */
+export function planOffers(plan: Pick<MembershipPlan, "price" | "offers">): MembershipOffer[] {
+  const list = plan.offers?.length ? plan.offers : [{ id: "12m", months: 12 as const, price: plan.price, isActive: true, highlight: true }];
+  return list.filter((o) => o.isActive && o.price.amount > 0).sort((a, b) => a.months - b.months);
+}
+
+/** Offre choisie (ou celle mise en avant, sinon la plus longue). */
+export function pickOffer(plan: Pick<MembershipPlan, "price" | "offers">, offerId?: string | null): MembershipOffer | null {
+  const offers = planOffers(plan);
+  if (offerId) return offers.find((o) => o.id === offerId) ?? null;
+  return offers.find((o) => o.highlight) ?? offers[offers.length - 1] ?? null;
+}
+
+/** Prix par mois (centimes, arrondi au dirham) et économie par rapport à l'offre la plus courte payée chaque mois. */
+export function offerEconomics(offer: MembershipOffer, offers: MembershipOffer[]) {
+  const perMonth = Math.round(offer.price.amount / offer.months / 100) * 100;
+  const base = offers[0];
+  const reference = base && base.months < offer.months ? Math.round((base.price.amount / base.months) * offer.months) : offer.price.amount;
+  const saving = Math.max(0, reference - offer.price.amount);
+  return { perMonth, reference, saving, savingPercent: reference > 0 ? Math.round((saving / reference) * 100) : 0 };
 }
 
 /** Renouvellement possible ? (pas membre, ou échéance dans moins de 30 jours) */
@@ -74,5 +108,12 @@ export const membershipPlanInputSchema = z.object({
   benefitsFr: z.string().max(2000, "tooLong").default(""),
   benefitsAr: z.string().max(2000, "tooLong").default(""),
   isActive: z.boolean(),
-});
+  waiveServiceFee: z.boolean().default(false),
+  /** Prix par durée (DH) ; 0 ou vide = durée non proposée. Au moins une durée proposée si la formule est active. */
+  offers: z
+    .array(z.object({ months: z.union([z.literal(1), z.literal(3), z.literal(6), z.literal(12)]), priceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany"), isActive: z.boolean() }))
+    .max(4)
+    .default([]),
+  highlightMonths: z.union([z.literal(1), z.literal(3), z.literal(6), z.literal(12)]).optional(),
+}).refine((v) => !v.isActive || v.offers.length === 0 || v.offers.some((o) => o.isActive && o.priceDh >= 1), { message: "noOffer", path: ["offers"] });
 export type MembershipPlanInput = z.infer<typeof membershipPlanInputSchema>;

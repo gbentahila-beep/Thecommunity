@@ -23,6 +23,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
 
   // 2. Barre de recherche de l'en-tête : clavier
   await d.goto(base + '/', { waitUntil: 'load' });
+  await d.getByTestId('header-search-open').click();
   const box = d.locator('header input[role=combobox]');
   await box.fill('padle');
   assert(await visible(d.getByRole('option', { name: /Padel entre inconnus/ })), 'en-tête : suggestion affichée');
@@ -32,6 +33,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await box.press('Enter');
   await d.waitForURL('**/experiences/padel-entre-inconnus-anfa', { timeout: 15000 });
   assert(true, 'Entrée : ouvre la fiche');
+  await d.getByTestId('header-search-open').click();
   await d.locator('header input[role=combobox]').fill('zzqx');
   assert(await visible(d.getByText('Aucune suggestion')), 'aucune suggestion : message');
   await d.locator('header input[role=combobox]').press('Enter');

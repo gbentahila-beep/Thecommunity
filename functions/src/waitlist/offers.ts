@@ -1,4 +1,4 @@
-import { bookingClosesAt, memberUnitPrice, readServiceFee, WAITLIST_OFFER_HOURS, type ServiceFee } from "@thecommunity/shared";
+import { bookingClosesAt, memberUnitPrice, readServiceFee, WAITLIST_OFFER_HOURS, type ServiceFee, NO_SERVICE_FEE } from "@thecommunity/shared";
 import { Timestamp, type DocumentData, type DocumentReference, type QueryDocumentSnapshot, type Transaction } from "firebase-admin/firestore";
 import { db, FieldValue } from "../lib/admin";
 import { memberFromDoc, membershipRef, planRef } from "../membership/state";
@@ -76,7 +76,7 @@ export function writeOffers(
       seats,
       holdUntilMs: Math.min(o.now + WAITLIST_OFFER_HOURS * 3_600_000, closesAt),
       memberUnitAmount,
-      serviceFee: o.candidates.serviceFee,
+      serviceFee: member && o.candidates.plan?.waiveServiceFee === true ? NO_SERVICE_FEE : o.candidates.serviceFee,
       extra: { fromWaitlist: true },
     });
     tx.set(resRef, doc);

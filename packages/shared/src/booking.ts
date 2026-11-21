@@ -132,7 +132,15 @@ export const reviewInputSchema = z.object({
   comment: z.string().trim().max(REVIEW_COMMENT_MAX, "tooLong").default(""),
   /** Étape 24 : photo facultative déjà envoyée dans review-uploads/{uid}/… (vérifiée par le serveur). */
   photoPath: z.string().max(300).regex(/^review-uploads\/[A-Za-z0-9_-]{1,128}\/[\w.-]{1,120}$/, "invalidImage").optional().or(z.literal("")),
+  /** Notes détaillées facultatives (page Avis : « Chaque question que nous posons »). */
+  details: z.object({ group: z.number().int().min(1).max(5).optional(), organisation: z.number().int().min(1).max(5).optional(), venue: z.number().int().min(1).max(5).optional() }).optional(),
+  /** « Reviendriez-vous ? » (facultatif). */
+  comeAgain: z.boolean().optional(),
 });
+
+/** Questions détaillées d'un avis (toutes facultatives). */
+export const REVIEW_DETAIL_KEYS = ["group", "organisation", "venue"] as const;
+export type ReviewDetailKey = (typeof REVIEW_DETAIL_KEYS)[number];
 
 /** Peut-on laisser un avis sur cette réservation à `now` ? (présent·e, ou confirmé·e et expérience terminée) */
 export function canReview(r: { status: string; sessionSnapshot: { endAt: string } }, now: Date = new Date()): boolean {

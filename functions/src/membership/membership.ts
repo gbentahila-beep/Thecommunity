@@ -1,5 +1,7 @@
 import {
+  MEMBERSHIP_DURATIONS,
   MEMBERSHIP_TRANSFER_DAYS,
+  pickOffer,
   canRenewMembership,
   MEMBERSHIP_PLAN_ID,
   membershipPlanInputSchema,
@@ -34,9 +36,16 @@ export const adminSaveMembershipPlan = onCall({ region: REGION }, async (req) =>
   const lines = (s: string) => s.split("\n").map((l) => l.trim()).filter(Boolean);
   const fr = lines(v.benefitsFr);
   const ar = lines(v.benefitsAr);
+  // Offres par durée (1, 3, 6, 12 mois) ; sans offre saisie, une seule offre de 12 mois au prix annuel.
+  const offers = (v.offers.length ? v.offers : [{ months: 12 as const, priceDh: v.priceDh, isActive: true }])
+    .filter((o) => (MEMBERSHIP_DURATIONS as readonly number[]).includes(o.months))
+    .map((o) => ({ id: `${o.months}m`, months: o.months, price: { amount: Math.round(o.priceDh * 100), currency: "MAD" as const }, isActive: o.isActive && o.priceDh >= 1, highlight: o.months === (v.highlightMonths ?? 12) }));
+  const yearly = offers.find((o) => o.months === 12 && o.isActive) ?? offers.find((o) => o.isActive);
   const plan = {
     name: { fr: v.nameFr, ...(v.nameAr ? { ar: v.nameAr } : {}) },
-    price: { amount: Math.round(v.priceDh * 100), currency: "MAD" },
+    price: yearly ? yearly.price : { amount: Math.round(v.priceDh * 100), currency: "MAD" },
+    offers,
+    waiveServiceFee: v.waiveServiceFee,
     discountPercent: v.discountPercent,
     earlyAccessHours: v.earlyAccessHours,
     benefits: fr.map((t, i) => ({ fr: t, ...(ar[i] ? { ar: ar[i] } : {}) })),
@@ -45,7 +54,7 @@ export const adminSaveMembershipPlan = onCall({ region: REGION }, async (req) =>
     updatedBy: actor.uid,
   };
   await planRef().set(plan, { merge: true });
-  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "membership.plan.save", targetType: "membershipPlan", targetId: MEMBERSHIP_PLAN_ID, after: { priceDh: v.priceDh, discountPercent: v.discountPercent, earlyAccessHours: v.earlyAccessHours, isActive: v.isActive } });
+  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "membership.plan.save", targetType: "membershipPlan", targetId: MEMBERSHIP_PLAN_ID, after: { offers: offers.map((o) => `${o.months}m:${o.price.amount / 100}${o.isActive ? "" : "(off)"}`).join(" "), discountPercent: v.discountPercent, earlyAccessHours: v.earlyAccessHours, waiveServiceFee: v.waiveServiceFee, isActive: v.isActive } });
   return { ok: true };
 });
 
@@ -56,10 +65,14 @@ export const adminSaveMembershipPlan = onCall({ region: REGION }, async (req) =>
  */
 export const startMembershipCheckout = onCall({ region: REGION }, async (req) => {
   const { uid, token } = requireAuth(req);
+  const input = z.object({ offerId: z.string().regex(/^(1|3|6|12)m$/).optional() }).safeParse(req.data ?? {});
+  if (!input.success) invalidArgument(input.error.issues);
   if (token.email_verified !== true) refuse("email_not_verified", "Confirmez votre adresse e-mail.");
   await requireMemberReady(uid);
   const plan = await activePlan();
   if (!plan) refuse("membership_unavailable", "L'abonnement n'est pas proposé pour le moment.");
+  const offer = pickOffer(plan!, input.data.offerId);
+  if (!offer) refuse("membership_unavailable", "Cette formule n'est pas proposée pour le moment.");
   const current = (await db.doc(`memberships/${uid}`).get()).data();
   if (current && !canRenewMembership({ status: current.status, endAt: (current.endAt as Timestamp).toDate() })) refuse("already_member", "Votre abonnement est déjà actif.");
   const settings = await paymentSettings();
@@ -74,14 +87,16 @@ export const startMembershipCheckout = onCall({ region: REGION }, async (req) =>
   await payRef.set({
     purpose: "membership",
     planId: plan!.id,
+    offerId: offer!.id,
+    months: offer!.months,
     reservationId: null,
     userId: uid,
     type: "payment",
     provider: provider.id,
     mode: settings.mode,
     providerRef: null,
-    amount: plan!.price.amount,
-    currency: plan!.price.currency,
+    amount: offer!.price.amount,
+    currency: offer!.price.currency,
     status: "initiated",
     processedEventIds: [],
     createdAt: FieldValue.serverTimestamp(),
@@ -90,9 +105,9 @@ export const startMembershipCheckout = onCall({ region: REGION }, async (req) =>
   const checkout = await provider.createCheckout({
     paymentId: payRef.id,
     reservationId: `membership_${uid}`,
-    amount: plan!.price.amount,
-    currency: plan!.price.currency,
-    description: `${plan!.name.fr} — 12 mois`,
+    amount: offer!.price.amount,
+    currency: offer!.price.currency,
+    description: `${plan!.name.fr} — ${offer!.months} mois`,
   });
   const transfer = provider.id === "bank_transfer";
   await payRef.update({

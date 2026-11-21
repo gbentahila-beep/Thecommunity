@@ -1,4 +1,4 @@
-import { audienceRefusal, bookingClosesAt, bookingRefusal, HOLD_MINUTES, PHYSICAL_TERMS_VERSION, promoRefusal, readServiceFee, reservationRequestSchema, tooYoung, type BookingPreferences } from "@thecommunity/shared";
+import { audienceRefusal, bookingClosesAt, bookingRefusal, HOLD_MINUTES, PHYSICAL_TERMS_VERSION, promoRefusal, readServiceFee, reservationRequestSchema, tooYoung, type BookingPreferences, NO_SERVICE_FEE } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db, FieldValue, REGION } from "../lib/admin";
@@ -171,7 +171,7 @@ async function runReservationOnce(o: ReservationRun) {
       holdUntilMs: Math.min(now + (o.holdMs ?? HOLD_MINUTES * 60_000), bookingClosesAt(view.startAt, e.bookingMode).getTime()),
       memberUnitAmount: terms.memberUnitAmount,
       promo,
-      serviceFee: readServiceFee(bookingSettings.data()?.serviceFee),
+      serviceFee: terms.waiveFees ? NO_SERVICE_FEE : readServiceFee(bookingSettings.data()?.serviceFee),
       preferences: o.preferences ?? (request?.data()?.preferences ? storedPreferences(request.data()!.preferences) : undefined),
       commissionRules: rules,
       policies,

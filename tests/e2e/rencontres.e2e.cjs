@@ -22,7 +22,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   const order = await p.evaluate(() => { const t = document.querySelector('[data-testid=home-trust]'); const h = [...document.querySelectorAll('h2')].find((x) => x.textContent.startsWith('Cette semaine')); return t && h ? t.compareDocumentPosition(h) & Node.DOCUMENT_POSITION_FOLLOWING : 0; });
   assert(order > 0, '28 : repères avant « Cette semaine »');
   await p.goto(base + '/experiences/padel-entre-inconnus-anfa', { waitUntil: 'load' });
-  assert(await p.locator('aside').getByText('150 DH').first().isVisible() && await p.locator('aside').getByTestId('member-price').textContent() === '128 DH membres', '28 : prix public en grand, prix membre discret');
+  assert(await p.locator('aside').getByText('150 DH').first().isVisible() && await p.locator('aside').getByTestId('member-price').textContent() === '120 DH membres', '28 : prix public en grand, prix membre discret');
   assert(!(await p.locator('s').count()) && !(await p.getByRole('link', { name: 'Devenir membre' }).count()), '28 : ni prix barré ni « Devenir membre » sur une expérience ouverte à tous');
   assert(await p.getByRole('link', { name: 'Rejoindre cette expérience' }).first().isVisible(), '28 : bouton « Rejoindre cette expérience »');
   await p.goto(base + '/a-propos', { waitUntil: 'load' });

@@ -119,7 +119,7 @@ export async function ensureInvoice(paymentId: string): Promise<{ id: string; cr
     } else {
       const [plan, period] = await Promise.all([tx.get(db.doc(`membershipPlans/${p.planId}`)), tx.get(db.doc(`memberships/${p.userId}/periods/${paymentId}`))]);
       const per = period.data();
-      const detail = per ? `Du ${dateFr(per.startAt.toDate())} au ${dateFr(per.endAt.toDate())}` : "12 mois";
+      const detail = per ? `Du ${dateFr(per.startAt.toDate())} au ${dateFr(per.endAt.toDate())}` : `${Number(p.months) || 12} mois`;
       lines = [{ label: `Abonnement ${plan.data()?.name?.fr ?? "annuel"}`, detail, quantity: 1, unitAmount: p.amount, amount: p.amount }];
     }
     const { info, vatRate } = companyFrom(companySnap.data());

@@ -237,15 +237,15 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     slug: "comment-fonctionne-l-abonnement",
     category: "membership",
     title: { fr: "Comment fonctionne l'abonnement ?", en: "How does membership work?" },
-    summary: { fr: "Une formule annuelle : prix membre, accès anticipé, expériences réservées aux membres.", en: "One annual plan: member price, early access, members-only experiences." },
+    summary: { fr: "Plusieurs durées au choix : prix membre, accès anticipé, expériences réservées aux membres.", en: "Several lengths to choose from: member price, early access, members-only experiences." },
     body: {
       fr: [
-        "L'abonnement est une formule annuelle, valable 12 mois à partir du paiement. Ses avantages et son prix sont détaillés sur la page [Abonnement](/abonnement).",
+        "L'abonnement se prend pour la durée de votre choix (selon les formules proposées : 1, 3, 6 ou 12 mois), à partir du paiement. Ses avantages et ses prix sont détaillés sur la page [Abonnement](/abonnement).",
         ["Un prix membre sur les expériences : il est indiqué à côté du prix public et appliqué automatiquement.", "Un accès anticipé aux nouvelles dates, avant leur ouverture à tous.", "L'accès aux expériences réservées aux membres."],
         "Il n'y a pas de renouvellement automatique : rien n'est prélevé sans votre action.",
       ],
       en: [
-        "Membership is an annual plan, valid for 12 months from payment. Its benefits and price are on the [Membership](/abonnement) page.",
+        "Membership is taken for the length you choose (depending on the plans offered: 1, 3, 6 or 12 months), from payment. Its benefits and prices are on the [Membership](/abonnement) page.",
         ["A member price on experiences: it's shown next to the public price and applied automatically.", "Early access to new dates, before they open to everyone.", "Access to members-only experiences."],
         "There's no automatic renewal: nothing is charged without you taking action.",
       ],
@@ -260,12 +260,12 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     body: {
       fr: [
         `${MEMBERSHIP_RENEW_WINDOW_DAYS} jours avant la fin de votre abonnement, un bouton « Renouveler » apparaît sur la page [Abonnement](/abonnement).`,
-        "Les 12 nouveaux mois s'ajoutent à la fin de la période en cours : renouveler en avance ne vous fait perdre aucun jour.",
+        "La nouvelle période s'ajoute à la fin de la période en cours : renouveler en avance ne vous fait perdre aucun jour.",
         "Sans renouvellement, l'abonnement s'arrête simplement à son échéance et les prix publics s'appliquent de nouveau.",
       ],
       en: [
         `${MEMBERSHIP_RENEW_WINDOW_DAYS} days before your membership ends, a “Renew” button appears on the [Membership](/abonnement) page.`,
-        "The 12 new months are added to the end of the current period: renewing early doesn't lose you any days.",
+        "The new period is added to the end of the current one: renewing early doesn't lose you any days.",
         "If you don't renew, membership simply ends on its expiry date and public prices apply again.",
       ],
     },

@@ -595,17 +595,26 @@ export const DEMO_MEMBERSHIP_PLAN: MembershipPlan = {
   id: "annual",
   name: { fr: "The Host Club Membre", ar: "عضوية The Host Club" },
   price: { amount: 99000, currency: "MAD" },
-  discountPercent: 15,
+  // Proposition (21 novembre) : 4 durées payées en une fois, -20 % et frais de service offerts. Réglable dans le back-office.
+  offers: [
+    { id: "1m", months: 1, price: { amount: 12900, currency: "MAD" }, isActive: true },
+    { id: "3m", months: 3, price: { amount: 33900, currency: "MAD" }, isActive: true },
+    { id: "6m", months: 6, price: { amount: 59000, currency: "MAD" }, isActive: true, highlight: true },
+    { id: "12m", months: 12, price: { amount: 99000, currency: "MAD" }, isActive: true },
+  ],
+  waiveServiceFee: true,
+  discountPercent: 20,
   earlyAccessHours: 48,
   benefits: [
-    { fr: "-15 % sur toutes les expériences", ar: "خصم 15٪ على جميع التجارب" },
-    { fr: "Accès aux nouvelles dates 48 h avant tout le monde", ar: "الوصول إلى المواعيد الجديدة قبل الجميع بـ48 ساعة" },
-    { fr: "Expériences réservées aux membres", ar: "تجارب مخصصة للأعضاء" },
+    { fr: "-20 % sur toutes les expériences", ar: "خصم 20٪ على جميع التجارب", en: "20% off every experience" },
+    { fr: "Frais de service offerts sur chaque réservation", ar: "رسوم الخدمة مجانية في كل حجز", en: "No service fee on any booking" },
+    { fr: "Accès aux nouvelles dates 48 h avant tout le monde", ar: "الوصول إلى المواعيد الجديدة قبل الجميع بـ48 ساعة", en: "New dates 48 hours before everyone else" },
+    { fr: "Expériences réservées aux membres", ar: "تجارب مخصصة للأعضاء", en: "Members-only experiences" },
   ],
   isActive: true,
 };
 
-export const DEMO_REVIEWS: Review[] = [
+const DEMO_REVIEWS_BASE: Review[] = [
   { id: "r1", experienceId: "exp-diner-inconnus", rating: 5, publicName: "Salma B.", comment: "Je suis venue seule un peu stressée, je suis repartie avec quatre nouveaux contacts et un plan pour le week-end.", createdAt: "2026-10-18T22:00:00Z", isDemo: true },
   { id: "r2", experienceId: "exp-diner-inconnus", rating: 5, publicName: "Youssef A.", comment: "Table très bien composée, restaurant top. L'organisation est fluide du début à la fin.", createdAt: "2026-10-11T22:00:00Z", isDemo: true },
   { id: "r3", experienceId: "exp-pilates-brunch", rating: 5, publicName: "Inès K.", comment: "Le combo parfait pour un samedi matin. Le brunch est délicieux.", createdAt: "2026-10-26T12:00:00Z", isDemo: true },
@@ -616,3 +625,12 @@ export const DEMO_REVIEWS: Review[] = [
   { id: "rp2", experienceId: "exp-padel", rating: 4, publicName: "Leïla S.", comment: "Super ambiance. Les raquettes prêtées étaient un peu usées.", createdAt: "2026-11-08T20:00:00Z", isDemo: true },
   ...DEMO_MORE_REVIEWS,
 ];
+
+/** Démonstration : notes détaillées, « Reviendriez-vous ? » et quelques photos acceptées (page Avis). */
+const DEMO_PHOTOS: Record<string, string> = { r1: "/demo/diner-inconnus.webp", r3: "/demo/pilates-brunch.webp", r5: "/demo/atelier-ceramique.webp", rp1: "/demo/padel.webp" };
+export const DEMO_REVIEWS: Review[] = DEMO_REVIEWS_BASE.map((r, i) => ({
+  ...r,
+  details: { group: Math.max(1, Math.min(5, r.rating - (i % 3 === 0 ? 1 : 0))), organisation: Math.max(1, Math.min(5, r.rating + (i % 4 === 1 ? -1 : 0))), venue: Math.max(1, Math.min(5, r.rating - (i % 5 === 2 ? 1 : 0))) },
+  comeAgain: r.rating >= 4,
+  ...(DEMO_PHOTOS[r.id] && !r.photo ? { photo: { path: DEMO_PHOTOS[r.id]!, status: "approved" as const } } : {}),
+}));

@@ -811,6 +811,29 @@ describe("abonnement annuel", () => {
     expect(notes.size).toBe(2);
   });
 
+  it("formules par durée : l'offre choisie fixe le prix et la durée ; offre désactivée ou inconnue refusée", async () => {
+    const offers = [
+      { months: 1, priceDh: 129, isActive: true },
+      { months: 3, priceDh: 339, isActive: true },
+      { months: 6, priceDh: 590, isActive: false },
+      { months: 12, priceDh: 990, isActive: true },
+    ];
+    await team.call("adminSaveMembershipPlan", { ...planInput, offers, highlightMonths: 3, waiveServiceFee: true });
+    const saved = (await db().doc("membershipPlans/annual").get()).data()!;
+    expect(saved.waiveServiceFee).toBe(true);
+    expect(saved.offers.find((o: { months: number }) => o.months === 3)).toMatchObject({ id: "3m", price: { amount: 33900 }, isActive: true, highlight: true });
+    const u = await member();
+    expect(await refusal(u.call("startMembershipCheckout", { offerId: "6m" }))).toBe("failed-precondition:membership_unavailable");
+    expect(await refusal(u.call("startMembershipCheckout", { offerId: "2m" }))).toBe("invalid-argument:");
+    const { paymentId } = await u.call("startMembershipCheckout", { offerId: "3m" });
+    expect(await payment(paymentId as string)).toMatchObject({ amount: 33900, months: 3, offerId: "3m" });
+    await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
+    const months = (((await membership(u.uid))!.endAt as Timestamp).toMillis() - Date.now()) / (30.4 * 86_400_000);
+    expect(months).toBeGreaterThan(2.8);
+    expect(months).toBeLessThan(3.2);
+    await team.call("adminSaveMembershipPlan", planInput);
+  });
+
   it("prix membre appliqué par le serveur : -15 %, ou prix membre précis de l'expérience", async () => {
     const memberU = await member();
     const publicU = await member();

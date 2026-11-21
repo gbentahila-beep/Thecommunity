@@ -51,6 +51,8 @@ export async function getAdminMembership() {
         id: planSnap.id,
         name: p.name,
         price: { amount: p.price?.amount ?? 0, currency: "MAD" },
+        offers: Array.isArray(p.offers) ? p.offers.map((o: { id: string; months: 1 | 3 | 6 | 12; price: { amount: number }; isActive: boolean; highlight?: boolean }) => ({ id: o.id, months: o.months, price: { amount: o.price?.amount ?? 0, currency: "MAD" as const }, isActive: o.isActive === true, highlight: o.highlight === true })) : undefined,
+        waiveServiceFee: p.waiveServiceFee === true,
         discountPercent: p.discountPercent ?? 0,
         earlyAccessHours: p.earlyAccessHours ?? 0,
         benefits: (p.benefits ?? []).map((b: { fr: string; ar?: string }) => ({ fr: b.fr, ...(b.ar ? { ar: b.ar } : {}) })),

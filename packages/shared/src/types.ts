@@ -239,6 +239,9 @@ export type Review = {
   reply?: { text: string; authorName: string; authorRole: "organizer" | "team"; at: string } | null;
   /** Étape 24 : photo facultative, publiée seulement une fois acceptée par l'équipe. */
   photo?: { path: string; status: "pending" | "approved" | "rejected" } | null;
+  /** Notes détaillées facultatives (groupe, organisation, lieu) et « Reviendriez-vous ? ». */
+  details?: { group?: number; organisation?: number; venue?: number } | null;
+  comeAgain?: boolean | null;
   /** Étape 24 : signalements reçus / encore à traiter. */
   reportCount?: number;
   reportsOpen?: number;

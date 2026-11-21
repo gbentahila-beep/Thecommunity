@@ -220,6 +220,12 @@ export async function getMembershipPlan() {
   return DEMO_MEMBERSHIP_PLAN;
 }
 
+/** Page « Avis » : tous les avis publiés (récents d'abord). */
+export async function getAllReviews() {
+  if (FIREBASE_ENABLED) return fs.fsAllReviews();
+  return [...DEMO_REVIEWS].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 export async function getReviews(experienceId?: string) {
   if (FIREBASE_ENABLED) return fs.fsReviews(experienceId);
   return DEMO_REVIEWS.filter((r) => !experienceId || r.experienceId === experienceId);

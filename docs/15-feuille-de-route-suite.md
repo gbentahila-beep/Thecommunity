@@ -137,6 +137,15 @@ Relecture de tous les textes (interface FR / EN / AR, centre d'aide, blog, pages
 
 À faire hors code : renommer la catégorie « Rencontres » dans le back-office si elle a déjà été modifiée en ligne ; informations légales (docs/16).
 
+## Menu du haut, page Avis, abonnement à plusieurs durées (demande de Hamza, 21 novembre) — livré
+
+- **Menu du haut** (ordinateur) : Découvrir ▾ (toutes les catégories) · Abonnement · Avis · Plus ▾ (Comment ça marche, À propos, Blog, Questions-réponses → centre d'aide) · loupe de recherche · ville · langue · Se connecter / S'inscrire. « Comment ça marche » passe en direct sur les très grands écrans. Menu mobile et page Menu : mêmes entrées.
+- **Page Avis** (`/avis`) : note globale et répartition, photos acceptées, filtres (univers, note), tri, avis détaillés (réponse de l'organisateur comprise), « Ce qu'on vous demande après chaque expérience » (moyennes groupe, organisation, lieu, « Reviendriez-vous ? »).
+- **Avis après chaque expérience** : déjà en place ; le formulaire ajoute des notes **facultatives** (groupe, organisation, lieu) et « Reviendriez-vous ? ».
+- **Trustpilot** : pas nécessaire au lancement (les avis du site sont vérifiés : seuls les participants peuvent noter). Pour la visibilité au Maroc, une **fiche Google Business** est plus utile ; un lien « Laissez-nous un avis sur Google » pourra être ajouté ensuite.
+- **Abonnement** : plusieurs durées (1, 3, 6, 12 mois), payées en une fois, **sans renouvellement automatique** ; une durée mise en avant ; économie et prix par mois calculés ; option **frais de service offerts** aux membres. Proposition de départ (démonstration) : 129 / 339 / 590 / 990 DH, −20 % et frais offerts. **À régler dans le back-office → Abonnement** (prix par durée, durées proposées, mise en avant, réduction, frais offerts, accès anticipé, avantages). Tant que ce n'est pas enregistré, le site propose la formule actuelle (12 mois).
+- CGV, aide, FAQ et blog mis à jour (« durée choisie » au lieu de « 12 mois ») : **à faire relire par l'avocat**.
+
 ## Catalogue en agenda et barre du bas à 5 onglets (demande de Hamza, 21 novembre) — livré
 
 - **Toutes les expériences** : onglets par univers (Tout, Dîners, Sport…), **calendrier** des jours (point = au moins une date ; toucher un jour fait défiler jusqu'à lui), liste **groupée par jour** (« Samedi 21 novembre ») : vignette, titre et badges (Entre femmes, Coup de cœur, Nouveau, Plus que N places, Complet), heure · quartier · groupe, univers · langues · prix, bouton **Réserver** (ou Demander / Liste d'attente). Recherche, filtres et tri conservés ; un tri par prix, note ou nouveauté affiche une liste simple (jour indiqué sur chaque ligne).

@@ -12,11 +12,11 @@ export async function CityMenu({ currentCityId = DEFAULT_CITY }: { currentCityId
   return (
     <details className="group relative">
       <summary
-        className="flex cursor-pointer list-none items-center gap-2 rounded-full bg-cream-deep px-4 py-2 text-sm font-medium text-ink transition hover:bg-sand [&::-webkit-details-marker]:hidden"
+        className="flex cursor-pointer list-none items-center gap-2 rounded-full bg-cream-deep px-3 py-2 xl:px-4 text-sm font-medium text-ink transition hover:bg-sand [&::-webkit-details-marker]:hidden"
         aria-label={t("chooseCity")}
       >
         <MapPin className="size-4 text-plum-900" aria-hidden />
-        {current ? tr(current.name, locale) : ""}
+        <span className="hidden 2xl:inline">{current ? tr(current.name, locale) : ""}</span>
         <ChevronDown className="size-4 transition group-open:rotate-180" aria-hidden />
       </summary>
       <ul className="absolute start-1/2 z-40 mt-2 w-56 -translate-x-1/2 rtl:translate-x-1/2 sm:start-auto sm:end-0 sm:translate-x-0 rtl:sm:translate-x-0 overflow-hidden rounded-2xl border border-line bg-white p-1.5 shadow-float">

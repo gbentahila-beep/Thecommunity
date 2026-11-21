@@ -130,7 +130,7 @@ async function fsMembershipPlanRaw(): Promise<MembershipPlan | null> {
   const snap = await adminDb().doc(`membershipPlans/${MEMBERSHIP_PLAN_ID}`).get();
   const p = snap.data();
   if (p?.isActive !== true) return null;
-  return { id: snap.id, name: p.name, price: { amount: p.price?.amount ?? 0, currency: "MAD" }, discountPercent: p.discountPercent ?? 0, earlyAccessHours: p.earlyAccessHours ?? 0, benefits: p.benefits ?? [], isActive: true };
+  return { id: snap.id, name: p.name, price: { amount: p.price?.amount ?? 0, currency: "MAD" }, offers: Array.isArray(p.offers) ? p.offers : undefined, waiveServiceFee: p.waiveServiceFee === true, discountPercent: p.discountPercent ?? 0, earlyAccessHours: p.earlyAccessHours ?? 0, benefits: p.benefits ?? [], isActive: true };
 }
 
 async function fsReviewsRaw(experienceId?: string): Promise<Review[]> {
@@ -194,6 +194,13 @@ export const fsSession = cached(fsSessionRaw, "fsSession");
 /** Lecture SANS cache : places restantes exactes pour le tunnel de réservation. */
 export const fsSessionFresh = fsSessionRaw;
 export const fsReviews = cached(fsReviewsRaw, "fsReviews");
+
+/** Page « Avis » : les avis publiés les plus récents (300 au plus). */
+async function fsAllReviewsRaw(): Promise<Review[]> {
+  const snap = await adminDb().collection("reviews").where("status", "==", "published").orderBy("createdAt", "desc").limit(300).get();
+  return snap.docs.map((d) => withId<Review>(d));
+}
+export const fsAllReviews = cached(fsAllReviewsRaw, "fsAllReviews");
 export const fsPastSessions = cached(fsPastSessionsRaw, "fsPastSessions");
 export const fsMembershipPlan = cached(fsMembershipPlanRaw, "fsMembershipPlan");
 

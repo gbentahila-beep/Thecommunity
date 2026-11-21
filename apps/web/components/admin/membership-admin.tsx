@@ -1,6 +1,6 @@
 "use client";
 
-import { membershipPlanInputSchema, type MembershipPlan } from "@thecommunity/shared";
+import { MEMBERSHIP_DURATIONS, membershipPlanInputSchema, offerEconomics, planOffers, type MembershipOffer, type MembershipPlan } from "@thecommunity/shared";
 import { httpsCallable } from "firebase/functions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,9 +13,20 @@ async function call(name: string, data: Record<string, unknown>) {
 }
 const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-sm";
 
-/** Réglages de la formule : prix annuel, réduction, accès anticipé, avantages, activation. */
+type OfferRow = { months: (typeof MEMBERSHIP_DURATIONS)[number]; priceDh: string; isActive: boolean };
+const DEFAULT_PRICES: Record<number, string> = { 1: "129", 3: "339", 6: "590", 12: "990" };
+
+/** Réglages de la formule : prix par durée, mise en avant, réduction, frais offerts, accès anticipé, avantages, activation. */
 export function MembershipPlanForm({ plan, live }: { plan: MembershipPlan | null; live: boolean }) {
   const router = useRouter();
+  const stored = plan?.offers?.length ? plan.offers : plan ? [{ id: "12m", months: 12 as const, price: plan.price, isActive: true, highlight: true }] : [];
+  const [rows, setRows] = useState<OfferRow[]>(
+    MEMBERSHIP_DURATIONS.map((m) => {
+      const o = stored.find((x) => x.months === m);
+      return { months: m, priceDh: o ? String(o.price.amount / 100) : plan ? "" : DEFAULT_PRICES[m]!, isActive: o ? o.isActive : !plan };
+    }),
+  );
+  const [highlight, setHighlight] = useState<number>(stored.find((o) => o.highlight)?.months ?? 6);
   const [v, setV] = useState({
     nameFr: plan?.name.fr ?? "The Host Club Membre",
     nameAr: plan?.name.ar ?? "",
@@ -25,6 +36,7 @@ export function MembershipPlanForm({ plan, live }: { plan: MembershipPlan | null
     benefitsFr: (plan?.benefits ?? []).map((b) => b.fr).join("\n"),
     benefitsAr: (plan?.benefits ?? []).map((b) => b.ar ?? "").join("\n"),
     isActive: plan?.isActive ?? false,
+    waiveServiceFee: plan?.waiveServiceFee ?? true,
   });
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -36,8 +48,10 @@ export function MembershipPlanForm({ plan, live }: { plan: MembershipPlan | null
       onSubmit={async (e) => {
         e.preventDefault();
         setMsg(null);
-        const parsed = membershipPlanInputSchema.safeParse(v);
-        if (!parsed.success) return setMsg({ ok: false, text: "Vérifiez les champs : prix ≥ 1 DH, réduction entre 0 et 90 %, accès anticipé entre 0 et 720 h." });
+        const offers = rows.map((r) => ({ months: r.months, priceDh: Number(r.priceDh || 0), isActive: r.isActive && Number(r.priceDh) >= 1 }));
+        const yearly = offers.find((o) => o.months === 12 && o.isActive) ?? offers.find((o) => o.isActive);
+        const parsed = membershipPlanInputSchema.safeParse({ ...v, priceDh: yearly?.priceDh ?? Number(v.priceDh), offers, highlightMonths: highlight });
+        if (!parsed.success) return setMsg({ ok: false, text: "Vérifiez les champs : au moins une durée proposée avec un prix ≥ 1 DH, réduction entre 0 et 90 %, accès anticipé entre 0 et 720 h." });
         if (!live) return setMsg({ ok: true, text: "Démonstration : réglages valides (rien n'est enregistré)." });
         setBusy(true);
         try {
@@ -52,10 +66,40 @@ export function MembershipPlanForm({ plan, live }: { plan: MembershipPlan | null
     >
       <label className="text-sm font-medium">Nom (FR)<input className={input} value={v.nameFr} onChange={(e) => set("nameFr", e.target.value)} /></label>
       <label className="text-sm font-medium">Nom (AR, facultatif)<input className={input} dir="rtl" value={v.nameAr} onChange={(e) => set("nameAr", e.target.value)} /></label>
-      <label className="text-sm font-medium">Prix annuel (DH)<input className={input} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} /></label>
+      <fieldset className="sm:col-span-2">
+        <legend className="text-sm font-medium">Durées et prix</legend>
+        <p className="text-xs text-muted">Chaque durée se paie en une fois, sans renouvellement automatique. Laissez une durée décochée pour ne pas la proposer. L&apos;économie affichée est calculée par rapport au prix mensuel.</p>
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full min-w-[34rem] text-sm">
+            <thead className="text-start text-xs text-muted">
+              <tr><th className="py-1 text-start font-medium">Durée</th><th className="text-start font-medium">Prix (DH)</th><th className="text-start font-medium">Proposée</th><th className="text-start font-medium">Mise en avant</th><th className="text-start font-medium">Par mois · économie</th></tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => {
+                const priced = rows.filter((x) => x.isActive && Number(x.priceDh) >= 1).map((x): MembershipOffer => ({ id: `${x.months}m`, months: x.months, price: { amount: Math.round(Number(x.priceDh) * 100), currency: "MAD" }, isActive: true }));
+                const me = priced.find((x) => x.months === r.months);
+                const eco = me ? offerEconomics(me, planOffers({ price: me.price, offers: priced })) : null;
+                return (
+                  <tr key={r.months} className="border-t border-line">
+                    <td className="py-2 font-medium">{r.months === 1 ? "1 mois" : `${r.months} mois`}</td>
+                    <td><input aria-label={`Prix ${r.months} mois (DH)`} className={`${input} max-w-28`} inputMode="decimal" value={r.priceDh} onChange={(e) => setRows((xs) => xs.map((x, j) => (j === i ? { ...x, priceDh: e.target.value } : x)))} /></td>
+                    <td><input aria-label={`Proposer ${r.months} mois`} type="checkbox" className="size-4 accent-plum-900" checked={r.isActive} onChange={(e) => setRows((xs) => xs.map((x, j) => (j === i ? { ...x, isActive: e.target.checked } : x)))} /></td>
+                    <td><input aria-label={`Mettre en avant ${r.months} mois`} type="radio" name="highlight" className="size-4 accent-plum-900" checked={highlight === r.months} onChange={() => setHighlight(r.months)} /></td>
+                    <td className="text-muted">{eco ? `${(eco.perMonth / 100).toFixed(0)} DH/mois${eco.savingPercent > 0 ? ` · −${eco.savingPercent} %` : ""}` : "—"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
       <label className="text-sm font-medium">Réduction sur les expériences (%)<span className="block text-xs font-normal text-muted">Un prix membre précis peut aussi être réglé sur chaque expérience.</span><input className={input} inputMode="numeric" value={v.discountPercent} onChange={(e) => set("discountPercent", e.target.value)} /></label>
       <label className="text-sm font-medium">Accès anticipé aux nouvelles dates (heures)<span className="block text-xs font-normal text-muted">0 = pas d&apos;accès anticipé.</span><input className={input} inputMode="numeric" value={v.earlyAccessHours} onChange={(e) => set("earlyAccessHours", e.target.value)} /></label>
       <label className="flex items-center gap-2 self-end pb-2 text-sm font-medium">
+        <input type="checkbox" checked={v.waiveServiceFee} onChange={(e) => set("waiveServiceFee", e.target.checked)} className="size-4 accent-plum-900" />
+        Frais de service offerts aux membres
+      </label>
+      <label className="flex items-center gap-2 self-end pb-2 text-sm font-medium sm:col-span-2">
         <input type="checkbox" checked={v.isActive} onChange={(e) => set("isActive", e.target.checked)} className="size-4 accent-plum-900" />
         Proposer l&apos;abonnement (prix barrés visibles sur le site)
       </label>

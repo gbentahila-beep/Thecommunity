@@ -22,7 +22,7 @@ export default async function TransfersPage({ searchParams }: PageProps<"/admin/
     return u ? { name: `${u.firstName} ${u.lastName}`, email: u.email } : { name: "Compte supprimé", email: "" };
   };
   const what = (p: (typeof transfers)[number]) => {
-    if (p.purpose === "membership") return { label: "Abonnement annuel", href: null as string | null, date: "" };
+    if (p.purpose === "membership") return { label: "Abonnement", href: null as string | null, date: "" };
     const r = resById.get(p.reservationId);
     const e = r ? d.experiences.get(r.experienceId) : undefined;
     return { label: e?.title.fr ?? "Réservation", href: r ? `/admin/sessions/${r.sessionId}` : null, date: r ? adminDate(r.sessionStartAt) : "" };

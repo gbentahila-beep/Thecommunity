@@ -6,6 +6,7 @@ import {
   readServiceFee,
   reservationRequestSchema,
   serviceFeeInputSchema,
+  NO_SERVICE_FEE,
 } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -54,7 +55,7 @@ export const previewPricing = onCall({ region: REGION }, async (req) => {
   const pricing = computePricing(s.price.amount, seats, s.price.currency, {
     memberUnitAmount: terms.memberUnitAmount,
     promo: rule,
-    serviceFee: readServiceFee(booking.data()?.serviceFee),
+    serviceFee: terms.waiveFees ? NO_SERVICE_FEE : readServiceFee(booking.data()?.serviceFee),
   });
   return { pricing };
 });

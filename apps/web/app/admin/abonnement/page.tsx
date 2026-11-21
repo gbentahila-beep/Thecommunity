@@ -1,10 +1,11 @@
 import { GrantMembershipForm, MembershipPlanForm, RevokeMembershipButton } from "@/components/admin/membership-admin";
 import { adminDate, Badge, Card, dh, PageHeader, StatTile, Table } from "@/components/admin/ui";
 import { getAdminMembership } from "@/lib/data/admin-membership";
+import { planOffers } from "@thecommunity/shared";
 
 export const metadata = { title: "Abonnement" };
 
-/** Abonnement annuel : réglages de la formule, abonnés, cadeaux et retraits (journalisés). */
+/** Abonnement : réglages de la formule, abonnés, cadeaux et retraits (journalisés). */
 export default async function MembershipAdminPage() {
   const { plan, members, revenue, isDemo, users } = await getAdminMembership();
   const active = members.filter((m) => m.active);
@@ -14,8 +15,8 @@ export default async function MembershipAdminPage() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="Membres actifs" value={String(active.length)} />
         <StatTile label="Revenus des abonnements" value={dh(revenue)} />
-        <StatTile label="Prix annuel" value={plan ? dh(plan.price.amount) : "—"} />
-        <StatTile label="Réduction" value={plan ? `${plan.discountPercent} %` : "—"} hint={plan?.earlyAccessHours ? `Accès anticipé ${plan.earlyAccessHours} h` : "Sans accès anticipé"} />
+        <StatTile label="Formules proposées" value={plan ? String(planOffers(plan).length) : "—"} hint={plan ? planOffers(plan).map((o) => `${o.months} m : ${dh(o.price.amount)}`).join(" · ") : undefined} />
+        <StatTile label="Réduction" value={plan ? `${plan.discountPercent} %` : "—"} hint={[plan?.waiveServiceFee ? "Frais offerts" : null, plan?.earlyAccessHours ? `Accès anticipé ${plan.earlyAccessHours} h` : "Sans accès anticipé"].filter(Boolean).join(" · ")} />
       </div>
       <Card title="Formule" className="mt-6">
         <MembershipPlanForm plan={plan} live={!isDemo} />

@@ -149,7 +149,7 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
 
 /**
  * Paiement d'un abonnement annuel : à la réussite (montant vérifié), l'abonnement est activé ou prolongé
- * de 12 mois (à partir de l'échéance en cours si l'on renouvelle en avance), dans la même transaction.
+ * de la durée achetée (12 mois par défaut ; à partir de l'échéance en cours si l'on renouvelle en avance), dans la même transaction.
  */
 async function applyMembershipPayment(
   tx: Transaction,
@@ -176,7 +176,8 @@ async function applyMembershipPayment(
     return { outcome: "refunded", purpose: "membership", refund: { amount: ev.amount, reason: "amount_mismatch" } };
   }
   const current = mem.data();
-  const period = nextMembershipPeriod(current ? { status: current.status, endAt: (current.endAt as Timestamp).toDate() } : null);
+  const months = [1, 3, 6, 12].includes(Number(p.months)) ? Number(p.months) : 12;
+  const period = nextMembershipPeriod(current ? { status: current.status, endAt: (current.endAt as Timestamp).toDate() } : null, new Date(), months);
   tx.set(memRef, {
     uid: p.userId,
     planId: p.planId,

@@ -1,4 +1,3 @@
-import { AccountLink } from "./account-link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCategories, getCities } from "@/lib/data";
@@ -6,12 +5,12 @@ import { tr } from "@/lib/i18n-text";
 import { categoryTone, DEFAULT_CITY } from "@/lib/site";
 import { CityMenu } from "./city-menu";
 import { DiscoverMenu } from "./discover-menu";
-import { LanguageSwitch } from "./language-switch";
+import { HeaderAuth } from "./header-auth";
+import { HeaderSearch } from "./header-search";
+import { LanguageMenu } from "./language-menu";
 import { Logo } from "./logo";
 import { MobileMenu } from "./mobile-menu";
-import { SearchBox } from "./search-box";
 import { HeaderBell } from "./header-bell";
-import { Search } from "lucide-react";
 
 export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string }) {
   const [t, locale, categories, cities] = await Promise.all([getTranslations("nav"), getLocale(), getCategories(), getCities()]);
@@ -19,36 +18,42 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
     { href: "/experiences", label: t("allExperiences") },
     ...categories.map((c) => ({ href: `/${cityId}/${c.id}`, label: tr(c.name, locale), dot: categoryTone(c).dot, dotStyle: categoryTone(c).style })),
   ];
+  // Menu du haut : Découvrir · À propos · Comment ça marche · Blog · Abonnement · Questions-réponses · Avis.
   const links = [
     { href: "/a-propos", label: t("about") },
     { href: "/comment-ca-marche", label: t("how") },
     { href: "/blog", label: t("blog") },
+    { href: "/abonnement", label: t("membership") },
+    { href: "/aide", label: t("questions") },
+    { href: "/avis", label: t("reviews") },
+  ];
+  const navLink = "whitespace-nowrap rounded-full px-2.5 py-2 text-[15px] text-ink/85 hover:bg-cream-deep hover:text-ink xl:px-3";
+  const more = (withHow: boolean) => [
+    ...(withHow ? [{ href: "/comment-ca-marche", label: t("how") }] : []),
+    { href: "/a-propos", label: t("about") },
+    { href: "/blog", label: t("blog") },
+    { href: "/aide", label: t("questions") },
   ];
   const cityItems = cities.map((c) => ({ id: c.id, name: tr(c.name, locale), active: c.isActive }));
   return (
     <header className="sticky top-0 z-30 px-3 pt-2 lg:border-b lg:border-line/60 lg:bg-cream/90 lg:px-0 lg:pt-0 lg:backdrop-blur-md">
       {/* Mobile : barre flottante (logo, S'inscrire, menu) ; ordinateur : barre pleine largeur. */}
-      <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 rounded-full border border-line/60 bg-white/95 ps-5 pe-2 max-[379px]:gap-2 max-[379px]:ps-4 shadow-card backdrop-blur-md lg:h-20 lg:gap-4 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-8 lg:shadow-none lg:backdrop-blur-none">
+      <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 rounded-full border border-line/60 bg-white/95 ps-5 pe-2 max-[379px]:gap-2 max-[379px]:ps-4 shadow-card backdrop-blur-md lg:h-20 lg:gap-2 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-6 xl:gap-4 xl:px-8 lg:shadow-none lg:backdrop-blur-none">
         <Logo />
-        <nav aria-label={t("mainNav")} className="ms-8 hidden items-center gap-1 lg:flex xl:ms-6">
+        <nav aria-label={t("mainNav")} className="ms-3 hidden items-center gap-0.5 lg:flex xl:ms-6 xl:gap-1">
           <DiscoverMenu label={t("discover")} menuLabel={t("discoverMenu")} items={discover} />
-          {links.map((l) => (
-            <Link key={l.href} href={l.href} className="whitespace-nowrap rounded-full px-3 py-2 text-[15px] text-ink/85 hover:bg-cream-deep hover:text-ink">
-              {l.label}
-            </Link>
-          ))}
+          <Link href="/comment-ca-marche" className={`${navLink} hidden 2xl:inline-flex`}>{t("how")}</Link>
+          <Link href="/abonnement" className={navLink}>{t("membership")}</Link>
+          <Link href="/avis" className={navLink}>{t("reviews")}</Link>
+          <div className="2xl:hidden"><DiscoverMenu label={t("more")} menuLabel={t("more")} items={more(true)} firstBold={false} /></div>
+          <div className="hidden 2xl:block"><DiscoverMenu label={t("more")} menuLabel={t("more")} items={more(false)} firstBold={false} /></div>
         </nav>
-        <div className="ms-auto hidden items-center gap-2 lg:flex">
-          <div className="hidden w-44 xl:block 2xl:w-64">
-            <SearchBox />
-          </div>
-          <Link href="/experiences" aria-label={t("search")} className="grid size-10 place-items-center rounded-full text-ink/80 hover:bg-cream-deep xl:hidden">
-            <Search className="size-5" aria-hidden />
-          </Link>
+        <div className="ms-auto hidden items-center gap-1 lg:flex xl:gap-1.5">
+          <HeaderSearch />
           <CityMenu currentCityId={cityId} />
-          <LanguageSwitch />
+          <LanguageMenu />
           <HeaderBell />
-          <AccountLink label={t("account")} />
+          <HeaderAuth />
         </div>
         <div className="ms-auto flex items-center gap-1 lg:hidden">
           <HeaderBell mobile />

@@ -9,7 +9,7 @@ import { authReady, bookingErrorOf } from "@/lib/booking-client";
 import { firebase } from "@/lib/firebase/client";
 
 /** Souscrire (ou renouveler) : le montant est fixé par le serveur, puis paiement chez le prestataire. */
-export function SubscribeButton({ label }: { label: string }) {
+export function SubscribeButton({ label, offerId }: { label: string; offerId?: string }) {
   const t = useTranslations("membership");
   const tb = useTranslations("booking");
   const router = useRouter();
@@ -30,7 +30,7 @@ export function SubscribeButton({ label }: { label: string }) {
               await user.reload();
               if (user.emailVerified) await user.getIdToken(true);
             }
-            const res = await httpsCallable(firebase().functions, "startMembershipCheckout")({});
+            const res = await httpsCallable(firebase().functions, "startMembershipCheckout")(offerId ? { offerId } : {});
             const { redirectUrl } = res.data as { redirectUrl: string };
             goToCheckout(redirectUrl, (href) => router.push(href));
           } catch (err) {
@@ -39,11 +39,11 @@ export function SubscribeButton({ label }: { label: string }) {
             setBusy(false);
           }
         }}
-        className="w-full rounded-full bg-plum-900 px-6 py-4 font-semibold text-white shadow-card hover:bg-plum-800 disabled:opacity-60"
+        className="w-full rounded-full bg-gradient-to-r from-plum-900 to-plum-700 px-6 py-4 font-semibold text-white shadow-float hover:from-plum-800 disabled:opacity-60"
       >
         {busy ? tb("working") : label}
       </button>
-      {error && <p role="alert" className="text-sm text-red-800">{error}</p>}
+      {error && <p role="alert" className="rounded-xl bg-white px-3 py-2 text-sm text-red-800 shadow-card">{error}</p>}
     </div>
   );
 }

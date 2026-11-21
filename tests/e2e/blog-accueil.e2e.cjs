@@ -19,7 +19,11 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
 
   // Menu Découvrir
   const header = d.locator('header');
-  for (const l of ['À propos', 'Comment ça marche', 'Blog']) assert(await header.getByRole('link', { name: l, exact: true }).isVisible(), `menu : ${l}`);
+  for (const l of ['Abonnement', 'Avis', 'Se connecter', "S'inscrire"]) assert(await header.getByRole('link', { name: l, exact: true }).isVisible(), `menu : ${l}`);
+  await header.getByRole('button', { name: 'Plus' }).first().click();
+  for (const l of ['Comment ça marche', 'À propos', 'Blog', 'Questions-réponses']) assert(await visible(header.getByRole('link', { name: l, exact: true }).first()), `menu « Plus » : ${l}`);
+  assert(await header.getByRole('link', { name: 'Questions-réponses', exact: true }).first().getAttribute('href') === '/aide', 'Questions-réponses → centre d\'aide');
+  await d.keyboard.press('Escape');
   const discover = header.getByRole('button', { name: 'Découvrir' });
   assert(await discover.getAttribute('aria-expanded') === 'false', 'Découvrir fermé au départ');
   await discover.focus();
@@ -63,7 +67,8 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await d.getByRole('link', { name: /Consulter le centre d'aide/ }).getAttribute('href') === '/aide', 'renvoi vers le centre d\'aide');
 
   // Blog
-  await header.getByRole('link', { name: 'Blog', exact: true }).click();
+  await header.getByRole('button', { name: 'Plus' }).first().click();
+  await header.getByRole('link', { name: 'Blog', exact: true }).first().click();
   await d.waitForURL('**/blog');
   assert(await d.getByRole('heading', { level: 1, name: 'Inconnus aujourd\'hui, amis demain' }).isVisible(), 'titre du blog');
   const tabs = d.getByRole('navigation', { name: 'Thèmes du blog' });
