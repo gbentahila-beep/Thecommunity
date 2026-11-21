@@ -18,3 +18,7 @@ Bricolage Grotesque refusée (« je n'aime pas la police »). `polices/` : le lo
 ## Révision du 21 novembre : plus de bleu + jaune, plus de W isolé
 
 Le duo bleu/jaune et le W seul rappelaient une grande enseigne marocaine. `palettes/` : quatre palettes (Corail, Sanguine, Sapin, Fuchsia), logo en Outfit, icône avec le mot entier. Page `../etape-2c-couleurs.html`. Régénérer : `python3 mkpal.py fonts palettes` puis `python3 page4.py palettes ../etape-2c-couleurs.html`.
+
+## Révision du 21 novembre : retour aux couleurs de la planche de référence
+
+Référence fournie : `docs/maquettes/2026-11-21-wenzy/reference-couleurs.jpg` (terre cuite `#B9462A`, atlantique `#1D4466`, safran `#E3A23B`, sable `#F4EADB`, encre `#22201C` ; DM Serif Display, DM Sans, Tajawal). `terre-cuite/` : « wenzy » en minuscules avec un soleil à rayons à gauche, dans six polices, et le symbole « soleil dans une arche » (pas de W). Page `../etape-2d-terre-cuite.html`. Régénérer : `python3 mksoleil.py fonts terre-cuite` puis `python3 page5.py terre-cuite ../etape-2d-terre-cuite.html`.
