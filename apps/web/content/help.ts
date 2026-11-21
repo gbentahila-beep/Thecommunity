@@ -650,6 +650,40 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     ]
   },
   {
+    slug: "payer-un-diner",
+    category: "bookings",
+    title: { fr: "Combien vais-je payer pour un dîner ?", en: "How much will I pay for a dinner?" },
+    summary: {
+      fr: "Menu tout compris, menu réglé au restaurant ou budget estimé : la fiche le dit toujours avant de réserver.",
+      en: "All-inclusive menu, menu paid at the restaurant or estimated budget: the page always says so before you book.",
+    },
+    body: {
+      fr: [
+        "Chaque fiche indique clairement ce que vous paierez, en ligne et sur place. Trois cas existent :",
+        [
+          "Menu négocié, tout compris : un seul prix, payé en ligne. Rien à régler sur place. Exemple : [Dîner du chef](/experiences/diner-du-chef-maarif).",
+          "Menu à prix fixe réglé au restaurant : votre place en ligne, puis un menu au prix annoncé, réglé au restaurant. Exemple : [Tajine & conversations](/experiences/tajine-et-conversations-habous) (49 DH en ligne + 150 DH sur place).",
+          "Chacun paie sa consommation : votre place en ligne, puis vous commandez à la carte et réglez au restaurant. La fiche affiche un budget estimé par personne. Exemple : [Pizza entre inconnus](/experiences/pizza-entre-inconnus-racine) (39 DH + resto 100–150 DH).",
+        ],
+        "La gamme du restaurant vous donne un repère : Casual (environ 100 à 200 DH par personne), Premium (200 à 400 DH), Exclusive (400 à 600 DH). Ce sont des ordres de grandeur ; le budget indiqué sur la fiche fait foi.",
+        "Lieu surprise : le nom du restaurant est dévoilé la veille avec votre groupe, mais la fiche affiche dès la réservation le quartier, la gamme, la cuisine, l'ambiance et le budget. Exemples : [Secret Dinner](/experiences/secret-dinner-gauthier), [Dîner gastronomique secret](/experiences/diner-gastronomique-secret-anfa).",
+        "Ce qui est payé sur place l'est directement au restaurant : The Host Club ne l'encaisse jamais. En cas d'annulation, seul le montant payé en ligne est concerné par les [conditions d'annulation](/aide/annuler-une-reservation).",
+      ],
+      en: [
+        "Every page states clearly what you'll pay, online and on site. There are three cases:",
+        [
+          "Agreed menu, all included: one price, paid online. Nothing to pay on site. Example: [Chef's dinner](/experiences/diner-du-chef-maarif).",
+          "Fixed-price menu paid at the restaurant: your place online, then a menu at the announced price, paid at the restaurant. Example: [Tagine & conversation](/experiences/tajine-et-conversations-habous) (49 DH online + 150 DH on site).",
+          "Everyone pays for what they order: your place online, then you order à la carte and pay the restaurant. The page shows an estimated budget per person. Example: [Pizza with strangers](/experiences/pizza-entre-inconnus-racine) (39 DH + restaurant 100–150 DH).",
+        ],
+        "The restaurant's range gives you a benchmark: Casual (about 100 to 200 DH per person), Premium (200 to 400 DH), Exclusive (400 to 600 DH). These are orders of magnitude; the budget shown on the page prevails.",
+        "Surprise venue: the restaurant's name is revealed the day before with your group, but the page shows the neighbourhood, range, cuisine, atmosphere and budget from the moment you book. Examples: [Secret Dinner](/experiences/secret-dinner-gauthier), [Secret fine-dining dinner](/experiences/diner-gastronomique-secret-anfa).",
+        "What you pay on site goes directly to the restaurant: The Host Club never collects it. If you cancel, only the amount paid online is covered by the [cancellation terms](/aide/annuler-une-reservation).",
+      ],
+    },
+    related: ["comment-fonctionne-the-host-club"],
+  },
+  {
     "slug": "assurance-et-activites-physiques",
     "category": "partner-hosting",
     "title": {

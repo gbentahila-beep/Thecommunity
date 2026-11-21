@@ -423,3 +423,15 @@ deux.
 - Démonstration : dîner surprise Premium (cuisine internationale, chic et décontractée), rooftop en consommation libre
   (150–250 DH), brunch au menu à prix fixe ; derniers textes « hôte » de la démonstration retirés (le contenu de départ
   corrige aussi le site de test).
+
+## Exemples de dîners pour chaque façon de payer (21 novembre)
+
+Démonstration (`apps/web/lib/data/demo-dinners.ts`, ajoutés aussi au site de test par le contenu de départ) :
+
+| Paiement                              | Lieu visible                          | Lieu surprise                                  |
+|---------------------------------------|---------------------------------------|------------------------------------------------|
+| Menu négocié, tout en ligne           | Dîner du chef (299 DH, Premium)        | Dîner entre inconnus (169 DH, Premium)        |
+| Menu à prix fixe réglé au restaurant  | Tajine & conversations (49 + 150 DH, Casual) | Brunch entre inconnus (59 + 80 DH)    |
+| Chacun paie sa consommation           | Pizza entre inconnus (39 DH + 100–150, Casual) | Secret Dinner (49 + 200–300, Premium), Dîner gastronomique secret (79 + 450–600, Exclusive) |
+
+Article d'aide « Combien vais-je payer pour un dîner ? » (`/aide/payer-un-diner`, FR/EN/AR) avec un lien vers chaque exemple.

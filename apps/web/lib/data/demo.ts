@@ -3,6 +3,7 @@
  * Elles seront remplacées par Firestore en phase 3. Les photos sont extraites
  * de la maquette de référence et devront être remplacées par de vraies photos des lieux.
  */
+import { DEMO_DINNER_EXPERIENCES, DEMO_DINNER_SCHEDULE } from "./demo-dinners";
 import { DEMO_MORE_EXPERIENCES, DEMO_MORE_REVIEWS, DEMO_MORE_SCHEDULE } from "./demo-more";
 import {
   DEFAULT_CANCELLATION_POLICY,
@@ -545,6 +546,8 @@ export const DEMO_EXPERIENCES: Experience[] = [
   },
   // 21b : expériences inventées pour toutes les catégories (démonstration).
   ...DEMO_MORE_EXPERIENCES,
+  // 21 novembre : un dîner pour chaque façon de payer et chaque gamme de restaurant.
+  ...DEMO_DINNER_EXPERIENCES,
 ];
 
 /** Planning type : jour de semaine (0 = dimanche), heure locale, capacité, places prises par occurrence. */
@@ -561,6 +564,7 @@ const SCHEDULE: Record<string, { weekday: number; hour: number; minute: number; 
   "exp-padel": { weekday: 6, hour: 10, minute: 30, capacity: 16, taken: [12, 5, 0], featured: true },
   "exp-paintball": { weekday: 0, hour: 14, minute: 30, capacity: 20, taken: [14, 6, 0], featured: true },
   ...DEMO_MORE_SCHEDULE,
+  ...DEMO_DINNER_SCHEDULE,
 };
 
 /** Génère trois occurrences à venir pour chaque expérience, à partir de `now`. */

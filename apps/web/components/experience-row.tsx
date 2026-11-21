@@ -71,7 +71,7 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
           {category ? tr(category.shortName, locale) : ""}
           {languages && ` · ${languages}`} · <span className="font-medium text-ink/75">{formatMoney(price, lang)}</span>
           {budget?.kind === "range" && <span className="font-medium text-ink/75"> {tp("plusRestaurant", { amount: budgetText(budget, lang) })}</span>}
-          {budget?.kind === "fixed" && <span className="font-medium text-ink/75"> {tp("onSite", { amount: formatMoney({ amount: budget.amount, currency: budget.currency }, lang) })}</span>}
+          {budget?.kind === "fixed" && <span className="font-medium text-ink/75"> + {tp("onSite", { amount: formatMoney({ amount: budget.amount, currency: budget.currency }, lang) })}</span>}
         </p>
       </div>
       <Link
