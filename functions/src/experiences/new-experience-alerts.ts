@@ -1,7 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
-import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import { onCall } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { z } from "zod";
@@ -17,8 +16,10 @@ import { clientKey, consumeRateLimit } from "../public/forms";
  *
  * - Qui : les membres qui l'ont activé (users/{uid}.notificationPrefs.newExperiences) et les visiteurs sans compte
  *   inscrits avec leur e-mail, après double confirmation (alertSubscribers, lu par le serveur seulement).
- * - Quand : à la PREMIÈRE publication d'une expérience, elle est mise en file (newExperienceAlerts/{id}, une seule
- *   fois par expérience). Toutes les heures, un seul e-mail regroupe les expériences publiées depuis le dernier envoi.
+ * - Quand : toutes les heures, la tâche repère les expériences publiées qui n'ont jamais été annoncées
+ *   (newExperienceAlerts/{id}, une seule fois par expérience) et envoie un seul e-mail qui les regroupe.
+ *   Pas de déclencheur Firestore (il exigerait des droits supplémentaires sur le projet Google Cloud).
+ *   Au tout premier passage, les expériences déjà en ligne sont marquées « connues » sans e-mail.
  * - Arrêt : lien dans chaque e-mail (visiteur : jeton personnel ; membre : page Préférences).
  */
 
@@ -30,21 +31,29 @@ const prefix = (l: L) => (l === "fr" ? "" : `/${l}`);
 const titleIn = (t: DocumentData | undefined, l: L): string => String(t?.[l] || t?.fr || "");
 export const subscriberId = (email: string) => createHash("sha256").update(email.trim().toLowerCase()).digest("hex").slice(0, 40);
 
-/** File d'attente : une expérience qui passe en « publiée » pour la première fois. */
-export const queueNewExperienceAlert = onDocumentWritten({ document: "experiences/{experienceId}", region: REGION }, async (event) => {
-  await queueIfFirstPublication(event.params.experienceId, event.data?.before.data(), event.data?.after.data());
-});
-
-/** Met en file une expérience qui vient de passer en « publiée », une seule fois dans sa vie. Renvoie true si ajoutée. */
-export async function queueIfFirstPublication(experienceId: string, before: DocumentData | undefined, after: DocumentData | undefined): Promise<boolean> {
-  if (!after || after.status !== "published" || before?.status === "published") return false;
-  try {
-    // create() échoue si l'expérience a déjà été annoncée (republication après un retrait : pas de nouvel e-mail).
-    await db.doc(`newExperienceAlerts/${experienceId}`).create({ experienceId, queuedAt: FieldValue.serverTimestamp(), sentAt: null });
-    return true;
-  } catch {
-    return false; // déjà annoncée
+/**
+ * Met en file les expériences publiées jamais annoncées (une seule fois dans leur vie : une republication après
+ * un retrait ne renvoie rien). Premier passage : tout ce qui est déjà en ligne est marqué connu, sans e-mail.
+ * Renvoie le nombre d'expériences mises en file.
+ */
+export async function queueNewlyPublished(): Promise<number> {
+  const marker = db.doc("settings/newExperienceAlerts");
+  const baseline = !(await marker.get()).exists;
+  const [published, known] = await Promise.all([
+    db.collection("experiences").where("status", "==", "published").select("status").get(),
+    db.collection("newExperienceAlerts").select("experienceId").get(),
+  ]);
+  const seen = new Set(known.docs.map((d) => d.id));
+  const fresh = published.docs.filter((d) => !seen.has(d.id));
+  for (let i = 0; i < fresh.length; i += 400) {
+    const batch = db.batch();
+    for (const d of fresh.slice(i, i + 400)) {
+      batch.set(db.doc(`newExperienceAlerts/${d.id}`), { experienceId: d.id, queuedAt: FieldValue.serverTimestamp(), sentAt: baseline ? FieldValue.serverTimestamp() : null, ...(baseline ? { announced: false, baseline: true } : {}) });
+    }
+    await batch.commit();
   }
+  if (baseline) await marker.set({ baselineAt: FieldValue.serverTimestamp(), known: fresh.length });
+  return baseline ? 0 : fresh.length;
 }
 
 type Recipient = { email: string; locale: L; stopHref: string | null };
@@ -77,6 +86,7 @@ export async function sendPendingNewExperienceAlerts(now = Date.now()): Promise<
     await batch.commit();
   }
 
+  await queueNewlyPublished();
   const queued = await db.collection("newExperienceAlerts").where("sentAt", "==", null).limit(30).get();
   if (queued.empty) return { experiences: 0, emails: 0 };
   const items: { title: DocumentData; slug: string }[] = [];
