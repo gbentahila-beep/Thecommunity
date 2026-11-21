@@ -12,8 +12,8 @@ Remplace la partie visuelle de `docs/18-identite-de-marque.md`. L'ancien brand b
 
 ## Plan en 5 étapes
 
-1. **Stratégie et pistes créatives** : livrée, `docs/marque/wenzy/etape-1-pistes.html`. Trois pistes : A « Midi » (cobalt, safran, chaux, Bricolage Grotesque), B « Menthe » (vert menthe, ambre, étoile du zellige, Syne), C « Soirée » (indigo, corail, lilas, Instrument Serif italique). **Choix : A « Midi »** (21 novembre). Couleurs à revoir (voir étape 2).
-2. **Logo** : après plusieurs allers-retours (voir `docs/marque/wenzy/logo/LISEZMOI.md`), **direction retenue : Coucher de soleil** (crème, encre, dégradé corail → violet, Instrument Serif + Inter, logo duo « wen » net + « zy » manuscrit). Six versions pour mieux souder « wen » et « zy » (`docs/marque/wenzy/etape-2i-coucher-de-soleil.html`), avis : B « Lié ». *En attente du choix.* Ensuite : dessin final, icônes, règles d’usage.
+1. **Stratégie et pistes créatives** : livrée, `docs/marque/wenzy/etape-1-pistes.html`. Trois pistes : A « Midi » (cobalt, safran, chaux, Bricolage Grotesque), B « Menthe » (vert menthe, ambre, étoile du zellige, Syne), C « Soirée » (indigo, corail, lilas, Instrument Serif italique). **Choix : A « Midi »** (21 novembre). Couleurs finalement remplacées à l’étape 2.
+2. **Logo** : **livré et validé.** Direction Coucher de soleil (crème `#F6F1EA`, encre `#141414`, dégradé corail `#FF6A4D` → violet `#C25BE8`, titres Instrument Serif, texte Inter). Logo duo version A « Serré » : « wen » en Outfit, « zy » manuscrit en dégradé ; icône avec le mot entier. Fichiers : `docs/marque/wenzy/logo/final/`, présentation et règles : `docs/marque/wenzy/etape-2-logo-final.html`. Historique des pistes : `docs/marque/wenzy/logo/LISEZMOI.md`.
 3. **Brand book complet** : 12 planches (ton, typographie, couleurs, logo, monogramme, motif, papeterie, à table, affichage, objets, fichiers, site).
 4. **Passage du site à Wenzy** : textes FR/EN/AR, e-mails, factures, visuels, couleurs et polices, adresses `@wenzy.ma`, tests.
 5. **Hors code** : domaine, dépôt de marque, comptes sociaux, adresse e-mail, documents juridiques.

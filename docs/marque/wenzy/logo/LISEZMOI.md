@@ -46,3 +46,7 @@ Demande : ajouter la tablée (six points en cercle, un point de couleur = vous).
 ## Choix du 21 novembre : direction « Coucher de soleil »
 
 Direction retenue : crème `#F6F1EA`, encre `#141414`, dégradé corail `#FF6A4D` → violet `#C25BE8` ; titres Instrument Serif, texte Inter ; logo duo « wen » (Outfit) + « zy » manuscrit en dégradé. Demande : souder « wen » et « zy », qui paraissaient décollés. `coucher-de-soleil/` : six versions (A serré, B lié, C signature, D équilibré, E pinceau, F le fil), sur crème, sur encre, et icône « zy » sur dégradé. Page `../etape-2i-coucher-de-soleil.html`. Régénérer : `python3 mkd1.py fonts coucher-de-soleil` puis `python3 page9.py coucher-de-soleil ../etape-2i-coucher-de-soleil.html`.
+
+## Logo final (21 novembre)
+
+**Choix : version A « Serré »**, direction Coucher de soleil. L'icône montre le mot entier « wenzy » (pas de « zy » seul). Fichiers définitifs dans `final/` : logos SVG (encre, crème, blanc, noir, avec fond), PNG 1600 px, icônes SVG et PNG (1024, 512, 192), icône Apple 180, favicon (ico, svg, 32 px), image de partage 1200×630, logo e-mail 600 px. Page de présentation et règles : `../etape-2-logo-final.html`. Régénérer les SVG : `python3 mkfinal.py fonts final` (les PNG sont rendus avec Playwright à partir des SVG).
