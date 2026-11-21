@@ -12,8 +12,8 @@ Remplace la partie visuelle de `docs/18-identite-de-marque.md`. L'ancien brand b
 
 ## Plan en 5 étapes
 
-1. **Stratégie et pistes créatives** : livrée, `docs/marque/wenzy/etape-1-pistes.html`. Trois pistes : A « Midi » (cobalt, safran, chaux, Bricolage Grotesque), B « Menthe » (vert menthe, ambre, étoile du zellige, Syne), C « Soirée » (indigo, corail, lilas, Instrument Serif italique). **Choix : A « Midi »** (21 novembre).
-2. **Logo** : première version en Bricolage Grotesque (`etape-2-logo.html`) refusée, la police ne plaît pas. Six polices proposées : `docs/marque/wenzy/etape-2b-polices.html`. *En attente du choix.* Ensuite : place du point, fichiers définitifs, monogramme, icônes (favicon, application, OG, e-mail), règles d’usage.
+1. **Stratégie et pistes créatives** : livrée, `docs/marque/wenzy/etape-1-pistes.html`. Trois pistes : A « Midi » (cobalt, safran, chaux, Bricolage Grotesque), B « Menthe » (vert menthe, ambre, étoile du zellige, Syne), C « Soirée » (indigo, corail, lilas, Instrument Serif italique). **Choix : A « Midi »** (21 novembre). Couleurs à revoir (voir étape 2).
+2. **Logo** : Bricolage Grotesque refusée (police), puis bleu + jaune et W isolé écartés (trop proches d’une grande enseigne marocaine). Propositions en cours : six polices (`docs/marque/wenzy/etape-2b-polices.html`) et quatre palettes sans bleu ni jaune, icône avec le mot entier (`docs/marque/wenzy/etape-2c-couleurs.html`). *En attente du choix de la police et de la palette.* Ensuite : fichiers définitifs, icônes, règles d’usage.
 3. **Brand book complet** : 12 planches (ton, typographie, couleurs, logo, monogramme, motif, papeterie, à table, affichage, objets, fichiers, site).
 4. **Passage du site à Wenzy** : textes FR/EN/AR, e-mails, factures, visuels, couleurs et polices, adresses `@wenzy.ma`, tests.
 5. **Hors code** : domaine, dépôt de marque, comptes sociaux, adresse e-mail, documents juridiques.

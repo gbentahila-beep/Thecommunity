@@ -14,3 +14,7 @@ Régénérer : `pip install fonttools uharfbuzz`, polices `bri-96-800.ttf` et `r
 ## Révision du 21 novembre : nouvelle police
 
 Bricolage Grotesque refusée (« je n'aime pas la police »). `polices/` : le logo « Soleil levé » dans six polices OFL (Outfit, Fredoka, Unbounded, Sora, Plus Jakarta Sans, DM Serif Display), page `../etape-2b-polices.html`. Régénérer : `python3 mkfonts.py fonts polices` puis `python3 page3.py polices ../etape-2b-polices.html`.
+
+## Révision du 21 novembre : plus de bleu + jaune, plus de W isolé
+
+Le duo bleu/jaune et le W seul rappelaient une grande enseigne marocaine. `palettes/` : quatre palettes (Corail, Sanguine, Sapin, Fuchsia), logo en Outfit, icône avec le mot entier. Page `../etape-2c-couleurs.html`. Régénérer : `python3 mkpal.py fonts palettes` puis `python3 page4.py palettes ../etape-2c-couleurs.html`.
