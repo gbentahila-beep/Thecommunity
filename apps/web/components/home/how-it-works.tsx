@@ -9,7 +9,7 @@ import { categoryTone } from "@/lib/site";
 
 /**
  * « Comment ça marche » en trois cartes légèrement inclinées et décalées (style The Host Club) :
- * 1) un aperçu du choix des univers, 2) un bouton vers les expériences, 3) trois photos de groupe.
+ * 1) un aperçu du choix des univers, 2) un bouton vers les expériences, 3) trois photos de groupe (dîner, sport, jeux).
  */
 export async function HowItWorks({ categories, showTitle = true }: { categories: Category[]; showTitle?: boolean }) {
   const [t, locale] = await Promise.all([getTranslations("home"), getLocale()]);
@@ -52,14 +52,15 @@ export async function HowItWorks({ categories, showTitle = true }: { categories:
           <span className="font-display text-5xl text-plum-100">3</span>
           <h3 className="mt-1 text-xl font-semibold text-ink">{t("how3Title")}</h3>
           <p className="mt-2 text-[15px] text-muted">{t("how3Text")}</p>
-          <div className="relative mt-5 h-40" role="img" aria-label={t("howPhotosAlt")}>
+          {/* Trois bandeaux (dîner, sport, jeux) légèrement inclinés et superposés : photos panoramiques, visages entiers. */}
+          <div className="mt-5 -space-y-2" role="img" aria-label={t("howPhotosAlt")}>
             {[
-              { src: "/images/photos/comment-groupe-2.webp", cls: "start-0 top-2 -rotate-6 w-[45%] h-32" },
-              { src: "/images/photos/comment-groupe-1.webp", cls: "start-[28%] top-0 rotate-3 w-[46%] h-36 z-10" },
-              { src: "/images/photos/comment-groupe-3.webp", cls: "end-0 top-4 -rotate-2 w-[42%] h-32" },
+              { src: "/images/photos/rencontre-groupe-diner.webp", cls: "-rotate-2" },
+              { src: "/images/photos/rencontre-groupe-sport.webp", cls: "rotate-[1.5deg] z-10" },
+              { src: "/images/photos/rencontre-groupe-jeux.webp", cls: "-rotate-1" },
             ].map((p) => (
-              <div key={p.src} className={`absolute overflow-hidden rounded-2xl border-4 border-white shadow-card ${p.cls}`}>
-                <Image src={p.src} alt="" fill sizes="(min-width: 768px) 12vw, 40vw" className="object-cover" />
+              <div key={p.src} className={`relative aspect-[3/1] overflow-hidden rounded-2xl border-4 border-white shadow-card ${p.cls}`}>
+                <Image src={p.src} alt="" fill sizes="(min-width: 768px) 22vw, 85vw" className="object-cover" />
               </div>
             ))}
           </div>

@@ -180,7 +180,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           </div>
           <div className="relative order-1 h-[46vh] min-h-72 lg:order-2 lg:h-auto lg:min-h-[520px]">
             <Image
-              src="/images/accueil-table-casablanca.webp"
+              src="/images/accueil-rooftop-casablanca.webp"
               alt={t("heroImageAlt")}
               fill
               priority
