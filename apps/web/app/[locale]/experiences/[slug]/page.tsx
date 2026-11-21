@@ -58,9 +58,11 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/experien
 }
 
 /** Fiche d'une expérience archivée : elle n'est plus proposée, on oriente vers des expériences proches. */
-async function RetiredExperience({ title, categoryId }: { title: string; categoryId: string }) {
+async function RetiredExperience({ title, categoryId, cityId }: { title: string; categoryId: string; cityId: string }) {
   const t = await getTranslations("experience");
-  const similar = (await getUpcomingSessions({ categoryId: categoryId as CategoryKey })).slice(0, 3);
+  // Ville + univers : la requête utilise l'index existant (ville, univers, statut, date). Une erreur de lecture ne doit
+  // jamais faire tomber la page : sans suggestions, elle reste utile.
+  const similar = (await getUpcomingSessions({ cityId, categoryId: categoryId as CategoryKey }).catch(() => [])).slice(0, 3);
   return (
     <PageShell className="py-14">
       <div className="mx-auto max-w-2xl text-center">
@@ -94,7 +96,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
   if (!exp) {
     const retired = await getArchivedExperience(slug);
     if (!retired) notFound();
-    return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} />;
+    return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} cityId={retired.cityId} />;
   }
   const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan, policies, organizer, tm, tInt, city] = await Promise.all([
     getTranslations("experience"),

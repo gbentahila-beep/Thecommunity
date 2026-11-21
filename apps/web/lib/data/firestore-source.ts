@@ -60,10 +60,10 @@ async function fsExperienceBySlugRaw(slug: string): Promise<Experience | null> {
 }
 
 /** Expérience archivée (fiche « n'est plus proposée ») : seulement le titre et l'univers. */
-async function fsArchivedExperienceBySlugRaw(slug: string): Promise<{ title: Experience["title"]; categoryId: Experience["categoryId"] } | null> {
+async function fsArchivedExperienceBySlugRaw(slug: string): Promise<{ title: Experience["title"]; categoryId: Experience["categoryId"]; cityId: string } | null> {
   const snap = await adminDb().collection("experiences").where("slug", "==", slug).where("status", "==", "archived").limit(1).get();
   const d = snap.docs[0]?.data();
-  return d ? { title: d.title, categoryId: d.categoryId } : null;
+  return d ? { title: d.title, categoryId: d.categoryId, cityId: String(d.cityId ?? "casablanca") } : null;
 }
 export const fsArchivedExperienceBySlug = cached(fsArchivedExperienceBySlugRaw, "fsArchivedExperienceBySlug");
 
