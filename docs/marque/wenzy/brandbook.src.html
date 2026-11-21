@@ -27,7 +27,7 @@ a { color: inherit }
 
 /* couverture */
 .cover { background: var(--encre); color: var(--creme); margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px); position: relative; overflow: hidden }
-.cover .motif { position: absolute; inset: 0; opacity: .32; background-size: 520px; background-repeat: repeat; -webkit-mask-image: linear-gradient(100deg, transparent 0%, transparent 35%, #000 75%); mask-image: linear-gradient(100deg, transparent 0%, transparent 35%, #000 75%) }
+.cover .motif { position: absolute; inset: 0; opacity: .95; background-size: cover; background-position: 70% 40%; -webkit-mask-image: linear-gradient(100deg, transparent 0%, transparent 35%, #000 75%); mask-image: linear-gradient(100deg, transparent 0%, transparent 35%, #000 75%) }
 .cover .in { position: relative; padding-block: clamp(4rem, 12vw, 8rem) clamp(3rem, 8vw, 5rem); display: grid; gap: 2rem }
 .cover img.logo { width: min(440px, 80%) }
 .cover h1 { font-size: clamp(2.8rem, 8vw, 5.6rem); max-width: 14ch }
@@ -169,12 +169,20 @@ a { color: inherit }
 .browser .bar { padding: .6rem .8rem; font-size: .8rem; color: var(--taupe) }
 
 /* 06 motif */
-.motif-big { border-radius: 24px; height: 340px; background-size: 520px; background-repeat: repeat }
+.motif-big { border-radius: 24px; height: 380px; background-size: cover; background-position: center }
+.crops { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem }
+.crops div { aspect-ratio: 4 / 5; border-radius: 16px; background-size: 260%; }
+@media (max-width: 600px) { .crops { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+.wall { width: 150px; aspect-ratio: 9 / 19; border-radius: 22px; background-size: 300%; background-position: 30% 40%; display: grid; justify-items: center; align-content: space-between; padding: 1.4rem .8rem 2rem; border: 5px solid #0d0d0d }
+.wall span { font: 300 2rem/1 var(--sans); color: #fff }
+.wall img { width: 80% }
 .motif-apps { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: .8rem }
 @media (max-width: 760px) { .motif-apps { grid-template-columns: 1fr } }
-.mapp { border-radius: 18px; overflow: hidden; position: relative; min-height: 230px; background-size: 360px; display: grid; place-items: center; padding: 1.4rem }
+.mapp { border-radius: 18px; overflow: hidden; position: relative; min-height: 230px; background-size: cover; background-position: center; display: grid; place-items: center; padding: 1.4rem }
 .mapp .inner { background: var(--blanc); box-shadow: 0 12px 30px -16px rgb(0 0 0 / .35); border-radius: 14px; padding: 1rem 1.2rem; display: grid; gap: .3rem; max-width: 300px }
+.mapp .inner { color: var(--encre) }
 .mapp .inner p { font: 400 1.6rem/1 var(--serif) }
+.mapp .inner p.k { font: 600 .7rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase }
 .tote { width: 170px; height: 200px; background: #E9DFD0; border-radius: 6px 6px 18px 18px; position: relative; display: grid; place-items: center; box-shadow: 0 18px 30px -18px rgb(0 0 0 / .45) }
 .tote::before { content: ""; position: absolute; top: -48px; left: 42px; width: 86px; height: 70px; border: 7px solid #E9DFD0; border-bottom: 0; border-radius: 50px 50px 0 0 }
 .tote img { width: 120px }
@@ -384,7 +392,7 @@ footer.end img { width: 120px }
       <li><a href="#couleurs"><span>03</span>Couleurs</a></li>
       <li><a href="#logo"><span>04</span>Logo</a></li>
       <li><a href="#icone"><span>05</span>Icône et favicon</a></li>
-      <li><a href="#motif"><span>06</span>Motif « les liens »</a></li>
+      <li><a href="#motif"><span>06</span>Le ciel de 19 h</a></li>
       <li><a href="#papeterie"><span>07</span>Papeterie</a></li>
       <li><a href="#table"><span>08</span>À table</a></li>
       <li><a href="#affichage"><span>09</span>Affichage</a></li>
@@ -555,16 +563,26 @@ footer.end img { width: 120px }
   <div class="in">
     <div class="ph">
       <p class="eyebrow">Planche 06</p>
-      <h2 id="t06">Motif <span class="g">« les liens »</span></h2>
-      <p class="lede">Des points, des personnes, reliés par des traits en dégradé : des groupes de deux à cinq qui se forment, comme des constellations. Le motif se répète sans couture, sur fond encre ou crème.</p>
+      <h2 id="t06">Le ciel <span class="g">de 19 h</span></h2>
+      <p class="lede">Pas de dessin : de grandes taches de couleur floues, corail, abricot et violet, comme le ciel de Casablanca au coucher du soleil. Le ciel habille les fonds d'écran, les stories, les couvertures et les cartes cadeaux. Chaque support le recadre autrement : il n'est jamais deux fois le même.</p>
     </div>
-    <div class="motif-big" style="background-image:url({{MOTIF_ENCRE}})" role="img" aria-label="Motif sur fond encre"></div>
+    <div class="motif-big" style="background-image:url({{MOTIF_ENCRE}})" role="img" aria-label="Le ciel de 19 h sur fond encre"></div>
+    <div class="crops" aria-label="Trois cadrages du ciel">
+      <div style="background-image:url({{MOTIF_ENCRE}});background-position:0% 0%"></div>
+      <div style="background-image:url({{MOTIF_ENCRE}});background-position:100% 30%"></div>
+      <div style="background-image:url({{MOTIF_CREME}});background-position:40% 100%"></div>
+      <div style="background-image:url({{MOTIF_CREME}});background-position:90% 0%"></div>
+    </div>
     <div class="motif-apps">
       <div class="mapp" style="background-image:url({{MOTIF_CREME}})"><div class="inner"><p class="k" style="color:#66625C">Fond de section</p><p>Comment ça marche</p></div></div>
-      <div class="mapp" style="background:#262626"><div class="tote"><img src="{{LOGO_ENCRE}}" alt=""></div></div>
-      <div class="mapp" style="background-image:url({{MOTIF_ENCRE}})"><div class="inner" style="background:linear-gradient(100deg,#FF6A4D,#C25BE8)"><p class="k">Carte cadeau</p><p>Offrez une table</p></div></div>
+      <div class="mapp" style="background:#262626"><div class="wall" style="background-image:url({{MOTIF_ENCRE}})"><span>19:00</span><img src="{{LOGO_BLANC}}" alt=""></div></div>
+      <div class="mapp" style="background-image:url({{MOTIF_ENCRE}})"><div class="inner"><p class="k" style="color:#66625C">Carte cadeau</p><p>Offrez une table</p></div></div>
     </div>
-    <p class="muted">Règles : le motif reste un fond, jamais sous du texte long ; on ne recolore pas les traits ; sur un support imprimé, l'échelle minimale est de 4 cm par tuile.</p>
+    <div class="grid3">
+      <div class="card"><h3>Toujours flou</h3><p>Jamais de contour net ni de forme reconnaissable : c'est une lumière, pas une illustration.</p></div>
+      <div class="card"><h3>Trois couleurs</h3><p>Corail, violet et une touche d'abricot (#FF9A6B), sur encre ou sur crème. Rien d'autre.</p></div>
+      <div class="card"><h3>Le texte au calme</h3><p>Le texte se pose sur une carte crème ou sur une zone unie du ciel. À l'impression : export haute définition (300 dpi).</p></div>
+    </div>
   </div>
 </section>
 
@@ -716,7 +734,7 @@ footer.end img { width: 120px }
           <tr><td>logo/final/wenzy-icone-*.svg · -1024/512/192.png</td><td>Icônes d'application et du site</td></tr>
           <tr><td>logo/final/favicon.ico · wenzy-apple-touch-icon-180.png</td><td>Navigateur et écran d'accueil iPhone</td></tr>
           <tr><td>logo/final/wenzy-og-1200x630.png</td><td>Image de partage sur les réseaux</td></tr>
-          <tr><td>motif/motif-encre.svg · -creme.svg · -encre-tuile.svg</td><td>Motif « les liens », raccordable</td></tr>
+          <tr><td>motif/ciel-encre.svg · ciel-creme.svg</td><td>Le ciel de 19 h, fond flou</td></tr>
           <tr><td>Polices : Instrument Serif, Inter, Amiri, IBM Plex Sans Arabic</td><td>Gratuites (Google Fonts, licence OFL)</td></tr>
         </tbody>
       </table>
