@@ -262,7 +262,9 @@
     "proposedBy": "Outing proposed by {name}, a community member",
     "notIncluded": "Not included",
     "organizedBy": "Organized by",
-    "organizerPage": "See the organizer's page"
+    "organizerPage": "See the organizer's page",
+    "onSiteHost": "A hostess welcomes you on site",
+    "selfArrival": "No host: check in and find your group in the app"
   },
   "booking": {
     "title": "Book my spot",
@@ -993,7 +995,7 @@
   "aboutPage": {
     "founderEyebrow": "The founder",
     "founderName": "Aya Snoussi",
-    "founderRole": "Founder and host of The Host Club",
+    "founderRole": "Founder of The Host Club",
     "founderP1": "After ten years in France, Aya came back to Casablanca with a simple wish: to find her place at home again, among people who share her culture, her humour and her references.",
     "founderP2": "The city has no shortage of places to go — cafés, gyms, restaurants. What was missing was an easy way to actually meet someone. She started with small meetups; very quickly, requests outnumbered the seats available.",
     "founderP3": "While looking for her own place, she created one where everyone can find theirs. The Host Club carries that idea forward.",
@@ -1025,7 +1027,7 @@
     "tool4Title": "The waitlist",
     "tool4": "Full? Sign up: if a spot opens, you're told and can book it before anyone else.",
     "tool5Title": "A tailored welcome",
-    "tool5": "Diet, allergies, preferred languages: add them when booking and we pass them on to the venue with your consent. When you arrive, we greet you by your first name.",
+    "tool5": "Diet, allergies, preferred languages: add them when booking and we pass them on to the venue with your consent. When you arrive, check in in the app: your group appears so you can find each other.",
     "tool6Title": "Reminders at the right time",
     "tool6": "The day before and 3 hours before, a reminder with the venue and time. If anything changes, you're told straight away.",
     "tool7Title": "Membership",
@@ -1214,7 +1216,7 @@
     "capacityLabel": "Number of participants",
     "priceLabel": "Price per person in mind (MAD)",
     "priceHint": "Optional: the team sets the final price.",
-    "willHost": "I'll be there to welcome the group.",
+    "willHost": "I will take part in the outing too.",
     "notesLabel": "A note for the team (optional)",
     "reviewNote": "Nothing is published without the team: we check the venue, safety and price before creating the page.",
     "submit": "Send my proposal",
@@ -1517,5 +1519,17 @@
     "closingSignup": "Sign up",
     "closingDiscover": "See experiences",
     "closingBookings": "My bookings"
+  },
+  "checkIn": {
+    "title": "Your arrival",
+    "text": "Are you there? Let us know: your group appears just below so you can find each other.",
+    "early": "On the day, from 30 minutes before the start, check in here: you will see your group to find them. There is no host: everyone finds each other through the app.",
+    "cta": "I have arrived",
+    "busy": "One moment…",
+    "doneTitle": "You have arrived",
+    "groupHint": "Find your group’s first names below and look for The Host Club sign on the table or at the meeting point.",
+    "soloHint": "Show your ticket at the venue’s front desk if needed. Enjoy!",
+    "hostHint": "A hostess welcomes you on site and introduces your group.",
+    "error": "We couldn’t save your arrival right now. Please try again in a moment."
   }
 }

@@ -211,6 +211,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     requestInstagramRequired: v.admission === "on_request" && v.requestInstagramRequired,
     languages: v.languages,
     alcoholServed: v.alcoholServed,
+    onSiteHost: v.onSiteHost === true,
     included: (v.included ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
     notIncluded: (v.notIncluded ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
     practicalInfo: { fr: v.practicalInfo ?? "" },

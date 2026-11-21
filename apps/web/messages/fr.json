@@ -262,7 +262,9 @@
     "proposedBy": "Sortie proposée par {name}, membre de la communauté",
     "notIncluded": "Non inclus",
     "organizedBy": "Organisé par",
-    "organizerPage": "Voir la page de l'organisateur"
+    "organizerPage": "Voir la page de l'organisateur",
+    "onSiteHost": "Une hôtesse vous accueille sur place",
+    "selfArrival": "Pas d’hôte : vous indiquez votre arrivée et retrouvez votre groupe dans l’application"
   },
   "booking": {
     "title": "Réserver ma place",
@@ -993,7 +995,7 @@
   "aboutPage": {
     "founderEyebrow": "La créatrice",
     "founderName": "Aya Snoussi",
-    "founderRole": "Fondatrice et hôtesse de The Host Club",
+    "founderRole": "Fondatrice de The Host Club",
     "founderP1": "Après dix ans en France, Aya est rentrée à Casablanca avec une envie simple : retrouver sa place chez elle, parmi des gens qui partagent sa culture, son humour et ses références.",
     "founderP2": "La ville ne manque pas d'adresses — cafés, salles de sport, restaurants. Ce qui manquait, c'était une façon facile de vraiment rencontrer quelqu'un. Elle a commencé par de petites rencontres ; très vite, les demandes ont dépassé les places disponibles.",
     "founderP3": "En cherchant sa propre place, elle a créé un endroit où chacun peut trouver la sienne. The Host Club prolonge cette idée.",
@@ -1025,7 +1027,7 @@
     "tool4Title": "La liste d'attente",
     "tool4": "C'est complet ? Inscrivez-vous : si une place se libère, vous êtes prévenu·e et pouvez la réserver avant tout le monde.",
     "tool5Title": "Un accueil sur mesure",
-    "tool5": "Régime, allergies, langues souhaitées : indiquez-les en réservant, nous les transmettons au lieu avec votre accord. À votre arrivée, on vous accueille par votre prénom.",
+    "tool5": "Régime, allergies, langues souhaitées : indiquez-les en réservant, nous les transmettons au lieu avec votre accord. À votre arrivée, indiquez-le dans l’application : votre groupe s’affiche pour vous retrouver.",
     "tool6Title": "Des rappels au bon moment",
     "tool6": "La veille et 3 h avant, un rappel avec le lieu et l'horaire. En cas de changement, vous êtes prévenu·e aussitôt.",
     "tool7Title": "L'abonnement",
@@ -1214,7 +1216,7 @@
     "capacityLabel": "Nombre de participants",
     "priceLabel": "Prix par personne envisagé (DH)",
     "priceHint": "Facultatif : l'équipe fixe le prix final.",
-    "willHost": "Je serai là pour accueillir le groupe.",
+    "willHost": "Je participerai aussi à la sortie.",
     "notesLabel": "Un mot pour l'équipe (facultatif)",
     "reviewNote": "Rien n'est publié sans l'équipe : nous vérifions le lieu, la sécurité et le prix avant de créer la fiche.",
     "submit": "Envoyer ma proposition",
@@ -1517,5 +1519,17 @@
     "closingSignup": "S’inscrire",
     "closingDiscover": "Voir les expériences",
     "closingBookings": "Mes réservations"
+  },
+  "checkIn": {
+    "title": "Votre arrivée",
+    "text": "Vous êtes sur place ? Indiquez-le : votre groupe s’affiche juste en dessous pour vous retrouver.",
+    "early": "Le jour J, à partir de 30 minutes avant le début, indiquez ici votre arrivée : vous verrez votre groupe pour le retrouver. Il n’y a pas d’hôte : chacun se retrouve grâce à l’application.",
+    "cta": "Je suis arrivé·e",
+    "busy": "Un instant…",
+    "doneTitle": "Vous êtes arrivé·e",
+    "groupHint": "Retrouvez les prénoms de votre groupe ci-dessous et cherchez le signe The Host Club sur la table ou au point de rendez-vous.",
+    "soloHint": "Présentez-vous à l’accueil du lieu avec votre billet si besoin. Belle expérience !",
+    "hostHint": "Une hôtesse vous accueille sur place et vous présente votre groupe.",
+    "error": "Impossible d’enregistrer votre arrivée pour le moment. Réessayez dans un instant."
   }
 }

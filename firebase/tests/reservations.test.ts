@@ -1260,11 +1260,7 @@ describe("composition des tables (6)", () => {
     expect((await db().collection(`users/${all[2]}/notifications`).where("type", "==", "group_revealed").get()).size).toBe(1);
   });
 
-  it("fiche hôte enregistrée par l'équipe ; plafond de 50 places par date", async () => {
-    const sid = await makeSession();
-    const adm = await member({ role: "admin" });
-    await adm.call("adminSaveHosting", { sessionId: sid, hostName: "Aya", notes: "Accueil 19 h 45, tour de table." });
-    expect((await session(sid)).hosting).toMatchObject({ hostName: "Aya", notes: "Accueil 19 h 45, tour de table." });
+  it("plafond de 50 places par date", async () => {
     const { sessionPlanSchema } = await import("../../packages/shared/src/experience-input");
     expect(sessionPlanSchema.safeParse({ firstDate: "2027-01-10", time: "19:30", weeks: 1, capacity: 51 }).success).toBe(false);
     expect(sessionPlanSchema.safeParse({ firstDate: "2027-01-10", time: "19:30", weeks: 1, capacity: 50 }).success).toBe(true);

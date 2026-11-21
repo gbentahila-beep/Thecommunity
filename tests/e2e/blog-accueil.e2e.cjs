@@ -218,7 +218,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   for (const u of ['/favicon.ico', '/manifest.webmanifest', '/images/brand/icon-512.png']) assert((await d.request.get(`${base}${u}`)).ok(), `10f : ${u} servi`);
   await d.goto(`${base}/admin/partenaires/p-atelier-cil/chevalet`);
   assert(await d.getByText('Réservé', { exact: true }).first().isVisible() && await d.locator('svg path').count() > 2, '10f : chevalet « Réservé » avec QR code');
-  await d.goto(`${base}/admin/sessions/ses-ceramique-1/fiche-hote`);
+  await d.goto(`${base}/admin/sessions/ses-ceramique-1/supports`);
   assert(await d.getByRole('heading', { name: 'Cartes de bienvenue' }).isVisible() && await d.getByText('Bienvenue à table').first().isVisible(), '10f : cartes de bienvenue imprimables');
 
   // 12 : « Comment ça marche » présentée comme sur l'accueil

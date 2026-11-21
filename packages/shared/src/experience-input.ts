@@ -60,6 +60,8 @@ export const experienceInputSchema = z
     durationMinutes: z.coerce.number().int().min(15, "min15").max(1440, "tooMany"),
     languages: z.array(z.enum(SPOKEN_LANGUAGES as [SpokenLanguage, ...SpokenLanguage[]])).min(1, "pickOne"),
     alcoholServed: z.boolean(),
+    /** docs/16 : pas d'hôte par défaut ; l'organisateur peut indiquer qu'une hôtesse accueille sur place. */
+    onSiteHost: z.boolean().default(false),
     included: z.string().max(1000, "tooLong").optional().or(z.literal("")),
     /** Étape 23 : ce qui n'est pas compris dans le prix (un élément par ligne). */
     notIncluded: z.string().max(1000, "tooLong").optional().or(z.literal("")),

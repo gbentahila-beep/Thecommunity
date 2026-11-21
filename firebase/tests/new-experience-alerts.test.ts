@@ -56,7 +56,11 @@ describe("alertes nouvelles expériences", () => {
     await queueNewlyPublished();
     expect((await db().doc(`newExperienceAlerts/${before}`).get()).get("sentAt")).not.toBeNull();
     // Nouvelle publication → mise en file (une seule fois dans la vie de l'expérience).
-    const exp = { slug, title: { fr: "Atelier alerte", en: "Alert workshop" } };
+    // Visiteur inscrit pour une autre ville : rien sur une expérience de Casablanca.
+    const rabat = `rabat.${run}@example.com`;
+    await subscribeVisitor(rabat, "fr", "rabat");
+    await confirmVisitor((await db().doc(`alertSubscribers/${subscriberId(rabat)}`).get()).get("token"));
+    const exp = { slug, cityId: "casablanca", title: { fr: "Atelier alerte", en: "Alert workshop" } };
     await db().doc(`experiences/${expId}`).set({ ...exp, status: "draft" });
     expect(await queueNewlyPublished()).toBe(0);
     await db().doc(`experiences/${expId}`).update({ status: "published" });
@@ -68,6 +72,7 @@ describe("alertes nouvelles expériences", () => {
     expect(String(toVisitor.text)).toContain(`/alertes?arreter=${pending.token}`);
     expect(String((await mailsTo(memberEmail, "new_experiences"))[0]!.text)).toContain("Alert workshop");
     expect(await mailsTo(`off.${run}@example.com`, "new_experiences")).toHaveLength(0);
+    expect(await mailsTo(rabat, "new_experiences")).toHaveLength(0);
 
     // Jamais deux fois : ni au passage suivant, ni après un retrait puis une republication.
     await db().doc(`experiences/${expId}`).update({ status: "draft" });

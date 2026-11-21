@@ -434,6 +434,13 @@ export function ExperienceForm({
           <input type="checkbox" checked={v.alcoholServed} onChange={(e) => set("alcoholServed", e.target.checked)} className="size-4 accent-plum-900" />
           De l&apos;alcool est servi pendant l&apos;expérience
         </label>
+        <label className="flex items-start gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" checked={Boolean(v.onSiteHost)} onChange={(e) => set("onSiteHost", e.target.checked)} className="mt-0.5 size-4 accent-plum-900" />
+          <span>
+            Une hôtesse accueille les participants sur place
+            <span className="block text-xs text-muted">Sinon, chacun indique son arrivée dans l&apos;application et retrouve son groupe seul (affiché sur la fiche).</span>
+          </span>
+        </label>
         <div className="sm:col-span-2"><Label k="included" hint="Tout ce que comprend le prix total, payé en ligne et sur place. Un élément par ligne, affiché sur la fiche.">Ce qui est inclus</Label><textarea {...field("included")} rows={3} value={v.included ?? ""} onChange={(e) => set("included", e.target.value)} /></div>
         <div className="sm:col-span-2"><Label k="notIncluded" hint="Facultatif : ce que le prix ne comprend pas (boissons, transport, matériel à louer…). Un élément par ligne.">Ce qui n&apos;est pas inclus</Label><textarea {...field("notIncluded")} rows={2} value={v.notIncluded ?? ""} onChange={(e) => set("notIncluded", e.target.value)} /></div>
         <div className="sm:col-span-2"><Label k="practicalInfo">Infos pratiques</Label><textarea {...field("practicalInfo")} rows={2} value={v.practicalInfo ?? ""} onChange={(e) => set("practicalInfo", e.target.value)} /></div>

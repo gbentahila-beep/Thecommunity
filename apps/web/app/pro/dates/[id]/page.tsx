@@ -41,7 +41,7 @@ export default async function ProSessionPage({ params }: PageProps<"/pro/dates/[
               return (
                 <tr key={r.id} data-testid="pro-participant">
                   <td className="font-mono text-xs">{r.code}</td>
-                  <td className="font-medium text-ink">{r.participant}</td>
+                  <td className="font-medium text-ink">{r.participant}{r.arrived && <span className="ms-2 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">Arrivé·e (appli)</span>}</td>
                   <td>{r.seats}</td>
                   <td><Badge tone={st[1]}>{st[0]}</Badge></td>
                   <td className="text-xs text-muted">{[r.diet, r.allergies].filter(Boolean).join(" · ") || "—"}</td>

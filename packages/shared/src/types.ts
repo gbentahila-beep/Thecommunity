@@ -123,6 +123,8 @@ export type Experience = {
   requestInstagramRequired?: boolean;
   languages: string[];
   alcoholServed?: boolean;
+  /** Une hôtesse accueille les participants sur place (option de l'organisateur) ; sinon, arrivée autonome. */
+  onSiteHost?: boolean;
   included: LocalizedText[];
   /** Étape 23 : ce qui n'est pas compris dans le prix. */
   notIncluded?: LocalizedText[];
@@ -220,7 +222,6 @@ export type Session = {
   /** Composition des tables (6) : état, à revoir après une annulation, fiche hôte. */
   groupsStatus?: "none" | "proposed" | "validated" | "revealed";
   groupsNeedReview?: boolean;
-  hosting?: { hostName: string; notes: string };
   isDemo?: boolean;
 };
 
@@ -329,6 +330,8 @@ export type Reservation = {
   /** Régime, allergies, langues de table (5g) ; transmis au lieu seulement avec l'accord de la personne. */
   preferences?: { diet: string; allergies: string; languages: string[]; shareWithVenue: boolean };
   groupId?: string;
+  /** Arrivée indiquée par le participant lui-même (docs/16) ; le pointage de l'organisateur reste à part. */
+  arrivedAt?: string;
   paidAt?: string;
   /** Fin du blocage des places pendant le paiement (réservation « pending_payment »). */
   holdExpiresAt?: string;

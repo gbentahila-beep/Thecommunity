@@ -150,6 +150,19 @@ export function canReview(r: { status: string; sessionSnapshot: { endAt: string 
   return r.status === "confirmed" && now.getTime() >= end;
 }
 
+/**
+ * Arrivée autonome (docs/16, phase 7) : pas d'hôte ni d'hôtesse ; chaque participant indique lui-même son arrivée,
+ * de 30 min avant le début à 1 h après. Il voit alors son groupe pour le retrouver.
+ */
+export const SELF_CHECKIN_BEFORE_MIN = 30;
+export const SELF_CHECKIN_AFTER_MIN = 60;
+export function selfCheckInState(startAt: string, now: Date = new Date()): "early" | "open" | "closed" {
+  const start = new Date(startAt).getTime();
+  if (now.getTime() < start - SELF_CHECKIN_BEFORE_MIN * 60_000) return "early";
+  if (now.getTime() > start + SELF_CHECKIN_AFTER_MIN * 60_000) return "closed";
+  return "open";
+}
+
 /** Nom public d'un avis : prénom + initiale du nom (« Sara B. »). */
 export function publicNameOf(firstName?: string, lastName?: string): string {
   const f = (firstName ?? "").trim() || "Membre";

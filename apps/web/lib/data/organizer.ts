@@ -92,6 +92,8 @@ export type ProReservation = {
   diet?: string;
   allergies?: string;
   checkedIn: boolean;
+  /** Le participant a indiqué son arrivée lui-même (arrivée autonome, docs/16). */
+  arrived?: boolean;
 };
 export type ProRequest = { id: string; sessionId: string; experienceId: string; title: string; startAt: string; seats: number; message: string; instagram?: string; participant: string; createdAt: string; status: string };
 
@@ -142,6 +144,7 @@ export const getProData = cache(async function getProData(orgId: string): Promis
         // Régime et allergies : seulement si la personne accepte qu'ils soient transmis au lieu (5g).
         ...(share && r.preferences ? { diet: r.preferences.diet ?? "", allergies: r.preferences.allergies ?? "" } : {}),
         checkedIn: r.status === "attended",
+        arrived: Boolean(r.arrivedAt),
       };
     })
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));

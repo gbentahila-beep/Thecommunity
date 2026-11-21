@@ -213,14 +213,3 @@ export const adminRevealGroups = onCall({ region: REGION, timeoutSeconds: 120 },
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "groups.reveal", targetType: "session", targetId: sessRef.id, after: { participants: participants.length, groups: groups.size } });
   return { ok: true, participants: participants.length };
 });
-
-/** Fiche hôte : qui accueille et le déroulé de la soirée (équipe). */
-export const adminSaveHosting = onCall({ region: REGION }, async (req) => {
-  const actor = requireRole(req, [...TEAM]);
-  const parsed = z.object({ sessionId: idSchema, hostName: z.string().trim().max(80), notes: z.string().trim().max(2000) }).safeParse(req.data);
-  if (!parsed.success) invalidArgument(parsed.error.issues);
-  const ref = db.doc(`sessions/${parsed.data.sessionId}`);
-  if (!(await ref.get()).exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
-  await ref.update({ hosting: { hostName: parsed.data.hostName, notes: parsed.data.notes, updatedAt: FieldValue.serverTimestamp(), updatedBy: actor.uid } });
-  return { ok: true };
-});

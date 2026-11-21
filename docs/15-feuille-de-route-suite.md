@@ -340,3 +340,16 @@ Tests : 6 tests d'intégration et 4 unitaires (formule, souscription et renouvel
   semaine › »), Pour vous, « Cette semaine à … » (15 expériences).
 - **Catalogue** : titre, ville ▾ et icône filtres (panneau : tri, prix, quartier, jour, format, cases). Plus de
   barre de recherche, de compteur ni de « Trier par » ; un seul badge par ligne.
+
+## Refonte UX/UI — phase 7 : plus d'hôte ni d'hôtesse, arrivée autonome (21 novembre 2026)
+
+- Rôle d'hôte supprimé : plus de fiche hôte (`adminSaveHosting` et `sessions.hosting` retirés) ; la page devient
+  « Supports imprimés » (`/admin/sessions/[id]/supports` : marque-places, numéros de table, cartes de bienvenue).
+  Textes revus (fondatrice, charte, sécurité, propositions de sortie, blog, à propos).
+- Arrivée autonome : `selfCheckIn` (callable) — de 30 min avant à 1 h après le début (`selfCheckInState`), pour sa
+  propre réservation confirmée ; enregistre `arrivedAt` sans changer le statut (l'avis s'ouvre toujours à la fin).
+  Bloc « Votre arrivée » sur la réservation (la veille et le jour J), puis le groupe juste en dessous. Organisateur :
+  « Arrivé·e (appli) » dans la liste des participants ; son pointage des billets est conservé.
+- Option de l'organisateur « Une hôtesse accueille les participants sur place » (`experiences.onSiteHost`), affichée
+  sur la fiche ; sinon la fiche indique « Pas d'hôte : vous indiquez votre arrivée et retrouvez votre groupe ».
+- Tests : `firebase/tests/self-check-in.test.ts`, alertes filtrées par ville, `selfCheckInState` (unitaire).

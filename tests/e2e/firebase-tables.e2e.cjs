@@ -111,14 +111,11 @@ const arr = (xs) => ({ arrayValue: { values: xs.map(str) } });
   const mails = (await fsList('mail')).filter((m) => m.fields.kind?.stringValue === 'group_revealed' && m.fields.refs?.mapValue.fields.sessionId?.stringValue === sid);
   assert(mails.length === 11, 'un e-mail « votre table est prête » par participant (boîte d\'envoi)');
 
-  // 2. Fiche hôte et marque-places
-  await admin.goto(`${base}/admin/sessions/${sid}/fiche-hote`);
-  await admin.getByLabel('Hôte ou hôtesse').fill('Aya');
-  await admin.getByLabel('Déroulé et consignes').fill('19 h 45 accueil, 20 h tour de table.');
-  await admin.getByRole('button', { name: 'Enregistrer la fiche' }).click();
-  assert(await visible(admin.getByText('Enregistré.')), 'fiche hôte enregistrée');
+  // 2. Supports imprimés (plus de fiche hôte) : marque-places par table
+  await admin.goto(`${base}/admin/sessions/${sid}/supports`);
+  assert(!(await admin.getByLabel('Hôte ou hôtesse').count()), 'plus de rôle d\'hôte');
   assert(await admin.getByRole('region', { name: /Table 1/ }).isVisible() && await admin.getByText('Salma', { exact: true }).isVisible(), 'marque-places par table');
-  await shot(admin, 'tables-2-fiche-hote');
+  await shot(admin, 'tables-2-supports');
 
   // 3. Membre : sa table et le lieu
   const page = await open();

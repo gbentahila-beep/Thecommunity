@@ -7,7 +7,7 @@ import {
   type CategoryKey,
   type Experience,
 } from "@thecommunity/shared";
-import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users } from "lucide-react";
+import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, Handshake } from "lucide-react";
 import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
@@ -201,6 +201,9 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <Fact icon={Clock} label={t("duration")} value={duration} />
               <Fact icon={Languages} label={t("languages")} value={exp.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ")} />
               {exp.alcoholServed === false && <Fact icon={Leaf} label={t("alcoholFree")} value="" />}
+              {(exp.bookingMode === "social_dinner" || exp.bookingMode === "group" || exp.onSiteHost) && (
+                <Fact icon={Handshake} label={exp.onSiteHost ? t("onSiteHost") : t("selfArrival")} value="" />
+              )}
               {exp.level && <Fact icon={Gauge} label={t("levelLabel")} value={t(`level_${exp.level}`)} />}
               {exp.minAge != null && exp.minAge > 18 && <Fact icon={UserCheck} label={t("minAgeLabel")} value={t("minAgeValue", { age: exp.minAge })} />}
             </ul>

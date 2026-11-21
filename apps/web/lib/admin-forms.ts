@@ -27,7 +27,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
     revealPolicy: "immediate", bookingMode: "individual",
     groupMin: "5", groupTarget: "6", groupMax: "7", maxSeatsPerBooking: "1",
     admission: "direct", requestMessageRequired: false, requestInstagramRequired: false, memberPriceDh: "", membersOnly: false,
-    priceDh: "", durationMinutes: "120", languages: ["fr"], alcoholServed: false,
+    priceDh: "", durationMinutes: "120", languages: ["fr"], alcoholServed: false, onSiteHost: false,
     included: "", notIncluded: "", practicalInfo: "", cancellationPolicyId: DEFAULT_CANCELLATION_POLICY.id,
     partnerId: "", economicsModel: "own", costPerSeatDh: "", commissionPercent: "",
     pricingModel: "online_only", partnerPriceDh: "", partnerDescription: "", onSiteCommissionPercent: "",
@@ -51,7 +51,7 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     // Étape 22 : pour une activité d'organisateur, le prix saisi est le prix TOTAL (la part en ligne en découle).
     maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String((e.totalPrice?.amount ?? e.price.amount) / 100), durationMinutes: String(e.durationMinutes),
     languages: e.languages.filter((l): l is ExperienceFormValues["languages"][number] => ["fr", "ar", "darija", "en", "es"].includes(l)),
-    alcoholServed: Boolean(e.alcoholServed), included: includedLines(e).join("\n"), notIncluded: (e.notIncluded ?? []).map((i) => i.fr).join("\n"), practicalInfo: e.practicalInfo?.fr ?? "",
+    alcoholServed: Boolean(e.alcoholServed), onSiteHost: Boolean(e.onSiteHost), included: includedLines(e).join("\n"), notIncluded: (e.notIncluded ?? []).map((i) => i.fr).join("\n"), practicalInfo: e.practicalInfo?.fr ?? "",
     partnerId: eco?.partnerId ?? "", economicsModel: eco?.model ?? "own",
     costPerSeatDh: eco?.costPerSeat != null ? String(eco.costPerSeat / 100) : "",
     commissionPercent: eco?.commissionPercent != null ? String(eco.commissionPercent) : "",

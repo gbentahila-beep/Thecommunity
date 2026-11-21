@@ -54,8 +54,8 @@ export default async function GroupsPage({ params }: PageProps<"/admin/sessions/
         title={`Groupes · ${e.title.fr}`}
         subtitle={`${adminDate(s.startAt)} · ${d.isDemo ? Object.keys(members).length : seats} participants confirmés · cible ${e.groupConfig.targetSize} (min ${e.groupConfig.minSize}, max ${e.groupConfig.maxSize})`}
         actions={
-          <Link href={`/admin/sessions/${s.id}/fiche-hote`} className="rounded-full border border-plum-900 px-4 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-50">
-            Fiche hôte et marque-places
+          <Link href={`/admin/sessions/${s.id}/supports`} className="rounded-full border border-plum-900 px-4 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-50">
+            Supports imprimés (marque-places)
           </Link>
         }
       />

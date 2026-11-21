@@ -80,3 +80,14 @@ describe("avis", () => {
     expect(publicNameOf("", "")).toBe("Membre");
   });
 });
+
+import { selfCheckInState } from "./booking";
+describe("arrivée autonome", () => {
+  const start = "2026-11-21T19:00:00.000Z";
+  it("ouvre 30 min avant et ferme 1 h après le début", () => {
+    expect(selfCheckInState(start, new Date("2026-11-21T18:29:00.000Z"))).toBe("early");
+    expect(selfCheckInState(start, new Date("2026-11-21T18:30:00.000Z"))).toBe("open");
+    expect(selfCheckInState(start, new Date("2026-11-21T20:00:00.000Z"))).toBe("open");
+    expect(selfCheckInState(start, new Date("2026-11-21T20:01:00.000Z"))).toBe("closed");
+  });
+});

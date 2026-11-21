@@ -1,4 +1,5 @@
-import { canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences } from "@thecommunity/shared";
+import { SelfCheckIn } from "@/components/account/self-check-in";
+import { canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -59,6 +60,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const title = tr(s.title, locale);
   const isUpcoming = new Date(s.startAt).getTime() > now.getTime();
   const isActive = r.status === "confirmed";
+  const checkIn = selfCheckInState(s.startAt, now);
   const refund = refundAmountFor(policy, r.pricing.total, new Date(s.startAt), now);
   const refundable = Boolean(r.paymentId) && canRequestRefund({ status: r.status, sessionStartAt: s.startAt, paidAmount: r.pricing.total, refundedAmount: r.refundedAmount }, now);
   const review = data.review;
@@ -223,6 +225,11 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
             </div>
           </div>
         </section>
+      )}
+
+      {/* Arrivée autonome (docs/16) : affichée la veille et le jour J, jusqu'à 1 h après le début. */}
+      {isActive && checkIn !== "closed" && new Date(s.startAt).getTime() - now.getTime() < 86_400_000 && (
+        <SelfCheckIn reservationId={r.id} state={checkIn} arrived={Boolean(r.arrivedAt)} onSiteHost={Boolean(experience?.onSiteHost)} hasGroup={Boolean(group)} />
       )}
 
       {group && (
