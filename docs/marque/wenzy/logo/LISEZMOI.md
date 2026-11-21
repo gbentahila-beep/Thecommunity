@@ -22,3 +22,7 @@ Le duo bleu/jaune et le W seul rappelaient une grande enseigne marocaine. `palet
 ## Révision du 21 novembre : retour aux couleurs de la planche de référence
 
 Référence fournie : `docs/maquettes/2026-11-21-wenzy/reference-couleurs.jpg` (terre cuite `#B9462A`, atlantique `#1D4466`, safran `#E3A23B`, sable `#F4EADB`, encre `#22201C` ; DM Serif Display, DM Sans, Tajawal). `terre-cuite/` : « wenzy » en minuscules avec un soleil à rayons à gauche, dans six polices, et le symbole « soleil dans une arche » (pas de W). Page `../etape-2d-terre-cuite.html`. Régénérer : `python3 mksoleil.py fonts terre-cuite` puis `python3 page5.py terre-cuite ../etape-2d-terre-cuite.html`.
+
+## Révision du 21 novembre : lettrages « fun et jeune »
+
+Demande : un logo fun et jeune, avec des changements de police, de taille ou de forme selon les lettres ou les syllabes. `lettrages/` : six lettrages composés lettre par lettre (Rebond, Duo, Autocollant, Grand Z, Mélange, Sourire), en palette fun (tomate, bonbon, lilas, pomme, crème, encre) et en terre cuite (`tc-*`). Polices OFL : Bagel Fat One, Pacifico, Caprasimo, Shrikhand, Dela Gothic One, Rubik, Fraunces. Page `../etape-2e-lettrages.html`. Régénérer : `python3 mkfun.py fonts lettrages` puis `python3 page6.py lettrages ../etape-2e-lettrages.html`.
