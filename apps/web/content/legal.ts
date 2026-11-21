@@ -134,9 +134,9 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
           [
             "Prévenez un proche : dites-lui où vous allez et à quelle heure vous pensez rentrer.",
             "Prévoyez l'aller et le retour avant de partir, surtout le soir ou si vous comptez boire un verre.",
-            "Un besoin particulier (mobilité, audition, vue, régime, allergie) ? Indiquez-le en réservant, rubrique « Pour votre accueil », ou écrivez-nous le plus tôt possible : nous pourrons en tenir compte pour le lieu et la table.",
+            "Un besoin particulier (mobilité, audition, vue, régime, allergie) ? Indiquez-le en réservant, rubrique « Pour votre accueil », ou écrivez-nous le plus tôt possible : nous pourrons en tenir compte pour le lieu et votre groupe.",
             "Réservez et payez uniquement sur notre site officiel. Nous ne demandons jamais de payer par virement, par message ou en espèces à un inconnu. Méfiez-vous des pages ou comptes qui imitent notre nom.",
-            "Avant l'expérience, nous vous communiquons les informations utiles (lieu, horaire, et selon le format votre table). Vos coordonnées ne sont jamais transmises aux autres participants.",
+            "Avant l'expérience, nous vous communiquons les informations utiles (lieu, horaire, et selon le format votre table ou votre équipe). Vos coordonnées ne sont jamais transmises aux autres participants.",
           ],
         ],
       },
@@ -175,7 +175,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         body: [
           "Si la vie ou la sécurité de quelqu'un est en jeu, appelez d'abord les secours, puis prévenez-nous :",
           ["Police : 19", "Gendarmerie royale (hors des villes) : 177", "Protection civile (pompiers, ambulances) : 15", "Depuis un téléphone portable, le 112 vous oriente aussi vers les secours"],
-          "Cela vaut pour un malaise à table, une personne en détresse, un participant introuvable après une expérience ou une menace visant un lieu ou un groupe. Le personnel du lieu connaît l'adresse exacte : demandez-lui de l'aide pour guider les secours.",
+          "Cela vaut pour un malaise pendant l'expérience, une personne en détresse, un participant introuvable après une expérience ou une menace visant un lieu ou un groupe. Le personnel du lieu connaît l'adresse exacte : demandez-lui de l'aide pour guider les secours.",
           "Pas sûr que ce soit grave ? Prévenez-nous quand même : nous préférons être alertés pour une situation qui se révèle sans gravité plutôt que de passer à côté d'une vraie urgence.",
         ],
       },
@@ -251,8 +251,8 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "Venir, ou annuler à temps",
         body: [
-          "Une place vide se voit et pèse sur toute la table. Si vous ne pouvez plus venir, annulez dans les délais indiqués dans les [conditions de vente](/cgv) pour libérer la place.",
-          "Vous venez avec des amis ? Réservez leurs places dans la même réservation : la table est composée pour un nombre précis de personnes, et un invité non prévu prendrait la place de quelqu'un d'autre. La personne qui réserve s'assure que ses invités connaissent ces règles, et en répond.",
+          "Une place vide se voit et pèse sur tout le groupe. Si vous ne pouvez plus venir, annulez dans les délais indiqués dans les [conditions de vente](/cgv) pour libérer la place.",
+          "Vous venez avec des amis ? Réservez leurs places dans la même réservation : le groupe est composé pour un nombre précis de personnes, et un invité non prévu prendrait la place de quelqu'un d'autre. La personne qui réserve s'assure que ses invités connaissent ces règles, et en répond.",
         ],
       },
       {
@@ -286,7 +286,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         ],
       },
       {
-        title: "Pas de discrimination à table",
+        title: "Pas de discrimination",
         body: [
           "Réunir des personnes d'origines, de parcours et d'opinions différents, c'est le cœur de The Host Club. Nous agissons contre toute discrimination, qu'elle vienne d'un participant ou d'un lieu.",
           [
@@ -620,7 +620,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
             "Profil et questionnaire : date de naissance (pour vérifier la majorité), ville, langues parlées, centres d'intérêt, objectifs ; genre (facultatif ; nécessaire pour réserver une activité réservée aux femmes), profession, biographie, photo, quartier, univers préférés, niveau sportif et préférence d'âge pour son groupe (facultatifs ; utilisés pour composer les groupes et pour les suggestions « Pour vous »). Le questionnaire n'est ni une évaluation médicale ni une évaluation psychologique.",
             "Localisation approximative : votre ville et, si vous l'indiquez, votre quartier. Aucun suivi GPS.",
             "Expériences : réservations, demandes de participation (message, compte Instagram facultatif), listes d'attente, tables ou équipes, présence le jour J, absences, avis (et photo jointe, publiée seulement après vérification par l'équipe), « Mes rencontres » (les personnes que vous aimeriez revoir — jamais montré à la personne sauf si c'est réciproque — et celles avec qui vous ne voulez plus être réuni·e), abonnement, codes promo utilisés.",
-            "Préférences d'accueil : régime alimentaire, allergies et langue(s) de table, si vous les indiquez, avec la date de votre accord pour leur transmission au lieu.",
+            "Préférences d'accueil : régime alimentaire, allergies et langue(s) souhaitée(s), si vous les indiquez, avec la date de votre accord pour leur transmission au lieu.",
             "Questionnaire d'une expérience : vos réponses (uniquement des choix : niveau, allure, envies…), si l'expérience en comporte un.",
             "Activités physiques : la version des conditions de participation que vous avez acceptée et sa date.",
             "Propositions de sorties (membres de confiance) : le contenu de vos propositions et la réponse de l'équipe.",
@@ -637,7 +637,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
             "Directement auprès de vous : création du compte, questionnaire, réservation, demande de participation, formulaire de contact ou de candidature partenaire, signalement, avis.",
             "Automatiquement : journaux techniques et cookies strictement nécessaires lorsque vous utilisez le site.",
             "Par nos prestataires : le prestataire de paiement nous confirme le statut et la référence de chaque paiement.",
-            "Par notre équipe : présence le jour J, composition des tables, décisions de modération.",
+            "Par notre équipe : présence le jour J, composition des groupes, décisions de modération.",
           ],
         ],
       },
@@ -650,8 +650,8 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
               rows: [
                 ["Créer et gérer votre compte", "Exécution du contrat", "Tant que le compte est actif, puis 3 ans après la dernière activité, avant suppression ou anonymisation."],
                 ["Réserver, payer, être remboursé, recevoir confirmations, rappels et changements", "Exécution du contrat", "Durée de la relation ; les pièces comptables suivent la durée légale (ligne « Obligations légales »)."],
-                ["Composer les tables et équipes, sans réunir toujours les mêmes personnes", "Exécution du contrat ; intérêt légitime", "Durée du compte (l'historique des tables sert à proposer de nouvelles rencontres)."],
-                ["Transmettre régime, allergies et langues de table au lieu", "Votre consentement explicite (le régime et les allergies peuvent révéler une donnée de santé)", "Le temps de l'expérience et de son suivi, puis effacement au plus tard 30 jours après l'expérience. Vous pouvez retirer votre accord jusqu'au début de l'expérience."],
+                ["Composer les tables et équipes, sans réunir toujours les mêmes personnes", "Exécution du contrat ; intérêt légitime", "Durée du compte (l'historique des groupes sert à proposer de nouvelles rencontres)."],
+                ["Transmettre régime, allergies et langues souhaitées au lieu", "Votre consentement explicite (le régime et les allergies peuvent révéler une donnée de santé)", "Le temps de l'expérience et de son suivi, puis effacement au plus tard 30 jours après l'expérience. Vous pouvez retirer votre accord jusqu'au début de l'expérience."],
                 ["Composer les groupes à partir du questionnaire d'une expérience (niveau, allure, envies…)", "Exécution du contrat", "Jusqu'à l'expérience, puis effacement automatique 30 jours après l'expérience."],
                 ["Conserver la preuve de l'acceptation des conditions de participation aux activités physiques", "Intérêt légitime (preuve en cas de litige)", "Avec la réservation, 5 ans au plus après l'expérience."],
                 ["Étudier les sorties proposées par les membres de confiance et y répondre", "Exécution du contrat ; intérêt légitime", "3 ans après la dernière proposition."],
@@ -670,7 +670,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "6. Composition des groupes : en toute transparence",
         body: [
-          "Un outil propose une composition des tables et des équipes à partir de vos langues, de votre âge, de vos centres d'intérêt et de vos réponses au questionnaire, en évitant de réunir des personnes qui se sont déjà rencontrées. Notre équipe relit et ajuste chaque composition : aucune n'est révélée sans validation humaine. Vous pouvez modifier vos réponses à tout moment ; certaines informations restent nécessaires au fonctionnement du service (âge, ville, langues). En savoir plus : [comment nous composons les tables](/blog/comment-nous-composons-les-tables).",
+          "Un outil propose une composition des tables et des équipes à partir de vos langues, de votre âge, de vos centres d'intérêt et de vos réponses au questionnaire, en évitant de réunir des personnes qui se sont déjà rencontrées. Notre équipe relit et ajuste chaque composition : aucune n'est révélée sans validation humaine. Vous pouvez modifier vos réponses à tout moment ; certaines informations restent nécessaires au fonctionnement du service (âge, ville, langues). En savoir plus : [comment nous composons les groupes](/blog/comment-nous-composons-les-tables).",
           "Pour certaines expériences, vos réponses au questionnaire de l'expérience (niveau, allure…) servent aussi à réunir des niveaux proches ou à mélanger les profils. Le calcul est fait sur nos propres serveurs, sans service d'intelligence artificielle externe ; vos réponses ne sont jamais montrées aux autres participants et sont effacées 30 jours après l'expérience.",
         ],
       },
@@ -686,7 +686,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
           [
             "Notre équipe, uniquement les personnes qui en ont besoin (assistance, sécurité, modération, technique), selon leur rôle ; ces accès sont enregistrés.",
             "Les autres participants de votre groupe : uniquement votre prénom, votre photo de profil (si vous en avez mis une) et vos centres d'intérêt, une fois le groupe révélé.",
-            "Le lieu qui accueille l'expérience : le nombre de participants, les prénoms pour l'accueil et les marque-places et, avec votre accord, votre régime, vos allergies et vos langues de table. Jamais vos coordonnées.",
+            "Le lieu qui accueille l'expérience : le nombre de participants, les prénoms pour l'accueil et les marque-places et, avec votre accord, votre régime, vos allergies et vos langues souhaitées. Jamais vos coordonnées.",
             "Les autorités, lorsque la loi l'exige.",
           ],
           "Nos prestataires traitent les données pour notre compte, selon nos instructions et avec des garanties de sécurité :",
@@ -856,9 +856,9 @@ const en: Record<BaseLegalKey, LegalDoc> = {
           [
             "Tell someone close: let them know where you're going and when you expect to be back.",
             "Plan your way there and back before you leave, especially in the evening or if you might have a drink.",
-            "A specific need (mobility, hearing, sight, diet, allergy)? Mention it when booking, under “For your welcome”, or write to us as early as possible so we can take it into account for the venue and the table.",
+            "A specific need (mobility, hearing, sight, diet, allergy)? Mention it when booking, under “For your welcome”, or write to us as early as possible so we can take it into account for the venue and your group.",
             "Book and pay only on our official website. We never ask you to pay by bank transfer, by message or in cash to a stranger. Be wary of pages or accounts imitating our name.",
-            "Before the experience, we send you what you need (venue, time and, depending on the format, your table). Your contact details are never shared with other participants.",
+            "Before the experience, we send you what you need (venue, time and, depending on the format, your table or team). Your contact details are never shared with other participants.",
           ],
         ],
       },
@@ -897,7 +897,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         body: [
           "If someone's life or safety is at risk, call the emergency services first, then let us know:",
           ["Police: 19", "Royal Gendarmerie (outside cities): 177", "Civil protection (fire, ambulance): 15", "From a mobile phone, 112 also connects you to emergency services"],
-          "This includes someone feeling unwell at the table, a person in distress, a participant who can't be found after an experience, or a threat against a venue or a group. Venue staff know the exact address: ask them to help guide the emergency services.",
+          "This includes someone feeling unwell during the experience, a person in distress, a participant who can't be found after an experience, or a threat against a venue or a group. Venue staff know the exact address: ask them to help guide the emergency services.",
           "Not sure it's serious? Tell us anyway: we would rather hear about something that turns out to be fine than miss a real emergency.",
         ],
       },
@@ -972,8 +972,8 @@ const en: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "Show up, or cancel in time",
         body: [
-          "An empty seat is noticed and weighs on the whole table. If you can't come, cancel within the deadlines in the [terms of sale](/cgv) to free up the spot.",
-          "Coming with friends? Book their seats in the same booking: the table is put together for a precise number of people, and an unexpected guest would take someone else's place. The person who books makes sure their guests know these rules, and is responsible for them.",
+          "An empty seat is noticed and weighs on the whole group. If you can't come, cancel within the deadlines in the [terms of sale](/cgv) to free up the spot.",
+          "Coming with friends? Book their seats in the same booking: the group is put together for a precise number of people, and an unexpected guest would take someone else's place. The person who books makes sure their guests know these rules, and is responsible for them.",
         ],
       },
       {
@@ -1007,7 +1007,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         ],
       },
       {
-        title: "No discrimination at the table",
+        title: "No discrimination",
         body: [
           "Bringing together people of different backgrounds, paths and opinions is the heart of The Host Club. We act on discrimination in every form, whether it comes from a participant or a venue.",
           [
@@ -1212,8 +1212,8 @@ const en: Record<BaseLegalKey, LegalDoc> = {
     sections: [
       { title: "1. Key points", body: [["We only collect what is useful to organise small-group experiences safely.", "We never sell your data and use no advertising cookies or GPS location.", "Within a group, only your first name, your profile photo (if you added one) and your interests are shared.", "Your diet and allergies are only passed on to the venue with your explicit consent.", "No photo in which you can be recognised is published without your agreement.", "You can view, correct or download your data and delete your account at any time."]] },
       { title: "2. Data controller", body: ["{{publisher}}, {{address}} (ICE {{ice}}), is responsible for the data processed on the site. For any question about your data: {{privacyEmail}}.", "Declaration to the CNDP: {{cndpDeclaration}}. Authorisation to transfer data outside Morocco: {{cndpTransfer}}.", "It is up to you to give us accurate information and keep it up to date from your member area."] },
-      { title: "3. Data we collect", body: [["Account: first name, last name, email address, phone (optional). Your password is handled by our authentication provider and never stored in plain text.", "Profile and questionnaire: date of birth (to check you are an adult), city, languages, interests, goals; gender (optional; needed to book a women-only activity), profession, bio, photo, neighbourhood, favourite universes, sports level and group age preference (optional; used to put groups together and for “For you” suggestions). The questionnaire is neither a medical nor a psychological assessment.", "Approximate location: your city and, if you provide it, your neighbourhood. No GPS tracking.", "Experiences: bookings, participation requests (message, optional Instagram account), waitlists, tables or teams, attendance on the day, no-shows, reviews (and an attached photo, published only after the team checks it), “My connections” (people you'd like to see again — never shown to them unless it's mutual — and people you don't want to be grouped with again), membership, promo codes used.", "Welcome preferences: diet, allergies and table language(s), if you provide them, with the date of your consent to share them with the venue.", "Payments and invoices: amount, date, status, provider reference, documents issued. Card details are entered and processed only by the payment provider: we never receive them.", "Safety and support: reports, messages sent to the team, moderation decisions and appeals.", "Technical data: IP address, connection and security logs, strictly necessary cookies.", "Experience questionnaire: your answers (multiple choice only: level, pace, preferences…), if the experience has one.", "Physical activities: the version of the participation terms you accepted and its date.", "Outing proposals (trusted members): the content of your proposals and the team's reply."]] },
-      { title: "4. How we collect it", body: [["Directly from you: account creation, questionnaire, booking, participation request, contact or partner application form, report, review.", "Automatically: technical logs and strictly necessary cookies when you use the site.", "From our providers: the payment provider confirms the status and reference of each payment.", "From our team: attendance on the day, table line-ups, moderation decisions."]] },
+      { title: "3. Data we collect", body: [["Account: first name, last name, email address, phone (optional). Your password is handled by our authentication provider and never stored in plain text.", "Profile and questionnaire: date of birth (to check you are an adult), city, languages, interests, goals; gender (optional; needed to book a women-only activity), profession, bio, photo, neighbourhood, favourite universes, sports level and group age preference (optional; used to put groups together and for “For you” suggestions). The questionnaire is neither a medical nor a psychological assessment.", "Approximate location: your city and, if you provide it, your neighbourhood. No GPS tracking.", "Experiences: bookings, participation requests (message, optional Instagram account), waitlists, tables or teams, attendance on the day, no-shows, reviews (and an attached photo, published only after the team checks it), “My connections” (people you'd like to see again — never shown to them unless it's mutual — and people you don't want to be grouped with again), membership, promo codes used.", "Welcome preferences: diet, allergies and preferred language(s), if you provide them, with the date of your consent to share them with the venue.", "Payments and invoices: amount, date, status, provider reference, documents issued. Card details are entered and processed only by the payment provider: we never receive them.", "Safety and support: reports, messages sent to the team, moderation decisions and appeals.", "Technical data: IP address, connection and security logs, strictly necessary cookies.", "Experience questionnaire: your answers (multiple choice only: level, pace, preferences…), if the experience has one.", "Physical activities: the version of the participation terms you accepted and its date.", "Outing proposals (trusted members): the content of your proposals and the team's reply."]] },
+      { title: "4. How we collect it", body: [["Directly from you: account creation, questionnaire, booking, participation request, contact or partner application form, report, review.", "Automatically: technical logs and strictly necessary cookies when you use the site.", "From our providers: the payment provider confirms the status and reference of each payment.", "From our team: attendance on the day, group line-ups, moderation decisions."]] },
       {
         title: "5. Why, on what basis, and for how long",
         body: [
@@ -1223,8 +1223,8 @@ const en: Record<BaseLegalKey, LegalDoc> = {
               rows: [
                 ["Creating and managing your account", "Performance of the contract", "While the account is active, then 3 years after the last activity, before deletion or anonymisation."],
                 ["Booking, paying, getting refunds, receiving confirmations, reminders and changes", "Performance of the contract", "For the duration of the relationship; accounting records follow the legal period (see “Legal obligations”)."],
-                ["Putting tables and teams together, without always seating the same people", "Performance of the contract; legitimate interest", "For the life of the account (table history is used to suggest new encounters)."],
-                ["Passing diet, allergies and table languages on to the venue", "Your explicit consent (diet and allergies may reveal health data)", "For the experience and its follow-up, then deleted no later than 30 days after the experience. You can withdraw your consent until the experience starts."],
+                ["Putting tables and teams together, without always seating the same people", "Performance of the contract; legitimate interest", "For the life of the account (group history is used to suggest new encounters)."],
+                ["Passing diet, allergies and preferred languages on to the venue", "Your explicit consent (diet and allergies may reveal health data)", "For the experience and its follow-up, then deleted no later than 30 days after the experience. You can withdraw your consent until the experience starts."],
                 ["Putting groups together from an experience questionnaire (level, pace, preferences…)", "Performance of the contract", "Until the experience, then deleted automatically 30 days after it."],
                 ["Keeping proof that the terms for physical activities were accepted", "Legitimate interest (evidence in case of dispute)", "With the booking, at most 5 years after the experience."],
                 ["Reviewing and answering outings proposed by trusted members", "Performance of the contract; legitimate interest", "3 years after the last proposal."],
@@ -1240,12 +1240,12 @@ const en: Record<BaseLegalKey, LegalDoc> = {
           },
         ],
       },
-      { title: "6. How groups are put together, transparently", body: ["A tool suggests table and team line-ups based on your languages, age, interests and questionnaire answers, avoiding seating people together who have already met. Our team reviews and adjusts every line-up: none is revealed without human approval. You can change your answers at any time; some information remains necessary for the service to work (age, city, languages). Learn more: [how we put tables together](/blog/comment-nous-composons-les-tables).", "For some experiences, your answers to the experience questionnaire (level, pace…) are also used to group similar levels or to mix profiles. The calculation runs on our own servers, with no external artificial-intelligence service; your answers are never shown to other participants and are deleted 30 days after the experience."] },
+      { title: "6. How groups are put together, transparently", body: ["A tool suggests table and team line-ups based on your languages, age, interests and questionnaire answers, avoiding seating people together who have already met. Our team reviews and adjusts every line-up: none is revealed without human approval. You can change your answers at any time; some information remains necessary for the service to work (age, city, languages). Learn more: [how we put groups together](/blog/comment-nous-composons-les-tables).", "For some experiences, your answers to the experience questionnaire (level, pace…) are also used to group similar levels or to mix profiles. The calculation runs on our own servers, with no external artificial-intelligence service; your answers are never shown to other participants and are deleted 30 days after the experience."] },
       { title: "7. Cookies", body: ["We only use strictly necessary cookies: keeping you signed in and remembering your language. They do not require your consent. We use no audience measurement, personalisation or advertising cookies; if that changes, we will ask for your consent first."] },
       {
         title: "8. Who can access it",
         body: [
-          ["Our team, only people who need it (support, safety, moderation, technical), according to their role; this access is logged.", "Other participants in your group: only your first name, your profile photo (if you added one) and your interests, once the group is revealed.", "The venue hosting the experience: the number of participants, first names for the welcome and place cards and, with your consent, your diet, allergies and table languages. Never your contact details.", "Authorities, where required by law."],
+          ["Our team, only people who need it (support, safety, moderation, technical), according to their role; this access is logged.", "Other participants in your group: only your first name, your profile photo (if you added one) and your interests, once the group is revealed.", "The venue hosting the experience: the number of participants, first names for the welcome and place cards and, with your consent, your diet, allergies and preferred languages. Never your contact details.", "Authorities, where required by law."],
           "Our providers process data on our behalf, following our instructions and with security safeguards:",
           {
             table: {

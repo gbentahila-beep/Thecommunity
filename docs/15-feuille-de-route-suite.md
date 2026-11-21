@@ -131,6 +131,7 @@ Relecture de tous les textes (interface FR / EN / AR, centre d'aide, blog, pages
 - **Lieux partenaires et organisateurs** : deux façons de travailler avec nous (accueillir nos groupes, ou publier ses activités dans `/pro`) ; « espace partenaire prévu plus tard » retiré.
 - **Pas de ton « dating »** : « C'est réciproque » → « Envie partagée » ; arabe « إعجاب متبادل » → « رغبة مشتركة » ; catégorie démo « Rencontres & activités sociales » → « Échanges & vie sociale ». Le libellé « Mes rencontres » (validé à l'étape 32) est gardé.
 - **Univers** : plus de « cinq univers » (le nombre change avec le back-office).
+- **« Table » réservé aux dîners** : quand un texte parle de toutes les activités, on dit « groupe » (À propos : « Des inconnus en arrivant. Des amis en repartant. » ; « Notre outil compose des groupes équilibrés » ; article « Comment nous composons les groupes », adresse inchangée ; « langues souhaitées » au lieu de « langues de table » ; charte, sécurité, confidentialité, presse).
 - **Restes de développement** (« phase 3 », « bientôt disponible ») retirés ; « Déjà membre ? » → « Déjà un compte ? » (« membre » = abonné) ; vocabulaire « expérience » ; écriture « seul·e / prévenu·e » harmonisée ; affirmations non vérifiables (« la plupart des membres… ») reformulées.
 - **Arabe** : nom de la ville traduit (الدار البيضاء) sur les fiches, la réservation et le détail de réservation ; « Enter » ; « جولة إرشادية » ; pluriels corrigés.
 

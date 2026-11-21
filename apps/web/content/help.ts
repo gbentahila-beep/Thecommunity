@@ -203,12 +203,12 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
       fr: [
         "Végétarien, sans gluten, allergie, autre contrainte ? Indiquez-le au moment de réserver, rubrique « Pour votre accueil ». Avec votre accord, nous le transmettons au lieu partenaire, qui prépare votre accueil. Vous pouvez le modifier depuis votre réservation jusqu'au début de l'expérience. Un doute ? Écrivez-nous via la page [Contact](/contact).",
         "Le menu ou ce qui est servi est indiqué sur chaque fiche, rubrique « Ce qui est inclus ».",
-        "Côté langues, chaque expérience indique celles qui y sont parlées (français, darija, arabe, anglais…). Au moment de réserver, choisissez la ou les langues que vous aimeriez parler à table : cela nous aide à vous placer dans un groupe où vous pourrez participer à la conversation.",
+        "Côté langues, chaque expérience indique celles qui y sont parlées (français, darija, arabe, anglais…). Au moment de réserver, choisissez la ou les langues que vous aimeriez parler pendant l'expérience : cela nous aide à vous placer dans un groupe où vous pourrez participer à la conversation.",
       ],
       en: [
         "Vegetarian, gluten-free, an allergy or another requirement? Tell us when you book, under “For your welcome”. With your consent, we pass it on to the partner venue so it can prepare. You can change it from your booking until the experience starts. Any doubt? Write to us via the [Contact](/contact) page.",
         "The menu or what's served is shown on each experience page under “What's included”.",
-        "As for languages, each experience lists the ones spoken (French, Darija, Arabic, English…). When you book, pick the language(s) you'd like to speak at the table: it helps us place you in a group where you can join the conversation.",
+        "As for languages, each experience lists the ones spoken (French, Darija, Arabic, English…). When you book, pick the language(s) you'd like to speak during the experience: it helps us place you in a group where you can join the conversation.",
       ],
     },
     related: ["venir-seul", "reserver-une-place"],

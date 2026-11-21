@@ -149,7 +149,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
 
   // 8e : À propos
   await d.goto(`${base}/a-propos`);
-  assert(await d.getByRole('heading', { level: 1, name: /Des inconnus à table\.\s*Des amis en repartant\./ }).isVisible(), 'À propos : accroche');
+  assert(await d.getByRole('heading', { level: 1, name: /Des inconnus en arrivant\.\s*Des amis en repartant\./ }).isVisible(), 'À propos : accroche');
   const founder = d.locator('section[aria-labelledby="founder"]');
   const [imgBox, textBox] = [await founder.locator('img').boundingBox(), await founder.getByRole('heading', { name: 'Aya Snoussi' }).boundingBox()];
   assert(imgBox.x < textBox.x, 'créatrice : photo à gauche, texte à droite');
@@ -168,7 +168,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   // 8h : Confidentialité
   await d.goto(`${base}/confidentialite`);
   assert(await d.getByRole('columnheader', { name: 'Base légale' }).first().isVisible(), 'confidentialité : tableau finalité / base / durée');
-  assert(await d.getByRole('rowheader', { name: 'Transmettre régime, allergies et langues de table au lieu' }).isVisible(), 'confidentialité : régime et allergies avec accord');
+  assert(await d.getByRole('rowheader', { name: 'Transmettre régime, allergies et langues souhaitées au lieu' }).isVisible(), 'confidentialité : régime et allergies avec accord');
   assert(await d.getByRole('cell', { name: /Envoi des e-mails/ }).isVisible(), 'confidentialité : prestataires listés');
   assert(await d.getByRole('heading', { name: '12. Mineurs et protection de l\'enfance' }).isVisible(), 'confidentialité : protection des mineurs');
 
@@ -229,7 +229,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   // 8d / 8f / 8g : Sécurité, Règles de la communauté, CGU
   await d.goto(`${base}/charte`);
   assert(await d.getByRole('heading', { level: 1, name: 'Règles de la communauté' }).isVisible(), 'page Règles de la communauté');
-  for (const h of ['Les lignes rouges', 'Pas de discrimination à table', 'Les mesures', 'Recours']) assert(await d.getByRole('heading', { level: 2, name: h }).isVisible(), `règles : ${h}`);
+  for (const h of ['Les lignes rouges', 'Pas de discrimination', 'Les mesures', 'Recours']) assert(await d.getByRole('heading', { level: 2, name: h }).isVisible(), `règles : ${h}`);
   assert(await d.locator('main').getByRole('link', { name: 'Sécurité' }).first().getAttribute('href') === '/securite', 'règles → lien Sécurité');
   await d.goto(`${base}/securite`);
   for (const h of ['Avant l\'expérience', 'Pendant l\'expérience', 'Sorties, sport et activités en plein air', 'En cas d\'urgence', 'Après l\'expérience']) assert(await d.getByRole('heading', { level: 2, name: h }).isVisible(), `sécurité : ${h}`);
