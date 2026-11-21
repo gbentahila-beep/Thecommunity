@@ -42,8 +42,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   assert(await page.getByText('Il faut min ≤ cible ≤ max.').isVisible(), 'règle de cohérence des tailles de groupe');
   await page.locator('#f-groupMin').fill('5');
   await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();
-  await page.waitForTimeout(400);
-  assert(await page.getByText('Formulaire valide').isVisible(), 'formulaire valide : récapitulatif affiché');
+  assert(await page.getByText('Formulaire valide').first().waitFor({ state: 'visible', timeout: 10000 }).then(() => true, () => false), 'formulaire valide : récapitulatif affiché');
   assert(await page.locator('#form-result li.list-disc').count() === 4, 'récurrence : 4 dates générées');
   assert(await page.locator('#form-result').textContent().then(t => t.includes('64 DH')), 'marge estimée par place (139 − 75 = 64 DH)');
   // 11h : « Ce qui est inclus » dans « 3. Format » (prix total) ; Instagram obligatoire possible sur demande

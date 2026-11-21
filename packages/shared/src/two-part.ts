@@ -133,3 +133,43 @@ export function seatEconomics(o: {
     onSiteCommissionOnConsumption: o.model === "variable_consumption" && pct > 0,
   };
 }
+
+/**
+ * Gamme du restaurant (positionnement affiché) et budget restaurant (docs/16, 21 novembre).
+ * Les fourchettes par défaut sont des repères de positionnement, pas des tarifs vérifiés : l'équipe saisit le budget
+ * réel estimé de chaque expérience quand elle le connaît.
+ */
+export const VENUE_TIERS = ["casual", "premium", "exclusive"] as const;
+export type VenueTier = (typeof VENUE_TIERS)[number];
+/** Budget par personne en dirhams (repères par défaut). */
+export const VENUE_TIER_RANGES: Record<VenueTier, { min: number; max: number }> = {
+  casual: { min: 100, max: 200 },
+  premium: { min: 200, max: 400 },
+  exclusive: { min: 400, max: 600 },
+};
+
+export type RestaurantBudget =
+  | { kind: "fixed"; amount: number; currency: CurrencyCode }
+  | { kind: "range"; min: number; max: number; currency: CurrencyCode; estimated: true };
+
+/**
+ * Ce que le client dépensera au restaurant, par personne : montant exact quand un menu est négocié (prix fixe chez le
+ * partenaire), fourchette estimée quand chacun paie sa consommation (budget saisi, sinon repère de la gamme).
+ * null : tout est payé en ligne (le prix affiché suffit).
+ */
+export function restaurantBudget(e: {
+  pricing?: ExperiencePricing | null;
+  price?: { currency: CurrencyCode };
+  venueTier?: VenueTier | null;
+  budgetRange?: { min: number; max: number; currency: CurrencyCode } | null;
+}): RestaurantBudget | null {
+  const p = pricingOf(e);
+  if (p.model === "fixed_partner" && p.partner?.price) return { kind: "fixed", amount: p.partner.price.amount, currency: p.partner.price.currency };
+  if (p.model !== "variable_consumption") return null;
+  if (e.budgetRange && e.budgetRange.max > 0) return { kind: "range", min: e.budgetRange.min, max: e.budgetRange.max, currency: e.budgetRange.currency, estimated: true };
+  if (e.venueTier) {
+    const r = VENUE_TIER_RANGES[e.venueTier];
+    return { kind: "range", min: r.min * 100, max: r.max * 100, currency: p.currency, estimated: true };
+  }
+  return null;
+}

@@ -213,6 +213,11 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     alcoholServed: v.alcoholServed,
     onSiteHost: v.onSiteHost === true,
     foodServed: v.foodServed === true,
+    // Restaurant (docs/16) : gamme, budget estimé par personne (consommation libre sur place), cuisine, ambiance.
+    venueTier: v.venueTier || null,
+    budgetRange: v.budgetMinDh !== undefined && v.budgetMaxDh !== undefined ? { min: Math.round(v.budgetMinDh * 100), max: Math.round(v.budgetMaxDh * 100), currency: "MAD" } : null,
+    cuisine: v.cuisine || null,
+    ambiance: v.ambiance || null,
     included: (v.included ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
     notIncluded: (v.notIncluded ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
     practicalInfo: { fr: v.practicalInfo ?? "" },

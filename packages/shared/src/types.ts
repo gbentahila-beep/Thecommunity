@@ -1,4 +1,4 @@
-import type { ExperiencePricing, PartnerPaymentStatus, PartnerSnapshot } from "./two-part";
+import type { ExperiencePricing, PartnerPaymentStatus, PartnerSnapshot, VenueTier } from "./two-part";
 import type { ActivityLevel } from "./activity";
 import type { QuestionDef, QuestionnaireAnswers } from "./questionnaire";
 /**
@@ -133,6 +133,12 @@ export type Experience = {
   onSiteHost?: boolean;
   /** Des plats ou boissons sont servis (atelier cuisine, dégustation…) : régime et allergies demandés. */
   foodServed?: boolean;
+  /** Restaurant : gamme (Casual, Premium, Exclusive), budget estimé par personne (centimes) quand chacun paie sa
+   *  consommation, type de cuisine et ambiance — affichés même quand le nom du lieu reste une surprise. */
+  venueTier?: VenueTier | null;
+  budgetRange?: { min: number; max: number; currency: CurrencyCode } | null;
+  cuisine?: string | null;
+  ambiance?: string | null;
   included: LocalizedText[];
   /** Étape 23 : ce qui n'est pas compris dans le prix. */
   notIncluded?: LocalizedText[];

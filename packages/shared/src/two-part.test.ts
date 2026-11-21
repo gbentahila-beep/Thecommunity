@@ -64,3 +64,16 @@ describe("économie d'une place sans double comptage (11g)", () => {
     expect(seatEconomics({ onlineUnit: 12000, model: "variable_consumption", onSiteUnit: null, economicsModel: "own", onSiteCommissionPercent: 8 })).toMatchObject({ clientPays: null, margin: 12000, onSiteCommission: null, onSiteCommissionOnConsumption: true });
   });
 });
+
+import { restaurantBudget } from "./two-part";
+describe("budget restaurant (docs/16)", () => {
+  const partner = { name: "Resto", paymentMode: "on_site" as const, description: "" };
+  it("menu négocié : montant exact ; consommation libre : budget saisi, sinon repère de la gamme ; tout en ligne : rien", () => {
+    expect(restaurantBudget({ pricing: { model: "fixed_partner", currency: "MAD", partner: { ...partner, pricingType: "fixed", price: { amount: 29900, currency: "MAD" } } } })).toEqual({ kind: "fixed", amount: 29900, currency: "MAD" });
+    const variable = { model: "variable_consumption" as const, currency: "MAD" as const, partner: { ...partner, pricingType: "consumption" as const, price: null } };
+    expect(restaurantBudget({ pricing: variable, budgetRange: { min: 20000, max: 30000, currency: "MAD" } })).toMatchObject({ kind: "range", min: 20000, max: 30000 });
+    expect(restaurantBudget({ pricing: variable, venueTier: "premium" })).toMatchObject({ kind: "range", min: 20000, max: 40000 });
+    expect(restaurantBudget({ pricing: variable })).toBeNull();
+    expect(restaurantBudget({ price: { currency: "MAD" }, venueTier: "exclusive" })).toBeNull();
+  });
+});

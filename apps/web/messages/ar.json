@@ -272,7 +272,17 @@
     "organizedBy": "من تنظيم",
     "organizerPage": "صفحة المنظّم",
     "onSiteHost": "استقبال في المكان: قدّموا تذكرتكم عند الدخول",
-    "selfArrival": "بدون مضيف: سجّلوا وصولكم وجدوا مجموعتكم في التطبيق"
+    "selfArrival": "بدون مضيف: سجّلوا وصولكم وجدوا مجموعتكم في التطبيق",
+    "surpriseVenue": "مكان مفاجئ",
+    "surpriseVenueValue": "يُكشف عنه في اليوم السابق مع مجموعتك",
+    "budgetLabel": "ميزانية المطعم التقديرية",
+    "budgetNote": "للشخص، تقريبية، تُدفع في المكان حسب ما تطلبه",
+    "tierLabel": "الفئة",
+    "tier_casual": "عادية · في المتناول",
+    "tier_premium": "مميزة · تجربة راقية",
+    "tier_exclusive": "حصرية · فاخرة",
+    "cuisineLabel": "المطبخ",
+    "ambianceLabel": "الأجواء"
   },
   "booking": {
     "title": "احجز مكاني",
@@ -1424,7 +1434,12 @@
     "sectionOnline": "عبر الإنترنت عند الحجز: {amount} للشخص.",
     "sectionFixed": "في عين المكان، للشريك: {amount} للشخص.",
     "sectionVariable": "في عين المكان، للشريك: حسب ما تستهلكه.",
-    "onSiteToVenue": "يُدفع مباشرة إلى المكان الشريك في عين المكان."
+    "onSiteToVenue": "يُدفع مباشرة إلى المكان الشريك في عين المكان.",
+    "plusRestaurant": "+ المطعم {amount}",
+    "restaurantEstimated": "المطعم تقديرياً {amount} للشخص",
+    "sectionBudget": "في المكان، بالمطعم: حوالي {amount} للشخص (ميزانية تقريبية حسب ما تطلبه).",
+    "restaurantPill": "المطعم {amount}",
+    "surprisePill": "مكان مفاجئ"
   },
   "ticket": {
     "title": "تذكرتك",
@@ -1595,7 +1610,12 @@
     "sort_price_desc": "السعر تنازلياً",
     "sort_rating": "الأعلى تقييماً",
     "sort_new": "الجديدة",
-    "women": "للنساء فقط"
+    "women": "للنساء فقط",
+    "tier": "فئة المطعم",
+    "tierAny": "كل الفئات",
+    "tier_casual": "عادية · 100–200 درهم",
+    "tier_premium": "مميزة · 200–400 درهم",
+    "tier_exclusive": "حصرية · 400–600 درهم"
   },
   "gallery": {
     "title": "الصور",

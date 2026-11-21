@@ -30,7 +30,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
     priceDh: "", durationMinutes: "120", languages: ["fr"], alcoholServed: false, onSiteHost: false, foodServed: false,
     included: "", notIncluded: "", practicalInfo: "", cancellationPolicyId: DEFAULT_CANCELLATION_POLICY.id,
     partnerId: "", economicsModel: "own", costPerSeatDh: "", commissionPercent: "",
-    pricingModel: "online_only", partnerPriceDh: "", partnerDescription: "", onSiteCommissionPercent: "",
+    pricingModel: "online_only", partnerPriceDh: "", partnerDescription: "", onSiteCommissionPercent: "", budgetMinDh: "", budgetMaxDh: "", venueTier: "", cuisine: "", ambiance: "",
     paymentModel: "full_online", depositPercent: "30",
     status: "draft",
     sessions: { firstDate: nextWeekDate(now), time: "19:30", weeks: "1", capacity: "12" },
@@ -51,6 +51,8 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     // Étape 22 : pour une activité d'organisateur, le prix saisi est le prix TOTAL (la part en ligne en découle).
     maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String((e.totalPrice?.amount ?? e.price.amount) / 100), durationMinutes: String(e.durationMinutes),
     languages: e.languages.filter((l): l is ExperienceFormValues["languages"][number] => ["fr", "ar", "darija", "en", "es"].includes(l)),
+    budgetMinDh: e.budgetRange ? String(e.budgetRange.min / 100) : "", budgetMaxDh: e.budgetRange ? String(e.budgetRange.max / 100) : "",
+    venueTier: e.venueTier ?? "", cuisine: e.cuisine ?? "", ambiance: e.ambiance ?? "",
     alcoholServed: Boolean(e.alcoholServed), onSiteHost: Boolean(e.onSiteHost), foodServed: Boolean(e.foodServed), included: includedLines(e).join("\n"), notIncluded: (e.notIncluded ?? []).map((i) => i.fr).join("\n"), practicalInfo: e.practicalInfo?.fr ?? "",
     partnerId: eco?.partnerId ?? "", economicsModel: eco?.model ?? "own",
     costPerSeatDh: eco?.costPerSeat != null ? String(eco.costPerSeat / 100) : "",

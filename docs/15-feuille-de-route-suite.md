@@ -409,3 +409,17 @@ Dans la fiche (back-office et espace organisateur), une question « Comment les 
 arrivée ? » : « Ils l'indiquent dans l'application » (par défaut) ou « Leur billet est scanné à l'entrée ». Le billet
 reste donné d'office quand une part est à régler au lieu partenaire. Le participant voit l'un OU l'autre, jamais les
 deux.
+
+## Budget restaurant et gammes (21 novembre)
+
+- Deux modèles, déjà en place, désormais lisibles : **menu négocié** (prix fixe, tout en ligne ou part fixe réglée au
+  restaurant) = montant exact affiché ; **chacun paie sa consommation** = **budget restaurant estimé** par personne
+  (ex. 150–250 DH), saisi dans la fiche (obligatoire, ou à défaut la gamme) et affiché partout : prix (« 120 DH
+  + resto 150–250 DH »), encadré « Comment se règle cette expérience », repères de la fiche, lignes du catalogue.
+- **Gammes** : Casual (100–200 DH), Premium (200–400 DH), Exclusive (400–600 DH) — repères de positionnement, pas des
+  tarifs vérifiés ; filtre « Gamme du restaurant » dans le catalogue (`?gamme=premium`).
+- **Lieu surprise** (révélé la veille) : la fiche affiche quand même le quartier, la gamme, la cuisine, l'ambiance, la
+  taille du groupe et le budget ; pastille « Lieu surprise » dans les listes.
+- Démonstration : dîner surprise Premium (cuisine internationale, chic et décontractée), rooftop en consommation libre
+  (150–250 DH), brunch au menu à prix fixe ; derniers textes « hôte » de la démonstration retirés (le contenu de départ
+  corrige aussi le site de test).

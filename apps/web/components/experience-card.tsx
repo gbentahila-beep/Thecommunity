@@ -1,4 +1,4 @@
-import { experienceBadge, LOW_SEATS_THRESHOLD, pricingOf, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
+import { experienceBadge, LOW_SEATS_THRESHOLD, pricingOf, seatsAvailable, type Experience, type Session, restaurantBudget } from "@thecommunity/shared";
 import { MapPin, Star, Users } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -92,7 +92,7 @@ export async function ExperienceCard({
         </p>
         <div className="mt-auto flex items-end justify-between pt-3">
           <p>
-            <PriceTag price={shownPrice} memberAmount={memberAmountFor(plan, shownPrice, experience)} lang={locale as "fr" | "ar" | "en"} memberLabel={t("memberShort")} pricing={pricingOf(experience)} t2={t2} />
+            <PriceTag price={shownPrice} memberAmount={memberAmountFor(plan, shownPrice, experience)} lang={locale as "fr" | "ar" | "en"} memberLabel={t("memberShort")} pricing={pricingOf(experience)} t2={t2} budget={restaurantBudget(experience)} />
           </p>
           {session ? (
             <p className="flex items-center gap-1.5 text-sm text-ink/80">

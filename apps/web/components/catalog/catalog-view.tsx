@@ -1,4 +1,4 @@
-import { activeFilterCount, CATALOG_FORMATS, CATALOG_MAX_PRICES, CATALOG_SORTS, catalogDistricts, catalogParams, formatParam, MOROCCO_TIMEZONE, parseCatalogParams, sortParam, zonedParts, type CatalogFilters } from "@thecommunity/shared";
+import { activeFilterCount, VENUE_TIERS, CATALOG_FORMATS, CATALOG_MAX_PRICES, CATALOG_SORTS, catalogDistricts, catalogParams, formatParam, MOROCCO_TIMEZONE, parseCatalogParams, sortParam, zonedParts, type CatalogFilters } from "@thecommunity/shared";
 import { X } from "lucide-react";
 import type { Category } from "@thecommunity/shared";
 import { getTranslations } from "next-intl/server";
@@ -81,6 +81,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
     ...(filters.district ? [{ label: filters.district, href: hrefOf(state, { filters: { district: null } }) }] : []),
     ...(filters.date ? [{ label: formatLongDate(`${filters.date}T12:00:00Z`, locale), href: hrefOf(state, { filters: { date: null } }) }] : []),
     ...(filters.format ? [{ label: tf(`format_${filters.format}`), href: hrefOf(state, { filters: { format: null } }) }] : []),
+    ...(filters.tier ? [{ label: tf(`tier_${filters.tier}`), href: hrefOf(state, { filters: { tier: null } }) }] : []),
     ...(filters.beginner ? [{ label: tf("beginner"), href: hrefOf(state, { filters: { beginner: false } }) }] : []),
     ...(filters.available ? [{ label: tf("available"), href: hrefOf(state, { filters: { available: false } }) }] : []),
     ...(filters.women ? [{ label: tf("women"), href: hrefOf(state, { filters: { women: false } }) }] : []),
@@ -146,6 +147,13 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                 <label className="block text-sm">
                   <span className="mb-1 block font-medium text-ink">{tf("date")}</span>
                   <input type="date" name="date" min={today} defaultValue={filters.date ?? ""} className={select} />
+                </label>
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium text-ink">{tf("tier")}</span>
+                  <select name="gamme" defaultValue={filters.tier ?? ""} className={select}>
+                    <option value="">{tf("tierAny")}</option>
+                    {VENUE_TIERS.map((v) => <option key={v} value={v}>{tf(`tier_${v}`)}</option>)}
+                  </select>
                 </label>
                 <label className="block text-sm">
                   <span className="mb-1 block font-medium text-ink">{tf("format")}</span>

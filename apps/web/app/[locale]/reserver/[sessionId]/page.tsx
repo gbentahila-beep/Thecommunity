@@ -1,4 +1,4 @@
-import { bookingRefusal, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds } from "@thecommunity/shared";
+import { bookingRefusal, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -146,7 +146,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           <div className="flex justify-between py-3">
             <dt className="text-muted">{t("unitPrice")}</dt>
             <dd className="text-end">
-              <PriceTag price={session.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} />
+              <PriceTag price={session.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} budget={restaurantBudget(exp)} />
               {memberAmount !== null && !isMember && (
                 <span className="mt-1 block text-xs text-muted">
                   {t("publicPriceNote", { price: formatMoney(session.price, lang) })}{" "}

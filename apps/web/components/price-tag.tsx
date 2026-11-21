@@ -1,4 +1,10 @@
-import { formatMoney, memberUnitPrice, priceSplit, type Experience, type ExperiencePricing, type MembershipPlan, type Money } from "@thecommunity/shared";
+import { formatMoney, memberUnitPrice, priceSplit, type Experience, type ExperiencePricing, type MembershipPlan, type Money, type RestaurantBudget } from "@thecommunity/shared";
+
+/** « 200–300 DH » (fourchette) ou « 299 DH » (montant exact). */
+export function budgetText(b: RestaurantBudget, lang: "fr" | "ar" | "en"): string {
+  if (b.kind === "fixed") return formatMoney({ amount: b.amount, currency: b.currency }, lang);
+  return `${Math.round(b.min / 100)}–${formatMoney({ amount: b.max, currency: b.currency }, lang)}`;
+}
 
 /** Prix membre d'une place pour cette expérience, si une formule d'abonnement est proposée (sinon null). */
 export function memberAmountFor(plan: MembershipPlan | null, publicPrice: Money, experience: Pick<Experience, "memberPrice">): number | null {
@@ -8,7 +14,7 @@ export function memberAmountFor(plan: MembershipPlan | null, publicPrice: Money,
 }
 
 /** Traductions de l'espace « twoPart » (passées par la page, qui a déjà son traducteur). */
-export type TwoPartT = (key: "now" | "onSite" | "plusConsumption" | "consumptionOnSite", values?: { amount: string }) => string;
+export type TwoPartT = (key: "now" | "onSite" | "plusConsumption" | "consumptionOnSite" | "plusRestaurant" | "restaurantEstimated", values?: { amount: string }) => string;
 
 /**
  * Prix affiché : le prix public en grand ; le prix membre, s'il existe, en mention discrète à côté
@@ -27,6 +33,7 @@ export function PriceTag({
   pricing,
   t2,
   detail = true,
+  budget = null,
 }: {
   price: Money;
   memberAmount: number | null;
@@ -37,6 +44,8 @@ export function PriceTag({
   t2?: TwoPartT;
   /** false : sans la ligne « … maintenant · … sur place » (barre compacte). */
   detail?: boolean;
+  /** Consommation libre : budget restaurant estimé (« + resto 200–300 DH » au lieu de « + consommation »). */
+  budget?: RestaurantBudget | null;
 }) {
   const split = pricing && t2 ? priceSplit(price.amount, pricing) : null;
   const twoPart = split !== null && split.model !== "online_only";
@@ -61,10 +70,14 @@ export function PriceTag({
     <span className="inline-flex flex-col gap-0.5" data-two-part={split.model}>
       <span className="inline-flex flex-wrap items-baseline gap-x-1.5">
         {main}
-        {split.variable && <span className={`${size === "lg" ? "text-lg" : "text-sm"} font-semibold text-ink`}>{t2("plusConsumption")}</span>}
+        {split.variable && (
+          <span className={`${size === "lg" ? "text-lg" : "text-sm"} font-semibold text-ink`} data-testid="price-budget">
+            {budget?.kind === "range" ? t2("plusRestaurant", { amount: budgetText(budget, lang) }) : t2("plusConsumption")}
+          </span>
+        )}
       </span>
       {detail && <span className="text-xs font-normal text-muted">
-        {t2("now", { amount: fmt(now) })} · {split.onSiteUnit != null ? t2("onSite", { amount: fmt(split.onSiteUnit) }) : t2("consumptionOnSite")}
+        {t2("now", { amount: fmt(now) })} · {split.onSiteUnit != null ? t2("onSite", { amount: fmt(split.onSiteUnit) }) : budget?.kind === "range" ? t2("restaurantEstimated", { amount: budgetText(budget, lang) }) : t2("consumptionOnSite")}
       </span>}
     </span>
   );

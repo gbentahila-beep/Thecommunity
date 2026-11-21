@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { VENUE_TIERS } from "./two-part";
 import { DEPOSIT_MAX, DEPOSIT_MIN, PAYMENT_MODELS } from "./marketplace";
 import { BOOKING_MODES, CATEGORY_ID_PATTERN } from "./constants";
 import { SPOKEN_LANGUAGES } from "./profile";
@@ -82,6 +83,12 @@ export const experienceInputSchema = z
     pricingModel: z.enum(["online_only", "fixed_partner", "variable_consumption"]).default("online_only"),
     partnerPriceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany").optional(),
     partnerDescription: z.string().trim().max(300, "tooLong").optional().or(z.literal("")),
+    /** Restaurant (docs/16) : gamme, budget estimé par personne (consommation libre), cuisine, ambiance. */
+    venueTier: z.enum(VENUE_TIERS).optional().or(z.literal("")),
+    budgetMinDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany").optional(),
+    budgetMaxDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany").optional(),
+    cuisine: z.string().trim().max(60, "tooLong").optional().or(z.literal("")),
+    ambiance: z.string().trim().max(60, "tooLong").optional().or(z.literal("")),
     status: z.enum(["draft", "published"]),
     sessions: sessionPlanSchema,
     /* ——— 18b : précisions pour les activités (toutes facultatives) ——— */
@@ -142,6 +149,16 @@ export const experienceInputSchema = z
     }
     if (v.pricingModel !== "online_only" && !v.partnerId) {
       ctx.addIssue({ code: "custom", path: ["pricingModel"], message: "pricingNeedsPartner" });
+    }
+    if ((v.budgetMinDh === undefined) !== (v.budgetMaxDh === undefined)) {
+      ctx.addIssue({ code: "custom", path: [v.budgetMinDh === undefined ? "budgetMinDh" : "budgetMaxDh"], message: "required" });
+    }
+    if (v.budgetMinDh !== undefined && v.budgetMaxDh !== undefined && v.budgetMinDh > v.budgetMaxDh) {
+      ctx.addIssue({ code: "custom", path: ["budgetMaxDh"], message: "budgetOrder" });
+    }
+    // Consommation libre : le client doit savoir combien il dépensera (budget estimé, ou à défaut la gamme).
+    if (v.pricingModel === "variable_consumption" && v.budgetMaxDh === undefined && !v.venueTier) {
+      ctx.addIssue({ code: "custom", path: ["budgetMinDh"], message: "budgetNeeded" });
     }
     if (v.pricingModel === "fixed_partner" && v.partnerPriceDh === undefined) {
       ctx.addIssue({ code: "custom", path: ["partnerPriceDh"], message: "required" });

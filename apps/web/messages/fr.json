@@ -272,7 +272,17 @@
     "organizedBy": "Organisé par",
     "organizerPage": "Voir la page de l'organisateur",
     "onSiteHost": "Accueil sur place : présentez votre billet à l’entrée",
-    "selfArrival": "Pas d’hôte : vous indiquez votre arrivée et retrouvez votre groupe dans l’application"
+    "selfArrival": "Pas d’hôte : vous indiquez votre arrivée et retrouvez votre groupe dans l’application",
+    "surpriseVenue": "Lieu surprise",
+    "surpriseVenueValue": "Révélé la veille avec votre groupe",
+    "budgetLabel": "Budget restaurant estimé",
+    "budgetNote": "par personne, indicatif, réglé sur place selon votre consommation",
+    "tierLabel": "Gamme",
+    "tier_casual": "Casual · accessible",
+    "tier_premium": "Premium · expérience qualitative",
+    "tier_exclusive": "Exclusive · haut de gamme",
+    "cuisineLabel": "Cuisine",
+    "ambianceLabel": "Ambiance"
   },
   "booking": {
     "title": "Réserver ma place",
@@ -1424,7 +1434,12 @@
     "sectionOnline": "En ligne, à la réservation : {amount} par personne.",
     "sectionFixed": "Sur place, au partenaire : {amount} par personne.",
     "sectionVariable": "Sur place, au partenaire : ce que vous consommez.",
-    "onSiteToVenue": "Réglé directement au lieu partenaire, sur place."
+    "onSiteToVenue": "Réglé directement au lieu partenaire, sur place.",
+    "plusRestaurant": "+ resto {amount}",
+    "restaurantEstimated": "resto estimé {amount} / pers.",
+    "sectionBudget": "Sur place, au restaurant : environ {amount} par personne (budget indicatif, selon votre consommation).",
+    "restaurantPill": "Resto {amount}",
+    "surprisePill": "Lieu surprise"
   },
   "ticket": {
     "title": "Votre billet",
@@ -1595,7 +1610,12 @@
     "sort_price_desc": "Prix décroissant",
     "sort_rating": "Mieux notées",
     "sort_new": "Nouveautés",
-    "women": "Réservé aux femmes"
+    "women": "Réservé aux femmes",
+    "tier": "Gamme du restaurant",
+    "tierAny": "Toutes les gammes",
+    "tier_casual": "Casual · 100–200 DH",
+    "tier_premium": "Premium · 200–400 DH",
+    "tier_exclusive": "Exclusive · 400–600 DH"
   },
   "gallery": {
     "title": "Photos",

@@ -31,13 +31,13 @@ import type { QuestionDraft } from "@/lib/questionnaire-draft";
 import { firebase } from "@/lib/firebase/client";
 
 type Option = { id: string; label: string; disabled?: boolean; /** 18c : état de l'assurance du lieu partenaire. */ insurance?: "valid" | "expiring" | "expired" | "missing"; /** Étape 19 : sous-catégorie de… */ parentId?: string };
-export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "onSiteCommissionPercent" | "minAge" | "targetAgeMin" | "targetAgeMax" | "level" | "questionnaire" | "proposalId" | "depositPercent"> & {
+export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "budgetMinDh" | "budgetMaxDh" | "onSiteCommissionPercent" | "minAge" | "targetAgeMin" | "targetAgeMax" | "level" | "questionnaire" | "proposalId" | "depositPercent"> & {
   /** Étape 22 : acompte en % (mode B). */
   depositPercent: string;
   /** 18b : âge minimum (vide = 18 ans), niveau attendu (vide = non précisé) ; 18a : questionnaire ; 18d : proposition d'origine. */
   minAge: string; targetAgeMin: string; targetAgeMax: string; level: "" | ActivityLevel; questionnaire: QuestionDraft[]; proposalId?: string;
   groupMin: string; groupTarget: string; groupMax: string; costPerSeatDh: string; commissionPercent: string;
-  priceDh: string; durationMinutes: string; maxSeatsPerBooking: string; memberPriceDh: string; partnerPriceDh: string; onSiteCommissionPercent: string;
+  priceDh: string; durationMinutes: string; maxSeatsPerBooking: string; memberPriceDh: string; partnerPriceDh: string; budgetMinDh: string; budgetMaxDh: string; onSiteCommissionPercent: string;
   sessions: { firstDate: string; time: string; weeks: string; capacity: string };
 };
 
@@ -49,6 +49,8 @@ const MESSAGES: Record<string, string> = {
   seatsPerBookingMode: "Plus de 2 places par réservation : seulement en mode libre ou privatisé.", partnerRequired: "Le modèle commission nécessite un partenaire.",
   revealNeedsGroups: "La révélation différée n'est possible qu'avec des groupes (dîner social ou groupe).",
   inPast: "La première date est déjà passée.", memberAbovePublic: "Le prix membre doit être inférieur ou égal au prix public.", invalidImagePath: "Photo invalide.",
+  budgetOrder: "Le budget minimum doit être inférieur ou égal au maximum.",
+  budgetNeeded: "Consommation libre : indiquez le budget estimé par personne ou, à défaut, la gamme du restaurant.",
   pricingNeedsPartner: "Choisissez d'abord le partenaire : la part sur place lui est réglée directement.",
   onSiteNoCommission: "Avec une part sur place, utilisez « Nos coûts » ; une commission sur la part sur place se saisit dans son propre champ.",
   minAge: "18 ans minimum (règle du site).", optionsMin: "Au moins 2 réponses par question.", optionsMax: "6 réponses au plus par question.",
@@ -188,6 +190,8 @@ export function ExperienceForm({
       proposalId: v.proposalId || undefined,
       memberPriceDh: pro ? undefined : opt(v.memberPriceDh),
       partnerPriceDh: !pro && v.pricingModel === "fixed_partner" ? opt(v.partnerPriceDh) : undefined,
+      budgetMinDh: !pro && v.pricingModel === "variable_consumption" ? opt(v.budgetMinDh) : undefined,
+      budgetMaxDh: !pro && v.pricingModel === "variable_consumption" ? opt(v.budgetMaxDh) : undefined,
       partnerDescription: "",
     });
     if (!parsed.success) {
@@ -372,6 +376,16 @@ export function ExperienceForm({
             <option value="immediate">Visible dès la réservation</option>
             <option value="on_group_reveal">Révélé la veille avec le groupe</option>
           </select>{err("revealPolicy")}</div>
+        {/* Restaurant (docs/16) : affichés sur la fiche même quand le nom du lieu reste une surprise. */}
+        <div><Label k="venueTier" hint="Casual 100–200 DH, Premium 200–400 DH, Exclusive 400–600 DH par personne (repères).">Gamme du lieu</Label>
+          <select {...field("venueTier")} value={v.venueTier ?? ""} onChange={(e) => set("venueTier", e.target.value as ExperienceFormValues["venueTier"])}>
+            <option value="">Non précisée</option>
+            <option value="casual">Casual (accessible)</option>
+            <option value="premium">Premium (expérience qualitative)</option>
+            <option value="exclusive">Exclusive (haut de gamme)</option>
+          </select>{err("venueTier")}</div>
+        <div><Label k="cuisine" hint="Facultatif, ex. internationale, marocaine, italienne.">Cuisine</Label><input {...field("cuisine")} maxLength={60} value={v.cuisine ?? ""} onChange={(e) => set("cuisine", e.target.value)} />{err("cuisine")}</div>
+        <div className="sm:col-span-2"><Label k="ambiance" hint="Facultatif, ex. chic et décontractée, conviviale, rooftop animé.">Ambiance</Label><input {...field("ambiance")} maxLength={60} value={v.ambiance ?? ""} onChange={(e) => set("ambiance", e.target.value)} />{err("ambiance")}</div>
       </Section>
 
       <Section title="3. Format">
@@ -573,7 +587,11 @@ export function ExperienceForm({
             {v.pricingModel === "fixed_partner" ? (
               <div><Label k="partnerPriceDh" hint="Montant fixe par place, connu à l'avance.">Prix sur place par place (DH)</Label><input {...field("partnerPriceDh")} inputMode="decimal" value={v.partnerPriceDh} onChange={(e) => set("partnerPriceDh", e.target.value)} />{err("partnerPriceDh")}</div>
             ) : (
-              <p className="text-sm text-muted sm:col-span-2">Le client règle sur place ce qu&apos;il consomme : le site affiche « + consommation », sans montant.</p>
+              <>
+                <p className="text-sm text-muted sm:col-span-2">Le client règle sur place ce qu&apos;il consomme. Indiquez le budget estimé par personne : il s&apos;affiche sur la fiche (« Budget restaurant estimé 200–300 DH »). À défaut, la fourchette de la gamme du lieu (section 2) est affichée.</p>
+                <div><Label k="budgetMinDh">Budget estimé, minimum (DH / pers.)</Label><input {...field("budgetMinDh")} inputMode="decimal" value={v.budgetMinDh} onChange={(e) => set("budgetMinDh", e.target.value)} />{err("budgetMinDh")}</div>
+                <div><Label k="budgetMaxDh">Budget estimé, maximum (DH / pers.)</Label><input {...field("budgetMaxDh")} inputMode="decimal" value={v.budgetMaxDh} onChange={(e) => set("budgetMaxDh", e.target.value)} />{err("budgetMaxDh")}</div>
+              </>
             )}
             <p className="text-xs text-muted sm:col-span-2">Ce que comprend le prix (en ligne et sur place) se décrit une seule fois, dans « Ce qui est inclus » (section 3).</p>
           </div>

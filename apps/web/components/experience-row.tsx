@@ -1,4 +1,4 @@
-import { experienceBadge, formatMoney, LOW_SEATS_THRESHOLD, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
+import { experienceBadge, formatMoney, LOW_SEATS_THRESHOLD, seatsAvailable, type Experience, type Session, restaurantBudget } from "@thecommunity/shared";
 import { getLocale, getTranslations } from "next-intl/server";
 import { MediaImage as Image } from "@/components/media";
 import { Link } from "@/i18n/navigation";
@@ -6,20 +6,23 @@ import { getCategory, getHomeSettings } from "@/lib/data";
 import { formatShortSlot, formatTime } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { groupLabel } from "./experience-card";
+import { budgetText } from "./price-tag";
 
 /**
  * Ligne du catalogue en vue « agenda » : vignette, titre (+ badges), heure · quartier · groupe, univers · langues · prix,
  * et un bouton « Réserver » (ou « Demander » / « Liste d'attente »). Toute la ligne ouvre la fiche.
  */
 export async function ExperienceRow({ experience, session, showDay = false, priority = false }: { experience: Experience; session?: Session; showDay?: boolean; priority?: boolean }) {
-  const [locale, t, tl, tr2, category, home] = await Promise.all([
+  const [locale, t, tl, tr2, category, home, tp] = await Promise.all([
     getLocale(),
     getTranslations("card"),
     getTranslations("labels.languages"),
     getTranslations("catalogRow"),
     getCategory(experience.categoryId),
     getHomeSettings(),
+    getTranslations("twoPart"),
   ]);
+  const budget = restaurantBudget(experience);
   const lang = locale as "fr" | "ar" | "en";
   // Sans date (« Déjà vécues ») : même ligne, « Prochaines dates bientôt » et un bouton « M'alerter » vers la fiche.
   const left = session ? seatsAvailable(session) : Infinity;
@@ -67,6 +70,8 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
         <p className="mt-0.5 truncate text-sm text-muted">
           {category ? tr(category.shortName, locale) : ""}
           {languages && ` · ${languages}`} · <span className="font-medium text-ink/75">{formatMoney(price, lang)}</span>
+          {budget?.kind === "range" && <span className="font-medium text-ink/75"> {tp("plusRestaurant", { amount: budgetText(budget, lang) })}</span>}
+          {budget?.kind === "fixed" && <span className="font-medium text-ink/75"> {tp("onSite", { amount: formatMoney({ amount: budget.amount, currency: budget.currency }, lang) })}</span>}
         </p>
       </div>
       <Link

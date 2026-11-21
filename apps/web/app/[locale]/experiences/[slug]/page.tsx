@@ -6,8 +6,9 @@ import {
   seatsAvailable,
   type CategoryKey,
   type Experience,
+  restaurantBudget,
 } from "@thecommunity/shared";
-import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, Handshake } from "lucide-react";
+import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, Handshake, Gift, Wallet, Gem, UtensilsCrossed, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
@@ -23,7 +24,7 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
-import { memberAmountFor, PriceTag } from "@/components/price-tag";
+import { budgetText, memberAmountFor, PriceTag } from "@/components/price-tag";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
 import { getArchivedExperience, getCategory, getCity, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublicOrganizer, getPublishedExperiences, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
@@ -116,6 +117,9 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
   const policy = policyOf(policies, exp.cancellationPolicyId);
   const memberAmount = memberAmountFor(plan, exp.price, exp);
   const twoPart = pricingOf(exp);
+  // Restaurant (docs/16) : menu négocié = montant exact ; consommation libre = budget estimé (ou repère de la gamme).
+  const budget = restaurantBudget(exp);
+  const surprise = exp.venue.revealPolicy === "on_group_reveal";
   const lang = locale as "fr" | "ar" | "en";
   const next = sessions.find((s) => seatsAvailable(s) > 0) ?? sessions[0];
   // Étape 29 : « Qui allez-vous rencontrer ? » (chiffres globaux sur les inscrits de la prochaine date, à partir de 4).
@@ -200,6 +204,11 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <Fact icon={Users} label={t("groupSize")} value={formatLabel(exp, t, next?.capacity ?? 0)} />
               <Fact icon={Clock} label={t("duration")} value={duration} />
               <Fact icon={Languages} label={t("languages")} value={exp.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ")} />
+              {surprise && <Fact icon={Gift} label={t("surpriseVenue")} value={t("surpriseVenueValue")} />}
+              {budget?.kind === "range" && <Fact icon={Wallet} label={t("budgetLabel")} value={`${budgetText(budget, lang)} · ${t("budgetNote")}`} />}
+              {exp.venueTier && <Fact icon={Gem} label={t("tierLabel")} value={t(`tier_${exp.venueTier}`)} />}
+              {exp.cuisine && <Fact icon={UtensilsCrossed} label={t("cuisineLabel")} value={exp.cuisine} />}
+              {exp.ambiance && <Fact icon={Sparkles} label={t("ambianceLabel")} value={exp.ambiance} />}
               {exp.alcoholServed === false && <Fact icon={Leaf} label={t("alcoholFree")} value="" />}
               {(exp.bookingMode === "social_dinner" || exp.bookingMode === "group" || exp.onSiteHost) && (
                 <Fact icon={Handshake} label={exp.onSiteHost ? t("onSiteHost") : t("selfArrival")} value="" />
@@ -328,7 +337,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
           <aside id="dates" className="lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-[var(--radius-card)] bg-white p-5 shadow-float">
               <p className="flex flex-wrap items-baseline gap-2">
-                <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" pricing={twoPart} t2={t2} />
+                <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" pricing={twoPart} t2={t2} budget={budget} />
                 <span className="text-sm text-muted">{t("perPerson")}</span>
               </p>
               {exp.membersOnly && <p className="mt-2 rounded-xl bg-plum-900 px-3 py-2 text-sm font-medium text-white">{t("membersOnlyNote")}</p>}
@@ -337,7 +346,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                   <p className="font-semibold">{t2("sectionTitle")}</p>
                   <ul className="mt-1 space-y-0.5">
                     <li>{t2("sectionOnline", { amount: formatMoney(exp.price, lang) })}</li>
-                    <li>{twoPart.partner.price ? t2("sectionFixed", { amount: formatMoney(twoPart.partner.price, lang) }) : t2("sectionVariable")}</li>
+                    <li>{twoPart.partner.price ? t2("sectionFixed", { amount: formatMoney(twoPart.partner.price, lang) }) : budget?.kind === "range" ? t2("sectionBudget", { amount: budgetText(budget, lang) }) : t2("sectionVariable")}</li>
                   </ul>
                   {twoPart.partner.description && <p className="mt-1 text-muted">{t2("whatOnSite", { description: twoPart.partner.description })}</p>}
                 </div>
@@ -403,7 +412,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         <div data-testid="mobile-book-bar" className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 border-t border-line bg-white px-4 py-2.5 shadow-[0_-4px_16px_rgba(0,0,0,0.04)] lg:hidden">
           <div className="mx-auto flex max-w-md items-center justify-between gap-3 max-[359px]:flex-col max-[359px]:items-stretch max-[359px]:gap-2">
             <div className="min-w-0 flex-1">
-              <p className="leading-tight"><PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} detail={false} /></p>
+              <p className="leading-tight"><PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} detail={false} budget={budget} /></p>
               <p className="text-xs text-muted">{formatShortSlot(next.startAt, locale)}</p>
             </div>
             <Link href={`/reserver/${next.id}`} className="btn btn-primary h-12 shrink-0 whitespace-nowrap">

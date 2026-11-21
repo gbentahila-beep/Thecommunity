@@ -1,3 +1,4 @@
+import { VENUE_TIERS, type VenueTier } from "./two-part";
 import { MOROCCO_TIMEZONE } from "./constants";
 import { searchScore, type SearchField } from "./search";
 import { seatsAvailable } from "./seats";
@@ -41,10 +42,12 @@ export type CatalogFilters = {
   women: boolean;
   /** Jour précis (AAAA-MM-JJ, heure de Casablanca). */
   date: string | null;
+  /** Gamme du restaurant (docs/16) : Casual, Premium, Exclusive. */
+  tier: VenueTier | null;
   sort: CatalogSort;
 };
 
-export const EMPTY_CATALOG_FILTERS: CatalogFilters = { q: "", maxPrice: null, district: null, beginner: false, format: null, available: false, women: false, date: null, sort: "recommended" };
+export const EMPTY_CATALOG_FILTERS: CatalogFilters = { q: "", maxPrice: null, district: null, beginner: false, format: null, available: false, women: false, date: null, tier: null, sort: "recommended" };
 
 type Params = Record<string, string | string[] | undefined>;
 
@@ -66,6 +69,7 @@ export function parseCatalogParams(sp: Params): CatalogFilters {
     available: one("dispo") === "1",
     women: one("public") === "femmes",
     date: /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(Date.parse(`${date}T12:00:00Z`)) ? date : null,
+    tier: (VENUE_TIERS as readonly string[]).includes(one("gamme")) ? (one("gamme") as VenueTier) : null,
     sort,
   };
 }
@@ -81,6 +85,7 @@ export function catalogParams(f: Partial<CatalogFilters>): [string, string][] {
   if (f.available) out.push(["dispo", "1"]);
   if (f.women) out.push(["public", "femmes"]);
   if (f.date) out.push(["date", f.date]);
+  if (f.tier) out.push(["gamme", f.tier]);
   if (f.sort && f.sort !== "recommended") out.push(["tri", SORT_PARAM[f.sort]]);
   return out;
 }
@@ -90,7 +95,7 @@ export const formatParam = (f: CatalogFormat) => FORMAT_PARAM[f];
 
 /** Nombre de filtres actifs (hors recherche et tri), pour le bouton « Filtres (n) ». */
 export function activeFilterCount(f: CatalogFilters): number {
-  return [f.maxPrice, f.district, f.beginner, f.format, f.available, f.women, f.date].filter(Boolean).length;
+  return [f.maxPrice, f.district, f.beginner, f.format, f.available, f.women, f.date, f.tier].filter(Boolean).length;
 }
 
 /** Prix comparable d'une place : total connu (en ligne + part fixe sur place), sinon la part en ligne. */
@@ -148,6 +153,7 @@ export function applyCatalog(input: {
     (!f.district || e.district === f.district) &&
     (!f.beginner || beginnerFriendly(e)) &&
     (!f.women || e.audience === "women") &&
+    (!f.tier || e.venueTier === f.tier) &&
     (!f.format || (f.format === "solo" ? e.bookingMode === "social_dinner" || e.bookingMode === "group" : e.maxSeatsPerBooking >= 2)) &&
     score(e) > 0;
   const keepSession = (s: Session) => (!f.available || (s.status !== "full" && seatsAvailable(s) > 0)) && (!f.date || casablancaDay(s.startAt) === f.date);

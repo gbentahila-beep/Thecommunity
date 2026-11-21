@@ -173,6 +173,9 @@ const policy = DEFAULT_CANCELLATION_POLICY.id;
 export const DEMO_EXPERIENCES: Experience[] = [
   {
     id: "exp-diner-inconnus",
+    venueTier: "premium",
+    cuisine: "Internationale",
+    ambiance: "Chic et décontractée",
     slug: "diner-entre-inconnus-casablanca",
     targetAgeMin: 25,
     targetAgeMax: 40,
@@ -302,11 +305,14 @@ export const DEMO_EXPERIENCES: Experience[] = [
   },
   {
     id: "exp-rooftop",
+    venueTier: "casual",
+    budgetRange: { min: 15000, max: 25000, currency: "MAD" },
+    ambiance: "Rooftop au coucher du soleil",
     slug: "rooftop-coucher-de-soleil-casablanca",
     title: { fr: "Rooftop au coucher du soleil", ar: "سطح عند غروب الشمس" },
     summary: { fr: "Un apéritif sans alcool face à la ville, seul ou entre amis.", ar: "مشروبات بدون كحول مطلة على المدينة، وحدك أو مع أصدقائك." },
     description: {
-      fr: "Une soirée détendue sur un rooftop du centre-ville avec vue sur la ville et la mosquée Hassan II au loin. Venez seul ou accompagné : nos hôtes facilitent les présentations.",
+      fr: "Une soirée détendue sur un rooftop du centre-ville avec vue sur la ville et la mosquée Hassan II au loin. Venez seul ou accompagné : tout le monde est là pour rencontrer du monde.",
     },
     categoryId: "discover",
     cityId: "casablanca",
@@ -329,7 +335,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
     maxSeatsPerBooking: 4,
     languages: ["fr", "darija", "en"],
     alcoholServed: false,
-    included: [{ fr: "Un mocktail de bienvenue" }, { fr: "Présentations par nos hôtes" }],
+    included: [{ fr: "Un mocktail de bienvenue" }, { fr: "Une table réservée à notre groupe" }],
     practicalInfo: { fr: "Accès par ascenseur. Pièce d'identité demandée à l'entrée." },
     cancellationPolicyId: policy,
     status: "published",
@@ -339,6 +345,9 @@ export const DEMO_EXPERIENCES: Experience[] = [
   },
   {
     id: "exp-brunch-inconnus",
+    venueTier: "casual",
+    cuisine: "Brunch",
+    ambiance: "Café chaleureux",
     slug: "brunch-entre-inconnus-racine",
     title: { fr: "Brunch entre inconnus", ar: "فطور متأخر مع غرباء" },
     summary: { fr: "Le dimanche, une grande table et de nouvelles têtes.", ar: "يوم الأحد، طاولة كبيرة ووجوه جديدة." },
@@ -364,7 +373,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
     maxSeatsPerBooking: 1,
     languages: ["fr", "darija"],
     alcoholServed: false,
-    included: [{ fr: "Place réservée à une table de six" }, { fr: "Accueil et présentations par un hôte" }, { fr: "Brunch complet" }, { fr: "Boisson chaude et jus pressé" }],
+    included: [{ fr: "Place réservée à une table de six" }, { fr: "Cartes de bienvenue pour lancer la conversation" }, { fr: "Brunch complet" }, { fr: "Boisson chaude et jus pressé" }],
     practicalInfo: { fr: "Expérience réservée aux 18 ans et plus." },
     cancellationPolicyId: policy,
     status: "published",

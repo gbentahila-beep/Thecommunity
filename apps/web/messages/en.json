@@ -272,7 +272,17 @@
     "organizedBy": "Organized by",
     "organizerPage": "See the organizer's page",
     "onSiteHost": "Welcome on site: show your ticket at the entrance",
-    "selfArrival": "No host: check in and find your group in the app"
+    "selfArrival": "No host: check in and find your group in the app",
+    "surpriseVenue": "Surprise venue",
+    "surpriseVenueValue": "Revealed the day before with your group",
+    "budgetLabel": "Estimated restaurant budget",
+    "budgetNote": "per person, indicative, paid on site for what you order",
+    "tierLabel": "Range",
+    "tier_casual": "Casual · accessible",
+    "tier_premium": "Premium · quality experience",
+    "tier_exclusive": "Exclusive · high end",
+    "cuisineLabel": "Cuisine",
+    "ambianceLabel": "Atmosphere"
   },
   "booking": {
     "title": "Book my spot",
@@ -1424,7 +1434,12 @@
     "sectionOnline": "Online, when you book: {amount} per person.",
     "sectionFixed": "On site, to the partner: {amount} per person.",
     "sectionVariable": "On site, to the partner: whatever you order.",
-    "onSiteToVenue": "Paid directly to the partner venue, on site."
+    "onSiteToVenue": "Paid directly to the partner venue, on site.",
+    "plusRestaurant": "+ restaurant {amount}",
+    "restaurantEstimated": "restaurant est. {amount} / person",
+    "sectionBudget": "On site, at the restaurant: about {amount} per person (indicative budget, depending on what you order).",
+    "restaurantPill": "Restaurant {amount}",
+    "surprisePill": "Surprise venue"
   },
   "ticket": {
     "title": "Your ticket",
@@ -1595,7 +1610,12 @@
     "sort_price_desc": "Price: high to low",
     "sort_rating": "Top rated",
     "sort_new": "Newest",
-    "women": "Women only"
+    "women": "Women only",
+    "tier": "Restaurant range",
+    "tierAny": "All ranges",
+    "tier_casual": "Casual · 100–200 DH",
+    "tier_premium": "Premium · 200–400 DH",
+    "tier_exclusive": "Exclusive · 400–600 DH"
   },
   "gallery": {
     "title": "Photos",

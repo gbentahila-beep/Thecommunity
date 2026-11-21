@@ -1,4 +1,4 @@
-import { experienceBadge, formatMoney, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
+import { experienceBadge, formatMoney, seatsAvailable, type Experience, type Session, restaurantBudget } from "@thecommunity/shared";
 import { getLocale, getTranslations } from "next-intl/server";
 import { MediaImage as Image } from "@/components/media";
 import { Link } from "@/i18n/navigation";
@@ -6,6 +6,7 @@ import { getCategory, getHomeSettings } from "@/lib/data";
 import { formatDaySlot } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { groupLabel } from "./experience-card";
+import { budgetText } from "./price-tag";
 
 /**
  * Ligne compacte d'une expérience (accueil, tableau de bord, « Déjà vécues ») : vignette, titre + badge, jour et heure
@@ -13,7 +14,8 @@ import { groupLabel } from "./experience-card";
  * quartier · groupe, univers ; prix à droite. Toute la ligne ouvre la fiche.
  */
 export async function CompactRow({ experience, session, priority = false }: { experience: Experience; session?: Session; priority?: boolean }) {
-  const [locale, t, category, home] = await Promise.all([getLocale(), getTranslations("card"), getCategory(experience.categoryId), getHomeSettings()]);
+  const [locale, t, category, home, tp] = await Promise.all([getLocale(), getTranslations("card"), getCategory(experience.categoryId), getHomeSettings(), getTranslations("twoPart")]);
+  const budget = restaurantBudget(experience);
   const full = session ? session.status === "full" || seatsAvailable(session) === 0 : false;
   const badge = full ? null : experienceBadge(experience, session, new Date(), home.featuredExperienceIds);
   const cover = experience.images[0];
@@ -40,6 +42,8 @@ export async function CompactRow({ experience, session, priority = false }: { ex
         </p>
         <div className="mt-1.5 flex flex-wrap gap-1.5">
           {category && <span className={`${pill} bg-cream-deep text-ink/80`}>{tr(category.shortName, locale)}</span>}
+          {budget?.kind === "range" && <span className={`${pill} bg-cream-deep text-ink/80`}>{tp("restaurantPill", { amount: budgetText(budget, locale as "fr" | "ar" | "en") })}</span>}
+          {experience.venue.revealPolicy === "on_group_reveal" && <span className={`${pill} bg-cream-deep text-ink/80`}>{tp("surprisePill")}</span>}
           {experience.audience === "women" && <span className={`${pill} bg-plum-100 text-plum-900`}>{t("women")}</span>}
           {full ? <span className={`${pill} bg-ink/80 text-white`}>{t("full")}</span> : badge && <span className={`${pill} ${badge === "featured" ? "bg-plum-900 text-white" : "bg-badge text-plum-900"}`}>{t(`badge_${badge}`)}</span>}
         </div>

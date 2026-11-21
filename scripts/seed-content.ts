@@ -103,6 +103,14 @@ async function main() {
     if (e.questionnaire?.length && snap.get("questionnaire") === undefined) patch.questionnaire = e.questionnaire;
     if (e.onSiteHost && snap.get("onSiteHost") === undefined) patch.onSiteHost = true;
     if (e.foodServed && snap.get("foodServed") === undefined) patch.foodServed = true;
+    // Restaurant : gamme, budget estimé, cuisine, ambiance (seulement s'ils manquent).
+    if (e.venueTier && snap.get("venueTier") === undefined) patch.venueTier = e.venueTier;
+    if (e.budgetRange && snap.get("budgetRange") === undefined) patch.budgetRange = e.budgetRange;
+    if (e.cuisine && snap.get("cuisine") === undefined) patch.cuisine = e.cuisine;
+    if (e.ambiance && snap.get("ambiance") === undefined) patch.ambiance = e.ambiance;
+    // Plus d'hôte (docs/16) : anciens textes de démonstration qui en parlaient, remplacés par les nouveaux.
+    if (JSON.stringify(snap.get("included") ?? []).includes("hôte")) patch.included = e.included;
+    if (String(snap.get("description.fr") ?? "").includes("nos hôtes")) patch["description.fr"] = e.description.fr;
     if (Object.keys(patch).length) {
       await snap.ref.update(patch);
       completed++;
