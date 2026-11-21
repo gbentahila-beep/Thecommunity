@@ -44,3 +44,15 @@ describe("questionnaire", () => {
     expect(profileSchema.safeParse(full).success).toBe(true);
   });
 });
+
+import { profileMoreSchema } from "./profile";
+describe("inscription en questions (docs/16)", () => {
+  it("réponses facultatives : valeurs connues seulement, 3 valeurs au plus, Instagram valide", () => {
+    expect(profileMoreSchema.safeParse({}).success).toBe(true);
+    expect(profileMoreSchema.safeParse({ groupVibe: "curious", conversationStyle: 4, humor: "dry", lifeValues: ["fun", "friends"], diets: ["halal"], sector: "tech", referral: "instagram", whatsapp: true, instagram: "@rita.b_92" }).success).toBe(true);
+    expect(profileMoreSchema.safeParse({ lifeValues: ["fun", "friends", "family", "health"] }).success).toBe(false);
+    expect(profileMoreSchema.safeParse({ conversationStyle: 6 }).success).toBe(false);
+    expect(profileMoreSchema.safeParse({ groupVibe: "religion" }).success).toBe(false);
+    expect(profileMoreSchema.safeParse({ instagram: "rita b" }).success).toBe(false);
+  });
+});

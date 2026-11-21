@@ -353,3 +353,23 @@ Tests : 6 tests d'intégration et 4 unitaires (formule, souscription et renouvel
 - Option de l'organisateur « Une hôtesse accueille les participants sur place » (`experiences.onSiteHost`), affichée
   sur la fiche ; sinon la fiche indique « Pas d'hôte : vous indiquez votre arrivée et retrouvez votre groupe ».
 - Tests : `firebase/tests/self-check-in.test.ts`, alertes filtrées par ville, `selfCheckInState` (unitaire).
+
+## Refonte UX/UI — phase 6 : inscription en questions (21 novembre 2026)
+
+- `/bienvenue` : une question par écran (23 questions, dont 7 obligatoires), barre « Question x sur 23 », retour,
+  quitter (réponses gardées sur l'appareil), « Passer » pour les facultatives, passage automatique après un choix
+  dans une liste, trois cartes « Le saviez-vous ? » sourcées (Hall 2018, Boothby et al. 2018, Dunbar 2017) et une
+  carte finale (Epley et Schroeder 2014). L'accord CGU / confidentialité / règles + newsletter facultative reste à
+  la création du compte.
+- Nouvelles réponses facultatives (`profileMoreSchema`) : ambiance de groupe, façon d'être en groupe (1 à 5),
+  humour, ce qui compte (3 au plus), fréquence sportive, type d'adresse, alimentation, secteur, comment vous nous
+  avez connus, WhatsApp, Instagram. Centres d'intérêt détaillés par thème (jusqu'à 15, « Voir plus »). Pas de
+  situation amoureuse, d'enfants ni de religion (données sensibles, loi 09-08).
+- « Mes informations » : toutes les réponses rangées par rubrique, chacune avec « Modifier » qui rouvre la question
+  (`/bienvenue?edition=1&etape=…`, bouton « Enregistrer »).
+- Composition des groupes (`profileCost`) : au moins une personne qui lance la conversation et pas que des
+  bavards, humours et ambiances proches, budgets proches (dîners), rythmes sportifs proches (activités physiques),
+  pas deux personnes du même secteur, petit bonus pour les valeurs partagées — toujours plus faible que les
+  critères essentiels (taille, langue commune, déjà rencontrés, âge, équilibre).
+- Confidentialité (FR/EN/AR) mise à jour. Tests : schéma, `profileCost`, parcours e2e (démo) ; le parcours
+  `firebase-auth` est adapté mais à relancer avec les émulateurs complets.

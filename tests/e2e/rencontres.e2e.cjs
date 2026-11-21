@@ -87,10 +87,12 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await p.goto(base + '/espace/profil', { waitUntil: 'load' });
   const prof = await p.locator('main').textContent();
   assert(prof.includes('Maârif') && prof.includes('Dîners') && prof.includes('Débutant·e') && prof.includes("Peu importe l'âge"), '30 : profil — quartier, univers préférés, niveau, âge');
-  await p.goto(base + '/bienvenue?edition=1', { waitUntil: 'load' });
-  for (let i = 0; i < 3; i++) await p.getByRole('button', { name: 'Continuer' }).click();
-  assert(await visible(p.locator('#f-district')) && await p.locator('#f-district').inputValue() === 'Maârif', '30 : questionnaire — quartier pré-rempli');
-  assert(await p.getByRole('radio', { name: 'Des personnes de mon âge (si possible)' }).isVisible() && await p.locator('#f-sportLevel').inputValue() === 'beginner', '30 : questionnaire — préférence d\'âge et niveau sportif');
+  await p.goto(base + '/bienvenue?edition=1&etape=district', { waitUntil: 'load' });
+  assert(await visible(p.locator('#f-district')) && await p.locator('#f-district').inputValue() === 'Maârif', '30 : questionnaire — quartier pré-rempli (ouvert depuis le profil)');
+  await p.goto(base + '/bienvenue?edition=1&etape=sport', { waitUntil: 'load' });
+  assert(await p.getByRole('radio', { name: 'Débutant·e' }).getAttribute('aria-checked') === 'true', '30 : questionnaire — niveau sportif');
+  await p.goto(base + '/bienvenue?edition=1&etape=age', { waitUntil: 'load' });
+  assert(await p.getByRole('radio', { name: 'Des personnes de mon âge (si possible)' }).isVisible(), '30 : questionnaire — préférence d\'âge');
   await p.goto(base + '/espace', { waitUntil: 'load' });
   const reco = p.locator('section[aria-labelledby=reco-title] [data-testid=compact-row]');
   assert(await reco.count() > 0, '30 : suggestions de l\'espace membre');

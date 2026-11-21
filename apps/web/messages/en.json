@@ -517,7 +517,38 @@
       "wellness": "Wellbeing",
       "games": "Games",
       "nightlife": "Going out",
-      "discovery": "Discovery"
+      "discovery": "Discovery",
+      "cooking": "Cooking",
+      "coffee": "Coffee",
+      "restaurants": "Restaurants",
+      "pastry": "Pastry",
+      "live_music": "Live music",
+      "festivals": "Festivals",
+      "museums": "Museums",
+      "theatre": "Theatre",
+      "comedy": "Comedy",
+      "dancing": "Dancing",
+      "cinema": "Cinema",
+      "photography": "Photography",
+      "design": "Design",
+      "writing": "Writing",
+      "fashion": "Fashion",
+      "architecture": "Architecture",
+      "crafts": "Crafts",
+      "running": "Running",
+      "cycling": "Cycling",
+      "football": "Football",
+      "hiking": "Hiking",
+      "yoga": "Yoga",
+      "padel": "Padel",
+      "swimming": "Swimming",
+      "books": "Books",
+      "languages": "Languages",
+      "tech": "Tech",
+      "history": "History",
+      "business": "Business",
+      "science": "Science",
+      "volunteering": "Volunteering"
     },
     "goals": {
       "meet_new_people": "Meet new people",
@@ -553,6 +584,104 @@
       "play": "Games",
       "create": "Workshops",
       "discover": "Outings"
+    },
+    "interestGroups": {
+      "eat": "Eating and drinking",
+      "city": "Out in the city",
+      "making": "Making things",
+      "moving": "Moving",
+      "mind": "Learning and sharing"
+    },
+    "vibe": {
+      "calm": "Small and easy",
+      "curious": "Smart and interesting",
+      "playful": "Playful and surprising",
+      "any": "I don't mind"
+    },
+    "vibeHint": {
+      "calm": "Quiet place, no pressure",
+      "curious": "People who like a real conversation",
+      "playful": "Livelier, up for anything",
+      "any": "The people matter more"
+    },
+    "conversation": {
+      "1": "I mostly listen",
+      "2": "I listen more than I talk",
+      "3": "Half and half",
+      "4": "I talk more than I listen",
+      "5": "I get the conversation going"
+    },
+    "humor": {
+      "dry": "Dry and clever",
+      "playful": "Light and teasing",
+      "offbeat": "Offbeat, absurd",
+      "everything": "I laugh at most things"
+    },
+    "values": {
+      "family": "Family",
+      "friends": "Friends",
+      "career": "Career",
+      "health": "Health",
+      "adventure": "Adventure",
+      "learning": "Learning",
+      "creativity": "Creativity",
+      "helping": "Helping others",
+      "fun": "Having fun"
+    },
+    "exercise": {
+      "most_days": "Most days",
+      "weekly": "A few times a week",
+      "sometimes": "Now and then",
+      "rarely": "Hardly ever"
+    },
+    "budget": {
+      "cafe": "A café",
+      "casual": "Brunch or a casual dinner",
+      "smart": "A smart restaurant",
+      "fine": "Fine dining"
+    },
+    "budgetHint": {
+      "cafe": "Coffee, pastry, a sandwich",
+      "casual": "Everyday places",
+      "smart": "Dress up a little",
+      "fine": "Tasting menus, renowned chefs"
+    },
+    "profileDiets": {
+      "vegetarian": "Vegetarian",
+      "vegan": "Vegan",
+      "pescatarian": "Pescatarian",
+      "halal": "Halal only",
+      "no_alcohol": "No alcohol",
+      "gluten_free": "Gluten free",
+      "lactose_free": "Lactose free"
+    },
+    "sector": {
+      "tech": "Tech",
+      "health": "Healthcare",
+      "finance_law": "Finance and law",
+      "creative_media": "Creative and media",
+      "education": "Education",
+      "trades": "Trades and building",
+      "hospitality_retail": "Hospitality and retail",
+      "public": "Public sector",
+      "student": "Studying",
+      "not_working": "Not working right now",
+      "other": "Something else"
+    },
+    "referral": {
+      "friend": "A friend",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "facebook": "Facebook",
+      "whatsapp": "WhatsApp",
+      "google": "Google",
+      "ai_assistant": "ChatGPT, Claude…",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube",
+      "event": "An event",
+      "poster": "A poster",
+      "press": "Press or podcast",
+      "other": "Somewhere else"
     }
   },
   "account": {
@@ -730,7 +859,7 @@
     "step4": "Finishing up",
     "firstName": "First name",
     "lastName": "Last name",
-    "phone": "Phone (optional)",
+    "phone": "Phone",
     "birthDate": "Date of birth",
     "birthDateHint": "Never shown: only used to form groups of similar ages.",
     "city": "City",
@@ -762,12 +891,14 @@
       "tooYoung": "The Host Club is for people aged 18 and over.",
       "invalidDate": "Invalid date.",
       "pickOne": "Choose at least one option.",
-      "pickThree": "Choose at least 3 interests."
+      "pickThree": "Choose at least 3 interests.",
+      "invalidInstagram": "Invalid account name (letters, numbers, dots and underscores).",
+      "tooMany": "Too many choices."
     },
     "saving": "Saving…",
     "saveError": "Couldn't save. Please check the details and try again.",
     "photoUploadError": "The photo couldn't be uploaded; your profile has still been saved.",
-    "district": "Your neighbourhood (optional)",
+    "district": "Your neighbourhood",
     "districtPlaceholder": "Maarif, Gauthier, Anfa…",
     "favoriteCategories": "Your favourite universes (optional)",
     "sportLevel": "Your sports level (optional)",
@@ -777,7 +908,147 @@
     "sportLevel_advanced": "Advanced",
     "agePreference": "In your group, preferably…",
     "agePreference_any": "Any age",
-    "agePreference_similar": "People my age (if possible)"
+    "agePreference_similar": "People my age (if possible)",
+    "progress": "Question {current} of {total}",
+    "answered": "{current} of {total} answered",
+    "optional": "Optional",
+    "continue": "Continue",
+    "skip": "Skip",
+    "close": "Leave (your answers are kept)",
+    "backStep": "Previous question",
+    "saveAndExit": "Save",
+    "leaveAnytime": "You can stop at any time: your answers are saved as you go.",
+    "chosen": "{count} of {max} chosen",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "soon": "Soon",
+    "q": {
+      "name": {
+        "title": "What is your name?",
+        "hint": "Only your first name is shown to other participants."
+      },
+      "birth": {
+        "title": "What is your date of birth?",
+        "hint": "We mix ages with care. Your age is never shown."
+      },
+      "gender": {
+        "title": "How do you describe yourself?",
+        "hint": "It helps us balance groups. Nobody else sees it."
+      },
+      "city": {
+        "title": "Which city do you live in?",
+        "hint": "We open new cities as people ask for them."
+      },
+      "district": {
+        "title": "Which neighbourhood?",
+        "hint": "So we can suggest experiences near you."
+      },
+      "languages": {
+        "title": "Which languages are you comfortable in?",
+        "hint": "Every group shares at least one language. Tick all that work for you."
+      },
+      "interests": {
+        "title": "What are your interests?",
+        "hint": "At least 3, up to 15: something to start the conversation."
+      },
+      "goals": {
+        "title": "What brings you here?",
+        "hint": "It helps us choose who you share the experience with."
+      },
+      "universes": {
+        "title": "Which categories appeal to you?",
+        "hint": "We will suggest them first."
+      },
+      "vibe": {
+        "title": "What kind of group would you enjoy?",
+        "hint": "We run all four. Pick the one that feels like you."
+      },
+      "conversation": {
+        "title": "With new people, you are more…",
+        "hint": "No right answer: every group needs a bit of everything."
+      },
+      "humor": {
+        "title": "What makes you laugh?",
+        "hint": "We bring together people who laugh at the same things."
+      },
+      "values": {
+        "title": "What matters most to you?",
+        "hint": "Up to 3. To bring together people who will get on."
+      },
+      "exercise": {
+        "title": "How often do you exercise?",
+        "hint": "To bring together people with a similar pace."
+      },
+      "sport": {
+        "title": "Your level for sports activities?",
+        "hint": "Padel, hiking, running: we form balanced teams."
+      },
+      "budget": {
+        "title": "What kind of place do you like?",
+        "hint": "So you sit somewhere you'll feel comfortable."
+      },
+      "diet": {
+        "title": "Do you eat differently?",
+        "hint": "We only suggest places that can cook for you."
+      },
+      "sector": {
+        "title": "Which sector do you work in?",
+        "hint": "To keep colleagues apart and mix profiles."
+      },
+      "age": {
+        "title": "For your group, you prefer…",
+        "hint": "A soft preference, respected when possible."
+      },
+      "referral": {
+        "title": "How did you hear about us?",
+        "hint": "Pick what brought you here. It tells us what works."
+      },
+      "phone": {
+        "title": "How can we reach you?",
+        "hint": "Only about your experience. Nobody in your group sees it."
+      },
+      "instagram": {
+        "title": "Your Instagram account?",
+        "hint": "Nobody sees it unless you share it yourself."
+      },
+      "photo": {
+        "title": "A photo and a few words?",
+        "hint": "Visible to your group once revealed. You can add them later."
+      }
+    },
+    "whatsapp": "I use WhatsApp on this number",
+    "instagramLabel": "Instagram",
+    "instagramPlaceholder": "yourname",
+    "facts": {
+      "eyebrow": "Did you know?",
+      "hours": {
+        "big": "50",
+        "unit": "hours",
+        "text": "That is roughly how long it takes to turn someone new into a friend, and over 200 hours for a close friend. That's why meeting again matters: after an experience, see members of your group on another one.",
+        "source": "Jeffrey A. Hall, University of Kansas, 2018"
+      },
+      "liking": {
+        "title": "People like you more than you think.",
+        "text": "After a first conversation with someone new, most people underestimate how much the other person liked them.",
+        "source": "Boothby, Cooney, Sandstrom and Clark, Psychological Science, 2018"
+      },
+      "meals": {
+        "title": "Almost done",
+        "subtitle": "Just a few quick questions left.",
+        "text": "People who often share meals say they are happier and have more friends they can count on.",
+        "source": "Robin Dunbar, University of Oxford, 2017"
+      },
+      "commute": {
+        "text": "Commuters who talked to a stranger on their journey enjoyed it more than those who sat alone. Most had predicted the opposite.",
+        "source": "Nicholas Epley and Juliana Schroeder, University of Chicago, 2014"
+      }
+    },
+    "doneTitle1": "Well done,",
+    "doneTitle2": "you're all set.",
+    "doneText": "Thank you! Your answers help us put your groups together. You can change them any time in My profile.",
+    "doneCta": "See experiences",
+    "doneHome": "My dashboard",
+    "edited": "Saved."
   },
   "testPayment": {
     "bannerTitle": "TEST payment",
@@ -1531,5 +1802,23 @@
     "soloHint": "Show your ticket at the venue’s front desk if needed. Enjoy!",
     "hostHint": "A hostess welcomes you on site and introduces your group.",
     "error": "We couldn’t save your arrival right now. Please try again in a moment."
+  },
+  "profileMore": {
+    "title": "To put your groups together",
+    "vibe": "Group vibe",
+    "conversation": "In a group",
+    "humor": "Humour",
+    "values": "What matters",
+    "exercise": "Exercise",
+    "budget": "Places",
+    "diets": "Diet",
+    "sector": "Sector",
+    "referral": "Heard via",
+    "whatsapp": "WhatsApp",
+    "instagram": "Instagram",
+    "edit": "Edit",
+    "none": "—",
+    "yes": "Yes",
+    "no": "No"
   }
 }

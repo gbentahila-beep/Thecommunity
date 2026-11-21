@@ -36,7 +36,13 @@ export type Interest =
   | "wellness"
   | "games"
   | "nightlife"
-  | "discovery";
+  | "discovery"
+  // Inscription en questions (docs/16) : centres d'intérêt détaillés, rangés par thème.
+  | "cooking" | "coffee" | "restaurants" | "pastry"
+  | "live_music" | "festivals" | "museums" | "theatre" | "comedy" | "dancing" | "cinema"
+  | "photography" | "design" | "writing" | "fashion" | "architecture" | "crafts"
+  | "running" | "cycling" | "football" | "hiking" | "yoga" | "padel" | "swimming"
+  | "books" | "languages" | "tech" | "history" | "business" | "science" | "volunteering";
 
 export type SocialGoal =
   | "meet_new_people"
@@ -270,6 +276,18 @@ export type UserProfile = {
   favoriteCategories?: string[];
   sportLevel?: "beginner" | "intermediate" | "advanced" | null;
   agePreference?: "any" | "similar";
+  /** Inscription en questions (docs/16) : réponses facultatives (composition des groupes). */
+  groupVibe?: "calm" | "curious" | "playful" | "any" | null;
+  conversationStyle?: number | null;
+  humor?: "dry" | "playful" | "offbeat" | "everything" | null;
+  lifeValues?: string[];
+  exerciseFrequency?: "most_days" | "weekly" | "sometimes" | "rarely" | null;
+  venueBudget?: "cafe" | "casual" | "smart" | "fine" | null;
+  diets?: string[];
+  sector?: string | null;
+  referral?: string | null;
+  whatsapp?: boolean;
+  instagram?: string | null;
   profession?: string;
   bio?: string;
   locale: Locale;

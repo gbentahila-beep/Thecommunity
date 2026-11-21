@@ -11,6 +11,9 @@
  *  6. centres d'intérêt partagés (bonus) ;
  *  7. (18a) réponses au questionnaire de l'expérience : réunir les réponses proches (« same » : niveau de padel,
  *     allure de course) ou les mélanger (« mix » : expérience au paintball, timides et bavards à table).
+ *  8. (docs/16) réponses de l'inscription, critères souples : au moins une personne qui lance la conversation et
+ *     pas que des bavards ; humours et ambiances proches ; budgets proches (dîners) et rythmes sportifs proches
+ *     (activités physiques) ; pas deux personnes du même secteur ; valeurs partagées (petit bonus).
  * Une réservation de plusieurs places (amis) reste à la même table.
  */
 import type { QuestionKind, QuestionMatch } from "./questionnaire";
@@ -28,6 +31,16 @@ export type MatchPerson = {
   /** Étape 30 : « plutôt des personnes de mon âge » (préférence souple) ; niveau sportif 1 à 3 (activités physiques). */
   agePreference?: "any" | "similar";
   sportLevel?: number | null;
+  /** docs/16 : 1 (écoute surtout) à 5 (lance la conversation). */
+  conversation?: number | null;
+  humor?: string | null;
+  vibe?: string | null;
+  /** 0 (café) à 3 (grande table) ; seulement pour les dîners. */
+  budget?: number | null;
+  /** 0 (rarement) à 3 (presque tous les jours) ; seulement pour les activités physiques. */
+  exercise?: number | null;
+  sector?: string | null;
+  values?: string[];
 };
 /** Question du questionnaire utile au calcul (18a). */
 export type MatchQuestion = { id: string; kind: QuestionKind; match: QuestionMatch };
@@ -84,6 +97,35 @@ export function groupCost(g: MatchPerson[], c: MatchConfig, o: MatchOptions = {}
   for (const p of g) for (const i of p.interests) counts.set(i, (counts.get(i) ?? 0) + 1);
   cost -= [...counts.values()].filter((n) => n >= 2).length;
   cost += questionnaireCost(g, o.questions);
+  cost += profileCost(g);
+  return cost;
+}
+
+/** Secteurs qui ne comptent pas comme « collègues » (études, sans activité, autre). */
+const OPEN_SECTORS = new Set(["student", "not_working", "other"]);
+
+/** Coût lié aux réponses de l'inscription (docs/16) : toujours plus faible que les critères essentiels. */
+export function profileCost(g: Pick<MatchPerson, "conversation" | "humor" | "vibe" | "budget" | "exercise" | "sector" | "values">[]): number {
+  let cost = 0;
+  const talk = g.map((p) => p.conversation).filter((v): v is number => typeof v === "number");
+  if (talk.length >= 3 && !talk.some((v) => v >= 4)) cost += 6;
+  const talkers = talk.filter((v) => v >= 4).length;
+  const half = Math.ceil(g.length / 2);
+  if (talkers > half) cost += 3 * (talkers - half);
+  for (let i = 0; i < g.length; i++) {
+    for (let j = i + 1; j < g.length; j++) {
+      const a = g[i]!;
+      const b = g[j]!;
+      if (a.humor && b.humor && a.humor !== b.humor && a.humor !== "everything" && b.humor !== "everything") cost += 2;
+      if (a.vibe && b.vibe && a.vibe !== b.vibe && a.vibe !== "any" && b.vibe !== "any") cost += 3;
+      if (typeof a.budget === "number" && typeof b.budget === "number") cost += 6 * Math.max(0, Math.abs(a.budget - b.budget) - 1);
+      if (typeof a.exercise === "number" && typeof b.exercise === "number") cost += 4 * Math.max(0, Math.abs(a.exercise - b.exercise) - 1);
+      if (a.sector && a.sector === b.sector && !OPEN_SECTORS.has(a.sector)) cost += 5;
+    }
+  }
+  const shared = new Map<string, number>();
+  for (const p of g) for (const v of p.values ?? []) shared.set(v, (shared.get(v) ?? 0) + 1);
+  cost -= [...shared.values()].filter((n) => n >= 2).length;
   return cost;
 }
 

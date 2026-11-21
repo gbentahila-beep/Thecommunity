@@ -8,6 +8,11 @@ import type { Experience, Session } from "./types";
 export const INTEREST_TO_CATEGORY: Record<string, string[]> = {
   gastronomy: ["eat"], sport: ["move"], wellness: ["move"], games: ["play"], art: ["create"],
   culture: ["create", "discover", "learn"], music: ["discover", "play"], nightlife: ["discover", "meet"], discovery: ["discover"], travel: ["discover", "meet"],
+  cooking: ["eat", "create"], coffee: ["eat"], restaurants: ["eat"], pastry: ["eat", "create"],
+  live_music: ["discover"], festivals: ["discover"], museums: ["learn", "discover"], theatre: ["discover", "learn"], comedy: ["discover"], dancing: ["discover", "move"], cinema: ["discover", "learn"],
+  photography: ["create", "discover"], design: ["create"], writing: ["create", "learn"], fashion: ["create"], architecture: ["discover", "learn"], crafts: ["create"],
+  running: ["move"], cycling: ["move"], football: ["move", "play"], hiking: ["move"], yoga: ["move"], padel: ["move"], swimming: ["move"],
+  books: ["learn"], languages: ["meet", "learn"], tech: ["learn"], history: ["learn", "discover"], business: ["meet"], science: ["learn"], volunteering: ["meet"],
 };
 
 export type RecoProfile = { interests?: string[]; favoriteCategories?: string[]; district?: string | null; gender?: string | null };

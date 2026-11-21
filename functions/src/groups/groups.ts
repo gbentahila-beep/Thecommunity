@@ -1,4 +1,4 @@
-import { ageOn, composeGroups, pairKey, type MatchPerson, type MatchQuestion } from "@thecommunity/shared";
+import { ageOn, composeGroups, EXERCISE_FREQUENCIES, pairKey, VENUE_BUDGETS, type MatchPerson, type MatchQuestion } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -112,6 +112,14 @@ export const adminProposeGroups = onCall({ region: REGION, timeoutSeconds: 120 }
     // Étape 30 : préférence d'âge (souple) et niveau sportif déclaré (activités physiques seulement).
     agePreference: p.user.agePreference === "similar" ? "similar" : "any",
     sportLevel: e.physicalActivity === true && typeof p.user.sportLevel === "string" ? ({ beginner: 1, intermediate: 2, advanced: 3 } as Record<string, number>)[p.user.sportLevel] ?? null : null,
+    // docs/16 : réponses de l'inscription (critères souples) ; budget pour les dîners, rythme pour le sport.
+    conversation: typeof p.user.conversationStyle === "number" ? p.user.conversationStyle : null,
+    humor: typeof p.user.humor === "string" ? p.user.humor : null,
+    vibe: typeof p.user.groupVibe === "string" ? p.user.groupVibe : null,
+    budget: e.bookingMode === "social_dinner" && typeof p.user.venueBudget === "string" ? (VENUE_BUDGETS as readonly string[]).indexOf(p.user.venueBudget) : null,
+    exercise: e.physicalActivity === true && typeof p.user.exerciseFrequency === "string" ? 3 - (EXERCISE_FREQUENCIES as readonly string[]).indexOf(p.user.exerciseFrequency) : null,
+    sector: typeof p.user.sector === "string" ? p.user.sector : null,
+    values: Array.isArray(p.user.lifeValues) ? (p.user.lifeValues as string[]) : [],
     // 18a : réponses au questionnaire de l'expérience (niveau, allure, envies…).
     ...(p.reservation.questionnaire?.answers ? { answers: p.reservation.questionnaire.answers as Record<string, number> } : {}),
   }));

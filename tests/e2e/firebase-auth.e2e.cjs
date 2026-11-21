@@ -60,17 +60,32 @@ const waitFor = async (fn, ms = 15000) => { const end = Date.now() + ms; while (
   await page.waitForURL('**/bienvenue', { timeout: 20000 });
   assert(await page.locator('#f-firstName').inputValue() === 'Rita', 'questionnaire pré-rempli avec le prénom saisi');
 
-  // Questionnaire enregistré par le serveur
+  // Questionnaire enregistré par le serveur (inscription en questions, docs/16)
+  const cont = () => page.getByRole('button', { name: 'Continuer' }).click();
   await page.locator('#f-lastName').fill('Bentahila');
+  await cont();
   await page.locator('#f-birthDate').fill('1992-06-30');
-  await page.getByRole('button', { name: 'Continuer' }).click();
+  await cont();
+  await page.getByRole('button', { name: 'Passer' }).click(); // genre
+  await cont(); // ville (Casablanca)
+  await page.getByRole('button', { name: 'Passer' }).click(); // quartier
   for (const l of ['Français', 'Darija']) await page.getByRole('button', { name: l, exact: true }).click();
+  await cont();
   for (const i of ['Gastronomie', 'Art', 'Voyage']) await page.getByRole('button', { name: i, exact: true }).click();
-  await page.getByRole('button', { name: 'Continuer' }).click();
+  await cont();
+  await cont(); // « Le saviez-vous ? »
   await page.getByRole('button', { name: 'Rencontrer de nouvelles personnes' }).click();
-  await page.getByRole('button', { name: 'Continuer' }).click();
+  await cont();
+  for (let i = 0; i < 30 && !(await page.locator('#f-bio').isVisible()); i++) {
+    if (await page.getByRole('radio', { name: 'Curieux et passionnant' }).isVisible()) await page.getByRole('radio', { name: 'Curieux et passionnant' }).click();
+    else if (await page.getByRole('button', { name: 'Passer' }).isVisible()) await page.getByRole('button', { name: 'Passer' }).click();
+    else await cont();
+    await page.waitForTimeout(300);
+  }
   await page.locator('input[type=file]').setInputFiles({ name: 'photo.png', mimeType: 'image/png', buffer: Buffer.from('89504e470d0a1a0a0000000d4948445200000001000000010806000000', 'hex') });
   await page.getByRole('button', { name: 'Terminer' }).click();
+  await visible(page.getByTestId('onboarding-done'), 20000);
+  await page.getByRole('link', { name: 'Mon tableau de bord' }).click();
   await page.waitForURL(/\/espace$/, { timeout: 20000 });
   assert(await page.getByRole('heading', { name: 'Bonjour Rita' }).isVisible(), 'arrivée dans l’espace membre');
   const users = await fsList('users');
@@ -78,6 +93,7 @@ const waitFor = async (fn, ms = 15000) => { const end = Date.now() + ms; while (
   assert(me && me.fields.onboardingCompleted.booleanValue === true && me.fields.role.stringValue === 'user', 'profil enregistré dans Firestore (rôle user)');
   assert(me.fields.consents?.mapValue?.fields?.version?.stringValue === '2026-11', 'consentements horodatés (version 2026-11)');
   assert(me.fields.photoPath?.stringValue?.startsWith('users/'), 'photo de profil envoyée dans Storage');
+  assert(me.fields.groupVibe?.stringValue === 'curious' && me.fields.diets?.arrayValue !== undefined, 'réponses facultatives enregistrées (ambiance de groupe)');
   const uid = me.name.split('/').pop();
 
   // Confirmation d'e-mail

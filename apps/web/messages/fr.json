@@ -517,7 +517,38 @@
       "wellness": "Bien-être",
       "games": "Jeux",
       "nightlife": "Sorties",
-      "discovery": "Découverte"
+      "discovery": "Découverte",
+      "cooking": "Cuisine",
+      "coffee": "Café",
+      "restaurants": "Restaurants",
+      "pastry": "Pâtisserie",
+      "live_music": "Concerts",
+      "festivals": "Festivals",
+      "museums": "Musées",
+      "theatre": "Théâtre",
+      "comedy": "Humour",
+      "dancing": "Danse",
+      "cinema": "Cinéma",
+      "photography": "Photo",
+      "design": "Design",
+      "writing": "Écriture",
+      "fashion": "Mode",
+      "architecture": "Architecture",
+      "crafts": "Artisanat",
+      "running": "Course à pied",
+      "cycling": "Vélo",
+      "football": "Football",
+      "hiking": "Randonnée",
+      "yoga": "Yoga",
+      "padel": "Padel",
+      "swimming": "Natation",
+      "books": "Lecture",
+      "languages": "Langues",
+      "tech": "Tech",
+      "history": "Histoire",
+      "business": "Entrepreneuriat",
+      "science": "Sciences",
+      "volunteering": "Bénévolat"
     },
     "goals": {
       "meet_new_people": "Rencontrer de nouvelles personnes",
@@ -553,6 +584,104 @@
       "play": "Jeux",
       "create": "Ateliers",
       "discover": "Sorties"
+    },
+    "interestGroups": {
+      "eat": "Manger et boire",
+      "city": "Sortir en ville",
+      "making": "Créer",
+      "moving": "Bouger",
+      "mind": "Apprendre et partager"
+    },
+    "vibe": {
+      "calm": "Petit et tranquille",
+      "curious": "Curieux et passionnant",
+      "playful": "Joueur et surprenant",
+      "any": "Peu importe"
+    },
+    "vibeHint": {
+      "calm": "Un lieu calme, sans pression",
+      "curious": "Des personnes qui aiment les vraies conversations",
+      "playful": "Plus animé, partant pour tout",
+      "any": "Ce sont les personnes qui comptent"
+    },
+    "conversation": {
+      "1": "J'écoute surtout",
+      "2": "J'écoute plus que je ne parle",
+      "3": "Moitié-moitié",
+      "4": "Je parle plus que je n'écoute",
+      "5": "Je lance la conversation"
+    },
+    "humor": {
+      "dry": "Pince-sans-rire et fin",
+      "playful": "Léger et taquin",
+      "offbeat": "Décalé, absurde",
+      "everything": "Je ris de presque tout"
+    },
+    "values": {
+      "family": "La famille",
+      "friends": "Les amis",
+      "career": "La carrière",
+      "health": "La santé",
+      "adventure": "L'aventure",
+      "learning": "Apprendre",
+      "creativity": "La créativité",
+      "helping": "Aider les autres",
+      "fun": "S'amuser"
+    },
+    "exercise": {
+      "most_days": "Presque tous les jours",
+      "weekly": "Quelques fois par semaine",
+      "sometimes": "De temps en temps",
+      "rarely": "Rarement"
+    },
+    "budget": {
+      "cafe": "Un café",
+      "casual": "Brunch ou dîner décontracté",
+      "smart": "Un beau restaurant",
+      "fine": "Une grande table"
+    },
+    "budgetHint": {
+      "cafe": "Café, pâtisserie, un sandwich",
+      "casual": "Des adresses du quotidien",
+      "smart": "On s'habille un peu",
+      "fine": "Menus dégustation, chefs reconnus"
+    },
+    "profileDiets": {
+      "vegetarian": "Végétarien·ne",
+      "vegan": "Végan·e",
+      "pescatarian": "Pescétarien·ne",
+      "halal": "Halal uniquement",
+      "no_alcohol": "Sans alcool",
+      "gluten_free": "Sans gluten",
+      "lactose_free": "Sans lactose"
+    },
+    "sector": {
+      "tech": "Tech",
+      "health": "Santé",
+      "finance_law": "Finance et droit",
+      "creative_media": "Création et médias",
+      "education": "Enseignement",
+      "trades": "Artisanat et BTP",
+      "hospitality_retail": "Hôtellerie et commerce",
+      "public": "Secteur public",
+      "student": "Études",
+      "not_working": "Sans activité en ce moment",
+      "other": "Autre"
+    },
+    "referral": {
+      "friend": "Un·e ami·e",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "facebook": "Facebook",
+      "whatsapp": "WhatsApp",
+      "google": "Google",
+      "ai_assistant": "ChatGPT, Claude…",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube",
+      "event": "Un événement",
+      "poster": "Une affiche",
+      "press": "Presse ou podcast",
+      "other": "Autre"
     }
   },
   "account": {
@@ -730,7 +859,7 @@
     "step4": "Pour finir",
     "firstName": "Prénom",
     "lastName": "Nom",
-    "phone": "Téléphone (facultatif)",
+    "phone": "Téléphone",
     "birthDate": "Date de naissance",
     "birthDateHint": "Jamais affichée : elle sert uniquement à former des groupes d'âges proches.",
     "city": "Ville",
@@ -762,12 +891,14 @@
       "tooYoung": "The Host Club est réservé aux 18 ans et plus.",
       "invalidDate": "Date invalide.",
       "pickOne": "Choisissez au moins une option.",
-      "pickThree": "Choisissez au moins 3 centres d'intérêt."
+      "pickThree": "Choisissez au moins 3 centres d'intérêt.",
+      "invalidInstagram": "Nom de compte invalide (lettres, chiffres, points et tirets bas).",
+      "tooMany": "Trop de choix."
     },
     "saving": "Enregistrement…",
     "saveError": "Enregistrement impossible. Vérifiez les informations et réessayez.",
     "photoUploadError": "La photo n'a pas pu être envoyée ; votre profil est tout de même enregistré.",
-    "district": "Votre quartier (facultatif)",
+    "district": "Votre quartier",
     "districtPlaceholder": "Maarif, Gauthier, Anfa…",
     "favoriteCategories": "Vos univers préférés (facultatif)",
     "sportLevel": "Votre niveau sportif (facultatif)",
@@ -777,7 +908,147 @@
     "sportLevel_advanced": "Confirmé·e",
     "agePreference": "Dans votre groupe, plutôt…",
     "agePreference_any": "Peu importe l'âge",
-    "agePreference_similar": "Des personnes de mon âge (si possible)"
+    "agePreference_similar": "Des personnes de mon âge (si possible)",
+    "progress": "Question {current} sur {total}",
+    "answered": "{current} sur {total} répondues",
+    "optional": "Facultatif",
+    "continue": "Continuer",
+    "skip": "Passer",
+    "close": "Quitter (vos réponses sont gardées)",
+    "backStep": "Question précédente",
+    "saveAndExit": "Enregistrer",
+    "leaveAnytime": "Vous pouvez arrêter à tout moment : vos réponses sont enregistrées au fur et à mesure.",
+    "chosen": "{count} sur {max} choisis",
+    "showMore": "Voir plus",
+    "showLess": "Voir moins",
+    "soon": "Bientôt",
+    "q": {
+      "name": {
+        "title": "Comment vous appelez-vous ?",
+        "hint": "Seul votre prénom est visible des autres participants."
+      },
+      "birth": {
+        "title": "Quelle est votre date de naissance ?",
+        "hint": "Nous mélangeons les âges avec soin. Votre âge n'est jamais affiché."
+      },
+      "gender": {
+        "title": "Comment vous décrivez-vous ?",
+        "hint": "Cela nous aide à équilibrer les groupes. Personne d'autre ne le voit."
+      },
+      "city": {
+        "title": "Dans quelle ville vivez-vous ?",
+        "hint": "Nous ouvrons de nouvelles villes au fil des demandes."
+      },
+      "district": {
+        "title": "Dans quel quartier ?",
+        "hint": "Pour vous proposer des expériences près de chez vous."
+      },
+      "languages": {
+        "title": "Dans quelles langues êtes-vous à l'aise ?",
+        "hint": "Chaque groupe partage au moins une langue. Cochez toutes celles qui vous vont."
+      },
+      "interests": {
+        "title": "Quels sont vos centres d'intérêt ?",
+        "hint": "Au moins 3, jusqu'à 15 : de quoi lancer la conversation."
+      },
+      "goals": {
+        "title": "Qu'est-ce qui vous amène ?",
+        "hint": "Cela nous aide à choisir avec qui vous partagerez l'expérience."
+      },
+      "universes": {
+        "title": "Quels univers vous tentent ?",
+        "hint": "Nous vous les proposerons en priorité."
+      },
+      "vibe": {
+        "title": "Quelle ambiance de groupe vous plairait ?",
+        "hint": "Nous organisons les quatre. Choisissez celle qui vous ressemble."
+      },
+      "conversation": {
+        "title": "Avec de nouvelles personnes, vous êtes plutôt…",
+        "hint": "Pas de bonne réponse : chaque groupe a besoin d'un peu de tout."
+      },
+      "humor": {
+        "title": "Qu'est-ce qui vous fait rire ?",
+        "hint": "Nous réunissons les personnes qui rient des mêmes choses."
+      },
+      "values": {
+        "title": "Qu'est-ce qui compte le plus pour vous ?",
+        "hint": "Jusqu'à 3. Pour réunir des personnes qui s'entendront."
+      },
+      "exercise": {
+        "title": "À quelle fréquence faites-vous du sport ?",
+        "hint": "Pour réunir des personnes au rythme proche."
+      },
+      "sport": {
+        "title": "Votre niveau pour les activités sportives ?",
+        "hint": "Padel, randonnée, course : nous formons des équipes équilibrées."
+      },
+      "budget": {
+        "title": "Quel genre d'adresse aimez-vous ?",
+        "hint": "Pour vous installer dans un lieu où vous serez à l'aise."
+      },
+      "diet": {
+        "title": "Mangez-vous différemment ?",
+        "hint": "Nous ne vous proposons que des lieux qui peuvent cuisiner pour vous."
+      },
+      "sector": {
+        "title": "Dans quel secteur travaillez-vous ?",
+        "hint": "Pour éviter de vous retrouver entre collègues et varier les profils."
+      },
+      "age": {
+        "title": "Pour votre groupe, vous préférez…",
+        "hint": "Une préférence souple, respectée quand c'est possible."
+      },
+      "referral": {
+        "title": "Comment nous avez-vous connus ?",
+        "hint": "Choisissez ce qui vous a amené ici. Cela nous aide à savoir ce qui marche."
+      },
+      "phone": {
+        "title": "Comment vous joindre ?",
+        "hint": "Uniquement au sujet de votre expérience. Personne de votre groupe ne le voit."
+      },
+      "instagram": {
+        "title": "Votre compte Instagram ?",
+        "hint": "Personne ne le voit, sauf si vous le partagez vous-même avec quelqu'un."
+      },
+      "photo": {
+        "title": "Une photo et quelques mots ?",
+        "hint": "Visibles de votre groupe une fois révélé. Vous pouvez les ajouter plus tard."
+      }
+    },
+    "whatsapp": "J'utilise WhatsApp sur ce numéro",
+    "instagramLabel": "Instagram",
+    "instagramPlaceholder": "votrenom",
+    "facts": {
+      "eyebrow": "Le saviez-vous ?",
+      "hours": {
+        "big": "50",
+        "unit": "heures",
+        "text": "C'est à peu près le temps qu'il faut passer avec quelqu'un pour en faire un ami, et plus de 200 heures pour un ami proche. D'où l'intérêt de se revoir : après une expérience, retrouvez des membres de votre groupe sur une autre.",
+        "source": "Jeffrey A. Hall, Université du Kansas, 2018"
+      },
+      "liking": {
+        "title": "On vous apprécie plus que vous ne le pensez.",
+        "text": "Après une première conversation avec quelqu'un de nouveau, la plupart des gens sous-estiment à quel point l'autre les a appréciés.",
+        "source": "Boothby, Cooney, Sandstrom et Clark, Psychological Science, 2018"
+      },
+      "meals": {
+        "title": "Presque fini",
+        "subtitle": "Encore quelques questions rapides.",
+        "text": "Les personnes qui partagent souvent leurs repas se disent plus heureuses et comptent davantage d'amis sur qui s'appuyer.",
+        "source": "Robin Dunbar, Université d'Oxford, 2017"
+      },
+      "commute": {
+        "text": "Des voyageurs qui ont parlé à un inconnu pendant leur trajet l'ont trouvé plus agréable que ceux restés seuls. La plupart avaient pourtant prédit l'inverse.",
+        "source": "Nicholas Epley et Juliana Schroeder, Université de Chicago, 2014"
+      }
+    },
+    "doneTitle1": "Bravo,",
+    "doneTitle2": "c'est prêt.",
+    "doneText": "Merci ! Vos réponses nous aident à composer vos groupes. Vous pouvez les modifier à tout moment dans Mon profil.",
+    "doneCta": "Voir les expériences",
+    "doneHome": "Mon tableau de bord",
+    "edited": "C'est enregistré."
   },
   "testPayment": {
     "bannerTitle": "Paiement de TEST",
@@ -1531,5 +1802,23 @@
     "soloHint": "Présentez-vous à l’accueil du lieu avec votre billet si besoin. Belle expérience !",
     "hostHint": "Une hôtesse vous accueille sur place et vous présente votre groupe.",
     "error": "Impossible d’enregistrer votre arrivée pour le moment. Réessayez dans un instant."
+  },
+  "profileMore": {
+    "title": "Pour composer vos groupes",
+    "vibe": "Ambiance",
+    "conversation": "En groupe",
+    "humor": "Humour",
+    "values": "Ce qui compte",
+    "exercise": "Sport",
+    "budget": "Adresses",
+    "diets": "Alimentation",
+    "sector": "Secteur",
+    "referral": "Connu par",
+    "whatsapp": "WhatsApp",
+    "instagram": "Instagram",
+    "edit": "Modifier",
+    "none": "—",
+    "yes": "Oui",
+    "no": "Non"
   }
 }

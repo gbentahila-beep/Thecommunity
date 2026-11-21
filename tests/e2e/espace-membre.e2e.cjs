@@ -13,46 +13,60 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   page.on('pageerror', e => errs.push(e.message));
   page.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
 
-  // 1. Questionnaire : validation
+  // 1. Inscription en questions (docs/16) : une question par écran, validation, brouillon, « Passer », fin.
+  const progress = () => page.getByTestId('onboarding-progress').textContent();
+  const cont = () => page.getByRole('button', { name: 'Continuer' }).click();
   await page.goto(base + '/bienvenue', { waitUntil: 'load' });
-  await page.getByRole('button', { name: 'Continuer' }).click();
-  assert(await page.getByText('Champ obligatoire.').count() >= 2, 'étape 1 : champs obligatoires signalés');
+  await cont();
+  assert(await page.getByText('Champ obligatoire.').count() >= 2, 'question 1 : prénom et nom obligatoires');
   await page.getByLabel('Prénom').fill('Rita');
   await page.getByLabel('Nom', { exact: true }).fill('Test');
+  await cont();
+  assert(await progress() === 'Question 2 sur 23', 'une question par écran (2 sur 23)');
   await page.getByLabel('Date de naissance').fill('2012-03-04');
-  await page.getByRole('button', { name: 'Continuer' }).click();
+  await cont();
   assert(await page.getByText('réservé aux 18 ans et plus').isVisible(), 'refus des moins de 18 ans');
   await page.getByLabel('Date de naissance').fill('1992-03-04');
-  await page.getByLabel('Téléphone (facultatif)').fill('abc');
-  await page.getByRole('button', { name: 'Continuer' }).click();
-  assert(await page.getByText('Numéro invalide.').isVisible(), 'téléphone invalide refusé');
-  await page.getByLabel('Téléphone (facultatif)').fill('+212 6 61 23 45 67');
-  await page.getByRole('button', { name: 'Femme' }).click();
-  await page.getByRole('button', { name: 'Continuer' }).click();
-  assert(await page.getByText('Étape 2 sur 4').isVisible(), 'passage à l’étape 2');
-
-  // 2. Intérêts : minimum 3
+  await cont();
+  await page.getByRole('radio', { name: 'Femme' }).click();
+  await page.waitForTimeout(500);
+  assert(await progress() === 'Question 4 sur 23', 'un choix dans la liste passe à la question suivante');
+  assert(await page.getByRole('radio', { name: /Rabat/ }).isDisabled() && await page.getByRole('radio', { name: /Rabat/ }).textContent().then((t) => t.includes('Bientôt')), 'villes à venir : « Bientôt »');
+  await cont();
+  await page.getByRole('button', { name: 'Passer' }).click();
+  await cont();
+  assert(await page.getByText('Choisissez au moins une option.').isVisible(), 'langues : au moins une');
   await page.getByRole('button', { name: 'Français' }).click();
-  await page.getByRole('button', { name: 'Art' }).click();
-  await page.getByRole('button', { name: 'Continuer' }).click();
+  await cont();
+  await page.getByRole('button', { name: 'Art', exact: true }).click();
+  await cont();
   assert(await page.getByText('au moins 3 centres').isVisible(), 'au moins 3 centres d’intérêt exigés');
-  // brouillon : recharger et retrouver l'étape
+  // brouillon : recharger et retrouver la question
   await page.reload({ waitUntil: 'load' }).then(() => page.waitForTimeout(500));
-  assert(await page.getByText('Étape 2 sur 4').isVisible(), 'brouillon repris après rechargement');
-  assert(await page.getByRole('button', { name: 'Art' }).getAttribute('aria-pressed') === 'true', 'choix conservés dans le brouillon');
-  await page.getByRole('button', { name: 'Musique' }).click();
-  await page.getByRole('button', { name: 'Voyage' }).click();
-  await page.getByRole('button', { name: 'Continuer' }).click();
-
-  // 3. Envies
-  await page.getByRole('button', { name: 'Continuer' }).click();
-  assert(await page.getByText('Choisissez au moins une option.').isVisible(), 'étape 3 : au moins une envie');
+  assert(await progress() === 'Question 7 sur 23', 'brouillon repris après rechargement');
+  assert(await page.getByRole('button', { name: 'Art', exact: true }).getAttribute('aria-pressed') === 'true', 'choix conservés dans le brouillon');
+  await page.getByRole('button', { name: 'Voir plus' }).click();
+  for (const i of ['Musique', 'Padel']) await page.getByRole('button', { name: i, exact: true }).click();
+  await cont();
+  assert(await page.getByRole('heading', { name: 'Le saviez-vous ?' }).count() === 1 && await page.getByText('Jeffrey A. Hall').isVisible(), 'carte « Le saviez-vous ? » sourcée');
+  await cont();
   await page.getByRole('button', { name: 'Rencontrer de nouvelles personnes' }).click();
-  await page.getByRole('button', { name: 'Continuer' }).click();
-
-  // 4. Fin
-  assert(await page.getByText('Étape 4 sur 4').isVisible(), 'étape 4 atteinte');
-  await page.getByRole('button', { name: 'Terminer' }).click();
+  await cont();
+  // Questions facultatives : on en saute la plupart ; le téléphone est vérifié.
+  for (let i = 0; i < 30 && !(await page.getByTestId('onboarding-done').isVisible()); i++) {
+    if (await page.locator('#f-phone').isVisible()) {
+      await page.locator('#f-phone').fill('abc');
+      await cont();
+      assert(await page.getByText('Numéro invalide.').isVisible(), 'téléphone invalide refusé');
+      await page.locator('#f-phone').fill('+212 6 61 23 45 67');
+      await page.getByLabel("J'utilise WhatsApp sur ce numéro").check();
+      await cont();
+    } else if (await page.getByRole('button', { name: 'Passer' }).isVisible()) await page.getByRole('button', { name: 'Passer' }).click();
+    else await cont();
+    await page.waitForTimeout(150);
+  }
+  assert(await page.getByTestId('onboarding-done').getByText("c'est prêt.").isVisible(), 'carte finale « c’est prêt »');
+  await page.getByRole('link', { name: 'Mon tableau de bord' }).click();
   await page.waitForURL('**/espace');
   assert(await page.getByRole('heading', { name: /Bonjour/ }).isVisible(), 'arrivée sur le tableau de bord');
 

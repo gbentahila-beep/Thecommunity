@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CATEGORY_ID_PATTERN, INTERESTS, SOCIAL_GOALS } from "./constants";
+import { ALL_INTERESTS, CATEGORY_ID_PATTERN, INTERESTS_MAX, SOCIAL_GOALS } from "./constants";
 import type { Interest, SocialGoal, SpokenLanguage } from "./types";
 
 export const SPOKEN_LANGUAGES: readonly SpokenLanguage[] = ["fr", "ar", "darija", "en", "es"];
@@ -55,7 +55,7 @@ export const profileIdentitySchema = z.object({
 
 export const profileInterestsSchema = z.object({
   languages: z.array(z.enum(SPOKEN_LANGUAGES as [SpokenLanguage, ...SpokenLanguage[]])).min(1, "pickOne"),
-  interests: z.array(z.enum(INTERESTS as [Interest, ...Interest[]])).min(3, "pickThree"),
+  interests: z.array(z.enum(ALL_INTERESTS as [Interest, ...Interest[]])).min(3, "pickThree").max(INTERESTS_MAX, "tooMany"),
 });
 
 export const profileGoalsSchema = z.object({
@@ -77,9 +77,46 @@ export const profileAboutSchema = z.object({
   agePreference: z.enum(AGE_PREFERENCES).default("any"),
 });
 
+/**
+ * Inscription en questions (docs/16, phase 6) : réponses facultatives qui aident à composer les groupes.
+ * Pas de question sur la situation amoureuse, les enfants ou la religion (données sensibles, loi 09-08, inutiles
+ * pour un bon groupe). Rien de tout cela n'est montré aux autres participants.
+ */
+export const GROUP_VIBES = ["calm", "curious", "playful", "any"] as const;
+export const HUMOR_STYLES = ["dry", "playful", "offbeat", "everything"] as const;
+export const LIFE_VALUES = ["family", "friends", "career", "health", "adventure", "learning", "creativity", "helping", "fun"] as const;
+export const LIFE_VALUES_MAX = 3;
+export const EXERCISE_FREQUENCIES = ["most_days", "weekly", "sometimes", "rarely"] as const;
+export const VENUE_BUDGETS = ["cafe", "casual", "smart", "fine"] as const;
+export const PROFILE_DIETS = ["vegetarian", "vegan", "pescatarian", "halal", "no_alcohol", "gluten_free", "lactose_free"] as const;
+export const SECTORS = ["tech", "health", "finance_law", "creative_media", "education", "trades", "hospitality_retail", "public", "student", "not_working", "other"] as const;
+export const REFERRAL_SOURCES = ["friend", "instagram", "tiktok", "facebook", "whatsapp", "google", "ai_assistant", "linkedin", "youtube", "event", "poster", "press", "other"] as const;
+/** De « J'écoute surtout » (1) à « Je lance la conversation » (5). */
+export const CONVERSATION_STYLES = [1, 2, 3, 4, 5] as const;
+
+export const profileMoreSchema = z.object({
+  groupVibe: z.enum(GROUP_VIBES).nullish(),
+  conversationStyle: z.number().int().min(1).max(5).nullish(),
+  humor: z.enum(HUMOR_STYLES).nullish(),
+  lifeValues: z.array(z.enum(LIFE_VALUES)).max(LIFE_VALUES_MAX, "tooMany").default([]),
+  exerciseFrequency: z.enum(EXERCISE_FREQUENCIES).nullish(),
+  venueBudget: z.enum(VENUE_BUDGETS).nullish(),
+  diets: z.array(z.enum(PROFILE_DIETS)).max(PROFILE_DIETS.length).default([]),
+  sector: z.enum(SECTORS).nullish(),
+  referral: z.enum(REFERRAL_SOURCES).nullish(),
+  whatsapp: z.boolean().default(false),
+  instagram: z
+    .string()
+    .trim()
+    .regex(/^@?[A-Za-z0-9._]{1,30}$/, "invalidInstagram")
+    .optional()
+    .or(z.literal("")),
+});
+
 export const profileSchema = profileIdentitySchema
   .merge(profileInterestsSchema)
   .merge(profileGoalsSchema)
-  .merge(profileAboutSchema);
+  .merge(profileAboutSchema)
+  .merge(profileMoreSchema);
 
 export type ProfileInput = z.infer<typeof profileSchema>;

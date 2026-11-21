@@ -20,6 +20,17 @@ export const INTERESTS: readonly Interest[] = [
   "discovery",
 ];
 
+/** Centres d'intérêt détaillés, par thème (« Voir plus » dans l'inscription). */
+export const INTEREST_GROUPS: readonly { key: string; items: readonly Interest[] }[] = [
+  { key: "eat", items: ["cooking", "coffee", "restaurants", "pastry"] },
+  { key: "city", items: ["live_music", "festivals", "museums", "theatre", "comedy", "dancing", "cinema"] },
+  { key: "making", items: ["photography", "design", "writing", "fashion", "architecture", "crafts"] },
+  { key: "moving", items: ["running", "cycling", "football", "hiking", "yoga", "padel", "swimming"] },
+  { key: "mind", items: ["books", "languages", "tech", "history", "business", "science", "volunteering"] },
+];
+export const ALL_INTERESTS: readonly Interest[] = [...INTERESTS, ...INTEREST_GROUPS.flatMap((g) => g.items)];
+export const INTERESTS_MAX = 15;
+
 export const SOCIAL_GOALS: readonly SocialGoal[] = [
   "meet_new_people",
   "expand_circle",

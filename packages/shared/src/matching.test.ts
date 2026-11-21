@@ -60,3 +60,31 @@ describe("composition des tables", () => {
     expect(composeGroups(people, cfg)).toEqual(composeGroups(people, cfg));
   });
 });
+
+import { profileCost } from "./matching";
+describe("réponses de l'inscription (docs/16)", () => {
+  it("préfère un groupe avec quelqu'un qui lance la conversation, et pas que des bavards", () => {
+    const quiet = [{ conversation: 1 }, { conversation: 2 }, { conversation: 1 }, { conversation: 2 }];
+    const mixed = [{ conversation: 1 }, { conversation: 5 }, { conversation: 2 }, { conversation: 3 }];
+    const loud = [{ conversation: 5 }, { conversation: 4 }, { conversation: 5 }, { conversation: 4 }];
+    expect(profileCost(mixed)).toBeLessThan(profileCost(quiet));
+    expect(profileCost(mixed)).toBeLessThan(profileCost(loud));
+  });
+  it("réunit humours, ambiances, budgets et rythmes proches ; sépare les collègues", () => {
+    expect(profileCost([{ humor: "dry" }, { humor: "dry" }])).toBeLessThan(profileCost([{ humor: "dry" }, { humor: "offbeat" }]));
+    expect(profileCost([{ humor: "dry" }, { humor: "everything" }])).toBe(0);
+    expect(profileCost([{ vibe: "calm" }, { vibe: "any" }])).toBe(0);
+    expect(profileCost([{ budget: 0 }, { budget: 3 }])).toBeGreaterThan(profileCost([{ budget: 1 }, { budget: 2 }]));
+    expect(profileCost([{ exercise: 0 }, { exercise: 3 }])).toBeGreaterThan(0);
+    expect(profileCost([{ sector: "tech" }, { sector: "tech" }])).toBeGreaterThan(profileCost([{ sector: "tech" }, { sector: "health" }]));
+    expect(profileCost([{ sector: "student" }, { sector: "student" }])).toBe(0);
+    expect(profileCost([{ values: ["friends", "fun"] }, { values: ["friends"] }])).toBe(-1);
+  });
+  it("composeGroups sépare deux collègues quand c'est possible", () => {
+    const mk = (uid: string, sector: string) => ({ uid, seats: 1, age: 30, languages: ["fr"], interests: [], sector });
+    const people = [mk("a", "tech"), mk("b", "tech"), mk("c", "health"), mk("d", "education"), mk("e", "finance_law"), mk("f", "public")];
+    const groups = composeGroups(people, { minSize: 3, targetSize: 3, maxSize: 3 });
+    expect(groups).toHaveLength(2);
+    expect(groups.some((g) => g.includes("a") && g.includes("b"))).toBe(false);
+  });
+});
