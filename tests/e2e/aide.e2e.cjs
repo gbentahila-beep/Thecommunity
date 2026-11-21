@@ -76,7 +76,7 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   // Accès depuis le pied de page et la FAQ
   await page.goto(`${base}/faq`);
   assert(await page.getByRole('link', { name: 'Plus de réponses dans le centre d\'aide' }).isVisible(), 'FAQ → centre d\'aide');
-  assert(await page.locator('footer').getByRole('link', { name: 'Centre d\'aide' }).isVisible() && await page.locator('footer').getByRole('link', { name: 'Devenir partenaire' }).isVisible(), 'liens du pied de page');
+  assert(await page.locator('footer').getByRole('link', { name: 'Centre d\'aide' }).isVisible() && await page.locator('footer').getByRole('link', { name: 'Lieux partenaires', exact: true }).isVisible() && await page.locator('footer').getByRole('link', { name: 'Organisateurs', exact: true }).isVisible(), 'liens du pied de page');
 
   // Page inconnue
   const r = await page.goto(`${base}/aide/nexiste-pas`);

@@ -33,8 +33,9 @@ export default async function BecomePartnerPage({ params }: PageProps<"/[locale]
         ))}
       </ul>
       {FIREBASE_ENABLED ? <PartnerApplicationForm /> : <p className="rounded-2xl bg-plum-50 p-4 text-sm text-plum-900">{t("demo")}</p>}
-      <p>
+      <p className="flex flex-col gap-2">
         <Link href="/aide/partenaires" className="font-medium text-plum-900 underline underline-offset-4">{t("helpLink")}</Link>
+        <Link href="/devenir-organisateur" className="font-medium text-plum-900 underline underline-offset-4">{t("organizersLink")}</Link>
       </p>
     </StaticPage>
   );

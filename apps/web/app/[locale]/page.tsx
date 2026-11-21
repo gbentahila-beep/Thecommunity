@@ -126,8 +126,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     faq: (
       <PageShell key="faq">
         <HomeFaq />
-        <div className="mx-auto max-w-4xl">
-          <AudienceCards />
+        <div className="mx-auto max-w-6xl pt-6">
+          <AudienceCards withTitle />
         </div>
         <ClosingCta />
       </PageShell>

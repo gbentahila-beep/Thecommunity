@@ -47,7 +47,11 @@
     "mySpace": "Mon espace",
     "clubGroup": "The Host Club",
     "helpGroup": "Aide",
-    "helpCenter": "Centre d’aide"
+    "helpCenter": "Centre d’aide",
+    "workWithUs": "Travailler avec nous",
+    "partnersLink": "Lieux partenaires",
+    "organizersLink": "Organisateurs",
+    "trustedLink": "Proposer une sortie"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -1235,8 +1239,8 @@
     "breadcrumb": "Fil d'Ariane"
   },
   "partner": {
-    "title": "Devenir partenaire",
-    "intro": "Vous tenez un lieu ou animez une activité à Casablanca ? Deux façons de travailler avec nous : accueillir nos petits groupes (nous nous occupons de la vente, du paiement et de la composition des groupes), ou publier vos propres activités depuis l'espace organisateur.",
+    "title": "Devenir lieu partenaire",
+    "intro": "Vous tenez un café, un restaurant, un studio ou un lieu à Casablanca ? Accueillez nos petits groupes aux dates que vous choisissez : nous nous occupons de la vente, du paiement et de la composition des groupes. Vous animez vous-même des activités ? Voyez plutôt la page Organisateurs.",
     "why1Title": "Un public nouveau",
     "why1": "Des membres curieux, qui viennent pour découvrir et rencontrer.",
     "why2Title": "Le paiement, c'est nous",
@@ -1267,7 +1271,8 @@
     "sent": "Merci ! Votre candidature est bien reçue. Notre équipe vous recontacte rapidement.",
     "error": "L'envoi a échoué. Vérifiez les champs et réessayez.",
     "demo": "Démonstration : le formulaire de candidature fonctionne sur le site en ligne.",
-    "helpLink": "Questions fréquentes des partenaires"
+    "helpLink": "Questions fréquentes des partenaires",
+    "organizersLink": "Vous organisez vos propres activités ? Devenir organisateur"
   },
   "aboutPage": {
     "founderEyebrow": "La créatrice",
@@ -1618,7 +1623,27 @@
     "reviews": "Avis sur ses activités",
     "rating": "{avg} sur 5 · {count, plural, one {# avis} other {# avis}}",
     "categories": "Univers",
-    "back": "Toutes les expériences"
+    "back": "Toutes les expériences",
+    "title": "Devenir organisateur",
+    "intro": "Vous animez des ateliers, des sorties sportives, des visites ou des soirées ? Publiez vos dates sur The Host Club et vendez vos places en ligne, auprès de personnes qui viennent pour découvrir et rencontrer.",
+    "why1Title": "Vos activités, votre prix",
+    "why1": "Vous créez vos fiches et vos dates depuis l'espace organisateur ; l'équipe les relit avant publication.",
+    "why2Title": "Paiement, rappels, billets",
+    "why2": "Paiement en ligne, rappels, annulations et remboursements sont gérés pour vous ; vous recevez vos ventes par virement, commission déduite.",
+    "why3Title": "Un public qui vient pour rencontrer",
+    "why3": "Des membres curieux, souvent venus seuls, qui laissent un avis après chaque expérience.",
+    "stepsTitle": "Comment ça se passe",
+    "step1": "Vous créez votre compte et présentez votre activité (pièces justificatives, assurance pour une activité physique).",
+    "step2": "L'équipe vérifie votre dossier et vous ouvre l'espace organisateur.",
+    "step3": "Vous publiez vos activités et vos dates ; chaque nouvelle fiche est relue avant d'être en ligne.",
+    "step4": "Les participants réservent et paient en ligne ; vous suivez vos ventes et recevez vos versements.",
+    "cta": "Créer mon compte organisateur",
+    "help": "Questions fréquentes des organisateurs",
+    "venueLink": "Vous tenez un lieu qui veut accueillir nos groupes ? Devenir lieu partenaire",
+    "roles": "Qui fait quoi ?",
+    "roleVenue": "Lieu partenaire : il accueille les groupes que nous composons et vendons.",
+    "roleOrganizer": "Organisateur : il publie et vend ses propres activités sur le site.",
+    "roleTrusted": "Membre de confiance : un habitué invité par l'équipe à proposer des sorties, que nous publions."
   },
   "reviewsPublic": {
     "replyFrom": "Réponse de {name}",
@@ -1734,7 +1759,7 @@
     "account": "Mon compte",
     "preferences": "Préférences",
     "club": "Le club",
-    "help": "Aide et à propos",
+    "help": "Aide",
     "helpHint": "Une personne vous répond",
     "faq": "Questions fréquentes",
     "terms": "Conditions et confidentialité"
@@ -1786,19 +1811,25 @@
     "ctaButton": "Donner mon avis"
   },
   "audiences": {
-    "partnersEyebrow": "Travaillons ensemble",
+    "partnersEyebrow": "Lieux partenaires",
     "partnersTitle": "Pour les cafés, restaurants et lieux",
     "partnersText": "Aux dates que vous choisissez, nous vous amenons un petit groupe de personnes qui ne vous connaissent pas encore. Chacun règle sa consommation : vous gardez simplement une table ou un espace libre.",
     "partnersCta": "Devenir lieu partenaire",
     "organizersEyebrow": "Organisateurs",
     "organizersTitle": "Pour celles et ceux qui animent des activités",
     "organizersText": "Atelier, sortie sportive, visite, soirée jeux : publiez vos dates sur The Host Club. Réservations, paiement en ligne et rappels sont pris en charge, vous vous concentrez sur l’expérience.",
-    "organizersCta": "Proposer mes activités",
+    "organizersCta": "Devenir organisateur",
     "closingTitle1": "Des inconnus en arrivant,",
     "closingTitle2": "des amis en repartant.",
     "closingSignup": "S’inscrire",
     "closingDiscover": "Voir les expériences",
-    "closingBookings": "Mes réservations"
+    "closingBookings": "Mes réservations",
+    "sectionTitle": "Travaillons ensemble",
+    "sectionText": "Trois façons de faire vivre The Host Club : accueillir nos groupes, publier vos activités, ou proposer vos idées de sortie.",
+    "trustedEyebrow": "Membres de confiance",
+    "trustedTitle": "Pour les habitués qui ont des idées",
+    "trustedText": "Vous venez souvent et vous avez une idée de sortie ? L'équipe invite des membres réguliers à devenir membres de confiance : vous proposez une sortie, nous la vérifions, puis nous la publions.",
+    "trustedCta": "Proposer une sortie"
   },
   "checkIn": {
     "title": "Votre arrivée",

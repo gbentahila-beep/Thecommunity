@@ -47,7 +47,11 @@
     "mySpace": "My space",
     "clubGroup": "The Host Club",
     "helpGroup": "Help",
-    "helpCenter": "Help centre"
+    "helpCenter": "Help centre",
+    "workWithUs": "Work with us",
+    "partnersLink": "Partner venues",
+    "organizersLink": "Organisers",
+    "trustedLink": "Propose an outing"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -1235,8 +1239,8 @@
     "breadcrumb": "Breadcrumb"
   },
   "partner": {
-    "title": "Become a partner",
-    "intro": "Do you run a venue or lead an activity in Casablanca? Two ways to work with us: host our small groups (we take care of sales, payment and putting the groups together), or publish your own activities from the organiser area.",
+    "title": "Become a partner venue",
+    "intro": "Do you run a café, restaurant, studio or venue in Casablanca? Host our small groups on the dates you choose: we handle sales, payment and putting groups together. Do you run your own activities? See the Organisers page instead.",
     "why1Title": "A new audience",
     "why1": "Curious members who come to discover and to meet people.",
     "why2Title": "We handle payment",
@@ -1267,7 +1271,8 @@
     "sent": "Thank you! We've received your application. Our team will get back to you soon.",
     "error": "Sending failed. Check the fields and try again.",
     "demo": "Demo: the application form works on the live site.",
-    "helpLink": "Partner FAQs"
+    "helpLink": "Partner FAQs",
+    "organizersLink": "Do you run your own activities? Become an organiser"
   },
   "aboutPage": {
     "founderEyebrow": "The founder",
@@ -1618,7 +1623,27 @@
     "reviews": "Reviews of their activities",
     "rating": "{avg} out of 5 · {count, plural, one {# review} other {# reviews}}",
     "categories": "Universes",
-    "back": "All experiences"
+    "back": "All experiences",
+    "title": "Become an organiser",
+    "intro": "Do you run workshops, sports outings, tours or evenings? Publish your dates on The Host Club and sell your places online to people who come to discover and meet others.",
+    "why1Title": "Your activities, your price",
+    "why1": "You create your listings and dates from the organiser space; the team reviews them before they go live.",
+    "why2Title": "Payment, reminders, tickets",
+    "why2": "Online payment, reminders, cancellations and refunds are handled for you; you receive your sales by bank transfer, minus commission.",
+    "why3Title": "People who come to meet others",
+    "why3": "Curious members, often coming alone, who leave a review after each experience.",
+    "stepsTitle": "How it works",
+    "step1": "Create your account and present your activity (supporting documents, insurance for physical activities).",
+    "step2": "The team checks your application and opens your organiser space.",
+    "step3": "Publish your activities and dates; each new listing is reviewed before going live.",
+    "step4": "Participants book and pay online; you follow your sales and receive your payouts.",
+    "cta": "Create my organiser account",
+    "help": "Organiser FAQ",
+    "venueLink": "Do you run a venue that wants to host our groups? Become a partner venue",
+    "roles": "Who does what?",
+    "roleVenue": "Partner venue: hosts the groups we put together and sell.",
+    "roleOrganizer": "Organiser: publishes and sells their own activities on the site.",
+    "roleTrusted": "Trusted member: a regular invited by the team to propose outings, which we publish."
   },
   "reviewsPublic": {
     "replyFrom": "Reply from {name}",
@@ -1734,7 +1759,7 @@
     "account": "My account",
     "preferences": "Preferences",
     "club": "The club",
-    "help": "Help and about",
+    "help": "Help",
     "helpHint": "A real person replies",
     "faq": "Questions and answers",
     "terms": "Terms and privacy"
@@ -1786,19 +1811,25 @@
     "ctaButton": "Leave a review"
   },
   "audiences": {
-    "partnersEyebrow": "Work with us",
+    "partnersEyebrow": "Partner venues",
     "partnersTitle": "For cafés, restaurants and venues",
     "partnersText": "On the dates you choose, we bring you a small group of people who don’\t know you yet. Everyone pays for their own order: you simply keep a table or a space free.",
     "partnersCta": "Become a partner venue",
     "organizersEyebrow": "Organisers",
     "organizersTitle": "For people who run activities",
     "organizersText": "Workshop, sports outing, tour, games night: publish your dates on The Host Club. Bookings, online payment and reminders are handled, so you can focus on the experience.",
-    "organizersCta": "List my activities",
+    "organizersCta": "Become an organiser",
     "closingTitle1": "Strangers when you arrive,",
     "closingTitle2": "friends when you leave.",
     "closingSignup": "Sign up",
     "closingDiscover": "See experiences",
-    "closingBookings": "My bookings"
+    "closingBookings": "My bookings",
+    "sectionTitle": "Let's work together",
+    "sectionText": "Three ways to bring The Host Club to life: host our groups, publish your activities, or suggest outing ideas.",
+    "trustedEyebrow": "Trusted members",
+    "trustedTitle": "For regulars with ideas",
+    "trustedText": "You come often and have an idea for an outing? The team invites regular members to become trusted members: you propose an outing, we check it, then we publish it.",
+    "trustedCta": "Propose an outing"
   },
   "checkIn": {
     "title": "Your arrival",

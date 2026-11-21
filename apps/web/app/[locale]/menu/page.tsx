@@ -1,4 +1,4 @@
-import { Bell, BookOpen, Star, CalendarRange, ChevronRight, CircleHelp, HandHeart, Info, Mail, MessageCircle, Newspaper, Award, Settings2, ShieldCheck, Sparkles, UserRound, type LucideIcon } from "lucide-react";
+import { Bell, BookOpen, CalendarHeart, Lightbulb, Star, CalendarRange, ChevronRight, CircleHelp, HandHeart, Info, Mail, MessageCircle, Newspaper, Award, Settings2, ShieldCheck, Sparkles, UserRound, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
@@ -73,9 +73,16 @@ export default async function MenuPage({ params }: PageProps<"/[locale]/menu">) 
           { href: "/comment-ca-marche", label: t("how"), icon: ico(Sparkles) },
           { href: "/abonnement", label: tf("membership"), icon: ico(Award) },
           { href: "/avis", label: t("reviews"), icon: ico(Star) },
-          { href: "/devenir-partenaire", label: tf("partner"), icon: ico(HandHeart) },
           { href: "/blog", label: tf("blog"), icon: ico(Newspaper) },
           { href: "/a-propos", label: tf("about"), icon: ico(Info) },
+        ]}
+      />
+      <Group
+        title={t("workWithUs")}
+        rows={[
+          { href: "/devenir-partenaire", label: t("partnersLink"), icon: ico(HandHeart) },
+          { href: "/devenir-organisateur", label: t("organizersLink"), icon: ico(CalendarHeart) },
+          { href: "/aide/proposer-une-sortie", label: t("trustedLink"), icon: ico(Lightbulb) },
         ]}
       />
       <Group

@@ -62,7 +62,12 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await visible(sheet.getByRole('status').filter({ hasText: 'Démonstration' })), 'alertes : démonstration, rien n\'est envoyé');
   await d.keyboard.press('Escape');
   assert(!(await sheet.count()), 'Échap ferme la fenêtre');
-  assert(await d.getByTestId('audience-cards').getByRole('link', { name: /Devenir lieu partenaire/ }).isVisible() && await d.getByTestId('audience-cards').getByRole('link', { name: /Proposer mes activités/ }).isVisible(), 'encadrés lieux partenaires et organisateurs');
+  const cardsBox = d.getByTestId('audience-cards');
+  assert(await cardsBox.getByRole('heading', { name: 'Travaillons ensemble' }).isVisible(), '« Travaillons ensemble »');
+  assert((await cardsBox.getByRole('link', { name: /Devenir lieu partenaire/ }).getAttribute('href')) === '/devenir-partenaire' && (await cardsBox.getByRole('link', { name: /Devenir organisateur/ }).getAttribute('href')) === '/devenir-organisateur' && (await cardsBox.getByRole('link', { name: /Proposer une sortie/ }).getAttribute('href')) === '/aide/proposer-une-sortie', 'trois encadrés : lieux partenaires, organisateurs, membres de confiance');
+  await d.goto(`${base}/devenir-organisateur`);
+  assert(await d.getByRole('heading', { level: 1, name: 'Devenir organisateur' }).isVisible() && (await d.getByTestId('organizer-cta').getAttribute('href')) === '/pro/inscription' && await d.getByRole('heading', { name: 'Qui fait quoi ?' }).isVisible(), 'page « Devenir organisateur » : étapes, qui fait quoi, lien vers l\'espace organisateur');
+  await d.goto(`${base}/`);
   assert(await d.getByTestId('home-closing').getByRole('link', { name: "S’inscrire" }).isVisible(), 'phrase de clôture avec deux boutons');
   await d.goto(`${base}/alertes`);
   assert(await visible(d.getByTestId('alerts-status').filter({ hasText: 'inscrivez-vous depuis l\'accueil' })), '/alertes sans lien : explication');

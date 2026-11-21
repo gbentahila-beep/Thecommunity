@@ -7,7 +7,8 @@ import { Link } from "@/i18n/navigation";
 import { firebase } from "@/lib/firebase/client";
 import { Honeypot } from "../honeypot";
 
-const TYPES = ["restaurant", "studio", "workshop", "venue", "organizer", "other"] as const;
+// Lieux qui accueillent nos groupes ; les organisateurs passent par « Devenir organisateur » (espace organisateur).
+const TYPES = ["restaurant", "studio", "workshop", "venue", "other"] as const;
 
 /** Candidature partenaire : envoyée au serveur (submitPartnerApplication : format, limite d'envois, piège à robots). */
 export function PartnerApplicationForm() {

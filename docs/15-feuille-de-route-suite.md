@@ -390,3 +390,14 @@ Tests : 6 tests d'intégration et 4 unitaires (formule, souscription et renouvel
 - Factures sur téléphone : montant aligné avec le titre, numéro sur sa ligne, bouton de téléchargement en icône.
 - Historique, favoris et « Déjà vécues » : même liste compacte que le reste du site.
 - Menu burger : rubriques en cartes (Mon espace si connecté, Découvrir, The Host Club, Aide, Villes).
+
+## Rôles démêlés : lieu partenaire, organisateur, membre de confiance (21 novembre)
+
+Un seul vocabulaire partout (accueil, centre d'aide, page Menu, menu burger, pied de page) :
+- **Lieu partenaire** (`/devenir-partenaire`) : café, restaurant, studio, lieu qui accueille les groupes que nous
+  composons et vendons ; candidature par formulaire (le type « organisateur » en est retiré).
+- **Organisateur** (nouvelle page `/devenir-organisateur`, puis `/pro/inscription`) : publie et vend ses propres
+  activités depuis l'espace organisateur, commission déduite.
+- **Membre de confiance** (`/aide/proposer-une-sortie`) : habitué invité par l'équipe à proposer des sorties, que
+  l'équipe vérifie et publie ; pas de candidature, mais une idée reste la bienvenue via le contact.
+Accueil : section « Travaillons ensemble » à trois encadrés ; « Aide et à propos » devient « Aide » dans la page Menu.
