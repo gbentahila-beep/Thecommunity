@@ -26,3 +26,7 @@ Référence fournie : `docs/maquettes/2026-11-21-wenzy/reference-couleurs.jpg` (
 ## Révision du 21 novembre : lettrages « fun et jeune »
 
 Demande : un logo fun et jeune, avec des changements de police, de taille ou de forme selon les lettres ou les syllabes. `lettrages/` : six lettrages composés lettre par lettre (Rebond, Duo, Autocollant, Grand Z, Mélange, Sourire), en palette fun (tomate, bonbon, lilas, pomme, crème, encre) et en terre cuite (`tc-*`). Polices OFL : Bagel Fat One, Pacifico, Caprasimo, Shrikhand, Dela Gothic One, Rubik, Fraunces. Page `../etape-2e-lettrages.html`. Régénérer : `python3 mkfun.py fonts lettrages` puis `python3 page6.py lettrages ../etape-2e-lettrages.html`.
+
+## Révision du 21 novembre : pro, vivant, mémorable, autour de la rencontre
+
+Lettrages fun jugés trop enfantins. Nouvelle demande : niveau des grandes applications sociales (référence citée : Timeleft, sans copier), professionnel, avec un élément qui évoque la rencontre et le lien. `rencontre/` : nom en Outfit minuscules, palette grenade `#E4473A`, aubergine `#2B1633`, abricot `#FFB37A`, pistache `#C9DB8A`, crème `#FFF7EE`, et trois symboles : `tablee-*` (six points en cercle, recommandé), `lien-*` (deux points et un sourire), `wdeux-*` (deux têtes dans les creux du w). Page `../etape-2f-rencontre.html`. Régénérer : `python3 mklien.py fonts rencontre` puis `python3 page7.py rencontre ../etape-2f-rencontre.html` (le script génère aussi une piste « duo » écartée, à supprimer).
