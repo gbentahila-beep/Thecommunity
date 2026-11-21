@@ -137,6 +137,11 @@ Relecture de tous les textes (interface FR / EN / AR, centre d'aide, blog, pages
 
 À faire hors code : renommer la catégorie « Rencontres » dans le back-office si elle a déjà été modifiée en ligne ; informations légales (docs/16).
 
+## Catalogue en agenda et barre du bas à 5 onglets (demande de Hamza, 21 novembre) — livré
+
+- **Toutes les expériences** : onglets par univers (Tout, Dîners, Sport…), **calendrier** des jours (point = au moins une date ; toucher un jour fait défiler jusqu'à lui), liste **groupée par jour** (« Samedi 21 novembre ») : vignette, titre et badges (Entre femmes, Coup de cœur, Nouveau, Plus que N places, Complet), heure · quartier · groupe, univers · langues · prix, bouton **Réserver** (ou Demander / Liste d'attente). Recherche, filtres et tri conservés ; un tri par prix, note ou nouveauté affiche une liste simple (jour indiqué sur chaque ligne).
+- **Barre du bas (téléphone)** : Accueil · Découvrir (toutes les expériences) · Mon groupe · Réservations · **Menu** (nouvelle page `/menu` : expériences et univers, mon compte, le club, aide et à propos, langue, se connecter / se déconnecter). La pastille des notifications non lues passe sur « Menu ».
+
 ## Univers de l'accueil en cartes empilées (demande de Hamza, 21 novembre) — livré
 
 - « Des univers pour sortir de sa routine » : chaque univers devient une carte teintée de sa couleur — nom, accroche, photo, texte, deux repères (**Groupe** calculé sur les vraies expériences, ex. « De 5 à 10 personnes », et un repère propre à l'univers) et un bouton « Voir les dîners », « Voir les jeux »…

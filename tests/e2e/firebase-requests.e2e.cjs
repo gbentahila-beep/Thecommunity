@@ -127,8 +127,8 @@ async function login(page, who, suite) {
   // 13 : la pastille apparaît en direct dans la barre du bas, sans recharger la page
   const badge = member.locator('nav[aria-label] [data-testid=unread-badge]');
   assert(await visible(badge), 'pastille de notifications non lues, en direct');
-  // 32 : la pastille est sur l'onglet « Profil » et la cloche de l'en-tête (mobile, connecté·e)
-  assert(/non lues?/.test(await member.locator('nav[aria-label] a[href$="/espace"][aria-label]').getAttribute('aria-label')), 'nombre de non-lues annoncé aux lecteurs d’écran (onglet Profil)');
+  // La pastille est sur l'onglet « Menu » et la cloche de l'en-tête (mobile, connecté·e)
+  assert(/non lues?/.test(await member.locator('nav[aria-label] a[href$="/menu"][aria-label]').getAttribute('aria-label')), 'nombre de non-lues annoncé aux lecteurs d’écran (onglet Menu)');
   assert(/non lues?/.test(await member.getByTestId('header-bell').last().getAttribute('aria-label')), 'nombre de non-lues annoncé aux lecteurs d’écran (cloche)');
   await member.goto(`${base}/espace/notifications`);
   assert(await visible(member.getByText('Votre demande est acceptée')), 'notification « demande acceptée »');

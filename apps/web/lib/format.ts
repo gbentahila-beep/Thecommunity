@@ -44,3 +44,19 @@ export function formatCalendarDate(date: string, locale: string) {
     year: "numeric",
   }).format(new Date(`${date}T12:00:00Z`));
 }
+
+/** Jour calendaire à Casablanca, « AAAA-MM-JJ » (regroupement par jour du catalogue). */
+export function dayKey(iso: string | Date) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: MOROCCO_TIMEZONE, year: "numeric", month: "2-digit", day: "2-digit" }).format(typeof iso === "string" ? new Date(iso) : iso);
+}
+
+/** En-tête d'un jour du catalogue : « Samedi » et « 21 novembre ». */
+export function formatDayHeading(iso: string, locale: string) {
+  const weekday = fmt(iso, locale, { weekday: "long" });
+  return { weekday: locale === "fr" ? weekday.charAt(0).toUpperCase() + weekday.slice(1) : weekday, date: fmt(iso, locale, { day: "numeric", month: "long" }) };
+}
+
+/** Case du calendrier : « SAM. » et « 21 ». */
+export function formatDayCell(iso: string, locale: string) {
+  return { weekday: fmt(iso, locale, { weekday: "short" }).replace(".", ""), day: fmt(iso, locale, { day: "numeric" }) };
+}

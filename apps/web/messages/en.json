@@ -35,7 +35,9 @@
     "login": "Log in",
     "unreadCount": "{count} unread",
     "search": "Search",
-    "meet": "My group"
+    "meet": "My group",
+    "home": "Home",
+    "menu": "Menu"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -172,7 +174,9 @@
     "title": "All experiences",
     "subtitle": "Book your spot, we take care of the rest.",
     "undatedTitle": "Already lived — new dates on the way",
-    "undatedText": "Read their reviews and ask to be notified as soon as new dates are scheduled."
+    "undatedText": "Read their reviews and ask to be notified as soon as new dates are scheduled.",
+    "tabsLabel": "Universes",
+    "calendarLabel": "Date calendar"
   },
   "city": {
     "title": "Experiences in {city}",
@@ -1221,7 +1225,7 @@
   },
   "catalogFilters": {
     "searchLabel": "Search",
-    "searchPlaceholder": "An activity, a neighbourhood, an organizer…",
+    "searchPlaceholder": "Padel, pottery, Maarif…",
     "searchButton": "Search",
     "resultsFor": "Results for “{q}”",
     "emptySearch": "Nothing matches “{q}” with these filters. Try another word or remove a filter.",
@@ -1382,5 +1386,19 @@
     "noToken": "To get alerts, sign up from the home page, below “See all experiences”.",
     "seeExperiences": "See the experiences",
     "backHome": "Back to home"
+  },
+  "catalogRow": {
+    "book": "Book",
+    "request": "Request",
+    "waitlist": "Waiting list"
+  },
+  "menuPage": {
+    "account": "My account",
+    "preferences": "Preferences",
+    "club": "The club",
+    "help": "Help and about",
+    "helpHint": "A real person replies",
+    "faq": "Questions and answers",
+    "terms": "Terms and privacy"
   }
 }

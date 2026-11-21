@@ -35,7 +35,9 @@
     "login": "Se connecter",
     "unreadCount": "{count, plural, one {# non lue} other {# non lues}}",
     "search": "Rechercher",
-    "meet": "Mon groupe"
+    "meet": "Mon groupe",
+    "home": "Accueil",
+    "menu": "Menu"
   },
   "home": {
     "heroTitle1": "Your people",
@@ -172,7 +174,9 @@
     "title": "Toutes les expériences",
     "subtitle": "Réservez votre place, nous nous occupons du reste.",
     "undatedTitle": "Déjà vécues — de nouvelles dates arrivent",
-    "undatedText": "Retrouvez leurs avis et demandez à être prévenu·e dès que de nouvelles dates sont programmées."
+    "undatedText": "Retrouvez leurs avis et demandez à être prévenu·e dès que de nouvelles dates sont programmées.",
+    "tabsLabel": "Univers",
+    "calendarLabel": "Calendrier des dates"
   },
   "city": {
     "title": "Expériences à {city}",
@@ -1221,7 +1225,7 @@
   },
   "catalogFilters": {
     "searchLabel": "Rechercher",
-    "searchPlaceholder": "Une activité, un quartier, un organisateur…",
+    "searchPlaceholder": "Padel, céramique, Maarif…",
     "searchButton": "Rechercher",
     "resultsFor": "Résultats pour « {q} »",
     "emptySearch": "Rien ne correspond à « {q} » avec ces filtres. Essayez un autre mot ou retirez un filtre.",
@@ -1382,5 +1386,19 @@
     "noToken": "Pour recevoir les alertes, inscrivez-vous depuis l'accueil, sous « Voir toutes les expériences ».",
     "seeExperiences": "Voir les expériences",
     "backHome": "Retour à l'accueil"
+  },
+  "catalogRow": {
+    "book": "Réserver",
+    "request": "Demander",
+    "waitlist": "Liste d'attente"
+  },
+  "menuPage": {
+    "account": "Mon compte",
+    "preferences": "Préférences",
+    "club": "Le club",
+    "help": "Aide et à propos",
+    "helpHint": "Une personne vous répond",
+    "faq": "Questions fréquentes",
+    "terms": "Conditions et confidentialité"
   }
 }

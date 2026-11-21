@@ -101,7 +101,16 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   globalThis.__page = m;
   await m.goto(base + '/', { waitUntil: 'load' });
   const bar = m.getByRole('navigation', { name: 'Navigation mobile' });
-  assert(JSON.stringify(await bar.getByRole('link').allTextContents()) === JSON.stringify(['Découvrir', 'Mon groupe', 'Réservations', 'Profil']), '32 : barre du bas Découvrir · Mes rencontres · Réservations · Profil');
+  assert(JSON.stringify(await bar.getByRole('link').allTextContents()) === JSON.stringify(['Accueil', 'Découvrir', 'Mon groupe', 'Réservations', 'Menu']), 'barre du bas : Accueil · Découvrir · Mon groupe · Réservations · Menu');
+  await bar.getByRole('link', { name: 'Découvrir' }).click();
+  await m.waitForURL('**/experiences');
+  assert(await bar.getByRole('link', { name: 'Découvrir' }).getAttribute('aria-current') === 'page', 'Découvrir → toutes les expériences');
+  await bar.getByRole('link', { name: 'Menu' }).click();
+  await m.waitForURL('**/menu');
+  assert(await m.getByRole('heading', { level: 1, name: 'Menu' }).isVisible() && await m.getByRole('main').getByRole('link', { name: /Centre d'aide/ }).first().isVisible(), 'Menu : page avec le centre d\'aide');
+  assert(await m.getByRole('link', { name: 'Se connecter' }).first().isVisible(), 'Menu : se connecter (non connecté·e)');
+  await bar.getByRole('link', { name: 'Accueil' }).click();
+  await m.waitForURL((u) => u.pathname === '/');
   assert(!(await m.locator('[data-testid=header-bell]:visible').count()), '32 : téléphone non connecté — pas de cloche (le bouton « S\'inscrire » reste visible)');
   await bar.getByRole('link', { name: 'Mon groupe' }).click();
   await m.waitForURL('**/espace/rencontres');

@@ -14,7 +14,9 @@ export function FiltersPanel({
   labels,
   clearHref,
   children,
+  className = "",
 }: {
+  className?: string;
   count: number;
   labels: { open: string; title: string; apply: string; clear: string; close: string };
   clearHref: string;
@@ -50,12 +52,12 @@ export function FiltersPanel({
   }, [open]);
 
   return (
-    <div ref={ref}>
+    <div ref={ref} className={className}>
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-expanded={open}
-        className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-ink shadow-card lg:hidden"
+        className="inline-flex h-12 items-center gap-2 rounded-full border border-line bg-white px-4 text-sm font-semibold text-ink shadow-card lg:hidden"
         data-testid="filters-open"
       >
         <SlidersHorizontal className="size-4" aria-hidden />
