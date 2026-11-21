@@ -40,10 +40,11 @@ service cloud.firestore {
             || (request.resource.data.photoPath is string
                 && request.resource.data.photoPath.matches('users/' + uid + '/avatar/[A-Za-z0-9._-]{1,80}')))
         && (!('notificationPrefs' in changedKeys())
-            || (request.resource.data.notificationPrefs.keys().hasOnly(['email', 'push', 'marketingEmail'])
+            || (request.resource.data.notificationPrefs.keys().hasOnly(['email', 'push', 'marketingEmail', 'newExperiences'])
                 && request.resource.data.notificationPrefs.email is bool
                 && request.resource.data.notificationPrefs.push is bool
-                && request.resource.data.notificationPrefs.marketingEmail is bool))
+                && request.resource.data.notificationPrefs.marketingEmail is bool
+                && request.resource.data.notificationPrefs.get('newExperiences', false) is bool))
         && (!('updatedAt' in changedKeys()) || request.resource.data.updatedAt == request.time);
 
       match /notifications/{id} {
@@ -236,6 +237,16 @@ service cloud.firestore {
     }
 
     // ---------- Formulaires publics ----------
+    // Alertes « nouvelles expériences » des visiteurs sans compte : écrites et lues par le serveur seulement
+    // (e-mail et jeton de désinscription) ; l'équipe peut consulter la liste.
+    match /alertSubscribers/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    match /newExperienceAlerts/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
     // Écrit uniquement par le serveur (submitContactMessage : format vérifié, limite d'envois, piège à robots).
     match /contactMessages/{id} {
       allow read: if isAdmin();

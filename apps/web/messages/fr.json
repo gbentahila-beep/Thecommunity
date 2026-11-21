@@ -612,7 +612,9 @@
     "deleteRequested": "Demande de suppression enregistrée. Notre équipe la traite et vous confirme par e-mail.",
     "deleteExplain": "Votre profil, votre photo et vos notifications seront supprimés ; vos réservations seront anonymisées pour la comptabilité.",
     "cancel": "Annuler",
-    "saveError": "Enregistrement impossible, réessayez."
+    "saveError": "Enregistrement impossible, réessayez.",
+    "newExperiences": "Nouvelles expériences par e-mail",
+    "newExperiencesHint": "Un e-mail dès qu'une nouvelle table ou activité est publiée. Désactivable à tout moment."
   },
   "notificationsPage": {
     "title": "Notifications",
@@ -1293,5 +1295,30 @@
   "forYou": {
     "title": "Pour vous",
     "subtitle": "D'après vos univers préférés, vos centres d'intérêt et votre quartier."
+  },
+  "alerts": {
+    "title": "Soyez prévenu·e des nouvelles tables et activités",
+    "text": "Recevez un e-mail dès qu'une nouvelle expérience est publiée. Gratuit, sans engagement : vous arrêtez quand vous voulez.",
+    "emailLabel": "Votre adresse e-mail",
+    "emailPlaceholder": "Votre adresse e-mail",
+    "submit": "M'alerter",
+    "sending": "Envoi…",
+    "sent": "Vérifiez votre boîte mail : cliquez sur le lien reçu pour confirmer vos alertes.",
+    "error": "Inscription impossible. Vérifiez l'adresse et réessayez.",
+    "rateLimited": "Trop de tentatives : réessayez un peu plus tard.",
+    "privacy": "Votre adresse sert uniquement à ces alertes, et chaque e-mail permet de les arrêter (loi n° 09-08).",
+    "privacyLink": "Politique de confidentialité",
+    "memberCta": "Recevoir un e-mail à chaque nouvelle expérience",
+    "memberOn": "Alertes activées",
+    "memberHint": "Vous recevez un e-mail dès qu'une nouvelle expérience est publiée. Touchez à nouveau pour arrêter, ou réglez-le dans vos Préférences.",
+    "demo": "Démonstration : rien n'est envoyé. Sur le site en ligne, vous recevez un e-mail pour confirmer vos alertes.",
+    "pageTitle": "Alertes nouvelles expériences",
+    "working": "Un instant…",
+    "confirmed": "C'est confirmé ! Vous recevrez un e-mail dès qu'une nouvelle table ou activité est publiée.",
+    "stopped": "C'est fait : vous ne recevrez plus ces alertes, et votre adresse a été effacée.",
+    "invalid": "Ce lien n'est plus valable. Vous pouvez vous réinscrire depuis l'accueil.",
+    "noToken": "Pour recevoir les alertes, inscrivez-vous depuis l'accueil, sous « Voir toutes les expériences ».",
+    "seeExperiences": "Voir les expériences",
+    "backHome": "Retour à l'accueil"
   }
 }

@@ -137,6 +137,16 @@ Relecture de tous les textes (interface FR / EN / AR, centre d'aide, blog, pages
 
 À faire hors code : renommer la catégorie « Rencontres » dans le back-office si elle a déjà été modifiée en ligne ; informations légales (docs/16).
 
+## Alertes « nouvelles tables et activités » (demande de Hamza, 21 novembre) — livré
+
+- **Où** : accueil, juste sous « Voir toutes les expériences » (section « Cette semaine ») ; aussi dans **Préférences** (« Nouvelles expériences par e-mail »).
+- **Membre connecté** : un bouton active / arrête l'alerte (`notificationPrefs.newExperiences`).
+- **Visiteur sans compte** : son e-mail, puis **double confirmation** (lien reçu par e-mail, page `/alertes`) ; une inscription non confirmée est effacée au bout de 7 jours ; chaque alerte contient un lien pour arrêter (l'adresse est alors effacée).
+- **Envoi** : une expérience est annoncée **une seule fois**, à sa **première publication** ; toutes les heures, un seul e-mail regroupe les nouveautés (FR / EN / AR selon la langue choisie). Les e-mails passent par la boîte d'envoi du site (test) ou Brevo, comme les autres.
+- **Confidentialité** : ligne ajoutée dans la politique (finalité, consentement, durée).
+- Serveur : `functions/src/experiences/new-experience-alerts.ts` ; tests : `firebase/tests/new-experience-alerts.test.ts`, règles Firestore, e2e démo (accueil).
+- À savoir : si l'équipe masque la section « Cette semaine » dans les réglages de l'accueil, le bloc d'alerte disparaît avec elle (l'option reste dans Préférences).
+
 ## Ajouts du 7 novembre (exemples Sahbi et Timeleft)
 
 Inspirations à reprendre **à notre façon** (sans copier) :

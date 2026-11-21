@@ -612,7 +612,9 @@
     "deleteRequested": "Deletion request recorded. Our team will process it and confirm by email.",
     "deleteExplain": "Your profile, photo and notifications will be deleted; your bookings will be anonymised for accounting.",
     "cancel": "Cancel",
-    "saveError": "Couldn't save, please try again."
+    "saveError": "Couldn't save, please try again.",
+    "newExperiences": "New experiences by email",
+    "newExperiencesHint": "An email as soon as a new table or activity is published. You can turn it off at any time."
   },
   "notificationsPage": {
     "title": "Notifications",
@@ -1293,5 +1295,30 @@
   "forYou": {
     "title": "For you",
     "subtitle": "Based on your favourite universes, interests and neighbourhood."
+  },
+  "alerts": {
+    "title": "Get alerts for new tables and activities",
+    "text": "Get an email as soon as a new experience is published. Free, no commitment: stop whenever you like.",
+    "emailLabel": "Your email address",
+    "emailPlaceholder": "Your email address",
+    "submit": "Alert me",
+    "sending": "Sending…",
+    "sent": "Check your inbox: click the link we sent you to confirm your alerts.",
+    "error": "We couldn't sign you up. Check the address and try again.",
+    "rateLimited": "Too many attempts: please try again a little later.",
+    "privacy": "Your address is only used for these alerts, and every email lets you stop them (Law 09-08).",
+    "privacyLink": "Privacy policy",
+    "memberCta": "Get an email for every new experience",
+    "memberOn": "Alerts on",
+    "memberHint": "You get an email as soon as a new experience is published. Tap again to stop, or change it in your Preferences.",
+    "demo": "Demo: nothing is sent. On the live site, you get an email to confirm your alerts.",
+    "pageTitle": "New experience alerts",
+    "working": "One moment…",
+    "confirmed": "Confirmed! You'll get an email as soon as a new table or activity is published.",
+    "stopped": "Done: you won't receive these alerts any more, and your address has been deleted.",
+    "invalid": "This link is no longer valid. You can sign up again from the home page.",
+    "noToken": "To get alerts, sign up from the home page, below “See all experiences”.",
+    "seeExperiences": "See the experiences",
+    "backHome": "Back to home"
   }
 }

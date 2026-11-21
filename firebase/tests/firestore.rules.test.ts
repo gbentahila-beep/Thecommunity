@@ -73,6 +73,9 @@ describe("profils (users)", () => {
     await assertFails(updateDoc(doc(salma(), "users/salma"), { locale: "xx" }));
     await assertFails(updateDoc(doc(salma(), "users/salma"), { notificationPrefs: { email: "oui", push: false, marketingEmail: true } }));
     await assertFails(updateDoc(doc(salma(), "users/salma"), { notificationPrefs: { email: true, push: false, marketingEmail: true, admin: true } }));
+    // Alerte « nouvelles expériences » (accueil, préférences) : booléen facultatif.
+    await assertSucceeds(updateDoc(doc(salma(), "users/salma"), { notificationPrefs: { email: true, push: false, marketingEmail: false, newExperiences: true }, updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { notificationPrefs: { email: true, push: false, marketingEmail: false, newExperiences: "oui" } }));
   });
   it("la photo de profil doit être dans son propre dossier", async () => {
     await assertSucceeds(updateDoc(doc(salma(), "users/salma"), { photoPath: "users/salma/avatar/photo.webp" }));

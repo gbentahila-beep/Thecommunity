@@ -10,6 +10,7 @@ import { HowItWorks } from "@/components/home/how-it-works";
 import { ReviewsShowcase } from "@/components/home/reviews-showcase";
 import { Universes } from "@/components/home/universes";
 import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
+import { NewExperienceAlerts } from "@/components/new-experience-alerts";
 import { Link } from "@/i18n/navigation";
 import { experienceBadge, NEW_EXPERIENCE_DAYS, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
 import { getCategories, getCities, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences, getReviews } from "@/lib/data";
@@ -94,6 +95,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         <Link href={`/${DEFAULT_CITY}`} className="block text-center text-sm font-medium text-plum-900 underline underline-offset-4 sm:hidden">
           {t("seeAll")}
         </Link>
+        <NewExperienceAlerts />
       </PageShell>
     ),
     trust: (

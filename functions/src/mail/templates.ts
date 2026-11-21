@@ -6,7 +6,7 @@ const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 const prefix = (l: L) => (l === "fr" ? "" : `/${l}`);
 
 /** Gabarit commun : bandeau prune avec le logo et le motif « le fil » (identité 10f), lisible sur téléphone. */
-function layout(l: L, o: { heading: string; paragraphs: string[]; cta?: { label: string; href: string }; footer: string }) {
+function layout(l: L, o: { heading: string; paragraphs: string[]; list?: { label: string; href: string }[]; cta?: { label: string; href: string }; footer: string }) {
   const dir = l === "ar" ? "rtl" : "ltr";
   const html = `<!doctype html><html lang="${l}" dir="${dir}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
 <body style="margin:0;background:#f8efe9;font-family:Helvetica,Arial,sans-serif;color:#221c1e">
@@ -16,11 +16,12 @@ function layout(l: L, o: { heading: string; paragraphs: string[]; cta?: { label:
 <div style="background:#fff;border-radius:0 0 16px 16px;padding:24px">
 <h1 style="font-family:Georgia,serif;font-size:22px;color:#561a29;margin:0 0 12px">${esc(o.heading)}</h1>
 ${o.paragraphs.map((p) => `<p style="line-height:1.55;margin:0 0 12px">${esc(p)}</p>`).join("\n")}
+${o.list?.length ? `<ul style="padding:0 0 0 18px;margin:0 0 12px">${o.list.map((i) => `<li style="line-height:1.55;margin:0 0 6px"><a href="${esc(i.href)}" style="color:#561a29;font-weight:bold">${esc(i.label)}</a></li>`).join("")}</ul>` : ""}
 ${o.cta ? `<p style="margin:20px 0 4px"><a href="${esc(o.cta.href)}" style="display:inline-block;background:#561a29;color:#fff;text-decoration:none;padding:12px 20px;border-radius:999px;font-weight:bold">${esc(o.cta.label)}</a></p>` : ""}
 </div>
 <p style="font-size:12px;color:#6b6166;line-height:1.5;margin:16px 4px">${esc(o.footer)}</p>
 </div></body></html>`;
-  const text = [o.heading, "", ...o.paragraphs, ...(o.cta ? ["", `${o.cta.label} : ${o.cta.href}`] : []), "", o.footer].join("\n");
+  const text = [o.heading, "", ...o.paragraphs, ...(o.list ?? []).map((i) => `- ${i.label} : ${i.href}`), ...(o.cta ? ["", `${o.cta.label} : ${o.cta.href}`] : []), "", o.footer].join("\n");
   return { html, text };
 }
 
@@ -223,4 +224,30 @@ export function noticeMail(o: { heading: string; paragraphs: string[]; ctaLabel:
       footer: "Vous recevez cet e-mail au sujet d'une réservation faite sur The Host Club.",
     }),
   };
+}
+
+/** Alertes « nouvelles expériences » : e-mail de confirmation (visiteur sans compte, double confirmation). */
+export function alertConfirmMail(o: { locale: string; token: string }) {
+  const l = lang(o.locale);
+  const href = `${SITE_URL}${prefix(l)}/alertes?confirmer=${encodeURIComponent(o.token)}`;
+  const t = {
+    fr: { subject: "Confirmez vos alertes The Host Club", heading: "Une dernière étape", p: ["Vous avez demandé à être prévenu·e des nouvelles tables et activités de The Host Club.", "Confirmez votre adresse : vous recevrez ensuite un e-mail dès qu'une nouvelle expérience est publiée. Vous pourrez arrêter à tout moment, depuis chaque e-mail."], cta: "Confirmer mes alertes", footer: "Vous n'êtes pas à l'origine de cette demande ? Ignorez cet e-mail : sans confirmation, votre adresse est effacée sous 7 jours." },
+    en: { subject: "Confirm your The Host Club alerts", heading: "One last step", p: ["You asked to get alerts for new tables and activities from The Host Club.", "Confirm your address: you'll then get an email as soon as a new experience is published. You can stop at any time, from any email."], cta: "Confirm my alerts", footer: "Didn't ask for this? Just ignore this email: without confirmation, your address is deleted within 7 days." },
+    ar: { subject: "أكّد تنبيهات The Host Club", heading: "خطوة أخيرة", p: ["طلبت أن تصلك تنبيهات بالطاولات والأنشطة الجديدة في The Host Club.", "أكّد عنوانك: ستصلك بعد ذلك رسالة كلما نُشرت تجربة جديدة. ويمكنك التوقف في أي وقت، من كل رسالة."], cta: "تأكيد التنبيهات", footer: "لست صاحب هذا الطلب؟ تجاهل هذه الرسالة: دون تأكيد، يُحذف عنوانك خلال 7 أيام." },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: t.footer }) };
+}
+
+/** Alertes « nouvelles expériences » : une ou plusieurs expériences viennent d'être publiées. */
+export function newExperiencesMail(o: { locale: string; items: { title: string; slug: string }[]; stopHref: string | null }) {
+  const l = lang(o.locale);
+  const list = o.items.map((i) => ({ label: i.title, href: `${SITE_URL}${prefix(l)}/experiences/${i.slug}` }));
+  const one = o.items.length === 1;
+  const stop = o.stopHref ?? `${SITE_URL}${prefix(l)}/espace/preferences`;
+  const t = {
+    fr: { subject: one ? `Nouveau : ${o.items[0].title}` : `${o.items.length} nouvelles expériences à découvrir`, heading: one ? "Une nouvelle expérience vient d'ouvrir" : "De nouvelles expériences viennent d'ouvrir", p: ["Les places partent vite : réservez la vôtre, seul·e ou accompagné·e."], cta: "Voir toutes les expériences", footer: `Vous recevez cet e-mail car vous avez demandé à être prévenu·e des nouvelles expériences. Pour ne plus les recevoir : ${stop}` },
+    en: { subject: one ? `New: ${o.items[0].title}` : `${o.items.length} new experiences to discover`, heading: one ? "A new experience just opened" : "New experiences just opened", p: ["Spots go fast: book yours, on your own or with friends."], cta: "See all experiences", footer: `You're receiving this email because you asked for alerts about new experiences. To stop them: ${stop}` },
+    ar: { subject: one ? `جديد: ${o.items[0].title}` : `${o.items.length} تجارب جديدة للاكتشاف`, heading: one ? "فُتحت تجربة جديدة" : "فُتحت تجارب جديدة", p: ["الأماكن تنفد بسرعة: احجز مكانك، وحدك أو مع أصدقائك."], cta: "عرض كل التجارب", footer: `تصلك هذه الرسالة لأنك طلبت تنبيهات بالتجارب الجديدة. لإيقافها: ${stop}` },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, list, cta: { label: t.cta, href: `${SITE_URL}${prefix(l)}/experiences` }, footer: t.footer }) };
 }

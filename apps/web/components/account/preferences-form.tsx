@@ -68,6 +68,7 @@ export function PreferencesForm({ initial, uid }: { initial: Prefs; uid?: string
         <Toggle label={t("emailNotif")} hint={t("emailNotifHint")} checked={prefs.email} onChange={(v) => update({ email: v })} />
         <Toggle label={t("pushNotif")} hint={t("pushNotifHint")} checked={false} disabled onChange={() => {}} />
         <Toggle label={t("marketing")} hint={t("marketingHint")} checked={prefs.marketingEmail} onChange={(v) => update({ marketingEmail: v })} />
+        <Toggle label={t("newExperiences")} hint={t("newExperiencesHint")} checked={Boolean(prefs.newExperiences)} onChange={(v) => update({ newExperiences: v })} />
       </div>
       <p className="mt-2 text-xs text-muted" role="status" aria-live="polite">
         {uid ? (status === "saved" ? t("saved") : status === "error" ? t("saveError") : t("savedAccount")) : t("savedLocally")}

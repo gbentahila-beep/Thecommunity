@@ -270,7 +270,8 @@ export type UserProfile = {
   bio?: string;
   locale: Locale;
   onboardingCompleted: boolean;
-  notificationPrefs: { email: boolean; push: boolean; marketingEmail: boolean };
+  /** newExperiences : e-mail à chaque nouvelle expérience publiée (alerte de l'accueil). */
+  notificationPrefs: { email: boolean; push: boolean; marketingEmail: boolean; newExperiences?: boolean };
   createdAt: string;
   /** 18d : membre de confiance (peut proposer des sorties, statut donné par l'équipe). */
   trustedHost?: boolean;

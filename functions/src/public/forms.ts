@@ -17,7 +17,7 @@ const OPTIONS = { region: REGION, enforceAppCheck: process.env.ENFORCE_APP_CHECK
 const email = z.string().trim().max(120).regex(/^[^@ ]+@[^@ ]+[.][^@ ]+$/);
 const honeypot = z.string().max(200).optional();
 
-function clientKey(req: CallableRequest<unknown>, kind: string): string {
+export function clientKey(req: CallableRequest<unknown>, kind: string): string {
   const fwd = String(req.rawRequest?.headers?.["x-forwarded-for"] ?? "").split(",")[0]?.trim();
   const ip = fwd || req.rawRequest?.ip || "unknown";
   return createHash("sha256").update(`${kind}:${ip}`).digest("hex").slice(0, 40);

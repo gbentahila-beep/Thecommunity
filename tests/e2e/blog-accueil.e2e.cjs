@@ -36,6 +36,17 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
 
   // Sections de l'accueil
   await d.goto(`${base}/`);
+  // Alertes « nouvelles tables et activités », sous « Voir toutes les expériences » (démonstration : rien n'est envoyé)
+  const alerts = d.getByTestId('home-alerts');
+  assert(await alerts.getByRole('heading', { name: 'Soyez prévenu·e des nouvelles tables et activités' }).isVisible(), 'accueil : bloc d\'alertes');
+  await alerts.getByRole('textbox', { name: 'Votre adresse e-mail' }).fill('test@example.com');
+  await alerts.getByRole('button', { name: "M'alerter" }).click();
+  assert(await visible(alerts.getByRole('status').filter({ hasText: 'Démonstration' })), 'alertes : démonstration, rien n\'est envoyé');
+  await d.goto(`${base}/alertes`);
+  assert(await visible(d.getByTestId('alerts-status').filter({ hasText: 'inscrivez-vous depuis l\'accueil' })), '/alertes sans lien : explication');
+  await d.goto(`${base}/en/`);
+  assert(await d.getByTestId('home-alerts').getByRole('heading', { name: 'Get alerts for new tables and activities' }).isVisible(), 'home (EN): alerts block');
+  await d.goto(`${base}/`);
   const how = d.locator('section', { has: d.getByRole('heading', { name: 'Comment ça marche', exact: true }) });
   assert(await how.getByRole('link', { name: /Découvrir les expériences/ }).getAttribute('href') === '/experiences', 'carte 2 : bouton vers les expériences');
   assert(await how.locator('img').count() === 3, 'carte 3 : trois photos');
