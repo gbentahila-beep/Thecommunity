@@ -401,3 +401,11 @@ Un seul vocabulaire partout (accueil, centre d'aide, page Menu, menu burger, pie
 - **Membre de confiance** (`/aide/proposer-une-sortie`) : habitué invité par l'équipe à proposer des sorties, que
   l'équipe vérifie et publie ; pas de candidature, mais une idée reste la bienvenue via le contact.
 Accueil : section « Travaillons ensemble » à trois encadrés ; « Aide et à propos » devient « Aide » dans la page Menu.
+
+## Arrivée : choix dans la fiche (21 novembre)
+
+Décision : pas de code de vérification (les participants n'ont pas de raison de mentir, et un code les freinerait).
+Dans la fiche (back-office et espace organisateur), une question « Comment les participants signalent-ils leur
+arrivée ? » : « Ils l'indiquent dans l'application » (par défaut) ou « Leur billet est scanné à l'entrée ». Le billet
+reste donné d'office quand une part est à régler au lieu partenaire. Le participant voit l'un OU l'autre, jamais les
+deux.

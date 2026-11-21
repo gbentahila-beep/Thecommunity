@@ -230,8 +230,8 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </section>
       )}
 
-      {/* Arrivée autonome (docs/16) : affichée la veille et le jour J, jusqu'à 1 h après le début. */}
-      {isActive && checkIn !== "closed" && new Date(s.startAt).getTime() - now.getTime() < 86_400_000 && (
+      {/* Arrivée autonome (docs/16) : affichée la veille et le jour J, jusqu'à 1 h après le début ; jamais en même temps qu'un billet. */}
+      {isActive && !needsTicket(experience, r) && checkIn !== "closed" && new Date(s.startAt).getTime() - now.getTime() < 86_400_000 && (
         <SelfCheckIn reservationId={r.id} state={checkIn} arrived={Boolean(r.arrivedAt)} onSiteHost={Boolean(experience?.onSiteHost)} hasGroup={Boolean(group)} />
       )}
 

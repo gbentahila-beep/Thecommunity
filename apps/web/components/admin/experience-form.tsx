@@ -434,13 +434,23 @@ export function ExperienceForm({
           <input type="checkbox" checked={v.alcoholServed} onChange={(e) => set("alcoholServed", e.target.checked)} className="size-4 accent-plum-900" />
           De l&apos;alcool est servi pendant l&apos;expérience
         </label>
-        <label className="flex items-start gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" checked={Boolean(v.onSiteHost)} onChange={(e) => set("onSiteHost", e.target.checked)} className="mt-0.5 size-4 accent-plum-900" />
-          <span>
-            Un accueil est assuré sur place (hôtesse ou équipe du lieu)
-            <span className="block text-xs text-muted">Les participants reçoivent alors un billet à QR code à présenter. Sinon, pas de billet : chacun indique son arrivée dans l&apos;application et retrouve son groupe seul.</span>
-          </span>
-        </label>
+        <fieldset className="text-sm sm:col-span-2" data-testid="arrival-mode">
+          <legend className="mb-1.5 font-medium">Comment les participants signalent-ils leur arrivée ?</legend>
+          <label className="flex items-start gap-2 py-1">
+            <input type="radio" name="arrival-mode" checked={!v.onSiteHost} onChange={() => set("onSiteHost", false)} className="mt-0.5 size-4 accent-plum-900" />
+            <span>
+              Ils l&apos;indiquent dans l&apos;application (par défaut)
+              <span className="block text-xs text-muted">Pas d&apos;hôte ni de billet : le jour J, chacun appuie sur « Je suis arrivé·e » et retrouve son groupe seul.</span>
+            </span>
+          </label>
+          <label className="flex items-start gap-2 py-1">
+            <input type="radio" name="arrival-mode" checked={Boolean(v.onSiteHost)} onChange={() => set("onSiteHost", true)} className="mt-0.5 size-4 accent-plum-900" />
+            <span>
+              Leur billet est scanné à l&apos;entrée (hôtesse ou équipe sur place)
+              <span className="block text-xs text-muted">Chaque participant reçoit un billet à QR code. Le billet est aussi donné d&apos;office quand une part est à régler au lieu partenaire.</span>
+            </span>
+          </label>
+        </fieldset>
         <label className="flex items-start gap-2 text-sm sm:col-span-2">
           <input type="checkbox" checked={Boolean(v.foodServed)} onChange={(e) => set("foodServed", e.target.checked)} className="mt-0.5 size-4 accent-plum-900" />
           <span>
