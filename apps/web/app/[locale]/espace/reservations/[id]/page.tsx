@@ -1,5 +1,5 @@
 import { SelfCheckIn } from "@/components/account/self-check-in";
-import { canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds } from "@thecommunity/shared";
+import { VENUE_REVEAL_HOURS, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -193,7 +193,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                 ) : (
                   <>
                     <dd className="font-medium text-ink">{cityName}</dd>
-                    <dd className="text-sm text-muted">{t("venueHidden")}</dd>
+                    <dd className="text-sm text-muted">{t("venueHidden", { hours: VENUE_REVEAL_HOURS })}</dd>
                   </>
                 )}
               </div>

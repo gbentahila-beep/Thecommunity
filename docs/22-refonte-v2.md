@@ -1,79 +1,221 @@
-# 22 — Refonte v2 : un seul modèle pour tout le site (22 novembre 2026)
+# 22 — Feuille de route Wenzy v2 (référence unique)
 
-Plan complet après le brainstorm du 22 novembre. Remplace les choix contraires des docs 16, 19 et 20.
-Rien n'est encore codé : ce document sert de référence pour chaque lot.
+Mise à jour du 22 novembre 2026, après les échanges sur les dîners, le prix, les abonnements, les rôles, les modèles et les images.
+**Ce document est la seule référence.** Chaque demande y est inscrite pour qu'aucune étape ne se perde. Il remplace les choix contraires des docs 16, 19 et 20. Le détail des modèles d'événements est dans [docs/23](23-modeles-evenements.md).
+
+---
+
+## 0. Comment on travaille
+
+- **Par petites étapes, validées une par une.** Un questionnaire à la fois, une photo à la fois, quelques modèles à la fois. Rien n'est enregistré dans le site avant ta validation.
+- **Chaque demande est notée ici** (§ 1 pour les décisions, § 17 pour les étapes). Une décision prise n'est pas rediscutée, sauf si tu la changes.
+- **Tout est uniformisé par les modèles** : mêmes réglages, mêmes textes, mêmes images pour un même type d'événement. Sur une fiche, **seulement les détails strictement nécessaires**, sans répétition (par exemple, l'heure de révélation du lieu est dite une seule fois, jamais dans les « infos pratiques »).
+- **Mise en ligne** : l'étape A est faite. Les étapes de code (E à L) sortent ensemble, une fois les textes juridiques validés. L'étape M (tout supprimer, puis tout recréer) vient à la fin.
 
 ---
 
 ## 1. Décisions validées
 
+### Prix et paiement
 | # | Décision |
 |---|---|
-| 1 | **Prix à l'unité : 35 DH** affichés (30 DH Wenzy + 5 DH de frais), un seul chiffre partout. |
-| 2 | **Abonnements** : on supprime le « –15 % ». On garde un **Carnet 3 sorties** et un **Pass illimité** (1 semaine, 1, 3, 6 ou 12 mois). |
-| 3 | Le pass (et le carnet) couvre aussi les frais des **activités d'organisateurs**. |
-| 4 | Frais Wenzy sur les activités d'organisateurs : **30 DH + frais, comme partout** (35 DH). |
-| 5 | **Garde-fous** : 2 réservations à venir au maximum ; une absence (pas de check-in) donne un avertissement, une deuxième suspend le pass 2 semaines. |
-| 6a | **Pas assez d'inscrits** pour une table complète à la fermeture : chaque inscrit **choisit** entre une autre date et le remboursement. |
-| 6b | **Nombre qui ne tombe pas juste** (ex. 7 inscrits pour des tables de 4 à 6) : le logiciel propose une table de 7, **l'admin valide à chaque fois**. |
-| 6c | **Lieu secret par défaut.** |
-| 6d | **Accès anticipé des abonnés** (choix de Claude) : quand une date est mise en ligne, seuls les abonnés peuvent réserver pendant X jours (réglé à la création ; 0 = ouvert à tous tout de suite). Ensuite tout le monde peut réserver. Les autres voient l'événement avec « Ouvre à tous le … ». |
-| 7 | **Modèle « format récurrent + dates »** : on crée un rendez-vous une fois, puis on ajoute des dates en quelques secondes. |
-| 8 | **Sur l'appli, on ne paie que les frais Wenzy.** Tout le reste se paie **sur place** (sans préciser cash ou carte : « à régler sur place »). |
-| 9 | **Au lancement, c'est Wenzy qui crée tout**, de tous les types (tables, ateliers, sport, soirées…). Les organisateurs viendront ensuite. |
-| 10 | **Les membres de confiance sont supprimés.** |
-| 11 | L'univers « Dîners » est **renommé** (proposition § 4) et couvre **Café, Brunch, Déjeuner, Dîner**. |
-| 12 | Filtres de Découvrir : on **retire « Prix par place » et « Quartier »**, on **garde « Gamme du restaurant »**. |
-| 13 | L'univers s'appelle **« Tables »** (§ 4). |
-| 14 | **Codes promo : on les garde** (ex. première sortie offerte). Ils s'appliquent aux frais Wenzy. |
-| 15 | **Lieu par date, au choix de l'admin** : même restaurant à chaque date ou restaurants différents ; un restaurant qui convient peut devenir le **lieu habituel** du rendez-vous (§ 7.3). |
+| 1 | **35 DH par place** (30 DH Wenzy + 5 DH de frais), un seul chiffre affiché partout. |
+| 2 | **Sur l'appli, on ne paie que Wenzy.** Le reste se paie **sur place** (« à régler sur place », sans préciser espèces ou carte) : menu à prix fixe affiché, consommation avec budget indicatif, prix fixe de l'activité, ou rien. |
+| 3 | **Places par réservation : 1 par défaut**, l'admin peut autoriser **2** sur la fiche (« Moi seul·e / Moi + 1 »). Deux places = 2 × 35 DH. |
+| 4 | **Codes promo gardés** (ex. première sortie offerte). Ils portent sur les 35 DH. |
+| 5 | **Annulation** : on peut toujours annuler ; **les frais sont remboursés selon les conditions d'annulation** de l'événement (choisies dans le modèle). |
+
+### Abonnements
+| # | Décision |
+|---|---|
+| 6 | On supprime le « –15 % ». On garde un **Carnet 3 sorties** (70 DH, 1 offerte, valable 3 mois) et un **Pass illimité** : 1 semaine 49 DH · 1 mois 99 DH · 3 mois 249 DH · 6 mois 449 DH · 1 an 790 DH. |
+| 7 | Le pass et le carnet couvrent aussi les frais des **activités d'organisateurs**. |
+| 8 | **Garde-fous du pass** : 2 réservations à venir au maximum ; pas de check-in = absence ; une absence donne un avertissement, la deuxième suspend le pass 2 semaines. |
+| 9 | **Accès d'un événement** (réglé à la création) : **ouvert à tous** (par défaut) · **abonnés d'abord pendant X jours**, comptés à partir de la mise en ligne de la date · **abonnés uniquement**. Les non-abonnés voient l'événement avec « Ouvre à tous le … ». |
+| 10 | **Réservé aux femmes** : une case à cocher, décochée par défaut. |
+
+### Tables (restaurants)
+| # | Décision |
+|---|---|
+| 11 | L'univers « Dîners » s'appelle **« Tables »**. Formats : **Café, Brunch, Déjeuner, Dîner, Couscous du vendredi**. |
+| 12 | **Chaque format de Tables existe en 3 gammes : Casual, Premium, Exclusive.** La gamme fixe le budget sur place, ce qui réunit des personnes qui peuvent payer le même type de restaurant. Budgets par format au § 6. |
+| 13 | **Tables de 4 à 6** (min et max réglables), nombre de tables facultatif. |
+| 14 | **Lieu secret par défaut.** La fiche ne montre ni nom, ni adresse, ni quartier : seulement le format, la gamme, la cuisine et l'ambiance. Phrase unique : « 🔒 Le lieu et l'adresse vous sont révélés 5 h avant. » |
+| 15 | **Lieu choisi par l'admin, date par date** : à la création ou plus tard, **au plus tard 5 h avant**. Même restaurant à chaque date ou restaurants différents ; **plusieurs restaurants possibles** pour une même date ; un restaurant qui convient peut devenir le **lieu habituel** du rendez-vous. |
+| 16 | **Réservations fermées 12 h avant**, pour laisser à l'admin le temps de réserver le ou les restaurants. |
+| 17 | **Pas assez d'inscrits** pour une table complète : chaque inscrit **choisit** entre une autre date et le remboursement. |
+| 18 | **Nombre qui ne tombe pas juste** (ex. 7 pour des tables de 4 à 6) : le logiciel propose une table de 7, **l'admin valide à chaque fois**. |
+| 19 | **5 h avant** : révélation du lieu. **1 h avant** : tables composées automatiquement (l'admin peut vérifier). **Check-in** : on voit sa table et qui est déjà arrivé, seulement après son propre check-in. |
+| 20 | **Heure de début seulement**, pas d'heure de fin. |
+
+### Création des événements
+| # | Décision |
+|---|---|
+| 21 | **Toute création part d'un modèle** qui pré-remplit tout, du titre au questionnaire, image comprise. On peut aussi partir de zéro, et créer ses propres modèles dans l'appli. |
+| 22 | **Choix du modèle en 3 temps** : univers (ex. Tables) → format (ex. Dîner) → gamme (ex. Premium), la gamme seulement pour les Tables. |
+| 23 | **Titres simples** : « Brunch », « Padel ». Le titre long pour Google et les partages est automatique : « Brunch entre inconnus à Casablanca · Wenzy ». |
+| 24 | **Rendez-vous récurrent** : on crée un rendez-vous une fois, puis on ajoute des dates en quelques secondes. |
+| 25 | Le lieu partenaire se choisit **dès le choix du modèle**, ou **plus tard**, quand on connaît le nombre d'inscrits. |
+| 26 | **Case « alcool servi / sans alcool »** sur chaque événement. |
+| 27 | **Au lancement, Wenzy crée tout**, de tous les types : les organisateurs ne connaissent pas encore la plateforme. |
+
+### Arrivée, billet, questionnaire
+| # | Décision |
+|---|---|
+| 28 | **Le check-in seul est la règle.** Le QR code n'existe qu'avec l'option « hôtesse sur place » ou pour une activité d'organisateur. |
+| 29 | **Le questionnaire se remplit avant le paiement**, et il est obligatoire. On crée les nouveaux questionnaires nécessaires. |
+
+### Rôles
+| # | Décision |
+|---|---|
+| 30 | **Membres de confiance supprimés.** |
+| 31 | **Organisateurs** : ils créent leurs activités avec le nom du lieu et encaissent tout sur place ; Wenzy ne fait que la plateforme et prend ses frais (35 DH, ou le pass). |
+| 32 | **Lieux partenaires** : ils accueillent les rendez-vous Wenzy ; s'ils paient quelque chose (mise en avant), on peut les afficher, jamais quand le lieu est secret. |
+
+### Site
+| # | Décision |
+|---|---|
+| 33 | Filtres de Découvrir : **retirer « Prix par place » et « Quartier »**, **garder « Gamme du restaurant »**. |
+| 34 | **Tous les textes à revoir** : accueil, Comment ça marche, aide, FAQ, CGU, CGV, contrat et conditions des organisateurs, confidentialité, blog, presse, e-mails, en français, anglais et arabe. |
+| 35 | **À la fin, supprimer tous les événements existants et en recréer** à partir des modèles validés (avec ta confirmation au moment de le faire, car c'est définitif). |
 
 ---
 
-## 2. Le principe en une phrase
+## 2. Ce qui se fait ailleurs, et ce qu'on en retient
 
-> **Tu réserves ta place sur Wenzy pour 35 DH (ou avec ton pass), et tu règles sur place ce que tu consommes ou le prix de l'activité.**
+**Socials by Detor** (Amsterdam, Paris, Berlin, Barcelone…) :
+- groupes de 4 à 6 ; chacun paie sa nourriture et ses boissons ;
+- le prix de la place est affiché avant de payer ;
+- **lieu et heure 24 h avant** ;
+- **résumé du groupe la veille, sans les noms** (métiers, langues, centres d'intérêt) ;
+- **prénoms environ 1 h avant**, à l'ouverture d'un chat de groupe ;
+- messages entre participants possibles **2 h après le début** ; numéro et réseaux restent privés.
 
-Une seule mécanique pour **tous** les événements, qu'ils soient organisés par Wenzy ou par un organisateur :
+**Timeleft** :
+- groupes de 4 à 6 composés d'après un test de personnalité ; restaurant révélé avant le dîner ;
+- abonnement pour réserver, repas payé au restaurant ;
+- pour chaque événement, on choisit **langue, budget et un régime alimentaire** ;
+- **annulation jusqu'à 4 h avant**, **report sur une autre date jusqu'à 13 h avant** ;
+- pas de remboursement après le délai ; **3 annulations tardives en 2 mois peuvent mener à une suspension** ;
+- on peut venir avec des amis, les places restantes étant complétées par des inconnus.
+
+**Ce que Wenzy fait déjà pareil** : groupes de 4 à 6, place payée en ligne, repas sur place, questionnaire, lieu révélé avant, langues et régime demandés, budget (chez nous par la gamme).
+
+**Proposé, à valider (§ 18)** :
+1. **Résumé de la table sans noms à la révélation (5 h avant)** : âges, langues, secteurs et centres d'intérêt des autres convives. Les prénoms viennent au check-in.
+2. **Déplacer sa réservation sur une autre date** jusqu'à la fermeture (12 h avant), au lieu d'annuler.
+3. **Échanger après la rencontre** : à rapprocher de l'existant « Mes rencontres ».
+
+Sources : [Socials by Detor](https://joinsocials.app/) · [FAQ Socials](https://joinsocials.app/faq) · [Timeleft, fonctionnement](https://timeleft.com/how-it-works/) · [Timeleft, annuler ou modifier](https://help.timeleft.com/hc/en-150/articles/28536868572444-How-Do-I-Cancel-or-Modify-My-Reservation) · [Timeleft, conditions](https://timeleft.com/terms-conditions/)
+
+---
+
+## 3. Le principe en une phrase
+
+> **Vous réservez votre place sur Wenzy pour 35 DH (ou avec votre pass), et vous réglez sur place ce que vous consommez ou le prix de l'activité.**
 
 | | En ligne (Wenzy) | Sur place |
 |---|---|---|
-| Brunch à menu fixe | 35 DH | Menu 120 DH, affiché sur la fiche |
-| Dîner à la consommation | 35 DH | Consommation, budget indicatif affiché (ex. ≈ 100–150 DH) |
+| Brunch à menu fixe | 35 DH | Menu, montant affiché sur la fiche |
+| Dîner à la consommation | 35 DH | Consommation, budget de la gamme affiché |
 | Atelier ou sport à prix fixe | 35 DH | Prix de l'activité, affiché sur la fiche |
-| Balade, quiz, rien à payer sur place | 35 DH | — |
-| Avec un pass | 0 DH (« Inclus dans ton pass ») | idem |
+| Balade, quiz… | 35 DH | — ou consommation |
+| Avec un pass ou un carnet | 0 DH (« Inclus dans votre pass ») | idem |
 
-Ce que ça supprime d'un coup : le paiement « tout en ligne », l'acompte, le prix membre, la marge par place, les reversements aux organisateurs, les commissions, le suivi « part partenaire réglée ». **Wenzy n'encaisse jamais l'argent de quelqu'un d'autre.**
-
-Conséquence assumée : Wenzy ne paie plus jamais un lieu ou un prestataire à la place des participants.
+Ce que ça supprime : paiement « tout en ligne », acompte, prix membre, marge par place, reversements aux organisateurs, commissions, suivi « part partenaire réglée ». **Wenzy n'encaisse jamais l'argent de quelqu'un d'autre** et ne paie jamais un lieu à la place des participants.
 
 ---
 
-## 3. Les rôles
+## 4. Les rôles
 
-| Rôle | Ce qu'il fait | Ce qui change |
-|---|---|---|
-| **Participant** | Réserve à l'unité (35 DH) ou avec un carnet ou un pass | Plus de « prix membre » |
-| **Équipe Wenzy** | Crée les rendez-vous de tous types, choisit les lieux, vérifie les tables | Back-office réduit (§ 9) |
-| **Organisateur** | Crée ses activités **avec le nom du lieu**, encaisse tout **sur place**. Wenzy ne fait que la plateforme : réservations, rappels, avis | Plus de modes A/B, de commission, de reversements, de page Finances avec virements |
-| **Lieu partenaire** | Accueille les rendez-vous Wenzy. Son nom n'apparaît pas avant la révélation quand le lieu est secret | Fiche lieu avec capacité ; message automatique 1 h avant. Pas de compte au lancement |
-| ~~Membre de confiance~~ | **Supprimé** | Retrait du statut, de « Proposer une sortie », des propositions, de la page admin « Propositions » |
-
----
-
-## 4. L'univers « Dîners » devient « Tables »
-
-**Validé : « Tables »** (FR et EN), « موائد » (AR). C'est court, ça marche pour le café comme pour le dîner, et c'est cohérent avec « On compose les tables ».
-« Social Tables » est en anglais et reprend le vocabulaire d'un concurrent (Socials) : à éviter. Autres pistes possibles : « À table », « Tables & cafés ».
-
-- **Sous-catégories (formats)** : Café · Brunch · Déjeuner · Dîner. Les sous-catégories existent déjà (étape 19).
-- L'identifiant technique `eat` ne change pas : aucune adresse du site ne casse.
-- À renommer partout : menu (`nav.dinners`), méta-description, sous-titre du catalogue, nom de l'univers, tuiles de l'accueil, blog, presse, aide, FAQ, e-mails, back-office (« univers Dîners »).
+| Rôle | Ce qu'il fait |
+|---|---|
+| **Participant** | Réserve à l'unité, avec un carnet ou avec un pass |
+| **Équipe Wenzy** | Crée les rendez-vous de tous types à partir des modèles, choisit les lieux, vérifie les tables |
+| **Organisateur** | Crée ses activités avec le nom du lieu, encaisse tout sur place, pointe ses participants |
+| **Lieu partenaire** | Accueille les rendez-vous Wenzy ; reçoit le message de préparation 1 h avant ; pas de compte au lancement |
+| ~~Membre de confiance~~ | Supprimé (statut, « Proposer une sortie », propositions, page admin « Propositions ») |
 
 ---
 
-## 5. Abonnements : Carnet et Pass
+## 5. Univers, formats et modèles
+
+| Univers | Formats (modèles) |
+|---|---|
+| **Tables** | Café, Brunch, Déjeuner, Dîner, Couscous du vendredi, chacun en Casual, Premium ou Exclusive |
+| **Bouger** | Running, Padel, Yoga, Pilates, Randonnée, Vélo, Foot à 5, Surf, Danse, Hammam & spa |
+| **Jouer** | Escape game, Paintball, Laser game, Bowling, Karting, Soirée jeux, Quiz, Karaoké, Murder party |
+| **Créer** | Céramique, Zellige, Cuisine marocaine, Pâtisserie, Parfum, Calligraphie, Balade photo, Café de spécialité, Bougies, Thé & pâtisseries |
+| **Découvrir** | Afterwork, Rooftop, Visite guidée, Street art, Musée, Ciné-club, Concert, Stand-up, Échange de langues, Plage, Escapade |
+
+**Lancement : 16 modèles.** Les 5 formats de Tables, plus Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée et Échange de langues. Contenus, réglages et images : [docs/23](23-modeles-evenements.md).
+
+**Choisir un modèle** : univers → format → gamme (Tables seulement) → formulaire pré-rempli → date et heure → lieu maintenant ou plus tard → enregistrer.
+
+**Gérer les modèles dans l'appli** : *Paramètres → Modèles* (créer de zéro, modifier, dupliquer, masquer), ou « Enregistrer comme modèle » depuis un événement. Modifier un modèle ne change pas les événements déjà créés.
+
+---
+
+## 6. Les gammes des Tables (budgets sur place, à valider)
+
+Budget indicatif par personne, affiché sur la fiche (« Sur place : votre consommation, ≈ 150–250 DH »). Ce sont des repères à confirmer avec les restaurants.
+
+| Format | Casual | Premium | Exclusive |
+|---|---|---|---|
+| Café | 30–60 DH | 60–100 DH | 100–150 DH |
+| Brunch | 100–150 DH | 150–250 DH | 250–400 DH |
+| Déjeuner | 80–150 DH | 150–250 DH | 250–400 DH |
+| Dîner | 150–250 DH | 250–400 DH | 400–600 DH |
+| Couscous du vendredi | 80–120 DH | 120–200 DH | 200–300 DH |
+
+- Le filtre « Gamme du restaurant » de Découvrir s'appuie dessus.
+- Un menu à prix fixe négocié avec le restaurant remplace le budget par le montant exact.
+
+---
+
+## 7. Le formulaire de création : les champs strictement nécessaires
+
+Tout est pré-rempli par le modèle ; l'admin ne touche que ce qui change.
+
+| Bloc | Champs |
+|---|---|
+| **Essentiel** | Titre · accroche · description · image (arabe et anglais repliés) |
+| **Quand** | Date, heure de début, répéter chaque semaine (durée seulement hors Tables) |
+| **Format** | Tables : taille min et max, nombre de tables (facultatif) · autres : groupes ou équipes, nombre de places |
+| **Lieu** | Secret (par défaut pour Tables) ou affiché · lieu partenaire maintenant ou plus tard · gamme, cuisine, ambiance (Tables) |
+| **Sur place** | Rien / prix fixe (montant) / consommation (budget de la gamme, modifiable) |
+| **Inclus / pas inclus** | Pré-remplis, une ligne par élément |
+| **Pour qui** | Accès : ouvert à tous · abonnés d'abord (X jours) · abonnés uniquement ; case « réservé aux femmes » ; âge minimum (18 ans par défaut) |
+| **Règles** | Places par réservation (1 ou 2) · alcool servi ou non · conditions d'annulation · langues |
+| **Activité** (hors Tables) | Niveau · matériel fourni · à apporter · tenue · plein air · activité physique |
+| **Questionnaire** | Celui du modèle |
+| **Avancé** (replié) | Hôtesse sur place · inscription sur demande |
+
+**Disparaissent** : prix (réglage global), prix membre, « comment le client paie », bloc « ce que ça nous rapporte », taille cible, durée pour les Tables, capacité saisie à part, lien vers une proposition.
+
+---
+
+## 8. Le parcours d'un participant (Tables)
+
+| Quand | Ce qui se passe |
+|---|---|
+| **Agenda / Découvrir** | « Mercredi 26 nov. · Dîner · Premium · 20h00 · 35 DH ». Icône de l'univers, ni lieu ni quartier |
+| **Fiche** | Format, gamme, cuisine, ambiance ; « Ce que vous payez » (35 DH en ligne, budget sur place) ; « 🔒 Le lieu et l'adresse vous sont révélés 5 h avant » |
+| **Réservation** | Carte « billet » : date en grand, Début · Langue · Tables de 4 à 6 ; « Réservations jusqu'à mer. 8h00 » ; « Moi seul·e / Moi + 1 » si autorisé ; carrousel « Comment on compose les tables » généré par les réglages ; barre fixe « 35 DH · 1 place · Continuer » |
+| **À propos de vous** | Régime, allergies, langues et questionnaire, pré-remplis par le profil, **avant le paiement** |
+| **Paiement** | 35 DH, « Inclus dans votre pass » ou 1 crédit du carnet |
+| **Confirmation** | « Le lieu arrive mer. 15h00 ». Pas de QR code |
+| **12 h avant** | Fermeture. Minimum non atteint : chaque inscrit choisit autre date ou remboursement |
+| **5 h avant** | Répartition entre les lieux s'il y en a plusieurs ; révélation du lieu, de l'adresse et de la carte (notification et e-mail) ; résumé de table sans noms si validé (§ 2) |
+| **1 h avant** | Tables composées automatiquement (table de 7 à valider par l'admin) ; le lieu reçoit nombre de tables, prénoms et allergies |
+| **30 min avant → 1 h après** | Check-in : sa table, les prénoms, qui est arrivé |
+| **Après** | Pas de check-in = absence ; demande d'avis |
+
+**Lieu affiché** (ex. Padel, Céramique) : même parcours, avec le nom, l'adresse et la carte dès la fiche ; le quartier est alors affiché normalement.
+
+---
+
+## 9. Abonnements : Carnet et Pass
 
 | Offre | Prix | Par mois | Rentable dès |
 |---|---|---|---|
@@ -85,299 +227,195 @@ Conséquence assumée : Wenzy ne paie plus jamais un lieu ou un prestataire à l
 | **Pass 6 mois** (mis en avant) | 449 DH | 75 | |
 | Pass 1 an | 790 DH | 66 | |
 
-- **Page Abonnement** : trois offres visibles (Carnet, Pass 1 mois, Pass 6 mois), plus un lien « autres durées ». Le pass semaine est proposé au moment de payer.
-- **Le pass comprend** : les frais Wenzy offerts sur tous les événements (Wenzy et organisateurs), l'accès anticipé (§ 1, 6d), l'accès aux événements « Abonnés uniquement », la priorité sur la liste d'attente.
-- **Le carnet** : 3 crédits utilisables sur tous les événements. Il ne donne pas l'accès anticipé.
-- **Avantages des lieux partenaires** (facultatif) : par exemple –10 % chez eux pour les abonnés. C'est un avantage offert par le lieu, pas de l'argent.
-- **Garde-fous** : décision 5. Les absences sont détectées automatiquement grâce au check-in.
-- **Paiement** : tant que le paiement se fait par virement (validation manuelle sous 48 h), on vend le carnet et les pass d'un mois et plus. Le pass semaine arrive avec le paiement par carte.
+- **Page Abonnement** : Carnet, Pass 1 mois, Pass 6 mois, plus « autres durées ». Le pass semaine est proposé au moment de payer.
+- **Le pass comprend** : frais Wenzy offerts partout, accès anticipé, événements « abonnés uniquement », priorité sur la liste d'attente.
+- **Le carnet** : 3 crédits utilisables partout, sans accès anticipé.
+- **Avantage offert par les lieux partenaires** (facultatif) : par exemple –10 % chez eux pour les abonnés.
+- **Paiement** : par virement, on vend le carnet et les pass d'un mois et plus ; le pass semaine arrive avec le paiement par carte.
 - **Migration** : chaque abonné actuel reçoit un pass de la durée qui lui reste.
-- **Code existant réutilisé** : durées 1/3/6/12 mois, frais offerts, accès anticipé (`packages/shared/src/membership.ts`). À ajouter : la durée 7 jours, le carnet (crédits), la limite de réservations, les avertissements et suspensions. À retirer : le % de réduction et le prix membre.
 
 ---
 
-## 6. Prix affiché
+## 10. Prix affiché
 
-- **Cartes, listes, agenda** : « **35 DH** », et une petite mention grise « + sur place » seulement s'il y a quelque chose à payer sur place. Rien d'autre : plus de « 33 DH membres », plus de « + resto 100–150 DH ».
-- **Fiche** : un encadré unique « Ce que tu paies », écrit une seule fois :
-  - « En ligne : 35 DH (inclus dans ton pass) »
-  - « Sur place : menu 120 DH » / « Sur place : ta consommation, ≈ 100–150 DH » / « Sur place : 150 DH pour l'activité »
-- **Tunnel de réservation** : le même encadré, et rien de plus.
-- **Abonné** : « Inclus dans ton pass » remplace le prix.
+- **Cartes, listes, agenda** : « **35 DH** », avec une petite mention grise « + sur place » seulement s'il y a quelque chose à payer sur place.
+- **Fiche et tunnel** : un encadré unique « Ce que vous payez » : « En ligne : 35 DH » puis « Sur place : menu 120 DH » / « votre consommation, ≈ 150–250 DH » / « 150 DH pour l'activité ».
+- **Abonné** : « Inclus dans votre pass » remplace le prix.
 
 ---
 
-## 7. Créer un événement (équipe ; organisateur au § 10)
-
-### 7.0 Partir d'un modèle
-
-Toute création commence par **un modèle** qui pré-remplit tout, du titre au questionnaire, image comprise. On peut aussi partir de zéro. L'équipe crée ses propres modèles dans l'appli (**Paramètres → Modèles**, ou « Enregistrer comme modèle » depuis un événement). Le lieu partenaire se choisit tout de suite ou plus tard. **Liste complète des 46 modèles à valider : [docs/23](23-modeles-evenements.md).**
-
-### 7.1 Format récurrent, puis dates
-1. **Créer un rendez-vous** (une seule fois). C'est là qu'est tout le formulaire.
-2. **Ajouter des dates** : date, heure, et éventuellement « répéter chaque semaine ». Rien d'autre.
-3. **Page d'une date** (le travail de la semaine) : inscrits, lieux à renseigner, tables, check-ins.
-
-### 7.2 Le formulaire, par type
-On choisit d'abord le **type**, qui ne montre que ses propres champs :
-
-| Type | Champs propres |
-|---|---|
-| **Tables** (café, brunch, déjeuner, dîner) | Taille des tables (min et max), nombre de tables (facultatif), lieu secret (par défaut) ou affiché, gamme, cuisine, ambiance, sur place (menu fixe ou consommation avec budget). Régime, allergies et langues demandés automatiquement. **Heure de début seulement.** |
-| **Atelier** (Créer, Jouer, Découvrir) | Niveau, matériel fourni, à apporter, durée, prix sur place, groupes ou non |
-| **Sport** (Bouger) | Niveau, à apporter, tenue, plein air, activité physique (cochée d'office), durée, prix sur place |
-| **Soirée / sortie** | Tenue, alcool, consommation libre, durée |
-
-Les 5 étapes : **Type → L'essentiel** (titre, accroche, description, photos ; arabe et anglais repliés) **→ Format et lieu → Sur place → Accès et dates**.
-
-- **Accès** : « Ouvert à tous » / « Abonnés d'abord : X jours » / « Abonnés uniquement ».
-- **Options avancées** (repliées) : inscription sur demande, réservé aux femmes, âge, langues, conditions d'annulation, places max par réservation (inchangé), hôtesse sur place.
-- **Disparaissent du formulaire** : le prix (c'est le réglage global « Frais Wenzy »), le prix membre, le choix « comment le client paie », le bloc « ce que ça nous rapporte » (coût par place, commission), la taille cible, la durée pour les Tables, la capacité saisie dans « Dates » (elle se déduit des tables), le lien vers une proposition.
-- **Questionnaire** : l'éditeur reste dans le formulaire.
-
-### 7.3 Le lieu
-- **Lieu affiché** : nom, adresse, carte dès la fiche.
-- **Lieu secret** : rien sur la fiche, **pas même le quartier**. Seulement la cuisine, l'ambiance et la gamme.
-- **Le lieu se renseigne pour chaque date, pas sur le rendez-vous.** On peut le faire à la création, plus tard, ou au plus tard 5 h avant. On peut en mettre **plusieurs**, chacun avec sa capacité en tables.
-- Le choix se fait parmi les **lieux partenaires** (fiche avec capacité) ou en saisie libre.
-- **Même restaurant ou restaurants différents, au choix de l'admin**, date par date :
-  - **Lieu habituel** (facultatif) sur le rendez-vous : chaque nouvelle date est pré-remplie avec lui. Sans lieu habituel, chaque date attend son lieu.
-  - En choisissant le lieu d'une date, une case **« Utiliser ce lieu pour toutes les prochaines dates »** (dates déjà pourvues non modifiées).
-  - **Tester puis adopter** : après une date, sur sa page, l'admin note le lieu (« Ça s'est bien passé ? 👍 / 👎 ») et peut cliquer **« En faire le lieu habituel »**. Le rendez-vous devient alors hebdomadaire dans ce restaurant, jusqu'à ce qu'il le change.
-  - Le lieu habituel reste secret pour les participants comme les autres (révélé 5 h avant).
-- **Le lieu secret n'est jamais dans un document public de la base** (aujourd'hui le nom est lisible dans `experiences/{id}`) : il est rangé dans une partie privée de la date.
-
----
-
-## 8. Le parcours d'un participant (Tables)
-
-| Quand | Ce qui se passe |
-|---|---|
-| **Agenda / Découvrir** | « Mercredi 26 nov. · Dîner · 20h00 · 35 DH ». Icône de l'univers, pas de lieu ni de quartier |
-| **Réservation** | Carte « billet » : date en grand, Début · Langue · Tables de 4 à 6, puis 🔒 « Le lieu et l'adresse arrivent 5 h avant ». « Réservations jusqu'à mer. 8h00 ». Choix **Moi seul·e / Moi + 1**. Carrousel « Comment on compose les tables », généré depuis les réglages (réponses, langue commune, 18 ans et plus, équilibre femmes et hommes, seul·e ou à deux, table découverte au check-in). Barre fixe « 35 DH · 1 place · Continuer » |
-| **À propos de toi** | Régime, allergies, langues et questions de l'admin, pré-remplis d'après le profil. **Avant le paiement, et obligatoire** |
-| **Paiement** | 35 DH, ou « Inclus dans ton pass », ou 1 crédit du carnet |
-| **Confirmation** | « Le lieu arrive mer. 15h00 ». **Pas de QR code** |
-| **12 h avant** | Fermeture des réservations (règle déjà dans le code mais invisible ; on l'affiche et on la rend réglable). Si le minimum n'est pas atteint, chaque inscrit choisit **autre date** ou **remboursement** (décision 6a) |
-| **5 h avant** | Le logiciel répartit les participants entre les lieux, s'il y en a plusieurs. **Le lieu se révèle** dans la réservation : nom, adresse, carte, notification et e-mail |
-| **1 h avant** | **Les tables sont composées automatiquement** dans chaque lieu (l'algorithme `composeGroups` existe déjà). Une table de 7 est proposée si besoin, à valider par l'admin (décision 6b). Le lieu reçoit le nombre de tables, les prénoms et les allergies |
-| **30 min avant → 1 h après** | **Check-in** (« Je suis arrivé·e ») : on voit **sa table, les prénoms et qui est déjà arrivé**. La table n'est visible **qu'après le check-in** |
-| **Après** | Pas de check-in = absence : avertissement, puis suspension du pass. Demande d'avis (existe déjà) |
-
-**Lieu affiché** (ex. Pizza entre inconnus) : même parcours, avec le lieu, l'adresse et la carte visibles dès la fiche et dans la confirmation.
-
-**QR code** : uniquement si « Hôtesse sur place » est coché, ou pour les activités d'organisateurs (l'organisateur pointe ses participants).
-
----
-
-## 9. Le back-office
-
-**Aujourd'hui** : environ 25 entrées de menu. **Demain** :
+## 11. Le back-office
 
 | Entrée | Contenu |
 |---|---|
-| **Aujourd'hui** | Les dates à venir et ce qu'il reste à faire : lieu à renseigner (relances à 24 h et à 8 h avant), tables à valider (table de 7), minimum non atteint, check-ins en cours |
-| **Rendez-vous** | Les rendez-vous et leurs dates (création par type, § 7) |
-| **Lieux partenaires** | Fiche : tables et places, jours possibles, gamme, cuisine, budget moyen, contact (WhatsApp), avantage abonnés |
+| **Aujourd'hui** | Dates à venir et ce qu'il reste à faire : lieu à renseigner (relances 24 h et 8 h avant), table de 7 à valider, minimum non atteint, check-ins en cours |
+| **Rendez-vous** | Création depuis un modèle, dates, lieu par date et lieu habituel (après une date : 👍 / 👎 et « En faire le lieu habituel ») |
+| **Lieux partenaires** | Tables et places, jours possibles, gamme, cuisine, budget moyen, contact WhatsApp, avantage abonnés |
 | **Organisateurs** | Comptes, activités à valider |
 | **Participants et abonnements** | Utilisateurs, pass, carnets, avertissements et suspensions |
-| **Paiements** | Virements à valider, remboursements (seulement les frais Wenzy) |
+| **Paiements** | Virements à valider, remboursements (frais Wenzy seulement) |
 | **Contenu** | Accueil, avis, aide, e-mails |
-| **Paramètres** | Frais Wenzy (30 + 5 DH), offres carnet et pass, conditions d'annulation, catégories |
+| **Paramètres** | Prix Wenzy (35 DH), offres carnet et pass, **modèles**, conditions d'annulation, catégories |
 
-**Supprimés ou fusionnés** : Propositions, Commissions, Reversements, Encaissements (« en ligne / sur place »), Billets (scan) sauf pour les hôtesses, Promos (à garder seulement si utile pour le lancement).
-
----
-
-## 10. Organisateurs
-
-- Inscription, contrat et validation par l'équipe : **inchangés**.
-- **Formulaire court** dans l'espace pro, avec les mêmes types qu'au § 7.2 mais **sans lieu secret ni tables composées** : lieu (nom, adresse, carte) obligatoire, prix payé sur place, nombre de places, dates.
-- **Paiement** : le participant paie 35 DH en ligne (ou son pass), puis le prix **sur place à l'organisateur**.
-- **Revenu de Wenzy** : les frais de réservation. L'organisateur ne paie rien à Wenzy.
-- **Pointage** : l'organisateur pointe ses participants (liste ou QR code) depuis l'espace pro.
-- **Annulation par l'organisateur** : Wenzy rembourse ses frais ; rien d'autre n'a été encaissé.
-- **Espace pro** : « Finances » devient « Statistiques » (réservations, présents, avis). Plus de reversements ni de factures de commission.
+**Supprimés ou fusionnés** : Propositions, Commissions, Reversements, Encaissements, Billets (sauf hôtesses).
 
 ---
 
-## 11. Lieux partenaires
+## 12. Organisateurs
 
-- Ils **accueillent** les rendez-vous Wenzy, sans créer d'événement.
-- **Ce qu'ils y gagnent** : des tables pleines les soirs creux.
-- **Ce qu'on peut leur demander**, au choix et hors site : une commission sur la consommation facturée au lieu, un avantage pour les abonnés, une mise en avant payante (Découvrir, bar d'après-dîner).
+- Inscription, contrat et validation : inchangés.
+- Formulaire court, mêmes modèles, sans lieu secret ni tables composées ; lieu (nom, adresse, carte) obligatoire.
+- Le participant paie 35 DH en ligne (ou son pass), puis le prix sur place à l'organisateur.
+- Revenu de Wenzy : les frais de réservation ; l'organisateur ne paie rien à Wenzy.
+- Pointage depuis l'espace pro (liste ou QR code).
+- « Finances » devient « Statistiques ». Plus de reversements ni de commissions.
+
+---
+
+## 13. Lieux partenaires
+
+- Ils accueillent les rendez-vous Wenzy, sans créer d'événement.
+- **Ils y gagnent** des tables pleines les soirs creux.
+- **On peut leur demander**, hors site : une commission sur la consommation, un avantage abonnés ou une mise en avant payante (Découvrir, bar d'après-dîner).
 - **1 h avant** : message automatique (e-mail, puis WhatsApp) avec le nombre de tables, les prénoms et les allergies.
 - Un lieu qui veut organiser ses propres événements devient aussi organisateur.
-- La page « Devenir partenaire » propose deux portes : **accueillir nos tables** ou **publier vos activités**.
 
 ---
 
-## 12. Découvrir et accueil
+## 14. Découvrir et accueil
 
-**Accueil**
-- « Cette semaine à Casablanca » devient un **agenda par semaine** (Cette semaine / Semaine prochaine / Dans 2 semaines).
-- Chaque ligne : icône de l'univers, date en gras, format, heure, et **35 DH à droite**. Pas de photo ni de quartier.
-
-**Découvrir, les filtres**
-
-| Filtre | Décision |
-|---|---|
-| Univers (pastilles) | Garder ; « Dîners » devient « Tables » |
-| Format (Café, Brunch, Déjeuner, Dîner) | **Ajouter**, visible quand on choisit Tables |
-| Quand ? / Jour | Garder |
-| **Moment de la journée** (matin, midi, soir) | **Ajouter** : utile avec café, brunch, déjeuner et dîner |
-| Gamme du restaurant | **Garder**, visible pour Tables |
-| Seul·e / À plusieurs | Garder |
-| Accessible aux débutants | Garder |
-| Places disponibles | Garder |
-| Réservé aux femmes | Garder |
-| ~~Prix par place~~ | **Retirer** : c'est 35 DH partout |
-| ~~Quartier~~ | **Retirer** : les lieux sont secrets |
-| Tri | Garder Recommandées, Date, Mieux notées, Nouveautés. **Retirer** Prix croissant et décroissant |
-
-- La recherche ne doit plus indexer le quartier (`catalog.ts:116`).
-- Retirer « Maarif » de l'exemple de recherche.
+- **Accueil** : agenda par semaine (Cette semaine / Semaine prochaine / Dans 2 semaines). Chaque ligne : icône, date en gras, format (et gamme), heure, « 35 DH » à droite.
+- **Filtres** :
+  - à garder : univers, format, gamme du restaurant, jour, seul·e ou à plusieurs, débutants, places disponibles, réservé aux femmes ;
+  - à ajouter : moment de la journée ;
+  - à retirer : prix par place, quartier, tri par prix.
+- La recherche n'indexe plus le quartier des lieux secrets (fait à l'étape A).
 
 ---
 
-## 13. Tout ce qui change sur le site, page par page
+## 15. Tout ce qui change sur le site, page par page
 
-### 13.1 Corrections urgentes (fuites)
-| Où | Problème |
-|---|---|
-| Fiche (`experiences/[slug]/page.tsx:270`) | Nom et adresse du lieu affichés même quand le lieu est secret |
-| Fiche (`page.tsx:51` et `:205`) | Quartier dans le **titre de la page (référencement)** et dans les infos clés |
-| Cartes et lignes (`experience-card.tsx:90`, `experience-row.tsx:62-66`, `compact-row.tsx`) | Quartier affiché ; pastilles « Resto … » et « Lieu surprise » |
-| Recherche (`catalog.ts:116`) | Quartier indexé : on retrouve une expérience secrète en tapant son quartier |
-| Base (`experiences/{id}.venue`) | Nom du lieu secret lisible publiquement |
-| Billet (`booking.ts:182`) | QR code donné dès qu'il y a une part sur place, même en check-in seul |
-| Questionnaire | Rempli après le paiement, et facultatif |
-
-### 13.2 Pages publiques
+### 15.1 Pages publiques
 | Page | À revoir |
 |---|---|
-| **Accueil** | « Comment ça marche » (« place confirmée dès le paiement » devient « 35 DH ou ton pass, le reste sur place ») ; « Travaillons ensemble » passe de **3 à 2 portes** (retirer « Membres de confiance ») ; texte organisateurs (« paiement en ligne pris en charge » devient « vous encaissez sur place ») ; FAQ de l'accueil (« notre équipe valide chaque composition », « que comprend le prix ») ; agenda ; univers renommé |
-| **Comment ça marche** | Réécrire avec le nouveau parcours : réserver, lieu révélé 5 h avant, check-in, table |
-| **Découvrir** | Filtres (§ 12), cartes (prix unique, sans quartier) |
-| **Fiche expérience** | Encadré « Ce que tu paies », lieu, carrousel « Comment on compose les tables », accès abonnés |
-| **Réserver** | Nouvel écran (§ 8), étape « À propos de toi » avant le paiement, carnet et pass |
-| **Abonnement** | Carnet et Pass (§ 5) ; retirer prix membre et –X % |
-| **Devenir partenaire** | Retirer « Le paiement, c'est nous… remboursements » ; deux portes (§ 11) |
-| **Devenir organisateur** | Encaissement sur place, frais payés par le participant, plus de commission ni de reversements |
-| **Page organisateur publique** | Inchangée sur le fond |
-| **FAQ** | Prix, annulation (remboursement des frais), composition automatique, lieu secret, pass |
-| **À propos, Presse** | « Dîners et gastronomie » devient « Tables » ; modèle économique |
-| **Blog** | « Dîners & gastronomie » dans « wenzy-guide-complet » et « toutes-les-activites » ; **supprimer ou réécrire « proposer-votre-propre-sortie »** (membres de confiance) ; vérifier « comment-nous-composons-les-tables », « reserver-sa-premiere-experience », « le-questionnaire-avant-votre-experience » (le questionnaire passe avant le paiement), « diner-avec-des-inconnus » |
+| **Accueil** | « Comment ça marche » (35 DH ou pass, le reste sur place) ; « Travaillons ensemble » passe de 3 à 2 portes (sans membres de confiance) ; texte organisateurs (encaissement sur place) ; FAQ ; agenda ; univers « Tables » |
+| **Comment ça marche** | Nouveau parcours : réserver, lieu révélé 5 h avant, check-in, table |
+| **Découvrir** | Filtres (§ 14), cartes (prix unique, sans quartier pour les lieux secrets) |
+| **Fiche** | « Ce que vous payez », lieu, carrousel « Comment on compose les tables », accès abonnés |
+| **Réserver** | Nouvel écran (§ 8), carnet et pass |
+| **Abonnement** | Carnet et Pass |
+| **Devenir partenaire** | Sans « Le paiement, c'est nous » ; deux portes : accueillir nos tables, publier vos activités |
+| **Devenir organisateur** | Encaissement sur place, frais payés par le participant |
+| **FAQ** | Prix, annulation selon conditions, composition automatique, lieu secret, pass |
+| **À propos, Presse** | « Tables » ; modèle économique |
+| **Blog** | « Dîners & gastronomie » devient « Tables » ; supprimer ou réécrire « proposer-votre-propre-sortie » ; relire « comment-nous-composons-les-tables », « reserver-sa-premiere-experience », « diner-avec-des-inconnus » |
 
-### 13.3 Espace membre
+### 15.2 Espace membre
 | Page | À revoir |
 |---|---|
-| **Proposer une sortie** (`espace/proposer`) | **Supprimer** |
-| **Réservation** | Lieu révélé à l'heure prévue, sans billet si check-in seul, table visible après le check-in, choix « autre date / remboursement », questionnaire déplacé dans le tunnel |
-| **Factures** | Montant des frais Wenzy seulement, mention « à régler sur place » |
-| **Compte / profil** | Pass ou carnet : crédits restants, date de fin, avertissements |
+| Proposer une sortie | **Supprimer** |
+| Réservation | Lieu révélé à l'heure prévue, table après le check-in, choix « autre date / remboursement », déplacer sa réservation (si validé) |
+| Factures | Frais Wenzy seulement, mention « à régler sur place » |
+| Compte | Pass ou carnet : crédits restants, date de fin, avertissements |
 
-### 13.4 Espace organisateur (`/pro`)
-Formulaire court, modes de paiement retirés, Finances remplacée par Statistiques, pointage (Billets).
+### 15.3 Espace organisateur et back-office
+- Espace organisateur : formulaire court, modes de paiement retirés, Statistiques, pointage.
+- Back-office : menu (§ 11), modèles, formulaire (§ 7), page d'une date (lieux, tables, check-ins), abonnements.
 
-### 13.5 Back-office
-Menu (§ 9) ; formulaire (§ 7) ; page d'une date (lieux, tables, check-ins) ; Abonnement (offres) ; retrait de Propositions, Commissions, Reversements, Encaissements.
-
-### 13.6 Centre d'aide (FR / EN / AR)
+### 15.4 Centre d'aide (FR / EN / AR)
 | Article | Action |
 |---|---|
 | Comment fonctionne Wenzy ? | Réécrire |
 | Réserver une place · Payer ma réservation | 35 DH ou pass, le reste sur place |
-| Annuler une réservation et être remboursé | Remboursement des frais Wenzy, annulation libre jusqu'à la fermeture |
-| Régime alimentaire, allergies et langues | Demandé avant le paiement |
-| Comment fonctionne l'abonnement ? · Renouveler | Carnet et Pass |
-| Devenir lieu ou organisateur partenaire · Nos critères | Deux portes |
-| **Comment êtes-vous rémunéré ?** | Lieu : par ses clients, sur place. Organisateur : sur place. Plus de reversements |
+| Annuler une réservation | Frais remboursés selon les conditions |
+| Abonnement · Renouveler | Carnet et Pass |
+| Devenir lieu ou organisateur · Critères · Comment êtes-vous rémunéré ? | Deux portes, encaissement sur place, plus de reversements |
 | Espace organisateur | Encaissement sur place, pointage |
 | Préparer l'accueil d'un groupe | Message automatique 1 h avant |
 | Annulations et changements de date | Lieu par date, plusieurs lieux possibles |
 | Combien vais-je payer pour un dîner ? | Devient « Combien vais-je payer ? » |
-| **Nouveaux** | « Le lieu secret : quand est-il révélé ? » · « Le check-in et ma table » · « Pass et carnet » · « Absences et suspension du pass » · « Pas assez de participants : autre date ou remboursement » |
+| **Nouveaux** | Le lieu secret · Le check-in et ma table · Pass et carnet · Absences · Pas assez de participants · Les gammes des Tables |
 
-### 13.7 Documents juridiques (FR / EN / AR) : à faire relire
+### 15.5 Documents juridiques (FR / EN / AR), à faire relire
 | Document | À revoir |
 |---|---|
-| **CGV** | Art. 2 Prix : seuls les frais Wenzy sont payés en ligne, le reste sur place (fixe ou consommation), plus de prix membre. Art. 3 : questionnaire avant paiement et obligatoire ; billet seulement avec hôtesse. Art. 4 : remboursement des frais, annulation jusqu'à la fermeture. Art. 5 : minimum non atteint, choix autre date ou remboursement. **Art. 6 : Carnet et Pass**, nouvelle règle de rétractation (on déduit les frais déjà utilisés). Art. 7 : absences et suspension du pass. Art. 8 : facture des frais seulement |
-| **CGU** | Art. 3 (ce que fait Wenzy, ce que fait le lieu), art. 7 (composition automatique, lieu révélé 5 h avant, table au check-in), art. 9 (absences), art. 11 (retirer les propositions de sorties) |
-| **Contrat organisateur** | Art. 4 : seulement l'encaissement sur place. **Art. 5 Commission et art. 6 Reversements : supprimés** (remplacés par les frais payés par le participant). Art. 7 : remboursements limités aux frais Wenzy. Art. 12 : responsabilité (elle n'est plus « limitée aux commissions ») |
-| **Conditions de vente des activités des organisateurs** | Art. 1 : Wenzy n'encaisse plus au nom de l'organisateur (plus de mandat d'encaissement). Art. 2 : prix. Art. 3 : pointage par l'organisateur |
-| **Confidentialité** | Données transmises au lieu 1 h avant (prénoms, allergies), check-in, questionnaire avant paiement, retrait des données « membre de confiance » |
-| **Règles de la communauté** | « Les lieux partenaires », absences |
-| **Sécurité** | Lieu révélé tard, retrouver sa table au check-in |
+| **CGV** | Art. 2 prix (35 DH en ligne, reste sur place, plus de prix membre) · art. 3 (questionnaire avant paiement : fait) · art. 4 (frais remboursés selon conditions) · art. 5 (minimum non atteint : choix) · art. 6 (Carnet et Pass, rétractation) · art. 7 (absences, suspension) · art. 8 (facture des frais) |
+| **CGU** | Art. 3 (rôle de Wenzy et du lieu), art. 7 (composition automatique, révélation, table au check-in), art. 9 (absences), art. 11 (sans propositions de sorties) |
+| **Contrat organisateur** | Art. 4 (encaissement sur place), art. 5 et 6 supprimés (commission, reversements), art. 7 (frais Wenzy seulement), art. 12 (responsabilité) |
+| **Conditions de vente des organisateurs** | Plus de mandat d'encaissement ; prix ; pointage par l'organisateur |
+| **Confidentialité** | Données transmises au lieu 1 h avant, check-in, résumé de table (si validé), sans données « membre de confiance » |
+| **Règles de la communauté, Sécurité** | Lieux partenaires, absences, lieu révélé tard, retrouver sa table |
 
-### 13.8 E-mails et notifications
+### 15.6 E-mails et notifications
 | Message | À revoir |
 |---|---|
-| Confirmation de réservation | Sans billet en check-in seul ; « le lieu arrive à … » |
+| Confirmation | Sans billet en check-in seul (fait) ; « le lieu arrive à … » |
 | Abonnement | Carnet et Pass |
-| « Votre table est prête » | Devient « **Ton lieu est révélé** » (5 h avant). La table s'affiche au check-in |
-| Rappels (veille, 3 h avant) | Veille + lieu révélé + « check-in à partir de 19h30 » |
+| « Votre table est prête » | Devient « Votre lieu est révélé » (5 h avant) ; la table s'affiche au check-in |
+| Rappels | Veille, lieu révélé, « check-in à partir de 19h30 » |
 | Changement de lieu ou de date | Lieu par date, plusieurs lieux |
-| Messages aux organisateurs | Retirer reversements et commission |
-| **Nouveaux** | Minimum non atteint (choix) · Absence, puis pass suspendu · Message au lieu 1 h avant · Alertes équipe « lieu à renseigner », « table de 7 à valider » |
-
-### 13.9 Factures
-Elles portent seulement sur les frais Wenzy. La mention « à régler sur place, non encaissé par Wenzy » reste. Les anciennes factures ne changent pas.
+| Organisateurs | Sans reversements ni commission |
+| **Nouveaux** | Minimum non atteint (choix) · absence, puis pass suspendu · message au lieu 1 h avant · alertes équipe (lieu à renseigner, table de 7) |
 
 ---
 
-## 14. Données et code (repères pour le développement)
+## 16. Données et code (repères)
 
-- **Réglage global « Frais Wenzy »** : 3 000 + 500 centimes. Plus de prix par expérience.
-- **Modèles** : collection `eventTemplates/{id}` (mêmes champs qu'un rendez-vous, sans date ni lieu ; image ; actif ou masqué ; ordre). Les modèles validés de docs/23 sont créés au déploiement ; l'équipe les modifie ensuite dans l'appli.
-- **Expérience** : `onSite { type: none | fixed | consumption, amount, budgetMin, budgetMax, description }`, `tables { min, max, maxTables? }`, `access { mode: open | early | members, earlyDays }`, `venueMode: shown | secret`. On retire `memberPrice`, `pricing.model`, `economicsModel`, `costPerSeat`, `commission*`, `paymentModel`, `depositPercent`, `proposalId`, et `groupTarget`.
-- **Date** : `closesAt` (12 h avant, réglable), `revealAt` (5 h avant), `earlyAccessUntil`, et dans `sessions/{id}/private/venues` la liste des lieux (lieu partenaire ou saisie libre, nom, adresse, coordonnées, nombre de tables).
-- **Automatisations** (une tâche planifiée toutes les 5 à 15 min, sur le modèle de `sendReminders`) : fermeture et minimum (12 h avant), relances « lieu à renseigner », répartition et révélation (5 h avant), composition des tables et message au lieu (1 h avant), absences (après la fin).
-- **Check-in** : la table et les présents se lisent après son propre check-in.
+- **Réglage global « Prix Wenzy »** : 35 DH par place, tout compris. Il remplace le prix saisi par événement et les frais de service.
+- **Modèles** : collection `eventTemplates/{id}` : univers, format, gamme, mêmes champs qu'un rendez-vous sans date ni lieu, image, actif ou masqué, ordre. Les modèles validés (docs/23) sont créés au déploiement ; l'équipe les modifie ensuite dans l'appli.
+- **Rendez-vous** : `onSite { type: none | fixed | consumption, amount, budgetMin, budgetMax }`, `tier` (casual | premium | exclusive), `tables { min, max, maxTables? }`, `access { mode: open | early | members, earlyDays, womenOnly }`, `venueMode: shown | secret`, `alcohol`, `maxSeatsPerBooking: 1 | 2`, `templateId`. À retirer : `memberPrice`, `economicsModel`, `costPerSeat`, `commission*`, `paymentModel`, `depositPercent`, `proposalId`, `groupTarget`.
+- **Date** : `closesAt` (12 h avant), `revealAt` (5 h avant), `earlyAccessUntil` ; dans `sessions/{id}/private/venues` la liste des lieux (partenaire ou saisie libre, nom, adresse, coordonnées, tables). Lieu habituel sur le rendez-vous, dans sa partie privée.
+- **Automatisations** (tâche planifiée, sur le modèle de `sendReminders`) : fermeture et minimum, relances « lieu à renseigner », répartition et révélation, composition des tables et message au lieu, absences.
 - **Abonnement** : produits `carnet` (crédits) et `pass` (7, 30, 90, 180, 365 jours), limite de réservations, avertissements et suspension.
-- **À supprimer** : propositions et `trustedHost` (fonctions, pages, règles de la base), reversements, commissions, encaissements, `adminSetPartnerPayment`, modes A et B des organisateurs.
-- **Anciennes réservations** : leur prix figé reste lisible ; aucune facture n'est réécrite.
-- **Règles de la base** : la partie privée des lieux n'est lisible que par l'équipe et, après la révélation, par chaque participant via sa réservation.
-- **Tests** : mettre à jour ou retirer les tests de bout en bout liés aux fonctions supprimées (tarification en deux parts, reversements, propositions).
+- **À supprimer** : propositions et `trustedHost`, reversements, commissions, encaissements, `adminSetPartnerPayment`, modes A et B des organisateurs.
+- **Anciennes réservations et factures** : inchangées.
 
 ---
 
-## 15. Le plan en lots
+## 17. Les étapes, dans l'ordre
 
-Chaque lot met à jour ses propres écrans, e-mails et articles d'aide. **Les documents juridiques (lot 6) doivent être en ligne en même temps que le nouveau modèle de prix.**
+Chaque étape se termine par ta validation avant de passer à la suivante.
 
-| Lot | Contenu | Dépend de |
+| Étape | Contenu | Validation |
 |---|---|---|
-| **0, corrections** | Fuites du lieu et du quartier (fiche, cartes, référencement, recherche, base) ; QR code seulement avec hôtesse ; questionnaire avant le paiement et obligatoire | — |
-| **1, prix unique** | Réglage « Frais Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; affichage « 35 DH » partout ; factures des frais seulement ; univers « Tables » et ses formats | Nom de l'univers |
-| **2, créer et gérer** | **Modèles** (les 13 du lancement, puis les autres ; Paramètres → Modèles ; « Enregistrer comme modèle ») ; rendez-vous récurrents et dates ; formulaire par type ; lieu par date (secret par défaut, plusieurs lieux) ; fiches de lieux partenaires ; back-office « Aujourd'hui » | 1 |
-| **3, parcours Tables** | Écran de réservation façon billet ; fermeture 12 h avant et minimum (choix autre date ou remboursement) ; révélation 5 h avant ; tables 1 h avant (table de 7 à valider) ; message au lieu ; check-in qui dévoile la table et les présents | 2 |
-| **4, Carnet et Pass** | Offres, crédits, accès « abonnés d'abord / uniquement », garde-fous et absences, migration des abonnés actuels | 1 et 3 (absences) |
-| **5, organisateurs** | Formulaire court, encaissement sur place, pointage, Statistiques ; suppression des reversements, des commissions, des propositions et des membres de confiance | 1 |
-| **6, textes** | Accueil, Comment ça marche, FAQ, aide, blog, presse en FR / EN / AR ; CGU, CGV, contrat organisateur, conditions de vente des organisateurs, confidentialité, règles, sécurité ; relecture juridique | 1 à 5 |
-| **7, Découvrir et agenda** | Agenda à l'accueil ; filtres (§ 12) ; format Café | 1 |
-| **8, vitrine complète** | **Toutes les activités du site recréées de A à Z à partir des modèles validés**, avec leurs images, pour voir le rendu final (démonstration et site d'essai) | 1 à 7 |
+| **A — Corrections** ✅ | Lieu secret protégé (écran et base), billet seulement avec hôtesse, questionnaire avant le paiement, phrase « Le lieu et l'adresse vous sont révélés 5 h avant », infos pratiques sans répétition | Faite |
+| **B — Questionnaires** | Un par un : Tables, Running, Padel, Jeu en équipe, Atelier, Niveau, **Langues** (nouveau) ; d'autres si un modèle en a besoin | Chaque questionnaire |
+| **C — Photos** | Une par une : 12 reçues, à attribuer et valider ; celles qui manquent (docs/23 § 7) | Chaque photo |
+| **D — Modèles** | Par petits lots : D1 Café et Dîner (avec les 3 gammes) → D2 Brunch, Déjeuner, Couscous → D3 Running, Padel, Yoga → D4 Escape game, Soirée jeux, Quiz → D5 Céramique, Afterwork, Visite guidée, Échange de langues → puis les modèles de phase 2 | Chaque lot (les premiers en détail, ensuite plus vite) |
+| **E — Prix unique et Tables** | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; univers « Tables », formats et gammes | Démonstration à l'écran |
+| **F — Modèles dans l'appli** | Choix univers → format → gamme ; formulaire pré-rempli aux champs strictement nécessaires (§ 7) ; places 1 ou 2 ; accès ; réservé aux femmes ; alcool ; conditions d'annulation ; *Paramètres → Modèles* ; « Enregistrer comme modèle » | Démonstration |
+| **G — Rendez-vous et lieux** | Rendez-vous récurrents, lieu par date (plus tard possible), plusieurs lieux, lieu habituel, fiches des lieux partenaires, « Aujourd'hui » | Démonstration |
+| **H — Parcours Tables** | Écran de réservation, fermeture 12 h avant, minimum (choix), révélation 5 h avant, tables 1 h avant (table de 7 à valider), message au lieu, check-in, liste d'attente avec questionnaire | Démonstration |
+| **I — Carnet et Pass** | Offres, crédits, accès abonnés, garde-fous, migration des abonnés | Démonstration |
+| **J — Organisateurs et rôles** | Encaissement sur place, formulaire court, pointage, Statistiques ; suppression des reversements, commissions, propositions et membres de confiance | Démonstration |
+| **K — Découvrir et agenda** | Agenda de l'accueil, filtres, moment de la journée | Démonstration |
+| **L — Textes** | Tous les textes FR / EN / AR (§ 15), juridique compris, à faire relire | Relecture |
+| **M — Vitrine** | **Suppression de tous les événements existants** (avec ta confirmation), puis **création des nouveaux** à partir des modèles validés, avec leurs images | Rendu final |
 
-**Mise en ligne en deux vagues** : le lot 0 tout de suite ; les lots 1 à 7 ensemble, une fois les textes juridiques validés.
-
----
-
-## 16. Points encore ouverts
-
-- **Modèles d'événements** : liste, style des titres, contenus et images à valider (docs/23 § 8).
+**Mise en ligne** : A est prête ; E à L sortent ensemble, une fois les textes juridiques validés ; M ensuite.
 
 ---
 
-## 17. Lot 0 livré (22 novembre)
+## 18. Questions ouvertes
 
+1. **« Une des 6 catégories »** : le site en compte 5 (Tables, Bouger, Jouer, Créer, Découvrir). La 6ᵉ serait-elle **« Soirées »** (afterwork, rooftop, karaoké, concert, stand-up), séparée de « Découvrir » (visites, musée, ciné-club, échange de langues, plage, escapade) ? C'est ma recommandation.
+2. **Les budgets des gammes par format** (§ 6).
+3. **Les trois idées venues de Socials et Timeleft** (§ 2) : résumé de table sans noms, déplacer sa réservation, échanger après la rencontre.
+4. **Photos** : laquelle des deux pour le Yoga (en plein air ou en studio) ? L'autre peut servir au Pilates.
+
+---
+
+## 19. Journal
+
+### Étape A livrée (22 novembre)
 | Correction | Ce qui change |
 |---|---|
-| **Lieu secret hors du public** | Nom, adresse, coordonnées, quartier et nom du partenaire ne sont plus écrits dans la fiche publique (`experiences/{id}`) ni dans le résumé des dates : ils sont rangés dans `experiences/{id}/private/venue` (équipe seulement, règles déjà en place). Le back-office et l'espace organisateur les relisent pour le formulaire ; la révélation des groupes les lit pour les communiquer aux participants. Filet de sécurité côté site : `publicExperience()` vide ces champs pour toute expérience à lieu secret (anciens documents, démonstration). |
-| **Plus de quartier pour un lieu secret** | Fiche (infos clés et **titre de la page pour Google**), cartes, lignes, « Cette semaine », suggestions « Pour vous », page de réservation, espace membre (réservations à venir), rappels par e-mail (la ville seulement). La recherche ne retrouve plus une expérience secrète par son quartier. |
-| **Fiche** | « Le lieu » n'affiche plus ni nom, ni adresse, ni carte quand le lieu est secret ; texte neutre : « Le lieu est gardé secret : il vous est communiqué avant l'expérience, directement dans votre réservation. » |
-| **Billet à QR code** | Seulement avec une hôtesse (option de l'expérience) ou pour une activité d'organisateur. Une part à régler sur place ne donne plus de billet. E-mail de confirmation : « Voir ma réservation » et rappel du check-in au lieu de « Voir mon billet ». |
-| **Questionnaire avant le paiement** | Dans le tunnel de réservation et dans la demande de participation, juste avant de payer ; **obligatoire** (sauf questions facultatives), vérifié par le serveur (`questionnaire_required`). Réponses modifiables ensuite depuis la réservation. Une place proposée par la liste d'attente garde le questionnaire après coup (cas rare, à revoir au lot 3). CGV art. 3, CGU art. 7, article d'aide et article de blog mis à jour (FR / EN / AR). |
+| **Lieu secret hors du public** | Nom, adresse, coordonnées, quartier et nom du partenaire rangés dans `experiences/{id}/private/venue` (équipe seulement) et retirés des documents publics. Le back-office et l'espace organisateur les relisent ; la révélation des groupes les communique aux participants. Filet de sécurité côté site : `publicExperience()`. |
+| **Plus de quartier pour un lieu secret** | Fiche (infos clés et titre de page Google), cartes, lignes, « Cette semaine », suggestions, page de réservation, espace membre, rappels par e-mail. La recherche ne retrouve plus une expérience secrète par son quartier. |
+| **Phrase du lieu secret** | « 🔒 Le lieu et l'adresse vous sont révélés 5 h avant. » (FR / EN / AR) ; sur la réservation : « Révélés 5 h avant le début ». Infos pratiques de démonstration sans répétition. |
+| **Billet à QR code** | Seulement avec une hôtesse ou pour une activité d'organisateur ; e-mail de confirmation adapté. |
+| **Questionnaire avant le paiement** | Dans le tunnel et la demande de participation, obligatoire, vérifié par le serveur ; CGV, CGU, aide et blog à jour (FR / EN / AR). Liste d'attente : questionnaire après coup, à reprendre à l'étape H. |
 
-**Action manuelle après mise en ligne** : lancer une fois `scripts/migrate-secret-venues.ts` (d'abord sans `--confirm` pour voir la liste) pour retirer le lieu des expériences secrètes déjà enregistrées. Sinon, chaque expérience est corrigée à son prochain enregistrement dans le back-office.
+**Les lieux secrets déjà enregistrés** : il suffit d'ouvrir chaque expérience à lieu secret dans le back-office et de cliquer sur « Enregistrer ». Le script `scripts/migrate-secret-venues.ts` fait la même chose pour toutes d'un coup, mais demande un accès technique. À l'étape M, tous les événements seront de toute façon supprimés et recréés.
 
-**Tests** : unitaires 152 (dont 6 nouveaux : lieu secret, billet, questionnaire) ; émulateurs 171 réussis. Les 9 échecs restants existent à l'identique sans ces changements : déclencheurs Authentification et Stockage non émulés dans cet environnement (inscription, e-mails de factures et de virement).
+**Tests** : unitaires 152 ; émulateurs 171 réussis. Les 9 échecs restants existent à l'identique sans ces changements : déclencheurs Authentification et Stockage non émulés dans cet environnement.

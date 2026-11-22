@@ -5,6 +5,9 @@
  * retirées du document public. Le lieu est communiqué à chaque participant sur sa réservation, à la révélation.
  */
 
+/** Le lieu secret et son adresse sont révélés ce nombre d'heures avant le début (docs/22). */
+export const VENUE_REVEAL_HOURS = 5;
+
 type VenueLike = { venue?: { revealPolicy?: string | null } | null };
 
 /** Le lieu reste-t-il secret jusqu'à la révélation ? */

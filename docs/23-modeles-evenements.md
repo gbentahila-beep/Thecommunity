@@ -1,6 +1,17 @@
-# 23 — Modèles d'événements (à valider)
+# 23 — Modèles d'événements
 
-Liste de tous les modèles proposés à l'équipe quand elle crée un événement. **Rien n'est codé** : on valide d'abord la liste et le contenu, puis on les crée (lot 2, voir docs/22 § 15).
+Liste de tous les modèles proposés à l'équipe quand elle crée un événement. **Rien n'est codé** : chaque modèle est validé avant d'être créé dans le site (docs/22 § 17, étapes B, C, D puis F).
+
+## 0. Décisions du 22 novembre
+
+- **Titres simples** (« Brunch »), titre long automatique pour Google (option A du § 2).
+- **Liste validée.** **Toutes les Tables sont au lancement**, soit **16 modèles au lancement**.
+- **Chaque format de Tables existe en 3 gammes** (Casual, Premium, Exclusive), qui fixent le budget sur place (docs/22 § 6). La « Grande table » n'est donc plus un modèle à part : c'est le **Dîner en gamme Exclusive**.
+- **Choix du modèle** : univers → format → gamme (Tables seulement).
+- **Contenus validés dans le principe.** On valide les premiers modèles en détail, puis les suivants plus vite ; tout reste modifiable dans le back-office.
+- **Réglages ajoutés à chaque modèle** : places par réservation (1 par défaut, 2 possible), accès (ouvert à tous par défaut), case « réservé aux femmes », case « alcool servi », conditions d'annulation (les frais sont remboursés selon elles).
+- **Pas de répétition** : la révélation du lieu n'apparaît jamais dans les infos pratiques ni dans la description.
+- **Images** : tes photos, reçues au fur et à mesure (§ 7).
 
 ---
 
@@ -27,7 +38,7 @@ Liste de tous les modèles proposés à l'équipe quand elle crée un événemen
 | **B. Titre avec le concept** | « Brunch entre inconnus » | « Brunch entre inconnus » | Clair tout de suite, bon pour Google | « entre inconnus » répété sur 40 événements, liste chargée |
 | **C. Titre + moment** | « Brunch du samedi » | « Brunch du samedi » | Crée un rendez-vous fixe | Faux dès qu'on change de jour |
 
-**Recommandation : A, avec un titre long automatique pour Google et le partage.** Partout dans l'appli, on écrit « Brunch ». Le titre de la page (Google, WhatsApp, Instagram) est généré : « Brunch entre inconnus à Casablanca · Wenzy ». L'accroche porte le concept. Dans les fiches ci-dessous, chaque modèle a donc un **titre** (court) et un **titre Google** (long).
+**Validé : A, avec un titre long automatique pour Google et le partage.** Partout dans l'appli, on écrit « Brunch ». Le titre de la page (Google, WhatsApp, Instagram) est généré : « Brunch entre inconnus à Casablanca · Wenzy ». L'accroche porte le concept. Dans les fiches ci-dessous, chaque modèle a donc un **titre** (court) et un **titre Google** (long).
 
 ---
 
@@ -38,12 +49,12 @@ Ils sont pré-remplis partout, pour ne pas les répéter dans chaque fiche :
 | Réglage | Valeur par défaut |
 |---|---|
 | Frais Wenzy | 35 DH (ou pass / carnet) |
-| Annulation | Libre jusqu'à la fermeture des réservations |
+| Annulation | Toujours possible ; frais remboursés selon les conditions d'annulation du modèle |
 | Public | Mixte, 18 ans et plus |
 | Langues | Français et darija (modifiable) |
 | Arrivée | Check-in dans l'appli, sans hôtesse |
-| Places par réservation | 2 (« Moi seul·e / Moi + 1 ») |
-| Accès | Ouvert à tous |
+| Places par réservation | 1 (l'admin peut passer à 2 : « Moi seul·e / Moi + 1 », 2 × 35 DH) |
+| Accès | Ouvert à tous (modifiable : abonnés d'abord X jours, abonnés uniquement) · réservé aux femmes : non · alcool : selon le modèle |
 | Inclus, toujours en tête | « Votre place dans un groupe composé pour vous » · « La réservation du lieu et l'organisation » |
 | Pas inclus, toujours | « Ce qui se règle sur place (voir « Ce que vous payez ») » |
 
@@ -59,21 +70,21 @@ Ils sont pré-remplis partout, pour ne pas les répéter dans chaque fiche :
 
 ---
 
-## 4. La liste complète (46 modèles)
+## 4. La liste complète (45 modèles)
 
-Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou saisonnier. Image : ✓ existe déjà · ✗ à créer.
+Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou saisonnier. Image : 📷 reçue = ta photo · ✓ = une image existe déjà sur le site (à remplacer par une photo plus tard) · ✗ = à envoyer.
 
 | # | Modèle | Univers › format | Groupe | Sur place (repère) | Prio | Image |
 |---|---|---|---|---|---|---|
-| T1 | Café | Tables › Café | Tables 4–6 | Conso ≈ 30–60 DH | **L** | ✓ |
-| T2 | Brunch | Tables › Brunch | Tables 4–6 | Menu fixe ≈ 120–180 DH | **L** | ✗ |
-| T3 | Déjeuner | Tables › Déjeuner | Tables 4–6 | Conso ≈ 80–150 DH | 2 | ✗ |
-| T4 | Dîner | Tables › Dîner | Tables 4–6 | Conso ≈ 150–250 DH | **L** | ✓ |
-| T5 | Grande table | Tables › Dîner (Premium) | Tables 4–6 | Conso ≈ 400–600 DH | 2 | ✗ |
-| T6 | Couscous du vendredi | Tables › Déjeuner | Tables 4–6 | Menu fixe ≈ 80–120 DH | 2 | ✓ |
-| S1 | Running | Bouger | Groupes par allure | — | **L** | ✓ |
-| S2 | Padel | Bouger | 4 par terrain, par niveau | ≈ 100–150 DH | **L** | ✓ |
-| S3 | Yoga | Bouger | Cours collectif | ≈ 100–150 DH | **L** | ✓ |
+| T1 | Café | Tables › Café · 3 gammes | Tables 4–6 | Selon la gamme | **L** | 📷 reçue |
+| T2 | Brunch | Tables › Brunch · 3 gammes | Tables 4–6 | Selon la gamme ou menu fixe | **L** | 📷 reçue |
+| T3 | Déjeuner | Tables › Déjeuner · 3 gammes | Tables 4–6 | Selon la gamme | **L** | ✗ à envoyer |
+| T4 | Dîner | Tables › Dîner · 3 gammes | Tables 4–6 | Selon la gamme | **L** | 📷 reçue |
+| ~~T5~~ | ~~Grande table~~ | Devient le Dîner en gamme Exclusive | — | — | — | — |
+| T6 | Couscous du vendredi | Tables › Couscous · 3 gammes | Tables 4–6 | Selon la gamme ou menu fixe | **L** | ✗ à envoyer |
+| S1 | Running | Bouger | Groupes par allure | — | **L** | 📷 reçue |
+| S2 | Padel | Bouger | 4 par terrain, par niveau | ≈ 100–150 DH | **L** | 📷 reçue |
+| S3 | Yoga | Bouger | Cours collectif | ≈ 100–150 DH | **L** | 📷 reçue (2, à choisir) |
 | S4 | Pilates | Bouger | Cours collectif | ≈ 150–200 DH | 2 | ✓ |
 | S5 | Randonnée | Bouger | Groupes | — | 2 | ✓ |
 | S6 | Balade à vélo | Bouger | Groupe | Location ≈ 50–80 DH | + | ✗ |
@@ -81,16 +92,16 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 | S8 | Surf | Bouger | Cours débutants | ≈ 200–300 DH | + | ✗ |
 | S9 | Danse (salsa, bachata) | Bouger | Cours collectif | ≈ 80–120 DH | 2 | ✗ |
 | S10 | Hammam & spa (femmes) | Bouger | Petit groupe | ≈ 200–350 DH | + | ✗ |
-| J1 | Escape game | Jouer | Équipes 4–6 | ≈ 120–180 DH | **L** | ✓ |
+| J1 | Escape game | Jouer | Équipes 4–6 | ≈ 120–180 DH | **L** | 📷 reçue |
 | J2 | Paintball | Jouer | Équipes équilibrées | ≈ 200–250 DH | 2 | ✓ |
 | J3 | Laser game | Jouer | Équipes | ≈ 80–120 DH | + | ✗ |
 | J4 | Bowling | Jouer | Équipes 4–6 par piste | ≈ 60–100 DH | 2 | ✗ |
 | J5 | Karting | Jouer | Course en groupe | ≈ 200–300 DH | + | ✗ |
-| J6 | Soirée jeux de société | Jouer | Tables 4–6 | Conso ≈ 40–80 DH | **L** | ✓ |
-| J7 | Quiz & blind test | Jouer | Équipes 4–6 | Conso ≈ 60–120 DH | **L** | ✗ |
+| J6 | Soirée jeux de société | Jouer | Tables 4–6 | Conso ≈ 40–80 DH | **L** | 📷 reçue |
+| J7 | Quiz & blind test | Jouer | Équipes 4–6 | Conso ≈ 60–120 DH | **L** | 📷 reçue |
 | J8 | Karaoké | Jouer | Groupe | Conso ≈ 80–150 DH | 2 | ✓ |
 | J9 | Murder party | Jouer | Équipes d'enquêteurs | ≈ 150–200 DH | + | ✗ |
-| A1 | Céramique | Créer | Petit groupe | ≈ 250–350 DH | **L** | ✓ |
+| A1 | Céramique | Créer | Petit groupe | ≈ 250–350 DH | **L** | 📷 reçue |
 | A2 | Peinture sur zellige | Créer | Petit groupe | ≈ 200–300 DH | 2 | ✓ |
 | A3 | Cuisine marocaine | Créer | Petit groupe | ≈ 300–400 DH | 2 | ✗ |
 | A4 | Pâtisserie marocaine | Créer | Petit groupe | ≈ 250–350 DH | + | ✗ |
@@ -100,19 +111,19 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 | A8 | Café de spécialité | Créer | Petit groupe | ≈ 150–200 DH | 2 | ✓ |
 | A9 | Bougies parfumées | Créer | Petit groupe | ≈ 200–250 DH | + | ✗ |
 | A10 | Thé & pâtisseries | Créer | Tables 4–6 | ≈ 80–120 DH | 2 | ✓ |
-| D1 | Afterwork | Découvrir | Libre | Conso ≈ 60–150 DH | **L** | ✓ |
+| D1 | Afterwork | Découvrir | Libre | Conso ≈ 60–150 DH | **L** | 📷 reçue |
 | D2 | Rooftop au coucher du soleil | Découvrir | Libre | Conso ≈ 80–150 DH | 2 | ✓ |
-| D3 | Visite guidée | Découvrir | Groupe | Guide ≈ 100–150 DH | **L** | ✓ |
+| D3 | Visite guidée | Découvrir | Groupe | Guide ≈ 100–150 DH | **L** | ✗ à envoyer |
 | D4 | Balade street art | Découvrir | Groupe | Guide ≈ 80–120 DH | 2 | ✓ |
 | D5 | Musée & expo | Découvrir | Groupe | Entrée ≈ 30–80 DH | + | ✗ |
 | D6 | Ciné-club | Découvrir | Groupe puis tables | Billet ≈ 50–80 DH | 2 | ✗ |
 | D7 | Concert | Découvrir | Groupe | Billet ≈ 100–200 DH | 2 | ✓ |
 | D8 | Stand-up | Découvrir | Groupe | Billet ≈ 100–150 DH | + | ✗ |
-| D9 | Échange de langues | Découvrir | Tables par langue | Conso ≈ 30–60 DH | **L** | ✓ |
+| D9 | Échange de langues | Découvrir | Tables par langue | Conso ≈ 30–60 DH | **L** | 📷 reçue |
 | D10 | Journée plage | Découvrir | Groupe | Conso | + | ✗ |
 | D11 | Escapade d'une journée | Découvrir | Groupe | Transport ≈ 150–250 DH | + | ✗ |
 
-**Lancement : 13 modèles** (Café, Brunch, Dîner, Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée, Échange de langues).
+**Lancement : 16 modèles** : les 5 Tables (Café, Brunch, Déjeuner, Dîner, Couscous du vendredi, chacun en 3 gammes), Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée, Échange de langues.
 
 ---
 
@@ -156,7 +167,7 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 - **Inclus** : une table réservée dans un restaurant partenaire · **Pas inclus** : votre repas et vos boissons
 - **Questionnaire** : Tables · **Image** : `diner-inconnus.webp` ✓
 
-**T5 · Grande table** — Tables › Dîner, Premium ou Exclusive · 2
+**T5 · Grande table** — *fusionné : c'est désormais le Dîner en gamme Exclusive (fiche gardée pour ses textes)*
 - **Titre** : Grande table · **Google** : Dîner gastronomique entre inconnus à Casablanca
 - **Accroche** : Pour les grandes occasions : une belle adresse, gardée secrète jusqu'au jour J.
 - **Description** : Une adresse haut de gamme, choisie pour sa cuisine et son cadre, et une table de quatre à six convives curieux. Le restaurant est révélé 5 heures avant. Menu dégustation ou carte, réglé directement sur place.
@@ -440,15 +451,29 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 
 ## 7. Images
 
-- **23 modèles ont déjà une image** (✓ dans la liste). Elles mélangent photos (`/demo`) et illustrations (`/images/illustrations`).
-- **23 images sont à créer** (✗). Je recommande **un seul style pour tous les modèles**, celui des illustrations de la marque (`/images/illustrations`), pour que l'agenda et Découvrir soient homogènes.
-- Une fois la liste validée, je prépare pour chaque image une **consigne de création** (sujet, cadrage, couleurs de la marque). À faire produire par un graphiste ou un outil d'images.
+Tes photos, enregistrées dans le site (`apps/web/public/images/modeles/`), à valider une par une :
+
+| Modèle | Photo reçue | Fichier |
+|---|---|---|
+| Café | Trois mains qui trinquent avec des cafés | `cafe.webp` |
+| Brunch | Table de brunch vue du dessus | `brunch.webp` |
+| Dîner | Longue table dressée, sans personne | `diner.webp` |
+| Afterwork | Groupe attablé le soir | `afterwork.webp` |
+| Échange de langues | Cafés et carnets, un doigt qui pointe une page | `echange-langues.webp` |
+| Running | Coureurs de dos | `running.webp` |
+| Padel | Raquettes et balles sur un terrain bleu | `padel.webp` |
+| Yoga | **Deux photos** : en plein air, ou en studio aux murs colorés (à choisir ; l'autre peut aller au Pilates) | `yoga-exterieur.webp`, `yoga-studio.webp` |
+| Escape game | Néon « Escape rooms » | `escape-game.webp` |
+| Soirée jeux | Partie de cartes vue du dessus | `soiree-jeux.webp` |
+| Quiz | Néon « Game on » | `quiz.webp` |
+| Céramique | Mains sur un tour de potier | `ceramique.webp` |
+
+**À m'envoyer pour le lancement** : **Déjeuner**, **Couscous du vendredi**, **Visite guidée**. Les autres modèles (phase 2 et plus tard) viendront ensuite ; je te dirai lesquelles manquent à chaque étape.
+
+Les gammes Casual, Premium et Exclusive d'un même format partagent la même photo, sauf si tu veux une photo par gamme.
 
 ---
 
-## 8. À valider ensemble
+## 8. Prochaines validations
 
-1. **Le style des titres** (§ 2) : A « Brunch » (recommandé), B « Brunch entre inconnus », ou C « Brunch du samedi » ?
-2. **La liste** (§ 4) : modèles à retirer, à ajouter, priorités (les 13 du lancement).
-3. **Les contenus** (§ 5) : accroches, descriptions, inclus / pas inclus, jours et heures, repères de prix.
-4. **Le style des images** (§ 7).
+Dans l'ordre (docs/22 § 17) : **questionnaires un par un** (étape B), **photos une par une** (étape C), puis **modèles par petits lots** (étape D, en commençant par Café et Dîner avec leurs 3 gammes).
