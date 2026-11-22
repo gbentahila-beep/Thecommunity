@@ -157,7 +157,26 @@
     "weekEmpty": "Nothing in this category this week. See all upcoming dates.",
     "howMoreUniverses": "+ {count, plural, one {# more category} other {# more categories}}",
     "tileThisWeek": "{count} this week",
-    "tileSeeDates": "See dates"
+    "tileSeeDates": "See dates",
+    "appTitle": "All your outings in your pocket",
+    "appText": "Book a seat, meet your group, discover what's on this week.",
+    "appCta": "Sign up now",
+    "appScreenHome": "App home screen: your next experience and outings to book",
+    "appScreenBooking": "Dinner confirmation screen with the restaurant on a map",
+    "appScreenDiscover": "Discover screen: this week's calendar of outings",
+    "typewriterLabel": "With Wenzy, you can:",
+    "typewriter": [
+      "Find people for Sunday brunch",
+      "Have dinner with 5 strangers",
+      "Find people to run the Corniche with",
+      "Make new girlfriends at a workshop",
+      "Put together a padel team",
+      "Discover a secret restaurant",
+      "Play board games with strangers",
+      "Meet people when you move to Casablanca",
+      "Practise your English over coffee",
+      "Go hiking at the weekend"
+    ]
   },
   "card": {
     "people": "{count} people",

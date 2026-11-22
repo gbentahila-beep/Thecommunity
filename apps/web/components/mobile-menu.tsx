@@ -2,7 +2,7 @@
 
 import { ChevronRight, Menu, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { logout } from "@/lib/auth/client";
@@ -11,7 +11,8 @@ import { LanguageSwitch } from "./language-switch";
 import { Logo } from "./logo";
 import { ProfileCard } from "./profile-card";
 
-type Item = { href: string; label: string; dot?: string; dotStyle?: CSSProperties };
+/** `sub` : un univers, affiché en retrait sous « Toutes les expériences » (pas de pastille de couleur). */
+type Item = { href: string; label: string; sub?: boolean };
 type City = { id: string; name: string; active: boolean };
 
 /** Rubrique du menu : petit titre, puis une carte de lignes. */
@@ -156,8 +157,7 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
               <Group title={t("discover")}>
                 {discover.map((it, i) => (
                   <Row key={it.href} href={it.href} onClick={close} current={pathname === it.href}>
-                    {it.dot ? <span className={`size-2.5 shrink-0 rounded-full ${it.dot}`} style={it.dotStyle} aria-hidden /> : null}
-                    <span className={i === 0 ? "font-semibold text-brand-900" : ""}>{it.label}</span>
+                    <span className={it.sub ? "ps-4 text-[15px] text-ink/75" : i === 0 ? "font-semibold text-brand-900" : ""}>{it.label}</span>
                   </Row>
                 ))}
               </Group>

@@ -48,7 +48,7 @@ export async function ClosingCta({ signedIn = false }: { signedIn?: boolean }) {
   const t = await getTranslations("audiences");
   return (
     <section aria-labelledby="closing-title" className="py-16 text-center" data-testid="home-closing">
-      <h2 id="closing-title" className="mx-auto max-w-2xl font-display text-[2.1rem] leading-[1.08] font-medium text-balance text-brand-900 sm:text-[3rem]">
+      <h2 id="closing-title" className="mx-auto max-w-2xl font-display text-[2.1rem] leading-[1.08] font-semibold tracking-[-0.02em] text-balance text-brand-900 sm:text-[3rem]">
         {t("closingTitle1")} <em className="text-brand-700 not-italic sm:italic">{t("closingTitle2")}</em>
       </h2>
       <div className="mx-auto mt-8 grid max-w-md grid-cols-2 gap-3">

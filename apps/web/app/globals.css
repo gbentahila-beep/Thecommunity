@@ -2,7 +2,7 @@
 
 /*
  * Charte Wenzy, direction « Coucher de soleil » (docs/marque/wenzy/brand-book.html).
- * Crème et encre, une seule couleur forte : le dégradé corail → violet. Titres en Instrument Serif, texte en Inter.
+ * Crème et encre, une seule couleur forte : le dégradé corail → violet. Titres en Newsreader (gras pour les grands titres), texte en Inter.
  * L'échelle « brand » : 900 = encre (texte fort, fonds sombres), 700 = violet profond lisible sur crème (liens, accents),
  * 500 = violet de la marque (décor), 50 à 200 = lilas clairs (surfaces, survols).
  */
@@ -31,7 +31,7 @@
   --color-cat-discover: #4650c8;
 
   --font-sans: var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-instrument), var(--font-arabic-display), ui-serif, Georgia, serif;
+  --font-display: var(--font-display-serif), var(--font-arabic-display), ui-serif, Georgia, serif;
 
   --radius-card: 1.5rem;
   --shadow-card: 0 1px 2px rgb(20 20 20 / 0.04), 0 8px 24px -12px rgb(20 20 20 / 0.16);
@@ -79,9 +79,8 @@
     outline: 2px solid var(--color-brand-700);
     outline-offset: 2px;
   }
-  /* Instrument Serif n'existe qu'en une graisse : jamais de gras artificiel sur les titres. */
   .font-display {
-    font-synthesis-weight: none;
+    font-optical-sizing: auto;
   }
   ::selection {
     background: var(--color-brand-100);
@@ -124,10 +123,10 @@
  */
 @layer components {
   .page-title {
-    @apply font-display text-[2.35rem] leading-[1.05] font-normal text-balance text-brand-900 sm:text-[3.1rem];
+    @apply font-display text-[2.1rem] leading-[1.05] font-semibold tracking-[-0.02em] text-balance text-brand-900 sm:text-[2.8rem];
   }
   .section-title {
-    @apply font-display text-[1.9rem] leading-[1.08] font-normal text-balance text-brand-900 sm:text-[2.45rem];
+    @apply font-display text-[1.75rem] leading-[1.08] font-semibold tracking-[-0.02em] text-balance text-brand-900 sm:text-[2.2rem];
   }
   .eyebrow {
     @apply text-xs font-semibold tracking-[0.16em] text-muted uppercase;

@@ -1,10 +1,11 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 
-type Item = { href: string; label: string; dot?: string; dotStyle?: CSSProperties };
+/** `sub` : un univers, affiché en retrait sous « Toutes les expériences » (pas de pastille de couleur). */
+type Item = { href: string; label: string; sub?: boolean };
 
 /**
  * « Découvrir » : menu déroulant ouvert au survol (souris), au clic ou au clavier (Entrée / Espace / flèche bas),
@@ -68,9 +69,8 @@ export function DiscoverMenu({ label, menuLabel, items, firstBold = true }: { la
                 <Link
                   href={it.href}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-cream ${i === 0 && firstBold ? "font-semibold text-brand-900" : "text-ink"}`}
+                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-cream ${i === 0 && firstBold ? "font-semibold text-brand-900" : it.sub ? "ps-6 text-ink/75" : "text-ink"}`}
                 >
-                  {it.dot && <span className={`size-2.5 rounded-full ${it.dot}`} style={it.dotStyle} aria-hidden />}
                   {it.label}
                 </Link>
               </li>

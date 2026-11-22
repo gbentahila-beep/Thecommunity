@@ -157,7 +157,26 @@
     "weekEmpty": "Rien dans cet univers cette semaine. Voyez toutes les dates à venir.",
     "howMoreUniverses": "+ {count, plural, one {# autre univers} other {# autres univers}}",
     "tileThisWeek": "{count, plural, one {# cette semaine} other {# cette semaine}}",
-    "tileSeeDates": "Voir les dates"
+    "tileSeeDates": "Voir les dates",
+    "appTitle": "Toutes vos sorties dans votre poche",
+    "appText": "Réservez une table, retrouvez votre groupe, découvrez les sorties de la semaine.",
+    "appCta": "S'inscrire maintenant",
+    "appScreenHome": "Écran d'accueil de l'application : la prochaine expérience et les sorties à réserver",
+    "appScreenBooking": "Écran de confirmation d'un dîner, avec le restaurant sur une carte",
+    "appScreenDiscover": "Écran Découvrir : le calendrier des sorties de la semaine",
+    "typewriterLabel": "Avec Wenzy, vous pouvez :",
+    "typewriter": [
+      "Trouver des gens pour bruncher le dimanche",
+      "Dîner à 6 avec des inconnus",
+      "Trouver des partenaires pour courir sur la Corniche",
+      "Se faire de nouvelles amies autour d'un atelier",
+      "Monter une équipe de padel",
+      "Découvrir un restaurant secret",
+      "Jouer à des jeux de société entre inconnus",
+      "Rencontrer du monde en arrivant à Casablanca",
+      "Pratiquer son anglais autour d'un café",
+      "Partir en randonnée le week-end"
+    ]
   },
   "card": {
     "people": "{count} pers.",
