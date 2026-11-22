@@ -461,11 +461,11 @@ Tes photos, enregistrées dans le site (`apps/web/public/images/modeles/`), à v
 |---|---|---|
 | Café | Trois mains qui trinquent avec des cafés | `cafe.webp` · **validée** |
 | Brunch | Table de brunch vue du dessus | `brunch.webp` · **validée** |
-| Dîner | Longue table dressée, sans personne | `diner.webp` |
-| Afterwork | Groupe attablé le soir | `afterwork.webp` |
-| Échange de langues | Cafés et carnets, un doigt qui pointe une page | `echange-langues.webp` |
-| Running | Coureurs de dos | `running.webp` |
-| Padel | Raquettes et balles sur un terrain bleu | `padel.webp` |
+| Dîner | Longue table dressée, sans personne | `diner.webp` · **validée** |
+| Afterwork | Groupe attablé le soir | `afterwork.webp` · **validée** |
+| Échange de langues | Cafés et carnets, un doigt qui pointe une page | `echange-langues.webp` · **validée** |
+| Running | Coureurs de dos | `running.webp` · **validée** |
+| Padel | Raquettes et balles sur un terrain bleu | `padel.webp` · **validée** |
 | Yoga | Cours en plein air | `yoga.webp` |
 | Pilates | Cours en studio aux murs colorés | `pilates.webp` |
 | Escape game | Néon « Escape rooms » | `escape-game.webp` |
