@@ -107,14 +107,14 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       ),
     cities: (
       <PageShell key="cities" className="pb-8">
-        <div id="villes" className="scroll-mt-24 rounded-3xl bg-ciel px-6 py-12 text-center text-white sm:px-12">
-          <h2 className="font-display text-3xl font-medium sm:text-4xl">{t("citiesTitle")}</h2>
-          <p className="mx-auto mt-3 max-w-xl text-brand-100">{t("citiesText")}</p>
+        <div id="villes" className="scroll-mt-24 overflow-hidden rounded-3xl bg-night px-6 py-12 text-center text-white sm:px-12">
+          <h2 className="font-display text-3xl sm:text-4xl">{t("citiesTitle")}</h2>
+          <p className="mx-auto mt-3 max-w-xl text-cream/75">{t("citiesText")}</p>
           <ul className="mt-8 flex flex-wrap justify-center gap-2.5">
             {cities.map((c) => (
               <li
                 key={c.id}
-                className={`rounded-full px-4 py-2 text-sm ${c.isActive ? "bg-white font-semibold text-brand-900" : "border border-white/25 text-brand-100"}`}
+                className={`rounded-full px-4 py-2 text-sm ${c.isActive ? "bg-gradient-brand font-semibold text-ink" : "border border-white/20 text-cream/80"}`}
               >
                 {tr(c.name, locale)}
               </li>

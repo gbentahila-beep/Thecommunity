@@ -14,7 +14,7 @@ export function PlaceCard({ name, table }: { name: string; table?: string }) {
 export function TableNumberCard({ label }: { label: string }) {
   const n = label.match(/\d+/)?.[0];
   return (
-    <div className="grid aspect-[1.2] place-items-center rounded-xl bg-ciel p-4 break-inside-avoid print:[print-color-adjust:exact]">
+    <div className="grid aspect-[1.2] place-items-center rounded-xl bg-night p-4 break-inside-avoid print:[print-color-adjust:exact]">
       <div className="grid justify-items-center rounded-lg bg-cream px-8 py-4">
         <span className="text-[11px] tracking-[0.18em] text-muted uppercase">{n ? "Table" : label}</span>
         {n && <span className="font-display text-6xl leading-none text-brand-900">{n}</span>}
@@ -27,7 +27,7 @@ export function TableNumberCard({ label }: { label: string }) {
 export function WelcomeCard({ questions }: { questions: string[] }) {
   return (
     <div className="overflow-hidden rounded-xl border border-line bg-white break-inside-avoid">
-      <div className="h-10 bg-ciel print:[print-color-adjust:exact]" />
+      <div className="h-10 bg-night print:[print-color-adjust:exact]" />
       <div className="grid gap-2 p-4">
         <span className="font-display text-xl text-brand-900">Bienvenue à table</span>
         <span className="text-[11px] tracking-[0.12em] text-muted uppercase">Pour lancer la conversation</span>

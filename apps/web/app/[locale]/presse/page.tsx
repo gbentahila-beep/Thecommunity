@@ -152,8 +152,8 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
           <p className="mt-3 text-sm text-muted">{P.photosNote[l]}</p>
         </section>
 
-        <section aria-labelledby="contact-presse" className="rounded-3xl bg-ciel p-6 text-cream sm:p-10">
-          <h2 id="contact-presse" className="section-title">{P.contactTitle[l]}</h2>
+        <section aria-labelledby="contact-presse" className="overflow-hidden rounded-3xl bg-night p-6 text-cream sm:p-10">
+          <h2 id="contact-presse" className="section-title text-cream">{P.contactTitle[l]}</h2>
           <p className="mt-3 max-w-2xl leading-relaxed text-cream/85">{P.contactText[l]}</p>
           <Link href="/contact" className="mt-6 inline-flex items-center gap-2 rounded-full bg-cream px-5 py-3 text-sm font-semibold text-brand-900 hover:bg-white">
             <Mail className="size-4" aria-hidden />

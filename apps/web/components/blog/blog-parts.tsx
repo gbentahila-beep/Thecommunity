@@ -182,10 +182,10 @@ export function ArticleBody({ blocks, summaryLabel }: { blocks: BlogBlock[]; sum
 export async function BlogCta() {
   const t = await getTranslations("blog");
   return (
-    <section className="mt-16 rounded-3xl bg-ciel px-6 py-10 text-center text-white sm:px-10">
-      <h2 className="section-title">{t("ctaTitle")}</h2>
+    <section className="mt-16 overflow-hidden rounded-3xl bg-night px-6 py-10 text-center text-white sm:px-10">
+      <h2 className="section-title text-cream">{t("ctaTitle")}</h2>
       <p className="mx-auto mt-3 max-w-xl text-white/80">{t("ctaText")}</p>
-      <Link href="/experiences" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-6 font-semibold text-brand-900 transition hover:bg-cream">
+      <Link href="/experiences" className="btn btn-primary mt-6 min-h-11">
         {t("ctaButton")}
         <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
       </Link>
