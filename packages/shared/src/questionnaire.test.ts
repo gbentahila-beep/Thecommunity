@@ -93,7 +93,7 @@ describe("activités (18b, 18c, 18d)", () => {
     };
     const ok = experienceInputSchema.safeParse({ ...valid, level: "all", minAge: 21, outdoor: true, physicalActivity: true, questionnaire: padel, whatToBring: "Baskets" });
     expect(ok.success).toBe(true);
-    expect(ok.success && ok.data.questionnaire).toHaveLength(3);
+    expect(ok.success && ok.data.questionnaire).toHaveLength(2);
     expect(experienceInputSchema.safeParse(valid).success).toBe(true);
     expect(experienceInputSchema.safeParse({ ...valid, minAge: 16 }).success).toBe(false);
   });

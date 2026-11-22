@@ -103,7 +103,9 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   if (org && ownerOrgId !== org.id) throw new HttpsError("permission-denied", "Cette activité ne vous appartient pas.", { reason: "not_owner" });
   // Les photos doivent avoir été envoyées dans le dossier de CETTE expérience (équipe) ou de l'organisateur.
   for (const img of images) {
-    const okPath = (!org && img.path.startsWith(`experiences/${id}/`)) || (ownerOrgId !== null && img.path.startsWith(`organizers/${ownerOrgId}/public/`));
+    // docs/22 : la photo d'un modèle (fichier du site, /images/modeles/…) peut servir telle quelle.
+    const templatePhoto = /^\/images\/modeles\/[a-z0-9-]+\.webp$/.test(img.path);
+    const okPath = templatePhoto || (!org && img.path.startsWith(`experiences/${id}/`)) || (ownerOrgId !== null && img.path.startsWith(`organizers/${ownerOrgId}/public/`));
     if (!okPath || img.path.includes("..")) {
       invalidArgument([{ path: ["images"], message: "invalidImagePath" }]);
     }
@@ -220,6 +222,9 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     // docs/22 : plus de prix membre ; les avantages des abonnés passent par le pass et le carnet (étape I).
     memberPrice: null,
     membersOnly: v.membersOnly,
+    // docs/22, décision 9 : abonnés d'abord pendant X jours (0 = ouvert à tous) ; un abonné n'est jamais bloqué.
+    earlyAccessDays: v.membersOnly ? 0 : v.earlyAccessDays,
+    templateId: v.templateId ?? null,
     admission: v.admission,
     requestMessageRequired: v.admission === "on_request" && v.requestMessageRequired,
     requestInstagramRequired: v.admission === "on_request" && v.requestInstagramRequired,

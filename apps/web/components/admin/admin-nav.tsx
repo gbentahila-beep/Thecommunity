@@ -26,6 +26,7 @@ import {
   ScanLine,
   Users,
   Wallet,
+  LayoutTemplate,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -33,6 +34,7 @@ import { usePathname } from "next/navigation";
 export const ADMIN_LINKS = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { href: "/admin/experiences", label: "Expériences", icon: Sparkles },
+  { href: "/admin/modeles", label: "Modèles", icon: LayoutTemplate },
   { href: "/admin/sessions", label: "Sessions & groupes", icon: CalendarRange },
   { href: "/admin/participations", label: "Demandes de participation", icon: Inbox },
   { href: "/admin/propositions", label: "Sorties proposées", icon: Lightbulb },

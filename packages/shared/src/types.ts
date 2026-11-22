@@ -121,6 +121,10 @@ export type Experience = {
   memberPrice?: Money | null;
   /** Réservable uniquement par les membres abonnés. */
   membersOnly?: boolean;
+  /** docs/22 : abonnés d'abord pendant X jours après la mise en ligne d'une date (0 = ouvert à tous). */
+  earlyAccessDays?: number;
+  /** Modèle d'événement d'origine. */
+  templateId?: string | null;
   /** « on_request » : la personne envoie une demande, l'équipe accepte ou refuse avant le paiement. */
   admission?: Admission;
   /** Message de motivation obligatoire avec la demande (sinon facultatif). */

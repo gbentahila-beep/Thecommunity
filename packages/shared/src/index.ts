@@ -28,3 +28,4 @@ export * from "./meeting";
 export * from "./meet";
 export * from "./recommend";
 export * from "./venue";
+export * from "./event-templates";

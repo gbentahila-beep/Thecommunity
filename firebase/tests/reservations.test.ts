@@ -17,7 +17,7 @@ import { sendTransferReminders } from "../../functions/src/payments/transfer-rem
 import { expiredBackupFolders } from "../../functions/src/maintenance/backup";
 import { runHealthCheck, uninsuredPhysicalExperiences } from "../../functions/src/maintenance/health";
 import { sendDueReminders } from "../../functions/src/notify/reminders";
-import { DEFAULT_HOME_SETTINGS, QUESTIONNAIRE_TEMPLATES } from "@thecommunity/shared";
+import { DEFAULT_EVENT_TEMPLATES, DEFAULT_HOME_SETTINGS, QUESTIONNAIRE_TEMPLATES } from "@thecommunity/shared";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -1226,6 +1226,17 @@ describe("composition des tables (6)", () => {
     return { sid, people };
   }
 
+  it("lieu secret jamais révélé vide (docs/22, décision 15)", async () => {
+    const { sid, people } = await dinnerSession(4);
+    await db().doc(`experiences/${(await session(sid)).experienceId}/private/venue`).set({ name: "", address: "", geo: null, district: "", partnerName: "" });
+    const adm = await member({ role: "admin" });
+    await adm.call("adminProposeGroups", { sessionId: sid });
+    const groups = (await db().collection("groups").where("sessionId", "==", sid).get()).docs.map((d) => ({ label: d.data().label as string, memberIds: d.data().memberIds as string[] }));
+    await adm.call("adminSaveGroups", { sessionId: sid, groups });
+    expect(await refusal(adm.call("adminRevealGroups", { sessionId: sid }))).toBe("failed-precondition:venue_missing");
+    expect(people.length).toBe(4);
+  });
+
   it("proposer, corriger, enregistrer puis révéler : chacun voit sa table, le lieu, une notification et un e-mail", async () => {
     const { sid, people } = await dinnerSession(8);
     const adm = await member({ role: "admin" });
@@ -1758,6 +1769,26 @@ describe("toutes les activités (18)", () => {
     // Une nouvelle réservation paie le nouveau prix, sans frais en plus.
     const u = await member();
     expect((await u.call("createReservation", { sessionId: sid, seats: 2 })).total).toBe(7000);
+  });
+
+  it("modèles : enregistrés par l'équipe seulement ; accès anticipé réglé par événement (docs/22, étape F)", async () => {
+    const doc = { ...DEFAULT_EVENT_TEMPLATES.find((t) => t.id === "cafe")!, builtIn: undefined };
+    const user = await member();
+    expect(await refusal(user.call("adminSaveTemplate", JSON.parse(JSON.stringify({ ...doc, name: "Café du samedi" }))))).toBe("permission-denied:");
+    const adm = await member({ role: "admin" });
+    expect(await adm.call("adminSaveTemplate", JSON.parse(JSON.stringify({ ...doc, name: "Café du samedi" })))).toEqual({ id: "cafe" });
+    expect((await db().doc("eventTemplates/cafe").get()).data()).toMatchObject({ name: "Café du samedi", isActive: true, values: { titleFr: "Café" } });
+    expect((await refusal(adm.call("adminSaveTemplate", { ...JSON.parse(JSON.stringify(doc)), image: "../secret.png" }))).startsWith("invalid-argument")).toBe(true);
+    expect(await adm.call("adminDeleteTemplate", { id: "cafe" })).toEqual({ ok: true });
+    expect((await db().doc("eventTemplates/cafe").get()).exists).toBe(false);
+    // Abonnés d'abord pendant 2 jours : un non-abonné attend ; après 2 jours, il réserve.
+    const fresh = await makeSession({ price: 0, createdHoursAgo: 1, extra: { earlyAccessDays: 2 } });
+    const old = await makeSession({ price: 0, createdHoursAgo: 49, extra: { earlyAccessDays: 2 } });
+    const open = await makeSession({ price: 0, createdHoursAgo: 1, extra: { earlyAccessDays: 0 } });
+    const u = await member();
+    expect(await refusal(u.call("createReservation", { sessionId: fresh, seats: 1 }))).toBe("failed-precondition:members_early_access");
+    expect((await u.call("createReservation", { sessionId: old, seats: 1 })).status).toBe("confirmed");
+    expect((await u.call("createReservation", { sessionId: open, seats: 1 })).status).toBe("confirmed");
   });
 
   it("membres de confiance : statut donné par l'équipe, proposition, refus avec message, limite par jour", async () => {

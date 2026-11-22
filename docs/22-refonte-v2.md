@@ -160,7 +160,7 @@ Ce que ça supprime : paiement « tout en ligne », acompte, prix membre, marge 
 | **Sortir** | Jeux, Sorties, Vie sociale | Escape game, Paintball, Laser game, Bowling, Karting, Soirée jeux, Quiz, Karaoké, Murder party, Afterwork, Rooftop, Concert, Stand-up, Échange de langues, Plage |
 | **Découvrir** | Ateliers, Culture | Céramique, Zellige, Cuisine marocaine, Pâtisserie, Parfum, Calligraphie, Balade photo, Café de spécialité, Bougies, Thé & pâtisseries, Visite guidée, Street art, Musée, Ciné-club, Escapade |
 
-**Lancement : 15 modèles.** Les 4 formats de Tables, plus Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée et Échange de langues. Contenus, réglages et images : [docs/23](23-modeles-evenements.md).
+**Lancement : 14 modèles.** Les 4 formats de Tables, plus Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée et Échange de langues. Contenus, réglages et images : [docs/23](23-modeles-evenements.md).
 
 **Choisir un modèle** : univers → format → gamme (Tables seulement) → formulaire pré-rempli → date et heure → lieu maintenant ou plus tard → enregistrer.
 
@@ -391,10 +391,10 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 |---|---|---|
 | **A — Corrections** ✅ | Lieu secret protégé (écran et base), billet seulement avec hôtesse, questionnaire avant le paiement, phrase « Le lieu et l'adresse vous sont révélés 5 h avant », infos pratiques sans répétition | Faite |
 | **B — Questionnaires** ✅ | Seulement les questions que le profil ne pose pas : Running, Padel, Jeu en équipe, Atelier, Niveau, **Langues** (nouveau), tous validés ; Tables : aucun (le profil suffit). Détail : docs/23 § 6 | Faite |
-| **C — Photos** ✅ | Les 15 photos du lancement validées (docs/23 § 7) | Faite |
+| **C — Photos** ✅ | Les 14 photos du lancement validées, plus celle du Pilates (docs/23 § 7) | Faite |
 | **D — Modèles** ✅ | Règles de rédaction : pas de « Pas inclus » (l'encadré « Ce que vous payez » le dit), jamais la révélation du lieu dans les textes, pas de durée ni de « première fois » ni de « sans pression » pour les Tables (sans limite de temps, et certains viendront souvent). Pas de moment ajouté autour de l'activité qui n'est pas prévu (ex. pas de « thé pour faire connaissance » après le yoga). Par petits lots : D1 Café et Dîner (avec les 3 gammes, **validés**) → D2 Brunch, Déjeuner (**validés**) → D3 Running, Padel, Yoga (**validés**) → D4 Escape game, Soirée jeux, Quiz (**validés**) → D5 Céramique, Afterwork, Visite guidée, Échange de langues (**validés**) → puis les modèles de phase 2 | Chaque lot (les premiers en détail, ensuite plus vite) |
 | **E — Prix unique et univers** ✅ | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; **les 4 univers** (Tables, formats et gammes compris) | Faite (journal § 19) |
-| **F — Modèles dans l'appli** | Choix univers → format → gamme ; formulaire pré-rempli aux champs strictement nécessaires (§ 7) ; places 1 ou 2 ; accès ; réservé aux femmes ; alcool ; conditions d'annulation ; *Paramètres → Modèles* ; « Enregistrer comme modèle » | Démonstration |
+| **F — Modèles dans l'appli** ✅ | Choix univers → format → gamme ; formulaire pré-rempli aux champs strictement nécessaires (§ 7) ; places 1 ou 2 ; accès ; réservé aux femmes ; alcool ; conditions d'annulation ; *Paramètres → Modèles* ; « Enregistrer comme modèle » | Faite (journal § 19) |
 | **G — Rendez-vous et lieux** | Rendez-vous récurrents, lieu par date (plus tard possible), plusieurs lieux, lieu habituel, fiches des lieux partenaires, « Aujourd'hui » | Démonstration |
 | **H — Parcours Tables** | Écran de réservation, fermeture 12 h avant, minimum (choix), déplacer sa réservation, révélation 5 h avant avec résumé de table sans noms, tables 1 h avant (table de 7 à valider), message au lieu, check-in, messages après la rencontre, liste d'attente avec questionnaire | Démonstration |
 | **I — Carnet et Pass** | Offres, crédits, accès abonnés, garde-fous, migration des abonnés | Démonstration |
@@ -445,4 +445,17 @@ Aucune pour l'instant.
 **Tests** : unitaires 155 ; émulateurs 172 réussis (dont le nouveau test du prix Wenzy) ; mêmes 9 échecs d'environnement qu'avant. Les 9 suites de bout en bout de démonstration passent (mises à jour pour le prix unique et les 4 univers). **Non lancées** : les suites de bout en bout sur émulateurs (`firebase-*.e2e.cjs`) ; `firebase-tarification` remplit l'ancien formulaire de prix et sera à réécrire à l'étape J.
 
 **Remarque pour l'étape K** : sur téléphone, dans la liste de Découvrir, le prix est en fin de ligne et peut être coupé ; l'agenda de l'étape K le met à droite.
+
+### Étape F livrée (22 novembre)
+| Changement | Ce qui change |
+|---|---|
+| **Créer depuis un modèle** | *Expériences → Nouvelle expérience* : univers (Tables, Bouger, Sortir, Découvrir) → modèle (avec sa photo) → gamme pour les Tables (Casual, Premium, Exclusive, avec le budget sur place et l'ambiance) → formulaire **entièrement pré-rempli** : textes, format, prix sur place, règles, questionnaire, photo, jour et heure conseillés. « Partir de zéro » reste possible. |
+| **Les 14 modèles du lancement** | Les 4 Tables + Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Afterwork, Échange de langues, Céramique, Visite guidée, avec les contenus, réglages, questionnaires et photos validés. Prix sur place fixes par défaut (Padel 120 DH, Yoga 120 DH, Escape game 150 DH, Céramique 300 DH, Visite guidée 120 DH), à ajuster selon le lieu. |
+| **Questionnaires validés** | Running, Padel, Jeu en équipe, Atelier, Niveau (réunir ou mélanger), **Langues** (nouveau) ; l'ancien questionnaire « Dîner » est retiré (le profil suffit). |
+| **Paramètres → Modèles** (`/admin/modeles`) | Liste par univers ; ouvrir, masquer / afficher, supprimer un modèle créé, remettre d'origine un modèle du site modifié. Créer ou modifier un modèle : depuis le formulaire, « Enregistrer comme nouveau modèle » ou « Mettre à jour le modèle ». |
+| **Formulaire réduit** | Lieu : secret (révélé 5 h avant) ou affiché ; **lieu secret choisi plus tard** (nom et adresse facultatifs ; la révélation est refusée tant qu'ils manquent). Tables : pas de choix de format ni de durée, « personnes par table min / max », plus de taille cible. Places par réservation : **1 ou 2**. **Accès** : ouvert à tous / abonnés d'abord X jours / abonnés uniquement (vérifié par le serveur). Cases **« Réservé aux femmes »** et **« De l'alcool est servi »**. Conditions d'annulation (frais remboursés selon elles). Champs rares repliés dans **« Options avancées »** (inscription sur demande, hôtesse, âge, tranche d'âge, « pas inclus »). Gamme, ambiance et cuisine seulement pour les Tables. |
+
+**Tests** : unitaires 159 ; émulateurs 174 réussis (nouveaux : modèles réservés à l'équipe, accès anticipé par événement, lieu secret jamais révélé vide) ; mêmes 9 échecs d'environnement. Les 9 suites de bout en bout de démonstration passent (parcours univers → modèle → gamme ajouté).
+
+**Correction** : le lancement compte **14 modèles**, pas 15 (le retrait du couscous avait été mal compté).
 

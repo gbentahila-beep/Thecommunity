@@ -196,6 +196,8 @@ export const adminRevealGroups = onCall({ region: REGION, timeoutSeconds: 120 },
   // Lieu secret : le lieu réel est dans le document privé (docs/22) ; anciens documents : dans la fiche.
   const hidden = e.venue?.revealPolicy === "on_group_reveal" ? (await db.doc(`experiences/${s.experienceId}/private/venue`).get()).data() : undefined;
   const venue = e.venue?.revealPolicy === "on_group_reveal" ? { name: String(hidden?.name ?? e.venue.name ?? ""), address: String(hidden?.address ?? e.venue.address ?? ""), ...(hidden?.cuisine || e.cuisine ? { cuisine: String(hidden?.cuisine || e.cuisine) } : {}) } : null;
+  // docs/22, décision 15 : un lieu secret peut être choisi tard, mais jamais révélé vide.
+  if (venue && (!venue.name || !venue.address)) refuse("venue_missing", "Renseignez le lieu avant de le révéler.");
   const batch = db.batch();
   groups.docs.forEach((g) => batch.update(g.ref, { status: "revealed", revealedAt: FieldValue.serverTimestamp() }));
   for (const p of participants) {

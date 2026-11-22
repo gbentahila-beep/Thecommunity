@@ -19,8 +19,32 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   assert(await page.getByText("Chiffre d'affaires brut").isVisible(), 'tableau de bord : indicateurs');
   assert(await page.getByRole('meter').count() >= 5, 'tableau de bord : jauges de remplissage');
 
-  // Formulaire : validation
+  // docs/22, étape F : création en partant d'un modèle (univers → modèle → gamme), formulaire pré-rempli
   await go('/admin/experiences/nouvelle');
+  assert(await page.getByTestId('universe-choice').locator('li').count() === 4, 'nouvel événement : 4 univers');
+  await page.getByTestId('universe-choice').getByRole('link', { name: /Tables/ }).click();
+  await page.waitForURL('**/nouvelle?univers=eat');
+  assert((await page.getByTestId('template-choice').locator('li').allTextContents()).map((t) => t.split('Casual')[0].trim()).join('|') === 'Café|Brunch|Déjeuner|Dîner', 'Tables : modèles Café, Brunch, Déjeuner, Dîner');
+  await page.getByTestId('template-choice').getByRole('link', { name: /Dîner/ }).click();
+  await page.waitForURL('**/nouvelle?modele=diner');
+  assert(/250–400 DH/.test(await page.getByTestId('tier-choice').innerText()), 'Dîner : gammes avec leur budget (Premium 250–400 DH)');
+  await page.getByTestId('tier-choice').getByRole('link', { name: /Premium/ }).click();
+  await page.waitForURL('**/nouvelle?modele=diner&gamme=premium');
+  assert(await page.locator('#f-titleFr').inputValue() === 'Dîner' && await page.locator('#f-ambiance').inputValue() === 'Chic et décontractée' && await page.locator('#f-venueTier').inputValue() === 'premium', 'formulaire pré-rempli : titre, gamme et ambiance du modèle');
+  assert(await page.locator('#f-revealPolicy').inputValue() === 'on_group_reveal' && await page.locator('#f-bookingMode').count() === 0 && await page.locator('#f-durationMinutes').count() === 0, 'Tables : lieu secret, tables composées, heure de début seulement');
+  assert(await page.getByTestId('template-photo').isVisible(), 'photo du modèle proposée');
+  assert(await page.locator('#f-groupTarget').count() === 0 && await page.locator('#f-maxSeatsPerBooking').inputValue() === '1', 'plus de taille cible ; 1 place par réservation');
+  await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();
+  await page.waitForTimeout(400);
+  assert(await page.getByText('Formulaire valide').first().isVisible(), 'lieu secret choisi plus tard : formulaire valide sans nom ni adresse');
+  await page.getByTestId('access').getByLabel(/Abonnés d'abord/).check();
+  assert(await page.locator('#f-earlyAccessDays').inputValue() === '3', 'accès : abonnés d\'abord 3 jours par défaut');
+  assert(await page.getByTestId('save-as-template').isVisible(), 'enregistrer comme modèle : bloc proposé');
+  await go('/admin/modeles');
+  assert(await page.getByTestId('template-list').locator('li').count() === 14, 'Paramètres → Modèles : les 14 modèles du lancement');
+
+  // Formulaire : validation
+  await go('/admin/experiences/nouvelle?modele=vide');
   await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();
   assert(await page.getByText(/champs? à corriger/).isVisible(), 'formulaire vide : erreurs annoncées');
   // Saisie continue : le focus ne doit pas se perdre entre deux frappes
@@ -32,12 +56,11 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.locator('#f-district').fill('Racine');
   await page.locator('#f-venueName').fill('Café partenaire');
   await page.locator('#f-address').fill('Boulevard Racine, Casablanca');
-  await page.locator('#f-bookingMode').selectOption('social_dinner');
-  await page.locator('#f-groupMin').fill('7'); // incohérent volontairement (min > cible)
+  await page.locator('#f-groupMin').fill('8'); // incohérent volontairement (min > max)
   await page.locator('[id="f-sessions.weeks"]').fill('4');
   await page.locator('[id="f-sessions.capacity"]').fill('24');
   await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();
-  assert(await page.getByText('Il faut min ≤ cible ≤ max.').isVisible(), 'règle de cohérence des tailles de groupe');
+  assert(await page.getByText('Le minimum doit être inférieur ou égal au maximum.').isVisible(), 'règle de cohérence des tailles de groupe');
   await page.locator('#f-groupMin').fill('5');
   await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();
   assert(await page.getByText('Formulaire valide').first().waitFor({ state: 'visible', timeout: 10000 }).then(() => true, () => false), 'formulaire valide : récapitulatif affiché');
@@ -46,6 +69,8 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   // 11h : « Ce qui est inclus » dans « 3. Format » (prix total) ; Instagram obligatoire possible sur demande
   assert(await page.locator('fieldset', { hasText: '3. Format' }).locator('#f-included').count() === 1, '« Ce qui est inclus » dans la section Format');
   assert(await page.locator('#f-partnerDescription').count() === 0, 'plus de second champ « réglé sur place »');
+  // Étape F : options rares repliées dans « Options avancées »
+  await page.getByTestId('advanced-options').locator('summary').click();
   await page.locator('#f-admission').selectOption('on_request');
   assert(await page.getByLabel('Compte Instagram obligatoire').isVisible() && await page.getByLabel('Message de motivation obligatoire', { exact: false }).isVisible(), 'sur demande : Instagram et message obligatoires au choix');
   await page.locator('#f-admission').selectOption('direct');
@@ -110,19 +135,20 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   assert(await page.getByText('Suspendu').count() === 1, 'liste des utilisateurs avec statut');
 
   // 18 : activités, questionnaire, propositions, assurance
-  await go('/admin/experiences/nouvelle');
+  await go('/admin/experiences/nouvelle?modele=vide');
+  await page.getByLabel(/^Univers/).selectOption('discover');
   const act = page.locator('#activite');
-  assert(await act.getByText('4. Activité, sécurité et questionnaire').isVisible(), 'formulaire : section « Activité, sécurité et questionnaire »');
+  assert(await act.getByText('4. Activité et questionnaire').isVisible(), 'formulaire : section « Activité et questionnaire »');
   await page.getByLabel('Partir d\'un modèle').selectOption('padel');
   await page.getByRole('button', { name: 'Utiliser ce modèle' }).click();
-  assert(await page.getByTestId('question').count() === 3, 'questionnaire : modèle « padel » chargé (3 questions)');
+  assert(await page.getByTestId('question').count() === 2, 'questionnaire : modèle « padel » chargé (2 questions validées)');
   assert(await page.getByLabel('Question (français)').first().inputValue() === 'Votre niveau de padel ?', 'questionnaire : question de niveau');
   await page.getByRole('button', { name: /Ajouter une question/ }).click();
-  assert(await page.getByTestId('question').count() === 4, 'questionnaire : ajouter une question');
-  await page.getByRole('button', { name: 'Supprimer la question 4' }).click();
+  assert(await page.getByTestId('question').count() === 3, 'questionnaire : ajouter une question');
+  await page.getByRole('button', { name: 'Supprimer la question 3' }).click();
   await page.getByLabel('Partir d\'un modèle').selectOption('paintball');
   await page.getByRole('button', { name: 'Utiliser ce modèle' }).click();
-  assert(await page.getByText('Remplacer les 3 questions actuelles ?').isVisible(), 'remplacer un questionnaire : confirmation dans la page');
+  assert(await page.getByText('Remplacer les 2 questions actuelles ?').isVisible(), 'remplacer un questionnaire : confirmation dans la page');
   await page.getByRole('button', { name: 'Oui, remplacer' }).click();
   assert(await page.getByTestId('question').count() === 2, 'questionnaire : modèle « paintball » (2 questions)');
   await page.getByLabel(/^Univers/).selectOption('move');

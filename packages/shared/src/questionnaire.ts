@@ -105,54 +105,61 @@ export const optionText = (q: QuestionDef, index: number, lang: "fr" | "ar" | "e
 const L = (fr: string, en: string, ar: string): LocalizedText => ({ fr, en, ar });
 const LEVELS = [L("Débutant", "Beginner", "مبتدئ"), L("Intermédiaire", "Intermediate", "متوسط"), L("Confirmé", "Advanced", "متمرّس")];
 
-/** Modèles proposés à l'équipe (chargés puis modifiables dans le formulaire). */
+/**
+ * Questionnaires validés le 22 novembre (docs/23 § 6). Règle : jamais une question déjà posée à l'inscription
+ * (façon d'être en conversation, centres d'intérêt, ce que l'on recherche, secteur, sport, budget, langues…) ;
+ * seulement ce qui est propre à l'activité. Les Tables n'ont pas de questionnaire : le profil suffit.
+ * Chargés puis modifiables dans le formulaire ; les modèles d'événements y renvoient par leur identifiant.
+ */
 export const QUESTIONNAIRE_TEMPLATES: { id: string; name: string; questions: QuestionDef[] }[] = [
   {
-    id: "padel",
-    name: "Padel (niveau)",
+    id: "running",
+    name: "Running (allure, distance)",
     questions: [
-      { id: "qlevel", kind: "ordered", required: true, match: "same", label: L("Votre niveau de padel ?", "Your padel level?", "ما مستواك في البادل؟"), options: [L("Débutant : je découvre", "Beginner: just starting", "مبتدئ: أكتشف اللعبة"), L("Intermédiaire : je joue régulièrement", "Intermediate: I play regularly", "متوسط: ألعب بانتظام"), L("Confirmé : je joue en compétition ou presque", "Advanced: I play competitively", "متمرّس: ألعب بمستوى تنافسي تقريباً")] },
-      { id: "qgoal", kind: "choice", required: true, match: "same", label: L("Vous jouez plutôt…", "You mostly play…", "تلعب غالباً…"), options: [L("Pour le plaisir", "For fun", "من أجل المتعة"), L("Pour progresser", "To improve", "من أجل التقدّم"), L("Pour gagner", "To win", "من أجل الفوز")] },
-      { id: "qside", kind: "choice", required: false, match: "none", label: L("Votre côté préféré ?", "Your preferred side?", "جانبك المفضّل؟"), options: [L("Gauche", "Left", "اليسار"), L("Droite", "Right", "اليمين"), L("Peu importe", "No preference", "لا يهم")] },
+      { id: "qpace", kind: "ordered", required: true, match: "same", label: L("Votre allure habituelle ?", "Your usual pace?", "سرعتك المعتادة؟"), options: [L("Plus de 7 min/km", "Slower than 7 min/km", "أكثر من 7 دقائق/كم"), L("6 à 7 min/km", "6 to 7 min/km", "من 6 إلى 7 دقائق/كم"), L("5 à 6 min/km", "5 to 6 min/km", "من 5 إلى 6 دقائق/كم"), L("Moins de 5 min/km", "Faster than 5 min/km", "أقل من 5 دقائق/كم")] },
+      { id: "qdist", kind: "ordered", required: true, match: "same", label: L("Quelle distance vous convient aujourd'hui ?", "What distance suits you today?", "ما المسافة التي تناسبك اليوم؟"), options: [L("Moins de 5 km", "Under 5 km", "أقل من 5 كم"), L("5 à 10 km", "5 to 10 km", "من 5 إلى 10 كم"), L("Plus de 10 km", "Over 10 km", "أكثر من 10 كم")] },
     ],
   },
   {
-    id: "running",
-    name: "Course à pied (allure)",
+    id: "padel",
+    name: "Padel (niveau, envie)",
     questions: [
-      { id: "qpace", kind: "ordered", required: true, match: "same", label: L("Votre allure habituelle ?", "Your usual pace?", "سرعتك المعتادة؟"), options: [L("Plus de 7 min/km", "Slower than 7 min/km", "أكثر من 7 دقائق/كم"), L("6 à 7 min/km", "6 to 7 min/km", "من 6 إلى 7 دقائق/كم"), L("5 à 6 min/km", "5 to 6 min/km", "من 5 إلى 6 دقائق/كم"), L("Moins de 5 min/km", "Faster than 5 min/km", "أقل من 5 دقائق/كم")] },
-      { id: "qdist", kind: "ordered", required: true, match: "same", label: L("Distance confortable aujourd'hui ?", "Comfortable distance today?", "المسافة المريحة لك حالياً؟"), options: [L("Moins de 5 km", "Under 5 km", "أقل من 5 كم"), L("5 à 10 km", "5 to 10 km", "من 5 إلى 10 كم"), L("Plus de 10 km", "Over 10 km", "أكثر من 10 كم")] },
-      { id: "qtalk", kind: "choice", required: false, match: "same", label: L("En courant, vous aimez…", "While running, you like to…", "أثناء الجري تحب…"), options: [L("Discuter", "Chat", "الدردشة"), L("Courir en silence", "Run quietly", "الجري بصمت"), L("Un peu des deux", "A bit of both", "قليلاً من الاثنين")] },
+      { id: "qlevel", kind: "ordered", required: true, match: "same", label: L("Votre niveau de padel ?", "Your padel level?", "ما مستواك في البادل؟"), options: [L("Débutant : je découvre", "Beginner: just starting", "مبتدئ: أكتشف اللعبة"), L("Intermédiaire : je joue régulièrement", "Intermediate: I play regularly", "متوسط: ألعب بانتظام"), L("Confirmé : je joue en compétition ou presque", "Advanced: I play competitively", "متمرّس: ألعب بمستوى تنافسي تقريباً")] },
+      { id: "qgoal", kind: "choice", required: true, match: "same", label: L("Vous jouez plutôt…", "You mostly play…", "تلعب غالباً…"), options: [L("Pour le plaisir", "For fun", "من أجل المتعة"), L("Pour progresser", "To improve", "من أجل التقدّم"), L("Pour gagner", "To win", "من أجل الفوز")] },
     ],
   },
   {
     id: "paintball",
-    name: "Paintball / jeu en équipe",
+    name: "Jeu en équipe (escape game, quiz, paintball…)",
     questions: [
       { id: "qexp", kind: "ordered", required: true, match: "mix", label: L("Vous avez déjà joué ?", "Have you played before?", "هل لعبت من قبل؟"), options: [L("Jamais", "Never", "أبداً"), L("Une ou deux fois", "Once or twice", "مرة أو مرتين"), L("Souvent", "Often", "كثيراً")] },
-      { id: "qstyle", kind: "choice", required: true, match: "same", label: L("Votre état d'esprit ?", "Your mindset?", "ما هي روحك في اللعب؟"), options: [L("Pour rigoler", "Just for fun", "للضحك والمتعة"), L("Pour gagner", "To win", "من أجل الفوز")] },
-    ],
-  },
-  {
-    id: "dinner",
-    name: "Dîner / rencontre (personnalité)",
-    questions: [
-      { id: "qtalk", kind: "ordered", required: true, match: "mix", label: L("À table, vous êtes plutôt…", "At the table, you are more…", "على المائدة، أنت غالباً…"), options: [L("Celui ou celle qui écoute", "The listener", "من يستمع"), L("Un peu des deux", "A bit of both", "قليلاً من الاثنين"), L("Celui ou celle qui anime", "The one who gets things going", "من ينشّط الحديث")] },
-      { id: "qtopic", kind: "choice", required: true, match: "same", label: L("Le sujet qui vous fait parler des heures ?", "The topic you could talk about for hours?", "الموضوع الذي تتحدث عنه لساعات؟"), options: [L("Voyages", "Travel", "السفر"), L("Culture et arts", "Culture and arts", "الثقافة والفنون"), L("Entrepreneuriat et travail", "Business and work", "ريادة الأعمال والعمل"), L("Sport et bien-être", "Sport and wellbeing", "الرياضة والعافية"), L("Cuisine", "Food", "الطبخ"), L("Société", "Society", "المجتمع")] },
-      { id: "qgoal", kind: "choice", required: true, match: "same", label: L("Vous venez surtout pour…", "You're mainly coming to…", "تأتي أساساً من أجل…"), options: [L("Me faire de nouveaux amis", "Make new friends", "تكوين أصدقاء جدد"), L("Élargir mon réseau", "Widen my network", "توسيع شبكة معارفي"), L("Découvrir la ville et ses lieux", "Discover the city", "اكتشاف المدينة وأماكنها")] },
+      { id: "qstyle", kind: "choice", required: true, match: "same", label: L("Vous venez plutôt…", "You're coming mostly…", "تأتي غالباً…"), options: [L("Pour rigoler", "Just for fun", "للضحك والمتعة"), L("Pour gagner", "To win", "من أجل الفوز")] },
     ],
   },
   {
     id: "workshop",
-    name: "Atelier (niveau)",
+    name: "Atelier (expérience)",
     questions: [
       { id: "qlevel", kind: "ordered", required: true, match: "same", label: L("Votre expérience dans cette activité ?", "Your experience with this activity?", "خبرتك في هذا النشاط؟"), options: [L("Jamais essayé", "Never tried", "لم أجرّب أبداً"), L("Quelques bases", "Some basics", "بعض الأساسيات"), L("À l'aise", "Comfortable", "مرتاح فيه")] },
     ],
   },
   {
     id: "level",
-    name: "Niveau seul (Débutant / Intermédiaire / Confirmé)",
-    questions: [{ id: "qlevel", kind: "ordered", required: true, match: "same", label: L("Votre niveau ?", "Your level?", "ما مستواك؟"), options: LEVELS }],
+    name: "Niveau dans l'activité (réunir les niveaux proches)",
+    questions: [{ id: "qlevel", kind: "ordered", required: true, match: "same", label: L("Votre niveau dans cette activité ?", "Your level in this activity?", "ما مستواك في هذا النشاط؟"), options: LEVELS }],
+  },
+  {
+    id: "level-mix",
+    name: "Niveau dans l'activité (mélanger, équipes équilibrées)",
+    questions: [{ id: "qlevel", kind: "ordered", required: true, match: "mix", label: L("Votre niveau dans cette activité ?", "Your level in this activity?", "ما مستواك في هذا النشاط؟"), options: LEVELS }],
+  },
+  {
+    id: "langues",
+    name: "Échange de langues (langue à pratiquer, niveau)",
+    questions: [
+      { id: "qlang", kind: "choice", required: true, match: "same", label: L("Quelle langue voulez-vous pratiquer ?", "Which language do you want to practise?", "أي لغة تريد ممارستها؟"), options: [L("Français", "French", "الفرنسية"), L("Anglais", "English", "الإنجليزية"), L("Espagnol", "Spanish", "الإسبانية"), L("Arabe", "Arabic", "العربية"), L("Darija", "Darija", "الدارجة")] },
+      { id: "qlanglevel", kind: "ordered", required: true, match: "same", label: L("Votre niveau dans cette langue ?", "Your level in this language?", "مستواك في هذه اللغة؟"), options: [L("Débutant", "Beginner", "مبتدئ"), L("Intermédiaire", "Intermediate", "متوسط"), L("Avancé", "Advanced", "متقدّم")] },
+    ],
   },
 ];
 

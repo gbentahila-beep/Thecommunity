@@ -7,6 +7,7 @@ import {
   reservationRequestSchema,
   serviceFeeInputSchema,
   wenzyPriceInputSchema,
+  templateInputSchema,
   NO_SERVICE_FEE,
 } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
@@ -144,6 +145,31 @@ export const adminSaveWenzyPrice = onCall({ region: REGION, timeoutSeconds: 300 
   }
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "settings.wenzyPrice", targetType: "settings", targetId: "booking", before: { wenzyPrice: before.wenzyPrice ?? null, serviceFee: before.serviceFee ?? null }, after: { wenzyPrice: amount, experiences, sessions } });
   return { wenzyPrice: amount, experiences, sessions };
+});
+
+/**
+ * Paramètres → Modèles (docs/22, décision 21) : créer, modifier, masquer un modèle d'événement. Un modèle livré avec le
+ * site, une fois modifié, est enregistré sous le même identifiant et l'emporte sur la version d'origine. Journalisé.
+ */
+export const adminSaveTemplate = onCall({ region: REGION }, async (req) => {
+  const actor = requireRole(req, ["admin", "superadmin"]);
+  const v = templateInputSchema.safeParse(req.data);
+  if (!v.success) invalidArgument(v.error.issues);
+  const ref = db.doc(`eventTemplates/${v.data.id}`);
+  const before = (await ref.get()).data() ?? null;
+  await ref.set({ ...JSON.parse(JSON.stringify(v.data)), updatedAt: FieldValue.serverTimestamp(), updatedBy: actor.uid });
+  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: before ? "template.update" : "template.create", targetType: "eventTemplate", targetId: v.data.id, after: { name: v.data.name, isActive: v.data.isActive } });
+  return { id: v.data.id };
+});
+
+/** Supprime un modèle créé dans l'appli, ou remet un modèle livré avec le site dans sa version d'origine. Journalisé. */
+export const adminDeleteTemplate = onCall({ region: REGION }, async (req) => {
+  const actor = requireRole(req, ["admin", "superadmin"]);
+  const v = z.object({ id: z.string().regex(/^[a-z][a-z0-9-]{1,40}$/) }).safeParse(req.data);
+  if (!v.success) invalidArgument(v.error.issues);
+  await db.doc(`eventTemplates/${v.data.id}`).delete();
+  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "template.delete", targetType: "eventTemplate", targetId: v.data.id });
+  return { ok: true };
 });
 
 /** Paramètres → Frais de service (super-admin). S'appliquent aux nouvelles réservations payantes. Journalisé. */

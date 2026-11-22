@@ -52,7 +52,8 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   assert(await cards.count() >= 1 && await cards.count() === await p.getByTestId('catalog-results').getByTestId('card-women').count(), '29 : filtre « Réservé aux femmes »');
   assert(await p.getByTestId('active-filters').getByRole('link', { name: 'Retirer le filtre : Réservé aux femmes' }).isVisible(), '29 : puce du filtre');
   await p.goto(base + '/admin/experiences/exp-the-patisseries', { waitUntil: 'load' });
-  assert(await p.locator('#f-audience').inputValue() === 'women' && await p.locator('#f-targetAgeMin').inputValue() === '25', '29 : formulaire — public et tranche d\'âge visée');
+  await p.getByTestId('advanced-options').locator('summary').click();
+  assert(await p.getByLabel('Réservé aux femmes').isChecked() && await p.locator('#f-targetAgeMin').inputValue() === '25', '29 : formulaire — réservé aux femmes (case) et tranche d\'âge visée');
 
   // ——— 31 ———
   await p.goto(base + '/espace', { waitUntil: 'load' });

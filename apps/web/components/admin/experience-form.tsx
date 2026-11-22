@@ -3,7 +3,9 @@
 import {
   DEFAULT_COMMISSION_PERCENT,
   DEFAULT_WENZY_PRICE,
+  templateSlug,
   tierRange,
+  type EventTemplate,
   DEPOSIT_MAX,
   DEPOSIT_MIN,
   experienceInputSchema,
@@ -28,10 +30,13 @@ import { useEffect, useMemo, useState } from "react";
 import { mediaUrl } from "@/components/media";
 import { QuestionnaireEditor } from "@/components/admin/questionnaire-editor";
 import type { QuestionDraft } from "@/lib/questionnaire-draft";
+import { valuesToTemplate } from "@/lib/admin-forms";
 import { firebase } from "@/lib/firebase/client";
 
 type Option = { id: string; label: string; disabled?: boolean; /** 18c : état de l'assurance du lieu partenaire. */ insurance?: "valid" | "expiring" | "expired" | "missing"; /** Étape 19 : sous-catégorie de… */ parentId?: string };
-export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "budgetMinDh" | "budgetMaxDh" | "onSiteCommissionPercent" | "minAge" | "targetAgeMin" | "targetAgeMax" | "level" | "questionnaire" | "proposalId" | "depositPercent"> & {
+export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "budgetMinDh" | "budgetMaxDh" | "onSiteCommissionPercent" | "minAge" | "targetAgeMin" | "targetAgeMax" | "level" | "questionnaire" | "proposalId" | "depositPercent" | "earlyAccessDays" | "templateId"> & {
+  /** docs/22 : abonnés d'abord pendant X jours (« 0 » = ouvert à tous). */
+  earlyAccessDays: string;
   /** Étape 22 : acompte en % (mode B). */
   depositPercent: string;
   /** 18b : âge minimum (vide = 18 ans), niveau attendu (vide = non précisé) ; 18a : questionnaire ; 18d : proposition d'origine. */
@@ -45,7 +50,7 @@ const MESSAGES: Record<string, string> = {
   required: "Champ obligatoire.", tooShort: "Trop court.", tooLong: "Trop long.", tooMany: "Valeur trop élevée.",
   depositRange: "Acompte entre 10 et 90 %.", ageOrder: "L'âge minimum visé doit être inférieur au maximum.", invalidCoords: "Coordonnées illisibles : deux nombres séparés par une virgule (ex. 33.5951, -7.6187).", paymentModelDisabled: "Ce mode de paiement n'est pas proposé pour l'instant.",
   min0: "Doit être positif.", min1: "Au moins 1.", min2: "Au moins 2.", min15: "Au moins 15 minutes.", max100: "100 % maximum.",
-  pickOne: "Choisissez au moins une langue.", groupOrder: "Il faut min ≤ cible ≤ max.", capacityBelowGroup: "La capacité doit permettre au moins un groupe complet.",
+  pickOne: "Choisissez au moins une langue.", groupOrder: "Le minimum doit être inférieur ou égal au maximum.", capacityBelowGroup: "La capacité doit permettre au moins un groupe complet.",
   seatsPerBookingMode: "Plus de 2 places par réservation : seulement en mode libre ou privatisé.", partnerRequired: "Le modèle commission nécessite un partenaire.",
   revealNeedsGroups: "La révélation différée n'est possible qu'avec des groupes (dîner social ou groupe).",
   inPast: "La première date est déjà passée.", memberAbovePublic: "Le prix membre doit être inférieur ou égal au prix public.", invalidImagePath: "Photo invalide.",
@@ -116,6 +121,7 @@ export function ExperienceForm({
   bookedSeats = 0,
   organizer,
   wenzyPrice = DEFAULT_WENZY_PRICE,
+  template,
 }: {
   initial: ExperienceFormValues;
   categories: Option[];
@@ -131,6 +137,8 @@ export function ExperienceForm({
   bookedSeats?: number;
   /** Prix Wenzy en vigueur (centimes), réglé dans Paramètres (docs/22). */
   wenzyPrice?: number;
+  /** docs/22 : modèle d'origine (photo par défaut, « Mettre à jour le modèle »). */
+  template?: Omit<EventTemplate, "values">;
   /**
    * Étape 20 : formulaire de l'espace organisateur. Mêmes champs, sans le modèle économique, les lieux partenaires
    * ni les avantages membres ; photos dans le dossier public de l'organisateur ; « Envoyer pour validation ».
@@ -169,7 +177,9 @@ export function ExperienceForm({
     setResult(null);
   };
 
-  const grouped = v.bookingMode === "group" || v.bookingMode === "social_dinner";
+  const isTables = v.categoryId === "eat";
+  const secret = v.revealPolicy === "on_group_reveal";
+  const grouped = isTables || v.bookingMode === "group" || v.bookingMode === "social_dinner";
   const opt = (s: string) => (s === "" ? undefined : s);
 
   const submit = async (e: React.FormEvent) => {
@@ -178,9 +188,14 @@ export function ExperienceForm({
     setServerError("");
     const parsed = experienceInputSchema.safeParse({
       ...v,
+      // docs/22 : Tables → toujours des tables composées ; plus de « taille cible » (la composition vise le maximum).
+      bookingMode: isTables ? "social_dinner" : v.bookingMode,
       groupMin: grouped ? opt(v.groupMin) : undefined,
-      groupTarget: grouped ? opt(v.groupTarget) : undefined,
+      groupTarget: grouped ? opt(v.groupMax) : undefined,
       groupMax: grouped ? opt(v.groupMax) : undefined,
+      venueTier: isTables ? v.venueTier : "",
+      earlyAccessDays: v.membersOnly ? "0" : v.earlyAccessDays || "0",
+      templateId: template?.id,
       // Activité d'un organisateur : modèle économique géré par le contrat (commission), jamais saisi ici.
       ...(pro ? { economicsModel: "own" as const, partnerId: "", pricingModel: "online_only" as const } : { paymentModel: "full_online" as const, economicsModel: "own" as const }),
       depositPercent: pro && v.paymentModel === "deposit" ? opt(v.depositPercent) : undefined,
@@ -233,11 +248,13 @@ export function ExperienceForm({
         await uploadBytes(ref(storage, path), img.file, { contentType: img.file.type });
         uploaded.push({ path, alt: parsed.data.titleFr });
       }
+      // docs/22 : sans photo envoyée, une nouvelle fiche prend la photo du modèle.
+      const photos = uploaded.length === 0 && mode === "create" && template ? [{ path: template.image, alt: parsed.data.titleFr }] : uploaded;
       const res = await httpsCallable(functions, proSelf ? "organizerSaveExperience" : "adminSaveExperience")({
         ...(experienceId ? { experienceId } : { newId: id }),
         data: JSON.parse(JSON.stringify(parsed.data)), // retire les champs vides (undefined)
         addSessions,
-        images: uploaded,
+        images: photos,
       });
       const data = res.data as { experienceId: string; slug: string; sessionsCreated: number; status?: string };
       setSaved({ ...data, status: data.status ?? parsed.data.status });
@@ -355,74 +372,59 @@ export function ExperienceForm({
       </Section>
 
       <Section title="2. Lieu">
+        <div className="sm:col-span-2"><Label k="revealPolicy" hint={secret ? "Nom, adresse et cuisine restent cachés jusqu'à 5 h avant. Le lieu peut être choisi plus tard, quand vous connaissez le nombre d'inscrits (au plus tard 5 h avant)." : "Nom, adresse et carte visibles dès la fiche."}>Lieu</Label>
+          <select {...field("revealPolicy")} value={v.revealPolicy} onChange={(e) => set("revealPolicy", e.target.value as "immediate" | "on_group_reveal")}>
+            <option value="on_group_reveal">Secret, révélé 5 h avant</option>
+            <option value="immediate">Affiché dès la fiche</option>
+          </select>{err("revealPolicy")}</div>
         <div><Label k="cityId">Ville</Label>
           <select {...field("cityId")} value={v.cityId} onChange={(e) => set("cityId", e.target.value)}>
             {cities.map((c) => <option key={c.id} value={c.id} disabled={c.disabled}>{c.label}</option>)}
           </select>{err("cityId")}</div>
-        <div><Label k="district">Quartier</Label><input {...field("district")} value={v.district} onChange={(e) => set("district", e.target.value)} />{err("district")}</div>
-        <div><Label k="venueName">Nom du lieu</Label><input {...field("venueName")} value={v.venueName} onChange={(e) => set("venueName", e.target.value)} />{err("venueName")}</div>
-        <div><Label k="address">Adresse</Label><input {...field("address")} value={v.address} onChange={(e) => set("address", e.target.value)} />{err("address")}</div>
-        <div className="sm:col-span-2"><Label k="venueCoords" hint="Facultatif. Dans Google Maps, clic droit sur le lieu puis cliquez sur les chiffres pour les copier (ex. 33.5951, -7.6187). Une carte s'affiche alors sur la fiche, seulement si le lieu est visible dès la réservation.">Coordonnées GPS du lieu</Label><input {...field("venueCoords")} value={v.venueCoords ?? ""} onChange={(e) => set("venueCoords", e.target.value)} placeholder="33.5951, -7.6187" inputMode="decimal" />{err("venueCoords")}</div>
-        <div className="sm:col-span-2"><Label k="revealPolicy">Révélation du lieu</Label>
-          <select {...field("revealPolicy")} value={v.revealPolicy} onChange={(e) => set("revealPolicy", e.target.value as "immediate" | "on_group_reveal")}>
-            <option value="immediate">Visible dès la réservation</option>
-            <option value="on_group_reveal">Révélé la veille avec le groupe</option>
-          </select>{err("revealPolicy")}</div>
-        {/* Restaurant (docs/16) : affichés sur la fiche même quand le nom du lieu reste une surprise. */}
-        <div><Label k="venueTier" hint="Fixe le budget sur place selon le format (ex. Dîner : Casual 150–250 DH, Premium 250–400 DH, Exclusive 400–600 DH par personne).">Gamme du lieu</Label>
-          <select {...field("venueTier")} value={v.venueTier ?? ""} onChange={(e) => set("venueTier", e.target.value as ExperienceFormValues["venueTier"])}>
-            <option value="">Non précisée</option>
-            <option value="casual">Casual (accessible)</option>
-            <option value="premium">Premium (expérience qualitative)</option>
-            <option value="exclusive">Exclusive (haut de gamme)</option>
-          </select>{err("venueTier")}</div>
-        <div><Label k="cuisine" hint="Facultatif, ex. internationale, marocaine, italienne.">Cuisine</Label><input {...field("cuisine")} maxLength={60} value={v.cuisine ?? ""} onChange={(e) => set("cuisine", e.target.value)} />{err("cuisine")}</div>
-        <div className="sm:col-span-2"><Label k="ambiance" hint="Facultatif, ex. chic et décontractée, conviviale, rooftop animé.">Ambiance</Label><input {...field("ambiance")} maxLength={60} value={v.ambiance ?? ""} onChange={(e) => set("ambiance", e.target.value)} />{err("ambiance")}</div>
+        <div><Label k="district" hint={secret ? "Facultatif pour l'instant ; jamais affiché." : undefined}>Quartier</Label><input {...field("district")} value={v.district} onChange={(e) => set("district", e.target.value)} />{err("district")}</div>
+        <div><Label k="venueName" hint={secret ? "Facultatif pour l'instant." : undefined}>Nom du lieu</Label><input {...field("venueName")} value={v.venueName} onChange={(e) => set("venueName", e.target.value)} />{err("venueName")}</div>
+        <div><Label k="address" hint={secret ? "Facultatif pour l'instant." : undefined}>Adresse</Label><input {...field("address")} value={v.address} onChange={(e) => set("address", e.target.value)} />{err("address")}</div>
+        <div className="sm:col-span-2"><Label k="venueCoords" hint="Facultatif. Dans Google Maps, clic droit sur le lieu puis cliquez sur les chiffres pour les copier (ex. 33.5951, -7.6187). La carte s'affiche quand le lieu est visible.">Coordonnées GPS du lieu</Label><input {...field("venueCoords")} value={v.venueCoords ?? ""} onChange={(e) => set("venueCoords", e.target.value)} placeholder="33.5951, -7.6187" inputMode="decimal" />{err("venueCoords")}</div>
+        {isTables && (<>
+          <div><Label k="venueTier" hint="Fixe le budget sur place selon le format (ex. Dîner : Casual 150–250 DH, Premium 250–400 DH, Exclusive 400–600 DH par personne).">Gamme</Label>
+            <select {...field("venueTier")} value={v.venueTier ?? ""} onChange={(e) => set("venueTier", e.target.value as ExperienceFormValues["venueTier"])}>
+              <option value="">Non précisée</option>
+              <option value="casual">Casual</option>
+              <option value="premium">Premium</option>
+              <option value="exclusive">Exclusive</option>
+            </select>{err("venueTier")}</div>
+          <div><Label k="ambiance" hint="Affichée sur la fiche.">Ambiance</Label><input {...field("ambiance")} maxLength={60} value={v.ambiance ?? ""} onChange={(e) => set("ambiance", e.target.value)} />{err("ambiance")}</div>
+          <div className="sm:col-span-2"><Label k="cuisine" hint={secret ? "Affichée seulement avec le lieu, 5 h avant." : "Affichée sur la fiche."}>Cuisine</Label><input {...field("cuisine")} maxLength={60} value={v.cuisine ?? ""} onChange={(e) => set("cuisine", e.target.value)} />{err("cuisine")}</div>
+        </>)}
       </Section>
 
-      <Section title="3. Format">
-        <div className="sm:col-span-2"><Label k="bookingMode">Mode de réservation</Label>
-          <select {...field("bookingMode")} value={v.bookingMode} onChange={(e) => set("bookingMode", e.target.value as ExperienceFormValues["bookingMode"])}>
-            {MODES.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
-          </select></div>
-        <div className="sm:col-span-2"><Label k="admission" hint="Sur demande : chaque personne envoie une demande (message, Instagram facultatif) ; l'équipe accepte ou refuse dans « Demandes de participation », puis la personne acceptée a 24 h pour payer.">Inscription</Label>
-          <select {...field("admission")} value={v.admission} onChange={(e) => set("admission", e.target.value as ExperienceFormValues["admission"])}>
-            <option value="direct">Réservation directe — on réserve et on paie tout de suite</option>
-            <option value="on_request">Sur demande — l&apos;équipe valide chaque participant</option>
-          </select></div>
-        {v.admission === "on_request" && (
-          <label className="flex items-center gap-2 text-sm sm:col-span-2">
-            <input type="checkbox" checked={v.requestMessageRequired} onChange={(e) => set("requestMessageRequired", e.target.checked)} className="size-4 accent-brand-900" />
-            Message de motivation obligatoire (« Pourquoi souhaitez-vous participer ? »)
-          </label>
-        )}
-        {v.admission === "on_request" && (
-          <label className="flex items-center gap-2 text-sm sm:col-span-2">
-            <input type="checkbox" checked={v.requestInstagramRequired} onChange={(e) => set("requestInstagramRequired", e.target.checked)} className="size-4 accent-brand-900" />
-            Compte Instagram obligatoire
-          </label>
+      <Section title="3. Format et règles">
+        {isTables ? (
+          <p className="text-sm text-muted sm:col-span-2">Tables composées par Wenzy, heure de début seulement (chacun reste aussi longtemps qu&apos;il le souhaite).</p>
+        ) : (
+          <div className="sm:col-span-2"><Label k="bookingMode">Format</Label>
+            <select {...field("bookingMode")} value={v.bookingMode} onChange={(e) => set("bookingMode", e.target.value as ExperienceFormValues["bookingMode"])}>
+              {MODES.filter((m) => m.id !== "social_dinner").map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+            </select></div>
         )}
         {grouped && (
-          <div className="grid grid-cols-3 gap-3 sm:col-span-2">
-            <div><Label k="groupMin">Taille min</Label><input {...field("groupMin")} inputMode="numeric" value={v.groupMin} onChange={(e) => set("groupMin", e.target.value)} />{err("groupMin")}</div>
-            <div><Label k="groupTarget">Cible</Label><input {...field("groupTarget")} inputMode="numeric" value={v.groupTarget} onChange={(e) => set("groupTarget", e.target.value)} />{err("groupTarget")}</div>
-            <div><Label k="groupMax">Taille max</Label><input {...field("groupMax")} inputMode="numeric" value={v.groupMax} onChange={(e) => set("groupMax", e.target.value)} />{err("groupMax")}</div>
+          <div className="grid grid-cols-2 gap-3 sm:col-span-2">
+            <div><Label k="groupMin">{isTables ? "Personnes par table, minimum" : "Taille d'un groupe, minimum"}</Label><input {...field("groupMin")} inputMode="numeric" value={v.groupMin} onChange={(e) => set("groupMin", e.target.value)} />{err("groupMin")}</div>
+            <div><Label k="groupMax">{isTables ? "Personnes par table, maximum" : "Taille d'un groupe, maximum"}</Label><input {...field("groupMax")} inputMode="numeric" value={v.groupMax} onChange={(e) => set("groupMax", e.target.value)} />{err("groupMax")}{err("groupTarget")}</div>
           </div>
         )}
-        {!pro && (
-          <label className="flex items-center gap-2 self-end pb-3 text-sm">
-            <input type="checkbox" checked={v.membersOnly} onChange={(e) => set("membersOnly", e.target.checked)} className="size-4 accent-brand-900" />
-            Réservée aux membres abonnés
-          </label>
-        )}
-        <div><Label k="durationMinutes">Durée (minutes)</Label><input {...field("durationMinutes")} inputMode="numeric" value={v.durationMinutes} onChange={(e) => set("durationMinutes", e.target.value)} />{err("durationMinutes")}</div>
-        <div><Label k="maxSeatsPerBooking" hint="1 pour une réservation individuelle.">Places max par réservation</Label><input {...field("maxSeatsPerBooking")} inputMode="numeric" value={v.maxSeatsPerBooking} onChange={(e) => set("maxSeatsPerBooking", e.target.value)} />{err("maxSeatsPerBooking")}</div>
-        <div><Label k="cancellationPolicyId">Conditions d&apos;annulation</Label>
+        <div><Label k="maxSeatsPerBooking" hint="2 = « Moi + 1 » : la personne réserve aussi pour quelqu'un, chaque place est payée.">Places par réservation</Label>
+          <select {...field("maxSeatsPerBooking")} value={Number(v.maxSeatsPerBooking) >= 2 ? "2" : "1"} onChange={(e) => set("maxSeatsPerBooking", e.target.value)}>
+            <option value="1">1 place</option>
+            <option value="2">2 places au plus</option>
+          </select>{err("maxSeatsPerBooking")}</div>
+        {!isTables && <div><Label k="durationMinutes">Durée (minutes)</Label><input {...field("durationMinutes")} inputMode="numeric" value={v.durationMinutes} onChange={(e) => set("durationMinutes", e.target.value)} />{err("durationMinutes")}</div>}
+        <div><Label k="cancellationPolicyId" hint="Les frais Wenzy sont remboursés selon ces conditions.">Conditions d&apos;annulation</Label>
           <select {...field("cancellationPolicyId")} value={v.cancellationPolicyId} onChange={(e) => set("cancellationPolicyId", e.target.value)}>
             {policies.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
           </select></div>
         <fieldset className="sm:col-span-2">
-          <legend className="mb-1 text-sm font-medium text-ink">Langues de l&apos;expérience</legend>
+          <legend className="mb-1 text-sm font-medium text-ink">Langues de l&apos;événement</legend>
           <div className="flex flex-wrap gap-2" aria-invalid={Boolean(errors.languages)}>
             {SPOKEN_LANGUAGES.map((l) => {
               const on = v.languages.includes(l);
@@ -436,73 +438,103 @@ export function ExperienceForm({
           </div>
           {err("languages")}
         </fieldset>
-        <label className="flex items-center gap-2 text-sm sm:col-span-2">
+        {!pro && (
+          <fieldset className="text-sm sm:col-span-2" data-testid="access">
+            <legend className="mb-1.5 font-medium">Accès</legend>
+            <label className="flex items-center gap-2 py-1">
+              <input type="radio" name="access" checked={!v.membersOnly && Number(v.earlyAccessDays || 0) === 0} onChange={() => setV((x) => ({ ...x, membersOnly: false, earlyAccessDays: "0" }))} className="size-4 accent-brand-900" />
+              Ouvert à tous
+            </label>
+            <label className="flex flex-wrap items-center gap-2 py-1">
+              <input type="radio" name="access" checked={!v.membersOnly && Number(v.earlyAccessDays || 0) > 0} onChange={() => setV((x) => ({ ...x, membersOnly: false, earlyAccessDays: Number(x.earlyAccessDays || 0) > 0 ? x.earlyAccessDays : "3" }))} className="size-4 accent-brand-900" />
+              Abonnés d&apos;abord pendant
+              <input id="f-earlyAccessDays" aria-label="Nombre de jours réservés aux abonnés" inputMode="numeric" className="w-16 rounded-xl border border-line bg-white px-2 py-1 text-[15px]" value={v.earlyAccessDays} onChange={(e) => setV((x) => ({ ...x, membersOnly: false, earlyAccessDays: e.target.value }))} />
+              jours, puis ouvert à tous
+            </label>
+            <label className="flex items-center gap-2 py-1">
+              <input type="radio" name="access" checked={v.membersOnly} onChange={() => setV((x) => ({ ...x, membersOnly: true, earlyAccessDays: "0" }))} className="size-4 accent-brand-900" />
+              Abonnés uniquement
+            </label>
+            {err("earlyAccessDays")}
+          </fieldset>
+        )}
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={v.audience === "women"} onChange={(e) => set("audience", e.target.checked ? "women" : "all")} className="size-4 accent-brand-900" />
+          Réservé aux femmes
+        </label>
+        <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={v.alcoholServed} onChange={(e) => set("alcoholServed", e.target.checked)} className="size-4 accent-brand-900" />
-          De l&apos;alcool est servi pendant l&apos;expérience
+          De l&apos;alcool est servi
         </label>
-        <fieldset className="text-sm sm:col-span-2" data-testid="arrival-mode">
-          <legend className="mb-1.5 font-medium">Comment les participants signalent-ils leur arrivée ?</legend>
-          <label className="flex items-start gap-2 py-1">
-            <input type="radio" name="arrival-mode" checked={!v.onSiteHost} onChange={() => set("onSiteHost", false)} className="mt-0.5 size-4 accent-brand-900" />
-            <span>
-              Ils l&apos;indiquent dans l&apos;application (par défaut)
-              <span className="block text-xs text-muted">Pas d&apos;hôte ni de billet : le jour J, chacun appuie sur « Je suis arrivé·e » et retrouve son groupe seul.</span>
-            </span>
+        {!isTables && (
+          <label className="flex items-start gap-2 text-sm sm:col-span-2">
+            <input type="checkbox" checked={Boolean(v.foodServed)} onChange={(e) => set("foodServed", e.target.checked)} className="mt-0.5 size-4 accent-brand-900" />
+            <span>Des plats ou boissons sont servis<span className="block text-xs text-muted">Régime et allergies demandés à la réservation (toujours le cas pour les Tables).</span></span>
           </label>
-          <label className="flex items-start gap-2 py-1">
-            <input type="radio" name="arrival-mode" checked={Boolean(v.onSiteHost)} onChange={() => set("onSiteHost", true)} className="mt-0.5 size-4 accent-brand-900" />
-            <span>
-              Leur billet est scanné à l&apos;entrée (hôtesse ou équipe sur place)
-              <span className="block text-xs text-muted">Chaque participant reçoit un billet à QR code. Le billet est aussi donné d&apos;office quand une part est à régler au lieu partenaire.</span>
-            </span>
-          </label>
-        </fieldset>
-        <label className="flex items-start gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" checked={Boolean(v.foodServed)} onChange={(e) => set("foodServed", e.target.checked)} className="mt-0.5 size-4 accent-brand-900" />
-          <span>
-            Des plats ou boissons sont servis
-            <span className="block text-xs text-muted">Régime et allergies demandés à la réservation (toujours le cas pour l&apos;univers Dîners et les dîners composés).</span>
-          </span>
-        </label>
-        <div className="sm:col-span-2"><Label k="included" hint="Tout ce que comprend le prix total, payé en ligne et sur place. Un élément par ligne, affiché sur la fiche.">Ce qui est inclus</Label><textarea {...field("included")} rows={3} value={v.included ?? ""} onChange={(e) => set("included", e.target.value)} /></div>
-        <div className="sm:col-span-2"><Label k="notIncluded" hint="Facultatif : ce que le prix ne comprend pas (boissons, transport, matériel à louer…). Un élément par ligne.">Ce qui n&apos;est pas inclus</Label><textarea {...field("notIncluded")} rows={2} value={v.notIncluded ?? ""} onChange={(e) => set("notIncluded", e.target.value)} /></div>
-        <div className="sm:col-span-2"><Label k="practicalInfo">Infos pratiques</Label><textarea {...field("practicalInfo")} rows={2} value={v.practicalInfo ?? ""} onChange={(e) => set("practicalInfo", e.target.value)} /></div>
+        )}
+        <div className="sm:col-span-2"><Label k="included" hint="Un élément par ligne. Ce qui se paie sur place est déjà dit dans « Ce que vous payez » : pas besoin de le répéter.">Ce qui est inclus</Label><textarea {...field("included")} rows={3} value={v.included ?? ""} onChange={(e) => set("included", e.target.value)} /></div>
+        <div className="sm:col-span-2"><Label k="practicalInfo" hint="Seulement l'indispensable (ex. « Tenue soignée »). Jamais l'heure de révélation du lieu, déjà indiquée.">Infos pratiques</Label><textarea {...field("practicalInfo")} rows={2} value={v.practicalInfo ?? ""} onChange={(e) => set("practicalInfo", e.target.value)} /></div>
+        <details className="rounded-xl border border-line p-4 sm:col-span-2" data-testid="advanced-options">
+          <summary className="cursor-pointer text-sm font-semibold text-ink">Options avancées</summary>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2"><Label k="admission" hint="Sur demande : chaque personne envoie une demande ; l'équipe accepte ou refuse, puis la personne acceptée a 24 h pour payer.">Inscription</Label>
+              <select {...field("admission")} value={v.admission} onChange={(e) => set("admission", e.target.value as ExperienceFormValues["admission"])}>
+                <option value="direct">Réservation directe</option>
+                <option value="on_request">Sur demande : l&apos;équipe valide chaque participant</option>
+              </select></div>
+            {v.admission === "on_request" && (
+              <label className="flex items-center gap-2 text-sm sm:col-span-2">
+                <input type="checkbox" checked={v.requestMessageRequired} onChange={(e) => set("requestMessageRequired", e.target.checked)} className="size-4 accent-brand-900" />
+                Message de motivation obligatoire
+              </label>
+            )}
+            {v.admission === "on_request" && (
+              <label className="flex items-center gap-2 text-sm sm:col-span-2">
+                <input type="checkbox" checked={v.requestInstagramRequired} onChange={(e) => set("requestInstagramRequired", e.target.checked)} className="size-4 accent-brand-900" />
+                Compte Instagram obligatoire
+              </label>
+            )}
+            <label className="flex items-start gap-2 text-sm sm:col-span-2" data-testid="arrival-mode">
+              <input type="checkbox" checked={Boolean(v.onSiteHost)} onChange={(e) => set("onSiteHost", e.target.checked)} className="mt-0.5 size-4 accent-brand-900" />
+              <span>Hôtesse sur place<span className="block text-xs text-muted">Chaque participant reçoit un billet à QR code, scanné à l&apos;entrée. Sinon (par défaut), chacun indique son arrivée dans l&apos;appli.</span></span>
+            </label>
+            <div><Label k="minAge" hint="Vide = 18 ans (règle du site).">Âge minimum</Label><input {...field("minAge")} inputMode="numeric" value={v.minAge} onChange={(e) => set("minAge", e.target.value)} />{err("minAge")}</div>
+            <div><Label k="targetAgeMin" hint="Indicatif, ne bloque personne.">Tranche d&apos;âge visée</Label>
+              <span className="flex items-center gap-2"><input {...field("targetAgeMin")} inputMode="numeric" placeholder="25" value={v.targetAgeMin} onChange={(e) => set("targetAgeMin", e.target.value)} className="w-20 rounded-xl border border-line bg-white px-3 py-2.5" /> à <input id="f-targetAgeMax" aria-label="Tranche d'âge visée : maximum" inputMode="numeric" placeholder="35" value={v.targetAgeMax} onChange={(e) => set("targetAgeMax", e.target.value)} className="w-20 rounded-xl border border-line bg-white px-3 py-2.5" /> ans</span>{err("targetAgeMin")}{err("targetAgeMax")}</div>
+            <div className="sm:col-span-2"><Label k="notIncluded" hint="Rarement utile : l'encadré « Ce que vous payez » dit déjà ce qui se règle sur place.">Ce qui n&apos;est pas inclus</Label><textarea {...field("notIncluded")} rows={2} value={v.notIncluded ?? ""} onChange={(e) => set("notIncluded", e.target.value)} /></div>
+          </div>
+        </details>
       </Section>
 
-      <Section id="activite" title="4. Activité, sécurité et questionnaire">
-        <div><Label k="level" hint="Affiché sur la fiche. Pour former des groupes de même niveau, ajoutez une question « niveau » au questionnaire.">Niveau attendu</Label>
-          <select {...field("level")} value={v.level} onChange={(e) => set("level", e.target.value as ExperienceFormValues["level"])}>
-            <option value="">Non précisé</option>
-            {(Object.keys(LEVEL_LABELS) as ActivityLevel[]).map((l) => <option key={l} value={l}>{LEVEL_LABELS[l]}</option>)}
-          </select></div>
-        <div><Label k="audience" hint="« Réservé aux femmes » : seules les personnes dont le profil indique « femme » peuvent réserver (vérifié par le serveur).">Public</Label>
-          <select {...field("audience")} value={v.audience ?? "all"} onChange={(e) => set("audience", e.target.value as "all" | "women")}>
-            <option value="all">Mixte</option>
-            <option value="women">Réservé aux femmes</option>
-          </select></div>
-        <div><Label k="targetAgeMin" hint="Indicatif, affiché sur la fiche (« pensé pour les 25 à 35 ans ») ; ne bloque personne.">Tranche d&apos;âge visée</Label>
-          <span className="flex items-center gap-2"><input {...field("targetAgeMin")} inputMode="numeric" placeholder="25" value={v.targetAgeMin} onChange={(e) => set("targetAgeMin", e.target.value)} className="w-24 rounded-xl border border-line bg-white px-3 py-2.5" /> à <input id="f-targetAgeMax" aria-label="Tranche d'âge visée : maximum" inputMode="numeric" placeholder="35" value={v.targetAgeMax} onChange={(e) => set("targetAgeMax", e.target.value)} className="w-24 rounded-xl border border-line bg-white px-3 py-2.5" /> ans</span>{err("targetAgeMin")}{err("targetAgeMax")}</div>
-        <div><Label k="minAge" hint="Vide = 18 ans (règle du site). Vérifié à la réservation avec la date de naissance.">Âge minimum</Label><input {...field("minAge")} inputMode="numeric" value={v.minAge} onChange={(e) => set("minAge", e.target.value)} />{err("minAge")}</div>
-        <div><Label k="equipmentProvided" hint="Ex. raquettes et balles, masque et lanceur, tablier.">Matériel fourni</Label><textarea {...field("equipmentProvided")} rows={2} value={v.equipmentProvided ?? ""} onChange={(e) => set("equipmentProvided", e.target.value)} />{err("equipmentProvided")}</div>
-        <div><Label k="whatToBring" hint="Ex. baskets propres, bouteille d'eau, serviette.">À apporter</Label><textarea {...field("whatToBring")} rows={2} value={v.whatToBring ?? ""} onChange={(e) => set("whatToBring", e.target.value)} />{err("whatToBring")}</div>
-        <div className="sm:col-span-2"><Label k="dressCode" hint="Ex. tenue de sport, vêtements qui ne craignent pas la peinture.">Tenue conseillée</Label><input {...field("dressCode")} value={v.dressCode ?? ""} onChange={(e) => set("dressCode", e.target.value)} />{err("dressCode")}</div>
-        <label className="flex items-start gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" checked={v.outdoor} onChange={(e) => set("outdoor", e.target.checked)} className="mt-0.5 size-4 accent-brand-900" />
-          <span>En plein air<span className="block text-xs text-muted">Affiché sur la fiche : si la météo ne permet pas l&apos;activité, elle est reportée (place gardée ou remboursée, au choix) ou annulée et remboursée.</span></span>
-        </label>
-        <label className="flex items-start gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" checked={v.physicalActivity} onChange={(e) => set("physicalActivity", e.target.checked)} className="mt-0.5 size-4 accent-brand-900" />
-          <span>Activité physique<span className="block text-xs text-muted">Chaque participant accepte les <Link href="/conditions-activites-physiques" target="_blank" className="underline">conditions de participation aux activités physiques</Link> avant de réserver (enregistré avec la réservation).</span></span>
-        </label>
-        {v.physicalActivity && v.partnerId && insurance !== "valid" && (
-          <p role="status" data-testid="insurance-warning" className="flex items-start gap-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-950 sm:col-span-2">
-            <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
-            <span>
-              {insurance === "expired" ? "L'assurance du lieu partenaire a expiré." : insurance === "expiring" ? "L'assurance du lieu partenaire expire dans moins de 30 jours." : "L'assurance du lieu partenaire n'a pas encore été vérifiée."}{" "}
-              Demandez son attestation de responsabilité civile et mettez à jour la <Link href={`/admin/partenaires/${v.partnerId}`} className="underline">fiche du partenaire</Link>.
-            </span>
-          </p>
-        )}
+      <Section id="activite" title={isTables ? "4. Questionnaire" : "4. Activité et questionnaire"}>
+        {!isTables && (<>
+          <div><Label k="level" hint="Affiché sur la fiche.">Niveau attendu</Label>
+            <select {...field("level")} value={v.level} onChange={(e) => set("level", e.target.value as ExperienceFormValues["level"])}>
+              <option value="">Non précisé</option>
+              {(Object.keys(LEVEL_LABELS) as ActivityLevel[]).map((l) => <option key={l} value={l}>{LEVEL_LABELS[l]}</option>)}
+            </select></div>
+          <div><Label k="dressCode" hint="Ex. tenue de sport.">Tenue conseillée</Label><input {...field("dressCode")} value={v.dressCode ?? ""} onChange={(e) => set("dressCode", e.target.value)} />{err("dressCode")}</div>
+          <div><Label k="equipmentProvided" hint="Ex. raquettes et balles, tapis.">Matériel fourni</Label><textarea {...field("equipmentProvided")} rows={2} value={v.equipmentProvided ?? ""} onChange={(e) => set("equipmentProvided", e.target.value)} />{err("equipmentProvided")}</div>
+          <div><Label k="whatToBring" hint="Ex. baskets propres, bouteille d'eau.">À apporter</Label><textarea {...field("whatToBring")} rows={2} value={v.whatToBring ?? ""} onChange={(e) => set("whatToBring", e.target.value)} />{err("whatToBring")}</div>
+          <label className="flex items-start gap-2 text-sm sm:col-span-2">
+            <input type="checkbox" checked={v.outdoor} onChange={(e) => set("outdoor", e.target.checked)} className="mt-0.5 size-4 accent-brand-900" />
+            <span>En plein air<span className="block text-xs text-muted">Si la météo ne permet pas l&apos;activité, elle est reportée ou annulée et remboursée.</span></span>
+          </label>
+          <label className="flex items-start gap-2 text-sm sm:col-span-2">
+            <input type="checkbox" checked={v.physicalActivity} onChange={(e) => set("physicalActivity", e.target.checked)} className="mt-0.5 size-4 accent-brand-900" />
+            <span>Activité physique<span className="block text-xs text-muted">Chaque participant accepte les <Link href="/conditions-activites-physiques" target="_blank" className="underline">conditions de participation aux activités physiques</Link> en réservant.</span></span>
+          </label>
+          {v.physicalActivity && v.partnerId && insurance !== "valid" && (
+            <p role="status" data-testid="insurance-warning" className="flex items-start gap-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-950 sm:col-span-2">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
+              <span>
+                {insurance === "expired" ? "L'assurance du lieu partenaire a expiré." : insurance === "expiring" ? "L'assurance du lieu partenaire expire dans moins de 30 jours." : "L'assurance du lieu partenaire n'a pas encore été vérifiée."}{" "}
+                Demandez son attestation de responsabilité civile et mettez à jour la <Link href={`/admin/partenaires/${v.partnerId}`} className="underline">fiche du partenaire</Link>.
+              </span>
+            </p>
+          )}
+        </>)}
+        {isTables && <p className="text-sm text-muted sm:col-span-2">Les Tables n&apos;ont pas de questionnaire : le profil d&apos;inscription suffit pour composer les tables.</p>}
         <QuestionnaireEditor value={v.questionnaire} onChange={(q) => set("questionnaire", q)} error={Object.entries(errors).find(([k]) => k.startsWith("questionnaire"))?.[1]} />
       </Section>
 
@@ -626,6 +658,15 @@ export function ExperienceForm({
       <fieldset className="rounded-2xl bg-white p-4 shadow-card sm:p-5">
         <legend className="float-left mb-3 w-full text-base font-semibold text-ink">6. Photos</legend>
         <div className="clear-both">
+          {existingImages.length === 0 && images.length === 0 && template && (
+            <div className="mb-3 flex flex-wrap items-center gap-3" data-testid="template-photo">
+              <div className="relative size-24 overflow-hidden rounded-xl ring-2 ring-brand-100">
+                {/* eslint-disable-next-line @next/next/no-img-element -- photo du modèle (fichier du site) */}
+                <img src={mediaUrl(template.image)} alt="" className="size-full object-cover" />
+              </div>
+              <p className="text-xs text-muted">Photo du modèle « {template.name} ». Ajoutez une photo pour la remplacer.</p>
+            </div>
+          )}
           {existingImages.length > 0 && images.length === 0 && (
             <div className="mb-3 flex flex-wrap gap-3">
               {existingImages.map((img) => (
@@ -671,6 +712,8 @@ export function ExperienceForm({
         {!live && <span className="text-xs text-muted">Mode démonstration : rien n&apos;est enregistré.</span>}
       </div>
 
+      {!pro && <SaveAsTemplate values={v} template={template} existingImages={existingImages} live={live} />}
+
       {live && saved && (
         <section id="form-result" role="status" className="scroll-mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-950">
           <h2 className="flex items-center gap-2 text-base font-semibold"><CheckCircle2 className="size-5" aria-hidden /> {pro ? "Activité enregistrée" : "Expérience enregistrée"}</h2>
@@ -711,3 +754,56 @@ export function ExperienceForm({
     </form>
   );
 }
+
+/**
+ * docs/22, décision 21 : « Enregistrer comme modèle » (nouveau modèle) ou « Mettre à jour le modèle » (celui d'origine).
+ * Le modèle garde ses gammes ; le lieu, la date et la gamme choisie n'en font pas partie.
+ */
+function SaveAsTemplate({ values, template, existingImages, live }: { values: ExperienceFormValues; template?: Omit<EventTemplate, "values">; existingImages: { path: string }[]; live: boolean }) {
+  const [name, setName] = useState("");
+  const [state, setState] = useState<"idle" | "busy" | "error">("idle");
+  const [done, setDone] = useState("");
+  const save = async (asNew: boolean) => {
+    const label = asNew ? name.trim() : template!.name;
+    if (label.length < 2) return setState("error");
+    const photo = template?.image ?? existingImages.find((i) => i.path.startsWith("experiences/") || i.path.startsWith("/images/modeles/"))?.path ?? "/images/modeles/diner.webp";
+    const weekday = values.sessions.firstDate ? new Date(`${values.sessions.firstDate}T12:00:00Z`).getUTCDay() : 6;
+    setState("busy");
+    setDone("");
+    try {
+      await firebase().auth.authStateReady();
+      const res = await httpsCallable(firebase().functions, "adminSaveTemplate")({
+        id: asNew ? templateSlug(label) : template!.id,
+        name: label,
+        image: photo,
+        order: template?.order ?? 50,
+        isActive: true,
+        ...(template?.tiers ? { tiers: template.tiers } : {}),
+        values: JSON.parse(JSON.stringify(valuesToTemplate(values, weekday))),
+      });
+      setDone(`Modèle « ${label} » enregistré.`);
+      setState("idle");
+      void res;
+    } catch {
+      setState("error");
+    }
+  };
+  return (
+    <section className="rounded-2xl border border-dashed border-line bg-white p-4 text-sm" data-testid="save-as-template">
+      <p className="font-semibold text-ink">Modèle</p>
+      <p className="mt-1 text-xs text-muted">Réutilisez ces réglages pour les prochains événements : textes, format, prix sur place, règles et questionnaire (sans le lieu ni la date).</p>
+      {!live ? (
+        <p className="mt-2 text-xs text-muted">Démonstration : les modèles s&apos;enregistrent sur le site en ligne.</p>
+      ) : (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {template && <button type="button" disabled={state === "busy"} onClick={() => save(false)} className="rounded-full border border-brand-900 px-4 py-2 font-semibold text-brand-900 disabled:opacity-60">Mettre à jour le modèle « {template.name} »</button>}
+          <input aria-label="Nom du nouveau modèle" placeholder="Nom du nouveau modèle" value={name} onChange={(e) => { setName(e.target.value); setState("idle"); }} className="w-56 rounded-xl border border-line bg-white px-3 py-2" />
+          <button type="button" disabled={state === "busy"} onClick={() => save(true)} className="rounded-full bg-brand-900 px-4 py-2 font-semibold text-white disabled:opacity-60">Enregistrer comme nouveau modèle</button>
+          {done && <span role="status" className="text-emerald-800">{done}</span>}
+          {state === "error" && <span role="alert" className="text-red-800">Nom manquant ou enregistrement impossible.</span>}
+        </div>
+      )}
+    </section>
+  );
+}
+

@@ -1,4 +1,4 @@
-import { DEFAULT_CANCELLATION_POLICY, insuranceState, pricingOf, type Experience, type OutingProposal } from "@thecommunity/shared";
+import { cleanQuestion, DEFAULT_CANCELLATION_POLICY, insuranceState, nextWeekdayDate, pricingOf, type EventTemplate, type Experience, type OutingProposal, type TemplateValues, type VenueTier } from "@thecommunity/shared";
 import { toDraft } from "@/lib/questionnaire-draft";
 import type { ExperienceFormValues } from "@/components/admin/experience-form";
 import type { AdminData } from "@/lib/data/admin";
@@ -27,7 +27,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
     revealPolicy: "immediate", bookingMode: "individual",
     groupMin: "5", groupTarget: "6", groupMax: "7", maxSeatsPerBooking: "1",
     admission: "direct", requestMessageRequired: false, requestInstagramRequired: false, memberPriceDh: "", membersOnly: false,
-    priceDh: "", free: false, durationMinutes: "120", languages: ["fr"], alcoholServed: false, onSiteHost: false, foodServed: false,
+    priceDh: "", free: false, earlyAccessDays: "0", durationMinutes: "120", languages: ["fr"], alcoholServed: false, onSiteHost: false, foodServed: false,
     included: "", notIncluded: "", practicalInfo: "", cancellationPolicyId: DEFAULT_CANCELLATION_POLICY.id,
     partnerId: "", economicsModel: "own", costPerSeatDh: "", commissionPercent: "",
     pricingModel: "online_only", partnerPriceDh: "", partnerDescription: "", onSiteCommissionPercent: "", budgetMinDh: "", budgetMaxDh: "", venueTier: "", cuisine: "", ambiance: "",
@@ -50,7 +50,7 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     memberPriceDh: e.memberPrice ? String(e.memberPrice.amount / 100) : "", membersOnly: Boolean(e.membersOnly),
     // Étape 22 : pour une activité d'organisateur, le prix saisi est le prix TOTAL (la part en ligne en découle).
     // docs/22 : un événement Wenzy prend le prix Wenzy global ; seul « gratuit » se règle ici.
-    maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String((e.totalPrice?.amount ?? e.price.amount) / 100), free: !e.organizerId && e.price.amount === 0, durationMinutes: String(e.durationMinutes),
+    maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String((e.totalPrice?.amount ?? e.price.amount) / 100), free: !e.organizerId && e.price.amount === 0, earlyAccessDays: String(e.earlyAccessDays ?? 0), durationMinutes: String(e.durationMinutes),
     languages: e.languages.filter((l): l is ExperienceFormValues["languages"][number] => ["fr", "ar", "darija", "en", "es"].includes(l)),
     budgetMinDh: e.budgetRange ? String(e.budgetRange.min / 100) : "", budgetMaxDh: e.budgetRange ? String(e.budgetRange.max / 100) : "",
     venueTier: e.venueTier ?? "", cuisine: e.cuisine ?? "", ambiance: e.ambiance ?? "",
@@ -106,5 +106,63 @@ export function proposalToValues(p: OutingProposal, now: Date): ExperienceFormVa
     proposalId: p.id,
     practicalInfo: p.willHost ? `Sortie proposée et accueillie par ${p.firstName}, membre de la communauté.` : "",
     sessions: { ...base.sessions, capacity: String(Math.min(50, Math.max(2, p.capacity))) },
+  };
+}
+
+/**
+ * docs/22, décision 21 : formulaire pré-rempli à partir d'un modèle (et de sa gamme pour les Tables). Il ne reste
+ * qu'à choisir la date ; le lieu se renseigne maintenant ou plus tard (lieu secret).
+ */
+export function templateToValues(t: EventTemplate, tier: VenueTier | null, now: Date): ExperienceFormValues {
+  const x = t.values;
+  const g = tier ? t.tiers?.[tier] : undefined;
+  const str = (n: number | undefined) => (n === undefined ? "" : String(n));
+  return {
+    ...emptyExperienceValues(now),
+    titleFr: x.titleFr, summaryFr: x.summaryFr, descriptionFr: x.descriptionFr,
+    titleAr: x.titleAr ?? "", summaryAr: x.summaryAr ?? "", descriptionAr: x.descriptionAr ?? "",
+    titleEn: x.titleEn ?? "", summaryEn: x.summaryEn ?? "", descriptionEn: x.descriptionEn ?? "",
+    categoryId: x.categoryId, subcategoryId: x.subcategoryId ?? "",
+    revealPolicy: x.revealPolicy, bookingMode: x.bookingMode,
+    groupMin: str(x.groupMin ?? 4), groupTarget: str(x.groupMax ?? 6), groupMax: str(x.groupMax ?? 6),
+    maxSeatsPerBooking: String(x.maxSeatsPerBooking), durationMinutes: String(x.durationMinutes),
+    pricingModel: x.pricingModel, partnerPriceDh: str(x.partnerPriceDh), budgetMinDh: str(x.budgetMinDh), budgetMaxDh: str(x.budgetMaxDh),
+    venueTier: tier ?? "", cuisine: x.cuisine ?? "", ambiance: g?.ambiance ?? x.ambiance ?? "",
+    included: x.included, practicalInfo: g?.practicalInfo ?? x.practicalInfo ?? "",
+    level: x.level ?? "", equipmentProvided: x.equipmentProvided ?? "", whatToBring: x.whatToBring ?? "", dressCode: x.dressCode ?? "",
+    outdoor: x.outdoor, physicalActivity: x.physicalActivity, alcoholServed: x.alcoholServed, foodServed: x.categoryId === "eat",
+    languages: x.languages, cancellationPolicyId: x.cancellationPolicyId, audience: x.audience,
+    membersOnly: x.membersOnly, earlyAccessDays: String(x.earlyAccessDays),
+    questionnaire: x.questionnaire.map(toDraft),
+    status: "draft",
+    sessions: { firstDate: nextWeekdayDate(x.weekday, now), time: x.time, weeks: "1", capacity: String(x.capacity) },
+  };
+}
+
+/** Valeurs du formulaire → réglages d'un modèle (« Enregistrer comme modèle »). La gamme et le lieu n'en font pas partie. */
+export function valuesToTemplate(v: ExperienceFormValues, weekday: number): TemplateValues {
+  const num = (s: string) => (s.trim() === "" ? undefined : Number(s.replace(",", ".")));
+  const grouped = v.categoryId === "eat" || v.bookingMode === "group" || v.bookingMode === "social_dinner";
+  const opt = (s?: string) => (s && s.trim() ? s.trim() : undefined);
+  return {
+    titleFr: v.titleFr.trim(), summaryFr: v.summaryFr.trim(), descriptionFr: v.descriptionFr.trim(),
+    titleAr: opt(v.titleAr), summaryAr: opt(v.summaryAr), descriptionAr: opt(v.descriptionAr),
+    titleEn: opt(v.titleEn), summaryEn: opt(v.summaryEn), descriptionEn: opt(v.descriptionEn),
+    categoryId: v.categoryId, subcategoryId: opt(v.subcategoryId),
+    revealPolicy: v.revealPolicy, bookingMode: v.categoryId === "eat" ? "social_dinner" : v.bookingMode,
+    groupMin: grouped ? num(v.groupMin) : undefined, groupMax: grouped ? num(v.groupMax) : undefined,
+    capacity: Number(v.sessions.capacity) || 12, maxSeatsPerBooking: Number(v.maxSeatsPerBooking) >= 2 ? 2 : 1,
+    durationMinutes: Number(v.durationMinutes) || 120, weekday, time: v.sessions.time || "19:30",
+    pricingModel: v.pricingModel,
+    partnerPriceDh: v.pricingModel === "fixed_partner" ? num(v.partnerPriceDh) : undefined,
+    budgetMinDh: v.pricingModel === "variable_consumption" ? num(v.budgetMinDh) : undefined,
+    budgetMaxDh: v.pricingModel === "variable_consumption" ? num(v.budgetMaxDh) : undefined,
+    cuisine: undefined, ambiance: v.categoryId === "eat" ? undefined : opt(v.ambiance),
+    included: v.included ?? "", practicalInfo: opt(v.practicalInfo),
+    level: v.level || undefined, equipmentProvided: opt(v.equipmentProvided), whatToBring: opt(v.whatToBring), dressCode: opt(v.dressCode),
+    outdoor: v.outdoor, physicalActivity: v.physicalActivity, alcoholServed: v.alcoholServed,
+    languages: v.languages, cancellationPolicyId: v.cancellationPolicyId, audience: v.audience === "women" ? "women" : "all",
+    membersOnly: v.membersOnly, earlyAccessDays: v.membersOnly ? 0 : Number(v.earlyAccessDays) || 0,
+    questionnaire: v.questionnaire.map((q) => cleanQuestion({ ...q, label: q.label, options: q.options })),
   };
 }

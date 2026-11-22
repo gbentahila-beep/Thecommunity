@@ -109,9 +109,9 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   const twoPart = pricingOf(exp);
   const memberAmount = memberAmountFor(plan, session.price, exp);
   const isMember = Boolean(visitor?.member);
-  // Accès anticipé : une nouvelle date est réservée aux membres pendant les premières heures.
-  const earlyUntil =
-    plan && plan.earlyAccessHours > 0 && session.createdAt ? new Date(new Date(session.createdAt).getTime() + plan.earlyAccessHours * 3_600_000) : null;
+  // Accès anticipé (docs/22, décision 9) : réglé par événement en jours ; à défaut (anciennes fiches), réglage de la formule.
+  const earlyHours = typeof exp.earlyAccessDays === "number" ? exp.earlyAccessDays * 24 : plan?.earlyAccessHours ?? 0;
+  const earlyUntil = earlyHours > 0 && session.createdAt ? new Date(new Date(session.createdAt).getTime() + earlyHours * 3_600_000) : null;
   const earlyLocked = Boolean(earlyUntil && !isMember && isAfterNow(earlyUntil));
   const membersLocked = Boolean(exp.membersOnly && !isMember);
 

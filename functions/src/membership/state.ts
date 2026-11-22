@@ -29,7 +29,8 @@ export function membershipTerms(o: {
 }): { member: boolean; memberUnitAmount?: number; waiveFees?: boolean } {
   const member = memberFromDoc(o.membership, new Date(o.now));
   if (o.e.membersOnly === true && !member) refuse("members_only", "Expérience réservée aux membres.");
-  const early = o.plan?.isActive === true ? Number(o.plan.earlyAccessHours ?? 0) : 0;
+  // docs/22, décision 9 : l'accès anticipé se règle par événement (X jours) ; à défaut (anciennes fiches), réglage de la formule.
+  const early = typeof o.e.earlyAccessDays === "number" ? o.e.earlyAccessDays * 24 : o.plan?.isActive === true ? Number(o.plan.earlyAccessHours ?? 0) : 0;
   const created = o.s.createdAt instanceof Timestamp ? o.s.createdAt.toMillis() : null;
   if (!o.byTeam && !member && early > 0 && created !== null && o.now < created + early * 3_600_000) {
     refuse("members_early_access", "Nouvelle date en accès anticipé pour les membres.");

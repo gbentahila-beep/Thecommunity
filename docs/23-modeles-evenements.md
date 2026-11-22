@@ -5,7 +5,7 @@ Liste de tous les modèles proposés à l'équipe quand elle crée un événemen
 ## 0. Décisions du 22 novembre
 
 - **Titres simples** (« Brunch »), titre long automatique pour Google (option A du § 2).
-- **Liste validée.** **Toutes les Tables sont au lancement**, soit **15 modèles au lancement**. **Le Couscous du vendredi est supprimé** : c'est un Déjeuner (cuisine marocaine, titre modifiable).
+- **Liste validée.** **Toutes les Tables sont au lancement**, soit **14 modèles au lancement**. **Le Couscous du vendredi est supprimé** : c'est un Déjeuner (cuisine marocaine, titre modifiable).
 - **Chaque format de Tables existe en 3 gammes** (Casual, Premium, Exclusive), qui fixent le budget sur place (docs/22 § 6). La « Grande table » n'est donc plus un modèle à part : c'est le **Dîner en gamme Exclusive**.
 - **Choix du modèle** : univers → format → gamme (Tables seulement).
 - **Contenus validés dans le principe.** On valide les premiers modèles en détail, puis les suivants plus vite ; tout reste modifiable dans le back-office.
@@ -125,7 +125,7 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 | D10 | Journée plage | Découvrir | Groupe | Conso | + | ✗ |
 | D11 | Escapade d'une journée | Découvrir | Groupe | Transport ≈ 150–250 DH | + | ✗ |
 
-**Lancement : 15 modèles** : les 4 Tables (Café, Brunch, Déjeuner, Dîner, chacun en 3 gammes), Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée, Échange de langues.
+**Lancement : 14 modèles** : les 4 Tables (Café, Brunch, Déjeuner, Dîner, chacun en 3 gammes), Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée, Échange de langues.
 
 ---
 

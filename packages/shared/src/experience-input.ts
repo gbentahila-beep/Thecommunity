@@ -39,9 +39,10 @@ export const experienceInputSchema = z
     /** Étape 19 : sous-catégorie facultative (rattachée à la catégorie choisie, vérifié par le serveur). */
     subcategoryId: z.string().regex(CATEGORY_ID_PATTERN, "required").optional().or(z.literal("")),
     cityId: z.string().min(1, "required"),
-    district: z.string().trim().min(2, "required").max(60, "tooLong"),
-    venueName: z.string().trim().min(2, "required").max(100, "tooLong"),
-    address: z.string().trim().min(5, "required").max(200, "tooLong"),
+    // docs/22, décision 15 : lieu secret → le lieu peut être choisi plus tard (au plus tard 5 h avant) ; lieu affiché → obligatoire.
+    district: z.string().trim().max(60, "tooLong").default(""),
+    venueName: z.string().trim().max(100, "tooLong").default(""),
+    address: z.string().trim().max(200, "tooLong").default(""),
     revealPolicy: z.enum(["immediate", "on_group_reveal"]),
     /** Étape 23 : coordonnées GPS du lieu (« 33.5951, -7.6187 », copiées depuis une carte) : carte sur la fiche si le lieu est public. */
     venueCoords: z.string().trim().max(40, "tooLong").refine((s) => !s || parseCoords(s) !== null, "invalidCoords").optional().or(z.literal("")),
@@ -54,6 +55,8 @@ export const experienceInputSchema = z
     /** Prix membre précis (DH) ; vide = réduction de la formule d'abonnement. */
     memberPriceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany").optional(),
     membersOnly: z.boolean().default(false),
+    /** docs/22, décision 9 : abonnés d'abord pendant X jours après la mise en ligne d'une date (0 = ouvert à tous tout de suite). */
+    earlyAccessDays: z.coerce.number().int().min(0, "min0").max(30, "tooMany").default(0),
     requestMessageRequired: z.boolean().default(false),
     /** 11h : compte Instagram obligatoire dans la demande de participation (expériences sur demande). */
     requestInstagramRequired: z.boolean().default(false),
@@ -114,6 +117,8 @@ export const experienceInputSchema = z
     physicalActivity: z.boolean().default(false),
     /** 18a : questionnaire rempli par les participants après leur réservation (10 questions au plus). */
     questionnaire: questionnaireSchema,
+    /** docs/22 : modèle d'événement dont la fiche est partie (pour le suivi ; rien n'en dépend). */
+    templateId: z.string().regex(/^[a-z][a-z0-9-]{1,40}$/).optional(),
     /** 18d : proposition d'un membre de confiance dont cette expérience est issue. */
     proposalId: z.string().regex(/^[A-Za-z0-9_-]{6,40}$/).optional(),
   })
@@ -161,6 +166,11 @@ export const experienceInputSchema = z
     }
     if (v.pricingModel === "fixed_partner" && v.partnerPriceDh === undefined) {
       ctx.addIssue({ code: "custom", path: ["partnerPriceDh"], message: "required" });
+    }
+    if (v.revealPolicy === "immediate") {
+      if (v.district.length < 2) ctx.addIssue({ code: "custom", path: ["district"], message: "required" });
+      if (v.venueName.length < 2) ctx.addIssue({ code: "custom", path: ["venueName"], message: "required" });
+      if (v.address.length < 5) ctx.addIssue({ code: "custom", path: ["address"], message: "required" });
     }
     if (v.revealPolicy === "on_group_reveal" && !grouped) {
       ctx.addIssue({ code: "custom", path: ["revealPolicy"], message: "revealNeedsGroups" });
