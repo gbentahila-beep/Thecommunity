@@ -393,7 +393,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | **B — Questionnaires** ✅ | Seulement les questions que le profil ne pose pas : Running, Padel, Jeu en équipe, Atelier, Niveau, **Langues** (nouveau), tous validés ; Tables : aucun (le profil suffit). Détail : docs/23 § 6 | Faite |
 | **C — Photos** ✅ | Les 15 photos du lancement validées (docs/23 § 7) | Faite |
 | **D — Modèles** ✅ | Règles de rédaction : pas de « Pas inclus » (l'encadré « Ce que vous payez » le dit), jamais la révélation du lieu dans les textes, pas de durée ni de « première fois » ni de « sans pression » pour les Tables (sans limite de temps, et certains viendront souvent). Pas de moment ajouté autour de l'activité qui n'est pas prévu (ex. pas de « thé pour faire connaissance » après le yoga). Par petits lots : D1 Café et Dîner (avec les 3 gammes, **validés**) → D2 Brunch, Déjeuner (**validés**) → D3 Running, Padel, Yoga (**validés**) → D4 Escape game, Soirée jeux, Quiz (**validés**) → D5 Céramique, Afterwork, Visite guidée, Échange de langues (**validés**) → puis les modèles de phase 2 | Chaque lot (les premiers en détail, ensuite plus vite) |
-| **E — Prix unique et univers** | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; **les 4 univers** (Tables, formats et gammes compris) | Démonstration à l'écran |
+| **E — Prix unique et univers** ✅ | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; **les 4 univers** (Tables, formats et gammes compris) | Faite (journal § 19) |
 | **F — Modèles dans l'appli** | Choix univers → format → gamme ; formulaire pré-rempli aux champs strictement nécessaires (§ 7) ; places 1 ou 2 ; accès ; réservé aux femmes ; alcool ; conditions d'annulation ; *Paramètres → Modèles* ; « Enregistrer comme modèle » | Démonstration |
 | **G — Rendez-vous et lieux** | Rendez-vous récurrents, lieu par date (plus tard possible), plusieurs lieux, lieu habituel, fiches des lieux partenaires, « Aujourd'hui » | Démonstration |
 | **H — Parcours Tables** | Écran de réservation, fermeture 12 h avant, minimum (choix), déplacer sa réservation, révélation 5 h avant avec résumé de table sans noms, tables 1 h avant (table de 7 à valider), message au lieu, check-in, messages après la rencontre, liste d'attente avec questionnaire | Démonstration |
@@ -427,3 +427,22 @@ Aucune pour l'instant.
 **Les lieux secrets déjà enregistrés** : il suffit d'ouvrir chaque expérience à lieu secret dans le back-office et de cliquer sur « Enregistrer ». Le script `scripts/migrate-secret-venues.ts` fait la même chose pour toutes d'un coup, mais demande un accès technique. À l'étape M, tous les événements seront de toute façon supprimés et recréés.
 
 **Tests** : unitaires 152 ; émulateurs 171 réussis. Les 9 échecs restants existent à l'identique sans ces changements : déclencheurs Authentification et Stockage non émulés dans cet environnement.
+
+### Étape E livrée (22 novembre)
+| Changement | Ce qui change |
+|---|---|
+| **Prix Wenzy unique** | Réglage global *Paramètres → Prix Wenzy* (super-admin), 35 DH par défaut, frais compris. L'enregistrer l'applique à toutes les expériences Wenzy payantes et à leurs dates à venir, et coupe les anciens frais de service. Les réservations déjà faites gardent leur prix ; les événements gratuits et les activités d'organisateurs ne changent pas (étape J). Un événement Wenzy ne peut plus avoir de prix saisi : seulement la case « Événement gratuit ». |
+| **Formulaire (section 5)** | « Ce que paie le participant » : en ligne le prix Wenzy (ou gratuit) ; sur place : rien, prix fixe (montant) ou consommation (budget saisi, sinon budget de la gamme). Plus de prix membre, de marge, de coût par place ni de commission ; le lieu partenaire n'est plus obligatoire pour une part sur place. Aperçu « Ce que voit le participant ». |
+| **Affichage** | Un seul chiffre partout (« 35 DH »), avec la mention « + sur place » quand il y a quelque chose à régler au lieu. Fiche : encadré unique « Ce que vous payez » (en ligne, puis sur place). Plus de prix membre ni de « Devenir membre » sur le prix. Cartes : la pastille de gamme (Casual, Premium, Exclusive) remplace le budget. |
+| **Gammes par format** | Budgets validés (§ 6) pour Café, Brunch, Déjeuner et Dîner ; repère du Dîner par défaut. Le filtre « Gamme » affiche seulement le nom de la gamme. |
+| **Cuisine d'un lieu secret** | Remplie à la création, rangée avec le lieu dans le document privé, affichée seulement à la révélation (sur la réservation). |
+| **4 univers** | Tables (`eat`), Bouger (`move`), Sortir (`discover` : jeux, sorties, vie sociale), Découvrir (`create` : ateliers, culture). Formats des Tables en sous-catégories : Café, Brunch, Déjeuner, Dîner. Textes du menu, de l'accueil et des descriptions en FR / EN / AR. |
+
+**Actions sur le site en ligne** (une fois mis en ligne) :
+1. *Paramètres → Prix Wenzy* : enregistrer 35 DH une fois (met à jour tous les événements Wenzy).
+2. *Paramètres → Catégories* : vérifier les 4 univers et les 4 formats des Tables (le script `seed-content` les met à jour s'ils n'ont pas été modifiés à la main) ; **masquer Jeux, Vie sociale et Culture** et ranger leurs expériences dans Sortir ou Découvrir. À l'étape M, tout sera recréé de toute façon.
+
+**Tests** : unitaires 155 ; émulateurs 172 réussis (dont le nouveau test du prix Wenzy) ; mêmes 9 échecs d'environnement qu'avant. Les 9 suites de bout en bout de démonstration passent (mises à jour pour le prix unique et les 4 univers). **Non lancées** : les suites de bout en bout sur émulateurs (`firebase-*.e2e.cjs`) ; `firebase-tarification` remplit l'ancien formulaire de prix et sera à réécrire à l'étape J.
+
+**Remarque pour l'étape K** : sur téléphone, dans la liste de Découvrir, le prix est en fin de ligne et peut être coupé ; l'agenda de l'étape K le met à droite.
+

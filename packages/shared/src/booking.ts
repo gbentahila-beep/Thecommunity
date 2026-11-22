@@ -7,6 +7,18 @@ import type { BookingMode, CurrencyCode, Pricing } from "./types";
 /** Durée pendant laquelle une place reste bloquée le temps du paiement (hypothèse validée : 15 min). */
 export const HOLD_MINUTES = 15;
 
+/**
+ * Prix Wenzy d'une place, en centimes (docs/22, décision 1) : 35 DH tout compris (30 DH + 5 DH de frais), le même pour
+ * tous les événements. Réglable par le super-admin (Paramètres → Prix Wenzy) ; tout le reste se paie sur place.
+ */
+export const DEFAULT_WENZY_PRICE = 3500;
+/** Prix Wenzy en vigueur, lu dans `settings/booking.wenzyPrice` (centimes) ; 35 DH à défaut. */
+export function wenzyPriceOf(settings: { wenzyPrice?: unknown } | null | undefined): number {
+  const v = Number(settings?.wenzyPrice);
+  return Number.isInteger(v) && v >= 0 && v <= 100_000 ? v : DEFAULT_WENZY_PRICE;
+}
+export const wenzyPriceInputSchema = z.object({ priceDh: z.coerce.number().min(0, "min0").max(1000, "tooMany") });
+
 /** Nombre maximal de places dans une même réservation, quel que soit le réglage de l'expérience. */
 export const MAX_SEATS_PER_BOOKING = 20;
 

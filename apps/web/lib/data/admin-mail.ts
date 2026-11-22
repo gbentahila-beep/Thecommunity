@@ -1,5 +1,5 @@
 import "server-only";
-import { readServiceFee, type ServiceFee } from "@thecommunity/shared";
+import { readServiceFee, wenzyPriceOf, type ServiceFee } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { connection } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin";
@@ -71,6 +71,13 @@ export async function getCompanySettings(): Promise<CompanySettings | null> {
 }
 
 /** Frais de service en vigueur (Paramètres). */
+/** Prix Wenzy par place (centimes), docs/22 ; null en démonstration. */
+export async function getWenzyPrice(): Promise<number | null> {
+  if (!FIREBASE_ENABLED) return null;
+  await requireAdmin();
+  return wenzyPriceOf((await adminDb().doc("settings/booking").get()).data());
+}
+
 export async function getServiceFee(): Promise<ServiceFee | null> {
   if (!FIREBASE_ENABLED) return null;
   await requireAdmin();

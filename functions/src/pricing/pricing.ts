@@ -6,6 +6,7 @@ import {
   readServiceFee,
   reservationRequestSchema,
   serviceFeeInputSchema,
+  wenzyPriceInputSchema,
   NO_SERVICE_FEE,
 } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
@@ -106,6 +107,43 @@ export const adminSavePromo = onCall({ region: REGION }, async (req) => {
   });
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: before ? "promo.update" : "promo.create", targetType: "promoCode", targetId: p.code, before, after: p });
   return { code: p.code };
+});
+
+/**
+ * Paramètres → Prix Wenzy (super-admin, docs/22 décision 1) : un seul prix par place pour tous les événements Wenzy,
+ * frais compris (35 DH par défaut). Enregistrer le prix l'applique aux expériences Wenzy payantes et à leurs dates à
+ * venir, et coupe les anciens frais de service (désormais compris dans le prix). Les réservations déjà faites gardent
+ * leur prix ; les activités d'organisateurs ne changent pas ici (étape J). Journalisé.
+ */
+export const adminSaveWenzyPrice = onCall({ region: REGION, timeoutSeconds: 300 }, async (req) => {
+  const actor = requireRole(req, ["superadmin"]);
+  const v = wenzyPriceInputSchema.safeParse(req.data);
+  if (!v.success) invalidArgument(v.error.issues);
+  const amount = Math.round(v.data.priceDh * 100);
+  const ref = db.doc("settings/booking");
+  const before = (await ref.get()).data() ?? {};
+  await ref.set({ wenzyPrice: amount, serviceFee: { mode: "none", amount: 0, percent: 0 }, updatedAt: FieldValue.serverTimestamp(), updatedBy: actor.uid }, { merge: true });
+  const price = { amount, currency: "MAD" };
+  const exps = await db.collection("experiences").get();
+  const now = Timestamp.now();
+  let experiences = 0;
+  let sessions = 0;
+  for (const e of exps.docs) {
+    const d = e.data();
+    // Activités d'organisateurs et événements gratuits : inchangés.
+    if (d.organizerId || Number(d.price?.amount ?? 0) === 0) continue;
+    const future = await db.collection("sessions").where("experienceId", "==", e.id).where("startAt", ">=", now).get();
+    const writes: [FirebaseFirestore.DocumentReference, Record<string, unknown>][] = [[e.ref, { price, memberPrice: null, updatedAt: FieldValue.serverTimestamp() }], ...future.docs.map((s) => [s.ref, { price }] as [FirebaseFirestore.DocumentReference, Record<string, unknown>])];
+    for (let i = 0; i < writes.length; i += 400) {
+      const batch = db.batch();
+      writes.slice(i, i + 400).forEach(([r, data]) => batch.update(r, data));
+      await batch.commit();
+    }
+    experiences++;
+    sessions += future.size;
+  }
+  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "settings.wenzyPrice", targetType: "settings", targetId: "booking", before: { wenzyPrice: before.wenzyPrice ?? null, serviceFee: before.serviceFee ?? null }, after: { wenzyPrice: amount, experiences, sessions } });
+  return { wenzyPrice: amount, experiences, sessions };
 });
 
 /** Paramètres → Frais de service (super-admin). S'appliquent aux nouvelles réservations payantes. Journalisé. */

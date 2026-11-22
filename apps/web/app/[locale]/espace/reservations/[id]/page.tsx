@@ -189,6 +189,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                   <>
                     <dd className="font-medium text-ink">{r.venue.name}</dd>
                     <dd className="text-sm text-muted">{r.venue.address}</dd>
+                    {r.venue.cuisine && <dd className="text-sm text-muted">{r.venue.cuisine}</dd>}
                   </>
                 ) : (
                   <>

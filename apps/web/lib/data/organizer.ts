@@ -121,7 +121,7 @@ export const getProData = cache(async function getProData(orgId: string): Promis
     .map((d) => {
       const e = plain<Experience>({ id: d.id, ...d.data() });
       const h = hidden.get(d.id);
-      return h ? { ...e, district: String(h.district || e.district), venue: { ...e.venue, name: String(h.name ?? ""), address: String(h.address ?? ""), geo: h.geo ?? null } } : e;
+      return h ? { ...e, district: String(h.district || e.district), cuisine: (h.cuisine as string | undefined) || e.cuisine || null, venue: { ...e.venue, name: String(h.name ?? ""), address: String(h.address ?? ""), geo: h.geo ?? null } } : e;
     })
     .sort((a, b) => a.title.fr.localeCompare(b.title.fr));
   const titleOf = new Map(experiences.map((e) => [e.id, e.title.fr]));

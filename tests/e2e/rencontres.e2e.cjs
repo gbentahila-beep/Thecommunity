@@ -22,7 +22,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   const order = await p.evaluate(() => { const t = document.querySelector('[data-testid=home-trust]'); const h = [...document.querySelectorAll('h2')].find((x) => x.textContent.startsWith('Cette semaine')); return t && h ? t.compareDocumentPosition(h) & Node.DOCUMENT_POSITION_FOLLOWING : 0; });
   assert(order > 0, '28 : repères avant « Cette semaine »');
   await p.goto(base + '/experiences/padel-entre-inconnus-anfa', { waitUntil: 'load' });
-  assert(await p.locator('aside').getByText('150 DH').first().isVisible() && await p.locator('aside').getByTestId('member-price').textContent() === '120 DH membres', '28 : prix public en grand, prix membre discret');
+  assert(await p.locator('aside').getByText('150 DH').first().isVisible() && await p.locator('aside').getByTestId('member-price').count() === 0, 'docs/22 : un seul prix affiché, plus de prix membre');
   assert(!(await p.locator('s').count()) && !(await p.getByRole('link', { name: 'Devenir membre' }).count()), '28 : ni prix barré ni « Devenir membre » sur une expérience ouverte à tous');
   assert(await p.getByRole('link', { name: 'Rejoindre cette expérience' }).first().isVisible(), '28 : bouton « Rejoindre cette expérience »');
   await p.goto(base + '/a-propos', { waitUntil: 'load' });
@@ -86,7 +86,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   // ——— 30 ———
   await p.goto(base + '/espace/profil', { waitUntil: 'load' });
   const prof = await p.locator('main').textContent();
-  assert(prof.includes('Maârif') && prof.includes('Dîners') && prof.includes('Débutant·e') && prof.includes("Peu importe l'âge"), '30 : profil — quartier, univers préférés, niveau, âge');
+  assert(prof.includes('Maârif') && prof.includes('Tables') && prof.includes('Débutant·e') && prof.includes("Peu importe l'âge"), '30 : profil — quartier, univers préférés, niveau, âge');
   await p.goto(base + '/bienvenue?edition=1&etape=district', { waitUntil: 'load' });
   assert(await visible(p.locator('#f-district')) && await p.locator('#f-district').inputValue() === 'Maârif', '30 : questionnaire — quartier pré-rempli (ouvert depuis le profil)');
   await p.goto(base + '/bienvenue?edition=1&etape=sport', { waitUntil: 'load' });

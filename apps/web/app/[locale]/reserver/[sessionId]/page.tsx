@@ -1,4 +1,4 @@
-import { bookingRefusal, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
+import { bookingRefusal, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -147,13 +147,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             <dt className="text-muted">{t("unitPrice")}</dt>
             <dd className="text-end">
               <PriceTag price={session.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} budget={restaurantBudget(exp)} />
-              {memberAmount !== null && !isMember && (
-                <span className="mt-1 block text-xs text-muted">
-                  {t("publicPriceNote", { price: formatMoney(session.price, lang) })}{" "}
-                  <Link href="/abonnement" className="font-semibold text-brand-900 underline">{tm("become")}</Link>
-                </span>
-              )}
-              {isMember && memberAmount !== null && <span className="mt-1 block text-xs font-medium text-emerald-800">{t("memberPriceApplied")}</span>}
+              {/* docs/22 : un seul prix affiché ; les avantages abonnés (pass, carnet) arrivent à l'étape I. */}
             </dd>
           </div>
           {refusal === null && (

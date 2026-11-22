@@ -134,7 +134,7 @@ export type Experience = {
   /** Des plats ou boissons sont servis (atelier cuisine, dégustation…) : régime et allergies demandés. */
   foodServed?: boolean;
   /** Restaurant : gamme (Casual, Premium, Exclusive), budget estimé par personne (centimes) quand chacun paie sa
-   *  consommation, type de cuisine et ambiance — affichés même quand le nom du lieu reste une surprise. */
+   *  consommation et ambiance — affichées même quand le lieu reste une surprise ; la cuisine, elle, n'apparaît qu'avec le lieu (docs/22). */
   venueTier?: VenueTier | null;
   budgetRange?: { min: number; max: number; currency: CurrencyCode } | null;
   cuisine?: string | null;
@@ -354,7 +354,7 @@ export type Reservation = {
     bookingMode: BookingMode;
   };
   /** Lieu exact : renseigné dès la réservation, ou à la révélation du groupe pour les dîners. */
-  venue?: { name: string; address: string };
+  venue?: { name: string; address: string; cuisine?: string };
   /** Régime, allergies, langues de table (5g) ; transmis au lieu seulement avec l'accord de la personne. */
   preferences?: { diet: string; allergies: string; languages: string[]; shareWithVenue: boolean };
   groupId?: string;

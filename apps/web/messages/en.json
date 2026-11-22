@@ -2,7 +2,7 @@
   "meta": {
     "siteName": "Wenzy",
     "defaultTitle": "Wenzy — Experiences and new friends in Casablanca",
-    "defaultDescription": "Dinners with strangers, sport, games, workshops and outings: book your spot and meet new people in real life."
+    "defaultDescription": "Tables with strangers, sport, outings and discoveries: book your spot and meet new people in real life."
   },
   "demo": {
     "banner": "Demo version — the experiences, dates and reviews shown are fictitious.",
@@ -10,7 +10,7 @@
   },
   "nav": {
     "discover": "Discover",
-    "dinners": "Dinners",
+    "dinners": "Tables",
     "activities": "Activities",
     "how": "How it works",
     "account": "My account",
@@ -98,11 +98,11 @@
     "universe": {
       "eat": {
         "tagline": "One table, new faces, a great spot",
-        "text": "New in town, or your friends are always busy? Join a table of people who also want to meet someone new. We put the table together and book the restaurant: come alone or as two.",
+        "text": "Coffee, brunch, lunch or dinner: join a table of four to six people who also want to meet someone new. We put the table together and pick the place: come alone or as two.",
         "group": "Tables put together",
-        "factLabel": "Matched by",
-        "factValue": "Languages, ages, interests",
-        "cta": "See dinners"
+        "factLabel": "Formats",
+        "factValue": "Coffee, brunch, lunch, dinner",
+        "cta": "See tables"
       },
       "move": {
         "tagline": "Get moving with people at your level",
@@ -121,19 +121,19 @@
         "cta": "See games"
       },
       "create": {
-        "tagline": "Make something, together",
-        "text": "Pottery, Moroccan cooking, perfume, zellige painting: your hands are busy and the conversation flows on its own. You leave with what you made… and new contacts.",
-        "group": "Small workshops",
+        "tagline": "Learn and create, together",
+        "text": "Pottery, guided tours, workshops and culture: your hands or your mind are busy and the conversation flows on its own.",
+        "group": "Small groups",
         "factLabel": "Level",
         "factValue": "Beginners welcome",
-        "cta": "See workshops"
+        "cta": "See discoveries"
       },
       "discover": {
-        "tagline": "Meet lots of people in one night",
-        "text": "A sunset rooftop, a Gnawa night, a street art walk: outings open to everyone, to see the city differently and cross paths with new faces.",
-        "group": "Open to everyone",
+        "tagline": "Go out and meet people",
+        "text": "Escape games, game nights, quizzes, afterworks, language exchanges: outings designed to cross paths with new faces, as a team or over a drink.",
+        "group": "As a team or open to all",
         "factLabel": "Format",
-        "factValue": "Solo or with friends",
+        "factValue": "Solo or as two",
         "cta": "See outings"
       },
       "meet": {
@@ -219,7 +219,7 @@
   },
   "city": {
     "title": "Experiences in {city}",
-    "subtitle": "Dinners with strangers, sport, games, workshops and outings: everything you need to meet people in {city}.",
+    "subtitle": "Tables with strangers, sport, outings and discoveries: everything you need to meet people in {city}.",
     "categoryTitle": "{category} in {city}",
     "comingSoonTitle": "Wenzy is coming soon to {city}",
     "comingSoonText": "We are preparing the first experiences. Meanwhile, join us in Casablanca.",
@@ -616,11 +616,11 @@
       "no_show": "No-show"
     },
     "categories": {
-      "eat": "Dinners & food",
-      "move": "Sport & wellbeing",
-      "play": "Games",
-      "create": "Workshops",
-      "discover": "Outings"
+      "eat": "Tables",
+      "move": "Move",
+      "play": "Go out",
+      "create": "Discover",
+      "discover": "Go out"
     },
     "interestGroups": {
       "eat": "Eating and drinking",
@@ -1448,16 +1448,21 @@
     "paidOnline": "Paid online",
     "dueOnline": "To pay online",
     "paidOnSite": "Paid on site",
-    "sectionTitle": "How you pay for this experience",
-    "sectionOnline": "Online, when you book: {amount} per person.",
-    "sectionFixed": "On site, to the partner: {amount} per person.",
-    "sectionVariable": "On site, to the partner: whatever you order.",
+    "sectionTitle": "What you pay",
+    "sectionOnline": "Online, when booking: {amount} per person.",
+    "sectionFixed": "On site: {amount} per person.",
+    "sectionVariable": "On site: what you order.",
     "onSiteToVenue": "Paid directly to the partner venue, on site.",
     "plusRestaurant": "+ restaurant {amount}",
     "restaurantEstimated": "restaurant est. {amount} / person",
-    "sectionBudget": "On site, at the restaurant: about {amount} per person (indicative budget, depending on what you order).",
+    "sectionBudget": "On site: what you order, about {amount} per person.",
     "restaurantPill": "Restaurant {amount}",
-    "surprisePill": "Surprise venue"
+    "surprisePill": "Surprise venue",
+    "plusOnSite": "+ on site",
+    "sectionNothing": "Nothing to pay on site.",
+    "tier_casual": "Casual",
+    "tier_premium": "Premium",
+    "tier_exclusive": "Exclusive"
   },
   "ticket": {
     "title": "Your ticket",
@@ -1633,9 +1638,9 @@
     "women": "Women only",
     "tier": "Restaurant range",
     "tierAny": "All ranges",
-    "tier_casual": "Casual · 100–200 DH",
-    "tier_premium": "Premium · 200–400 DH",
-    "tier_exclusive": "Exclusive · 400–600 DH"
+    "tier_casual": "Casual",
+    "tier_premium": "Premium",
+    "tier_exclusive": "Exclusive"
   },
   "gallery": {
     "title": "Photos",

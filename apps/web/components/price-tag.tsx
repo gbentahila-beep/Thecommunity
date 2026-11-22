@@ -1,4 +1,4 @@
-import { formatMoney, memberUnitPrice, priceSplit, type Experience, type ExperiencePricing, type MembershipPlan, type Money, type RestaurantBudget } from "@thecommunity/shared";
+import { formatMoney, memberUnitPrice, type Experience, type ExperiencePricing, type MembershipPlan, type Money, type RestaurantBudget } from "@thecommunity/shared";
 
 /** « 200–300 DH » (fourchette) ou « 299 DH » (montant exact). */
 export function budgetText(b: RestaurantBudget, lang: "fr" | "ar" | "en"): string {
@@ -14,71 +14,45 @@ export function memberAmountFor(plan: MembershipPlan | null, publicPrice: Money,
 }
 
 /** Traductions de l'espace « twoPart » (passées par la page, qui a déjà son traducteur). */
-export type TwoPartT = (key: "now" | "onSite" | "plusConsumption" | "consumptionOnSite" | "plusRestaurant" | "restaurantEstimated", values?: { amount: string }) => string;
+export type TwoPartT = (key: "now" | "onSite" | "plusConsumption" | "consumptionOnSite" | "plusRestaurant" | "restaurantEstimated" | "plusOnSite", values?: { amount: string }) => string;
+
+/** « Sur place : … » d'une expérience (docs/22) : montant fixe, budget estimé, ou consommation ; null si rien sur place. */
+export function onSiteText(pricing: ExperiencePricing | null | undefined, budget: RestaurantBudget | null, lang: "fr" | "ar" | "en", t: (key: "sectionFixed" | "sectionBudget" | "sectionVariable", values?: { amount: string }) => string): string | null {
+  if (!pricing || pricing.model === "online_only") return null;
+  if (pricing.model === "fixed_partner" && pricing.partner?.price) return t("sectionFixed", { amount: formatMoney(pricing.partner.price, lang) });
+  if (budget?.kind === "range") return t("sectionBudget", { amount: budgetText(budget, lang) });
+  return t("sectionVariable");
+}
 
 /**
- * Prix affiché : le prix public en grand ; le prix membre, s'il existe, en mention discrète à côté
- * (étape 28 : l'abonnement n'est plus mis en avant avant la première réservation — auparavant, prix public barré).
- * Tarification en deux parts (étape 11) :
- * - prix fixe chez le partenaire → total par personne, puis « 250 DH maintenant · 200 DH sur place » ;
- * - consommation libre → « 150 DH + consommation » (jamais de faux total).
- * Le prix membre ne réduit que la part payée en ligne.
+ * Prix affiché (docs/22, décision 1) : un seul chiffre, le prix payé en ligne (35 DH), et une petite mention
+ * « + sur place » quand quelque chose se règle au lieu. Le détail (montant, budget) est dit une seule fois, dans
+ * l'encadré « Ce que vous payez » de la fiche et du tunnel. Plus de prix membre affiché.
  */
 export function PriceTag({
   price,
-  memberAmount,
   lang,
-  memberLabel,
   size = "md",
   pricing,
   t2,
-  detail = true,
-  budget = null,
 }: {
   price: Money;
-  memberAmount: number | null;
+  /** Ancien prix membre : n'est plus affiché (gardé pour compatibilité des appels). */
+  memberAmount?: number | null;
   lang: "fr" | "ar" | "en";
-  memberLabel: string;
+  memberLabel?: string;
   size?: "md" | "lg";
   pricing?: ExperiencePricing | null;
   t2?: TwoPartT;
-  /** false : sans la ligne « … maintenant · … sur place » (barre compacte). */
   detail?: boolean;
-  /** Consommation libre : budget restaurant estimé (« + resto 200–300 DH » au lieu de « + consommation »). */
   budget?: RestaurantBudget | null;
 }) {
-  const split = pricing && t2 ? priceSplit(price.amount, pricing) : null;
-  const twoPart = split !== null && split.model !== "online_only";
-  const onSite = twoPart && split.onSiteUnit != null ? split.onSiteUnit : 0;
-  const fmt = (amount: number) => formatMoney({ amount, currency: price.currency }, lang);
+  const onSite = Boolean(pricing && pricing.model !== "online_only");
   const big = size === "lg" ? "text-3xl" : "text-lg";
-  const shown = price.amount + onSite;
-  const main =
-    memberAmount === null ? (
-      <span className={`${big} font-bold text-ink`}>{fmt(shown)}</span>
-    ) : (
-      <span className="inline-flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <span className={`${big} font-bold text-ink`}>{fmt(shown)}</span>
-        <span className="text-xs font-medium text-brand-800" data-testid="member-price">
-          {fmt(memberAmount + onSite)} {memberLabel}
-        </span>
-      </span>
-    );
-  if (!twoPart || !t2) return main;
-  const now = price.amount;
   return (
-    <span className="inline-flex flex-col gap-0.5" data-two-part={split.model}>
-      <span className="inline-flex flex-wrap items-baseline gap-x-1.5">
-        {main}
-        {split.variable && (
-          <span className={`${size === "lg" ? "text-lg" : "text-sm"} font-semibold text-ink`} data-testid="price-budget">
-            {budget?.kind === "range" ? t2("plusRestaurant", { amount: budgetText(budget, lang) }) : t2("plusConsumption")}
-          </span>
-        )}
-      </span>
-      {detail && <span className="text-xs font-normal text-muted">
-        {t2("now", { amount: fmt(now) })} · {split.onSiteUnit != null ? t2("onSite", { amount: fmt(split.onSiteUnit) }) : budget?.kind === "range" ? t2("restaurantEstimated", { amount: budgetText(budget, lang) }) : t2("consumptionOnSite")}
-      </span>}
+    <span className="inline-flex flex-wrap items-baseline gap-x-1.5" data-two-part={pricing?.model ?? "online_only"}>
+      <span className={`${big} font-bold text-ink`}>{formatMoney({ amount: price.amount, currency: price.currency }, lang)}</span>
+      {onSite && t2 && <span className="text-xs font-medium text-muted" data-testid="price-on-site">{t2("plusOnSite")}</span>}
     </span>
   );
 }

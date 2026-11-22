@@ -141,12 +141,29 @@ export function seatEconomics(o: {
  */
 export const VENUE_TIERS = ["casual", "premium", "exclusive"] as const;
 export type VenueTier = (typeof VENUE_TIERS)[number];
-/** Budget par personne en dirhams (repères par défaut). */
+/** Budget par personne en dirhams (repères par défaut : ceux du Dîner, docs/22 § 6). */
 export const VENUE_TIER_RANGES: Record<VenueTier, { min: number; max: number }> = {
-  casual: { min: 100, max: 200 },
-  premium: { min: 200, max: 400 },
+  casual: { min: 150, max: 250 },
+  premium: { min: 250, max: 400 },
   exclusive: { min: 400, max: 600 },
 };
+
+/** Formats des Tables (sous-catégories de l'univers « Tables », identifiant `eat`). */
+export const TABLE_FORMATS = ["cafe", "brunch", "dejeuner", "diner"] as const;
+export type TableFormat = (typeof TABLE_FORMATS)[number];
+
+/** Budget sur place par personne, en dirhams, selon le format et la gamme (validé le 22 novembre, docs/22 § 6). */
+export const TIER_BUDGETS: Record<TableFormat, Record<VenueTier, { min: number; max: number }>> = {
+  cafe: { casual: { min: 30, max: 60 }, premium: { min: 60, max: 100 }, exclusive: { min: 100, max: 150 } },
+  brunch: { casual: { min: 100, max: 150 }, premium: { min: 150, max: 250 }, exclusive: { min: 250, max: 400 } },
+  dejeuner: { casual: { min: 80, max: 150 }, premium: { min: 150, max: 250 }, exclusive: { min: 250, max: 400 } },
+  diner: VENUE_TIER_RANGES,
+};
+
+/** Fourchette de budget d'une gamme pour un format (repère du Dîner si le format n'est pas un format de Tables). */
+export function tierRange(tier: VenueTier, format?: string | null): { min: number; max: number } {
+  return (TIER_BUDGETS as Record<string, Record<VenueTier, { min: number; max: number }>>)[format ?? ""]?.[tier] ?? VENUE_TIER_RANGES[tier];
+}
 
 export type RestaurantBudget =
   | { kind: "fixed"; amount: number; currency: CurrencyCode }
@@ -162,13 +179,15 @@ export function restaurantBudget(e: {
   price?: { currency: CurrencyCode };
   venueTier?: VenueTier | null;
   budgetRange?: { min: number; max: number; currency: CurrencyCode } | null;
+  /** Format de Tables (Café, Brunch…) : il fixe la fourchette de chaque gamme. */
+  subcategoryId?: string | null;
 }): RestaurantBudget | null {
   const p = pricingOf(e);
   if (p.model === "fixed_partner" && p.partner?.price) return { kind: "fixed", amount: p.partner.price.amount, currency: p.partner.price.currency };
   if (p.model !== "variable_consumption") return null;
   if (e.budgetRange && e.budgetRange.max > 0) return { kind: "range", min: e.budgetRange.min, max: e.budgetRange.max, currency: e.budgetRange.currency, estimated: true };
   if (e.venueTier) {
-    const r = VENUE_TIER_RANGES[e.venueTier];
+    const r = tierRange(e.venueTier, e.subcategoryId);
     return { kind: "range", min: r.min * 100, max: r.max * 100, currency: p.currency, estimated: true };
   }
   return null;

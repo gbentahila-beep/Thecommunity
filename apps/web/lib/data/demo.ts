@@ -57,13 +57,16 @@ export const DEMO_CITIES: City[] = [
 ];
 
 export const DEMO_CATEGORIES: Category[] = [
+  // docs/22, décision 36 : 4 univers. Identifiants inchangés (adresses du site) : eat = Tables, move = Bouger,
+  // discover = Sortir (Jeux, Sorties et Vie sociale réunis), create = Découvrir (Ateliers et Culture réunis).
   {
     id: "eat",
-    name: { fr: "Dîners & gastronomie", ar: "عشاء وتذوق" },
-    shortName: { fr: "Dîners", ar: "عشاء" },
+    name: { fr: "Tables", ar: "موائد", en: "Tables" },
+    shortName: { fr: "Tables", ar: "موائد", en: "Tables" },
     description: {
-      fr: "Dîners entre inconnus, brunchs et tables à découvrir.",
-      ar: "عشاء مع غرباء، فطور متأخر ومطاعم جديدة.",
+      fr: "Café, brunch, déjeuner ou dîner, à une table composée pour vous.",
+      ar: "قهوة، فطور متأخر، غداء أو عشاء، على مائدة نُكوّنها لك.",
+      en: "Coffee, brunch, lunch or dinner, at a table put together for you.",
     },
     order: 1,
     isActive: true,
@@ -71,23 +74,25 @@ export const DEMO_CATEGORIES: Category[] = [
   },
   {
     id: "move",
-    name: { fr: "Sport & bien-être", ar: "رياضة وعافية" },
-    shortName: { fr: "Sport & bien-être", ar: "رياضة" },
+    name: { fr: "Bouger", ar: "حركة", en: "Move" },
+    shortName: { fr: "Bouger", ar: "حركة", en: "Move" },
     description: {
-      fr: "Pilates, yoga, running et randonnées en petit groupe.",
-      ar: "بيلاتس، يوغا، جري ومشي في مجموعات صغيرة.",
+      fr: "Running, padel, yoga, randonnée : du sport en petit groupe, à votre niveau.",
+      ar: "جري، بادل، يوغا، مشي: رياضة في مجموعات صغيرة، حسب مستواك.",
+      en: "Running, padel, yoga, hiking: sport in small groups, at your level.",
     },
     order: 2,
     isActive: true,
     defaultBookingMode: "individual",
   },
   {
-    id: "play",
-    name: { fr: "Jeux", ar: "ألعاب" },
-    shortName: { fr: "Jeux", ar: "ألعاب" },
+    id: "discover",
+    name: { fr: "Sortir", ar: "خرجات", en: "Go out" },
+    shortName: { fr: "Sortir", ar: "خرجات", en: "Go out" },
     description: {
-      fr: "Escape games, quiz, blind tests et soirées jeux.",
-      ar: "ألعاب الهروب، مسابقات وأمسيات ألعاب.",
+      fr: "Escape game, soirée jeux, quiz, afterwork, échange de langues : des sorties pour rencontrer du monde.",
+      ar: "ألعاب الهروب، أمسيات ألعاب، مسابقات، لقاءات بعد العمل، تبادل اللغات: خرجات للتعرّف على الناس.",
+      en: "Escape games, game nights, quizzes, afterworks, language exchanges: outings to meet people.",
     },
     order: 3,
     isActive: true,
@@ -95,63 +100,35 @@ export const DEMO_CATEGORIES: Category[] = [
   },
   {
     id: "create",
-    name: { fr: "Ateliers", ar: "ورشات" },
-    shortName: { fr: "Ateliers", ar: "ورشات" },
+    name: { fr: "Découvrir", ar: "اكتشاف", en: "Discover" },
+    shortName: { fr: "Découvrir", ar: "اكتشاف", en: "Discover" },
     description: {
-      fr: "Poterie, cuisine, peinture et savoir-faire artisanaux.",
-      ar: "فخار، طبخ، رسم وحرف تقليدية.",
+      fr: "Ateliers, visites guidées et culture : apprendre et créer, à plusieurs.",
+      ar: "ورشات، جولات إرشادية وثقافة: نتعلّم ونبدع معًا.",
+      en: "Workshops, guided tours and culture: learn and create, together.",
     },
     order: 4,
     isActive: true,
     defaultBookingMode: "individual",
   },
-  {
-    id: "discover",
-    name: { fr: "Sorties", ar: "خرجات" },
-    shortName: { fr: "Sorties", ar: "خرجات" },
-    description: {
-      fr: "Rooftops, soirées thématiques et lieux à découvrir.",
-      ar: "أسطح، أمسيات خاصة وأماكن جديدة.",
-    },
-    order: 5,
+  // Formats des Tables (sous-catégories) : ils fixent le budget de chaque gamme (docs/22 § 6).
+  ...([
+    ["cafe", "Café", "قهوة", "Coffee", "coffee"],
+    ["brunch", "Brunch", "فطور متأخر", "Brunch", "utensils"],
+    ["dejeuner", "Déjeuner", "غداء", "Lunch", "utensils"],
+    ["diner", "Dîner", "عشاء", "Dinner", "utensils"],
+  ] as const).map(([id, fr, ar, en, icon], i): Category => ({
+    id,
+    name: { fr, ar, en },
+    shortName: { fr, ar, en },
+    description: { fr: `${fr} à une table composée pour vous.`, ar: `${ar} على مائدة نُكوّنها لك.`, en: `${en} at a table put together for you.` },
+    order: i + 1,
     isActive: true,
-    defaultBookingMode: "open",
-  },
-  // Étape 19 : catégories dynamiques. Deux catégories du cahier des charges ; visibles depuis l'ajout
-  // d'expériences inventées pour la démonstration (21b).
-  {
-    id: "meet",
-    name: { fr: "Échanges & vie sociale", ar: "تبادل وحياة اجتماعية", en: "Social life & exchanges" },
-    shortName: { fr: "Vie sociale", ar: "حياة اجتماعية", en: "Social life" },
-    description: {
-      fr: "Échanges de langues, clubs de lecture, apéros entre nouveaux arrivants.",
-      ar: "تبادل اللغات، نوادي القراءة، لقاءات للقادمين الجدد.",
-      en: "Language exchanges, book clubs, newcomer drinks.",
-    },
-    order: 6,
-    isActive: true,
-    imagePath: "/images/illustrations/langues.webp",
-    defaultBookingMode: "open",
-    icon: "users",
-    color: "#3d6b8c",
-  },
-  {
-    id: "learn",
-    name: { fr: "Culture & apprentissage", ar: "ثقافة وتعلّم", en: "Culture & learning" },
-    shortName: { fr: "Culture", ar: "ثقافة", en: "Culture" },
-    description: {
-      fr: "Visites guidées, conférences, initiations et masterclasses.",
-      ar: "جولات إرشادية، محاضرات، دروس أولى وورشات متقدمة.",
-      en: "Guided tours, talks, introductions and masterclasses.",
-    },
-    order: 7,
-    isActive: true,
-    imagePath: "/images/illustrations/artdeco.webp",
-    defaultBookingMode: "individual",
-    icon: "book",
-    color: "#6a5a8e",
-  },
-  // Sous-catégorie (un seul niveau) : /casablanca/padel liste les activités padel de « Sport & bien-être ».
+    defaultBookingMode: "social_dinner",
+    icon,
+    parentId: "eat",
+  })),
+  // Sous-catégorie (un seul niveau) : /casablanca/padel liste les activités padel de « Bouger ».
   {
     id: "padel",
     name: { fr: "Padel", ar: "بادل", en: "Padel" },
@@ -189,6 +166,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
       fr: "Chaque jeudi, nous réunissons des personnes qui ne se connaissent pas autour de tables de six, dans un restaurant sélectionné de Gauthier. Vous réservez seul, nous composons les tables pour que la conversation prenne naturellement. Le nom du restaurant et votre table vous sont révélés la veille.",
     },
     categoryId: "eat",
+    subcategoryId: "diner",
     cityId: "casablanca",
     district: "Gauthier",
     tags: ["diners-entre-inconnus", "afterwork"],
@@ -199,7 +177,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
       { path: "/demo/hero-diner-rooftop.webp", alt: { fr: "Dîner sur un rooftop au coucher du soleil" } },
     ],
     durationMinutes: 150,
-    price: mad(169),
+    price: mad(35), // docs/22 : prix Wenzy unique
     bookingMode: "social_dinner",
     groupConfig: { minSize: 5, targetSize: 6, maxSize: 7 },
     maxSeatsPerBooking: 1,
@@ -235,7 +213,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
       { path: "/demo/yoga-loft.webp", alt: { fr: "Studio avec plantes" } },
     ],
     durationMinutes: 120,
-    price: mad(149),
+    price: mad(35), // docs/22 : prix Wenzy unique
     bookingMode: "individual",
     maxSeatsPerBooking: 1,
     languages: ["fr", "en"],
@@ -255,7 +233,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
     description: {
       fr: "Réservez seul ou à deux : nous formons des équipes de 5 à 6 personnes. Rien de tel qu'une énigme pour briser la glace. Un verre est offert après la partie pour débriefer.",
     },
-    categoryId: "play",
+    categoryId: "discover",
     cityId: "casablanca",
     district: "Maarif",
     tags: ["escape-games", "afterwork"],
@@ -263,7 +241,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
     venue: { name: "Escape room partenaire", address: "Maarif, Casablanca", revealPolicy: "immediate" },
     images: [{ path: "/demo/escape-game.webp", alt: { fr: "Équipe concentrée sur une énigme" } }],
     durationMinutes: 90,
-    price: mad(180),
+    price: mad(35), // docs/22 : prix Wenzy unique
     bookingMode: "group",
     groupConfig: { minSize: 5, targetSize: 6, maxSize: 6 },
     maxSeatsPerBooking: 2,
@@ -292,7 +270,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
     venue: { name: "Atelier partenaire", address: "CIL, Casablanca", revealPolicy: "immediate" },
     images: [{ path: "/demo/atelier-ceramique.webp", alt: { fr: "Participante façonnant une pièce en argile" } }],
     durationMinutes: 150,
-    price: mad(220),
+    price: mad(35), // docs/22 : prix Wenzy unique
     bookingMode: "individual",
     maxSeatsPerBooking: 1,
     languages: ["fr"],
@@ -325,7 +303,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
       { path: "/demo/hero-diner-rooftop.webp", alt: { fr: "Groupe souriant au coucher du soleil" } },
     ],
     durationMinutes: 150,
-    price: mad(120),
+    price: mad(35), // docs/22 : prix Wenzy unique
     // Étape 11 : entrée et mocktail de bienvenue payés en ligne, le reste à la carte sur place.
     pricing: {
       model: "variable_consumption",
@@ -356,13 +334,14 @@ export const DEMO_EXPERIENCES: Experience[] = [
       fr: "La version dominicale de notre dîner : tables de six, brunch généreux dans un café de Racine, et beaucoup de conversations.",
     },
     categoryId: "eat",
+    subcategoryId: "brunch",
     cityId: "casablanca",
     district: "Racine",
     tags: ["diners-entre-inconnus", "brunch", "week-end"],
     venue: { name: "Café partenaire (révélé la veille)", address: "Racine, Casablanca", revealPolicy: "on_group_reveal" },
     images: [{ path: "/demo/restaurant-lanternes.webp", alt: { fr: "Café chaleureux aux lanternes tressées" } }],
     durationMinutes: 120,
-    price: mad(59),
+    price: mad(35), // docs/22 : prix Wenzy unique
     // Étape 11 : part organisation en ligne, brunch réglé au café sur place (139 DH au total).
     pricing: {
       model: "fixed_partner",
@@ -396,7 +375,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
     venue: { name: "Plage d'Aïn Diab (point de rendez-vous précisé)", address: "Aïn Diab, Casablanca", revealPolicy: "immediate" },
     images: [{ path: "/demo/yoga-loft.webp", alt: { fr: "Groupe pratiquant le yoga" } }],
     durationMinutes: 90,
-    price: mad(99),
+    price: mad(35), // docs/22 : prix Wenzy unique
     bookingMode: "individual",
     maxSeatsPerBooking: 1,
     languages: ["fr", "en"],
@@ -414,14 +393,14 @@ export const DEMO_EXPERIENCES: Experience[] = [
     title: { fr: "Quiz & blind test", ar: "مسابقة واختبار موسيقي" },
     summary: { fr: "Des équipes formées sur place, de la musique et des questions.", ar: "فرق تتشكل في المكان، موسيقى وأسئلة." },
     description: { fr: "Culture générale, cinéma, musique marocaine et internationale : nous formons des équipes de 4 à 6 personnes. Fous rires garantis." },
-    categoryId: "play",
+    categoryId: "discover",
     cityId: "casablanca",
     district: "Gauthier",
     tags: ["quiz", "afterwork"],
     venue: { name: "Café partenaire", address: "Gauthier, Casablanca", revealPolicy: "immediate" },
     images: [{ path: "/demo/escape-game.webp", alt: { fr: "Joueurs autour d'une table" } }],
     durationMinutes: 120,
-    price: mad(90),
+    price: mad(35), // docs/22 : prix Wenzy unique
     bookingMode: "group",
     groupConfig: { minSize: 4, targetSize: 5, maxSize: 6 },
     maxSeatsPerBooking: 2,
@@ -448,7 +427,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
     venue: { name: "Maison d'hôtes partenaire", address: "Quartier Habous, Casablanca", revealPolicy: "immediate" },
     images: [{ path: "/demo/restaurant-lanternes.webp", alt: { fr: "Table dressée pour un repas partagé" } }],
     durationMinutes: 180,
-    price: mad(280),
+    price: mad(35), // docs/22 : prix Wenzy unique
     bookingMode: "individual",
     maxSeatsPerBooking: 1,
     languages: ["fr", "darija"],
@@ -514,7 +493,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
       ar: "ظهيرة من البينتبول في ملعب مشجّر قرب بوسكورة. نمزج الفرق ليلعب المبتدئون وأصحاب الخبرة معاً، مع مؤطّر من الملعب. كل المعدّات متوفّرة؛ ونختم بوجبة خفيفة لاستعادة أطوار اللعب.",
       en: "An afternoon of paintball on a wooded field near Bouskoura. We mix the teams so beginners and regulars play together, with a coach from the venue. All equipment is provided; we finish with a snack to replay the games.",
     },
-    categoryId: "play",
+    categoryId: "discover",
     cityId: "casablanca",
     district: "Bouskoura",
     tags: ["paintball", "plein-air", "équipe"],
@@ -522,7 +501,7 @@ export const DEMO_EXPERIENCES: Experience[] = [
     venue: { name: "Terrain de paintball partenaire", address: "Route de Bouskoura, Casablanca", revealPolicy: "immediate" },
     images: [{ path: "/demo/paintball.webp", alt: { fr: "Illustration : barricades et éclaboussures de peinture" } }],
     durationMinutes: 180,
-    price: mad(250),
+    price: mad(35), // docs/22 : prix Wenzy unique
     bookingMode: "group",
     groupConfig: { minSize: 6, targetSize: 8, maxSize: 10 },
     maxSeatsPerBooking: 2,

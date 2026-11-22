@@ -1,4 +1,4 @@
-import { cleanQuestion, experienceInputSchema, MOROCCO_TIMEZONE, parseCoords, PAYMENT_MODELS, planSessionDates, resolveCommission, splitForModel } from "@thecommunity/shared";
+import { cleanQuestion, experienceInputSchema, MOROCCO_TIMEZONE, parseCoords, PAYMENT_MODELS, planSessionDates, resolveCommission, splitForModel, wenzyPriceOf } from "@thecommunity/shared";
 import { commissionRules, moroccoToday } from "../commissions/ledger";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -108,12 +108,15 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
       invalidArgument([{ path: ["images"], message: "invalidImagePath" }]);
     }
   }
-  const [city, category, subcategory, partner] = await Promise.all([
+  const [city, category, subcategory, partner, bookingSettings] = await Promise.all([
     db.doc(`cities/${v.cityId}`).get(),
     db.doc(`categories/${v.categoryId}`).get(),
     v.subcategoryId ? db.doc(`categories/${v.subcategoryId}`).get() : Promise.resolve(null),
     v.partnerId ? db.doc(`partners/${v.partnerId}`).get() : Promise.resolve(null),
+    db.doc("settings/booking").get(),
   ]);
+  // Activité d'un organisateur : le prix total de l'activité reste saisi (étape J pour la suite).
+  if (ownerOrgId && v.priceDh === undefined) invalidArgument([{ path: ["priceDh"], message: "required" }]);
   if (!city.exists || city.data()?.isActive !== true) invalidArgument([{ path: ["cityId"], message: "required" }]);
   // Étape 19 : l'univers est une catégorie principale ; la sous-catégorie (facultative) en dépend.
   if (!category.exists || category.get("parentId")) invalidArgument([{ path: ["categoryId"], message: "required" }]);
@@ -143,7 +146,8 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   // Lieu secret : ni nom, ni adresse, ni coordonnées, ni quartier, ni nom du partenaire dans les documents publics.
   const secret = v.revealPolicy === "on_group_reveal";
   const publicDistrict = secret ? "" : v.district;
-  const price = { amount: Math.round(v.priceDh * 100), currency: "MAD" as const };
+  // docs/22 : un événement Wenzy coûte le prix Wenzy en vigueur (35 DH), ou rien s'il est gratuit ; jamais un prix saisi.
+  const price = { amount: v.free ? 0 : wenzyPriceOf(bookingSettings.data()), currency: "MAD" as const };
   const sellPrice = () => (marketplace ? { amount: marketplace.onlineUnit, currency: "MAD" as const } : price);
   const slug = isCreate ? await uniqueSlug(slugify(`${v.titleFr} ${v.cityId}`)) : (existing.data()?.slug as string);
   const imageDocs = images.map((i) => ({ path: i.path, alt: { fr: i.alt || v.titleFr } }));
@@ -165,7 +169,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   if (ownerOrgId) {
     const enabled = ((await db.doc("settings/payment").get()).get("organizerPaymentModels") as string[] | undefined) ?? [...PAYMENT_MODELS];
     if (!enabled.includes(v.paymentModel)) invalidArgument([{ path: ["paymentModel"], message: "paymentModelDisabled" }]);
-    const totalUnit = Math.round(v.priceDh * 100);
+    const totalUnit = Math.round((v.priceDh ?? 0) * 100);
     const c = resolveCommission(await commissionRules(), { experienceId: id, organizerId: ownerOrgId, categoryId: v.categoryId, at: moroccoToday() });
     const split = splitForModel(v.paymentModel, totalUnit, { depositPercent: v.depositPercent, ratePercent: c.ratePercent, fixedPerSeat: c.fixedPerSeat });
     marketplace = { paymentModel: v.paymentModel, depositPercent: v.paymentModel === "deposit" ? (v.depositPercent ?? 30) : null, totalUnit, ...split };
@@ -177,13 +181,14 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   const pricing =
     marketplace && marketplace.paymentModel !== "full_online"
       ? { model: "fixed_partner", currency: "MAD", partner: { name: orgName, paymentMode: "on_site", pricingType: "fixed", price: { amount: marketplace.onSiteUnit, currency: "MAD" }, description: "" } }
-      : v.pricingModel === "online_only" || !partner?.exists
+      : v.pricingModel === "online_only"
       ? { model: "online_only", currency: "MAD", partner: null }
       : {
+          // docs/22 : la part sur place se règle au lieu, qu'il soit un partenaire enregistré ou non.
           model: v.pricingModel,
           currency: "MAD",
           partner: {
-            name: secret ? "" : String(partner.data()?.name ?? ""),
+            name: secret || !partner?.exists ? "" : String(partner.data()?.name ?? ""),
             paymentMode: "on_site",
             pricingType: v.pricingModel === "fixed_partner" ? "fixed" : "consumption",
             price: v.pricingModel === "fixed_partner" ? { amount: Math.round((v.partnerPriceDh ?? 0) * 100), currency: "MAD" } : null,
@@ -212,7 +217,8 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     bookingMode: v.bookingMode,
     groupConfig: grouped ? { minSize: v.groupMin, targetSize: v.groupTarget, maxSize: v.groupMax } : null,
     maxSeatsPerBooking: v.maxSeatsPerBooking,
-    memberPrice: v.memberPriceDh !== undefined ? { amount: Math.round(v.memberPriceDh * 100), currency: "MAD" } : null,
+    // docs/22 : plus de prix membre ; les avantages des abonnés passent par le pass et le carnet (étape I).
+    memberPrice: null,
     membersOnly: v.membersOnly,
     admission: v.admission,
     requestMessageRequired: v.admission === "on_request" && v.requestMessageRequired,
@@ -224,7 +230,8 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     // Restaurant (docs/16) : gamme, budget estimé par personne (consommation libre sur place), cuisine, ambiance.
     venueTier: v.venueTier || null,
     budgetRange: v.budgetMinDh !== undefined && v.budgetMaxDh !== undefined ? { min: Math.round(v.budgetMinDh * 100), max: Math.round(v.budgetMaxDh * 100), currency: "MAD" } : null,
-    cuisine: v.cuisine || null,
+    // docs/22 : lieu secret → la cuisine est révélée avec le lieu (rangée dans le document privé).
+    cuisine: secret ? null : v.cuisine || null,
     ambiance: v.ambiance || null,
     included: (v.included ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
     notIncluded: (v.notIncluded ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
@@ -295,7 +302,8 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   for (const s of future.docs) {
     const status = s.data().status;
     const nextStatus = archived ? status : status === "draft" && effectiveStatus === "published" ? "published" : status === "published" && effectiveStatus === "draft" && s.data().seatsConfirmed === 0 ? "draft" : status;
-    batch.update(s.ref, { experienceSnapshot: snapshot, status: nextStatus });
+    // Prix des dates à venir aligné (les places déjà réservées gardent leur prix, copié sur chaque réservation).
+    batch.update(s.ref, { experienceSnapshot: snapshot, status: nextStatus, price: sellPrice() });
   }
   const starts = [...future.docs.map((s) => (s.data().startAt as Timestamp).toMillis()), ...planned.map((d) => new Date(d.startAt).getTime())];
   const nextSessionAt = starts.length ? Timestamp.fromMillis(Math.min(...starts)) : null;
@@ -307,6 +315,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     geo: parseCoords(v.venueCoords),
     district: v.district,
     partnerName: partner?.exists ? String(partner.data()?.name ?? "") : "",
+    cuisine: v.cuisine || "",
     updatedAt: FieldValue.serverTimestamp(),
   });
   if (isCreate) batch.set(ref, { ...experience, organizerId: ownerOrgId, nextSessionAt, ratingAvg: 0, ratingCount: 0, createdAt: FieldValue.serverTimestamp(), createdBy: actor.uid });

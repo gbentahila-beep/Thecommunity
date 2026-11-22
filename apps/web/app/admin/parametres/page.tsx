@@ -7,19 +7,19 @@ import { CompanyForm } from "@/components/admin/company-form";
 import { CategoryForm, CityForm } from "@/components/admin/place-forms";
 import { requireAdmin } from "@/lib/auth/admin";
 import { getAdminData } from "@/lib/data/admin";
-import { getCompanySettings, getPaymentSettings, getServiceFee } from "@/lib/data/admin-mail";
+import { getCompanySettings, getPaymentSettings, getWenzyPrice } from "@/lib/data/admin-mail";
 import { PaymentSettingsForm } from "@/components/admin/payment-settings-form";
-import { ServiceFeeForm } from "@/components/admin/service-fee-form";
+import { WenzyPriceForm } from "@/components/admin/wenzy-price-form";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 
 export const metadata = { title: "Paramètres" };
 
 export default async function SettingsAdminPage() {
-  const [{ cities, categories }, company, me, serviceFee, payment] = await Promise.all([
+  const [{ cities, categories }, company, me, wenzyPrice, payment] = await Promise.all([
     getAdminData(),
     getCompanySettings(),
     FIREBASE_ENABLED ? requireAdmin() : Promise.resolve(null),
-    getServiceFee(),
+    getWenzyPrice(),
     getPaymentSettings(),
   ]);
   const [policies, models] = await Promise.all([getCancellationPolicies(), organizerPaymentModels()]);
@@ -122,16 +122,16 @@ export default async function SettingsAdminPage() {
           <p className="mb-3 text-sm text-muted">À n&apos;ouvrir en réel qu&apos;avec un contrat de paiement qui autorise l&apos;encaissement pour le compte des organisateurs (docs/16). En mode test, les trois sont proposés.</p>
           <PaymentModelsForm initial={models} live={Boolean(company)} canEdit={!company || me?.role === "superadmin"} />
         </Card>
-        <Card title="Réservations et frais de service">
+        <Card title="Prix Wenzy et réservations">
           <dl className="mb-4 grid grid-cols-2 gap-3 text-sm">
             <div><dt className="text-xs text-muted">Blocage d&apos;une place pendant le paiement</dt><dd>15 minutes</dd></div>
             <div><dt className="text-xs text-muted">Fermeture des réservations</dt><dd>12 h avant (dîners) · 2 h (autres)</dd></div>
             <div><dt className="text-xs text-muted">Âge minimum</dt><dd>18 ans</dd></div>
           </dl>
-          {serviceFee ? (
-            <ServiceFeeForm initial={serviceFee} canEdit={me?.role === "superadmin"} />
+          {wenzyPrice !== null ? (
+            <WenzyPriceForm initial={wenzyPrice} canEdit={me?.role === "superadmin"} />
           ) : (
-            <p className="text-sm text-muted">Frais de service : aucun. Démonstration : ils se règlent ici sur le site en ligne (super-admin).</p>
+            <p className="text-sm text-muted" data-testid="wenzy-price-demo">Prix Wenzy : 35 DH par place, frais compris. Démonstration : il se règle ici sur le site en ligne (super-admin).</p>
           )}
         </Card>
       </div>

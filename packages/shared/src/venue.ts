@@ -20,6 +20,8 @@ export type PrivateVenue = {
   geo: { lat: number; lng: number } | null;
   district: string;
   partnerName: string;
+  /** Cuisine du restaurant, révélée avec le lieu (docs/22, décision 14). */
+  cuisine?: string;
 };
 
 type PublicFields = {
@@ -27,6 +29,7 @@ type PublicFields = {
   venue: { name: string; address: string; revealPolicy: "immediate" | "on_group_reveal"; geo?: { lat: number; lng: number } | null };
   partnerSnapshot?: { name: string } | null;
   pricing?: { partner?: { name: string } | null } | null;
+  cuisine?: string | null;
 };
 
 /**
@@ -40,6 +43,7 @@ export function publicExperience<T extends PublicFields>(e: T): T {
     ...e,
     district: "",
     venue: { ...e.venue, name: "", address: "", geo: null },
+    ...(e.cuisine ? { cuisine: null } : {}),
     ...(e.partnerSnapshot ? { partnerSnapshot: null } : {}),
     ...(e.pricing?.partner ? { pricing: { ...e.pricing, partner: { ...e.pricing.partner, name: "" } } } : {}),
   };

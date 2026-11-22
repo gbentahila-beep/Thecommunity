@@ -1741,6 +1741,25 @@ describe("toutes les activités (18)", () => {
     expect(r.questionnairePurgedAt).toBeInstanceOf(Timestamp);
   });
 
+  it("prix Wenzy : réglé par le super-admin, appliqué aux événements Wenzy payants et à leurs dates à venir (docs/22)", async () => {
+    const sid = await makeSession({ price: 14900, extra: { price: { amount: 14900, currency: "MAD" } } });
+    const freeSid = await makeSession({ price: 0, extra: { price: { amount: 0, currency: "MAD" } } });
+    const orgSid = await makeSession({ price: 20000, extra: { price: { amount: 20000, currency: "MAD" }, organizerId: "org-test-prix" } });
+    const adm = await member({ role: "admin" });
+    expect(await refusal(adm.call("adminSaveWenzyPrice", { priceDh: 35 }))).toBe("permission-denied:");
+    const sup = await member({ role: "superadmin" });
+    expect((await sup.call("adminSaveWenzyPrice", { priceDh: 35 })).wenzyPrice).toBe(3500);
+    const expOf = async (id: string) => (await db().doc(`experiences/${(await session(id)).experienceId}`).get()).data()!;
+    expect((await session(sid)).price.amount).toBe(3500);
+    expect((await expOf(sid)).price.amount).toBe(3500);
+    expect((await session(freeSid)).price.amount).toBe(0);
+    expect((await session(orgSid)).price.amount).toBe(20000);
+    expect((await db().doc("settings/booking").get()).data()).toMatchObject({ wenzyPrice: 3500, serviceFee: { mode: "none" } });
+    // Une nouvelle réservation paie le nouveau prix, sans frais en plus.
+    const u = await member();
+    expect((await u.call("createReservation", { sessionId: sid, seats: 2 })).total).toBe(7000);
+  });
+
   it("membres de confiance : statut donné par l'équipe, proposition, refus avec message, limite par jour", async () => {
     const u = await member();
     await db().doc(`users/${u.uid}`).set({ firstName: "Yasmine", cityId: "casablanca" }, { merge: true });

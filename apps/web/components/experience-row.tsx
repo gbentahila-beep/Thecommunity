@@ -6,7 +6,6 @@ import { getCategory, getHomeSettings } from "@/lib/data";
 import { formatShortSlot, formatTime } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { groupLabel } from "./experience-card";
-import { budgetText } from "./price-tag";
 
 /**
  * Ligne du catalogue en vue « agenda » : vignette, titre (+ badges), heure · quartier · groupe, univers · langues · prix,
@@ -70,8 +69,7 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
         <p className="mt-0.5 truncate text-sm text-muted">
           {category ? tr(category.shortName, locale) : ""}
           {languages && ` · ${languages}`} · <span className="font-medium text-ink/75">{formatMoney(price, lang)}</span>
-          {budget?.kind === "range" && <span className="font-medium text-ink/75"> {tp("plusRestaurant", { amount: budgetText(budget, lang) })}</span>}
-          {budget?.kind === "fixed" && <span className="font-medium text-ink/75"> + {tp("onSite", { amount: formatMoney({ amount: budget.amount, currency: budget.currency }, lang) })}</span>}
+          {budget && <span className="text-muted"> {tp("plusOnSite")}</span>}
         </p>
       </div>
       <Link

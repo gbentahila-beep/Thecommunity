@@ -23,6 +23,7 @@ const base = {
   isDemo: true,
   createdAt: "2026-11-21T08:00:00.000Z",
   categoryId: "eat",
+  subcategoryId: "diner",
   bookingMode: "social_dinner" as const,
   groupConfig: { minSize: 5, targetSize: 6, maxSize: 7 },
   maxSeatsPerBooking: 1,
@@ -52,7 +53,7 @@ export const DEMO_DINNER_EXPERIENCES: Experience[] = [
     district: "Gauthier",
     venue: { name: "Restaurant surprise (révélé la veille)", address: "Quartier Gauthier, Casablanca", revealPolicy: "on_group_reveal" },
     images: [{ path: "/demo/restaurant-lanternes.webp", alt: { fr: "Salle de restaurant chaleureuse aux lanternes" } }],
-    price: mad(49),
+    price: mad(35), // docs/22 : prix Wenzy unique
     pricing: { model: "variable_consumption", currency: "MAD", partner: partner("Restaurant partenaire Gauthier", "consumption", null) },
     venueTier: "premium",
     budgetRange: { min: 20000, max: 30000, currency: "MAD" },
@@ -79,7 +80,7 @@ export const DEMO_DINNER_EXPERIENCES: Experience[] = [
     district: "Maârif",
     venue: { name: "Restaurant méditerranéen partenaire", address: "Boulevard d'Anfa, Maârif, Casablanca", revealPolicy: "immediate" },
     images: [{ path: "/demo/hero-diner-rooftop.webp", alt: { fr: "Table dressée pour un dîner au coucher du soleil" } }],
-    price: mad(299),
+    price: mad(35), // docs/22 : prix Wenzy unique
     venueTier: "premium",
     cuisine: "Méditerranéenne",
     ambiance: "Élégante et chaleureuse",
@@ -104,7 +105,7 @@ export const DEMO_DINNER_EXPERIENCES: Experience[] = [
     district: "Habous",
     venue: { name: "Restaurant familial partenaire", address: "Quartier Habous, Casablanca", revealPolicy: "immediate" },
     images: [{ path: "/images/illustrations/couscous.webp", alt: { fr: "Plat marocain vu de dessus" } }],
-    price: mad(49),
+    price: mad(35), // docs/22 : prix Wenzy unique
     pricing: { model: "fixed_partner", currency: "MAD", partner: partner("Restaurant familial Habous", "fixed", 150) },
     venueTier: "casual",
     cuisine: "Marocaine",
@@ -129,7 +130,7 @@ export const DEMO_DINNER_EXPERIENCES: Experience[] = [
     district: "Racine",
     venue: { name: "Pizzeria partenaire", address: "Racine, Casablanca", revealPolicy: "immediate" },
     images: [{ path: "/demo/diner-inconnus.webp", alt: { fr: "Tablée conviviale au restaurant" } }],
-    price: mad(39),
+    price: mad(35), // docs/22 : prix Wenzy unique
     pricing: { model: "variable_consumption", currency: "MAD", partner: partner("Pizzeria partenaire Racine", "consumption", null) },
     venueTier: "casual",
     budgetRange: { min: 10000, max: 15000, currency: "MAD" },
@@ -156,7 +157,7 @@ export const DEMO_DINNER_EXPERIENCES: Experience[] = [
     district: "Anfa",
     venue: { name: "Restaurant gastronomique (révélé la veille)", address: "Anfa, Casablanca", revealPolicy: "on_group_reveal" },
     images: [{ path: "/demo/rooftop-medina.webp", alt: { fr: "Table élégante avec vue sur la ville" } }],
-    price: mad(79),
+    price: mad(35), // docs/22 : prix Wenzy unique
     pricing: { model: "variable_consumption", currency: "MAD", partner: partner("Restaurant gastronomique Anfa", "consumption", null) },
     venueTier: "exclusive",
     budgetRange: { min: 45000, max: 60000, currency: "MAD" },

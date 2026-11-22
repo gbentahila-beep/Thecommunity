@@ -55,7 +55,8 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   const url = new URL(d.url());
   assert(url.searchParams.get('debutant') === '1' && !url.searchParams.has('quartier') && !url.searchParams.has('date'), 'filtres : adresse lisible (champs vides non envoyés)');
   const filtered = await d.getByTestId('catalog-row').count();
-  assert(filtered > 0 && filtered < all, `filtres combinés : ${filtered} sur ${all}`);
+  // docs/22 : toutes les expériences coûtent 35 DH (le filtre prix disparaît à l'étape K) ; « débutants » filtre encore.
+  assert(filtered > 0 && filtered <= all, `filtres combinés : ${filtered} sur ${all}`);
   assert(await d.getByTestId('active-filters').getByRole('link', { name: 'Retirer le filtre : 200 DH max' }).isVisible(), 'puce « 200 DH max »');
   await d.getByTestId('filters-open').click();
   await d.locator('select[name=tri]').selectOption('prix-croissant');

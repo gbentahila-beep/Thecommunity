@@ -27,7 +27,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
     revealPolicy: "immediate", bookingMode: "individual",
     groupMin: "5", groupTarget: "6", groupMax: "7", maxSeatsPerBooking: "1",
     admission: "direct", requestMessageRequired: false, requestInstagramRequired: false, memberPriceDh: "", membersOnly: false,
-    priceDh: "", durationMinutes: "120", languages: ["fr"], alcoholServed: false, onSiteHost: false, foodServed: false,
+    priceDh: "", free: false, durationMinutes: "120", languages: ["fr"], alcoholServed: false, onSiteHost: false, foodServed: false,
     included: "", notIncluded: "", practicalInfo: "", cancellationPolicyId: DEFAULT_CANCELLATION_POLICY.id,
     partnerId: "", economicsModel: "own", costPerSeatDh: "", commissionPercent: "",
     pricingModel: "online_only", partnerPriceDh: "", partnerDescription: "", onSiteCommissionPercent: "", budgetMinDh: "", budgetMaxDh: "", venueTier: "", cuisine: "", ambiance: "",
@@ -49,7 +49,8 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     admission: e.admission ?? "direct", requestMessageRequired: Boolean(e.requestMessageRequired), requestInstagramRequired: Boolean(e.requestInstagramRequired),
     memberPriceDh: e.memberPrice ? String(e.memberPrice.amount / 100) : "", membersOnly: Boolean(e.membersOnly),
     // Étape 22 : pour une activité d'organisateur, le prix saisi est le prix TOTAL (la part en ligne en découle).
-    maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String((e.totalPrice?.amount ?? e.price.amount) / 100), durationMinutes: String(e.durationMinutes),
+    // docs/22 : un événement Wenzy prend le prix Wenzy global ; seul « gratuit » se règle ici.
+    maxSeatsPerBooking: String(e.maxSeatsPerBooking), priceDh: String((e.totalPrice?.amount ?? e.price.amount) / 100), free: !e.organizerId && e.price.amount === 0, durationMinutes: String(e.durationMinutes),
     languages: e.languages.filter((l): l is ExperienceFormValues["languages"][number] => ["fr", "ar", "darija", "en", "es"].includes(l)),
     budgetMinDh: e.budgetRange ? String(e.budgetRange.min / 100) : "", budgetMaxDh: e.budgetRange ? String(e.budgetRange.max / 100) : "",
     venueTier: e.venueTier ?? "", cuisine: e.cuisine ?? "", ambiance: e.ambiance ?? "",

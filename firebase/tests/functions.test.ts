@@ -194,7 +194,8 @@ describe("back-office : expériences et comptes", () => {
     expect(res).toMatchObject({ experienceId: "exp-test-createur", slug: "diner-des-creatifs-casablanca", sessionsCreated: 3 });
     const db = adminDb(admin);
     const exp = (await db.doc("experiences/exp-test-createur").get()).data();
-    expect(exp).toMatchObject({ status: "published", price: { amount: 16900, currency: "MAD" }, groupConfig: { minSize: 5, targetSize: 6, maxSize: 7 } });
+    // docs/22 : le prix saisi est ignoré pour un événement Wenzy ; il prend le prix Wenzy (35 DH par défaut).
+    expect(exp).toMatchObject({ status: "published", price: { amount: 3500, currency: "MAD" }, memberPrice: null, groupConfig: { minSize: 5, targetSize: 6, maxSize: 7 } });
     expect(exp?.included).toEqual([{ fr: "Entrée, plat, dessert" }, { fr: "Boissons sans alcool" }]);
     expect((await db.doc("experiences/exp-test-createur/private/economics").get()).data()).toMatchObject({ model: "own", costPerSeat: 9500 });
     const sessions = await db.collection("sessions").where("experienceId", "==", "exp-test-createur").get();

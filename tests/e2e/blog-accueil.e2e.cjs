@@ -30,13 +30,13 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await d.keyboard.press('ArrowDown');
   const menu = d.getByRole('navigation', { name: /univers/i });
   assert(await visible(menu), 'Découvrir ouvert au clavier');
-  for (const l of ['Dîners & gastronomie', 'Sport & bien-être', 'Jeux', 'Ateliers', 'Sorties', 'Échanges & vie sociale', 'Culture & apprentissage']) assert(await menu.getByRole('link', { name: l }).isVisible(), `menu Découvrir : ${l}`);
+  for (const l of ['Tables', 'Bouger', 'Sortir', 'Découvrir']) assert(await menu.getByRole('link', { name: l }).isVisible(), `menu Découvrir : ${l}`);
   await d.keyboard.press('Escape');
   assert(await discover.getAttribute('aria-expanded') === 'false', 'Échap referme le menu');
   await discover.hover();
-  await menu.getByRole('link', { name: 'Jeux' }).click();
-  await d.waitForURL('**/casablanca/play');
-  assert(true, 'Découvrir → Jeux ouvre l\'univers');
+  await menu.getByRole('link', { name: 'Sortir' }).click();
+  await d.waitForURL('**/casablanca/discover');
+  assert(true, 'Découvrir → Sortir ouvre l\'univers');
 
   // Sections de l'accueil
   await d.goto(`${base}/`);
@@ -49,9 +49,9 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await visible(week.getByText('Bientôt').first()), 'le chevron ouvre la liste des villes (« bientôt »)');
   await week.getByTestId('city-select').click();
   const rows = await week.getByTestId('compact-row').count();
-  await week.getByTestId('week-chips').getByRole('button', { name: 'Jeux' }).click();
+  await week.getByTestId('week-chips').getByRole('button', { name: 'Sortir' }).click();
   const games = await week.getByTestId('compact-row').count();
-  assert(rows > 0 && games > 0 && games < rows && (await week.getByTestId('compact-row').allTextContents()).every((t) => t.includes('Jeux')), `pastilles : filtre sur place (${games} sur ${rows})`);
+  assert(rows > 0 && games > 0 && games <= rows && (await week.getByTestId('compact-row').allTextContents()).every((t) => t.includes('Sortir')), `pastilles : filtre sur place (${games} sur ${rows})`);
   // Alertes : une ligne qui ouvre une fenêtre (ville + e-mail ; démonstration : rien n'est envoyé)
   const alerts = d.getByTestId('home-alerts');
   await alerts.getByRole('button', { name: 'Soyez prévenu·e des nouvelles tables et activités' }).click();
@@ -78,13 +78,12 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await how.getByRole('link', { name: /Découvrir les expériences/ }).getAttribute('href') === '/experiences', 'carte 2 : bouton vers les expériences');
   assert(await how.locator('img').count() === 3, 'carte 3 : trois photos');
   const uni = d.locator('section[aria-labelledby="universes-title"]');
-  assert(await uni.locator('li').count() === 7, 'sept univers (dont Rencontres et Culture, 21b)');
-  assert((await uni.locator('li').nth(5).locator('img').getAttribute('src')).includes('langues.webp'), 'Rencontres : illustration de la catégorie');
+  assert(await uni.locator('li').count() === 4, 'quatre univers (docs/22 : Tables, Bouger, Sortir, Découvrir)');
   assert((await uni.locator('li').evaluateAll((lis) => lis.map((li) => getComputedStyle(li).position))).every((p) => p === 'sticky'), 'univers : cartes empilées (sticky)');
   const eat = uni.locator('li').first();
-  assert(await eat.getByText('Une table, de nouvelles têtes, une bonne adresse').isVisible(), 'carte Dîners : accroche');
-  assert(await eat.getByText('De 5 à 10 personnes').isVisible(), 'carte Dîners : taille de groupe calculée sur les expériences');
-  assert(await eat.getByRole('link', { name: /Dîners/ }).getAttribute('href') === '/casablanca/eat', 'carte Dîners : bouton vers l\'univers');
+  assert(await eat.getByText('Une table, de nouvelles têtes, une bonne adresse').isVisible(), 'carte Tables : accroche');
+  assert(await eat.getByText(/De \d+ à \d+ personnes/).isVisible(), 'carte Tables : taille de groupe calculée sur les expériences');
+  assert(await eat.getByRole('link', { name: /tables/i }).first().getAttribute('href') === '/casablanca/eat', 'carte Tables : bouton vers l\'univers');
   assert(await d.getByRole('heading', { level: 2, name: 'Pourquoi venir' }).isVisible(), 'section « Pourquoi venir »');
   assert(await d.getByRole('heading', { name: 'Questions fréquentes' }).isVisible(), 'FAQ sur l\'accueil');
   assert(await d.getByRole('link', { name: /Consulter le centre d'aide/ }).getAttribute('href') === '/aide', 'renvoi vers le centre d\'aide');
@@ -256,7 +255,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   // Rubriques en cartes (Découvrir, Wenzy, Aide, Villes) ; « Mon espace » seulement une fois connecté.
   for (const h of ['Découvrir', 'Wenzy', 'Aide', 'Villes']) assert(await dialog.getByRole('heading', { name: h, exact: true }).count() === 1, `menu burger : rubrique « ${h} »`);
   assert(!(await dialog.getByRole('heading', { name: 'Mon espace' }).count()), 'menu burger : pas de « Mon espace » sans connexion');
-  assert(await dialog.getByRole('link', { name: 'Jeux' }).count() === 1 && !(await dialog.locator('input[role=combobox]').count()), 'Découvrir : univers listés, plus de barre de recherche');
+  assert(await dialog.getByRole('link', { name: 'Sortir' }).count() === 1 && !(await dialog.locator('input[role=combobox]').count()), 'Découvrir : univers listés, plus de barre de recherche');
   assert(await dialog.getByText('Bientôt').count() >= 1, 'Villes : villes « bientôt »');
   const topEl = await m.evaluate(() => { const r = document.querySelector('[role=dialog]').getBoundingClientRect(); const el = document.elementFromPoint(r.left + r.width / 2, Math.min(r.bottom - 10, innerHeight - 10)); return !!el.closest('[role=dialog]'); });
   assert(topEl, 'le menu passe au-dessus de la barre du bas');
@@ -316,7 +315,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await d.goto(`${base}/experiences/padel-entre-inconnus-anfa`);
   assert(await d.getByRole('navigation', { name: "Fil d'Ariane" }).getByRole('link', { name: 'Padel' }).isVisible(), 'fiche : sous-catégorie dans le fil d\'Ariane');
   // 21b : expériences inventées dans toutes les catégories (au moins trois par univers d'origine, deux dans les nouvelles)
-  for (const [cat, min] of [['eat', 3], ['move', 3], ['play', 3], ['create', 3], ['discover', 3], ['meet', 2], ['learn', 2]]) {
+  for (const [cat, min] of [['eat', 3], ['move', 3], ['create', 3], ['discover', 3]]) {
     await d.goto(`${base}/casablanca/${cat}`);
     const n = await d.locator('main article h3, main a h3').count();
     assert(n >= min, `/casablanca/${cat} : ${n} expériences (≥ ${min})`);

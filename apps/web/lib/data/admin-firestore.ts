@@ -59,7 +59,7 @@ export async function fsAdminData(now: Date) {
 
   const economics: Record<string, Economics> = {};
   /** Lieu réel des expériences à lieu secret (docs/22) : rangé à part, remis dans la fiche pour l'équipe. */
-  const hiddenVenues: Record<string, { name?: string; address?: string; geo?: { lat: number; lng: number } | null; district?: string; partnerName?: string }> = {};
+  const hiddenVenues: Record<string, { name?: string; address?: string; geo?: { lat: number; lng: number } | null; district?: string; partnerName?: string; cuisine?: string }> = {};
   const finance: Record<string, { gross: number; cost: number; margin: number }> = {};
   for (const d of privSnap.docs) {
     const parent = d.ref.parent.parent;
@@ -83,7 +83,7 @@ export async function fsAdminData(now: Date) {
       const e = plain<Experience>({ id: d.id, ...d.data() });
       const h = hiddenVenues[d.id];
       if (!h || e.venue?.revealPolicy !== "on_group_reveal") return [d.id, e];
-      return [d.id, { ...e, district: h.district || e.district, venue: { ...e.venue, name: h.name ?? "", address: h.address ?? "", geo: h.geo ?? null }, partnerSnapshot: h.partnerName ? { name: h.partnerName } : (e.partnerSnapshot ?? null) } as Experience];
+      return [d.id, { ...e, district: h.district || e.district, cuisine: h.cuisine || e.cuisine || null, venue: { ...e.venue, name: h.name ?? "", address: h.address ?? "", geo: h.geo ?? null }, partnerSnapshot: h.partnerName ? { name: h.partnerName } : (e.partnerSnapshot ?? null) } as Experience];
     }),
   );
   const reservations: AdminReservation[] = resSnap.docs.map((d) => {

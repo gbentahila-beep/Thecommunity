@@ -57,7 +57,12 @@ export const experienceInputSchema = z
     requestMessageRequired: z.boolean().default(false),
     /** 11h : compte Instagram obligatoire dans la demande de participation (expériences sur demande). */
     requestInstagramRequired: z.boolean().default(false),
-    priceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany"),
+    /**
+     * docs/22 : le prix d'un événement Wenzy est le prix Wenzy global (35 DH), jamais saisi ici. `priceDh` ne sert plus
+     * qu'aux activités d'organisateurs (prix total de l'activité). `free` : événement gratuit (aucun frais Wenzy).
+     */
+    priceDh: z.coerce.number().min(0, "min0").max(100_000, "tooMany").optional(),
+    free: z.boolean().default(false),
     durationMinutes: z.coerce.number().int().min(15, "min15").max(1440, "tooMany"),
     languages: z.array(z.enum(SPOKEN_LANGUAGES as [SpokenLanguage, ...SpokenLanguage[]])).min(1, "pickOne"),
     alcoholServed: z.boolean(),
@@ -71,7 +76,7 @@ export const experienceInputSchema = z
     practicalInfo: z.string().max(1000, "tooLong").optional().or(z.literal("")),
     cancellationPolicyId: z.string().min(1, "required"),
     partnerId: z.string().optional().or(z.literal("")),
-    economicsModel: z.enum(["own", "commission"]),
+    economicsModel: z.enum(["own", "commission"]).default("own"),
     costPerSeatDh: z.coerce.number().min(0, "min0").optional(),
     commissionPercent: z.coerce.number().min(0, "min0").max(100, "max100").optional(),
     /** 11g : commission éventuelle sur la part réglée sur place, facturée au partenaire hors site (jamais encaissée en ligne). */
@@ -131,12 +136,8 @@ export const experienceInputSchema = z
     if (v.bookingMode !== "open" && v.bookingMode !== "private" && v.maxSeatsPerBooking > 2) {
       ctx.addIssue({ code: "custom", path: ["maxSeatsPerBooking"], message: "seatsPerBookingMode" });
     }
-    if (v.memberPriceDh !== undefined && v.memberPriceDh > v.priceDh) {
+    if (v.memberPriceDh !== undefined && v.priceDh !== undefined && v.memberPriceDh > v.priceDh) {
       ctx.addIssue({ code: "custom", path: ["memberPriceDh"], message: "memberAbovePublic" });
-    }
-    // 11g : avec une part sur place, le prix payé au partenaire n'est jamais un coût pour nous ; nos coûts éventuels sont facultatifs (0 par défaut).
-    if (v.economicsModel === "own" && v.costPerSeatDh === undefined && v.pricingModel === "online_only") {
-      ctx.addIssue({ code: "custom", path: ["costPerSeatDh"], message: "required" });
     }
     if (v.economicsModel === "commission" && v.commissionPercent === undefined) {
       ctx.addIssue({ code: "custom", path: ["commissionPercent"], message: "required" });
@@ -147,9 +148,7 @@ export const experienceInputSchema = z
     if (v.pricingModel !== "online_only" && v.economicsModel === "commission") {
       ctx.addIssue({ code: "custom", path: ["economicsModel"], message: "onSiteNoCommission" });
     }
-    if (v.pricingModel !== "online_only" && !v.partnerId) {
-      ctx.addIssue({ code: "custom", path: ["pricingModel"], message: "pricingNeedsPartner" });
-    }
+    // docs/22 : une part sur place (menu, consommation, prix de l'activité) ne demande plus de lieu partenaire enregistré.
     if ((v.budgetMinDh === undefined) !== (v.budgetMaxDh === undefined)) {
       ctx.addIssue({ code: "custom", path: [v.budgetMinDh === undefined ? "budgetMinDh" : "budgetMaxDh"], message: "required" });
     }

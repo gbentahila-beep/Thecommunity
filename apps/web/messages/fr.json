@@ -2,7 +2,7 @@
   "meta": {
     "siteName": "Wenzy",
     "defaultTitle": "Wenzy — Expériences et rencontres à Casablanca",
-    "defaultDescription": "Dîners entre inconnus, sport, jeux, ateliers et sorties : réservez votre place et rencontrez de nouvelles personnes dans la vraie vie."
+    "defaultDescription": "Tables entre inconnus, sport, sorties et découvertes : réservez votre place et rencontrez de nouvelles personnes dans la vraie vie."
   },
   "demo": {
     "banner": "Version de démonstration — les expériences, dates et avis affichés sont fictifs.",
@@ -10,7 +10,7 @@
   },
   "nav": {
     "discover": "Découvrir",
-    "dinners": "Dîners",
+    "dinners": "Tables",
     "activities": "Activités",
     "how": "Comment ça marche",
     "account": "Mon compte",
@@ -98,11 +98,11 @@
     "universe": {
       "eat": {
         "tagline": "Une table, de nouvelles têtes, une bonne adresse",
-        "text": "Nouveau en ville, ou des amis toujours pris ? Rejoignez une table de personnes qui ont, elles aussi, envie de rencontrer du monde. Nous composons la table et réservons le restaurant : venez seul·e ou à deux.",
+        "text": "Café, brunch, déjeuner ou dîner : rejoignez une table de quatre à six personnes qui ont, elles aussi, envie de rencontrer du monde. Nous composons la table et choisissons l'adresse : venez seul·e ou à deux.",
         "group": "Tables composées",
-        "factLabel": "Critères",
-        "factValue": "Langues, âges, intérêts",
-        "cta": "Voir les dîners"
+        "factLabel": "Formats",
+        "factValue": "Café, brunch, déjeuner, dîner",
+        "cta": "Voir les tables"
       },
       "move": {
         "tagline": "Bougez avec des personnes de votre niveau",
@@ -121,19 +121,19 @@
         "cta": "Voir les jeux"
       },
       "create": {
-        "tagline": "Créez quelque chose, ensemble",
-        "text": "Céramique, cuisine marocaine, parfum, peinture sur zellige : les mains sont occupées, la conversation vient toute seule. Vous repartez avec votre création… et de nouveaux contacts.",
-        "group": "Petits ateliers",
+        "tagline": "Apprenez et créez, à plusieurs",
+        "text": "Céramique, visite guidée, ateliers et culture : les mains ou l'esprit sont occupés, la conversation vient toute seule.",
+        "group": "Petits groupes",
         "factLabel": "Niveau",
         "factValue": "Débutants bienvenus",
-        "cta": "Voir les ateliers"
+        "cta": "Voir les découvertes"
       },
       "discover": {
-        "tagline": "Rencontrez beaucoup de monde en une soirée",
-        "text": "Rooftop au coucher du soleil, soirée gnaoua, balade street art : des sorties ouvertes à tous, pour découvrir la ville autrement et croiser de nouvelles têtes.",
-        "group": "Ouvert à tous",
+        "tagline": "Sortez et rencontrez du monde",
+        "text": "Escape game, soirée jeux, quiz, afterwork, échange de langues : des sorties pensées pour croiser de nouvelles têtes, en équipe ou autour d'un verre.",
+        "group": "En équipe ou ouvert à tous",
         "factLabel": "Format",
-        "factValue": "Seul·e ou entre amis",
+        "factValue": "Seul·e ou à deux",
         "cta": "Voir les sorties"
       },
       "meet": {
@@ -219,7 +219,7 @@
   },
   "city": {
     "title": "Expériences à {city}",
-    "subtitle": "Dîners entre inconnus, sport, jeux, ateliers et sorties : tout ce qu'il faut pour rencontrer du monde à {city}.",
+    "subtitle": "Tables entre inconnus, sport, sorties et découvertes : tout ce qu'il faut pour rencontrer du monde à {city}.",
     "categoryTitle": "{category} à {city}",
     "comingSoonTitle": "Wenzy arrive bientôt à {city}",
     "comingSoonText": "Nous préparons les premières expériences. En attendant, retrouvez-nous à Casablanca.",
@@ -616,11 +616,11 @@
       "no_show": "Absent·e"
     },
     "categories": {
-      "eat": "Dîners & gastronomie",
-      "move": "Sport & bien-être",
-      "play": "Jeux",
-      "create": "Ateliers",
-      "discover": "Sorties"
+      "eat": "Tables",
+      "move": "Bouger",
+      "play": "Sortir",
+      "create": "Découvrir",
+      "discover": "Sortir"
     },
     "interestGroups": {
       "eat": "Manger et boire",
@@ -1448,16 +1448,21 @@
     "paidOnline": "Payé en ligne",
     "dueOnline": "À payer en ligne",
     "paidOnSite": "Réglé sur place",
-    "sectionTitle": "Comment se règle cette expérience",
+    "sectionTitle": "Ce que vous payez",
     "sectionOnline": "En ligne, à la réservation : {amount} par personne.",
-    "sectionFixed": "Sur place, au partenaire : {amount} par personne.",
-    "sectionVariable": "Sur place, au partenaire : ce que vous consommez.",
+    "sectionFixed": "Sur place : {amount} par personne.",
+    "sectionVariable": "Sur place : votre consommation.",
     "onSiteToVenue": "Réglé directement au lieu partenaire, sur place.",
     "plusRestaurant": "+ resto {amount}",
     "restaurantEstimated": "resto estimé {amount} / pers.",
-    "sectionBudget": "Sur place, au restaurant : environ {amount} par personne (budget indicatif, selon votre consommation).",
+    "sectionBudget": "Sur place : votre consommation, environ {amount} par personne.",
     "restaurantPill": "Resto {amount}",
-    "surprisePill": "Lieu surprise"
+    "surprisePill": "Lieu surprise",
+    "plusOnSite": "+ sur place",
+    "sectionNothing": "Rien à régler sur place.",
+    "tier_casual": "Casual",
+    "tier_premium": "Premium",
+    "tier_exclusive": "Exclusive"
   },
   "ticket": {
     "title": "Votre billet",
@@ -1633,9 +1638,9 @@
     "women": "Réservé aux femmes",
     "tier": "Gamme du restaurant",
     "tierAny": "Toutes les gammes",
-    "tier_casual": "Casual · 100–200 DH",
-    "tier_premium": "Premium · 200–400 DH",
-    "tier_exclusive": "Exclusive · 400–600 DH"
+    "tier_casual": "Casual",
+    "tier_premium": "Premium",
+    "tier_exclusive": "Exclusive"
   },
   "gallery": {
     "title": "Photos",

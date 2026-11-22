@@ -10,7 +10,7 @@ import {
   type Experience,
   restaurantBudget,
 } from "@thecommunity/shared";
-import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, Handshake, Gift, Wallet, Gem, UtensilsCrossed, Sparkles } from "lucide-react";
+import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, Handshake, Gift, Gem, UtensilsCrossed, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
@@ -26,7 +26,7 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
-import { budgetText, memberAmountFor, PriceTag } from "@/components/price-tag";
+import { memberAmountFor, onSiteText, PriceTag } from "@/components/price-tag";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
 import { getArchivedExperience, getCategory, getCity, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublicOrganizer, getPublishedExperiences, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
@@ -210,9 +210,9 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <Fact icon={Clock} label={t("duration")} value={duration} />
               <Fact icon={Languages} label={t("languages")} value={exp.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ")} />
               {surprise && <Fact icon={Gift} label={t("surpriseVenue")} value={t("surpriseVenueValue")} />}
-              {budget?.kind === "range" && <Fact icon={Wallet} label={t("budgetLabel")} value={`${budgetText(budget, lang)} · ${t("budgetNote")}`} />}
-              {exp.venueTier && <Fact icon={Gem} label={t("tierLabel")} value={t(`tier_${exp.venueTier}`)} />}
-              {exp.cuisine && <Fact icon={UtensilsCrossed} label={t("cuisineLabel")} value={exp.cuisine} />}
+              {exp.venueTier && <Fact icon={Gem} label={t("tierLabel")} value={t2(`tier_${exp.venueTier}`)} />}
+              {/* docs/22, décision 14 : lieu secret → la cuisine n'apparaît qu'avec le lieu, à la révélation. */}
+              {exp.cuisine && !surprise && <Fact icon={UtensilsCrossed} label={t("cuisineLabel")} value={exp.cuisine} />}
               {exp.ambiance && <Fact icon={Sparkles} label={t("ambianceLabel")} value={exp.ambiance} />}
               {exp.alcoholServed === false && <Fact icon={Leaf} label={t("alcoholFree")} value="" />}
               {(exp.bookingMode === "social_dinner" || exp.bookingMode === "group" || exp.onSiteHost) && (
@@ -350,16 +350,14 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 <span className="text-sm text-muted">{t("perPerson")}</span>
               </p>
               {exp.membersOnly && <p className="mt-2 rounded-xl bg-brand-900 px-3 py-2 text-sm font-medium text-white">{t("membersOnlyNote")}</p>}
-              {twoPart.partner && (
-                <div className="mt-3 rounded-xl bg-cream px-3 py-2.5 text-sm text-ink" data-testid="two-part">
-                  <p className="font-semibold">{t2("sectionTitle")}</p>
-                  <ul className="mt-1 space-y-0.5">
-                    <li>{t2("sectionOnline", { amount: formatMoney(exp.price, lang) })}</li>
-                    <li>{twoPart.partner.price ? t2("sectionFixed", { amount: formatMoney(twoPart.partner.price, lang) }) : budget?.kind === "range" ? t2("sectionBudget", { amount: budgetText(budget, lang) }) : t2("sectionVariable")}</li>
-                  </ul>
-                  {twoPart.partner.description && <p className="mt-1 text-muted">{t2("whatOnSite", { description: twoPart.partner.description })}</p>}
-                </div>
-              )}
+              {/* docs/22 : « Ce que vous payez », dit une seule fois : en ligne (prix Wenzy), puis sur place. */}
+              <div className="mt-3 rounded-xl bg-cream px-3 py-2.5 text-sm text-ink" data-testid="two-part">
+                <p className="font-semibold">{t2("sectionTitle")}</p>
+                <ul className="mt-1 space-y-0.5">
+                  <li>{t2("sectionOnline", { amount: formatMoney(exp.price, lang) })}</li>
+                  <li>{onSiteText(twoPart, budget, lang, t2) ?? t2("sectionNothing")}</li>
+                </ul>
+              </div>
               {/* Étape 28 : l'abonnement n'est proposé ici que si l'expérience est réservée aux membres (sinon : après la 1re expérience). */}
               {plan && exp.membersOnly && (
                 <Link href="/abonnement" className="mt-2 inline-block text-sm font-semibold text-brand-900 underline underline-offset-4">

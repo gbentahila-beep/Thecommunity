@@ -34,8 +34,6 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.locator('#f-address').fill('Boulevard Racine, Casablanca');
   await page.locator('#f-bookingMode').selectOption('social_dinner');
   await page.locator('#f-groupMin').fill('7'); // incohérent volontairement (min > cible)
-  await page.locator('#f-priceDh').fill('139');
-  await page.locator('#f-costPerSeatDh').fill('75');
   await page.locator('[id="f-sessions.weeks"]').fill('4');
   await page.locator('[id="f-sessions.capacity"]').fill('24');
   await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();
@@ -44,34 +42,29 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();
   assert(await page.getByText('Formulaire valide').first().waitFor({ state: 'visible', timeout: 10000 }).then(() => true, () => false), 'formulaire valide : récapitulatif affiché');
   assert(await page.locator('#form-result li.list-disc').count() === 4, 'récurrence : 4 dates générées');
-  assert(await page.locator('#form-result').textContent().then(t => t.includes('64 DH')), 'marge estimée par place (139 − 75 = 64 DH)');
+  assert(await page.locator('#form-result').textContent().then(t => t.includes('Payé en ligne : 35 DH par place')), 'prix Wenzy unique : 35 DH par place (docs/22)');
   // 11h : « Ce qui est inclus » dans « 3. Format » (prix total) ; Instagram obligatoire possible sur demande
   assert(await page.locator('fieldset', { hasText: '3. Format' }).locator('#f-included').count() === 1, '« Ce qui est inclus » dans la section Format');
   assert(await page.locator('#f-partnerDescription').count() === 0, 'plus de second champ « réglé sur place »');
   await page.locator('#f-admission').selectOption('on_request');
   assert(await page.getByLabel('Compte Instagram obligatoire').isVisible() && await page.getByLabel('Message de motivation obligatoire', { exact: false }).isVisible(), 'sur demande : Instagram et message obligatoires au choix');
   await page.locator('#f-admission').selectOption('direct');
-  // 11g : une seule section « Prix, paiement et partenaire », sans double comptage
-  assert(await page.locator('#f-economicsModel').count() === 0, 'sans partenaire : pas de commission possible, seulement nos coûts');
-  assert((await page.getByTestId('preview-team').innerText()).includes('64 DH'), 'aperçu équipe en direct : marge 64 DH par place');
-  await page.locator('#f-partnerId').selectOption({ index: 1 });
-  await page.locator('#f-economicsModel').selectOption('commission');
-  await page.locator('#f-commissionPercent').fill('15');
-  assert(/Marge\s*20,85 DH/.test(await page.getByTestId('preview-team').innerText()), 'commission 15 % de 139 DH = 20,85 DH de marge');
+  // docs/22, étape E : en ligne toujours le prix Wenzy ; sur place rien, prix fixe ou consommation ; ni marge ni prix membre.
+  assert(await page.locator('#f-priceDh').count() === 0 && await page.locator('#f-memberPriceDh').count() === 0 && await page.locator('#f-economicsModel').count() === 0 && await page.getByTestId('preview-team').count() === 0, 'ni prix saisi, ni prix membre, ni marge dans le formulaire');
+  assert((await page.getByTestId('part-online').innerText()).includes('35 DH par place'), 'en ligne : prix Wenzy de 35 DH');
+  assert((await page.getByTestId('preview-client').innerText()).includes('Rien à régler sur place'), 'aperçu : rien sur place par défaut');
   await page.locator('input[name=pricingModel][value=fixed_partner]').check();
-  assert(await page.locator('#f-economicsModel').count() === 0 && await page.getByTestId('part-on-site').isVisible(), 'part sur place : bloc dédié, commission en ligne remplacée par nos coûts');
-  await page.locator('#f-priceDh').fill('59');
-  await page.locator('#f-partnerPriceDh').fill('80');
-  await page.locator('#f-costPerSeatDh').fill('80');
-  assert(await page.getByText(/ne nous coûte rien/).isVisible(), 'coût = prix sur place : avertissement de double comptage');
-  await page.locator('#f-costPerSeatDh').fill('');
-  await page.locator('#f-onSiteCommissionPercent').fill('10');
-  const team = await page.getByTestId('preview-team').innerText();
-  assert(/Marge\s*59 DH/.test(team) && team.includes('8 DH'), 'part sur place hors coûts : marge 59 DH + 8 DH de commission à facturer');
-  assert((await page.getByTestId('preview-client').innerText()).includes('139 DH par personne'), 'aperçu client : 139 DH par personne');
+  await page.locator('#f-partnerPriceDh').fill('120');
+  assert(/35 DH[\s\S]*Sur place : 120 DH/.test(await page.getByTestId('preview-client').innerText()), 'prix fixe sur place, sans lieu partenaire : aperçu 35 DH puis 120 DH sur place');
+  await page.locator('input[name=pricingModel][value=variable_consumption]').check();
+  await page.locator('#f-venueTier').selectOption('premium');
+  assert((await page.getByTestId('preview-client').innerText()).includes('250–400 DH'), 'consommation : budget de la gamme Premium du Dîner (250–400 DH)');
+  await page.getByLabel('Événement gratuit (aucun frais Wenzy)').check();
+  assert((await page.getByTestId('preview-client').innerText()).includes('Gratuit'), 'événement gratuit : aucun frais Wenzy');
+  await page.getByLabel('Événement gratuit (aucun frais Wenzy)').uncheck();
   await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();
   await page.waitForTimeout(400);
-  assert(await page.getByText('Formulaire valide').isVisible(), 'part sur place sans coût saisi : formulaire valide');
+  assert(await page.getByText('Formulaire valide').isVisible(), 'consommation avec gamme, sans lieu partenaire : formulaire valide');
 
   // Édition pré-remplie
   await go('/admin/experiences/exp-diner-inconnus');
@@ -137,11 +130,11 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   // Étape 19 : sous-catégorie proposée seulement pour l'univers qui en a
   assert((await page.locator('#f-subcategoryId option').allTextContents()).join('|') === '— Aucune —|Padel', 'Sport : sous-catégorie Padel proposée');
   await page.getByLabel(/^Univers/).selectOption('eat');
-  assert(await page.locator('#f-subcategoryId').count() === 0, 'Dîners : pas de sous-catégorie');
+  assert((await page.locator('#f-subcategoryId option').allTextContents()).join('|') === '— Aucune —|Café|Brunch|Déjeuner|Dîner', 'Tables : formats Café, Brunch, Déjeuner, Dîner');
   await page.getByLabel(/^Univers/).selectOption('move');
-  await page.getByLabel(/^Partenaire/).selectOption('p-paintball-bouskoura');
+  await page.getByLabel(/^Lieu partenaire/).selectOption('p-paintball-bouskoura');
   assert(await page.getByTestId('insurance-warning').isVisible(), 'activité physique chez un lieu sans assurance vérifiée : alerte');
-  await page.getByLabel(/^Partenaire/).selectOption('p-padel-anfa');
+  await page.getByLabel(/^Lieu partenaire/).selectOption('p-padel-anfa');
   assert(await page.getByTestId('insurance-warning').count() === 0, 'lieu assuré : pas d\'alerte');
   await go('/admin/propositions');
   assert(await page.getByTestId('proposal').count() === 2, 'sorties proposées : 2 propositions d\'exemple');
@@ -160,8 +153,8 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   // Étape 19 : Paramètres → catégories dynamiques (démo : lecture seule)
   await page.goto(`${base}/admin/parametres`);
   assert(await page.locator('summary', { hasText: 'Padel' }).getByText('Sous-catégorie').isVisible(), 'Paramètres : Padel listée comme sous-catégorie');
-  assert(await page.locator('summary', { hasText: 'Échanges & vie sociale' }).getByText('Masquée').count() === 0, 'Paramètres : Vie sociale visible (expériences de démonstration, 21b)');
-  assert(await page.locator('#cat-padel-parent').inputValue() === 'move', 'Padel rattachée à Sport & bien-être');
+  assert(await page.locator('summary', { hasText: 'Brunch' }).getByText('Sous-catégorie').isVisible(), 'Paramètres : Brunch listé comme format des Tables');
+  assert(await page.locator('#cat-padel-parent').inputValue() === 'move', 'Padel rattachée à Bouger');
   // Étape 22 : politiques d'annulation, modes de paiement des organisateurs, demandes de remboursement
   assert(await page.getByTestId('policies').locator('li').count() === 3, 'Paramètres : 3 politiques d\'annulation (démonstration)');
   await page.getByText('+ Nouvelle politique').click();

@@ -93,7 +93,7 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   await page.locator('#o-email').fill('yasmine@example.com');
   await page.locator('#o-phone').fill('+212 600 000 000');
   await page.locator('#o-address').fill('Rue Ibnou Mounir, Casablanca');
-  await page.getByRole('checkbox', { name: 'Ateliers' }).check();
+  await page.getByRole('checkbox', { name: 'Découvrir' }).check();
   await page.locator('#o-description').fill('Atelier de céramique à Maârif : initiations au tour, cuisson comprise, tous niveaux.');
   await page.locator('#o-documents').setInputFiles({ name: 'registre.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 démo') });
   assert(await visible(page.getByTestId('documents').getByText('registre.pdf')), 'inscription : pièce ajoutée');
@@ -127,7 +127,7 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   // 6. Étape 21 : finances de l'organisateur, commissions et reversements côté équipe
   await page.goto(base + '/pro/finances', { waitUntil: 'load' });
   assert(await page.getByTestId('pro-finance-kpis').getByText('Commission Wenzy').isVisible(), 'finances : chiffres clés');
-  assert(/Sport & bien-être : 12 %/.test(await page.getByTestId('pro-rates').textContent()), 'finances : taux applicable (règle « Sport » 12 %)');
+  assert(/Bouger : 12 %/.test(await page.getByTestId('pro-rates').textContent()), 'finances : taux applicable (règle « Bouger » 12 %)');
   const ledger = await page.getByTestId('pro-ledger').allTextContents();
   assert(ledger.length >= 1 && ledger.every((t) => /Padel entre inconnus/.test(t)), `finances : ${ledger.length} écritures, toutes sur le padel`);
   assert(await page.getByTestId('pro-payout').filter({ hasText: 'Viré' }).count() === 1, 'finances : un reversement « viré »');
