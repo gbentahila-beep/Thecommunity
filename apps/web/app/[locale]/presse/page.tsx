@@ -1,4 +1,4 @@
-import { AtSign, Download, Mail } from "lucide-react";
+import { Download, Mail } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { setRequestLocale } from "next-intl/server";
@@ -6,7 +6,6 @@ import { CopyButton } from "@/components/booking/copy-button";
 import { PageShell } from "@/components/ui";
 import { PRESS } from "@/content/press";
 import { Link } from "@/i18n/navigation";
-import { AYA_INSTAGRAM } from "@/lib/legal-info";
 
 type L = "fr" | "en" | "ar";
 const lang = (l: string): L => (l === "en" || l === "ar" ? l : "fr");
@@ -19,7 +18,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/presse">
 const h2 = "font-display text-3xl font-medium text-brand-900";
 const card = "rounded-[var(--radius-card)] bg-white p-5 shadow-card";
 
-/** Kit presse : présentation (3 longueurs), faits clés, fondatrice, logos, couleurs, typographies, photos, contact. */
+/** Kit presse : présentation (3 longueurs), faits clés, équipe, logos, couleurs, typographies, photos, contact. */
 export default async function PressPage({ params }: PageProps<"/[locale]/presse">) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -72,15 +71,11 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
             </dl>
           </div>
           <div>
-            <h2 className={h2}>{P.founderTitle[l]}</h2>
+            <h2 className={h2}>{P.teamTitle[l]}</h2>
             <div className={`${card} mt-5`}>
-              <p className="leading-relaxed text-ink">{P.founderText[l]}</p>
+              <p className="leading-relaxed text-ink">{P.teamText[l]}</p>
               <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold text-brand-900">
-                <Link href="/a-propos" className="underline underline-offset-4">{P.founderMore[l]}</Link>
-                <a href={AYA_INSTAGRAM.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 underline underline-offset-4">
-                  <AtSign className="size-4" aria-hidden />
-                  {P.instagram[l]}
-                </a>
+                <Link href="/a-propos" className="underline underline-offset-4">{P.teamMore[l]}</Link>
               </div>
             </div>
           </div>

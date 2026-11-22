@@ -1,6 +1,6 @@
 /**
  * Kit presse (8 novembre). Textes originaux, en trois langues. Aucun chiffre inventé : seuls des faits vérifiables
- * (fondatrice, ville, univers, langues). Les photos proposées ne montrent personne de reconnaissable ; les autres
+ * (équipe, ville, univers, langues). Les photos proposées ne montrent personne de reconnaissable ; les autres
  * sont fournies sur demande, avec l'accord des participants (CGU, article « Photos »).
  */
 type L = "fr" | "en" | "ar";
@@ -42,9 +42,9 @@ export const PRESS = {
     {
       label: { fr: "Version longue", en: "Long version", ar: "نسخة مطوّلة" } as T,
       text: {
-        fr: "Wenzy est né d'un constat simple : à Casablanca, les adresses ne manquent pas, mais rencontrer vraiment quelqu'un reste difficile. Sa fondatrice, Aya Snoussi, a commencé par de petites tables entre inconnus ; les demandes ont vite dépassé les places. Aujourd'hui, le club propose des expériences dans plusieurs univers — dîners et gastronomie, sport et bien-être, jeux, ateliers, sorties, vie sociale, culture — dans des lieux partenaires. On réserve sur le site, en français, en arabe ou en anglais ; l'équipe compose des groupes équilibrés (langues, âges, centres d'intérêt) et accueille chacun par son prénom. Wenzy n'est pas une application de rencontres amoureuses : c'est un lieu pour se faire des amis, hors ligne.",
-        en: "Wenzy started from a simple observation: Casablanca has no shortage of places to go, yet really meeting someone is still hard. Its founder, Aya Snoussi, began with small tables of strangers; requests soon outnumbered the seats. Today the club offers experiences across several worlds — dining, sport and wellbeing, games, workshops, nights out, social life, culture — at partner venues. People book on the website in French, Arabic or English; the team puts together balanced groups (languages, ages, interests) and greets everyone by name. Wenzy is not a dating app: it's a place to make friends, offline.",
-        ar: "انطلق Wenzy من ملاحظة بسيطة: في الدار البيضاء لا تنقص الأماكن، لكن التعرّف الحقيقي على شخص ما يظل صعبًا. بدأت مؤسِّسته آية السنوسي بطاولات صغيرة بين غرباء، وسرعان ما فاقت الطلبات عدد الأماكن. اليوم يقترح النادي تجارب في عوالم متعددة — العشاء وفن الطبخ، الرياضة والرفاه، الألعاب، الورشات، الخرجات، الحياة الاجتماعية، الثقافة — في أماكن شريكة. يتم الحجز على الموقع بالفرنسية أو العربية أو الإنجليزية؛ ويشكّل الفريق مجموعات متوازنة (اللغات، الأعمار، الاهتمامات) ويستقبل كل شخص باسمه. Wenzy ليس تطبيقًا للمواعدة: إنه مكان لتكوين صداقات، خارج الشاشات.",
+        fr: "Wenzy est né d'un constat simple : à Casablanca, les adresses ne manquent pas, mais rencontrer vraiment quelqu'un reste difficile. L'équipe a commencé par de petites tables entre inconnus ; les demandes ont vite dépassé les places. Aujourd'hui, le club propose des expériences dans plusieurs univers — dîners et gastronomie, sport et bien-être, jeux, ateliers, sorties, vie sociale, culture — dans des lieux partenaires. On réserve sur le site, en français, en arabe ou en anglais ; l'équipe compose des groupes équilibrés (langues, âges, centres d'intérêt) et accueille chacun par son prénom. Wenzy n'est pas une application de rencontres amoureuses : c'est un lieu pour se faire des amis, hors ligne.",
+        en: "Wenzy started from a simple observation: Casablanca has no shortage of places to go, yet really meeting someone is still hard. The team began with small tables of strangers; requests soon outnumbered the seats. Today the club offers experiences across several worlds — dining, sport and wellbeing, games, workshops, nights out, social life, culture — at partner venues. People book on the website in French, Arabic or English; the team puts together balanced groups (languages, ages, interests) and greets everyone by name. Wenzy is not a dating app: it's a place to make friends, offline.",
+        ar: "انطلق Wenzy من ملاحظة بسيطة: في الدار البيضاء لا تنقص الأماكن، لكن التعرّف الحقيقي على شخص ما يظل صعبًا. بدأ الفريق بطاولات صغيرة بين غرباء، وسرعان ما فاقت الطلبات عدد الأماكن. اليوم يقترح النادي تجارب في عوالم متعددة — العشاء وفن الطبخ، الرياضة والرفاه، الألعاب، الورشات، الخرجات، الحياة الاجتماعية، الثقافة — في أماكن شريكة. يتم الحجز على الموقع بالفرنسية أو العربية أو الإنجليزية؛ ويشكّل الفريق مجموعات متوازنة (اللغات، الأعمار، الاهتمامات) ويستقبل كل شخص باسمه. Wenzy ليس تطبيقًا للمواعدة: إنه مكان لتكوين صداقات، خارج الشاشات.",
       } as T,
     },
   ],
@@ -53,7 +53,6 @@ export const PRESS = {
 
   factsTitle: { fr: "Faits clés", en: "Key facts", ar: "معطيات أساسية" } as T,
   facts: [
-    { k: { fr: "Fondatrice", en: "Founder", ar: "المؤسِّسة" } as T, v: { fr: "Aya Snoussi", en: "Aya Snoussi", ar: "آية السنوسي" } as T },
     { k: { fr: "Ville", en: "City", ar: "المدينة" } as T, v: { fr: "Casablanca, Maroc", en: "Casablanca, Morocco", ar: "الدار البيضاء، المغرب" } as T },
     { k: { fr: "Univers", en: "Worlds", ar: "العوالم" } as T, v: { fr: "Dîners et gastronomie · Sport et bien-être · Jeux · Ateliers · Sorties", en: "Dining · Sport and wellbeing · Games · Workshops · Nights out", ar: "العشاء وفن الطبخ · الرياضة والرفاه · الألعاب · الورشات · الخرجات" } as T },
     { k: { fr: "Langues", en: "Languages", ar: "اللغات" } as T, v: { fr: "Français, arabe, anglais", en: "French, Arabic, English", ar: "الفرنسية، العربية، الإنجليزية" } as T },
@@ -61,13 +60,13 @@ export const PRESS = {
     { k: { fr: "Ce que ce n'est pas", en: "What it isn't", ar: "ما ليس عليه" } as T, v: { fr: "Une application de rencontres amoureuses", en: "A dating app", ar: "تطبيق للمواعدة" } as T },
   ],
 
-  founderTitle: { fr: "La fondatrice", en: "The founder", ar: "المؤسِّسة" } as T,
-  founderText: {
-    fr: "Après dix ans en France, Aya Snoussi est rentrée à Casablanca avec l'envie de retrouver sa place parmi des gens qui partagent sa culture et son humour. En cherchant la sienne, elle a créé un endroit où chacun peut trouver la sienne. Portrait en haute définition et interview sur demande.",
-    en: "After ten years in France, Aya Snoussi moved back to Casablanca wanting to find her place among people who share her culture and her sense of humour. In looking for her own place, she created one where everyone can find theirs. High-resolution portrait and interviews on request.",
-    ar: "بعد عشر سنوات في فرنسا، عادت آية السنوسي إلى الدار البيضاء برغبة في إيجاد مكانها بين أناس يشاركونها ثقافتها وروح دعابتها. وفي بحثها عن مكانها، أنشأت مكانًا يجد فيه كل شخص مكانه. صورة عالية الدقة ومقابلة عند الطلب.",
+  teamTitle: { fr: "L'équipe", en: "The team", ar: "الفريق" } as T,
+  teamText: {
+    fr: "Une petite équipe basée à Casablanca, qui compose les groupes, choisit les lieux partenaires et soigne chaque détail des expériences. Interviews et visite d'une expérience sur demande.",
+    en: "A small team based in Casablanca that puts the groups together, chooses the partner venues and takes care of every detail of the experiences. Interviews and a visit during an experience on request.",
+    ar: "فريق صغير مقيم في الدار البيضاء، يكوّن المجموعات ويختار الأماكن الشريكة ويعتني بكل تفاصيل التجارب. مقابلات وزيارة خلال إحدى التجارب عند الطلب.",
   } as T,
-  founderMore: { fr: "Lire son histoire", en: "Read her story", ar: "اقرأ قصتها" } as T,
+  teamMore: { fr: "Lire notre histoire", en: "Read our story", ar: "اقرأ قصتنا" } as T,
 
   logosTitle: { fr: "Logos", en: "Logos", ar: "الشعارات" } as T,
   logosRules: {
@@ -116,5 +115,4 @@ export const PRESS = {
     ar: "سؤال، مقابلة، أو زيارة خلال إحدى التجارب؟ راسلنا مع ذكر « صحافة »: نرد بسرعة.",
   } as T,
   contactCta: { fr: "Écrire à l'équipe", en: "Write to the team", ar: "راسل الفريق" } as T,
-  instagram: { fr: "Instagram d'Aya", en: "Aya's Instagram", ar: "إنستغرام آية" } as T,
 };

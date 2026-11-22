@@ -61,7 +61,7 @@ export type AdminUser = {
   trustedHost?: boolean;
 };
 
-const FEMALE = ["Salma", "Lina", "Sofia", "Inès", "Nadia", "Yasmine", "Kenza", "Rim", "Ghita", "Hiba", "Meryem", "Sara", "Aya", "Imane", "Chaïmae", "Leila", "Zineb", "Nora", "Dounia", "Sanaa"];
+const FEMALE = ["Salma", "Lina", "Sofia", "Inès", "Nadia", "Yasmine", "Kenza", "Rim", "Ghita", "Hiba", "Meryem", "Sara", "Amal", "Imane", "Chaïmae", "Leila", "Zineb", "Nora", "Dounia", "Sanaa"];
 const MALE = ["Karim", "Omar", "Yassine", "Mehdi", "Youssef", "Amine", "Hamza", "Reda", "Anas", "Othmane", "Ilyas", "Adam", "Nabil", "Soufiane", "Ayoub", "Badr", "Ismail", "Hicham", "Tarik", "Walid"];
 const LAST = ["Alaoui", "Bennani", "Tazi", "Berrada", "El Idrissi", "Chraibi", "Fassi", "Benjelloun", "Lahlou", "Sqalli", "Kettani", "Amrani", "Ouazzani", "Zniber", "Belkadi", "Naciri"];
 const INTERESTS: Interest[] = ["gastronomy", "sport", "travel", "culture", "art", "music", "wellness", "games", "nightlife", "discovery"];

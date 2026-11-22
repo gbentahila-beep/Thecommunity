@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { getCategories } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
 import { DEFAULT_CITY } from "@/lib/site";
-import { AYA_INSTAGRAM, LEGAL_INFO } from "@/lib/legal-info";
+import { LEGAL_INFO } from "@/lib/legal-info";
 import { LanguageSwitch } from "./language-switch";
 import { Logo } from "./logo";
 
@@ -53,10 +53,6 @@ export async function SiteFooter() {
           <Logo />
           <p className="max-w-xs text-sm text-muted">{t("tagline")}</p>
           <LanguageSwitch className="-ms-3" />
-          <a href={AYA_INSTAGRAM.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-brand-900 hover:underline">
-            <svg viewBox="0 0 24 24" className="size-4" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" /></svg>
-            {t("instagramAya", { handle: AYA_INSTAGRAM.handle })}
-          </a>
         </div>
         {columns.map((col) => (
           <div key={col.title}>

@@ -13,7 +13,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.locator('footer').getByRole('link', { name: 'Presse' }).click();
   await page.waitForURL('**/presse');
   assert(await page.getByRole('heading', { level: 1, name: 'Kit presse' }).isVisible(), 'lien « Presse » du pied de page → kit presse');
-  for (const h of ['En bref', 'Faits clés', 'La fondatrice', 'Logos', 'Couleurs', 'Typographies', 'Photos', 'Contact presse']) {
+  for (const h of ['En bref', 'Faits clés', "L'équipe", 'Logos', 'Couleurs', 'Typographies', 'Photos', 'Contact presse']) {
     assert(await page.getByRole('heading', { level: 2, name: h }).isVisible(), `section « ${h} »`);
   }
   const links = await page.locator('a[download]').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
