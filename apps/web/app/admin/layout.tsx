@@ -43,7 +43,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <MobileAdminMenu />
           <Link href="/admin" className="flex items-center gap-2" aria-label="Wenzy — back-office">
             {/* eslint-disable-next-line @next/next/no-img-element -- logo SVG statique */}
-            <img src="/images/brand/logo-horizontal-prune.svg" alt="" width={150} height={21} className="h-5 w-auto" />
+            <img src="/images/brand/logo-encre.svg" alt="" width={84} height={32} className="h-8 w-auto" />
             <span className="text-sm font-medium text-muted">admin</span>
           </Link>
         </header>
@@ -51,7 +51,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 overflow-y-auto border-e border-line px-4 py-6 lg:flex print:hidden">
             <Link href="/admin" className="px-3" aria-label="Wenzy — back-office">
               {/* eslint-disable-next-line @next/next/no-img-element -- logo SVG statique */}
-              <img src="/images/brand/logo-horizontal-prune.svg" alt="" width={180} height={25} className="h-6 w-auto" />
+              <img src="/images/brand/logo-encre.svg" alt="" width={105} height={40} className="h-10 w-auto" />
               <span className="mt-1 block text-xs font-medium uppercase tracking-wider text-muted">Back-office</span>
             </Link>
             <AdminNav />

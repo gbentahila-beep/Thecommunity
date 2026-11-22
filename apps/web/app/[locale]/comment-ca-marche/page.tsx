@@ -42,7 +42,7 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
       </section>
       <Universes categories={categories} title={t("formatsTitle")} />
       <div className="mx-auto mt-6 max-w-4xl space-y-12">
-        <section aria-labelledby="safety" className="rounded-3xl bg-brand-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] p-6 text-cream sm:p-10">
+        <section aria-labelledby="safety" className="rounded-3xl bg-ciel p-6 text-cream sm:p-10">
           <h2 id="safety" className="section-title">{t("safetyTitle")}</h2>
           <p className="mt-3 max-w-2xl leading-relaxed text-cream/85">{t("safetyText")}</p>
         </section>

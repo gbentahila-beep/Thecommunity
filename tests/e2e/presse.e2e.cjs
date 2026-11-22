@@ -17,7 +17,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
     assert(await page.getByRole('heading', { level: 2, name: h }).isVisible(), `section « ${h} »`);
   }
   const links = await page.locator('a[download]').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
-  assert(links.length === 14, `14 fichiers téléchargeables (6 logos × SVG/PNG + 2 photos) — ${links.length}`);
+  assert(links.length === 10, `10 fichiers téléchargeables (4 logos × SVG/PNG + 2 photos) — ${links.length}`);
   for (const href of links) {
     const r = await fetch(base + href);
     assert(r.ok && Number(r.headers.get('content-length') ?? 1) > 0, `fichier disponible : ${href}`);

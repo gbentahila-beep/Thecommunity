@@ -15,8 +15,8 @@ export const CATEGORY_STYLES: Record<string, CategoryTone> = {
   discover: { text: "text-cat-discover", bg: "bg-cat-discover/10", dot: "bg-cat-discover" },
 };
 
-/** Couleur par défaut d'une catégorie créée sans couleur (prune du site). */
-export const DEFAULT_CATEGORY_COLOR = "#722637";
+/** Couleur par défaut d'une catégorie créée sans couleur (violet du site). */
+export const DEFAULT_CATEGORY_COLOR = "#8A35B5";
 
 /**
  * Étape 19 : couleur d'une catégorie. Les cinq historiques gardent la palette du site, sauf si le super-admin

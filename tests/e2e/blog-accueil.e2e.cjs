@@ -214,10 +214,10 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await d.getByRole('cell', { name: /Envoi des e-mails/ }).isVisible(), 'confidentialité : prestataires listés');
   assert(await d.getByRole('heading', { name: '12. Mineurs et protection de l\'enfance' }).isVisible(), 'confidentialité : protection des mineurs');
 
-  // 10f : identité sur le site
+  // Identité Wenzy sur le site
   await d.goto(`${base}/`);
-  assert(await d.locator('header img[src="/images/brand/logo-horizontal-prune.svg"]').isVisible(), '10f : logo vectoriel dans l\'en-tête');
-  assert(await d.locator('footer img[src="/images/brand/logo-horizontal-prune.svg"]').count() === 1, '10f : logo vectoriel dans le pied de page');
+  assert(await d.locator('header img[src="/images/brand/logo-encre.svg"]').isVisible(), '10f : logo vectoriel dans l\'en-tête');
+  assert(await d.locator('footer img[src="/images/brand/logo-encre.svg"]').count() === 1, '10f : logo vectoriel dans le pied de page');
   assert((await d.locator('meta[property="og:image"]').getAttribute('content')).endsWith('/images/brand/og.jpg'), '10f : image de partage');
   assert(await d.locator('link[rel="manifest"]').count() === 1 && await d.locator('link[rel="apple-touch-icon"]').count() === 1, '10f : manifeste et icône d\'application');
   for (const u of ['/favicon.ico', '/manifest.webmanifest', '/images/brand/icon-512.png']) assert((await d.request.get(`${base}${u}`)).ok(), `10f : ${u} servi`);

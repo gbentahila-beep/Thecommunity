@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
     },
     twitter: { card: "summary_large_image", images: ["/images/brand/og.jpg"] },
     icons: {
-      icon: [{ url: "/favicon.ico", sizes: "any" }, { url: "/images/brand/icon-192.png", type: "image/png", sizes: "192x192" }],
+      icon: [{ url: "/favicon.ico", sizes: "any" }, { url: "/images/brand/icon.svg", type: "image/svg+xml" }, { url: "/images/brand/icon-192.png", type: "image/png", sizes: "192x192" }],
       apple: [{ url: "/images/brand/apple-icon.png", sizes: "180x180" }],
     },
     alternates: { languages: { fr: "/", ar: "/ar", en: "/en" } },
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
 }
 
 export const viewport: Viewport = {
-  themeColor: "#f8efe8",
+  themeColor: "#f6f1ea",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

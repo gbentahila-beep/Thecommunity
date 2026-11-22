@@ -2,7 +2,7 @@
 
 import { useUnreadCount } from "@/lib/unread";
 
-/** Pastille prune du nombre de notifications non lues (étape 13). Décorative : le nombre est annoncé par le lien. */
+/** Pastille violette du nombre de notifications non lues (étape 13). Décorative : le nombre est annoncé par le lien. */
 export function UnreadBadge({ className = "" }: { className?: string }) {
   const n = useUnreadCount();
   if (n === 0) return null;

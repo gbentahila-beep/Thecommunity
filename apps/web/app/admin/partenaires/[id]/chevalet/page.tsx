@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PrintButton } from "@/components/admin/print-button";
 import { PageHeader } from "@/components/admin/ui";
-import { MonogramSvg } from "@/components/brand/brand-mark";
+import { BrandLogo } from "@/components/brand/brand-mark";
 import { getAdminData } from "@/lib/data/admin";
 import { qrSvg } from "@/lib/qr";
 import { SITE_URL } from "@/lib/site";
@@ -18,7 +18,7 @@ export default async function ReservedTentPage({ params }: { params: Promise<{ i
   const qr = await qrSvg(url);
   const face = (
     <div className="grid aspect-[1.55] place-items-center content-center gap-1 rounded-xl border border-dashed border-brand-200 bg-cream p-6 text-center print:[print-color-adjust:exact]">
-      <MonogramSvg className="h-9 w-auto text-brand-900" />
+      <BrandLogo className="h-12" />
       <span className="font-display text-5xl text-brand-900">Réservé</span>
       <span className="text-xs tracking-[0.2em] text-muted uppercase">Wenzy · {p.name}</span>
       <span className="mt-2 block w-28 overflow-hidden rounded-md [&_svg]:h-auto [&_svg]:w-full" dangerouslySetInnerHTML={{ __html: qr }} />

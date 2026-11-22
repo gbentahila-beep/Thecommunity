@@ -22,4 +22,6 @@ Firebase en local : `npm run emulators` puis `npm run seed` (voir [`docs/12-phas
 
 👉 À faire avant la mise en ligne : [`docs/11-checklist-avant-lancement.md`](docs/11-checklist-avant-lancement.md)
 
+Identité de marque : [`docs/21-identite-wenzy.md`](docs/21-identite-wenzy.md) et le brand book [`docs/marque/wenzy/brand-book.html`](docs/marque/wenzy/brand-book.html).
+
 Structure : `apps/web` (site Next.js), `packages/shared` (logique métier partagée), `docs/` (architecture et décisions).

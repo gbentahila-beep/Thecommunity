@@ -1,6 +1,7 @@
-import { Fraunces, IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
+import { Amiri, IBM_Plex_Sans_Arabic, Instrument_Serif, Inter } from "next/font/google";
 
-export const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", axes: ["opsz", "SOFT"], display: "swap" });
+/** Polices de la charte Wenzy (brand book, planche 02) : Instrument Serif pour les titres, Inter pour le texte, Amiri et IBM Plex Sans Arabic pour l'arabe. */
+export const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-instrument", display: "swap" });
 export const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 export const arabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
@@ -8,5 +9,6 @@ export const arabic = IBM_Plex_Sans_Arabic({
   variable: "--font-arabic",
   display: "swap",
 });
+export const arabicDisplay = Amiri({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-arabic-display", display: "swap" });
 
-export const fontVariables = `${fraunces.variable} ${inter.variable} ${arabic.variable}`;
+export const fontVariables = `${instrument.variable} ${inter.variable} ${arabic.variable} ${arabicDisplay.variable}`;

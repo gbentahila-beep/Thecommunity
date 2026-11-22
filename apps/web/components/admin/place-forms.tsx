@@ -247,7 +247,7 @@ export function CategoryForm({
   };
   const LANGS = [["fr", "français"], ["ar", "arabe"], ["en", "anglais"]] as const;
   const historic = Boolean(category && CATEGORY_STYLES[category.id]);
-  const previewColor = v.color || (historic ? undefined : "#722637");
+  const previewColor = v.color || (historic ? undefined : "#8A35B5");
   return (
     <form
       noValidate
@@ -296,9 +296,9 @@ export function CategoryForm({
             </select>
           </div>
         </Field>
-        <Field id={`${p}-color`} label="Couleur" hint={historic ? "Vide : couleur d'origine de l'univers." : "Vide : prune du site."}>
+        <Field id={`${p}-color`} label="Couleur" hint={historic ? "Vide : couleur d'origine de l'univers." : "Vide : violet du site."}>
           <div className="flex items-center gap-3">
-            <input id={`${p}-color`} type="color" className="h-10 w-14 cursor-pointer rounded-lg border border-line bg-white" value={v.color || "#722637"} disabled={!canEdit} onChange={(e) => update({ color: e.target.value })} aria-invalid={invalid.includes("color") || undefined} />
+            <input id={`${p}-color`} type="color" className="h-10 w-14 cursor-pointer rounded-lg border border-line bg-white" value={v.color || "#8A35B5"} disabled={!canEdit} onChange={(e) => update({ color: e.target.value })} aria-invalid={invalid.includes("color") || undefined} />
             {v.color && canEdit && <button type="button" onClick={() => update({ color: "" })} className="text-xs font-semibold text-brand-900 underline">Couleur par défaut</button>}
           </div>
         </Field>

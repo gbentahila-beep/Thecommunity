@@ -43,7 +43,7 @@ export default async function ProLayout({ children }: { children: ReactNode }) {
           <MobileProMenu approved={approved} pendingRequests={pending} />
           <Link href="/pro" className="flex items-center gap-2" aria-label="Wenzy — espace organisateur">
             {/* eslint-disable-next-line @next/next/no-img-element -- logo SVG statique */}
-            <img src="/images/brand/logo-horizontal-prune.svg" alt="" width={150} height={21} className="h-5 w-auto" />
+            <img src="/images/brand/logo-encre.svg" alt="" width={84} height={32} className="h-8 w-auto" />
             <span className="text-sm font-medium text-muted">pro</span>
           </Link>
         </header>
@@ -51,7 +51,7 @@ export default async function ProLayout({ children }: { children: ReactNode }) {
           <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 overflow-y-auto border-e border-line px-4 py-6 lg:flex print:hidden">
             <Link href="/pro" className="px-3" aria-label="Wenzy — espace organisateur">
               {/* eslint-disable-next-line @next/next/no-img-element -- logo SVG statique */}
-              <img src="/images/brand/logo-horizontal-prune.svg" alt="" width={180} height={25} className="h-6 w-auto" />
+              <img src="/images/brand/logo-encre.svg" alt="" width={105} height={40} className="h-10 w-auto" />
               <span className="mt-1 block text-xs font-medium uppercase tracking-wider text-muted">Espace organisateur</span>
             </Link>
             <ProNav approved={approved} pendingRequests={pending} />

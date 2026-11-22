@@ -1,11 +1,7 @@
-import { MONO_DOT, MONO_PATH, MONO_VIEWBOX } from "./paths";
+import { LOGO_SRC } from "@/components/logo";
 
-/** Monogramme « h. » (icônes, petits formats). */
-export function MonogramSvg({ className = "", dot = "var(--color-brand-500)", title }: { className?: string; dot?: string; title?: string }) {
-  return (
-    <svg viewBox={MONO_VIEWBOX} role={title ? "img" : undefined} aria-label={title} aria-hidden={title ? undefined : true} className={className} fill="currentColor">
-      <path d={MONO_PATH} />
-      <circle cx={MONO_DOT.cx} cy={MONO_DOT.cy} r={MONO_DOT.r} fill={dot} />
-    </svg>
-  );
+/** Logo Wenzy non cliquable, pour les supports imprimables (marque-place, chevalet, carte de bienvenue). */
+export function BrandLogo({ className = "", tone = "ink", alt = "" }: { className?: string; tone?: keyof typeof LOGO_SRC; alt?: string }) {
+  // eslint-disable-next-line @next/next/no-img-element -- SVG statique
+  return <img src={LOGO_SRC[tone]} alt={alt} width={105} height={40} className={`w-auto ${className}`} />;
 }

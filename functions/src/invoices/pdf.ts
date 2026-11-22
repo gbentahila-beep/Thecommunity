@@ -1,10 +1,11 @@
 import { PDFDocument, rgb, StandardFonts, type PDFFont, type PDFPage } from "pdf-lib";
 import type { InvoiceDoc } from "./types";
 import { dateFr, money } from "./format";
-import { LOGO_CAP, LOGO_DOT, LOGO_PATHS } from "./logo-paths";
+import { LOGO_WEN, LOGO_XHEIGHT, LOGO_ZY } from "./logo-paths";
 
-const PLUM = rgb(0.337, 0.102, 0.161); // #561a29
-const INK = rgb(0.13, 0.11, 0.12);
+const ENCRE = rgb(0.078, 0.078, 0.078); // #141414, couleur forte de la charte Wenzy
+const VIOLET = rgb(0.761, 0.357, 0.91); // #C25BE8 : le « zy » du logo (le PDF ne gère pas le dégradé)
+const INK = rgb(0.078, 0.078, 0.078);
 const MUTED = rgb(0.42, 0.38, 0.4);
 const LINE = rgb(0.88, 0.84, 0.82);
 
@@ -61,12 +62,12 @@ export async function renderInvoicePdf(inv: InvoiceDoc): Promise<Uint8Array> {
   };
 
   // En-tête
-  // Logo vectoriel (identité 10b) : environ 20 pt de hauteur de capitale.
-  const k = 20 / LOGO_CAP;
-  for (const d of LOGO_PATHS) page.drawSvgPath(d, { x: M, y: y - 22, scale: k, color: PLUM, borderWidth: 0 });
-  page.drawCircle({ x: M + LOGO_DOT.cx * k, y: y - 22 - LOGO_DOT.cy * k, size: LOGO_DOT.r * k, color: rgb(0.69, 0.337, 0.416) });
+  // Logo vectoriel Wenzy : « wen » en encre, « zy » en violet, environ 12 pt de hauteur d'x.
+  const k = 12 / LOGO_XHEIGHT;
+  page.drawSvgPath(LOGO_WEN, { x: M, y: y - 22, scale: k, color: ENCRE, borderWidth: 0 });
+  page.drawSvgPath(LOGO_ZY, { x: M, y: y - 22, scale: k, color: VIOLET, borderWidth: 0 });
   const titleLines = wrap(bold, inv.title, 13, 250);
-  titleLines.forEach((l, i) => right(l, M + W, y - 12 - i * 16, { size: 13, f: bold, color: PLUM }));
+  titleLines.forEach((l, i) => right(l, M + W, y - 12 - i * 16, { size: 13, f: bold, color: ENCRE }));
   let ty = y - 12 - titleLines.length * 16;
   right(`N° ${inv.number}`, M + W, ty - 2, { size: 10, f: bold });
   right(`Date : ${dateFr(new Date(inv.issuedAt))}`, M + W, ty - 16, { color: MUTED });
@@ -122,7 +123,7 @@ export async function renderInvoicePdf(inv: InvoiceDoc): Promise<Uint8Array> {
   const signed = (v: number) => sign * v || 0; // jamais « -0,00 »
   const row = (label: string, value: string, strong = false) => {
     right(label, cUnit, y, { f: strong ? bold : font, size: strong ? 11 : 10 });
-    right(value, cAmt - 6, y, { f: strong ? bold : font, size: strong ? 11 : 10, color: strong ? PLUM : INK });
+    right(value, cAmt - 6, y, { f: strong ? bold : font, size: strong ? 11 : 10, color: strong ? ENCRE : INK });
     y -= strong ? 18 : 15;
   };
   row("Total HT", money(signed(inv.totals.ht), inv.currency));

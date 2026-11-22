@@ -5,21 +5,21 @@ const lang = (l: string): L => (l === "en" || l === "ar" ? l : "fr");
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const prefix = (l: L) => (l === "fr" ? "" : `/${l}`);
 
-/** Gabarit commun : bandeau prune avec le logo et le motif « le fil » (identité 10f), lisible sur téléphone. */
+/** Gabarit commun Wenzy : en-tête encre avec le logo, bandeau en dégradé corail → violet, lisible sur téléphone. */
 function layout(l: L, o: { heading: string; paragraphs: string[]; list?: { label: string; href: string }[]; cta?: { label: string; href: string }; footer: string }) {
   const dir = l === "ar" ? "rtl" : "ltr";
   const html = `<!doctype html><html lang="${l}" dir="${dir}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
-<body style="margin:0;background:#f8efe9;font-family:Helvetica,Arial,sans-serif;color:#221c1e">
+<body style="margin:0;background:#f6f1ea;font-family:Helvetica,Arial,sans-serif;color:#141414">
 <div style="max-width:560px;margin:0 auto;padding:24px 16px">
-<div style="background:#561a29;border-radius:16px 16px 0 0;padding:22px 24px"><img src="${SITE_URL}/images/brand/email-logo.png" width="200" height="35" alt="Wenzy." style="display:block;border:0;color:#f8efe8;font-family:Georgia,serif;font-size:22px"></div>
-<div style="height:16px;background:#561a29 url('${SITE_URL}/images/brand/email-band.png') 0 0/280px 16px repeat-x"></div>
+<div style="background:#141414;border-radius:16px 16px 0 0;padding:18px 24px"><img src="${SITE_URL}/images/brand/email-logo.png" width="150" height="60" alt="Wenzy" style="display:block;border:0;color:#f6f1ea;font-family:Georgia,serif;font-size:22px"></div>
+<div style="height:8px;background:#ff6a4d url('${SITE_URL}/images/brand/email-band.png') 0 0/100% 8px no-repeat;background-image:linear-gradient(100deg,#ff6a4d,#c25be8)"></div>
 <div style="background:#fff;border-radius:0 0 16px 16px;padding:24px">
-<h1 style="font-family:Georgia,serif;font-size:22px;color:#561a29;margin:0 0 12px">${esc(o.heading)}</h1>
+<h1 style="font-family:Georgia,serif;font-weight:normal;font-size:24px;color:#141414;margin:0 0 12px">${esc(o.heading)}</h1>
 ${o.paragraphs.map((p) => `<p style="line-height:1.55;margin:0 0 12px">${esc(p)}</p>`).join("\n")}
-${o.list?.length ? `<ul style="padding:0 0 0 18px;margin:0 0 12px">${o.list.map((i) => `<li style="line-height:1.55;margin:0 0 6px"><a href="${esc(i.href)}" style="color:#561a29;font-weight:bold">${esc(i.label)}</a></li>`).join("")}</ul>` : ""}
-${o.cta ? `<p style="margin:20px 0 4px"><a href="${esc(o.cta.href)}" style="display:inline-block;background:#561a29;color:#fff;text-decoration:none;padding:12px 20px;border-radius:999px;font-weight:bold">${esc(o.cta.label)}</a></p>` : ""}
+${o.list?.length ? `<ul style="padding:0 0 0 18px;margin:0 0 12px">${o.list.map((i) => `<li style="line-height:1.55;margin:0 0 6px"><a href="${esc(i.href)}" style="color:#8a35b5;font-weight:bold">${esc(i.label)}</a></li>`).join("")}</ul>` : ""}
+${o.cta ? `<p style="margin:20px 0 4px"><a href="${esc(o.cta.href)}" style="display:inline-block;background:#ff6a4d;background-image:linear-gradient(100deg,#ff6a4d,#c25be8);color:#141414;text-decoration:none;padding:12px 20px;border-radius:999px;font-weight:bold">${esc(o.cta.label)}</a></p>` : ""}
 </div>
-<p style="font-size:12px;color:#6b6166;line-height:1.5;margin:16px 4px">${esc(o.footer)}</p>
+<p style="font-size:12px;color:#66625c;line-height:1.5;margin:16px 4px">${esc(o.footer)}</p>
 </div></body></html>`;
   const text = [o.heading, "", ...o.paragraphs, ...(o.list ?? []).map((i) => `- ${i.label} : ${i.href}`), ...(o.cta ? ["", `${o.cta.label} : ${o.cta.href}`] : []), "", o.footer].join("\n");
   return { html, text };
