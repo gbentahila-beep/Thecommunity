@@ -6,7 +6,6 @@ import { ToolsCarousel } from "@/components/about/tools-carousel";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getPaymentMethod } from "@/lib/data";
-import { AYA_INSTAGRAM } from "@/lib/legal-info";
 
 // Étape 28 : le texte de paiement suit le réglage du site (relu au plus toutes les heures, et à chaque changement dans le back-office).
 export const revalidate = 3600;
@@ -63,34 +62,24 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
         </div>
       </section>
 
-      {/* 2. La créatrice : photo à gauche, texte à droite */}
-      <section aria-labelledby="founder" className="mt-20 grid items-center gap-8 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
-        {/* Photo tirée de l'article CULTIQ (choix de Rita, 8 nov.) : accord de CULTIQ / original en haute définition à obtenir (docs/16). */}
+      {/* 2. Notre histoire : photo à gauche, texte à droite (au nom de l'équipe) */}
+      <section aria-labelledby="story" className="mt-20 grid items-center gap-8 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
         <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-3xl shadow-card">
-          <Image src="/images/aya-snoussi.webp" alt={ta("photoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
+          <Image src="/images/photos/comment-groupe-2.webp" alt={ta("storyPhotoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
         </div>
         <div>
-          <p className="text-sm font-semibold tracking-[0.2em] text-brand-700 uppercase">{ta("founderEyebrow")}</p>
-          <h2 id="founder" className="section-title mt-3">{ta("founderName")}</h2>
-          <p className="mt-1 text-muted">{ta("founderRole")}</p>
+          <p className="text-sm font-semibold tracking-[0.2em] text-brand-700 uppercase">{ta("storyEyebrow")}</p>
+          <h2 id="story" className="section-title mt-3">{ta("storyTitle")}</h2>
+          <p className="mt-1 text-muted">{ta("storySubtitle")}</p>
           <div className="mt-6 space-y-4 text-[17px] leading-relaxed text-ink/85">
-            <p>{ta("founderP1")}</p>
-            <p>{ta("founderP2")}</p>
-            <p>{ta("founderP3")}</p>
+            <p>{ta("storyP1")}</p>
+            <p>{ta("storyP2")}</p>
+            <p>{ta("storyP3")}</p>
           </div>
-          <a
-            href={AYA_INSTAGRAM.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-secondary btn-sm mt-7 min-h-11"
-          >
-            <svg viewBox="0 0 24 24" className="size-4" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" /></svg>
-            {ta("followAya")} <span dir="ltr">(@{AYA_INSTAGRAM.handle})</span>
-          </a>
         </div>
       </section>
 
-      {/* 3. Ce qui compte pour elle */}
+      {/* 3. Ce qui compte pour nous */}
       <section aria-labelledby="values" className="mt-20">
         <h2 id="values" className="section-title">{ta("valuesTitle")}</h2>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

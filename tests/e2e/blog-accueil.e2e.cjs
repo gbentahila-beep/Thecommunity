@@ -192,10 +192,11 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   // 8e : À propos
   await d.goto(`${base}/a-propos`);
   assert(await d.getByRole('heading', { level: 1, name: /Des inconnus en arrivant\.\s*Des amis en repartant\./ }).isVisible(), 'À propos : accroche');
-  const founder = d.locator('section[aria-labelledby="founder"]');
-  const [imgBox, textBox] = [await founder.locator('img').boundingBox(), await founder.getByRole('heading', { name: 'Aya Snoussi' }).boundingBox()];
-  assert(imgBox.x < textBox.x, 'créatrice : photo à gauche, texte à droite');
-  assert(await d.getByRole('heading', { name: 'Ce qui compte pour elle' }).isVisible(), 'ce qui compte pour elle');
+  const story = d.locator('section[aria-labelledby="story"]');
+  const [imgBox, textBox] = [await story.locator('img').boundingBox(), await story.getByRole('heading', { name: 'Une équipe, une idée simple' }).boundingBox()];
+  assert(imgBox.x < textBox.x, 'notre histoire : photo à gauche, texte à droite');
+  assert(await d.getByText('Aya').count() === 0, 'À propos : plus de mention de la fondatrice');
+  assert(await d.getByRole('heading', { name: 'Ce qui compte pour nous' }).isVisible(), 'ce qui compte pour nous');
   const tools = d.locator('section[aria-labelledby="tools-title"]');
   assert(await tools.getByRole('heading', { name: 'Nos outils pour créer du lien' }).isVisible() && await tools.locator('li').count() === 8, 'outils : 8 cartes');
   const prevT = tools.getByRole('button', { name: 'Outil précédent' }).first(), nextT = tools.getByRole('button', { name: 'Outil suivant' }).first();

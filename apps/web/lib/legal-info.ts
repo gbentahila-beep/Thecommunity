@@ -25,5 +25,3 @@ export const LEGAL_INFO = {
   host: "Google Cloud EMEA Ltd (Firebase) — données en Belgique (europe-west1), site servi depuis les Pays-Bas (europe-west4)",
 };
 
-/** Compte Instagram d'Aya Snoussi (pseudo donné par Rita). */
-export const AYA_INSTAGRAM = { handle: "ayagsnoussi", url: "https://www.instagram.com/ayagsnoussi/" };
