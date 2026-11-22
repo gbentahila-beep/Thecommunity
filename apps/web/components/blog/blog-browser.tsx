@@ -4,6 +4,7 @@ import { ChevronRight, Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
+import { EmptyState } from "@/components/empty-state";
 
 export type BrowseEntry = { slug: string; title: string; excerpt: string; theme: string; minutes: number };
 
@@ -69,7 +70,7 @@ export function BlogBrowser({ popular, recent }: { popular: BrowseEntry[]; recen
           ))}
         </ul>
       ) : (
-        <p className="mt-6 rounded-[var(--radius-card)] bg-white p-5 text-ink/80 shadow-card">{t("noResults")}</p>
+        <EmptyState variant="compact" bab="memo" mood="surprised" text={t("noResults")} className="mt-6" />
       )}
     </div>
   );

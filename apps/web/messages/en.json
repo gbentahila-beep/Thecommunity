@@ -1898,5 +1898,19 @@
     "none": "—",
     "yes": "Yes",
     "no": "No"
+  },
+  "emptyStates": {
+    "upcomingTitle": "Your calendar is nice and quiet",
+    "upcomingText": "No outings planned yet. New dates are published every week.",
+    "browse": "See experiences",
+    "pastTitle": "Nothing here yet",
+    "firstOuting": "Choose my first outing",
+    "notificationsTitle": "Nothing new, all is well",
+    "notificationsText": "News about your bookings shows up here: confirmations, revealed groups, a seat freed up on a waiting list.",
+    "invoicesTitle": "Your invoices will appear here",
+    "meetTitle": "Want to see someone again?",
+    "catalogTitle": "No outings found",
+    "reviewsTitle": "The first reviews are on their way",
+    "notFoundTitle": "This page got lost along the way"
   }
 }

@@ -6,6 +6,7 @@ import { CategoryIcon } from "@/components/category-icon";
 import { Link } from "@/i18n/navigation";
 import { tr } from "@/lib/i18n-text";
 import { categoryTone } from "@/lib/site";
+import { Bab } from "@/components/brand/bab";
 
 /**
  * « Comment ça marche » en trois cartes légèrement inclinées et décalées (style Wenzy) :
@@ -16,7 +17,10 @@ export async function HowItWorks({ categories, showTitle = true }: { categories:
   const card = "relative rounded-3xl p-6 shadow-float transition duration-300 hover:rotate-0 sm:p-7";
   return (
     <section aria-labelledby={showTitle ? "how-title" : undefined} aria-label={showTitle ? undefined : t("howTitle")} className={showTitle ? "py-16" : "pb-16"}>
-      <h2 id="how-title" hidden={!showTitle} className="section-title text-center">{t("howTitle")}</h2>
+      <h2 id="how-title" hidden={!showTitle} className="section-title text-center">
+        {t("howTitle")}
+        <Bab name="wen" className="ms-2 inline-block w-12 align-[-8px]" />
+      </h2>
       <ol className="mx-auto mt-10 grid max-w-6xl gap-8 px-2 md:grid-cols-3 md:gap-6 md:pt-6">
         <li className={`${card} -rotate-2 bg-white md:translate-y-6`}>
           <span className="font-display text-5xl text-brand-100">1</span>

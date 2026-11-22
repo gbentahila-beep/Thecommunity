@@ -1898,5 +1898,19 @@
     "none": "—",
     "yes": "Oui",
     "no": "Non"
+  },
+  "emptyStates": {
+    "upcomingTitle": "Votre agenda est tout calme",
+    "upcomingText": "Aucune sortie prévue pour l'instant. De nouvelles dates sont publiées chaque semaine.",
+    "browse": "Voir les expériences",
+    "pastTitle": "Rien ici pour l'instant",
+    "firstOuting": "Choisir ma première sortie",
+    "notificationsTitle": "Rien de neuf, tout va bien",
+    "notificationsText": "Vous trouverez ici les nouvelles de vos réservations : confirmation, groupe révélé, place libérée sur une liste d'attente.",
+    "invoicesTitle": "Vos factures arriveront ici",
+    "meetTitle": "Envie de revoir quelqu'un ?",
+    "catalogTitle": "Aucune sortie trouvée",
+    "reviewsTitle": "Les premiers avis arrivent",
+    "notFoundTitle": "Cette page s'est perdue en route"
   }
 }

@@ -3,6 +3,7 @@ import { Star } from "lucide-react";
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { MediaImage as Image } from "@/components/media";
+import { EmptyState } from "@/components/empty-state";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAllReviews, getCategories, getPublishedExperiences } from "@/lib/data";
@@ -34,7 +35,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
   const { locale } = await params;
   setRequestLocale(locale);
   const sp = await searchParams;
-  const [t, loc, all, experiences, categories] = await Promise.all([getTranslations("reviewsPage"), getLocale(), getAllReviews(), getPublishedExperiences(), getCategories()]);
+  const [t, te, loc, all, experiences, categories] = await Promise.all([getTranslations("reviewsPage"), getTranslations("emptyStates"), getLocale(), getAllReviews(), getPublishedExperiences(), getCategories()]);
   const expById = new Map(experiences.map((e) => [e.id, e]));
   const catById = new Map(categories.map((c) => [c.id, c]));
   const category = typeof sp.univers === "string" && catById.has(sp.univers) ? sp.univers : undefined;
@@ -76,7 +77,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
       </header>
 
       {total === 0 ? (
-        <p className="rounded-[var(--radius-card)] bg-white p-6 text-muted shadow-card">{t("empty")}</p>
+        <EmptyState bab="toast" prop="stars" titleAs="h2" title={te("reviewsTitle")} text={t("empty")} />
       ) : (
         <>
           <section aria-labelledby="overall-title" className="grid gap-4 md:grid-cols-[1.1fr_1fr]">
@@ -138,7 +139,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
             </div>
 
             {filtered.length === 0 ? (
-              <p className="rounded-2xl bg-white p-5 text-muted shadow-card">{t("noMatch")}</p>
+              <EmptyState variant="compact" bab="memo" mood="surprised" text={t("noMatch")} />
             ) : (
               <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="reviews-list">
                 {shown.map((r, i) => {

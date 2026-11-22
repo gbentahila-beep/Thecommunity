@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoritesList } from "@/components/account/favorites-list";
+import { EmptyState } from "@/components/empty-state";
+import { Bab } from "@/components/brand/bab";
+import { babForCategory } from "@/components/brand/bab-art";
 import { MediaImage as Image } from "@/components/media";
 import { Link } from "@/i18n/navigation";
 import { getArchivedExperiences, getNextSessionPerExperience, getPublishedExperiences } from "@/lib/data";
@@ -16,8 +19,9 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/espace/h
 export default async function HistoryPage({ params }: PageProps<"/[locale]/espace/historique">) {
   const { locale: localeParam } = await params;
   setRequestLocale(localeParam);
-  const [t, locale, space, experiences, archived, nextSessions] = await Promise.all([
+  const [t, te, locale, space, experiences, archived, nextSessions] = await Promise.all([
     getTranslations("history"),
+    getTranslations("emptyStates"),
     getLocale(),
     getMemberSpace(),
     getPublishedExperiences(),
@@ -37,15 +41,21 @@ export default async function HistoryPage({ params }: PageProps<"/[locale]/espac
     <div className="space-y-10" data-testid="history">
       <h1 className="page-title">{t("title")}</h1>
       <section className="space-y-3">
-        <h2 className="section-title">{t("past")}</h2>
+        <h2 className="section-title">
+          {t("past")}
+          {space.past.length > 0 && <Bab name="wen" mood="party" className="ms-2 inline-block w-11 align-[-6px]" />}
+        </h2>
         {space.past.length === 0 ? (
-          <p className="card px-5 py-6 text-sm text-muted">{t("pastEmpty")}</p>
+          <EmptyState bab="memo" prop="notebook" title={te("pastTitle")} text={t("pastEmpty")} action={{ href: "/experiences", label: te("firstOuting") }} />
         ) : (
           <ul className="card divide-y divide-line/70 overflow-hidden" data-testid="past-list">
             {space.past.map((r) => (
               <li key={r.id} className="relative flex min-w-0 items-center gap-3.5 px-4 py-3.5">
-                <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-cream-deep">
-                  <Image src={r.sessionSnapshot.coverImagePath} alt="" fill sizes="64px" className="object-cover" />
+                <div className="relative shrink-0">
+                  <div className="relative size-16 overflow-hidden rounded-xl bg-cream-deep">
+                    <Image src={r.sessionSnapshot.coverImagePath} alt="" fill sizes="64px" className="object-cover" />
+                  </div>
+                  <Bab name={babForCategory(r.sessionSnapshot.categoryId)} className="absolute -end-2 -bottom-2 w-7" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <Link href={`/espace/reservations/${r.id}`} className="block truncate text-[15px] font-semibold text-ink after:absolute after:inset-0">
