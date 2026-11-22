@@ -63,7 +63,7 @@ export async function Universes({ categories, title }: { categories: Category[];
             >
               <article className="universe-card relative overflow-hidden rounded-3xl border border-white/70 p-5 shadow-[0_-10px_30px_-18px_rgba(42,29,31,0.35),0_18px_40px_-28px_rgba(42,29,31,0.4)] sm:p-8 md:grid md:grid-cols-[1fr_1.05fr] md:gap-x-10 md:gap-y-0">
                 <div className="md:col-start-1 md:row-start-1 md:self-end">
-                  <h3 className="font-display text-[1.6rem] leading-tight font-medium text-ink sm:text-4xl">{name}</h3>
+                  <h3 className="font-display text-[1.6rem] leading-tight font-semibold tracking-[-0.02em] text-ink sm:text-4xl">{name}</h3>
                   <p className="universe-accent mt-1 text-[16px] leading-snug font-semibold sm:text-lg">{rich ? t(`universe.${rich}.tagline`) : tr(c.description, locale)}</p>
                 </div>
 

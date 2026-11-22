@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCategories, getCities } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
-import { categoryTone, DEFAULT_CITY } from "@/lib/site";
+import { DEFAULT_CITY } from "@/lib/site";
 import { CityMenu } from "./city-menu";
 import { DiscoverMenu } from "./discover-menu";
 import { HeaderAuth } from "./header-auth";
@@ -16,7 +16,7 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
   const [t, locale, categories, cities] = await Promise.all([getTranslations("nav"), getLocale(), getCategories(), getCities()]);
   const discover = [
     { href: "/experiences", label: t("allExperiences") },
-    ...categories.map((c) => ({ href: `/${cityId}/${c.id}`, label: tr(c.name, locale), dot: categoryTone(c).dot, dotStyle: categoryTone(c).style })),
+    ...categories.map((c) => ({ href: `/${cityId}/${c.id}`, label: tr(c.name, locale), sub: true })),
   ];
   // Menu du haut : Découvrir · À propos · Comment ça marche · Blog · Abonnement · Questions-réponses · Avis.
   const links = [

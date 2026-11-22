@@ -1,4 +1,4 @@
-import { ChevronDown, MapPin } from "lucide-react";
+import { Check, ChevronDown, MapPin } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCities } from "@/lib/data";
@@ -47,7 +47,7 @@ export async function CityMenu({ currentCityId = DEFAULT_CITY, variant = "pill",
                 className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm hover:bg-cream"
               >
                 {tr(city.name, locale)}
-                {city.id === current?.id && <span className="size-2 rounded-full bg-brand-700" aria-hidden />}
+                {city.id === current?.id && <Check className="size-4 text-brand-700" aria-hidden />}
               </Link>
             ) : (
               <span className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-muted">

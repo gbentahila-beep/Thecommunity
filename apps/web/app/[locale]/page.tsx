@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AudienceCards, ClosingCta } from "@/components/audience-cards";
 import { CompactRow } from "@/components/compact-row";
 import { ThisWeek } from "@/components/home/this-week";
+import { AppPreview } from "@/components/home/app-preview";
 import { HomeFaq } from "@/components/home/home-faq";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { ReviewsShowcase } from "@/components/home/reviews-showcase";
@@ -166,13 +167,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </div>
         <div className="relative z-10 mx-3 -mt-24 rounded-[1.75rem] bg-cream p-5 shadow-float sm:mx-6 sm:p-7 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-7xl lg:rounded-none lg:bg-transparent lg:px-8 lg:py-0 lg:shadow-none">
           <div className="lg:max-w-xl">
-            {cityName && (
-              <p className="flex items-center gap-1.5 text-sm font-semibold text-ink lg:text-cream/90">
-                <span className="size-2 rounded-full bg-coral" aria-hidden />
-                {cityName}
-              </p>
-            )}
-            <h1 className="mt-2 animate-fade-up font-display text-[2.4rem] leading-[1] font-normal tracking-tight text-brand-900 sm:text-6xl lg:text-[4.5rem] lg:text-white">
+            <h1 className="animate-fade-up font-display text-[2.3rem] leading-[1] font-semibold tracking-[-0.025em] text-brand-900 sm:text-6xl lg:text-[4.5rem] lg:text-white">
               {t("heroTitle1")}
               <br />
               <span className="text-gradient lg:bg-[linear-gradient(100deg,#ff8a6b,#d98bf0)]">{t("heroTitle2")}</span>
@@ -184,8 +179,9 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           </div>
         </div>
       </section>
+      <AppPreview />
       {trustOn && (
-        <PageShell className="mt-6 lg:mt-8">
+        <PageShell className="mt-14 lg:mt-16">
           <ul className="grid gap-3 rounded-3xl bg-cream-deep p-5 sm:grid-cols-3 sm:gap-6 sm:px-7 [animation-delay:300ms] animate-fade-up" data-testid="home-trust">
             {[
               { icon: Users, label: t("trust1") },
