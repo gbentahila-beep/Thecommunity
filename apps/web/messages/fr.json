@@ -166,16 +166,15 @@
     "appScreenDiscover": "Écran Découvrir : le calendrier des sorties de la semaine",
     "typewriterLabel": "Avec Wenzy, vous pouvez :",
     "typewriter": [
-      "Trouver des gens pour bruncher le dimanche",
-      "Dîner à 6 avec des inconnus",
-      "Trouver des partenaires pour courir sur la Corniche",
-      "Se faire de nouvelles amies autour d'un atelier",
-      "Monter une équipe de padel",
-      "Découvrir un restaurant secret",
-      "Jouer à des jeux de société entre inconnus",
-      "Rencontrer du monde en arrivant à Casablanca",
-      "Pratiquer son anglais autour d'un café",
-      "Partir en randonnée le week-end"
+      "Se faire des amis en ville",
+      "Trouver un partenaire de padel",
+      "Trouver des gens pour bruncher",
+      "Trouver un binôme pour courir",
+      "Dîner avec de nouvelles têtes",
+      "Trouver des partenaires de jeu",
+      "Rencontrer sa future bande",
+      "Trouver des copains de rando",
+      "Ne plus jamais sortir seul·e"
     ]
   },
   "card": {
