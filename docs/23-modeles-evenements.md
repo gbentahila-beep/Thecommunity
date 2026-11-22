@@ -473,7 +473,10 @@ Tes photos, enregistrées dans le site (`apps/web/public/images/modeles/`), à v
 | Quiz | Néon « Game on » | `quiz.webp` · **validée** |
 | Céramique | Mains sur un tour de potier | `ceramique.webp` · **validée** |
 
-**À m'envoyer pour le lancement, au moment voulu** : **Déjeuner** et **Visite guidée**. Les autres modèles (phase 2 et plus tard) viendront ensuite ; je te dirai lesquelles manquent à chaque étape.
+| Déjeuner | Buffet vu du dessus, convives qui se servent | `dejeuner.webp` · reçue, **filigrane « Unsplash+ » visible** |
+| Visite guidée | Mosquée Hassan II vue depuis l'océan | `visite-guidee.webp` · reçue |
+
+Toutes les photos du lancement sont reçues. Les autres modèles (phase 2 et plus tard) viendront ensuite ; je te dirai lesquelles manquent à chaque étape.
 
 Les gammes Casual, Premium et Exclusive d'un même format partagent la même photo, sauf si tu veux une photo par gamme.
 

@@ -40,7 +40,7 @@ Mise à jour du 22 novembre 2026, après les échanges sur les dîners, le prix,
 | 11 | L'univers « Dîners » s'appelle **« Tables »**. Formats : **Café, Brunch, Déjeuner, Dîner** (le couscous du vendredi devient un Déjeuner). |
 | 12 | **Chaque format de Tables existe en 3 gammes : Casual, Premium, Exclusive.** La gamme fixe le budget sur place, ce qui réunit des personnes qui peuvent payer le même type de restaurant. Budgets par format au § 6. |
 | 13 | **Tables de 4 à 6** (min et max réglables), nombre de tables facultatif. |
-| 14 | **Lieu secret par défaut.** La fiche ne montre ni nom, ni adresse, ni quartier : seulement le format, la gamme, la cuisine et l'ambiance. Phrase unique, sans émoticône : « Le lieu et l'adresse vous sont révélés 5 h avant. » |
+| 14 | **Lieu secret par défaut.** La fiche ne montre ni nom, ni adresse, ni quartier, **ni cuisine** : seulement le format, la gamme et l'ambiance. **La cuisine se remplit à la création mais ne s'affiche qu'avec le lieu**, 5 h avant. Phrase unique, sans émoticône : « Le lieu et l'adresse vous sont révélés 5 h avant. » |
 | 15 | **Lieu choisi par l'admin, date par date** : à la création ou plus tard, **au plus tard 5 h avant**. Même restaurant à chaque date ou restaurants différents ; **plusieurs restaurants possibles** pour une même date ; un restaurant qui convient peut devenir le **lieu habituel** du rendez-vous. |
 | 16 | **Réservations fermées 12 h avant**, pour laisser à l'admin le temps de réserver le ou les restaurants. |
 | 17 | **Pas assez d'inscrits** pour une table complète : chaque inscrit **choisit** entre une autre date et le remboursement. |
@@ -211,13 +211,13 @@ Tout est pré-rempli par le modèle ; l'admin ne touche que ce qui change.
 | Quand | Ce qui se passe |
 |---|---|
 | **Agenda / Découvrir** | « Mercredi 26 nov. · Dîner · Premium · 20h00 · 35 DH ». Icône de l'univers, ni lieu ni quartier |
-| **Fiche** | Format, gamme, cuisine, ambiance ; « Ce que vous payez » (35 DH en ligne, budget sur place) ; « Le lieu et l'adresse vous sont révélés 5 h avant » |
+| **Fiche** | Format, gamme, ambiance (la cuisine reste cachée jusqu'à la révélation) ; « Ce que vous payez » (35 DH en ligne, budget sur place) ; « Le lieu et l'adresse vous sont révélés 5 h avant » |
 | **Réservation** | Carte « billet » : date en grand, Début · Langue · Tables de 4 à 6 ; « Réservations jusqu'à mer. 8h00 » ; « Moi seul·e / Moi + 1 » si autorisé ; carrousel « Comment on compose les tables » généré par les réglages ; barre fixe « 35 DH · 1 place · Continuer » |
 | **À propos de vous** | Langues, régime et allergies à confirmer (pré-remplis par le profil) ; questionnaire seulement s'il y en a un pour l'activité ; **avant le paiement** |
 | **Paiement** | 35 DH, « Inclus dans votre pass » ou 1 crédit du carnet |
 | **Confirmation** | « Le lieu arrive mer. 15h00 ». Pas de QR code. Bouton « Déplacer sur une autre date » jusqu'à la fermeture |
 | **12 h avant** | Fermeture. Minimum non atteint : chaque inscrit choisit autre date ou remboursement |
-| **5 h avant** | Répartition entre les lieux s'il y en a plusieurs ; révélation du lieu, de l'adresse et de la carte (notification et e-mail) ; résumé de la table sans les noms (âges, langues, secteurs, centres d'intérêt) |
+| **5 h avant** | Répartition entre les lieux s'il y en a plusieurs ; révélation du lieu, de l'adresse, de la carte et de la cuisine (notification et e-mail) ; résumé de la table sans les noms (âges, langues, secteurs, centres d'intérêt) |
 | **1 h avant** | Tables composées automatiquement (table de 7 à valider par l'admin) ; le lieu reçoit nombre de tables, prénoms et allergies |
 | **30 min avant → 1 h après** | Check-in : sa table, les prénoms, qui est arrivé |
 | **Après** | Messages possibles entre les personnes de la table ; pas de check-in = absence ; demande d'avis |
@@ -391,8 +391,8 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 |---|---|---|
 | **A — Corrections** ✅ | Lieu secret protégé (écran et base), billet seulement avec hôtesse, questionnaire avant le paiement, phrase « Le lieu et l'adresse vous sont révélés 5 h avant », infos pratiques sans répétition | Faite |
 | **B — Questionnaires** ✅ | Seulement les questions que le profil ne pose pas : Running, Padel, Jeu en équipe, Atelier, Niveau, **Langues** (nouveau), tous validés ; Tables : aucun (le profil suffit). Détail : docs/23 § 6 | Faite |
-| **C — Photos** ✅ | 13 photos validées (docs/23 § 7). **À recevoir** : Déjeuner et Visite guidée, au moment voulu | Faite (2 à recevoir) |
-| **D — Modèles** | Par petits lots : D1 Café et Dîner (avec les 3 gammes) → D2 Brunch, Déjeuner → D3 Running, Padel, Yoga → D4 Escape game, Soirée jeux, Quiz → D5 Céramique, Afterwork, Visite guidée, Échange de langues → puis les modèles de phase 2 | Chaque lot (les premiers en détail, ensuite plus vite) |
+| **C — Photos** | 13 photos validées ; Déjeuner et Visite guidée reçues, à valider (docs/23 § 7) | En cours |
+| **D — Modèles** | Règles de rédaction : pas de « Pas inclus » (l'encadré « Ce que vous payez » le dit), jamais la révélation du lieu dans les textes, pas de durée ni de « première fois » ni de « sans pression » pour les Tables (sans limite de temps, et certains viendront souvent). Par petits lots : D1 Café et Dîner (avec les 3 gammes) → D2 Brunch, Déjeuner → D3 Running, Padel, Yoga → D4 Escape game, Soirée jeux, Quiz → D5 Céramique, Afterwork, Visite guidée, Échange de langues → puis les modèles de phase 2 | Chaque lot (les premiers en détail, ensuite plus vite) |
 | **E — Prix unique et univers** | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; **les 4 univers** (Tables, formats et gammes compris) | Démonstration à l'écran |
 | **F — Modèles dans l'appli** | Choix univers → format → gamme ; formulaire pré-rempli aux champs strictement nécessaires (§ 7) ; places 1 ou 2 ; accès ; réservé aux femmes ; alcool ; conditions d'annulation ; *Paramètres → Modèles* ; « Enregistrer comme modèle » | Démonstration |
 | **G — Rendez-vous et lieux** | Rendez-vous récurrents, lieu par date (plus tard possible), plusieurs lieux, lieu habituel, fiches des lieux partenaires, « Aujourd'hui » | Démonstration |
