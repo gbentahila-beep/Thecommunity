@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AudienceCards, ClosingCta } from "@/components/audience-cards";
 import { CompactRow } from "@/components/compact-row";
 import { ThisWeek } from "@/components/home/this-week";
+import { Agenda } from "@/components/home/agenda";
 import { AppPreview } from "@/components/home/app-preview";
 import { HomeFaq } from "@/components/home/home-faq";
 import { HowItWorks } from "@/components/home/how-it-works";
@@ -78,7 +79,9 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     new: cards("new", t("newTitle"), fresh),
     popular: cards("popular", t("popularTitle"), popular),
     thisWeek: (
-      <PageShell key="thisWeek" className="max-w-3xl py-8">
+      <PageShell key="thisWeek" className="max-w-3xl space-y-10 py-8">
+        {/* docs/22 § 14 : agenda par semaine, puis la liste filtrable par univers. */}
+        <Agenda />
         <ThisWeek limit={6} />
       </PageShell>
     ),

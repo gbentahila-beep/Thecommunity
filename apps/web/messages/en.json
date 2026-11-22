@@ -2055,5 +2055,14 @@
       "safety": "Safety",
       "other": "Other"
     }
+  },
+  "agenda": {
+    "title": "What's on",
+    "week0": "This week",
+    "week1": "Next week",
+    "week2": "In 2 weeks",
+    "full": "Full",
+    "free": "Free",
+    "seeAll": "See all dates"
   }
 }

@@ -47,31 +47,28 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await d.goto(base + '/experiences', { waitUntil: 'load' });
   const all = await d.getByTestId('catalog-row').count();
   assert(!(await d.getByTestId('catalog-count').count()) && !(await d.locator('#catalog-q').count()), 'catalogue minimaliste : ni compteur ni barre de recherche');
+  // docs/22, décision 33 et § 14 : plus de filtre prix ni quartier, plus de tri par prix ; « moment de la journée ».
   await d.getByTestId('filters-open').click();
-  await d.locator('select[name=prix]').selectOption('200');
+  assert(!(await d.locator('select[name=prix]').count()) && !(await d.locator('select[name=quartier]').count()), 'K : plus de filtre prix ni quartier');
+  assert(!(await d.locator('select[name=tri] option[value=prix-croissant]').count()), 'K : plus de tri par prix');
+  await d.locator('select[name=moment]').selectOption('soir');
   await d.getByRole('checkbox', { name: 'Accessible aux débutants' }).check();
   await d.getByRole('button', { name: 'Afficher les résultats' }).click();
-  await d.waitForURL(/prix=200/, { timeout: 15000 });
+  await d.waitForURL(/moment=soir/, { timeout: 15000 });
   const url = new URL(d.url());
   assert(url.searchParams.get('debutant') === '1' && !url.searchParams.has('quartier') && !url.searchParams.has('date'), 'filtres : adresse lisible (champs vides non envoyés)');
   const filtered = await d.getByTestId('catalog-row').count();
-  // docs/22 : toutes les expériences coûtent 35 DH (le filtre prix disparaît à l'étape K) ; « débutants » filtre encore.
-  assert(filtered > 0 && filtered <= all, `filtres combinés : ${filtered} sur ${all}`);
-  assert(await d.getByTestId('active-filters').getByRole('link', { name: 'Retirer le filtre : 200 DH max' }).isVisible(), 'puce « 200 DH max »');
-  await d.getByTestId('filters-open').click();
-  await d.locator('select[name=tri]').selectOption('prix-croissant');
-  await d.getByRole('button', { name: 'Afficher les résultats' }).click();
-  await d.waitForURL(/tri=prix-croissant/, { timeout: 15000 });
-  assert(new URL(d.url()).searchParams.get('prix') === '200', 'tri : les filtres sont gardés');
-  await d.getByTestId('active-filters').getByRole('link', { name: 'Retirer le filtre : 200 DH max' }).click();
-  await d.waitForURL((u) => !u.search.includes('prix=') && u.search.includes('debutant=1'), { timeout: 15000 });
+  assert(filtered <= all, `filtres combinés : ${filtered} sur ${all}`);
+  assert(await d.getByTestId('active-filters').getByRole('link', { name: 'Retirer le filtre : Soir' }).isVisible(), 'K : puce « Soir »');
+  await d.getByTestId('active-filters').getByRole('link', { name: 'Retirer le filtre : Soir' }).click();
+  await d.waitForURL((u) => !u.search.includes('moment=') && u.search.includes('debutant=1'), { timeout: 15000 });
   assert(true, 'puce retirée : les autres filtres restent');
   await d.goto(base + '/experiences?format=seul', { waitUntil: 'load' });
   assert(await visible(d.getByTestId('catalog-results').getByRole('link', { name: 'Dîner entre inconnus' })), 'format « Je viens seul·e » : dîner entre inconnus');
   assert(!(await d.getByTestId('catalog-results').getByRole('link', { name: 'Atelier céramique' }).count()), 'format « Je viens seul·e » : pas l\'atelier en réservation libre');
   await d.goto(base + '/experiences?date=2031-01-01', { waitUntil: 'load' });
   assert(await visible(d.getByTestId('catalog-empty')) && !(await d.locator('#undated-title').count()), 'jour sans date : aucun résultat, pas de « déjà vécues »');
-  await d.goto(base + '/experiences?prix=250&tri=nimporte', { waitUntil: 'load' });
+  await d.goto(base + '/experiences?prix=250&quartier=Anfa&tri=prix-croissant', { waitUntil: 'load' });
   assert(!(await d.getByTestId('active-filters').count()), 'valeurs inconnues ignorées');
 
   // 4. Badges

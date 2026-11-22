@@ -1,4 +1,4 @@
-import { activeFilterCount, VENUE_TIERS, CATALOG_FORMATS, CATALOG_MAX_PRICES, CATALOG_SORTS, catalogDistricts, catalogParams, formatParam, MOROCCO_TIMEZONE, parseCatalogParams, sortParam, zonedParts, type CatalogFilters } from "@thecommunity/shared";
+import { activeFilterCount, VENUE_TIERS, CATALOG_FORMATS, CATALOG_SORTS, catalogParams, DAY_MOMENTS, formatParam, momentParam, MOROCCO_TIMEZONE, parseCatalogParams, sortParam, zonedParts, type CatalogFilters } from "@thecommunity/shared";
 import { X } from "lucide-react";
 import type { Category } from "@thecommunity/shared";
 import { getTranslations } from "next-intl/server";
@@ -50,7 +50,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
   const state: State = { category, sub, when, filters };
   const bySub = <T extends { experience: { subcategoryId?: string | null } }>(xs: T[]) => (sub ? xs.filter((x) => x.experience.subcategoryId === sub) : xs);
 
-  const [t, tc, tcity, tf, rawResults, published, subcategories] = await Promise.all([
+  const [t, tc, tcity, tf, rawResults, , subcategories] = await Promise.all([
     getTranslations("filters"),
     getTranslations("catalog"),
     getTranslations("city"),
@@ -64,7 +64,6 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
   const current = category ? allCategories.find((c) => c.id === category) ?? routeCategory : undefined;
   // Calendrier : les jours qui ont des dates, avec les filtres en cours mais sans le jour choisi.
   const forDays = filters.date ? { dated: bySub((await getCatalog({ cityId: DEFAULT_CITY, categoryId: category, when, filters: { ...filters, date: null } })).dated) } : results;
-  const districts = catalogDistricts(published.filter((e) => e.cityId === DEFAULT_CITY));
   const whenLabels: Record<WhenFilter, string> = { all: t("whenAll"), today: t("today"), weekend: t("weekend"), week: t("week") };
   const sortLabels = Object.fromEntries(CATALOG_SORTS.map((s) => [s, tf(`sort_${s}`)]));
   const n = activeFilterCount(filters);
@@ -77,8 +76,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
   const chips: { label: string; href: string }[] = [
     ...(filters.q ? [{ label: `« ${filters.q} »`, href: hrefOf(state, { filters: { q: "" } }) }] : []),
     ...(when !== "all" ? [{ label: whenLabels[when], href: hrefOf(state, { when: "all" }) }] : []),
-    ...(filters.maxPrice ? [{ label: tf("priceMax", { amount: filters.maxPrice }), href: hrefOf(state, { filters: { maxPrice: null } }) }] : []),
-    ...(filters.district ? [{ label: filters.district, href: hrefOf(state, { filters: { district: null } }) }] : []),
+    ...(filters.moment ? [{ label: tf(`moment_${filters.moment}`), href: hrefOf(state, { filters: { moment: null } }) }] : []),
     ...(filters.date ? [{ label: formatLongDate(`${filters.date}T12:00:00Z`, locale), href: hrefOf(state, { filters: { date: null } }) }] : []),
     ...(filters.format ? [{ label: tf(`format_${filters.format}`), href: hrefOf(state, { filters: { format: null } }) }] : []),
     ...(filters.tier ? [{ label: tf(`tier_${filters.tier}`), href: hrefOf(state, { filters: { tier: null } }) }] : []),
@@ -126,22 +124,15 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
               <label className="block text-sm">
                 <span className="mb-1 block font-medium text-ink">{tf("sort")}</span>
                 <select name="tri" defaultValue={sortParam(filters.sort)} className={select}>
-                  {CATALOG_SORTS.map((s) => <option key={s} value={sortParam(s)}>{sortLabels[s]}</option>)}
+                  {CATALOG_SORTS.filter((s) => !s.startsWith("price")).map((s) => <option key={s} value={sortParam(s)}>{sortLabels[s]}</option>)}
                 </select>
               </label>
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block text-sm">
-                  <span className="mb-1 block font-medium text-ink">{tf("price")}</span>
-                  <select name="prix" defaultValue={filters.maxPrice ?? ""} className={select}>
-                    <option value="">{tf("priceAny")}</option>
-                    {CATALOG_MAX_PRICES.map((v) => <option key={v} value={v}>{tf("priceMax", { amount: v })}</option>)}
-                  </select>
-                </label>
-                <label className="block text-sm">
-                  <span className="mb-1 block font-medium text-ink">{tf("district")}</span>
-                  <select name="quartier" defaultValue={filters.district ?? ""} className={select}>
-                    <option value="">{tf("districtAny")}</option>
-                    {districts.map((d) => <option key={d} value={d}>{d}</option>)}
+                  <span className="mb-1 block font-medium text-ink">{tf("moment")}</span>
+                  <select name="moment" defaultValue={filters.moment ? momentParam(filters.moment) : ""} className={select}>
+                    <option value="">{tf("momentAny")}</option>
+                    {DAY_MOMENTS.map((m) => <option key={m} value={momentParam(m)}>{tf(`moment_${m}`)}</option>)}
                   </select>
                 </label>
                 <label className="block text-sm">

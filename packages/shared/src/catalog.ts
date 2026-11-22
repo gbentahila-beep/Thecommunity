@@ -44,10 +44,22 @@ export type CatalogFilters = {
   date: string | null;
   /** Gamme du restaurant (docs/16) : Casual, Premium, Exclusive. */
   tier: VenueTier | null;
+  /** docs/22 § 14 : moment de la journée (heure de Casablanca). */
+  moment: DayMoment | null;
   sort: CatalogSort;
 };
 
-export const EMPTY_CATALOG_FILTERS: CatalogFilters = { q: "", maxPrice: null, district: null, beginner: false, format: null, available: false, women: false, date: null, tier: null, sort: "recommended" };
+/** Moment de la journée : matin (avant 11 h), midi (11 h–14 h), après-midi (14 h–18 h), soir (18 h et après). */
+export const DAY_MOMENTS = ["morning", "noon", "afternoon", "evening"] as const;
+export type DayMoment = (typeof DAY_MOMENTS)[number];
+const MOMENT_PARAM: Record<DayMoment, string> = { morning: "matin", noon: "midi", afternoon: "apres-midi", evening: "soir" };
+export const momentParam = (m: DayMoment) => MOMENT_PARAM[m];
+export function dayMomentOf(startAt: string | Date): DayMoment {
+  const h = zonedParts(new Date(startAt), MOROCCO_TIMEZONE).hour;
+  return h < 11 ? "morning" : h < 14 ? "noon" : h < 18 ? "afternoon" : "evening";
+}
+
+export const EMPTY_CATALOG_FILTERS: CatalogFilters = { q: "", maxPrice: null, district: null, beginner: false, format: null, available: false, women: false, date: null, tier: null, moment: null, sort: "recommended" };
 
 type Params = Record<string, string | string[] | undefined>;
 
@@ -56,20 +68,21 @@ export function parseCatalogParams(sp: Params): CatalogFilters {
     const v = sp[k];
     return (typeof v === "string" ? v : Array.isArray(v) ? (v[0] ?? "") : "").trim();
   };
-  const price = Number(one("prix"));
   const format = (Object.keys(FORMAT_PARAM) as CatalogFormat[]).find((f) => FORMAT_PARAM[f] === one("format")) ?? null;
-  const sort = (Object.keys(SORT_PARAM) as CatalogSort[]).find((s) => SORT_PARAM[s] && SORT_PARAM[s] === one("tri")) ?? "recommended";
+  // docs/22, décision 33 : plus de filtre « prix par place » ni « quartier », plus de tri par prix (un seul prix).
+  const sort = (Object.keys(SORT_PARAM) as CatalogSort[]).find((s) => SORT_PARAM[s] && SORT_PARAM[s] === one("tri") && !s.startsWith("price")) ?? "recommended";
   const date = one("date");
   return {
     q: one("q").slice(0, 80),
-    maxPrice: (CATALOG_MAX_PRICES as readonly number[]).includes(price) ? price : null,
-    district: one("quartier").slice(0, 60) || null,
+    maxPrice: null,
+    district: null,
     beginner: one("debutant") === "1",
     format,
     available: one("dispo") === "1",
     women: one("public") === "femmes",
     date: /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(Date.parse(`${date}T12:00:00Z`)) ? date : null,
     tier: (VENUE_TIERS as readonly string[]).includes(one("gamme")) ? (one("gamme") as VenueTier) : null,
+    moment: (Object.keys(MOMENT_PARAM) as DayMoment[]).find((m) => MOMENT_PARAM[m] === one("moment")) ?? null,
     sort,
   };
 }
@@ -86,6 +99,7 @@ export function catalogParams(f: Partial<CatalogFilters>): [string, string][] {
   if (f.women) out.push(["public", "femmes"]);
   if (f.date) out.push(["date", f.date]);
   if (f.tier) out.push(["gamme", f.tier]);
+  if (f.moment) out.push(["moment", MOMENT_PARAM[f.moment]]);
   if (f.sort && f.sort !== "recommended") out.push(["tri", SORT_PARAM[f.sort]]);
   return out;
 }
@@ -95,7 +109,7 @@ export const formatParam = (f: CatalogFormat) => FORMAT_PARAM[f];
 
 /** Nombre de filtres actifs (hors recherche et tri), pour le bouton « Filtres (n) ». */
 export function activeFilterCount(f: CatalogFilters): number {
-  return [f.maxPrice, f.district, f.beginner, f.format, f.available, f.women, f.date, f.tier].filter(Boolean).length;
+  return [f.beginner, f.format, f.available, f.women, f.date, f.tier, f.moment].filter(Boolean).length;
 }
 
 /** Prix comparable d'une place : total connu (en ligne + part fixe sur place), sinon la part en ligne. */
@@ -156,7 +170,7 @@ export function applyCatalog(input: {
     (!f.tier || e.venueTier === f.tier) &&
     (!f.format || (f.format === "solo" ? e.bookingMode === "social_dinner" || e.bookingMode === "group" : e.maxSeatsPerBooking >= 2)) &&
     score(e) > 0;
-  const keepSession = (s: Session) => (!f.available || (s.status !== "full" && seatsAvailable(s) > 0)) && (!f.date || casablancaDay(s.startAt) === f.date);
+  const keepSession = (s: Session) => (!f.available || (s.status !== "full" && seatsAvailable(s) > 0)) && (!f.date || casablancaDay(s.startAt) === f.date) && (!f.moment || dayMomentOf(s.startAt) === f.moment);
 
   const seen = new Set<string>();
   const dated: CatalogEntry[] = [];
@@ -167,7 +181,7 @@ export function applyCatalog(input: {
     dated.push({ experience, session: session as Session, score: score(experience) });
   }
   const undated: CatalogEntry[] =
-    f.available || f.date
+    f.available || f.date || f.moment
       ? []
       : input.undated.filter((e) => !seen.has(e.id) && keepExperience(e, null)).map((e) => ({ experience: e, session: null, score: score(e) }));
 
