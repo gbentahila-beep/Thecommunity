@@ -150,47 +150,56 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           </p>
         </div>
       )}
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-8">
-          <div className="relative z-10 order-2 px-4 pb-10 pt-8 sm:px-6 lg:order-1 lg:px-0 lg:py-24">
-            <h1 className="animate-fade-up font-display text-[2.75rem] leading-[1.02] font-normal tracking-tight text-brand-900 sm:text-6xl lg:text-[4.25rem]">
+      {/* HERO : sur téléphone, la photo entière en haut et une carte crème posée sur son bas (option 2) ;
+          sur ordinateur, la photo plein cadre avec le titre en blanc sur un voile sombre à gauche (option 1). */}
+      <section className={`relative ${banner ? "mt-3" : "-mt-16"} lg:mt-0 lg:flex lg:h-[min(80vh,720px)] lg:min-h-[560px] lg:items-center`}>
+        <div className="relative h-[50vh] min-h-[330px] max-h-[560px] lg:absolute lg:inset-0 lg:h-full lg:max-h-none">
+          <Image
+            src="/images/accueil-rooftop-casablanca.webp"
+            alt={t("heroImageAlt")}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-[45%_30%] lg:object-[60%_35%]"
+          />
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-ink/80 via-ink/40 to-transparent lg:block rtl:bg-gradient-to-l" />
+        </div>
+        <div className="relative z-10 mx-3 -mt-24 rounded-[1.75rem] bg-cream p-5 shadow-float sm:mx-6 sm:p-7 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-7xl lg:rounded-none lg:bg-transparent lg:px-8 lg:py-0 lg:shadow-none">
+          <div className="lg:max-w-xl">
+            {cityName && (
+              <p className="flex items-center gap-1.5 text-sm font-semibold text-ink lg:text-cream/90">
+                <span className="size-2 rounded-full bg-coral" aria-hidden />
+                {cityName}
+              </p>
+            )}
+            <h1 className="mt-2 animate-fade-up font-display text-[2.4rem] leading-[1] font-normal tracking-tight text-brand-900 sm:text-6xl lg:text-[4.5rem] lg:text-white">
               {t("heroTitle1")}
               <br />
-              <span className="text-gradient">{t("heroTitle2")}</span>
+              <span className="text-gradient lg:bg-[linear-gradient(100deg,#ff8a6b,#d98bf0)]">{t("heroTitle2")}</span>
             </h1>
-            <p className="mt-5 max-w-md text-lg text-ink/80 [animation-delay:120ms] animate-fade-up">{t("heroSubtitle")}</p>
-            <div className="mt-8 [animation-delay:220ms] animate-fade-up">
-              <PrimaryLink href="/experiences">{t("heroCta")}</PrimaryLink>
+            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-ink/75 [animation-delay:120ms] animate-fade-up lg:mt-5 lg:text-lg lg:text-white/85">{t("heroSubtitle")}</p>
+            <div className="mt-5 [animation-delay:220ms] animate-fade-up lg:mt-8">
+              <PrimaryLink href="/experiences" className="w-full lg:w-auto">{t("heroCta")}</PrimaryLink>
             </div>
-            {trustOn && (
-              <ul className="mt-8 max-w-md space-y-3 rounded-3xl bg-cream-deep p-5 [animation-delay:300ms] animate-fade-up" data-testid="home-trust">
-                {[
-                  { icon: Users, label: t("trust1") },
-                  { icon: HeartHandshake, label: t("trust2") },
-                  { icon: ShieldCheck, label: t("trust3") },
-                ].map(({ icon: Icon, label }) => (
-                  <li key={label} className="flex items-center gap-3">
-                    <Icon className="size-6 shrink-0 text-brand-900" strokeWidth={1.5} aria-hidden />
-                    <span className="text-[15px] leading-snug text-ink">{label}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <div className="relative order-1 h-[46vh] min-h-72 lg:order-2 lg:h-auto lg:min-h-[520px]">
-            <Image
-              src="/images/accueil-rooftop-casablanca.webp"
-              alt={t("heroImageAlt")}
-              fill
-              priority
-              sizes="(min-width: 1024px) 55vw, 100vw"
-              className="object-cover object-[45%_center] lg:rounded-b-[2rem]"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-cream via-cream/0 to-transparent lg:bg-gradient-to-r lg:from-cream lg:via-cream/10 rtl:lg:bg-gradient-to-l" />
           </div>
         </div>
       </section>
+      {trustOn && (
+        <PageShell className="mt-6 lg:mt-8">
+          <ul className="grid gap-3 rounded-3xl bg-cream-deep p-5 sm:grid-cols-3 sm:gap-6 sm:px-7 [animation-delay:300ms] animate-fade-up" data-testid="home-trust">
+            {[
+              { icon: Users, label: t("trust1") },
+              { icon: HeartHandshake, label: t("trust2") },
+              { icon: ShieldCheck, label: t("trust3") },
+            ].map(({ icon: Icon, label }) => (
+              <li key={label} className="flex items-center gap-3">
+                <Icon className="size-6 shrink-0 text-brand-900" strokeWidth={1.5} aria-hidden />
+                <span className="text-[15px] leading-snug text-ink">{label}</span>
+              </li>
+            ))}
+          </ul>
+        </PageShell>
+      )}
 
       {/* « Cette semaine » vient toujours juste après l'accroche ; les autres sections suivent l'ordre du back-office. */}
       {home.sections.some((x) => x.id === "thisWeek" && x.enabled) && sectionsById.thisWeek}
