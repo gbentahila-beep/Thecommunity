@@ -10,7 +10,7 @@ import {
   type Experience,
   restaurantBudget,
 } from "@thecommunity/shared";
-import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, Handshake, Gift, Wallet, Gem, UtensilsCrossed, Sparkles, Lock } from "lucide-react";
+import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, Handshake, Gift, Wallet, Gem, UtensilsCrossed, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
@@ -272,7 +272,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
             <Section title={t("venue")}>
               {/* Lieu secret : ni nom, ni adresse, ni carte avant la révélation (docs/22). */}
               {surprise ? (
-                <p className="flex items-center gap-2.5 rounded-xl bg-brand-50 px-4 py-3 text-sm font-medium text-brand-900" data-testid="venue-secret"><Lock className="size-4 shrink-0" aria-hidden />{t("venueRevealed", { hours: VENUE_REVEAL_HOURS })}</p>
+                <p className="rounded-xl bg-brand-50 px-4 py-3 text-sm font-medium text-brand-900" data-testid="venue-secret">{t("venueRevealed", { hours: VENUE_REVEAL_HOURS })}</p>
               ) : (
                 <>
                   <p className="font-medium text-ink">{exp.venue.name}</p>

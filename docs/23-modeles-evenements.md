@@ -5,13 +5,15 @@ Liste de tous les modèles proposés à l'équipe quand elle crée un événemen
 ## 0. Décisions du 22 novembre
 
 - **Titres simples** (« Brunch »), titre long automatique pour Google (option A du § 2).
-- **Liste validée.** **Toutes les Tables sont au lancement**, soit **16 modèles au lancement**.
+- **Liste validée.** **Toutes les Tables sont au lancement**, soit **15 modèles au lancement**. **Le Couscous du vendredi est supprimé** : c'est un Déjeuner (cuisine marocaine, titre modifiable).
 - **Chaque format de Tables existe en 3 gammes** (Casual, Premium, Exclusive), qui fixent le budget sur place (docs/22 § 6). La « Grande table » n'est donc plus un modèle à part : c'est le **Dîner en gamme Exclusive**.
 - **Choix du modèle** : univers → format → gamme (Tables seulement).
 - **Contenus validés dans le principe.** On valide les premiers modèles en détail, puis les suivants plus vite ; tout reste modifiable dans le back-office.
 - **Réglages ajoutés à chaque modèle** : places par réservation (1 par défaut, 2 possible), accès (ouvert à tous par défaut), case « réservé aux femmes », case « alcool servi », conditions d'annulation (les frais sont remboursés selon elles).
 - **Pas de répétition** : la révélation du lieu n'apparaît jamais dans les infos pratiques ni dans la description.
 - **Images** : tes photos, reçues au fur et à mesure (§ 7).
+- **Questionnaires** : jamais de question déjà posée à l'inscription (façon d'être en conversation, centres d'intérêt, ce qu'on recherche, secteur, humour, valeurs, sport, budget, régimes, langues). **Les Tables n'ont pas de questionnaire** : le profil suffit.
+- **Univers** : passage de 7 à 3 ou 4 univers en cours de validation (docs/22 § 5). Les univers indiqués ci-dessous changeront en conséquence.
 
 ---
 
@@ -70,7 +72,7 @@ Ils sont pré-remplis partout, pour ne pas les répéter dans chaque fiche :
 
 ---
 
-## 4. La liste complète (45 modèles)
+## 4. La liste complète (44 modèles)
 
 Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou saisonnier. Image : 📷 reçue = ta photo · ✓ = une image existe déjà sur le site (à remplacer par une photo plus tard) · ✗ = à envoyer.
 
@@ -81,11 +83,11 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 | T3 | Déjeuner | Tables › Déjeuner · 3 gammes | Tables 4–6 | Selon la gamme | **L** | ✗ à envoyer |
 | T4 | Dîner | Tables › Dîner · 3 gammes | Tables 4–6 | Selon la gamme | **L** | 📷 reçue |
 | ~~T5~~ | ~~Grande table~~ | Devient le Dîner en gamme Exclusive | — | — | — | — |
-| T6 | Couscous du vendredi | Tables › Couscous · 3 gammes | Tables 4–6 | Selon la gamme ou menu fixe | **L** | ✗ à envoyer |
+| ~~T6~~ | ~~Couscous du vendredi~~ | Devient un Déjeuner | — | — | — | — |
 | S1 | Running | Bouger | Groupes par allure | — | **L** | 📷 reçue |
 | S2 | Padel | Bouger | 4 par terrain, par niveau | ≈ 100–150 DH | **L** | 📷 reçue |
-| S3 | Yoga | Bouger | Cours collectif | ≈ 100–150 DH | **L** | 📷 reçue (2, à choisir) |
-| S4 | Pilates | Bouger | Cours collectif | ≈ 150–200 DH | 2 | ✓ |
+| S3 | Yoga | Bouger | Cours collectif | ≈ 100–150 DH | **L** | 📷 reçue |
+| S4 | Pilates | Bouger | Cours collectif | ≈ 150–200 DH | 2 | 📷 reçue |
 | S5 | Randonnée | Bouger | Groupes | — | 2 | ✓ |
 | S6 | Balade à vélo | Bouger | Groupe | Location ≈ 50–80 DH | + | ✗ |
 | S7 | Foot à 5 | Bouger | Équipes par niveau | ≈ 50–80 DH | 2 | ✗ |
@@ -123,7 +125,7 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 | D10 | Journée plage | Découvrir | Groupe | Conso | + | ✗ |
 | D11 | Escapade d'une journée | Découvrir | Groupe | Transport ≈ 150–250 DH | + | ✗ |
 
-**Lancement : 16 modèles** : les 5 Tables (Café, Brunch, Déjeuner, Dîner, Couscous du vendredi, chacun en 3 gammes), Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée, Échange de langues.
+**Lancement : 15 modèles** : les 4 Tables (Café, Brunch, Déjeuner, Dîner, chacun en 3 gammes), Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée, Échange de langues.
 
 ---
 
@@ -176,7 +178,7 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 - **Inclus** : une table réservée dans une adresse d'exception · **Pas inclus** : votre repas et vos boissons
 - **Questionnaire** : Tables · **Image** : ✗
 
-**T6 · Couscous du vendredi** — Tables › Déjeuner · 2
+**T6 · Couscous du vendredi** — *supprimé : c'est un Déjeuner (fiche gardée pour ses textes)*
 - **Titre** : Couscous du vendredi · **Google** : Couscous du vendredi entre inconnus à Casablanca
 - **Accroche** : La tradition du vendredi, partagée avec de nouvelles têtes.
 - **Description** : Un couscous comme à la maison, dans un restaurant familial partenaire, autour d'une table de quatre à six personnes. Menu couscous à prix fixe réglé sur place, thé à la menthe compris (à confirmer avec le restaurant).
@@ -437,15 +439,17 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 
 ## 6. Questionnaires
 
-| Modèle de questionnaire | Existe ? | Utilisé par |
-|---|---|---|
-| Tables (personnalité) | ✓ (aujourd'hui « Dîner ») | Tables, soirée jeux, ciné-club, thé & pâtisseries |
-| Course à pied (allure) | ✓ | Running |
-| Padel (niveau) | ✓ | Padel |
-| Jeu en équipe | ✓ (aujourd'hui « Paintball ») | Escape game, paintball, laser game, quiz, bowling, murder party |
-| Atelier (niveau) | ✓ | Ateliers |
-| Niveau seul | ✓ | Yoga, pilates, randonnée, foot à 5, danse, surf |
-| **Langues** | ✗ à créer | Échange de langues |
+**Règle : on ne redemande jamais ce que le profil sait déjà.** Déjà demandés à l'inscription : façon d'être en conversation (j'écoute → je lance la conversation), centres d'intérêt, ce que je recherche, secteur, humour, valeurs, ambiance de groupe préférée, fréquence de sport et niveau sportif général, budget de sortie, régimes, langues parlées, âge, genre. Le questionnaire d'un événement ne pose que ce qui est **propre à l'activité**.
+
+| Questionnaire | Questions propres à l'activité | Utilisé par | Statut |
+|---|---|---|---|
+| Tables | **Aucun** : le profil suffit pour composer les tables | Café, Brunch, Déjeuner, Dîner, Soirée jeux | Validé |
+| Running | Allure habituelle, distance confortable | Running | À valider |
+| Padel | Niveau de padel (le niveau sportif général ne suffit pas), envie (plaisir, progresser, gagner) | Padel | À valider |
+| Jeu en équipe | Déjà joué à ce jeu ?, état d'esprit (rigoler ou gagner) | Escape game, paintball, laser game, bowling, karting, quiz, murder party | À valider |
+| Atelier | Expérience dans cette activité | Ateliers | À valider |
+| Niveau | Niveau dans cette activité | Yoga, pilates, randonnée, foot à 5, danse, surf | À valider |
+| **Langues** (nouveau) | Langue que je veux pratiquer, niveau dans cette langue | Échange de langues | À valider |
 
 ---
 
@@ -462,13 +466,14 @@ Tes photos, enregistrées dans le site (`apps/web/public/images/modeles/`), à v
 | Échange de langues | Cafés et carnets, un doigt qui pointe une page | `echange-langues.webp` |
 | Running | Coureurs de dos | `running.webp` |
 | Padel | Raquettes et balles sur un terrain bleu | `padel.webp` |
-| Yoga | **Deux photos** : en plein air, ou en studio aux murs colorés (à choisir ; l'autre peut aller au Pilates) | `yoga-exterieur.webp`, `yoga-studio.webp` |
+| Yoga | Cours en plein air | `yoga.webp` |
+| Pilates | Cours en studio aux murs colorés | `pilates.webp` |
 | Escape game | Néon « Escape rooms » | `escape-game.webp` |
 | Soirée jeux | Partie de cartes vue du dessus | `soiree-jeux.webp` |
 | Quiz | Néon « Game on » | `quiz.webp` |
 | Céramique | Mains sur un tour de potier | `ceramique.webp` |
 
-**À m'envoyer pour le lancement** : **Déjeuner**, **Couscous du vendredi**, **Visite guidée**. Les autres modèles (phase 2 et plus tard) viendront ensuite ; je te dirai lesquelles manquent à chaque étape.
+**À m'envoyer pour le lancement, au moment voulu** : **Déjeuner** et **Visite guidée**. Les autres modèles (phase 2 et plus tard) viendront ensuite ; je te dirai lesquelles manquent à chaque étape.
 
 Les gammes Casual, Premium et Exclusive d'un même format partagent la même photo, sauf si tu veux une photo par gamme.
 

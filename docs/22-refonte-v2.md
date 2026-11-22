@@ -37,10 +37,10 @@ Mise à jour du 22 novembre 2026, après les échanges sur les dîners, le prix,
 ### Tables (restaurants)
 | # | Décision |
 |---|---|
-| 11 | L'univers « Dîners » s'appelle **« Tables »**. Formats : **Café, Brunch, Déjeuner, Dîner, Couscous du vendredi**. |
+| 11 | L'univers « Dîners » s'appelle **« Tables »**. Formats : **Café, Brunch, Déjeuner, Dîner** (le couscous du vendredi devient un Déjeuner). |
 | 12 | **Chaque format de Tables existe en 3 gammes : Casual, Premium, Exclusive.** La gamme fixe le budget sur place, ce qui réunit des personnes qui peuvent payer le même type de restaurant. Budgets par format au § 6. |
 | 13 | **Tables de 4 à 6** (min et max réglables), nombre de tables facultatif. |
-| 14 | **Lieu secret par défaut.** La fiche ne montre ni nom, ni adresse, ni quartier : seulement le format, la gamme, la cuisine et l'ambiance. Phrase unique : « 🔒 Le lieu et l'adresse vous sont révélés 5 h avant. » |
+| 14 | **Lieu secret par défaut.** La fiche ne montre ni nom, ni adresse, ni quartier : seulement le format, la gamme, la cuisine et l'ambiance. Phrase unique, sans émoticône : « Le lieu et l'adresse vous sont révélés 5 h avant. » |
 | 15 | **Lieu choisi par l'admin, date par date** : à la création ou plus tard, **au plus tard 5 h avant**. Même restaurant à chaque date ou restaurants différents ; **plusieurs restaurants possibles** pour une même date ; un restaurant qui convient peut devenir le **lieu habituel** du rendez-vous. |
 | 16 | **Réservations fermées 12 h avant**, pour laisser à l'admin le temps de réserver le ou les restaurants. |
 | 17 | **Pas assez d'inscrits** pour une table complète : chaque inscrit **choisit** entre une autre date et le remboursement. |
@@ -64,6 +64,7 @@ Mise à jour du 22 novembre 2026, après les échanges sur les dîners, le prix,
 |---|---|
 | 28 | **Le check-in seul est la règle.** Le QR code n'existe qu'avec l'option « hôtesse sur place » ou pour une activité d'organisateur. |
 | 29 | **Le questionnaire se remplit avant le paiement**, et il est obligatoire. On crée les nouveaux questionnaires nécessaires. |
+| 29 bis | **Un questionnaire ne redemande jamais ce que le profil d'inscription sait déjà** : façon d'être en conversation, centres d'intérêt, ce que la personne recherche, secteur, humour, valeurs, ambiance de groupe, sport, budget de sortie, régimes, langues, âge, genre. Il ne pose que les questions propres à l'activité (allure de course, niveau de padel…). **Les Tables n'ont donc pas de questionnaire** : le profil suffit. Au moment de réserver, langues, régime et allergies sont seulement à confirmer, pré-remplis. |
 
 ### Rôles
 | # | Décision |
@@ -78,6 +79,19 @@ Mise à jour du 22 novembre 2026, après les échanges sur les dîners, le prix,
 | 33 | Filtres de Découvrir : **retirer « Prix par place » et « Quartier »**, **garder « Gamme du restaurant »**. |
 | 34 | **Tous les textes à revoir** : accueil, Comment ça marche, aide, FAQ, CGU, CGV, contrat et conditions des organisateurs, confidentialité, blog, presse, e-mails, en français, anglais et arabe. |
 | 35 | **À la fin, supprimer tous les événements existants et en recréer** à partir des modèles validés (avec ta confirmation au moment de le faire, car c'est définitif). |
+| 36 | **Moins d'univers** : passer de 7 à 3 ou 4 au maximum (proposition au § 5, à valider). |
+
+### Idées reprises de Socials et Timeleft (validées)
+| # | Décision |
+|---|---|
+| 37 | **Résumé de la table sans les noms à la révélation (5 h avant)** : âges, langues, secteurs et centres d'intérêt des autres convives. Les prénoms viennent au check-in. |
+| 38 | **Déplacer sa réservation sur une autre date** du même rendez-vous, jusqu'à la fermeture des réservations (12 h avant), sans repayer. |
+| 39 | **Échanger après la rencontre** : messages possibles entre les personnes de la même table après l'événement, sans montrer numéro ni réseaux (à rapprocher de l'existant « Mes rencontres »). |
+
+### Gammes
+| # | Décision |
+|---|---|
+| 40 | **Budgets des gammes par format validés** (§ 6). |
 
 ---
 
@@ -101,10 +115,7 @@ Mise à jour du 22 novembre 2026, après les échanges sur les dîners, le prix,
 
 **Ce que Wenzy fait déjà pareil** : groupes de 4 à 6, place payée en ligne, repas sur place, questionnaire, lieu révélé avant, langues et régime demandés, budget (chez nous par la gamme).
 
-**Proposé, à valider (§ 18)** :
-1. **Résumé de la table sans noms à la révélation (5 h avant)** : âges, langues, secteurs et centres d'intérêt des autres convives. Les prénoms viennent au check-in.
-2. **Déplacer sa réservation sur une autre date** jusqu'à la fermeture (12 h avant), au lieu d'annuler.
-3. **Échanger après la rencontre** : à rapprocher de l'existant « Mes rencontres ».
+**Repris chez Wenzy (validé, décisions 37 à 39)** : résumé de la table sans les noms à la révélation, déplacer sa réservation jusqu'à la fermeture, échanger après la rencontre.
 
 Sources : [Socials by Detor](https://joinsocials.app/) · [FAQ Socials](https://joinsocials.app/faq) · [Timeleft, fonctionnement](https://timeleft.com/how-it-works/) · [Timeleft, annuler ou modifier](https://help.timeleft.com/hc/en-150/articles/28536868572444-How-Do-I-Cancel-or-Modify-My-Reservation) · [Timeleft, conditions](https://timeleft.com/terms-conditions/)
 
@@ -140,15 +151,18 @@ Ce que ça supprime : paiement « tout en ligne », acompte, prix membre, marge 
 
 ## 5. Univers, formats et modèles
 
-| Univers | Formats (modèles) |
-|---|---|
-| **Tables** | Café, Brunch, Déjeuner, Dîner, Couscous du vendredi, chacun en Casual, Premium ou Exclusive |
-| **Bouger** | Running, Padel, Yoga, Pilates, Randonnée, Vélo, Foot à 5, Surf, Danse, Hammam & spa |
-| **Jouer** | Escape game, Paintball, Laser game, Bowling, Karting, Soirée jeux, Quiz, Karaoké, Murder party |
-| **Créer** | Céramique, Zellige, Cuisine marocaine, Pâtisserie, Parfum, Calligraphie, Balade photo, Café de spécialité, Bougies, Thé & pâtisseries |
-| **Découvrir** | Afterwork, Rooftop, Visite guidée, Street art, Musée, Ciné-club, Concert, Stand-up, Échange de langues, Plage, Escapade |
+**Aujourd'hui, 7 univers** (Dîners, Sport & bien-être, Jeux, Ateliers, Sorties, Vie sociale, Culture). **Proposition : 4 univers** (à valider, décision 36) :
 
-**Lancement : 16 modèles.** Les 5 formats de Tables, plus Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée et Échange de langues. Contenus, réglages et images : [docs/23](23-modeles-evenements.md).
+| Univers | Ce qu'on y regroupe | Formats (modèles) |
+|---|---|---|
+| **Tables** | Dîners | Café, Brunch, Déjeuner, Dîner, chacun en Casual, Premium ou Exclusive |
+| **Bouger** | Sport & bien-être | Running, Padel, Yoga, Pilates, Randonnée, Vélo, Foot à 5, Surf, Danse, Hammam & spa |
+| **Sortir** | Jeux, Sorties, Vie sociale | Escape game, Paintball, Laser game, Bowling, Karting, Soirée jeux, Quiz, Karaoké, Murder party, Afterwork, Rooftop, Concert, Stand-up, Échange de langues, Plage |
+| **Découvrir** | Ateliers, Culture | Céramique, Zellige, Cuisine marocaine, Pâtisserie, Parfum, Calligraphie, Balade photo, Café de spécialité, Bougies, Thé & pâtisseries, Visite guidée, Street art, Musée, Ciné-club, Escapade |
+
+Variante à **3 univers** : Tables · Bouger · Sortir & découvrir. C'est plus court, mais le troisième devient un fourre-tout de 30 formats.
+
+**Lancement : 15 modèles.** Les 4 formats de Tables, plus Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée et Échange de langues. Contenus, réglages et images : [docs/23](23-modeles-evenements.md).
 
 **Choisir un modèle** : univers → format → gamme (Tables seulement) → formulaire pré-rempli → date et heure → lieu maintenant ou plus tard → enregistrer.
 
@@ -156,7 +170,7 @@ Ce que ça supprime : paiement « tout en ligne », acompte, prix membre, marge 
 
 ---
 
-## 6. Les gammes des Tables (budgets sur place, à valider)
+## 6. Les gammes des Tables (budgets sur place, validés)
 
 Budget indicatif par personne, affiché sur la fiche (« Sur place : votre consommation, ≈ 150–250 DH »). Ce sont des repères à confirmer avec les restaurants.
 
@@ -166,7 +180,6 @@ Budget indicatif par personne, affiché sur la fiche (« Sur place : votre conso
 | Brunch | 100–150 DH | 150–250 DH | 250–400 DH |
 | Déjeuner | 80–150 DH | 150–250 DH | 250–400 DH |
 | Dîner | 150–250 DH | 250–400 DH | 400–600 DH |
-| Couscous du vendredi | 80–120 DH | 120–200 DH | 200–300 DH |
 
 - Le filtre « Gamme du restaurant » de Découvrir s'appuie dessus.
 - Un menu à prix fixe négocié avec le restaurant remplace le budget par le montant exact.
@@ -200,16 +213,16 @@ Tout est pré-rempli par le modèle ; l'admin ne touche que ce qui change.
 | Quand | Ce qui se passe |
 |---|---|
 | **Agenda / Découvrir** | « Mercredi 26 nov. · Dîner · Premium · 20h00 · 35 DH ». Icône de l'univers, ni lieu ni quartier |
-| **Fiche** | Format, gamme, cuisine, ambiance ; « Ce que vous payez » (35 DH en ligne, budget sur place) ; « 🔒 Le lieu et l'adresse vous sont révélés 5 h avant » |
+| **Fiche** | Format, gamme, cuisine, ambiance ; « Ce que vous payez » (35 DH en ligne, budget sur place) ; « Le lieu et l'adresse vous sont révélés 5 h avant » |
 | **Réservation** | Carte « billet » : date en grand, Début · Langue · Tables de 4 à 6 ; « Réservations jusqu'à mer. 8h00 » ; « Moi seul·e / Moi + 1 » si autorisé ; carrousel « Comment on compose les tables » généré par les réglages ; barre fixe « 35 DH · 1 place · Continuer » |
-| **À propos de vous** | Régime, allergies, langues et questionnaire, pré-remplis par le profil, **avant le paiement** |
+| **À propos de vous** | Langues, régime et allergies à confirmer (pré-remplis par le profil) ; questionnaire seulement s'il y en a un pour l'activité ; **avant le paiement** |
 | **Paiement** | 35 DH, « Inclus dans votre pass » ou 1 crédit du carnet |
-| **Confirmation** | « Le lieu arrive mer. 15h00 ». Pas de QR code |
+| **Confirmation** | « Le lieu arrive mer. 15h00 ». Pas de QR code. Bouton « Déplacer sur une autre date » jusqu'à la fermeture |
 | **12 h avant** | Fermeture. Minimum non atteint : chaque inscrit choisit autre date ou remboursement |
-| **5 h avant** | Répartition entre les lieux s'il y en a plusieurs ; révélation du lieu, de l'adresse et de la carte (notification et e-mail) ; résumé de table sans noms si validé (§ 2) |
+| **5 h avant** | Répartition entre les lieux s'il y en a plusieurs ; révélation du lieu, de l'adresse et de la carte (notification et e-mail) ; résumé de la table sans les noms (âges, langues, secteurs, centres d'intérêt) |
 | **1 h avant** | Tables composées automatiquement (table de 7 à valider par l'admin) ; le lieu reçoit nombre de tables, prénoms et allergies |
 | **30 min avant → 1 h après** | Check-in : sa table, les prénoms, qui est arrivé |
-| **Après** | Pas de check-in = absence ; demande d'avis |
+| **Après** | Messages possibles entre les personnes de la table ; pas de check-in = absence ; demande d'avis |
 
 **Lieu affiché** (ex. Padel, Céramique) : même parcours, avec le nom, l'adresse et la carte dès la fiche ; le quartier est alors affiché normalement.
 
@@ -249,7 +262,7 @@ Tout est pré-rempli par le modèle ; l'admin ne touche que ce qui change.
 | Entrée | Contenu |
 |---|---|
 | **Aujourd'hui** | Dates à venir et ce qu'il reste à faire : lieu à renseigner (relances 24 h et 8 h avant), table de 7 à valider, minimum non atteint, check-ins en cours |
-| **Rendez-vous** | Création depuis un modèle, dates, lieu par date et lieu habituel (après une date : 👍 / 👎 et « En faire le lieu habituel ») |
+| **Rendez-vous** | Création depuis un modèle, dates, lieu par date et lieu habituel (après une date : « bien / à revoir » et « En faire le lieu habituel ») |
 | **Lieux partenaires** | Tables et places, jours possibles, gamme, cuisine, budget moyen, contact WhatsApp, avantage abonnés |
 | **Organisateurs** | Comptes, activités à valider |
 | **Participants et abonnements** | Utilisateurs, pass, carnets, avertissements et suspensions |
@@ -314,7 +327,7 @@ Tout est pré-rempli par le modèle ; l'admin ne touche que ce qui change.
 | Page | À revoir |
 |---|---|
 | Proposer une sortie | **Supprimer** |
-| Réservation | Lieu révélé à l'heure prévue, table après le check-in, choix « autre date / remboursement », déplacer sa réservation (si validé) |
+| Réservation | Lieu révélé à l'heure prévue, table après le check-in, choix « autre date / remboursement », déplacer sa réservation, messages après la rencontre |
 | Factures | Frais Wenzy seulement, mention « à régler sur place » |
 | Compte | Pass ou carnet : crédits restants, date de fin, avertissements |
 
@@ -343,7 +356,7 @@ Tout est pré-rempli par le modèle ; l'admin ne touche que ce qui change.
 | **CGU** | Art. 3 (rôle de Wenzy et du lieu), art. 7 (composition automatique, révélation, table au check-in), art. 9 (absences), art. 11 (sans propositions de sorties) |
 | **Contrat organisateur** | Art. 4 (encaissement sur place), art. 5 et 6 supprimés (commission, reversements), art. 7 (frais Wenzy seulement), art. 12 (responsabilité) |
 | **Conditions de vente des organisateurs** | Plus de mandat d'encaissement ; prix ; pointage par l'organisateur |
-| **Confidentialité** | Données transmises au lieu 1 h avant, check-in, résumé de table (si validé), sans données « membre de confiance » |
+| **Confidentialité** | Données transmises au lieu 1 h avant, check-in, résumé de table sans noms, messages après la rencontre, sans données « membre de confiance » |
 | **Règles de la communauté, Sécurité** | Lieux partenaires, absences, lieu révélé tard, retrouver sa table |
 
 ### 15.6 E-mails et notifications
@@ -379,13 +392,13 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | Étape | Contenu | Validation |
 |---|---|---|
 | **A — Corrections** ✅ | Lieu secret protégé (écran et base), billet seulement avec hôtesse, questionnaire avant le paiement, phrase « Le lieu et l'adresse vous sont révélés 5 h avant », infos pratiques sans répétition | Faite |
-| **B — Questionnaires** | Un par un : Tables, Running, Padel, Jeu en équipe, Atelier, Niveau, **Langues** (nouveau) ; d'autres si un modèle en a besoin | Chaque questionnaire |
+| **B — Questionnaires** | Un par un, **seulement les questions que le profil ne pose pas** : Running, Padel, Jeu en équipe, Atelier, Niveau, **Langues** (nouveau) ; Tables : aucun (le profil suffit) | Chaque questionnaire |
 | **C — Photos** | Une par une : 12 reçues, à attribuer et valider ; celles qui manquent (docs/23 § 7) | Chaque photo |
-| **D — Modèles** | Par petits lots : D1 Café et Dîner (avec les 3 gammes) → D2 Brunch, Déjeuner, Couscous → D3 Running, Padel, Yoga → D4 Escape game, Soirée jeux, Quiz → D5 Céramique, Afterwork, Visite guidée, Échange de langues → puis les modèles de phase 2 | Chaque lot (les premiers en détail, ensuite plus vite) |
-| **E — Prix unique et Tables** | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; univers « Tables », formats et gammes | Démonstration à l'écran |
+| **D — Modèles** | Par petits lots : D1 Café et Dîner (avec les 3 gammes) → D2 Brunch, Déjeuner → D3 Running, Padel, Yoga → D4 Escape game, Soirée jeux, Quiz → D5 Céramique, Afterwork, Visite guidée, Échange de langues → puis les modèles de phase 2 | Chaque lot (les premiers en détail, ensuite plus vite) |
+| **E — Prix unique et univers** | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; **les 4 univers** (Tables, formats et gammes compris) | Démonstration à l'écran |
 | **F — Modèles dans l'appli** | Choix univers → format → gamme ; formulaire pré-rempli aux champs strictement nécessaires (§ 7) ; places 1 ou 2 ; accès ; réservé aux femmes ; alcool ; conditions d'annulation ; *Paramètres → Modèles* ; « Enregistrer comme modèle » | Démonstration |
 | **G — Rendez-vous et lieux** | Rendez-vous récurrents, lieu par date (plus tard possible), plusieurs lieux, lieu habituel, fiches des lieux partenaires, « Aujourd'hui » | Démonstration |
-| **H — Parcours Tables** | Écran de réservation, fermeture 12 h avant, minimum (choix), révélation 5 h avant, tables 1 h avant (table de 7 à valider), message au lieu, check-in, liste d'attente avec questionnaire | Démonstration |
+| **H — Parcours Tables** | Écran de réservation, fermeture 12 h avant, minimum (choix), déplacer sa réservation, révélation 5 h avant avec résumé de table sans noms, tables 1 h avant (table de 7 à valider), message au lieu, check-in, messages après la rencontre, liste d'attente avec questionnaire | Démonstration |
 | **I — Carnet et Pass** | Offres, crédits, accès abonnés, garde-fous, migration des abonnés | Démonstration |
 | **J — Organisateurs et rôles** | Encaissement sur place, formulaire court, pointage, Statistiques ; suppression des reversements, commissions, propositions et membres de confiance | Démonstration |
 | **K — Découvrir et agenda** | Agenda de l'accueil, filtres, moment de la journée | Démonstration |
@@ -398,10 +411,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 
 ## 18. Questions ouvertes
 
-1. **« Une des 6 catégories »** : le site en compte 5 (Tables, Bouger, Jouer, Créer, Découvrir). La 6ᵉ serait-elle **« Soirées »** (afterwork, rooftop, karaoké, concert, stand-up), séparée de « Découvrir » (visites, musée, ciné-club, échange de langues, plage, escapade) ? C'est ma recommandation.
-2. **Les budgets des gammes par format** (§ 6).
-3. **Les trois idées venues de Socials et Timeleft** (§ 2) : résumé de table sans noms, déplacer sa réservation, échanger après la rencontre.
-4. **Photos** : laquelle des deux pour le Yoga (en plein air ou en studio) ? L'autre peut servir au Pilates.
+1. **Les univers** (§ 5) : 4 univers (Tables, Bouger, Sortir, Découvrir), ou la variante à 3 ?
 
 ---
 
@@ -412,7 +422,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 |---|---|
 | **Lieu secret hors du public** | Nom, adresse, coordonnées, quartier et nom du partenaire rangés dans `experiences/{id}/private/venue` (équipe seulement) et retirés des documents publics. Le back-office et l'espace organisateur les relisent ; la révélation des groupes les communique aux participants. Filet de sécurité côté site : `publicExperience()`. |
 | **Plus de quartier pour un lieu secret** | Fiche (infos clés et titre de page Google), cartes, lignes, « Cette semaine », suggestions, page de réservation, espace membre, rappels par e-mail. La recherche ne retrouve plus une expérience secrète par son quartier. |
-| **Phrase du lieu secret** | « 🔒 Le lieu et l'adresse vous sont révélés 5 h avant. » (FR / EN / AR) ; sur la réservation : « Révélés 5 h avant le début ». Infos pratiques de démonstration sans répétition. |
+| **Phrase du lieu secret** | « Le lieu et l'adresse vous sont révélés 5 h avant. », sans émoticône ni icône (FR / EN / AR) ; sur la réservation : « Révélés 5 h avant le début ». Infos pratiques de démonstration sans répétition. |
 | **Billet à QR code** | Seulement avec une hôtesse ou pour une activité d'organisateur ; e-mail de confirmation adapté. |
 | **Questionnaire avant le paiement** | Dans le tunnel et la demande de participation, obligatoire, vérifié par le serveur ; CGV, CGU, aide et blog à jour (FR / EN / AR). Liste d'attente : questionnaire après coup, à reprendre à l'étape H. |
 
