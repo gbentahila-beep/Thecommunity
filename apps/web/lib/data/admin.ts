@@ -4,7 +4,7 @@
  * - Mode Firebase : lecture Firestore par le serveur, APRÈS vérification du rôle admin / superadmin
  *   (cookie de session). Les règles Firestore restent la barrière côté navigateur.
  */
-import { seatsAvailable, type CategoryKey } from "@thecommunity/shared";
+import { seatsAvailable, type CategoryKey, type SessionVenue } from "@thecommunity/shared";
 import { connection } from "next/server";
 import { cache } from "react";
 import { requireAdmin } from "@/lib/auth/admin";
@@ -29,6 +29,7 @@ export const getAdminData = cache(async function getAdminData() {
     admin: null,
     isDemo: true,
     economics: DEMO_ECONOMICS,
+    sessionVenues: {} as Record<string, SessionVenue[]>,
     cities: DEMO_CITIES,
     categories: DEMO_CATEGORIES,
     experiences: new Map(DEMO_EXPERIENCES.map((e) => [e.id, e])),

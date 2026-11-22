@@ -1,3 +1,5 @@
+import { z } from "zod";
+import { parseCoords } from "./experience-input";
 /**
  * Lieu secret (docs/22, lot 0) : tant que le lieu n'est pas révélé, rien ne doit permettre de le deviner —
  * ni son nom, ni son adresse, ni ses coordonnées, ni le quartier, ni le nom du partenaire (souvent le restaurant).
@@ -53,3 +55,68 @@ export function publicExperience<T extends PublicFields>(e: T): T {
 export function placeLabel(district: string | null | undefined, city: string): string {
   return [district?.trim(), city].filter(Boolean).join(", ");
 }
+
+/* ——— Lieu par date (docs/22, décision 15) ——— */
+
+/** Un lieu d'une date : partenaire enregistré ou saisie libre ; `tables` = tables disponibles (répartition). */
+export type SessionVenue = {
+  partnerId?: string | null;
+  name: string;
+  address: string;
+  geo?: { lat: number; lng: number } | null;
+  tables?: number | null;
+  /** Après la date : l'équipe note le lieu (« bien » ou « à revoir »). */
+  rating?: "good" | "bad" | null;
+};
+
+export const sessionVenueInputSchema = z.object({
+  partnerId: z.string().trim().max(80).optional().or(z.literal("")),
+  name: z.string().trim().min(2, "required").max(100, "tooLong"),
+  address: z.string().trim().min(5, "required").max(200, "tooLong"),
+  coords: z.string().trim().max(40, "tooLong").refine((s) => !s || parseCoords(s) !== null, "invalidCoords").optional().or(z.literal("")),
+  tables: z.coerce.number().int().min(0, "min0").max(100, "tooMany").optional(),
+});
+
+export const sessionVenuesInputSchema = z.object({
+  sessionId: z.string().trim().min(1).max(200).regex(/^[A-Za-z0-9_-]+$/),
+  venues: z.array(sessionVenueInputSchema).max(5, "tooMany"),
+  /** Appliquer ces lieux aux prochaines dates du rendez-vous qui n'en ont pas encore. */
+  applyToFuture: z.boolean().default(false),
+  /** En faire le lieu habituel du rendez-vous (pré-rempli sur les nouvelles dates). */
+  makeDefault: z.boolean().default(false),
+});
+
+export const sessionVenueActionSchema = z.object({
+  sessionId: sessionVenuesInputSchema.shape.sessionId,
+  index: z.number().int().min(0).max(4),
+  action: z.enum(["rate", "default"]),
+  rating: z.enum(["good", "bad"]).optional(),
+});
+
+/**
+ * Plusieurs lieux pour une date : chaque table (groupe, dans l'ordre Table 1, Table 2…) reçoit un lieu. Les lieux se
+ * remplissent dans l'ordre selon leurs tables disponibles ; sans capacité indiquée, les tables sont réparties à parts
+ * égales. Renvoie l'indice du lieu de chaque table.
+ */
+export function assignGroupsToVenues(groupCount: number, venues: { tables?: number | null }[]): number[] {
+  if (venues.length <= 1) return Array.from({ length: groupCount }, () => 0);
+  const caps = venues.map((v) => (v.tables && v.tables > 0 ? v.tables : 0));
+  if (caps.every((c) => c === 0)) {
+    const per = Math.ceil(groupCount / venues.length);
+    return Array.from({ length: groupCount }, (_, i) => Math.min(venues.length - 1, Math.floor(i / per)));
+  }
+  const out: number[] = [];
+  const used = caps.map(() => 0);
+  for (let g = 0; g < groupCount; g++) {
+    let i = caps.findIndex((c, k) => c > 0 && used[k]! < c);
+    // Plus de place annoncée : lieux sans capacité indiquée d'abord, sinon le dernier lieu.
+    if (i === -1) i = caps.findIndex((c) => c === 0);
+    if (i === -1) i = venues.length - 1;
+    used[i]!++;
+    out.push(i);
+  }
+  return out;
+}
+
+/** « Table 2 » avant « Table 10 ». */
+export const byTableLabel = (a: string, b: string) => a.localeCompare(b, "fr", { numeric: true });

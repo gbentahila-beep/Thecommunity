@@ -1,5 +1,5 @@
 import "server-only";
-import type { CancellationPolicy, Category, City, Experience, Session } from "@thecommunity/shared";
+import type { CancellationPolicy, Category, City, Experience, Session, SessionVenue } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase/admin";
 import type { AdminGroup, AdminPayment, AdminReservation, AdminUser, Partner, PromoCode } from "./demo-admin";
@@ -58,6 +58,7 @@ export async function fsAdminData(now: Date) {
   ]);
 
   const economics: Record<string, Economics> = {};
+  const sessionVenues: Record<string, SessionVenue[]> = {};
   /** Lieu réel des expériences à lieu secret (docs/22) : rangé à part, remis dans la fiche pour l'équipe. */
   const hiddenVenues: Record<string, { name?: string; address?: string; geo?: { lat: number; lng: number } | null; district?: string; partnerName?: string; cuisine?: string }> = {};
   const finance: Record<string, { gross: number; cost: number; margin: number }> = {};
@@ -69,6 +70,8 @@ export async function fsAdminData(now: Date) {
       economics[parent.id] = { partnerId: e.partnerId ?? undefined, model: e.model, costPerSeat: e.costPerSeat ?? undefined, commissionPercent: e.commissionPercent ?? undefined, onSiteCommissionPercent: e.onSiteCommissionPercent ?? undefined };
     }
     if (parent.parent.id === "experiences" && d.id === "venue") hiddenVenues[parent.id] = d.data();
+    // docs/22, décision 15 : lieux renseignés pour une date (un ou plusieurs).
+    if (parent.parent.id === "sessions" && d.id === "venues") sessionVenues[parent.id] = (d.data().venues ?? []) as SessionVenue[];
     if (parent.parent.id === "reservations" && d.id === "finance") {
       const f = d.data();
       finance[parent.id] = { gross: f.gross ?? 0, cost: f.cost ?? 0, margin: f.margin ?? 0 };
@@ -111,6 +114,7 @@ export async function fsAdminData(now: Date) {
       ...(r.physicalTerms?.version ? { physicalTermsVersion: String(r.physicalTerms.version) } : {}),
       ...(r.cancellationPolicy?.rules?.length ? { cancellationPolicy: plain<CancellationPolicy>(r.cancellationPolicy) } : {}),
       ...(r.refundedAmount ? { refundedAmount: Number(r.refundedAmount) } : {}),
+      ...(r.arrivedAt ? { arrivedAt: iso(r.arrivedAt) } : {}),
     };
   });
   const payments: AdminPayment[] = paySnap.docs.map((d) => {
@@ -159,7 +163,7 @@ export async function fsAdminData(now: Date) {
   }
   const cities = citiesSnap.docs.map((d) => plain<City>({ id: d.id, ...d.data() }));
   const categories = catSnap.docs.map((d) => plain<Category>({ id: d.id, ...d.data() }));
-  return { sessions, recentSessions, experiences, economics, reservations, payments, users, partners, promos, groups, waitlists, cities, categories };
+  return { sessions, recentSessions, experiences, economics, sessionVenues, reservations, payments, users, partners, promos, groups, waitlists, cities, categories };
 }
 
 /** Demandes d'export / suppression (loi 09-08), les plus récentes d'abord. */

@@ -1278,6 +1278,68 @@ describe("composition des tables (6)", () => {
     expect(sessionPlanSchema.safeParse({ firstDate: "2027-01-10", time: "19:30", weeks: 1, capacity: 51 }).success).toBe(false);
     expect(sessionPlanSchema.safeParse({ firstDate: "2027-01-10", time: "19:30", weeks: 1, capacity: 50 }).success).toBe(true);
   });
+
+  it("plusieurs restaurants pour une date : chaque table reçoit le sien, et un changement après révélation prévient les personnes (Étape G)", async () => {
+    const { sid, people } = await dinnerSession(8);
+    const adm = await member({ role: "admin" });
+    const venues = [{ name: "Maison A", address: "1 rue Alpha, Casablanca", tables: 1 }, { name: "Maison B", address: "2 rue Beta, Casablanca", tables: 1 }];
+    expect(await refusal(people[0]!.call("adminSetSessionVenues", { sessionId: sid, venues }))).toBe("permission-denied:");
+    expect(await adm.call("adminSetSessionVenues", { sessionId: sid, venues })).toMatchObject({ ok: true, applied: 0, updated: 0 });
+    const all = people.map((p) => p.uid);
+    await adm.call("adminSaveGroups", { sessionId: sid, groups: [{ label: "Table 1", memberIds: all.slice(0, 4) }, { label: "Table 2", memberIds: all.slice(4) }] });
+    await adm.call("adminRevealGroups", { sessionId: sid });
+    const venueOf = async (uid: string) => (await db().collection("reservations").where("sessionId", "==", sid).where("userId", "==", uid).get()).docs[0]!.data().venue;
+    expect(await venueOf(all[0]!)).toMatchObject({ name: "Maison A", address: "1 rue Alpha, Casablanca" });
+    expect(await venueOf(all[5]!)).toMatchObject({ name: "Maison B" });
+    // Après révélation : la table 2 change de restaurant, seules ses 4 personnes sont prévenues.
+    const res = await adm.call("adminSetSessionVenues", { sessionId: sid, venues: [venues[0], { name: "Maison C", address: "3 rue Gamma, Casablanca", tables: 1 }] });
+    expect(res).toMatchObject({ updated: 4 });
+    expect(await venueOf(all[5]!)).toMatchObject({ name: "Maison C" });
+    expect(await venueOf(all[0]!)).toMatchObject({ name: "Maison A" });
+    // Noter un lieu, puis en faire le lieu habituel du rendez-vous.
+    await adm.call("adminSessionVenueAction", { sessionId: sid, index: 1, action: "rate", rating: "good" });
+    expect((await db().doc(`sessions/${sid}/private/venues`).get()).data()!.venues[1]).toMatchObject({ name: "Maison C", rating: "good" });
+    expect(await refusal(adm.call("adminSessionVenueAction", { sessionId: sid, index: 4, action: "default" }))).toBe("failed-precondition:venue_missing");
+    await adm.call("adminSessionVenueAction", { sessionId: sid, index: 1, action: "default" });
+    const expId = (await session(sid)).experienceId as string;
+    expect((await db().doc(`experiences/${expId}/private/venue`).get()).data()).toMatchObject({ name: "Maison C", address: "3 rue Gamma, Casablanca" });
+    // Le lieu ne fuit jamais dans la fiche publique.
+    expect((await db().doc(`experiences/${expId}`).get()).data()!.venue).toMatchObject({ name: "", address: "" });
+  });
+
+  it("appliquer aux prochaines dates sans lieu et en faire le lieu habituel", async () => {
+    const { sid } = await dinnerSession(0);
+    const s = await session(sid);
+    const expId = s.experienceId as string;
+    const later = db().collection("sessions").doc();
+    const filled = db().collection("sessions").doc();
+    for (const [ref, days] of [[later, 7], [filled, 14]] as const) {
+      await ref.set({ ...s, startAt: Timestamp.fromMillis((s.startAt as Timestamp).toMillis() + days * 86_400_000), seatsConfirmed: 0 });
+    }
+    await db().doc(`sessions/${filled.id}/private/venues`).set({ venues: [{ name: "Déjà choisi", address: "9 rue Déjà, Casablanca", geo: null, tables: null, rating: null, partnerId: null }] });
+    const adm = await member({ role: "admin" });
+    const r = await adm.call("adminSetSessionVenues", { sessionId: sid, venues: [{ name: "Maison D", address: "4 rue Delta, Casablanca" }], applyToFuture: true, makeDefault: true });
+    expect(r).toMatchObject({ applied: 1 });
+    expect((await db().doc(`sessions/${later.id}/private/venues`).get()).data()!.venues[0]).toMatchObject({ name: "Maison D" });
+    expect((await db().doc(`sessions/${filled.id}/private/venues`).get()).data()!.venues[0]).toMatchObject({ name: "Déjà choisi" });
+    expect((await db().doc(`experiences/${expId}/private/venue`).get()).data()).toMatchObject({ name: "Maison D" });
+    expect(await refusal(adm.call("adminSetSessionVenues", { sessionId: sid, venues: [{ partnerId: "inconnu", name: "Maison E", address: "5 rue Epsilon" }] }))).toBe("invalid-argument:");
+  });
+
+  it("ajouter des dates à un rendez-vous existant (Étape G)", async () => {
+    const sid = await makeSession();
+    const expId = (await session(sid)).experienceId as string;
+    await db().doc(`experiences/${expId}`).update({ cityId: "casablanca", categoryId: "eat", price: { amount: 3500, currency: "MAD" }, durationMinutes: 120 });
+    const adm = await member({ role: "admin" });
+    const u = await member();
+    const d = new Date(Date.now() + 10 * 86_400_000).toISOString().slice(0, 10);
+    expect(await refusal(u.call("adminAddSessions", { experienceId: expId, sessions: { firstDate: d, time: "19:30", weeks: 1, capacity: 12 } }))).toBe("permission-denied:");
+    expect(await refusal(adm.call("adminAddSessions", { experienceId: expId, sessions: { firstDate: "2020-01-01", time: "19:30", weeks: 1, capacity: 12 } }))).toBe("invalid-argument:");
+    expect(await adm.call("adminAddSessions", { experienceId: expId, sessions: { firstDate: d, time: "19:30", weeks: 3, capacity: 12 } })).toEqual({ created: 3 });
+    const added = (await db().collection("sessions").where("experienceId", "==", expId).get()).docs.map((x) => x.data()).filter((x) => x.capacity === 12 && x.groupsStatus === "none");
+    expect(added).toHaveLength(3);
+    expect(added[0]).toMatchObject({ price: { amount: 3500 }, status: "published", seatsConfirmed: 0 });
+  });
 });
 
 describe("rappels et changements (7)", () => {

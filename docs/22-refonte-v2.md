@@ -395,7 +395,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | **D — Modèles** ✅ | Règles de rédaction : pas de « Pas inclus » (l'encadré « Ce que vous payez » le dit), jamais la révélation du lieu dans les textes, pas de durée ni de « première fois » ni de « sans pression » pour les Tables (sans limite de temps, et certains viendront souvent). Pas de moment ajouté autour de l'activité qui n'est pas prévu (ex. pas de « thé pour faire connaissance » après le yoga). Par petits lots : D1 Café et Dîner (avec les 3 gammes, **validés**) → D2 Brunch, Déjeuner (**validés**) → D3 Running, Padel, Yoga (**validés**) → D4 Escape game, Soirée jeux, Quiz (**validés**) → D5 Céramique, Afterwork, Visite guidée, Échange de langues (**validés**) → puis les modèles de phase 2 | Chaque lot (les premiers en détail, ensuite plus vite) |
 | **E — Prix unique et univers** ✅ | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; **les 4 univers** (Tables, formats et gammes compris) | Faite (journal § 19) |
 | **F — Modèles dans l'appli** ✅ | Choix univers → format → gamme ; formulaire pré-rempli aux champs strictement nécessaires (§ 7) ; places 1 ou 2 ; accès ; réservé aux femmes ; alcool ; conditions d'annulation ; *Paramètres → Modèles* ; « Enregistrer comme modèle » | Faite (journal § 19) |
-| **G — Rendez-vous et lieux** | Rendez-vous récurrents, lieu par date (plus tard possible), plusieurs lieux, lieu habituel, fiches des lieux partenaires, « Aujourd'hui » | Démonstration |
+| **G — Rendez-vous et lieux** ✅ | Rendez-vous récurrents, lieu par date (plus tard possible), plusieurs lieux, lieu habituel, fiches des lieux partenaires, « Aujourd'hui » | Faite (journal § 19) |
 | **H — Parcours Tables** | Écran de réservation, fermeture 12 h avant, minimum (choix), déplacer sa réservation, révélation 5 h avant avec résumé de table sans noms, tables 1 h avant (table de 7 à valider), message au lieu, check-in, messages après la rencontre, liste d'attente avec questionnaire | Démonstration |
 | **I — Carnet et Pass** | Offres, crédits, accès abonnés, garde-fous, migration des abonnés | Démonstration |
 | **J — Organisateurs et rôles** | Encaissement sur place, formulaire court, pointage, Statistiques ; suppression des reversements, commissions, propositions et membres de confiance | Démonstration |
@@ -458,4 +458,19 @@ Aucune pour l'instant.
 **Tests** : unitaires 159 ; émulateurs 174 réussis (nouveaux : modèles réservés à l'équipe, accès anticipé par événement, lieu secret jamais révélé vide) ; mêmes 9 échecs d'environnement. Les 9 suites de bout en bout de démonstration passent (parcours univers → modèle → gamme ajouté).
 
 **Correction** : le lancement compte **14 modèles**, pas 15 (le retrait du couscous avait été mal compté).
+
+### Étape G livrée (22 novembre)
+| Changement | Ce qui change |
+|---|---|
+| **Fiche des lieux partenaires** | Nouveau bloc **« Accueil des Tables »** : nombre de tables, places par table, jours d'accueil, WhatsApp du responsable, avantage offert aux membres. Sert à choisir le lieu d'une date et à répartir les tables. |
+| **Lieu par date** (page d'une date à lieu secret) | Carte **« Lieu de cette date »** : à renseigner au plus tard 5 h avant (l'heure limite et le nombre d'inscrits sont affichés). Choisir un lieu partenaire (pré-remplit nom et adresse) ou saisie libre. **Jusqu'à 5 restaurants** pour une même date, avec leurs tables disponibles : à la révélation, Table 1, Table 2… remplissent les lieux dans l'ordre (sans tables indiquées, répartition à parts égales). Cases **« Appliquer aux prochaines dates sans lieu »** et **« En faire le lieu habituel »**. |
+| **Lieu habituel** | Sans lieu renseigné pour la date, c'est le lieu habituel du rendez-vous qui est révélé ; sans lieu du tout, la révélation est refusée. |
+| **Changement après révélation** | Si le lieu d'une table change (ou si une personne change de table), seules les personnes concernées reçoivent le nouveau lieu (notification et e-mail). |
+| **Après la date** | Noter chaque lieu (« bien » / « à revoir ») ou en faire le lieu habituel en un clic. Tout est journalisé. |
+| **Ajouter des dates** (fiche d'un rendez-vous) | Date, heure, « chaque semaine pendant » (1 à 12 semaines), places : les dates sont créées en quelques secondes, avec le prix, le format et le lieu habituel du rendez-vous ; les personnes qui avaient demandé à être prévenues le sont. |
+| **Aujourd'hui** (`/admin/aujourdhui`, en tête du menu) | Les dates des 7 prochains jours et ce qu'il reste à faire : **lieu à renseigner** (rouge à moins de 24 h de la limite), lieu habituel utilisé, **minimum non atteint** (la veille), tables à composer / à valider / à révéler / révélées, check-in en cours (arrivés / inscrits) dans les 3 h avant. Chaque ligne ouvre la page de la date. |
+
+**Tests** : unitaires 159 ; émulateurs 177 réussis (nouveaux : plusieurs restaurants pour une date et changement après révélation, application aux prochaines dates et lieu habituel, ajout de dates) ; mêmes 9 échecs d'environnement. Les 9 suites de bout en bout de démonstration passent (Aujourd'hui, lieu d'une date, ajout de dates, accueil des Tables ajoutés).
+
+**À faire en ligne** : compléter le bloc « Accueil des Tables » des restaurants partenaires (tables, places, jours, WhatsApp).
 

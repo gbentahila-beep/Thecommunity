@@ -111,10 +111,16 @@ export type Partner = {
   applicationId?: string;
   /** 18c : assurance responsabilité civile du lieu, vue par l'équipe. */
   insurance?: { verified: boolean; insurer?: string; policyNumber?: string; expiresOn?: string };
+  /** docs/22 : accueil des Tables (capacité, jours, contact, avantage abonnés). */
+  tables?: number;
+  seatsPerTable?: number;
+  days?: string;
+  whatsapp?: string;
+  memberPerk?: string;
 };
 
 export const DEMO_PARTNERS: Partner[] = [
-  { id: "p-resto-gauthier", name: "Restaurant partenaire Gauthier", type: "restaurant", district: "Gauthier", contactName: "M. Kabbaj", contactEmail: "resto@example.com", defaultCommissionPercent: 0, status: "active" },
+  { id: "p-resto-gauthier", name: "Restaurant partenaire Gauthier", type: "restaurant", district: "Gauthier", contactName: "M. Kabbaj", contactEmail: "resto@example.com", defaultCommissionPercent: 0, status: "active", address: "12 rue de Gauthier, Casablanca", tables: 4, seatsPerTable: 6, days: "Mardi au jeudi", whatsapp: "+212 600 000 001", memberPerk: "–10 % sur l'addition pour les abonnés" },
   { id: "p-studio-anfa", name: "Studio partenaire Anfa", type: "studio", district: "Anfa", contactName: "Mme Alami", contactEmail: "studio@example.com", defaultCommissionPercent: 20, status: "active" },
   { id: "p-escape-maarif", name: "Escape room partenaire", type: "venue", district: "Maarif", contactName: "M. Senhaji", contactEmail: "escape@example.com", defaultCommissionPercent: 15, status: "active" },
   { id: "p-atelier-cil", name: "Atelier céramique partenaire", type: "workshop", district: "CIL", contactName: "Mme Tahiri", contactEmail: "atelier@example.com", defaultCommissionPercent: 18, status: "active" },
@@ -177,6 +183,8 @@ export type AdminReservation = {
   /** Étape 22 : politique d'annulation copiée à la réservation, et déjà remboursé (centimes). */
   cancellationPolicy?: CancellationPolicy;
   refundedAmount?: number;
+  /** Check-in dans l'appli (« Je suis arrivé·e »). */
+  arrivedAt?: string;
 };
 
 export type AdminOnSite = {

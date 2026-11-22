@@ -9,6 +9,7 @@ import { dateTimeFor } from "../invoices/format";
 import { sendMail } from "../mail/mailer";
 import { groupRevealedMail } from "../mail/templates";
 import { refuse } from "../reservations/refuse";
+import { refreshRevealed, sessionVenues, venueByGroup } from "../experiences/venues";
 
 const TEAM = ["admin", "superadmin"] as const;
 const idSchema = z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/);
@@ -173,6 +174,9 @@ export const adminSaveGroups = onCall({ region: REGION }, async (req) => {
       }
     });
     await batch.commit();
+    // Plusieurs lieux : une personne qui change de table peut changer de restaurant (docs/22, décision 15).
+    const e = (await db.doc(`experiences/${s.experienceId}`).get()).data() ?? {};
+    if (e.venue?.revealPolicy === "on_group_reveal") await refreshRevealed(sessRef.id, s.experienceId, e);
   }
   await sessRef.update({ groupsStatus: revealed ? "revealed" : "validated", groupsNeedReview: false, updatedAt: FieldValue.serverTimestamp() });
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "groups.save", targetType: "session", targetId: sessRef.id, after: { groups: groups.map((g) => ({ label: g.label, size: g.memberIds.length })) } });
@@ -193,20 +197,21 @@ export const adminRevealGroups = onCall({ region: REGION, timeoutSeconds: 120 },
   const groupOf = new Map<string, { id: string; label: string }>();
   groups.docs.forEach((g) => (g.data().memberIds as string[]).forEach((uid) => groupOf.set(uid, { id: g.id, label: g.data().label })));
   if (participants.some((p) => !groupOf.has(p.uid))) refuse("unassigned", "Des participants confirmés ne sont pas placés.");
-  // Lieu secret : le lieu réel est dans le document privé (docs/22) ; anciens documents : dans la fiche.
-  const hidden = e.venue?.revealPolicy === "on_group_reveal" ? (await db.doc(`experiences/${s.experienceId}/private/venue`).get()).data() : undefined;
-  const venue = e.venue?.revealPolicy === "on_group_reveal" ? { name: String(hidden?.name ?? e.venue.name ?? ""), address: String(hidden?.address ?? e.venue.address ?? ""), ...(hidden?.cuisine || e.cuisine ? { cuisine: String(hidden?.cuisine || e.cuisine) } : {}) } : null;
-  // docs/22, décision 15 : un lieu secret peut être choisi tard, mais jamais révélé vide.
-  if (venue && (!venue.name || !venue.address)) refuse("venue_missing", "Renseignez le lieu avant de le révéler.");
+  // Lieu secret (docs/22, décision 15) : lieux de la date (un ou plusieurs), sinon lieu habituel ; jamais révélé vide.
+  const secret = e.venue?.revealPolicy === "on_group_reveal";
+  const found = secret ? await sessionVenues(sessRef.id, s.experienceId, e) : null;
+  if (found && (found.venues.length === 0 || found.venues.some((v) => !v.name || !v.address))) refuse("venue_missing", "Renseignez le lieu avant de le révéler.");
+  const venueOf = found ? venueByGroup(groups.docs.map((g) => ({ id: g.id, label: String(g.data().label ?? "") })), found.venues, found.cuisine) : null;
   const batch = db.batch();
   groups.docs.forEach((g) => batch.update(g.ref, { status: "revealed", revealedAt: FieldValue.serverTimestamp() }));
   for (const p of participants) {
     const g = groupOf.get(p.uid)!;
+    const venue = venueOf?.get(g.id);
     batch.update(db.doc(`reservations/${p.reservationId}`), { groupId: g.id, ...(venue ? { venue } : {}), updatedAt: FieldValue.serverTimestamp() });
     batch.set(db.collection(`users/${p.uid}/notifications`).doc(), {
       type: "group_revealed",
       title: { fr: "Votre table est prête", ar: "مائدتك جاهزة", en: "Your table is ready" },
-      body: { fr: `${g.label} : découvrez votre groupe${venue ? " et le lieu" : ""}.`, ar: `${g.label}: اكتشف مجموعتك.`, en: `${g.label}: meet your group${venue ? " and see the venue" : ""}.` },
+      body: { fr: `${g.label} : découvrez votre groupe${secret ? " et le lieu" : ""}.`, ar: `${g.label}: اكتشف مجموعتك.`, en: `${g.label}: meet your group${secret ? " and see the venue" : ""}.` },
       link: `/espace/reservations/${p.reservationId}`,
       createdAt: FieldValue.serverTimestamp(),
     });
@@ -218,6 +223,7 @@ export const adminRevealGroups = onCall({ region: REGION, timeoutSeconds: 120 },
     participants.map((p) => {
       const locale = String(p.user.locale ?? "fr");
       const title = s.experienceSnapshot?.title?.[locale] ?? s.experienceSnapshot?.title?.fr ?? e.title?.fr ?? "";
+      const venue = venueOf?.get(groupOf.get(p.uid)!.id);
       const mail = groupRevealedMail({ locale, firstName: String(p.user.firstName ?? ""), title, when: dateTimeFor(startAt, locale), table: groupOf.get(p.uid)!.label, venue: venue ? `${venue.name}, ${venue.address}` : null, reservationId: p.reservationId });
       return p.user.email ? sendMail({ to: p.user.email, locale, ...mail, kind: "group_revealed", refs: { reservationId: p.reservationId, sessionId: sessRef.id } }) : null;
     }),

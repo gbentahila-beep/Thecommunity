@@ -49,3 +49,5 @@ export { adminSaveCity, adminSaveCategory } from "./catalog/places";
 export { previewPricing, updateReservationPreferences, adminSavePromo, adminSaveBookingSettings, adminSaveWenzyPrice, adminSaveTemplate, adminDeleteTemplate } from "./pricing/pricing";
 export { adminProposeGroups, adminSaveGroups, adminRevealGroups } from "./groups/groups";
 export { sendReminders } from "./notify/reminders";
+export { adminSetSessionVenues, adminSessionVenueAction } from "./experiences/venues";
+export { adminAddSessions } from "./experiences/add-sessions";

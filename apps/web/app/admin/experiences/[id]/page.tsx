@@ -1,6 +1,7 @@
 import { PAYMENT_MODELS } from "@thecommunity/shared";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AddSessionsForm } from "@/components/admin/add-sessions-form";
 import { ExperienceActions } from "@/components/admin/experience-actions";
 import { ExperienceForm } from "@/components/admin/experience-form";
 import { ExperienceReview } from "@/components/admin/organizer-actions";
@@ -21,6 +22,15 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
   const sessions = d.sessions.filter((s) => s.experienceId === e.id);
   const me = d.isDemo ? null : await requireAdmin();
   const archived = e.status === "archived";
+  // docs/22, décision 24 : nouvelle date une semaine après la dernière, même heure et mêmes places.
+  const last = [...sessions].sort((a, b) => a.startAt.localeCompare(b.startAt)).at(-1);
+  const lastStart = last ? new Date(last.startAt) : null;
+  const nextDate = new Date(Math.max(d.now.getTime() + 86_400_000, (lastStart?.getTime() ?? 0) + 7 * 86_400_000));
+  const addDefaults = {
+    firstDate: nextDate.toISOString().slice(0, 10),
+    time: lastStart ? new Intl.DateTimeFormat("fr-FR", { timeZone: "Africa/Casablanca", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(lastStart) : "19:30",
+    capacity: String(last?.capacity ?? 12),
+  };
   const bookedSeats = sessions.filter((s) => new Date(s.startAt).getTime() > d.now.getTime()).reduce((n, s) => n + s.seatsConfirmed, 0);
   return (
     <div className="max-w-3xl">
@@ -43,6 +53,11 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
       <Card title="Archiver ou supprimer" className="mb-5">
         <ExperienceActions id={e.id} status={e.status} canDelete={me?.role === "superadmin"} live={!d.isDemo} />
       </Card>
+      {!archived && (
+        <Card title="Ajouter des dates" className="mb-5">
+          <AddSessionsForm experienceId={e.id} defaults={addDefaults} live={!d.isDemo} />
+        </Card>
+      )}
       <Card title="Dates programmées" className="mb-5">
         <ul className="divide-y divide-line text-sm">
           {sessions.map((s) => (

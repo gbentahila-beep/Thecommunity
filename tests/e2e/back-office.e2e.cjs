@@ -43,6 +43,21 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await go('/admin/modeles');
   assert(await page.getByTestId('template-list').locator('li').count() === 14, 'Paramètres → Modèles : les 14 modèles du lancement');
 
+  // Étape G : Aujourd'hui, lieux par date, ajout de dates, accueil des Tables chez le partenaire
+  await go('/admin/aujourdhui');
+  assert(await page.getByTestId('today-list').locator(':scope > li').count() > 0, "Aujourd'hui : les dates des 7 prochains jours");
+  const habitual = page.getByTestId('today-list').locator(':scope > li', { hasText: 'Lieu habituel' }).first();
+  assert(await habitual.isVisible(), "Aujourd'hui : lieu habituel signalé pour une Table à lieu secret");
+  await habitual.getByRole('link').first().click();
+  await page.waitForURL('**/admin/sessions/**');
+  assert(await page.getByTestId('session-venues').isVisible(), 'date à lieu secret : carte « Lieux de cette date »');
+  await go('/admin/experiences');
+  await page.locator('a[href^="/admin/experiences/"]:not([href$="nouvelle"])').first().click();
+  await page.waitForURL(/\/admin\/experiences\/[^/]+$/);
+  assert(await page.getByTestId('add-sessions').isVisible(), 'fiche rendez-vous : ajouter des dates');
+  await go('/admin/partenaires/nouveau');
+  assert(await page.getByTestId('partner-hosting').isVisible(), 'fiche partenaire : accueil des Tables (tables, places, jours, WhatsApp)');
+
   // Formulaire : validation
   await go('/admin/experiences/nouvelle?modele=vide');
   await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();

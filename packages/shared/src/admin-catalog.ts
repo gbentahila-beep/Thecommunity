@@ -34,6 +34,12 @@ export const partnerInputSchema = z
     notes: z.string().trim().max(2000, "tooLong"),
     /** 18c : assurance responsabilité civile du lieu (vue par l'équipe), utile pour les activités physiques. */
     insurance: partnerInsuranceSchema.optional(),
+    /* docs/22 § 13 : accueil des Tables (fiche lieu) — capacité, jours, contact, avantage pour les abonnés. */
+    tables: z.coerce.number().int().min(0, "min0").max(100, "tooMany").default(0),
+    seatsPerTable: z.coerce.number().int().min(0, "min0").max(20, "tooMany").default(0),
+    days: z.string().trim().max(120, "tooLong").default(""),
+    whatsapp: z.string().trim().max(30, "tooLong").regex(/^[0-9 +().-]*$/, "phone").default(""),
+    memberPerk: z.string().trim().max(120, "tooLong").default(""),
   })
   .refine((v) => v.model !== "commission" || v.defaultCommissionPercent > 0, { path: ["defaultCommissionPercent"], message: "required" });
 export type PartnerInput = z.infer<typeof partnerInputSchema>;

@@ -1,7 +1,8 @@
-import { ageBand, ageOn, pricingOf, refundAmountFor, seatsAvailable } from "@thecommunity/shared";
+import { ageBand, ageOn, pricingOf, refundAmountFor, seatsAvailable, VENUE_REVEAL_HOURS } from "@thecommunity/shared";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CsvExportButton } from "@/components/admin/csv-export";
+import { SessionVenuesForm } from "@/components/admin/session-venues-form";
 import { CancelSessionButton, ReservationAdminActions } from "@/components/admin/reservation-admin-actions";
 import { DIET_LABELS, LANGUAGE_LABELS, MODE_LABELS, RESERVATION_STATUS } from "@/components/admin/labels";
 import { adminDate, Badge, Card, dh, PageHeader, StatTile, Table } from "@/components/admin/ui";
@@ -29,6 +30,10 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
   const confirmed = rows.filter((x) => x.r.status === "confirmed");
   const waitlist = (d.waitlists[s.id] ?? []).map((uid) => d.usersById.get(uid)!);
   const grouped = e.bookingMode === "social_dinner" || e.bookingMode === "group";
+  // docs/22, décision 15 : lieu secret → lieu(x) renseigné(s) date par date, au plus tard 5 h avant.
+  const secret = e.venue.revealPolicy === "on_group_reveal";
+  const venues = d.sessionVenues[s.id] ?? [];
+  const revealAt = new Date(start.getTime() - VENUE_REVEAL_HOURS * 3_600_000);
   const twoPart = pricingOf(e).model !== "online_only" || rows.some((x) => x.r.onSite);
   const onSiteRows = rows.filter((x) => x.r.onSite && (x.r.status === "confirmed" || x.r.status === "attended"));
   const onSiteExpected = onSiteRows.reduce((a, x) => a + (x.r.onSite?.amount ?? 0), 0);
@@ -48,7 +53,7 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
       <p className="mb-2 text-sm"><Link href="/admin/sessions" className="text-brand-900">← Sessions</Link></p>
       <PageHeader
         title={e.title.fr}
-        subtitle={`${adminDate(s.startAt)} · ${e.district} · ${MODE_LABELS[e.bookingMode]}`}
+        subtitle={[adminDate(s.startAt), e.district, MODE_LABELS[e.bookingMode]].filter(Boolean).join(" · ")}
         actions={
           <>
             <CsvExportButton filename={`participants-${s.id}.csv`} rows={csv} log={d.isDemo ? undefined : { kind: "participants", targetId: s.id }} />
@@ -80,6 +85,21 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
           Part partenaire, réglée sur place (jamais encaissée par nous) :{" "}
           {onSiteRows.some((x) => x.r.onSite?.amount == null) ? "consommation libre" : <strong>{dh(onSiteExpected)} attendus</strong>} · {onSitePaid.length} / {onSiteRows.length} réglée{onSitePaid.length > 1 ? "s" : ""}.
         </p>
+      )}
+      {secret && (
+        <Card title={`Lieu de cette date${venues.length > 1 ? "s" : ""}`} className="mt-6">
+          <p className="mb-3 text-sm text-muted" data-testid="venue-deadline">
+            {venues.length ? `Révélé aux participants le ${adminDate(revealAt.toISOString())} (5 h avant).` : `À renseigner au plus tard le ${adminDate(revealAt.toISOString())} (5 h avant), quand vous connaissez le nombre d'inscrits (${s.seatsConfirmed}).`}
+          </p>
+          <SessionVenuesForm
+            sessionId={s.id}
+            initial={venues}
+            defaultVenue={e.venue.name ? { name: e.venue.name, address: e.venue.address } : null}
+            partners={d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, name: p.name, address: p.address ?? "", tables: p.tables ?? 0 }))}
+            live={!d.isDemo}
+            past={d.now.getTime() > start.getTime()}
+          />
+        </Card>
       )}
       <Card title={`Participants (${rows.length} réservations)`} className="mt-6">
         <Table head={["Participant", "Contact", "Âge", "Langues", "Accueil", "Places", twoPart ? "En ligne" : "Montant", ...(twoPart ? ["Sur place"] : []), "Statut", ...(d.isDemo ? [] : ["Actions"])]} caption="Participants">

@@ -138,6 +138,15 @@ export function PartnerForm({ id, initial, cities, live }: { id?: string; initia
           {err("insurance")}
         </div>
       </fieldset>
+      <fieldset className="grid gap-4 rounded-xl border border-line p-4 sm:grid-cols-2" data-testid="partner-hosting">
+        <legend className="px-1 text-sm font-semibold">Accueil des Tables</legend>
+        <p className="text-xs text-muted sm:col-span-2">Sert à choisir le lieu d&apos;une date selon le nombre d&apos;inscrits, et au message envoyé au lieu 1 h avant.</p>
+        {field("tables", "Nombre de tables disponibles", { inputMode: "numeric" })}
+        {field("seatsPerTable", "Places par table", { inputMode: "numeric" })}
+        {field("days", "Jours possibles", { placeholder: "Ex. mardi au jeudi" })}
+        {field("whatsapp", "WhatsApp du lieu", { inputMode: "tel" })}
+        <div className="sm:col-span-2">{field("memberPerk", "Avantage pour les abonnés (facultatif)", { placeholder: "Ex. –10 % sur l'addition" })}</div>
+      </fieldset>
       <div>
         <label htmlFor="pf-notes" className="mb-1 block text-sm font-medium">Notes internes</label>
         <textarea id="pf-notes" rows={4} className={input} value={v.notes} disabled={!live} onChange={(e) => set("notes", e.target.value)} />
