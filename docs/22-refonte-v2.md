@@ -390,7 +390,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | Étape | Contenu | Validation |
 |---|---|---|
 | **A — Corrections** ✅ | Lieu secret protégé (écran et base), billet seulement avec hôtesse, questionnaire avant le paiement, phrase « Le lieu et l'adresse vous sont révélés 5 h avant », infos pratiques sans répétition | Faite |
-| **B — Questionnaires** | Un par un, **seulement les questions que le profil ne pose pas** : Running (validé), Padel (validé), Jeu en équipe (validé), Atelier, Niveau, **Langues** (nouveau) ; Tables : aucun (le profil suffit) | Chaque questionnaire |
+| **B — Questionnaires** | Un par un, **seulement les questions que le profil ne pose pas** : Running (validé), Padel (validé), Jeu en équipe (validé), Atelier (validé), Niveau, **Langues** (nouveau) ; Tables : aucun (le profil suffit) | Chaque questionnaire |
 | **C — Photos** | Une par une : 12 reçues, à attribuer et valider ; celles qui manquent (docs/23 § 7) | Chaque photo |
 | **D — Modèles** | Par petits lots : D1 Café et Dîner (avec les 3 gammes) → D2 Brunch, Déjeuner → D3 Running, Padel, Yoga → D4 Escape game, Soirée jeux, Quiz → D5 Céramique, Afterwork, Visite guidée, Échange de langues → puis les modèles de phase 2 | Chaque lot (les premiers en détail, ensuite plus vite) |
 | **E — Prix unique et univers** | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; **les 4 univers** (Tables, formats et gammes compris) | Démonstration à l'écran |
