@@ -144,23 +144,28 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 - **Infos pratiques** : aucune · **Questionnaire** : aucun · **Image** : `cafe.webp`
 - **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non par défaut, à cocher selon le lieu · français et darija · annulation gratuite jusqu'à 48 h avant (frais remboursés jusqu'à 48 h avant)
 
-**T2 · Brunch** — Tables › Brunch · **L**
+**T2 · Brunch** — Tables › Brunch · **L** · **VALIDÉ**
 - **Titre** : Brunch · **Google** : Brunch entre inconnus à Casablanca
-- **Accroche** : Le week-end commence mieux à plusieurs : un brunch avec des gens que vous ne connaissez pas encore.
-- **Description** : Une table de quatre à six personnes composée d'après vos réponses, un restaurant partenaire révélé le jour même, et un menu brunch à prix fixe réglé sur place. Venez seul·e ou à deux : tout le monde est là pour rencontrer du monde.
-- **Quand** : samedi ou dimanche 11h30 · **Lieu** : secret, gamme Casual
-- **Sur place** : menu brunch fixe, ≈ 120–180 DH (fixé avec le restaurant)
-- **Inclus** : le menu brunch (réglé sur place) · **Pas inclus** : boissons en dehors du menu
-- **Questionnaire** : Tables · **Image** : ✗ à créer
+- **Accroche** : Un brunch partagé avec des gens que vous ne connaissez pas encore.
+- **Description** : Le week-end commence autour d'une table : quatre à six personnes composées pour vous, un brunch dans un restaurant choisi par notre équipe, et tout le temps de faire connaissance.
+- **Quand** : samedi 11h30 (heure de début seulement) · **Format** : tables de 4 à 6, nombre de tables libre
+- **Lieu** : secret ; restaurant choisi maintenant ou plus tard ; cuisine affichée seulement à la révélation
+- **Gammes** : Casual ≈ 100–150 DH, lumineuse et décontractée · Premium ≈ 150–250 DH, adresse tendance · Exclusive ≈ 250–400 DH, hôtel ou adresse d'exception (consommation sur place ; un menu brunch à prix fixe négocié remplace le budget)
+- **Inclus** : Votre place à une table composée pour vous · La réservation du restaurant · **Pas inclus** : aucune ligne
+- **Infos pratiques** : aucune · **Questionnaire** : aucun · **Image** : `brunch.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non par défaut · français et darija · annulation gratuite jusqu'à 48 h avant
 
-**T3 · Déjeuner** — Tables › Déjeuner · 2
+**T3 · Déjeuner** — Tables › Déjeuner · **L** · **VALIDÉ**
 - **Titre** : Déjeuner · **Google** : Déjeuner entre inconnus à Casablanca
-- **Accroche** : Une pause de midi qui change : une table, des inconnus, une heure.
-- **Description** : Pensé pour la pause déjeuner en semaine : une heure à une heure et quart, une table de quatre à six personnes, un restaurant proche des quartiers de bureaux, révélé le matin même. Chacun commande et règle sa consommation sur place.
-- **Quand** : mardi ou jeudi 12h30 · **Lieu** : secret, gamme Casual
-- **Sur place** : consommation, ≈ 80–150 DH
-- **Inclus** : une table réservée près des bureaux · **Pas inclus** : votre repas et vos boissons
-- **Questionnaire** : Tables · **Image** : ✗
+- **Accroche** : La pause de midi, à une table d'inconnus.
+- **Description** : Une table de quatre à six personnes composée pour vous, dans un restaurant choisi par notre équipe. On change d'air en pleine semaine, on discute et on rencontre de nouvelles têtes.
+- **Quand** : jeudi 12h30 (heure de début seulement) · **Format** : tables de 4 à 6, nombre de tables libre
+- **Lieu** : secret ; restaurant choisi maintenant ou plus tard ; cuisine affichée seulement à la révélation
+- **Gammes** : Casual ≈ 80–150 DH, simple et conviviale · Premium ≈ 150–250 DH, chic et décontractée · Exclusive ≈ 250–400 DH, haut de gamme (consommation sur place)
+- **Inclus** : Votre place à une table composée pour vous · La réservation du restaurant · **Pas inclus** : aucune ligne
+- **Infos pratiques** : aucune · **Questionnaire** : aucun · **Image** : `dejeuner.webp`
+- **Variante « Couscous du vendredi »** : même modèle, titre « Couscous du vendredi », vendredi 13h00, cuisine marocaine
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non par défaut · français et darija · annulation gratuite jusqu'à 48 h avant
 
 **T4 · Dîner** — Tables › Dîner · **L** · **VALIDÉ**
 - **Titre** : Dîner · **Google** : Dîner entre inconnus à Casablanca
@@ -477,7 +482,7 @@ Tes photos, enregistrées dans le site (`apps/web/public/images/modeles/`), à v
 | Quiz | Néon « Game on » | `quiz.webp` · **validée** |
 | Céramique | Mains sur un tour de potier | `ceramique.webp` · **validée** |
 
-| Déjeuner | Assiette de salade au saumon, fourchette dorée, en terrasse (photo en hauteur) | `dejeuner.webp` · nouvelle photo reçue, à valider |
+| Déjeuner | Assiette de salade au saumon, fourchette dorée, en terrasse (photo en hauteur) | `dejeuner.webp` · **validée** |
 | Visite guidée | Mosquée Hassan II vue depuis l'océan | `visite-guidee.webp` · **validée** |
 
 Toutes les photos du lancement sont reçues. Les autres modèles (phase 2 et plus tard) viendront ensuite ; je te dirai lesquelles manquent à chaque étape.
