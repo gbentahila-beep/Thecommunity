@@ -41,6 +41,10 @@ Une catégorie créée plus tard prend Wen (`babForCategory`).
 - Fiche d'expérience : le Bab de l'univers se penche au-dessus du panneau de réservation.
 - Historique : un Bab près de « Expériences vécues » et le Bab de l'univers au coin de chaque vignette.
 
+**Lignée « Votre place »** (`components/brand/bab-lineup.tsx`) : six Babs (quatre sur téléphone) autour d'une place libre en pointillés, étiquette « Votre place » et phrase « Il ne manque plus que vous. » (groupe `babs` des messages). Animée en CSS, immobile si l'appareil demande moins d'animations. Accueil : entre les trois promesses et « Cette semaine ». Espace membre : entre « Votre prochaine expérience » et « Explorer par univers ».
+
+**Kit presse** : bloc « Les Babs » après les logos, fichiers dans `public/presse/babs/` (SVG et PNG transparent de 1024 px), générés à partir de `bab-art.ts` le 22 novembre 2026. À régénérer si le dessin change.
+
 ## Règles
 
 - Un ou deux Babs par écran au plus. Les photos restent prioritaires.

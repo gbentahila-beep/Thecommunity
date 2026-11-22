@@ -1912,5 +1912,9 @@
     "catalogTitle": "Aucune sortie trouvée",
     "reviewsTitle": "Les premiers avis arrivent",
     "notFoundTitle": "Cette page s'est perdue en route"
+  },
+  "babs": {
+    "seat": "Votre place",
+    "caption": "Il ne manque plus que vous."
   }
 }

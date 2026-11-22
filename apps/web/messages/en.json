@@ -1912,5 +1912,9 @@
     "catalogTitle": "No outings found",
     "reviewsTitle": "The first reviews are on their way",
     "notFoundTitle": "This page got lost along the way"
+  },
+  "babs": {
+    "seat": "Your spot",
+    "caption": "All that's missing is you."
   }
 }
