@@ -448,7 +448,7 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 | Padel | 1. Votre niveau de padel ? (Débutant : je découvre · Intermédiaire : je joue régulièrement · Confirmé : je joue en compétition ou presque) · 2. Vous jouez plutôt… (Pour le plaisir · Pour progresser · Pour gagner). Les deux réunissent les réponses proches ; pas de question sur le côté préféré | Padel | **Validé** |
 | Jeu en équipe | 1. Vous avez déjà joué ? (Jamais · Une ou deux fois · Souvent) : on **mélange** débutants et habitués dans chaque équipe · 2. Vous venez plutôt… (Pour rigoler · Pour gagner) : on **réunit** les mêmes états d'esprit. « Déjà joué » se comprend au jeu de l'événement | Escape game, paintball, laser game, bowling, karting, quiz, murder party | **Validé** |
 | Atelier | 1. Votre expérience dans cette activité ? (Jamais essayé · Quelques bases · À l'aise) : on **réunit** les niveaux proches ; l'animateur reçoit le nombre de débutants et d'habitués | Ateliers | **Validé** |
-| Niveau | Niveau dans cette activité | Yoga, pilates, randonnée, foot à 5, danse, surf | À valider |
+| Niveau | 1. Votre niveau dans cette activité ? (Débutant · Intermédiaire · Confirmé) : on **réunit** les niveaux proches (yoga, pilates, randonnée, danse, surf) ou on les **mélange** (foot à 5, équipes équilibrées), réglé dans chaque modèle | Yoga, pilates, randonnée, foot à 5, danse, surf | **Validé** |
 | **Langues** (nouveau) | Langue que je veux pratiquer, niveau dans cette langue | Échange de langues | À valider |
 
 ---
