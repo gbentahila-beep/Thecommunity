@@ -13,7 +13,7 @@ Liste de tous les modèles proposés à l'équipe quand elle crée un événemen
 - **Pas de répétition** : la révélation du lieu n'apparaît jamais dans les infos pratiques ni dans la description.
 - **Images** : tes photos, reçues au fur et à mesure (§ 7).
 - **Questionnaires** : jamais de question déjà posée à l'inscription (façon d'être en conversation, centres d'intérêt, ce qu'on recherche, secteur, humour, valeurs, sport, budget, régimes, langues). **Les Tables n'ont pas de questionnaire** : le profil suffit.
-- **Univers** : passage de 7 à 3 ou 4 univers en cours de validation (docs/22 § 5). Les univers indiqués ci-dessous changeront en conséquence.
+- **Univers validés : Tables, Bouger, Sortir (jeux, sorties, vie sociale), Découvrir (ateliers, culture)** (docs/22 § 5). Dans les listes ci-dessous, « Jouer » et les soirées vont dans **Sortir**, « Créer » et les visites dans **Découvrir**.
 
 ---
 
@@ -444,7 +444,7 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 | Questionnaire | Questions propres à l'activité | Utilisé par | Statut |
 |---|---|---|---|
 | Tables | **Aucun** : le profil suffit pour composer les tables | Café, Brunch, Déjeuner, Dîner, Soirée jeux | Validé |
-| Running | Allure habituelle, distance confortable | Running | À valider |
+| Running | 1. Votre allure habituelle ? (Plus de 7 min/km · 6 à 7 · 5 à 6 · Moins de 5 min/km) · 2. Quelle distance vous convient aujourd'hui ? (Moins de 5 km · 5 à 10 km · Plus de 10 km). Les deux réunissent les réponses proches | Running | **Validé** |
 | Padel | Niveau de padel (le niveau sportif général ne suffit pas), envie (plaisir, progresser, gagner) | Padel | À valider |
 | Jeu en équipe | Déjà joué à ce jeu ?, état d'esprit (rigoler ou gagner) | Escape game, paintball, laser game, bowling, karting, quiz, murder party | À valider |
 | Atelier | Expérience dans cette activité | Ateliers | À valider |

@@ -79,7 +79,7 @@ Mise à jour du 22 novembre 2026, après les échanges sur les dîners, le prix,
 | 33 | Filtres de Découvrir : **retirer « Prix par place » et « Quartier »**, **garder « Gamme du restaurant »**. |
 | 34 | **Tous les textes à revoir** : accueil, Comment ça marche, aide, FAQ, CGU, CGV, contrat et conditions des organisateurs, confidentialité, blog, presse, e-mails, en français, anglais et arabe. |
 | 35 | **À la fin, supprimer tous les événements existants et en recréer** à partir des modèles validés (avec ta confirmation au moment de le faire, car c'est définitif). |
-| 36 | **Moins d'univers** : passer de 7 à 3 ou 4 au maximum (proposition au § 5, à valider). |
+| 36 | **4 univers** au lieu de 7 : **Tables, Bouger, Sortir, Découvrir** (§ 5). |
 
 ### Idées reprises de Socials et Timeleft (validées)
 | # | Décision |
@@ -151,7 +151,7 @@ Ce que ça supprime : paiement « tout en ligne », acompte, prix membre, marge 
 
 ## 5. Univers, formats et modèles
 
-**Aujourd'hui, 7 univers** (Dîners, Sport & bien-être, Jeux, Ateliers, Sorties, Vie sociale, Culture). **Proposition : 4 univers** (à valider, décision 36) :
+**Aujourd'hui, 7 univers** (Dîners, Sport & bien-être, Jeux, Ateliers, Sorties, Vie sociale, Culture). **Validé : 4 univers** (décision 36) :
 
 | Univers | Ce qu'on y regroupe | Formats (modèles) |
 |---|---|---|
@@ -159,8 +159,6 @@ Ce que ça supprime : paiement « tout en ligne », acompte, prix membre, marge 
 | **Bouger** | Sport & bien-être | Running, Padel, Yoga, Pilates, Randonnée, Vélo, Foot à 5, Surf, Danse, Hammam & spa |
 | **Sortir** | Jeux, Sorties, Vie sociale | Escape game, Paintball, Laser game, Bowling, Karting, Soirée jeux, Quiz, Karaoké, Murder party, Afterwork, Rooftop, Concert, Stand-up, Échange de langues, Plage |
 | **Découvrir** | Ateliers, Culture | Céramique, Zellige, Cuisine marocaine, Pâtisserie, Parfum, Calligraphie, Balade photo, Café de spécialité, Bougies, Thé & pâtisseries, Visite guidée, Street art, Musée, Ciné-club, Escapade |
-
-Variante à **3 univers** : Tables · Bouger · Sortir & découvrir. C'est plus court, mais le troisième devient un fourre-tout de 30 formats.
 
 **Lancement : 15 modèles.** Les 4 formats de Tables, plus Running, Padel, Yoga, Escape game, Soirée jeux, Quiz, Céramique, Afterwork, Visite guidée et Échange de langues. Contenus, réglages et images : [docs/23](23-modeles-evenements.md).
 
@@ -392,7 +390,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | Étape | Contenu | Validation |
 |---|---|---|
 | **A — Corrections** ✅ | Lieu secret protégé (écran et base), billet seulement avec hôtesse, questionnaire avant le paiement, phrase « Le lieu et l'adresse vous sont révélés 5 h avant », infos pratiques sans répétition | Faite |
-| **B — Questionnaires** | Un par un, **seulement les questions que le profil ne pose pas** : Running, Padel, Jeu en équipe, Atelier, Niveau, **Langues** (nouveau) ; Tables : aucun (le profil suffit) | Chaque questionnaire |
+| **B — Questionnaires** | Un par un, **seulement les questions que le profil ne pose pas** : Running (validé), Padel, Jeu en équipe, Atelier, Niveau, **Langues** (nouveau) ; Tables : aucun (le profil suffit) | Chaque questionnaire |
 | **C — Photos** | Une par une : 12 reçues, à attribuer et valider ; celles qui manquent (docs/23 § 7) | Chaque photo |
 | **D — Modèles** | Par petits lots : D1 Café et Dîner (avec les 3 gammes) → D2 Brunch, Déjeuner → D3 Running, Padel, Yoga → D4 Escape game, Soirée jeux, Quiz → D5 Céramique, Afterwork, Visite guidée, Échange de langues → puis les modèles de phase 2 | Chaque lot (les premiers en détail, ensuite plus vite) |
 | **E — Prix unique et univers** | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; **les 4 univers** (Tables, formats et gammes compris) | Démonstration à l'écran |
@@ -411,7 +409,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 
 ## 18. Questions ouvertes
 
-1. **Les univers** (§ 5) : 4 univers (Tables, Bouger, Sortir, Découvrir), ou la variante à 3 ?
+Aucune pour l'instant.
 
 ---
 
