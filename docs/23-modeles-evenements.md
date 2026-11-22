@@ -446,7 +446,7 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 | Tables | **Aucun** : le profil suffit pour composer les tables | Café, Brunch, Déjeuner, Dîner, Soirée jeux | Validé |
 | Running | 1. Votre allure habituelle ? (Plus de 7 min/km · 6 à 7 · 5 à 6 · Moins de 5 min/km) · 2. Quelle distance vous convient aujourd'hui ? (Moins de 5 km · 5 à 10 km · Plus de 10 km). Les deux réunissent les réponses proches | Running | **Validé** |
 | Padel | 1. Votre niveau de padel ? (Débutant : je découvre · Intermédiaire : je joue régulièrement · Confirmé : je joue en compétition ou presque) · 2. Vous jouez plutôt… (Pour le plaisir · Pour progresser · Pour gagner). Les deux réunissent les réponses proches ; pas de question sur le côté préféré | Padel | **Validé** |
-| Jeu en équipe | Déjà joué à ce jeu ?, état d'esprit (rigoler ou gagner) | Escape game, paintball, laser game, bowling, karting, quiz, murder party | À valider |
+| Jeu en équipe | 1. Vous avez déjà joué ? (Jamais · Une ou deux fois · Souvent) : on **mélange** débutants et habitués dans chaque équipe · 2. Vous venez plutôt… (Pour rigoler · Pour gagner) : on **réunit** les mêmes états d'esprit. « Déjà joué » se comprend au jeu de l'événement | Escape game, paintball, laser game, bowling, karting, quiz, murder party | **Validé** |
 | Atelier | Expérience dans cette activité | Ateliers | À valider |
 | Niveau | Niveau dans cette activité | Yoga, pilates, randonnée, foot à 5, danse, surf | À valider |
 | **Langues** (nouveau) | Langue que je veux pratiquer, niveau dans cette langue | Échange de langues | À valider |
