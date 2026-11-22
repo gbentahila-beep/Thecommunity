@@ -1,10 +1,11 @@
 "use client";
 
-import { formatMoney, type BookingPreferences, type CurrencyCode, type Pricing } from "@thecommunity/shared";
+import { answerIssues, formatMoney, type BookingPreferences, type CurrencyCode, type Pricing, type QuestionDef, type QuestionnaireAnswers } from "@thecommunity/shared";
 import { Minus, Plus, Tag } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
+import { QuestionnaireFields } from "@/components/account/questionnaire-fields";
 import { PhysicalTermsCheckbox } from "@/components/booking/physical-terms";
 import { authReady, bookingErrorOf, createReservation, previewPricing, promoErrorOf, startCheckout, type BookingError } from "@/lib/booking-client";
 import { goToCheckout } from "./go-to-checkout";
@@ -24,16 +25,19 @@ type Props = {
   transfer?: { hours: number; cutoff: number } | null;
   /** Langues du profil, proposées par défaut comme langues de table. */
   defaultLanguages?: BookingPreferences["languages"];
+  /** Questionnaire de l'expérience : rempli ici, avant le paiement (docs/22). */
+  questions?: QuestionDef[];
 };
 
 /**
  * Choix du nombre de places, code promo, préférences pour l'accueil, puis réservation.
  * Le prix affiché vient du serveur (prix membre, code, frais) ; la réservation le recalcule.
  */
-export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite = null, transfer = null, defaultLanguages = [], physical = false, needs = { food: true, languages: true } }: Props & { needs?: WelcomeNeeds }) {
+export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite = null, transfer = null, defaultLanguages = [], physical = false, questions = [], needs = { food: true, languages: true } }: Props & { needs?: WelcomeNeeds }) {
   const t = useTranslations("booking");
   const t2 = useTranslations("twoPart");
   const tp = useTranslations("prefs");
+  const tq = useTranslations("questionnaire");
   const lang = useLocale() as "fr" | "ar" | "en";
   const router = useRouter();
   const [seats, setSeats] = useState(1);
@@ -48,6 +52,8 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
   const [consentError, setConsentError] = useState(false);
   const [physicalOk, setPhysicalOk] = useState(false);
   const [physicalError, setPhysicalError] = useState(false);
+  const [answers, setAnswers] = useState<QuestionnaireAnswers>({});
+  const [missing, setMissing] = useState<string[]>([]);
   const request = useRef(0);
   const money = (amount: number) => formatMoney({ amount, currency }, lang);
 
@@ -84,6 +90,13 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
   const free = total === 0;
 
   const submit = async () => {
+    // Questionnaire d'abord (docs/22) : tout le monde répond avant de payer.
+    const issues = answerIssues(questions, answers);
+    if (issues.length) {
+      setMissing(issues.map((i) => i.id));
+      requestAnimationFrame(() => document.getElementById(`bq-${issues[0]!.id}`)?.focus());
+      return;
+    }
     const shared = prefs.diet !== "none" || prefs.allergies.trim() || prefs.languages.length;
     if (needsConsent(prefs) && !prefs.consent) {
       setConsentError(true);
@@ -98,7 +111,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
     setError(null);
     try {
       await authReady();
-      const r = await createReservation(sessionId, seats, { promoCode: promo, preferences: shared ? { ...prefs, allergies: prefs.allergies.trim() } : undefined, physicalTermsAccepted: physical ? true : undefined });
+      const r = await createReservation(sessionId, seats, { promoCode: promo, preferences: shared ? { ...prefs, allergies: prefs.allergies.trim() } : undefined, physicalTermsAccepted: physical ? true : undefined, answers: questions.length ? answers : undefined });
       if (r.status === "confirmed") {
         router.push(`/espace/reservations/${r.reservationId}?reservation=confirmee`);
         return;
@@ -212,6 +225,16 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
         )}
         {promoError && <p id="promo-err" role="alert" className="mt-2 text-sm text-red-800">{t(`promoErrors.${promoError}`)}</p>}
       </div>
+
+      {questions.length > 0 && (
+        <section aria-labelledby="booking-questions" className="space-y-5 rounded-[var(--radius-card)] bg-white p-4 shadow-card" data-testid="booking-questionnaire">
+          <div>
+            <h2 id="booking-questions" className="font-medium text-ink">{tq("bookingTitle")}</h2>
+            <p className="mt-0.5 text-xs text-muted">{tq("bookingIntro")}</p>
+          </div>
+          <QuestionnaireFields idPrefix="bq" questions={questions} answers={answers} missing={missing} disabled={busy} onChange={(next, id) => { setAnswers(next); setMissing((m) => m.filter((x) => x !== id)); }} />
+        </section>
+      )}
 
       {(needs.food || needs.languages) && (
       <details className="group rounded-[var(--radius-card)] bg-white p-4 shadow-card">

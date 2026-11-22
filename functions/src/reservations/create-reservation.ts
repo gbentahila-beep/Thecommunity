@@ -1,4 +1,4 @@
-import { audienceRefusal, bookingClosesAt, bookingRefusal, HOLD_MINUTES, PHYSICAL_TERMS_VERSION, promoRefusal, readServiceFee, reservationRequestSchema, tooYoung, type BookingPreferences, NO_SERVICE_FEE } from "@thecommunity/shared";
+import { answerIssues, audienceRefusal, bookingClosesAt, bookingRefusal, HOLD_MINUTES, PHYSICAL_TERMS_VERSION, promoRefusal, readServiceFee, reservationRequestSchema, tooYoung, type BookingPreferences, type QuestionDef, type QuestionnaireAnswers, NO_SERVICE_FEE } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db, FieldValue, REGION } from "../lib/admin";
@@ -32,10 +32,10 @@ export async function reserveSeats(caller: { uid: string; emailVerified: boolean
   const clean = data && typeof data === "object" ? Object.fromEntries(Object.entries(data).filter(([, v]) => v !== null && v !== undefined)) : data;
   const parsed = reservationRequestSchema.safeParse(clean);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats, promoCode, preferences, physicalTermsAccepted } = parsed.data;
+  const { sessionId, seats, promoCode, preferences, physicalTermsAccepted, answers } = parsed.data;
 
   await requireMemberReady(uid);
-  const out = await runReservation({ uid, sessionId, seats, promoCode, preferences, physicalTermsAccepted });
+  const out = await runReservation({ uid, sessionId, seats, promoCode, preferences, physicalTermsAccepted, answers });
   // 18a : réservation gratuite confirmée tout de suite → invitation à remplir le questionnaire.
   if (out.status === "confirmed" && !out.resumed) await notifyQuestionnaire(out.reservationId).catch(() => undefined);
   return out;
@@ -72,7 +72,7 @@ export async function runReservation(o: ReservationRun) {
   }
 }
 
-type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean };
+type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers };
 
 async function runReservationOnce(o: ReservationRun) {
   const { uid, sessionId, seats } = o;
@@ -114,6 +114,12 @@ async function runReservationOnce(o: ReservationRun) {
     // 18c : activité physique → conditions de participation acceptées (à la réservation, ou déjà avec la demande).
     const acceptedWithRequest = request?.data()?.physicalTerms;
     if (e.physicalActivity === true && o.physicalTermsAccepted !== true && !acceptedWithRequest) refuse("physical_terms_required", "Acceptez les conditions de participation aux activités physiques.");
+    // docs/22 : questionnaire rempli AVANT le paiement. Réservation directe : réponses exigées ici.
+    // Demande acceptée par l'équipe : réponses reprises de la demande (données avant tout paiement).
+    const questions = (Array.isArray(e.questionnaire) ? e.questionnaire : []) as QuestionDef[];
+    const answers = (o.answers ?? (request?.data()?.questionnaire?.answers as QuestionnaireAnswers | undefined)) || undefined;
+    if (questions.length > 0 && !requestRef && answerIssues(questions, answers ?? {}).length > 0) refuse("questionnaire_required", "Répondez au questionnaire pour réserver.");
+    const questionnaire = questions.length > 0 && answers && answerIssues(questions, answers).length === 0 ? { answers, answeredAt: Timestamp.fromMillis(now) } : null;
     const terms = membershipTerms({ plan: planSnap.data(), membership: memSnap.data(), s, e, now, byTeam: Boolean(requestRef) });
     if (request) {
       const r = request.data();
@@ -138,7 +144,8 @@ async function runReservationOnce(o: ReservationRun) {
       const p = prev.data();
       const samePromo = (p?.pricing?.promoCode ?? undefined) === (promo?.code ?? undefined) || !o.promoCode;
       if (!requestRef && p?.status === "pending_payment" && (p.holdExpiresAt as Timestamp).toMillis() > now && samePromo) {
-        // Même personne, paiement pas encore fait : on reprend la réservation existante.
+        // Même personne, paiement pas encore fait : on reprend la réservation existante (avec ses nouvelles réponses).
+        if (questionnaire) tx.update(prevRef, { questionnaire, updatedAt: FieldValue.serverTimestamp() });
         return { reservationId: prev.id, status: "pending_payment", resumed: true, total: p.pricing.total };
       }
       if (p?.status === "confirmed" || p?.status === "attended" || (requestRef && p?.status === "pending_payment" && (p.holdExpiresAt as Timestamp).toMillis() > now)) {
@@ -177,6 +184,7 @@ async function runReservationOnce(o: ReservationRun) {
       policies,
       extra: {
         ...(requestRef ? { requestId: requestRef.id } : {}),
+        ...(questionnaire ? { questionnaire } : {}),
         ...(e.physicalActivity === true
           ? { physicalTerms: acceptedWithRequest ?? { version: PHYSICAL_TERMS_VERSION, acceptedAt: Timestamp.fromMillis(now) } }
           : {}),

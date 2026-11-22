@@ -93,6 +93,9 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   const existing = await ref.get();
   if (isCreate && existing.exists) throw new HttpsError("already-exists", "Cette expérience existe déjà.");
   if (!isCreate && !existing.exists) throw new HttpsError("not-found", "Expérience introuvable.");
+  // Lieu secret (docs/22) : le lieu réel est rangé à part ; on le relit pour détecter un changement de lieu.
+  const privateVenueRef = db.doc(`experiences/${id}/private/venue`);
+  const beforeVenue = isCreate ? null : (((await privateVenueRef.get()).data() as { name?: string; address?: string } | undefined) ?? (existing.data()?.venue as { name?: string; address?: string } | undefined) ?? null);
   // Une expérience peut être créée SANS date : « Prochaines dates bientôt », dates ajoutées plus tard.
 
   // Étape 20 : un organisateur ne modifie que SES activités ; l'organisateur d'une activité ne change jamais.
@@ -137,6 +140,9 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
             ? "pending_review"
             : "draft";
   const grouped = v.bookingMode === "group" || v.bookingMode === "social_dinner";
+  // Lieu secret : ni nom, ni adresse, ni coordonnées, ni quartier, ni nom du partenaire dans les documents publics.
+  const secret = v.revealPolicy === "on_group_reveal";
+  const publicDistrict = secret ? "" : v.district;
   const price = { amount: Math.round(v.priceDh * 100), currency: "MAD" as const };
   const sellPrice = () => (marketplace ? { amount: marketplace.onlineUnit, currency: "MAD" as const } : price);
   const slug = isCreate ? await uniqueSlug(slugify(`${v.titleFr} ${v.cityId}`)) : (existing.data()?.slug as string);
@@ -148,7 +154,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     coverImagePath: keepImages[0]?.path ?? "",
     categoryId: v.categoryId,
     bookingMode: v.bookingMode,
-    district: v.district,
+    district: publicDistrict,
     admission: v.admission,
   };
 
@@ -177,7 +183,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
           model: v.pricingModel,
           currency: "MAD",
           partner: {
-            name: String(partner.data()?.name ?? ""),
+            name: secret ? "" : String(partner.data()?.name ?? ""),
             paymentMode: "on_site",
             pricingType: v.pricingModel === "fixed_partner" ? "fixed" : "consumption",
             price: v.pricingModel === "fixed_partner" ? { amount: Math.round((v.partnerPriceDh ?? 0) * 100), currency: "MAD" } : null,
@@ -194,10 +200,12 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     categoryId: v.categoryId,
     subcategoryId: v.subcategoryId || null,
     cityId: v.cityId,
-    district: v.district,
+    district: publicDistrict,
     tags: [] as string[],
-    partnerSnapshot: partner?.exists ? { name: partner.data()?.name } : null,
-    venue: { name: v.venueName, address: v.address, revealPolicy: v.revealPolicy, geo: parseCoords(v.venueCoords) },
+    partnerSnapshot: partner?.exists && !secret ? { name: partner.data()?.name } : null,
+    venue: secret
+      ? { name: "", address: "", revealPolicy: v.revealPolicy, geo: null }
+      : { name: v.venueName, address: v.address, revealPolicy: v.revealPolicy, geo: parseCoords(v.venueCoords) },
     images: keepImages,
     durationMinutes: v.durationMinutes,
     price: sellPrice(),
@@ -292,6 +300,15 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   const starts = [...future.docs.map((s) => (s.data().startAt as Timestamp).toMillis()), ...planned.map((d) => new Date(d.startAt).getTime())];
   const nextSessionAt = starts.length ? Timestamp.fromMillis(Math.min(...starts)) : null;
 
+  // Le lieu réel, toujours rangé dans le document privé (lisible par l'équipe seulement).
+  batch.set(privateVenueRef, {
+    name: v.venueName,
+    address: v.address,
+    geo: parseCoords(v.venueCoords),
+    district: v.district,
+    partnerName: partner?.exists ? String(partner.data()?.name ?? "") : "",
+    updatedAt: FieldValue.serverTimestamp(),
+  });
   if (isCreate) batch.set(ref, { ...experience, organizerId: ownerOrgId, nextSessionAt, ratingAvg: 0, ratingCount: 0, createdAt: FieldValue.serverTimestamp(), createdBy: actor.uid });
   else batch.update(ref, { ...experience, nextSessionAt });
   // Organisateur : modèle économique créé une fois (commission fixée par les règles de commission, étape 21),
@@ -355,7 +372,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   }
 
   // Lieu modifié : les personnes à qui il avait déjà été communiqué reçoivent le nouveau (notification + e-mail).
-  const before = existing.data()?.venue;
+  const before = beforeVenue;
   if (!isCreate && before && (before.name !== v.venueName || before.address !== v.address)) {
     const affected = await db.collection("reservations").where("experienceId", "==", id).where("sessionSnapshot.startAt", ">=", Timestamp.fromMillis(now)).get();
     for (const r of affected.docs) {

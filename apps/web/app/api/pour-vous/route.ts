@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
   const items = recommendFor({ interests: p.interests, favoriteCategories: p.favoriteCategories, district: p.district, gender: p.gender }, sessions, { exclude: booked, limit: 4 }).map((s) => ({
     href: `/experiences/${s.experience.slug}`,
     title: tr(s.experience.title, locale),
-    detail: `${s.experience.district} · ${formatShortSlot(s.startAt, locale)}`,
+    detail: [s.experience.district, formatShortSlot(s.startAt, locale)].filter(Boolean).join(" · "),
     image: s.experience.images[0]?.path ?? "",
   }));
   return NextResponse.json({ items }, { headers: { "Cache-Control": "private, no-store" } });

@@ -3,7 +3,7 @@ import type { LocalizedText } from "./types";
 
 /**
  * Étape 18a — questionnaire d'une expérience (10 questions au plus), défini par l'équipe à la création
- * et rempli par chaque participant après sa réservation. Les réponses servent uniquement à composer
+ * et rempli par chaque participant pendant sa réservation, avant le paiement (docs/22), modifiable ensuite. Les réponses servent uniquement à composer
  * les tables et les équipes (calcul fait chez nous, aucune donnée envoyée à un service externe)
  * et sont effacées 30 jours après l'expérience, comme le régime et les allergies.
  *
@@ -70,9 +70,12 @@ export function cleanQuestion(q: z.infer<typeof questionDefSchema>): QuestionDef
   return { id: q.id, kind: q.kind, label: lt(q.label), options: q.options.map(lt), required: q.required, match: q.match };
 }
 
+/** Réponses envoyées par le navigateur : identifiant de question → numéro de réponse. */
+export const questionnaireAnswersSchema = z.record(z.string().regex(/^q[a-z0-9]{1,12}$/), z.number().int().min(0).max(QUESTION_OPTIONS_MAX - 1));
+
 export const answersInputSchema = z.object({
   reservationId: z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/),
-  answers: z.record(z.string().regex(/^q[a-z0-9]{1,12}$/), z.number().int().min(0).max(QUESTION_OPTIONS_MAX - 1)),
+  answers: questionnaireAnswersSchema,
 });
 
 /** Réponses valides pour ce questionnaire ? Renvoie les problèmes (vide = tout va bien). */

@@ -27,3 +27,4 @@ export * from "./review-moderation";
 export * from "./meeting";
 export * from "./meet";
 export * from "./recommend";
+export * from "./venue";

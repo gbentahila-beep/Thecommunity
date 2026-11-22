@@ -58,6 +58,8 @@ export async function fsAdminData(now: Date) {
   ]);
 
   const economics: Record<string, Economics> = {};
+  /** Lieu réel des expériences à lieu secret (docs/22) : rangé à part, remis dans la fiche pour l'équipe. */
+  const hiddenVenues: Record<string, { name?: string; address?: string; geo?: { lat: number; lng: number } | null; district?: string; partnerName?: string }> = {};
   const finance: Record<string, { gross: number; cost: number; margin: number }> = {};
   for (const d of privSnap.docs) {
     const parent = d.ref.parent.parent;
@@ -66,6 +68,7 @@ export async function fsAdminData(now: Date) {
       const e = d.data();
       economics[parent.id] = { partnerId: e.partnerId ?? undefined, model: e.model, costPerSeat: e.costPerSeat ?? undefined, commissionPercent: e.commissionPercent ?? undefined, onSiteCommissionPercent: e.onSiteCommissionPercent ?? undefined };
     }
+    if (parent.parent.id === "experiences" && d.id === "venue") hiddenVenues[parent.id] = d.data();
     if (parent.parent.id === "reservations" && d.id === "finance") {
       const f = d.data();
       finance[parent.id] = { gross: f.gross ?? 0, cost: f.cost ?? 0, margin: f.margin ?? 0 };
@@ -75,7 +78,14 @@ export async function fsAdminData(now: Date) {
   const allSessions = sessionsSnap.docs.map((d) => plain<Session>({ id: d.id, ...d.data() }));
   const sessions = allSessions.filter((x) => new Date(x.startAt).getTime() >= now.getTime());
   const recentSessions = allSessions.filter((x) => new Date(x.startAt).getTime() < now.getTime()).reverse();
-  const experiences = new Map(expSnap.docs.map((d) => [d.id, plain<Experience>({ id: d.id, ...d.data() })]));
+  const experiences = new Map(
+    expSnap.docs.map((d) => {
+      const e = plain<Experience>({ id: d.id, ...d.data() });
+      const h = hiddenVenues[d.id];
+      if (!h || e.venue?.revealPolicy !== "on_group_reveal") return [d.id, e];
+      return [d.id, { ...e, district: h.district || e.district, venue: { ...e.venue, name: h.name ?? "", address: h.address ?? "", geo: h.geo ?? null }, partnerSnapshot: h.partnerName ? { name: h.partnerName } : (e.partnerSnapshot ?? null) } as Experience];
+    }),
+  );
   const reservations: AdminReservation[] = resSnap.docs.map((d) => {
     const r = d.data();
     return {

@@ -502,8 +502,8 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     "slug": "questionnaire-avant-l-experience",
     "category": "bookings",
     "title": {
-      "fr": "À quoi sert le questionnaire après ma réservation ?",
-      "en": "What is the questionnaire after my booking for?"
+      "fr": "À quoi sert le questionnaire de réservation ?",
+      "en": "What is the booking questionnaire for?"
     },
     "summary": {
       "fr": "Quelques questions à choix (niveau, allure, envies) pour vous placer avec les bonnes personnes.",
@@ -511,24 +511,24 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     },
     "body": {
       "fr": [
-        "Certaines expériences comportent un court questionnaire, 10 questions au plus, que vous remplissez après votre réservation, depuis la page de la réservation (rubrique « Votre questionnaire »). Une notification vous y invite.",
+        "Certaines expériences comportent un court questionnaire, 10 questions au plus, que vous remplissez pendant la réservation, juste avant le paiement. Vous retrouvez ensuite vos réponses sur la page de la réservation (rubrique « Votre questionnaire »).",
         [
           "Au padel ou en course à pied, il sert à réunir des personnes de niveau ou d'allure proches : par exemple, quatre joueurs de même niveau par terrain.",
           "Au paintball ou à table, il peut au contraire servir à mélanger les profils : débutants et habitués, personnes qui écoutent et personnes qui animent.",
           "Uniquement des réponses à choisir : aucune question ouverte, rien de sensible."
         ],
         "Vos réponses ne sont jamais montrées aux autres participants. Vous pouvez les modifier jusqu'au début de l'expérience ; elles sont effacées automatiquement 30 jours après.",
-        "Le questionnaire est recommandé mais pas obligatoire : sans réponse, nous composons votre groupe avec votre profil (langues, âge, centres d'intérêt)."
+        "Répondre est nécessaire pour réserver : c'est ce qui nous permet de composer des groupes où chacun trouve sa place. Seules les questions marquées « facultatif » peuvent rester sans réponse."
       ],
       "en": [
-        "Some experiences include a short questionnaire, 10 questions at most, that you fill in after booking, from the booking page (“Your questionnaire”). A notification reminds you.",
+        "Some experiences include a short questionnaire, 10 questions at most, that you fill in while booking, just before payment. You'll find your answers afterwards on the booking page (“Your questionnaire”).",
         [
           "For padel or running, it groups people with a similar level or pace: for example, four players of the same level per court.",
           "For paintball or at the table, it can instead mix profiles: beginners and regulars, listeners and people who get things going.",
           "Multiple choice only: no open questions, nothing sensitive."
         ],
         "Your answers are never shown to other participants. You can change them until the experience starts; they're deleted automatically 30 days after it.",
-        "The questionnaire is recommended but not compulsory: without answers, we put your group together from your profile (languages, age, interests)."
+        "Answering is required to book: it's what lets us put groups together where everyone fits in. Only questions marked “optional” can be left blank."
       ]
     },
     "related": [

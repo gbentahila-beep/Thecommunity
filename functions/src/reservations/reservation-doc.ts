@@ -1,4 +1,4 @@
-import { computePricing, initialPartnerStatus, NO_SERVICE_FEE, onSiteAmount, partnerSnapshotOf, pricingOf, type BookingPreferences, type PromoRule, type ServiceFee } from "@thecommunity/shared";
+import { computePricing, initialPartnerStatus, isSecretVenue, publicExperience, NO_SERVICE_FEE, onSiteAmount, partnerSnapshotOf, pricingOf, type BookingPreferences, type PromoRule, type ServiceFee } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { FieldValue } from "../lib/admin";
 import { commissionSnapshot } from "../commissions/ledger";
@@ -36,7 +36,8 @@ export function reservationDoc(o: {
   });
   const free = pricing.total === 0;
   // Étape 11 : la part partenaire (sur place) est copiée telle qu'elle est au moment de la réservation.
-  const twoPart = pricingOf(e as never);
+  // Lieu secret (docs/22) : le nom du partenaire (souvent le restaurant) n'est pas copié avant la révélation.
+  const twoPart = pricingOf(publicExperience(e as never) as never);
   const snap = s.experienceSnapshot ?? {};
   const venue = e.venue?.revealPolicy === "immediate" ? { name: e.venue.name ?? "", address: e.venue.address ?? "" } : null;
   const doc = {
@@ -64,7 +65,7 @@ export function reservationDoc(o: {
       slug: snap.slug ?? e.slug,
       startAt: s.startAt,
       endAt: s.endAt,
-      district: snap.district ?? e.district ?? "",
+      district: isSecretVenue(e) ? "" : (snap.district ?? e.district ?? ""),
       coverImagePath: snap.coverImagePath ?? e.images?.[0]?.path ?? "",
       categoryId: s.categoryId,
       bookingMode: e.bookingMode,

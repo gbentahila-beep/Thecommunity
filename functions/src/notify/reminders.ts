@@ -8,10 +8,10 @@ import { changeMail, reminderMail } from "../mail/templates";
 
 const HOUR = 3_600_000;
 
-/** Où aller : le lieu exact s'il est communiqué, sinon le quartier (lieu révélé avec le groupe). */
+/** Où aller : le lieu exact s'il est communiqué ; sinon (lieu secret pas encore révélé) la ville seulement, jamais le quartier. */
 function whereOf(r: DocumentData): string {
   if (r.venue?.name) return `${r.venue.name}, ${r.venue.address ?? ""}`.replace(/, $/, "");
-  return `${r.sessionSnapshot?.district ?? ""}, Casablanca`.replace(/^, /, "");
+  return "Casablanca";
 }
 
 async function personOf(uid: string) {

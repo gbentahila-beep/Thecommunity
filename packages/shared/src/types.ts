@@ -337,6 +337,8 @@ export type Reservation = {
   userId: string;
   sessionId: string;
   experienceId: string;
+  /** Organisateur de l'activité (null = Wenzy). */
+  organizerId?: string | null;
   status: ReservationStatus;
   seats: number;
   pricing: Pricing;

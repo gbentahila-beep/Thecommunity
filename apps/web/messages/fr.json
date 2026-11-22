@@ -238,7 +238,7 @@
     "included": "Inclus",
     "practical": "Infos pratiques",
     "venue": "Le lieu",
-    "venueRevealed": "Le lieu exact et votre groupe vous sont révélés la veille.",
+    "venueRevealed": "Le lieu est gardé secret : il vous est communiqué avant l'expérience, directement dans votre réservation.",
     "cancellation": "Annulation",
     "reviews": "Avis",
     "reviewsCount": "{count} avis",
@@ -362,7 +362,8 @@
       "transfer_too_late": "Cette date est trop proche pour un paiement par virement : choisissez une date plus lointaine.",
       "too_young": "Cette expérience demande un âge minimum plus élevé que le vôtre.",
       "physical_terms_required": "Acceptez les conditions de participation aux activités physiques pour réserver.",
-      "audience_women_only": "Cette expérience est réservée aux femmes. Si votre profil est incorrect, vous pouvez le modifier dans « Mon profil »."
+      "audience_women_only": "Cette expérience est réservée aux femmes. Si votre profil est incorrect, vous pouvez le modifier dans « Mon profil ».",
+      "questionnaire_required": "Répondez aux questions ci-dessus pour réserver."
     },
     "fullTextOnRequest": "Toutes les places sont prises pour cette date. Regardez les autres dates de cette expérience.",
     "seeMyBooking": "Voir ma réservation",
@@ -515,7 +516,7 @@
     "step4Title": "Payez votre place",
     "step4Text": "Uniquement sur le site, avec le moyen de paiement indiqué. Expérience sur demande : vous payez seulement une fois votre demande acceptée.",
     "step5Title": "Recevez votre confirmation",
-    "step5Text": "Billet avec QR code, rappels la veille et 3 h avant, infos pratiques, et le lieu ou votre groupe révélés au bon moment."
+    "step5Text": "Confirmation immédiate, rappels la veille et 3 h avant, infos pratiques, et le lieu ou votre groupe révélés au bon moment. Le jour J, vous indiquez votre arrivée dans l'application."
   },
   "faq": {
     "q1": "Est-ce une application de rencontre amoureuse ?",
@@ -771,7 +772,7 @@
     "status": "Statut",
     "when": "Date",
     "where": "Lieu",
-    "venueHidden": "Révélé la veille avec votre groupe",
+    "venueHidden": "Communiqué avant l'expérience, dans votre réservation",
     "receipt": "Reçu",
     "total": "Total payé",
     "group": "Votre groupe",
@@ -1346,9 +1347,9 @@
     "galleryTitle": "Des rencontres qui valent mille images",
     "galleryText": "Des sourires, de nouvelles rencontres et de belles connexions. Découvrez ces instants où des inconnus se retrouvent et partagent de vrais moments.",
     "galleryAlt": "Moment partagé lors d'une expérience Wenzy ({n})",
-    "tool2_card": "Choisissez un univers et une date, réglez par carte sur une page de paiement sécurisée et recevez votre billet dès la confirmation.",
-    "tool2_bank_transfer": "Choisissez un univers et une date, réglez par virement avec votre référence unique et recevez votre billet dès réception du paiement.",
-    "tool2_none": "Choisissez un univers et une date, réservez votre place et recevez votre billet dès la confirmation."
+    "tool2_card": "Choisissez un univers et une date, réglez par carte sur une page de paiement sécurisée : votre place est confirmée aussitôt.",
+    "tool2_bank_transfer": "Choisissez un univers et une date, réglez par virement avec votre référence unique : votre place est confirmée dès réception du paiement.",
+    "tool2_none": "Choisissez un univers et une date, réservez votre place : elle est confirmée aussitôt."
   },
   "invoices": {
     "title": "Mes factures",
@@ -1508,7 +1509,9 @@
     "closed": "L'expérience a commencé : les réponses ne sont plus modifiables.",
     "errorStarted": "L'expérience a déjà commencé.",
     "errorGeneric": "Envoi impossible pour le moment. Réessayez dans un instant.",
-    "todo": "Questionnaire à remplir"
+    "todo": "Questionnaire à remplir",
+    "bookingTitle": "Quelques questions avant de réserver",
+    "bookingIntro": "Elles nous aident à composer votre groupe. Vos réponses servent uniquement à vous placer avec les bonnes personnes et sont effacées 30 jours après l'expérience."
   },
   "propose": {
     "title": "Proposer une sortie",
@@ -1877,7 +1880,7 @@
     "busy": "Un instant…",
     "doneTitle": "Vous êtes arrivé·e",
     "groupHint": "Retrouvez les prénoms de votre groupe ci-dessous et cherchez le signe Wenzy sur la table ou au point de rendez-vous.",
-    "soloHint": "Présentez-vous à l’accueil du lieu avec votre billet si besoin. Belle expérience !",
+    "soloHint": "Vous êtes bien arrivé·e. Belle expérience !",
     "hostHint": "Une hôtesse vous accueille sur place et vous présente votre groupe.",
     "error": "Impossible d’enregistrer votre arrivée pour le moment. Réessayez dans un instant."
   },

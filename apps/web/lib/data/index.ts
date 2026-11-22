@@ -9,6 +9,7 @@ import {
   DEFAULT_HOME_SETTINGS,
   experienceSearchFields,
   MOROCCO_TIMEZONE,
+  publicExperience,
   queryTokens,
   searchScore,
   zonedDateTimeToUtc,
@@ -26,6 +27,9 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { buildDemoSessions, DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES, DEMO_MEMBERSHIP_PLAN, DEMO_REVIEWS } from "./demo";
 import { DEMO_ORGANIZER } from "./demo-organizer";
 import * as fs from "./firestore-source";
+
+/** Démonstration : même filet de sécurité que pour Firestore (lieu secret retiré des données publiques). */
+const PUBLIC_DEMO_EXPERIENCES = DEMO_EXPERIENCES.map((e) => publicExperience(e));
 
 /**
  * Bandeau « démonstration » : toujours affiché sans Firebase ; avec Firebase, affiché tant que
@@ -75,7 +79,7 @@ export async function getAllCategories() {
 
 export async function getExperienceBySlug(slug: string) {
   if (FIREBASE_ENABLED) return fs.fsExperienceBySlug(slug);
-  return DEMO_EXPERIENCES.find((e) => e.slug === slug && e.status === "published") ?? null;
+  return PUBLIC_DEMO_EXPERIENCES.find((e) => e.slug === slug && e.status === "published") ?? null;
 }
 
 /** Expérience archivée par l'équipe : la fiche indique qu'elle n'est plus proposée (pas de démo archivée). */
@@ -92,11 +96,11 @@ export async function getArchivedExperiences(): Promise<Experience[]> {
 
 export async function getPublishedExperiences() {
   if (FIREBASE_ENABLED) return fs.fsPublishedExperiences();
-  return DEMO_EXPERIENCES.filter((e) => e.status === "published");
+  return PUBLIC_DEMO_EXPERIENCES.filter((e) => e.status === "published");
 }
 
 function withExperience(sessions: Session[]): SessionWithExperience[] {
-  const byId = new Map(DEMO_EXPERIENCES.map((e) => [e.id, e]));
+  const byId = new Map(PUBLIC_DEMO_EXPERIENCES.map((e) => [e.id, e]));
   return sessions.flatMap((s) => {
     const experience = byId.get(s.experienceId);
     return experience && experience.status === "published" ? [{ ...s, experience }] : [];

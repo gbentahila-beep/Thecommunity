@@ -59,11 +59,11 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
         <p className="mt-1 truncate text-[15px] text-ink/80">
           {session ? (
             <>
-              {showDay ? formatShortSlot(session.startAt, locale) : formatTime(session.startAt, locale)} · {experience.district} · {await groupLabel(experience, session)}
+              {[showDay ? formatShortSlot(session.startAt, locale) : formatTime(session.startAt, locale), experience.district, await groupLabel(experience, session)].filter(Boolean).join(" · ")}
             </>
           ) : (
             <>
-              {t("datesSoon")} · {experience.district}
+              {[t("datesSoon"), experience.district].filter(Boolean).join(" · ")}
             </>
           )}
         </p>

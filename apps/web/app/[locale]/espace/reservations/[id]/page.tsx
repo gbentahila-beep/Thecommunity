@@ -67,7 +67,8 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const review = data.review;
   const city = await getCity(experience?.cityId ?? "casablanca");
   const cityName = city ? tr(city.name, locale) : "Casablanca";
-  const venueText = r.venue ? `${r.venue.name}, ${r.venue.address}` : `${s.district}, ${cityName}`;
+  // Lieu pas encore communiqué (lieu secret) : la ville seulement, jamais le quartier (docs/22).
+  const venueText = r.venue ? `${r.venue.name}, ${r.venue.address}` : cityName;
   const ics = buildIcs({ uid: r.id, title, startAt: s.startAt, endAt: s.endAt, location: venueText, url: `${SITE_URL}/espace/reservations/${r.id}` });
   const dateFmt = (iso: string) => formatLongDate(iso, locale);
   const holdOpen = r.status === "pending_payment" && r.holdExpiresAt !== undefined && new Date(r.holdExpiresAt).getTime() > now.getTime();
@@ -191,7 +192,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                   </>
                 ) : (
                   <>
-                    <dd className="font-medium text-ink">{s.district}, {cityName}</dd>
+                    <dd className="font-medium text-ink">{cityName}</dd>
                     <dd className="text-sm text-muted">{t("venueHidden")}</dd>
                   </>
                 )}
@@ -306,7 +307,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                 </dd>
               </div>
               <p className="mt-1 text-xs text-muted">
-                {r.venue ? t2("onSiteTo", { partner: r.partnerSnapshot.name }) : t2("onSiteToVenue")}
+                {r.venue && r.partnerSnapshot.name ? t2("onSiteTo", { partner: r.partnerSnapshot.name }) : t2("onSiteToVenue")}
                 {r.partnerSnapshot.description ? ` ${t2("whatOnSite", { description: r.partnerSnapshot.description })}` : ""}
               </p>
             </div>

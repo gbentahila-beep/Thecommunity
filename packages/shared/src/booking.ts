@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { bookingPreferencesSchema, promoCodeSchema, promoDiscount, serviceFeeAmount, type PromoRule, type ServiceFee } from "./promo";
+import { questionnaireAnswersSchema } from "./questionnaire";
 import { seatsAvailable } from "./seats";
 import type { BookingMode, CurrencyCode, Pricing } from "./types";
 
@@ -31,6 +32,8 @@ export const reservationRequestSchema = z.object({
   preferences: bookingPreferencesSchema.optional(),
   /** 18c : conditions de participation aux activités physiques acceptées (exigé si l'expérience le demande). */
   physicalTermsAccepted: z.boolean().optional(),
+  /** Réponses au questionnaire de l'expérience, données AVANT le paiement (docs/22) ; vérifiées par le serveur. */
+  answers: questionnaireAnswersSchema.optional(),
 });
 export type ReservationRequest = z.infer<typeof reservationRequestSchema>;
 
@@ -68,6 +71,8 @@ export const bookingRequestSchema = z.object({
     .default("")
     .refine((v) => v === "" || normalizeInstagram(v) !== null, "invalidInstagram"),
   physicalTermsAccepted: z.boolean().optional(),
+  /** Réponses au questionnaire, données avec la demande (avant tout paiement, docs/22). */
+  answers: questionnaireAnswersSchema.optional(),
 });
 export type BookingRequestInput = z.input<typeof bookingRequestSchema>;
 
@@ -176,11 +181,12 @@ export function welcomeNeeds(e: { categoryId: string; bookingMode: string; foodS
 }
 
 /**
- * Billet à présenter seulement s'il y a quelqu'un pour le scanner : accueil sur place (hôtesse ou équipe du lieu)
- * ou part à régler au lieu partenaire. Sinon, arrivée autonome (« Je suis arrivé·e »).
+ * Billet à QR code seulement s'il y a quelqu'un pour le scanner (docs/22) : une hôtesse ou l'équipe sur place
+ * (option « hôtesse » de l'expérience), ou l'organisateur de l'activité, présent pour pointer ses participants.
+ * Une part à régler sur place ne suffit plus : le check-in seul (« Je suis arrivé·e ») est la règle.
  */
-export const needsTicket = (e: { onSiteHost?: boolean } | null | undefined, r?: { partnerPaymentStatus?: string }) =>
-  e?.onSiteHost === true || r?.partnerPaymentStatus === "due_on_site";
+export const needsTicket = (e: { onSiteHost?: boolean; organizerId?: string | null } | null | undefined, r?: { organizerId?: string | null }) =>
+  e?.onSiteHost === true || Boolean(r?.organizerId ?? e?.organizerId);
 
 /** Nom public d'un avis : prénom + initiale du nom (« Sara B. »). */
 export function publicNameOf(firstName?: string, lastName?: string): string {

@@ -1,6 +1,6 @@
 "use client";
 
-import type { BookingPreferences, Pricing } from "@thecommunity/shared";
+import type { BookingPreferences, Pricing, QuestionnaireAnswers } from "@thecommunity/shared";
 import { httpsCallable } from "firebase/functions";
 import { firebase } from "@/lib/firebase/client";
 
@@ -26,6 +26,7 @@ export const BOOKING_ERRORS = [
   "transfer_too_late",
   "too_young",
   "physical_terms_required",
+  "questionnaire_required",
   "busy",
   "signin",
   "generic",
@@ -55,7 +56,7 @@ async function freshUser() {
   return user;
 }
 
-export async function createReservation(sessionId: string, seats: number, opts: { promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean } = {}) {
+export async function createReservation(sessionId: string, seats: number, opts: { promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers } = {}) {
   await freshUser();
   // Champs absents plutôt que vides : le SDK transmettrait `undefined` comme `null`, refusé par le serveur.
   const extra = Object.fromEntries(Object.entries(opts).filter(([, v]) => v !== undefined && v !== null));

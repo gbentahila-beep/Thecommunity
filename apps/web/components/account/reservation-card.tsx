@@ -37,7 +37,8 @@ export async function ReservationCard({ reservation }: { reservation: Reservatio
         </p>
         <p className="flex items-center gap-1.5 text-sm text-muted">
           <MapPin className="size-4 shrink-0 text-brand-700" aria-hidden />
-          {s.district}
+          {/* Lieu secret : rien tant qu'il n'est pas communiqué (docs/22). */}
+          {reservation.venue?.name ?? ""}
           {reservation.seats > 1 && <span>· {t("seats", { count: reservation.seats })}</span>}
         </p>
       </div>

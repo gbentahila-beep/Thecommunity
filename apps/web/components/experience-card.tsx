@@ -87,7 +87,7 @@ export async function ExperienceCard({
         </h3>
         <p className="flex items-center gap-1.5 text-sm text-muted">
           <MapPin className="size-4 shrink-0 text-brand-700" aria-hidden />
-          {experience.district} · {session ? formatShortSlot(session.startAt, locale) : t("datesSoon")}
+          {[experience.district, session ? formatShortSlot(session.startAt, locale) : t("datesSoon")].filter(Boolean).join(" · ")}
           {experience.audience === "women" && <span className="ms-1 rounded-full bg-brand-100 px-2 py-0.5 text-[11px] font-semibold text-brand-900" data-testid="card-women">{t("women")}</span>}
         </p>
         <div className="mt-auto flex items-end justify-between pt-3">

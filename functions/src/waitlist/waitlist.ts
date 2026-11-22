@@ -1,4 +1,4 @@
-import { audienceRefusal, bookingClosesAt, maxSeatsFor, reservationRequestSchema, seatsAvailable } from "@thecommunity/shared";
+import { audienceRefusal, bookingClosesAt, maxSeatsFor, reservationRequestSchema, seatsAvailable, isSecretVenue } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -49,7 +49,7 @@ export const joinWaitlist = onCall({ region: REGION }, async (req) => {
         slug: snap.slug ?? e!.slug,
         startAt: s.startAt,
         endAt: s.endAt,
-        district: snap.district ?? e!.district ?? "",
+        district: isSecretVenue(e) ? "" : (snap.district ?? e!.district ?? ""),
         coverImagePath: snap.coverImagePath ?? e!.images?.[0]?.path ?? "",
         categoryId: s.categoryId,
         bookingMode: e!.bookingMode,

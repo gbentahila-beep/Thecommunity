@@ -114,7 +114,16 @@ export const getProData = cache(async function getProData(orgId: string): Promis
     db.collection("reservations").where("organizerId", "==", orgId).get(),
     db.collection("bookingRequests").where("organizerId", "==", orgId).get(),
   ]);
-  const experiences = expSnap.docs.map((d) => plain<Experience>({ id: d.id, ...d.data() })).sort((a, b) => a.title.fr.localeCompare(b.title.fr));
+  // Lieu secret (docs/22) : le lieu réel est rangé à part ; l'organisateur le retrouve dans son formulaire.
+  const secretIds = expSnap.docs.filter((d) => d.data().venue?.revealPolicy === "on_group_reveal").map((d) => d.id);
+  const hidden = new Map((secretIds.length ? await db.getAll(...secretIds.map((id) => db.doc(`experiences/${id}/private/venue`))) : []).map((d) => [d.ref.parent.parent!.id, d.data()]));
+  const experiences = expSnap.docs
+    .map((d) => {
+      const e = plain<Experience>({ id: d.id, ...d.data() });
+      const h = hidden.get(d.id);
+      return h ? { ...e, district: String(h.district || e.district), venue: { ...e.venue, name: String(h.name ?? ""), address: String(h.address ?? ""), geo: h.geo ?? null } } : e;
+    })
+    .sort((a, b) => a.title.fr.localeCompare(b.title.fr));
   const titleOf = new Map(experiences.map((e) => [e.id, e.title.fr]));
   const sessions: ProSession[] = sesSnap.docs
     .map((d) => {

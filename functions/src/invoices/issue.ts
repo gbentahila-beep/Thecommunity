@@ -10,6 +10,7 @@ import {
   splitVat,
   type CompanyInfo,
   type InvoiceLine,
+  needsTicket,
 } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
@@ -80,7 +81,7 @@ export function onSiteText(r: FirebaseFirestore.DocumentData | undefined, locale
   const snap = r?.partnerSnapshot;
   if (!snap || r?.partnerPaymentStatus === "not_applicable") return null;
   const l = locale === "ar" || locale === "en" ? locale : "fr";
-  const who = r?.venue ? snap.name : null;
+  const who = r?.venue && snap.name ? snap.name : null;
   const amount = typeof r?.onSiteAmount === "number" ? money(r.onSiteAmount, r?.pricing?.currency ?? "MAD") : null;
   const what = snap.description ? ` (${snap.description})` : "";
   if (l === "en") return `${amount ? `${amount} to pay` : "What you order is paid"} directly to ${who ?? "the partner venue"}, on site${what}. Not collected by Wenzy.`;
@@ -236,7 +237,10 @@ export async function emailInvoice(invoiceId: string): Promise<{ id: string; sta
     const r = (await db.doc(`reservations/${inv.reservationId}`).get()).data();
     const title = r?.sessionSnapshot?.title?.[locale] ?? r?.sessionSnapshot?.title?.fr ?? inv.lines[0]?.label ?? "";
     const when = r?.sessionSnapshot?.startAt instanceof Timestamp ? dateTimeFor(r.sessionSnapshot.startAt.toDate(), locale) : "";
-    mail = reservationConfirmedMail({ locale, firstName, title, when, seats: r?.seats ?? 1, total, number: inv.number, reservationId: inv.reservationId, test: inv.test, onSite: onSiteText(r, locale) });
+    // Billet à QR code seulement avec une hôtesse ou un organisateur sur place (docs/22) ; sinon, check-in dans l'appli.
+    const exp = r?.experienceId ? (await db.doc(`experiences/${r.experienceId}`).get()).data() : undefined;
+    const ticket = needsTicket(exp as { onSiteHost?: boolean; organizerId?: string | null } | undefined, r as { organizerId?: string | null } | undefined);
+    mail = reservationConfirmedMail({ locale, firstName, title, when, seats: r?.seats ?? 1, total, number: inv.number, reservationId: inv.reservationId, test: inv.test, onSite: onSiteText(r, locale), ticket });
   }
   const sent = await sendMail({
     to,

@@ -24,6 +24,9 @@ Rien n'est encore codé : ce document sert de référence pour chaque lot.
 | 10 | **Les membres de confiance sont supprimés.** |
 | 11 | L'univers « Dîners » est **renommé** (proposition § 4) et couvre **Café, Brunch, Déjeuner, Dîner**. |
 | 12 | Filtres de Découvrir : on **retire « Prix par place » et « Quartier »**, on **garde « Gamme du restaurant »**. |
+| 13 | L'univers s'appelle **« Tables »** (§ 4). |
+| 14 | **Codes promo : on les garde** (ex. première sortie offerte). Ils s'appliquent aux frais Wenzy. |
+| 15 | **Lieu par date, au choix de l'admin** : même restaurant à chaque date ou restaurants différents ; un restaurant qui convient peut devenir le **lieu habituel** du rendez-vous (§ 7.3). |
 
 ---
 
@@ -61,7 +64,7 @@ Conséquence assumée : Wenzy ne paie plus jamais un lieu ou un prestataire à l
 
 ## 4. L'univers « Dîners » devient « Tables »
 
-**Recommandation : « Tables »** (FR et EN), « موائد » (AR). C'est court, ça marche pour le café comme pour le dîner, et c'est cohérent avec « On compose les tables ».
+**Validé : « Tables »** (FR et EN), « موائد » (AR). C'est court, ça marche pour le café comme pour le dîner, et c'est cohérent avec « On compose les tables ».
 « Social Tables » est en anglais et reprend le vocabulaire d'un concurrent (Socials) : à éviter. Autres pistes possibles : « À table », « Tables & cafés ».
 
 - **Sous-catégories (formats)** : Café · Brunch · Déjeuner · Dîner. Les sous-catégories existent déjà (étape 19).
@@ -133,6 +136,11 @@ Les 5 étapes : **Type → L'essentiel** (titre, accroche, description, photos ;
 - **Lieu secret** : rien sur la fiche, **pas même le quartier**. Seulement la cuisine, l'ambiance et la gamme.
 - **Le lieu se renseigne pour chaque date, pas sur le rendez-vous.** On peut le faire à la création, plus tard, ou au plus tard 5 h avant. On peut en mettre **plusieurs**, chacun avec sa capacité en tables.
 - Le choix se fait parmi les **lieux partenaires** (fiche avec capacité) ou en saisie libre.
+- **Même restaurant ou restaurants différents, au choix de l'admin**, date par date :
+  - **Lieu habituel** (facultatif) sur le rendez-vous : chaque nouvelle date est pré-remplie avec lui. Sans lieu habituel, chaque date attend son lieu.
+  - En choisissant le lieu d'une date, une case **« Utiliser ce lieu pour toutes les prochaines dates »** (dates déjà pourvues non modifiées).
+  - **Tester puis adopter** : après une date, sur sa page, l'admin note le lieu (« Ça s'est bien passé ? 👍 / 👎 ») et peut cliquer **« En faire le lieu habituel »**. Le rendez-vous devient alors hebdomadaire dans ce restaurant, jusqu'à ce qu'il le change.
+  - Le lieu habituel reste secret pour les participants comme les autres (révélé 5 h avant).
 - **Le lieu secret n'est jamais dans un document public de la base** (aujourd'hui le nom est lisible dans `experiences/{id}`) : il est rangé dans une partie privée de la date.
 
 ---
@@ -350,5 +358,20 @@ Chaque lot met à jour ses propres écrans, e-mails et articles d'aide. **Les do
 
 ## 16. Points encore ouverts
 
-1. **Nom de l'univers** : « Tables » (recommandé), « À table », « Tables & cafés », ou autre ?
-2. **Codes promo** : on les garde pour le lancement (ex. première sortie offerte), ou on les retire pour simplifier ?
+Aucun pour l'instant : nom de l'univers (« Tables »), codes promo (gardés) et lieu par date (§ 7.3) sont tranchés.
+
+---
+
+## 17. Lot 0 livré (22 novembre)
+
+| Correction | Ce qui change |
+|---|---|
+| **Lieu secret hors du public** | Nom, adresse, coordonnées, quartier et nom du partenaire ne sont plus écrits dans la fiche publique (`experiences/{id}`) ni dans le résumé des dates : ils sont rangés dans `experiences/{id}/private/venue` (équipe seulement, règles déjà en place). Le back-office et l'espace organisateur les relisent pour le formulaire ; la révélation des groupes les lit pour les communiquer aux participants. Filet de sécurité côté site : `publicExperience()` vide ces champs pour toute expérience à lieu secret (anciens documents, démonstration). |
+| **Plus de quartier pour un lieu secret** | Fiche (infos clés et **titre de la page pour Google**), cartes, lignes, « Cette semaine », suggestions « Pour vous », page de réservation, espace membre (réservations à venir), rappels par e-mail (la ville seulement). La recherche ne retrouve plus une expérience secrète par son quartier. |
+| **Fiche** | « Le lieu » n'affiche plus ni nom, ni adresse, ni carte quand le lieu est secret ; texte neutre : « Le lieu est gardé secret : il vous est communiqué avant l'expérience, directement dans votre réservation. » |
+| **Billet à QR code** | Seulement avec une hôtesse (option de l'expérience) ou pour une activité d'organisateur. Une part à régler sur place ne donne plus de billet. E-mail de confirmation : « Voir ma réservation » et rappel du check-in au lieu de « Voir mon billet ». |
+| **Questionnaire avant le paiement** | Dans le tunnel de réservation et dans la demande de participation, juste avant de payer ; **obligatoire** (sauf questions facultatives), vérifié par le serveur (`questionnaire_required`). Réponses modifiables ensuite depuis la réservation. Une place proposée par la liste d'attente garde le questionnaire après coup (cas rare, à revoir au lot 3). CGV art. 3, CGU art. 7, article d'aide et article de blog mis à jour (FR / EN / AR). |
+
+**Action manuelle après mise en ligne** : lancer une fois `scripts/migrate-secret-venues.ts` (d'abord sans `--confirm` pour voir la liste) pour retirer le lieu des expériences secrètes déjà enregistrées. Sinon, chaque expérience est corrigée à son prochain enregistrement dans le back-office.
+
+**Tests** : unitaires 152 (dont 6 nouveaux : lieu secret, billet, questionnaire) ; émulateurs 171 réussis. Les 9 échecs restants existent à l'identique sans ces changements : déclencheurs Authentification et Stockage non émulés dans cet environnement (inscription, e-mails de factures et de virement).

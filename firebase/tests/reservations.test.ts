@@ -1212,8 +1212,10 @@ describe("composition des tables (6)", () => {
     const expId = (await session(sid)).experienceId as string;
     await db().doc(`experiences/${expId}`).update({
       groupConfig: { minSize: 3, targetSize: 4, maxSize: 5 },
-      venue: { name: "Rooftop secret", address: "1 rue du Test", revealPolicy: "on_group_reveal" },
+      // Lieu secret (docs/22) : rien dans la fiche publique, le lieu réel est dans le document privé.
+      venue: { name: "", address: "", revealPolicy: "on_group_reveal", geo: null },
     });
+    await db().doc(`experiences/${expId}/private/venue`).set({ name: "Rooftop secret", address: "1 rue du Test", geo: null, district: "Gauthier", partnerName: "" });
     const people: Client[] = [];
     for (let i = 0; i < n; i++) {
       const u = await member();
@@ -1702,21 +1704,22 @@ describe("toutes les activités (18)", () => {
     expect((await reservation(String(rid))).physicalTerms.version).toBe("2026-11-19");
   });
 
-  it("questionnaire : invitation à la confirmation, réponses vérifiées, groupes padel par niveau", async () => {
+  it("questionnaire : rempli avant le paiement, réponses vérifiées, groupes padel par niveau", async () => {
     const sessionId = await makeSession({ price: 0, mode: "group", capacity: 8, maxSeats: 1, extra: { questionnaire: padel, groupConfig: { minSize: 4, targetSize: 4, maxSize: 4 } } });
     const players = await Promise.all(Array.from({ length: 8 }, () => member()));
-    const ids: string[] = [];
-    for (const p of players) ids.push(String((await p.call("createReservation", { sessionId, seats: 1 })).reservationId));
-    const notes = (await db().collection(`users/${players[0]!.uid}/notifications`).where("type", "==", "questionnaire").get()).docs;
-    expect(notes).toHaveLength(1);
-    expect(notes[0]!.data().link).toBe(`/espace/reservations/${ids[0]}#questionnaire`);
-    // Réponses invalides : obligatoire manquante, réponse hors liste, réservation d'autrui.
-    expect(await refusal(players[0]!.call("submitQuestionnaire", { reservationId: ids[0], answers: { qlevel: 0 } }))).toBe("invalid-argument:");
-    expect(await refusal(players[0]!.call("submitQuestionnaire", { reservationId: ids[0], answers: { qlevel: 5, qgoal: 0 } }))).toBe("invalid-argument:");
-    expect(await refusal(players[1]!.call("submitQuestionnaire", { reservationId: ids[0], answers: { qlevel: 0, qgoal: 0 } }))).toBe("not-found:not_found");
+    // docs/22 : sans réponse, ou avec une réponse obligatoire manquante, la réservation est refusée.
+    expect(await refusal(players[0]!.call("createReservation", { sessionId, seats: 1 }))).toBe("failed-precondition:questionnaire_required");
+    expect(await refusal(players[0]!.call("createReservation", { sessionId, seats: 1, answers: { qlevel: 0 } }))).toBe("failed-precondition:questionnaire_required");
+    expect(await refusal(players[0]!.call("createReservation", { sessionId, seats: 1, answers: { qlevel: 5, qgoal: 0 } }))).toBe("failed-precondition:questionnaire_required");
     const levels = [0, 2, 0, 2, 0, 2, 0, 2];
-    for (const [i, p] of players.entries()) expect(await p.call("submitQuestionnaire", { reservationId: ids[i], answers: { qlevel: levels[i], qgoal: 0 } })).toEqual({ ok: true });
+    const ids: string[] = [];
+    for (const [i, p] of players.entries()) ids.push(String((await p.call("createReservation", { sessionId, seats: 1, answers: { qlevel: levels[i], qgoal: 0 } })).reservationId));
     expect((await reservation(ids[1]!)).questionnaire.answers).toEqual({ qlevel: 2, qgoal: 0 });
+    // Déjà répondu : pas d'invitation à remplir le questionnaire après coup.
+    expect((await db().collection(`users/${players[0]!.uid}/notifications`).where("type", "==", "questionnaire").get()).size).toBe(0);
+    // Modification ensuite : réponses invalides et réservation d'autrui refusées.
+    expect(await refusal(players[0]!.call("submitQuestionnaire", { reservationId: ids[0], answers: { qlevel: 0 } }))).toBe("invalid-argument:");
+    expect(await refusal(players[1]!.call("submitQuestionnaire", { reservationId: ids[0], answers: { qlevel: 0, qgoal: 0 } }))).toBe("not-found:not_found");
     const team = await member({ role: "admin" });
     expect(await team.call("adminProposeGroups", { sessionId })).toEqual({ groups: 2 });
     const groups = (await db().collection("groups").where("sessionId", "==", sessionId).get()).docs.map((d) => d.data().memberIds as string[]);
@@ -1730,8 +1733,7 @@ describe("toutes les activités (18)", () => {
   it("questionnaire effacé 30 jours après l'expérience", async () => {
     const sessionId = await makeSession({ price: 0, extra: { questionnaire: padel } });
     const u = await member();
-    const { reservationId } = await u.call("createReservation", { sessionId, seats: 1 });
-    await u.call("submitQuestionnaire", { reservationId, answers: { qlevel: 1, qgoal: 2 } });
+    const { reservationId } = await u.call("createReservation", { sessionId, seats: 1, answers: { qlevel: 1, qgoal: 2 } });
     await db().doc(`reservations/${reservationId}`).update({ "sessionSnapshot.startAt": Timestamp.fromMillis(Date.now() - 31 * 86_400_000) });
     await purgeExpiredPreferences();
     const r = await reservation(String(reservationId));

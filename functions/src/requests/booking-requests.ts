@@ -1,5 +1,5 @@
 import { preferencesDoc } from "../reservations/reservation-doc";
-import { ACCEPTED_HOLD_HOURS, audienceRefusal, bookingClosesAt, bookingRequestSchema, maxSeatsFor, normalizeInstagram, PHYSICAL_TERMS_VERSION, tooYoung } from "@thecommunity/shared";
+import { ACCEPTED_HOLD_HOURS, answerIssues, audienceRefusal, bookingClosesAt, bookingRequestSchema, maxSeatsFor, normalizeInstagram, PHYSICAL_TERMS_VERSION, tooYoung, isSecretVenue, type QuestionDef } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -24,7 +24,7 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
   if (token.email_verified !== true) refuse("email_not_verified", "Confirmez votre adresse e-mail.");
   const parsed = bookingRequestSchema.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats, message, instagram, preferences, physicalTermsAccepted } = parsed.data;
+  const { sessionId, seats, message, instagram, preferences, physicalTermsAccepted, answers } = parsed.data;
   await requireMemberReady(uid);
 
   const sessRef = db.doc(`sessions/${sessionId}`);
@@ -50,6 +50,9 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
     if (tooYoung(e!.minAge, user.data()?.birthDate, new Date())) refuse("too_young", "Cette expérience est réservée aux personnes plus âgées.");
     if (audienceRefusal(e!.audience, user.data()?.gender)) refuse("audience_women_only", "Cette expérience est réservée aux femmes.");
     if (e!.physicalActivity === true && physicalTermsAccepted !== true) refuse("physical_terms_required", "Acceptez les conditions de participation aux activités physiques.");
+    // docs/22 : le questionnaire se remplit avec la demande, avant tout paiement.
+    const questions = (Array.isArray(e!.questionnaire) ? e!.questionnaire : []) as QuestionDef[];
+    if (questions.length > 0 && answerIssues(questions, answers ?? {}).length > 0) refuse("questionnaire_required", "Répondez au questionnaire pour envoyer votre demande.");
 
     const snap = s.experienceSnapshot ?? {};
     tx.set(reqRef, {
@@ -63,13 +66,14 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
       instagram: instagram ? normalizeInstagram(instagram) : null,
       ...(preferences ? { preferences: preferencesDoc(preferences) } : {}),
       ...(e!.physicalActivity === true ? { physicalTerms: { version: PHYSICAL_TERMS_VERSION, acceptedAt: Timestamp.now() } } : {}),
+      ...(questions.length > 0 && answers ? { questionnaire: { answers, answeredAt: Timestamp.now() } } : {}),
       status: "pending",
       sessionSnapshot: {
         title: snap.title ?? e!.title,
         slug: snap.slug ?? e!.slug,
         startAt: s.startAt,
         endAt: s.endAt,
-        district: snap.district ?? e!.district ?? "",
+        district: isSecretVenue(e) ? "" : (snap.district ?? e!.district ?? ""),
         coverImagePath: snap.coverImagePath ?? e!.images?.[0]?.path ?? "",
         categoryId: s.categoryId,
         bookingMode: e!.bookingMode,

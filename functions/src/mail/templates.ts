@@ -36,13 +36,15 @@ const TEST_NOTE: Record<L, string> = {
   ar: "دفع تجريبي: لم يُقتطع أي مبلغ.",
 };
 
-export function reservationConfirmedMail(o: { locale: string; firstName: string; title: string; when: string; seats: number; total: string; number: string; reservationId: string; test: boolean; onSite?: string | null }) {
+export function reservationConfirmedMail(o: { locale: string; firstName: string; title: string; when: string; seats: number; total: string; number: string; reservationId: string; test: boolean; onSite?: string | null; ticket?: boolean }) {
   const l = lang(o.locale);
   const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
+  // docs/22 : billet seulement avec une hôtesse ou un organisateur ; sinon, chacun indique son arrivée dans l'appli.
+  const ticket = o.ticket !== false;
   const t = {
-    fr: { subject: `C'est réservé : ${o.title}`, heading: `À bientôt, ${o.firstName || "et bienvenue"} !`, p: [`Votre place est confirmée pour « ${o.title} », ${o.when}.`, `${o.seats} place(s) · ${o.total} · document ${o.number}.`, "Votre billet avec QR code vous attend dans votre réservation : présentez-le à l'accueil."], cta: "Voir mon billet" },
-    en: { subject: `You're booked: ${o.title}`, heading: `See you soon${o.firstName ? `, ${o.firstName}` : ""}!`, p: [`Your seat is confirmed for “${o.title}”, ${o.when}.`, `${o.seats} seat(s) · ${o.total} · document ${o.number}.`, "Your ticket with its QR code is in your booking: show it when you arrive."], cta: "View my ticket" },
-    ar: { subject: `تم الحجز: ${o.title}`, heading: `إلى اللقاء قريبًا${o.firstName ? ` ${o.firstName}` : ""}!`, p: [`تم تأكيد مقعدك في « ${o.title} »، ${o.when}.`, `${o.seats} مقعد · ${o.total} · الوثيقة ${o.number}.`, "تذكرتك برمز QR موجودة في حجزك: اعرضها عند الاستقبال."], cta: "عرض تذكرتي" },
+    fr: { subject: `C'est réservé : ${o.title}`, heading: `À bientôt, ${o.firstName || "et bienvenue"} !`, p: [`Votre place est confirmée pour « ${o.title} », ${o.when}.`, `${o.seats} place(s) · ${o.total} · document ${o.number}.`, ticket ? "Votre billet avec QR code vous attend dans votre réservation : présentez-le à l'accueil." : "Le jour J, indiquez votre arrivée depuis votre réservation (« Je suis arrivé·e ») : vous y retrouverez votre groupe."], cta: ticket ? "Voir mon billet" : "Voir ma réservation" },
+    en: { subject: `You're booked: ${o.title}`, heading: `See you soon${o.firstName ? `, ${o.firstName}` : ""}!`, p: [`Your seat is confirmed for “${o.title}”, ${o.when}.`, `${o.seats} seat(s) · ${o.total} · document ${o.number}.`, ticket ? "Your ticket with its QR code is in your booking: show it when you arrive." : "On the day, check in from your booking (“I'm here”): that's where you'll find your group."], cta: ticket ? "View my ticket" : "View my booking" },
+    ar: { subject: `تم الحجز: ${o.title}`, heading: `إلى اللقاء قريبًا${o.firstName ? ` ${o.firstName}` : ""}!`, p: [`تم تأكيد مقعدك في « ${o.title} »، ${o.when}.`, `${o.seats} مقعد · ${o.total} · الوثيقة ${o.number}.`, ticket ? "تذكرتك برمز QR موجودة في حجزك: اعرضها عند الاستقبال." : "يوم التجربة، أكّد وصولك من حجزك («وصلت»): ستجد هناك مجموعتك."], cta: ticket ? "عرض تذكرتي" : "عرض حجزي" },
   }[l];
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: [...t.p, ...(o.onSite ? [o.onSite] : []), ...(o.test ? [TEST_NOTE[l]] : [])], cta: { label: t.cta, href }, footer: FOOTER[l] }) };
 }

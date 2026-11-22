@@ -2,6 +2,7 @@ import {
   LOW_SEATS_THRESHOLD,
   formatMoney,
   meetingSummary,
+  placeLabel,
   pricingOf,
   seatsAvailable,
   type CategoryKey,
@@ -48,7 +49,8 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/experien
     return retired ? { title: tr(retired.title, locale), robots: { index: false, follow: true } } : {};
   }
   const city = await getCity(exp.cityId);
-  const title = `${tr(exp.title, locale)} — ${exp.district}, ${city ? tr(city.name, locale) : "Casablanca"}`;
+  // Lieu secret : pas de quartier, même dans le titre de la page (docs/22).
+  const title = `${tr(exp.title, locale)} — ${placeLabel(exp.district, city ? tr(city.name, locale) : "Casablanca")}`;
   return {
     title,
     description: tr(exp.summary, locale),
@@ -202,7 +204,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               {next && (
                 <Fact icon={CalendarDays} label={formatLongDate(next.startAt, locale)} value={formatTimeRange(next.startAt, next.endAt, locale)} />
               )}
-              <Fact icon={MapPin} label={exp.district} value={cityName} />
+              {exp.district ? <Fact icon={MapPin} label={exp.district} value={cityName} /> : <Fact icon={MapPin} label={cityName} value="" />}
               <Fact icon={Users} label={t("groupSize")} value={formatLabel(exp, t, next?.capacity ?? 0)} />
               <Fact icon={Clock} label={t("duration")} value={duration} />
               <Fact icon={Languages} label={t("languages")} value={exp.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ")} />
@@ -267,12 +269,16 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
             )}
 
             <Section title={t("venue")}>
-              <p className="font-medium text-ink">{exp.venue.name}</p>
-              <p className="text-muted">{exp.venue.address}</p>
-              {exp.venue.revealPolicy === "on_group_reveal" && (
-                <p className="mt-3 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-900">{t("venueRevealed")}</p>
+              {/* Lieu secret : ni nom, ni adresse, ni carte avant la révélation (docs/22). */}
+              {surprise ? (
+                <p className="rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-900" data-testid="venue-secret">{t("venueRevealed")}</p>
+              ) : (
+                <>
+                  <p className="font-medium text-ink">{exp.venue.name}</p>
+                  <p className="text-muted">{exp.venue.address}</p>
+                  {exp.venue.geo && <VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} />}
+                </>
               )}
-              {exp.venue.revealPolicy === "immediate" && exp.venue.geo && <VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} />}
             </Section>
 
             {organizer && (

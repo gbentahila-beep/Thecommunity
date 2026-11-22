@@ -13,7 +13,7 @@ import type {
   Session,
   UserProfile,
 } from "@thecommunity/shared";
-import { crowdSummary, MEETING_MIN_PARTICIPANTS, MEMBERSHIP_PLAN_ID, normalizeHomeSettings, type Crowd, type Interest, type HomeSettings, type Membership, type MembershipPlan, type Organizer } from "@thecommunity/shared";
+import { crowdSummary, MEETING_MIN_PARTICIPANTS, MEMBERSHIP_PLAN_ID, normalizeHomeSettings, publicExperience, type Crowd, type Interest, type HomeSettings, type Membership, type MembershipPlan, type Organizer } from "@thecommunity/shared";
 import { Timestamp, type DocumentSnapshot } from "firebase-admin/firestore";
 import { unstable_cache } from "next/cache";
 import { adminDb } from "@/lib/firebase/admin";
@@ -28,6 +28,8 @@ function plain<T>(value: unknown): T {
   return value as T;
 }
 const withId = <T>(snap: DocumentSnapshot) => plain<T>({ id: snap.id, ...snap.data() });
+/** Expérience publique : lieu, quartier et partenaire retirés quand le lieu est secret (docs/22). */
+const expOf = (snap: DocumentSnapshot) => publicExperience(withId<Experience>(snap));
 
 /**
  * Données publiques du catalogue mises en cache 5 minutes (étiquette « catalog ») pour limiter
@@ -51,12 +53,12 @@ async function fsCategoriesRaw(): Promise<Category[]> {
 
 async function fsPublishedExperiencesRaw(): Promise<Experience[]> {
   const snap = await adminDb().collection("experiences").where("status", "==", "published").get();
-  return snap.docs.map((d) => withId<Experience>(d));
+  return snap.docs.map((d) => expOf(d));
 }
 
 async function fsExperienceBySlugRaw(slug: string): Promise<Experience | null> {
   const snap = await adminDb().collection("experiences").where("slug", "==", slug).where("status", "==", "published").limit(1).get();
-  return snap.docs[0] ? withId<Experience>(snap.docs[0]) : null;
+  return snap.docs[0] ? expOf(snap.docs[0]) : null;
 }
 
 /** Expérience archivée (fiche « n'est plus proposée ») : seulement le titre et l'univers. */
@@ -70,7 +72,7 @@ export const fsArchivedExperienceBySlug = cached(fsArchivedExperienceBySlugRaw, 
 /** Expériences archivées (favoris de l'espace membre : affichées en dernier, « n'est plus proposée »). */
 async function fsArchivedExperiencesRaw(): Promise<Experience[]> {
   const snap = await adminDb().collection("experiences").where("status", "==", "archived").get();
-  return snap.docs.map((d) => withId<Experience>(d));
+  return snap.docs.map((d) => expOf(d));
 }
 export const fsArchivedExperiences = cached(fsArchivedExperiencesRaw, "fsArchivedExperiences");
 
@@ -78,7 +80,7 @@ async function fsExperiencesListRaw(sortedIds: string[]): Promise<Experience[]> 
   if (sortedIds.length === 0) return [];
   const db = adminDb();
   const snaps = await db.getAll(...sortedIds.map((id) => db.doc(`experiences/${id}`)));
-  return snaps.filter((s) => s.exists && s.data()?.status === "published").map((s) => withId<Experience>(s));
+  return snaps.filter((s) => s.exists && s.data()?.status === "published").map((s) => expOf(s));
 }
 const fsExperiencesList = cached(fsExperiencesListRaw, "fsExperiencesList");
 

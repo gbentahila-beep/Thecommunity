@@ -37,8 +37,7 @@ export async function CompactRow({ experience, session, priority = false }: { ex
         </div>
         <p className="mt-0.5 text-[13px] text-ink/80">{session ? formatDaySlot(session.startAt, locale) : t("datesSoon")}</p>
         <p className="truncate text-[13px] text-muted">
-          {experience.district}
-          {session && ` · ${await groupLabel(experience, session)}`}
+          {[experience.district, session ? await groupLabel(experience, session) : ""].filter(Boolean).join(" · ")}
         </p>
         <div className="mt-1.5 flex flex-wrap gap-1.5">
           {category && <span className={`${pill} bg-cream-deep text-ink/80`}>{tr(category.shortName, locale)}</span>}

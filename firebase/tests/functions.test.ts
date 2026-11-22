@@ -200,6 +200,11 @@ describe("back-office : expériences et comptes", () => {
     const sessions = await db.collection("sessions").where("experienceId", "==", "exp-test-createur").get();
     expect(sessions.size).toBe(3);
     expect(sessions.docs.every((s) => s.data().seatsConfirmed === 0 && s.data().capacity === 24 && s.data().status === "published")).toBe(true);
+    // Lieu secret (docs/22) : rien dans les documents publics, le lieu réel est dans le document privé.
+    expect(exp?.venue).toEqual({ name: "", address: "", revealPolicy: "on_group_reveal", geo: null });
+    expect(exp?.district).toBe("");
+    expect((await db.doc("experiences/exp-test-createur/private/venue").get()).data()).toMatchObject({ name: "Restaurant partenaire", address: "Boulevard Racine, Casablanca", district: "Racine" });
+    expect(sessions.docs.every((s) => s.data().experienceSnapshot.district === "")).toBe(true);
     const logs = await db.collection("auditLogs").where("targetId", "==", "exp-test-createur").get();
     expect(logs.docs[0]?.data().action).toBe("experience.create");
   });

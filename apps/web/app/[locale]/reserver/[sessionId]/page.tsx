@@ -1,4 +1,4 @@
-import { bookingRefusal, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget } from "@thecommunity/shared";
+import { bookingRefusal, formatMoney, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -138,7 +138,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             </p>
             <p className="flex items-center gap-2 text-sm text-muted">
               <MapPin className="size-4 shrink-0 text-brand-700" aria-hidden />
-              {exp.district}, {city ? tr(city.name, locale) : "Casablanca"}
+              {placeLabel(exp.district, city ? tr(city.name, locale) : "Casablanca")}
             </p>
           </div>
         </div>
@@ -282,7 +282,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
       ) : visitor.transfer && transferClosed(new Date(session.startAt), visitor.transfer) && !onRequest ? (
         <Notice title={t("transferTooLateTitle")} text={t("transferTooLateText", { cutoff: visitor.transfer.cutoff })} />
       ) : onRequest ? (
-        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} instagramRequired={Boolean(exp.requestInstagramRequired)} defaultLanguages={profileLanguages(visitor.languages)} physical={exp.physicalActivity === true} needs={welcomeNeeds(exp)} />
+        <RequestForm sessionId={session.id} maxSeats={maxSeats} messageRequired={Boolean(exp.requestMessageRequired)} instagramRequired={Boolean(exp.requestInstagramRequired)} defaultLanguages={profileLanguages(visitor.languages)} physical={exp.physicalActivity === true} questions={exp.questionnaire ?? []} needs={welcomeNeeds(exp)} />
       ) : (
         <BookingForm
           sessionId={session.id}
@@ -293,6 +293,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           transfer={visitor.transfer}
           defaultLanguages={profileLanguages(visitor.languages)}
           physical={exp.physicalActivity === true}
+          questions={exp.questionnaire ?? []}
           needs={welcomeNeeds(exp)}
         />
       )}
