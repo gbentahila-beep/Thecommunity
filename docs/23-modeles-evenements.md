@@ -198,35 +198,35 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 
 ### Bouger (sport et bien-être) : lieu affiché, activité physique cochée
 
-**S1 · Running** · **L**
+**S1 · Running** — Bouger · **L** · **VALIDÉ**
 - **Titre** : Running · **Google** : Running entre inconnus sur la Corniche de Casablanca
 - **Accroche** : Courir à plusieurs, à votre allure, puis un café face à l'océan.
-- **Description** : Rendez-vous sur la Corniche pour 5 à 8 km en petits groupes de même allure, composés d'après vos réponses. Pas de compétition : on court en discutant, ou pas. Ceux qui veulent prolongent par un café, chacun réglant sa consommation.
-- **Quand** : samedi 8h00, environ 1 h 15 · **Lieu** : affiché (point de rendez-vous, Corniche d'Aïn Diab) · plein air
-- **Sur place** : rien (café facultatif)
-- **Inclus** : un parcours préparé, des groupes par allure · **Pas inclus** : le café après la course
-- **À apporter** : chaussures de course, eau · **Tenue** : tenue de sport · **Niveau** : tous niveaux
-- **Questionnaire** : Course à pied (allure) · **Image** : `running.webp` ✓
+- **Description** : Un parcours de 5 à 8 km sur la Corniche, en petits groupes de même allure composés d'après vos réponses. On court, on discute, et ceux qui veulent prolongent par un café.
+- **Quand** : samedi 8h00, 1 h 15 · **Format** : groupes par allure, 20 places · **Lieu** : affiché (point de rendez-vous, Corniche d'Aïn Diab, à préciser)
+- **Sur place** : rien · **Inclus** : Un parcours préparé · Des groupes par allure
+- **À apporter** : chaussures de course, eau · **Tenue** : tenue de sport · **Niveau** : tous niveaux · **Plein air** : oui
+- **Questionnaire** : Running · **Image** : `running.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non · français et darija · annulation gratuite jusqu'à 48 h avant · activité physique cochée (conditions acceptées à la réservation)
 
-**S2 · Padel** · **L**
+**S2 · Padel** — Bouger · **L** · **VALIDÉ**
 - **Titre** : Padel · **Google** : Padel entre inconnus à Casablanca
-- **Accroche** : Quatre par terrain, même niveau, zéro pression.
-- **Description** : Débutant ou confirmé, nous formons des parties de quatre joueurs de niveau proche d'après vos réponses. 1 h 30 de jeu dans un club partenaire, puis un verre ensemble pour ceux qui le souhaitent. Le terrain et la location de raquette se règlent sur place au club.
-- **Quand** : samedi 10h00, 1 h 30 · **Lieu** : affiché (club partenaire)
-- **Sur place** : terrain et raquette, ≈ 100–150 DH par personne
-- **Inclus** : des parties par niveau, le terrain réservé · **Pas inclus** : la location du terrain et de la raquette (sur place), les boissons
-- **Matériel fourni** : raquettes et balles (à confirmer) · **Tenue** : sport, baskets propres · **Niveau** : tous niveaux
-- **Questionnaire** : Padel · **Image** : `padel.webp` ✓
+- **Accroche** : Quatre par terrain, même niveau, et des parties qui s'enchaînent.
+- **Description** : Nous formons des parties de quatre joueurs de niveau proche d'après vos réponses, dans un club partenaire. Débutant ou confirmé, chacun joue avec des partenaires à sa mesure, puis ceux qui le souhaitent se retrouvent autour d'un verre.
+- **Quand** : samedi 10h00, 1 h 30 · **Format** : parties de 4 (8 places pour 2 terrains) · **Lieu** : affiché (club partenaire)
+- **Sur place** : ≈ 100–150 DH par personne (terrain et raquette) · **Inclus** : Des parties par niveau · Le terrain réservé
+- **Matériel fourni** : raquettes et balles (à confirmer avec le club) · **Tenue** : sport, baskets propres · **Niveau** : tous niveaux
+- **Questionnaire** : Padel · **Image** : `padel.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non · français et darija · annulation gratuite jusqu'à 48 h avant · activité physique cochée (conditions acceptées à la réservation)
 
-**S3 · Yoga** · **L**
+**S3 · Yoga** — Bouger · **L** · **VALIDÉ**
 - **Titre** : Yoga · **Google** : Yoga entre inconnus à Casablanca
-- **Accroche** : Une heure de yoga tous niveaux, puis un thé pour faire connaissance.
-- **Description** : Un cours doux, accessible à tous, donné par un professeur dans un studio ou sur un rooftop partenaire. Après la séance, on prend le temps d'un thé pour faire connaissance.
-- **Quand** : dimanche 8h30, 1 h 15 · **Lieu** : affiché (studio partenaire)
-- **Sur place** : cours, ≈ 100–150 DH
-- **Inclus** : le cours, le thé après la séance · **Pas inclus** : le cours (réglé sur place)
-- **Matériel fourni** : tapis · **À apporter** : eau · **Tenue** : souple · **Niveau** : tous niveaux
-- **Questionnaire** : Niveau seul · **Image** : `yoga-loft.webp` ✓
+- **Accroche** : Une séance de yoga tous niveaux, en petit groupe.
+- **Description** : Un cours accessible à tous, donné par un professeur dans un lieu partenaire : studio, jardin ou rooftop.
+- **Quand** : dimanche 9h00, 1 h 15 · **Format** : cours collectif, 12 places · **Lieu** : affiché (lieu partenaire)
+- **Sur place** : ≈ 100–150 DH (le cours) · **Inclus** : Le cours
+- **Matériel fourni** : tapis · **À apporter** : eau · **Tenue** : souple · **Niveau** : tous niveaux · **Plein air** : selon le lieu (décoché)
+- **Questionnaire** : Niveau (réunir) · **Image** : `yoga.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non · français et darija · annulation gratuite jusqu'à 48 h avant · activité physique cochée (conditions acceptées à la réservation)
 
 **S4 · Pilates** · 2
 - **Titre** : Pilates · **Accroche** : Un cours de pilates en petit groupe, avec de nouvelles têtes.
