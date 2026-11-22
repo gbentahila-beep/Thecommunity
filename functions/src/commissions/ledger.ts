@@ -26,7 +26,7 @@ export function moroccoToday(now = new Date()): string {
   return `${p.year}-${String(p.month).padStart(2, "0")}-${String(p.day).padStart(2, "0")}`;
 }
 
-/** Copie de la commission pour une réservation d'activité d'organisateur (null pour The Host Club). */
+/** Copie de la commission pour une réservation d'activité d'organisateur (null pour Wenzy). */
 export function commissionSnapshot(rules: CommissionRule[], e: DocumentData, experienceId: string, base: number, seats: number, now = new Date()) {
   const organizerId = e.organizerId as string | null | undefined;
   if (!organizerId) return null;

@@ -23,7 +23,7 @@ describe("virement bancaire (5h)", () => {
   });
 
   it("coordonnées bancaires : RIB de 24 chiffres exigé pour activer le virement", () => {
-    const ok = bankDetailsSchema.parse({ holder: "The Host Club SARL", bank: "Banque X", rib: "011 780 0000123456789012 34", iban: "", swift: "" });
+    const ok = bankDetailsSchema.parse({ holder: "Wenzy SARL", bank: "Banque X", rib: "011 780 0000123456789012 34", iban: "", swift: "" });
     expect(ok.rib).toHaveLength(24);
     expect(formatRib(ok.rib)).toBe("011 780 0000123456789012 34");
     expect(bankDetailsSchema.safeParse({ holder: "A B", bank: "Banque", rib: "1234" }).success).toBe(false);

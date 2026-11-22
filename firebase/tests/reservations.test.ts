@@ -768,7 +768,7 @@ describe("expériences sans date et alerte « prochaines dates »", () => {
 
 describe("abonnement annuel", () => {
   let team: Client;
-  const planInput = { nameFr: "The Host Club Membre", nameAr: "", priceDh: 990, discountPercent: 15, earlyAccessHours: 48, benefitsFr: "-15 % sur toutes les expériences\nAccès anticipé", benefitsAr: "", isActive: true };
+  const planInput = { nameFr: "Wenzy Membre", nameAr: "", priceDh: 990, discountPercent: 15, earlyAccessHours: 48, benefitsFr: "-15 % sur toutes les expériences\nAccès anticipé", benefitsAr: "", isActive: true };
   beforeAll(async () => {
     team = await member({ role: "admin" });
   });
@@ -958,7 +958,7 @@ describe("factures, avoirs et e-mails (5c)", () => {
   });
 
   it("société : réglée par le super-admin seulement, figée sur les nouveaux documents ; renvoi par e-mail depuis le back-office", async () => {
-    const company = { legalName: "The Host Club SARL", address: "Bd d'Anfa, Casablanca", ice: "001234567000089", if: "12345678", rc: "Casablanca 123456", email: "factures@example.com", vatRate: 20, mailProvider: "outbox", fromName: "The Host Club", fromEmail: "bonjour@example.com" };
+    const company = { legalName: "Wenzy SARL", address: "Bd d'Anfa, Casablanca", ice: "001234567000089", if: "12345678", rc: "Casablanca 123456", email: "factures@example.com", vatRate: 20, mailProvider: "outbox", fromName: "Wenzy", fromEmail: "bonjour@example.com" };
     const adm = await member({ role: "admin" });
     const sup = await member({ role: "superadmin" });
     expect(await refusal(adm.call("adminSaveCompanySettings", company))).toBe("permission-denied:");
@@ -970,7 +970,7 @@ describe("factures, avoirs et e-mails (5c)", () => {
       const { paymentId } = await paidReservation(u, sid);
       const inv = await invoice(`inv_${paymentId}`);
       // Paiement de test : toujours une série de TEST, mais avec la société et la TVA (20 %) figées.
-      expect(inv).toMatchObject({ series: "TEST-FA", seller: { legalName: "The Host Club SARL", ice: "001234567000089", vatRate: 20 }, totals: { ttc: 12000, ht: 10000, vat: 2000, rate: 20 } });
+      expect(inv).toMatchObject({ series: "TEST-FA", seller: { legalName: "Wenzy SARL", ice: "001234567000089", vatRate: 20 }, totals: { ttc: 12000, ht: 10000, vat: 2000, rate: 20 } });
       expect(await refusal(u.call("adminInvoiceAction", { paymentId, action: "resend" }))).toBe("permission-denied:");
       expect(await adm.call("adminInvoiceAction", { paymentId, action: "resend" })).toMatchObject({ invoiceId: `inv_${paymentId}`, created: false, mailStatus: "outbox" });
       expect(await mailsFor(`inv_${paymentId}`)).toHaveLength(2);
@@ -1451,7 +1451,7 @@ describe("tarification en deux parts (11)", () => {
 });
 
 describe("virement bancaire (5h)", () => {
-  const BANK = { holder: "The Host Club (fictif)", bank: "Banque d'essai", rib: "000111000000000000000099", iban: "", swift: "", deadlineHours: 48, cutoffHours: 24 };
+  const BANK = { holder: "Wenzy (fictif)", bank: "Banque d'essai", rib: "000111000000000000000099", iban: "", swift: "", deadlineHours: 48, cutoffHours: 24 };
   const useTransfer = async () => {
     await db().doc("settings/bankTransfer").set(BANK);
     await db().doc("settings/payment").set({ provider: "bank_transfer", mode: "live" });
@@ -1932,7 +1932,7 @@ describe("organisateurs (20)", () => {
     expect(await refusal(pro.call("adminCheckIn", { reservationId, presence: "attended" }))).toBe("failed-precondition:too_early");
     expect(await refusal(other.call("adminCheckIn", { reservationId, presence: "attended" }))).toBe("permission-denied:not_owner");
     expect(await refusal(buyer.call("adminCheckIn", { reservationId, presence: "attended" }))).toBe("permission-denied:");
-    // Une date de The Host Club : jamais accessible à un organisateur.
+    // Une date de Wenzy : jamais accessible à un organisateur.
     const thc = await makeSession({ startInHours: 1 });
     expect(await refusal(pro.call("adminCancelSession", { sessionId: thc, reason: "Essai interdit" }))).toBe("permission-denied:not_owner");
     // Export journalisé : participants et réservations seulement.
@@ -2030,7 +2030,7 @@ describe("commissions et reversements (21)", () => {
     expect(log.docs.map((d) => d.get("action"))).toContain("commission.rule.create");
   });
 
-  it("réservation : taux copié, écriture « vente » au paiement ; rien pour une expérience de The Host Club", async () => {
+  it("réservation : taux copié, écriture « vente » au paiement ; rien pour une expérience de Wenzy", async () => {
     // Le cache des règles (1 min) peut garder l'ancienne liste dans une autre instance de l'émulateur : on attend.
     await new Promise((r) => setTimeout(r, 61_000));
     const { sessionId } = await publishActivity(`Céramique ${run}`);
@@ -2259,7 +2259,7 @@ describe("avis : réponse, signalement, photo, historique (24)", () => {
     expect((await rv()).reply).toMatchObject({ text: "Merci Nadia, à bientôt !", authorName: `Avis Test ${run}`, authorRole: "organizer" });
     expect((await db().collection(`users/${u.uid}/notifications`).where("type", "==", "review_reply").get()).size).toBe(1);
     await team.call("replyToReview", { reviewId: reservationId, text: "Merci de votre retour." });
-    expect((await rv()).reply).toMatchObject({ authorRole: "team", authorName: "L'équipe The Host Club" });
+    expect((await rv()).reply).toMatchObject({ authorRole: "team", authorName: "L'équipe Wenzy" });
     await team.call("replyToReview", { reviewId: reservationId, text: "" });
     expect((await rv()).reply).toBeUndefined();
 

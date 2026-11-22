@@ -167,7 +167,7 @@ export function GroupsBoard({
           <Plus className="size-4" aria-hidden /> Ajouter un groupe
         </button>
         <span className="inline-flex flex-wrap items-center gap-1.5 text-sm">
-          <Merge className="size-4 text-plum-700" aria-hidden />
+          <Merge className="size-4 text-brand-700" aria-hidden />
           <label className="sr-only" htmlFor="merge-a">Groupe qui reçoit</label>
           <select id="merge-a" value={mergeA} onChange={(e) => setMergeA(e.target.value)} className="rounded-full border border-line bg-white px-3 py-2">
             <option value="">Fusionner…</option>
@@ -179,7 +179,7 @@ export function GroupsBoard({
             <option value="">…</option>
             {groups.filter((g) => g.id !== mergeA).map((g) => <option key={g.id} value={g.id}>{g.label}</option>)}
           </select>
-          <button type="button" onClick={merge} disabled={!mergeA || !mergeB} className="rounded-full bg-plum-900 px-3 py-2 font-medium text-white disabled:bg-plum-900/30">
+          <button type="button" onClick={merge} disabled={!mergeA || !mergeB} className="rounded-full bg-brand-900 px-3 py-2 font-medium text-white disabled:bg-brand-900/30">
             Fusionner
           </button>
         </span>
@@ -187,7 +187,7 @@ export function GroupsBoard({
           <RotateCcw className="size-4" aria-hidden /> Annuler mes changements
         </button>
         {live && groupsStatus !== "revealed" && (
-          <button type="button" disabled={busy} onClick={() => call("adminProposeGroups", { sessionId }, "Nouvelle proposition de l'algorithme.")} className="inline-flex items-center gap-1.5 rounded-full border border-plum-900 px-3 py-2 text-sm font-semibold text-plum-900 hover:bg-plum-50 disabled:opacity-50">
+          <button type="button" disabled={busy} onClick={() => call("adminProposeGroups", { sessionId }, "Nouvelle proposition de l'algorithme.")} className="inline-flex items-center gap-1.5 rounded-full border border-brand-900 px-3 py-2 text-sm font-semibold text-brand-900 hover:bg-brand-50 disabled:opacity-50">
             <Sparkles className="size-4" aria-hidden /> Proposer avec l&apos;algorithme
           </button>
         )}
@@ -210,7 +210,7 @@ export function GroupsBoard({
                 if (uid) move(uid, g.id);
                 setDragging(null);
               }}
-              className={`rounded-2xl border-2 bg-white p-4 shadow-card transition ${dragging ? "border-dashed border-plum-200" : "border-transparent"}`}
+              className={`rounded-2xl border-2 bg-white p-4 shadow-card transition ${dragging ? "border-dashed border-brand-200" : "border-transparent"}`}
             >
               <header className="mb-3 flex items-start justify-between gap-2">
                 <div>
@@ -252,7 +252,7 @@ export function GroupsBoard({
                       <span className="min-w-0 flex-1">
                         <span className="font-medium text-ink">{m.firstName}</span>{" "}
                         <span className="text-xs text-muted">{m.ageBand} · {m.languages.map((l) => LANG[l]).join("/")}{(m.seats ?? 1) > 1 ? ` · +${(m.seats ?? 1) - 1} invité(s)` : ""}</span>
-                        {m.answersText && <span className="block text-xs text-plum-900" data-testid="member-answers">{m.answersText}</span>}
+                        {m.answersText && <span className="block text-xs text-brand-900" data-testid="member-answers">{m.answersText}</span>}
                       </span>
                       <label className="sr-only" htmlFor={`mv-${uid}`}>Déplacer {m.firstName} vers</label>
                       <select
@@ -279,25 +279,25 @@ export function GroupsBoard({
         </p>
         {live ? (
           <div className="ms-auto flex flex-wrap gap-2">
-            <button type="button" disabled={busy} onClick={() => call("adminSaveGroups", payload(), groupsStatus === "revealed" ? "Enregistré : les personnes déplacées sont prévenues." : "Composition enregistrée.")} className="rounded-full border border-plum-900 px-5 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-50 disabled:opacity-50">
+            <button type="button" disabled={busy} onClick={() => call("adminSaveGroups", payload(), groupsStatus === "revealed" ? "Enregistré : les personnes déplacées sont prévenues." : "Composition enregistrée.")} className="rounded-full border border-brand-900 px-5 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50 disabled:opacity-50">
               Enregistrer la composition
             </button>
             {groupsStatus !== "revealed" && !confirmReveal && (
-              <button type="button" disabled={busy || groupsStatus !== "validated"} onClick={() => setConfirmReveal(true)} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-40">
+              <button type="button" disabled={busy || groupsStatus !== "validated"} onClick={() => setConfirmReveal(true)} className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-40">
                 Révéler aux participants
               </button>
             )}
           </div>
         ) : (
-          <button type="button" disabled className="ms-auto cursor-not-allowed rounded-full bg-plum-900/30 px-5 py-2.5 text-sm font-semibold text-white">
+          <button type="button" disabled className="ms-auto cursor-not-allowed rounded-full bg-brand-900/30 px-5 py-2.5 text-sm font-semibold text-white">
             Valider et révéler
           </button>
         )}
         {confirmReveal && (
-          <div role="alertdialog" aria-label="Confirmer la révélation" className="basis-full rounded-xl border border-plum-200 bg-plum-50 p-3 text-sm text-plum-900">
+          <div role="alertdialog" aria-label="Confirmer la révélation" className="basis-full rounded-xl border border-brand-200 bg-brand-50 p-3 text-sm text-brand-900">
             <p>Chaque participant verra sa table (prénoms et centres d&apos;intérêt), recevra une notification et un e-mail{" "}; le lieu exact sera communiqué s&apos;il était gardé secret. Révéler maintenant ?</p>
             <div className="mt-2 flex gap-2">
-              <button type="button" disabled={busy} onClick={async () => { if (await call("adminRevealGroups", { sessionId }, "Groupes révélés : les participants sont prévenus.")) setConfirmReveal(false); }} className="rounded-full bg-plum-900 px-4 py-2 font-semibold text-white disabled:opacity-50">Oui, révéler</button>
+              <button type="button" disabled={busy} onClick={async () => { if (await call("adminRevealGroups", { sessionId }, "Groupes révélés : les participants sont prévenus.")) setConfirmReveal(false); }} className="rounded-full bg-brand-900 px-4 py-2 font-semibold text-white disabled:opacity-50">Oui, révéler</button>
               <button type="button" onClick={() => setConfirmReveal(false)} className="rounded-full border border-line bg-white px-4 py-2 font-semibold">Pas encore</button>
             </div>
           </div>

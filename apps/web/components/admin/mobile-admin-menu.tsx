@@ -13,7 +13,7 @@ export function MobileAdminMenu() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-controls="admin-mobile-nav"
-        className="grid size-10 place-items-center rounded-full bg-white text-plum-900 shadow-card"
+        className="grid size-10 place-items-center rounded-full bg-white text-brand-900 shadow-card"
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
       >
         {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}

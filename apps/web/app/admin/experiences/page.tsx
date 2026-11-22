@@ -37,7 +37,7 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
       <PageHeader
         title="Expériences"
         subtitle={`${all.length - archivedCount} expérience${all.length - archivedCount > 1 ? "s" : ""} · ${archivedCount} archivée${archivedCount > 1 ? "s" : ""}`}
-        actions={<Link href="/admin/experiences/nouvelle" className="rounded-full bg-plum-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">+ Nouvelle expérience</Link>}
+        actions={<Link href="/admin/experiences/nouvelle" className="rounded-full bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">+ Nouvelle expérience</Link>}
       />
       {sp.supprime === "1" && <p role="status" className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900">Expérience supprimée.</p>}
       <nav aria-label="Filtrer les expériences" className="mb-4 flex gap-2">
@@ -46,7 +46,7 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
             key={f.key}
             href={f.key === "current" ? "/admin/experiences" : `/admin/experiences?vue=${f.key}`}
             aria-current={filter === f.key ? "page" : undefined}
-            className={`rounded-full px-4 py-2 text-sm font-medium ${filter === f.key ? "bg-plum-900 text-white" : "bg-white text-ink hover:bg-cream"}`}
+            className={`rounded-full px-4 py-2 text-sm font-medium ${filter === f.key ? "bg-brand-900 text-white" : "bg-white text-ink hover:bg-cream"}`}
           >
             {f.label}{f.key === "review" && reviewCount > 0 ? ` (${reviewCount})` : ""}
           </Link>
@@ -82,8 +82,8 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
                 </td>
                 <td><Badge tone={(STATUS[e.status] ?? STATUS.draft!).tone}>{(STATUS[e.status] ?? STATUS.draft!).label}</Badge>{e.reviewFlag ? <span className="ms-1"><Badge tone="amber">Modifiée</Badge></span> : null}</td>
                 <td className="whitespace-nowrap text-end">
-                  <Link href={`/admin/experiences/${e.id}`} className="font-medium text-plum-900">Modifier</Link> ·{" "}
-                  {e.status === "published" ? <Link href={`/experiences/${e.slug}`} className="font-medium text-plum-900">Voir</Link> : <span className="text-muted">Hors ligne</span>}
+                  <Link href={`/admin/experiences/${e.id}`} className="font-medium text-brand-900">Modifier</Link> ·{" "}
+                  {e.status === "published" ? <Link href={`/experiences/${e.slug}`} className="font-medium text-brand-900">Voir</Link> : <span className="text-muted">Hors ligne</span>}
                 </td>
               </tr>
             );

@@ -40,7 +40,7 @@ export default async function ProposalsPage() {
                 <Badge tone={p.status === "accepted" ? "green" : "gray"}>{p.status === "accepted" ? "Retenue" : "Refusée"}</Badge>
                 <span className="font-medium text-ink">{p.title}</span>
                 <span className="text-muted">· {p.firstName} · {adminDate(p.createdAt, false)}</span>
-                {p.experienceId && <Link href={`/admin/experiences/${p.experienceId}`} className="ms-auto text-plum-900 underline">Voir l&apos;expérience</Link>}
+                {p.experienceId && <Link href={`/admin/experiences/${p.experienceId}`} className="ms-auto text-brand-900 underline">Voir l&apos;expérience</Link>}
               </li>
             ))}
           </ul>
@@ -58,7 +58,7 @@ function ProposalCard({ p, live, categoryName }: { p: OutingProposal; live: bool
           <h2 className="text-lg font-semibold text-ink">{p.title}</h2>
           <p className="text-sm text-muted">Proposée par {p.firstName} · {adminDate(p.createdAt)} · {categoryName}</p>
         </div>
-        {p.willHost && <Badge tone="plum">Le membre accueille le groupe</Badge>}
+        {p.willHost && <Badge tone="brand">Le membre accueille le groupe</Badge>}
         {p.forGroupSize ? <Badge tone="green">Pour son ancien groupe ({p.forGroupSize} personnes), prévenu à la publication</Badge> : null}
       </header>
       <p className="whitespace-pre-line text-[15px] text-ink/90">{p.description}</p>

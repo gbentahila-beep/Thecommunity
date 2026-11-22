@@ -16,7 +16,7 @@ import { tr } from "@/lib/i18n-text";
 export const metadata: Metadata = { robots: { index: false } };
 
 /**
- * Instructions de virement (étape 5h) : montant, référence unique, coordonnées bancaires de The Host Club, échéance.
+ * Instructions de virement (étape 5h) : montant, référence unique, coordonnées bancaires de Wenzy, échéance.
  * Visible seulement par la personne qui paie. La confirmation vient de l'équipe (« Virement reçu »), jamais de cette page.
  */
 export default async function TransferPage({ params }: PageProps<"/[locale]/paiement/virement/[paymentId]">) {
@@ -99,15 +99,15 @@ export default async function TransferPage({ params }: PageProps<"/[locale]/paie
       <section className="mt-5 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="transfer-summary">
         <p className="text-sm text-muted">{what}</p>
         <p className="mt-3 text-sm font-medium text-muted">{t("amount")}</p>
-        <p className="text-3xl font-bold text-plum-900">{amount}</p>
+        <p className="text-3xl font-bold text-brand-900">{amount}</p>
         {deadlineText && <p className="mt-1 text-sm font-semibold text-ink">{deadlineText}</p>}
-        <div className="mt-4 rounded-xl bg-plum-50 p-4">
-          <p className="text-sm font-medium text-plum-900">{t("reference")}</p>
+        <div className="mt-4 rounded-xl bg-brand-50 p-4">
+          <p className="text-sm font-medium text-brand-900">{t("reference")}</p>
           <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
-            <p className="font-mono text-2xl font-bold tracking-wider text-plum-900" data-testid="transfer-reference">{pay.reference}</p>
+            <p className="font-mono text-2xl font-bold tracking-wider text-brand-900" data-testid="transfer-reference">{pay.reference}</p>
             <CopyButton value={pay.reference} label={t("copy")} copiedLabel={t("copied")} />
           </div>
-          <p className="mt-1 text-xs text-plum-900/80">{t("referenceHint")}</p>
+          <p className="mt-1 text-xs text-brand-900/80">{t("referenceHint")}</p>
         </div>
       </section>
 
@@ -134,7 +134,7 @@ export default async function TransferPage({ params }: PageProps<"/[locale]/paie
         <li>{t("step2", { reference: pay.reference })}</li>
         <li>{t("step3")}</li>
       </ol>
-      <Link href={back.href} className="mt-6 inline-block text-sm font-semibold text-plum-900 underline">{back.label}</Link>
+      <Link href={back.href} className="mt-6 inline-block text-sm font-semibold text-brand-900 underline">{back.label}</Link>
     </PageShell>
   );
 }

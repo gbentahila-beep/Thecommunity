@@ -13,7 +13,7 @@ export default async function HomeAdminPage() {
     <>
       <PageHeader title="Accueil du site" subtitle="Bannière, sections affichées et leur ordre, activités mises en avant. Enregistré tout de suite sur le site, journalisé." />
       <Card>
-        {!FIREBASE_ENABLED && <p className="mb-4 rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900">Démonstration : vous pouvez tout essayer, rien n&apos;est enregistré.</p>}
+        {!FIREBASE_ENABLED && <p className="mb-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-900">Démonstration : vous pouvez tout essayer, rien n&apos;est enregistré.</p>}
         <HomeSettingsForm initial={settings} experiences={experiences} live={FIREBASE_ENABLED} />
       </Card>
     </>

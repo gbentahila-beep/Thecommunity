@@ -28,9 +28,9 @@ const REASONS: Record<string, string> = {
   member_cancellation: "Annulation par le membre",
   late_payment_no_seat: "Paiement reçu après le délai, plus de place disponible",
   amount_mismatch: "Montant reçu différent du montant dû",
-  session_cancelled: "Date annulée par The Host Club",
+  session_cancelled: "Date annulée par Wenzy",
 };
-const reasonLabel = (r: string) => REASONS[r] ?? (r.startsWith("admin_") ? "Annulation par The Host Club" : "Remboursement");
+const reasonLabel = (r: string) => REASONS[r] ?? (r.startsWith("admin_") ? "Annulation par Wenzy" : "Remboursement");
 
 /** Société émettrice (Paramètres → Société) : figée sur chaque document au moment de l'émission. */
 function companyFrom(d: DocumentData | undefined): { info: CompanyInfo | null; vatRate: number | null } {
@@ -73,7 +73,7 @@ export async function storeInvoicePdf(invoiceId: string): Promise<string> {
 }
 
 /**
- * Étape 11 : part réglée sur place au partenaire, jamais encaissée par The Host Club.
+ * Étape 11 : part réglée sur place au partenaire, jamais encaissée par Wenzy.
  * Texte court pour la facture (hors total) et l'e-mail de confirmation ; null pour « tout en ligne ».
  */
 export function onSiteText(r: FirebaseFirestore.DocumentData | undefined, locale = "fr"): string | null {
@@ -83,9 +83,9 @@ export function onSiteText(r: FirebaseFirestore.DocumentData | undefined, locale
   const who = r?.venue ? snap.name : null;
   const amount = typeof r?.onSiteAmount === "number" ? money(r.onSiteAmount, r?.pricing?.currency ?? "MAD") : null;
   const what = snap.description ? ` (${snap.description})` : "";
-  if (l === "en") return `${amount ? `${amount} to pay` : "What you order is paid"} directly to ${who ?? "the partner venue"}, on site${what}. Not collected by The Host Club.`;
-  if (l === "ar") return `${amount ? `${amount} تُدفع` : "استهلاكك يُدفع"} مباشرة إلى ${who ?? "المكان الشريك"} في عين المكان${what}. لا تحصّله The Host Club.`;
-  return `${amount ? `${amount} à régler` : "Votre consommation est à régler"} directement ${who ? `à ${who}` : "au lieu partenaire"}, sur place${what}. Montant non encaissé par The Host Club.`;
+  if (l === "en") return `${amount ? `${amount} to pay` : "What you order is paid"} directly to ${who ?? "the partner venue"}, on site${what}. Not collected by Wenzy.`;
+  if (l === "ar") return `${amount ? `${amount} تُدفع` : "استهلاكك يُدفع"} مباشرة إلى ${who ?? "المكان الشريك"} في عين المكان${what}. لا تحصّله Wenzy.`;
+  return `${amount ? `${amount} à régler` : "Votre consommation est à régler"} directement ${who ? `à ${who}` : "au lieu partenaire"}, sur place${what}. Montant non encaissé par Wenzy.`;
 }
 
 /**
@@ -106,7 +106,7 @@ export async function ensureInvoice(paymentId: string): Promise<{ id: string; cr
     if (purpose === "reservation") {
       const r = (await tx.get(db.doc(`reservations/${p.reservationId}`))).data();
       onSiteNote = onSiteText(r);
-      const title = r?.sessionSnapshot?.title?.fr ?? "Expérience The Host Club";
+      const title = r?.sessionSnapshot?.title?.fr ?? "Expérience Wenzy";
       const start = r?.sessionSnapshot?.startAt instanceof Timestamp ? dateTimeFr(r.sessionSnapshot.startAt.toDate()) : "";
       const detail = [start, r?.sessionSnapshot?.district].filter(Boolean).join(" · ");
       lines = r?.pricing

@@ -19,7 +19,7 @@ export default async function AccountLayout({ children }: LayoutProps<"/[locale]
   return (
     <PageShell className="max-w-3xl py-6 lg:py-10">
       {space.isDemo && (
-        <p role="note" className="mb-6 flex items-start gap-2.5 rounded-2xl bg-plum-50 px-4 py-3 text-sm text-plum-900">
+        <p role="note" className="mb-6 flex items-start gap-2.5 rounded-2xl bg-brand-50 px-4 py-3 text-sm text-brand-900">
           <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
           {t("demoNotice")}
         </p>

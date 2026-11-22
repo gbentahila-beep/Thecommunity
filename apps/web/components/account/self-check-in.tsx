@@ -20,8 +20,8 @@ export function SelfCheckIn({ reservationId, state, arrived, onSiteHost, hasGrou
   const hint = onSiteHost ? t("hostHint") : hasGroup ? t("groupHint") : t("soloHint");
   return (
     <section aria-labelledby="check-in-title" className="card p-5" data-testid="self-check-in">
-      <h2 id="check-in-title" className="flex items-center gap-2 font-display text-[1.45rem] font-medium text-plum-900">
-        {done ? <CheckCircle2 className="size-6 text-plum-800" aria-hidden /> : <MapPinCheck className="size-6 text-plum-800" aria-hidden />}
+      <h2 id="check-in-title" className="flex items-center gap-2 font-display text-[1.45rem] font-medium text-brand-900">
+        {done ? <CheckCircle2 className="size-6 text-brand-800" aria-hidden /> : <MapPinCheck className="size-6 text-brand-800" aria-hidden />}
         {done ? t("doneTitle") : t("title")}
       </h2>
       <p className="mt-1.5 text-[15px] text-ink/80">{done ? hint : state === "early" ? t("early") : t("text")}</p>

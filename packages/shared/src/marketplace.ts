@@ -5,10 +5,10 @@ import { commissionAmount } from "./commission";
  * Étape 22 — modes de paiement des activités d'organisateurs, politiques d'annulation, demandes de remboursement.
  *
  * Modes (choisis par l'organisateur parmi ceux que l'équipe a activés) :
- * - A « full_online » : tout est payé en ligne ; The Host Club garde sa commission et reverse le reste.
+ * - A « full_online » : tout est payé en ligne ; Wenzy garde sa commission et reverse le reste.
  * - B « deposit »     : un acompte (pourcentage du prix) est payé en ligne, le solde sur place à l'organisateur.
  *                       L'acompte couvre au moins la commission (calculée sur le prix total).
- * - C « booking_fee » : seuls des frais de réservation sont payés en ligne (= la commission de The Host Club),
+ * - C « booking_fee » : seuls des frais de réservation sont payés en ligne (= la commission de Wenzy),
  *                       le prix de l'activité est payé sur place à l'organisateur.
  * Les parts « sur place » réutilisent la tarification en deux parts (étape 11) : affichage « X maintenant · Y sur place ».
  * Montants en centimes.

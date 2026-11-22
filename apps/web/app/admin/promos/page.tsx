@@ -27,7 +27,7 @@ export default async function PromosAdminPage() {
       <PageHeader title="Codes promo" subtitle={`${promos.filter((p) => status(p, today)[0] === "Actif").length} code(s) actif(s)`} />
       <Card className="mb-6">
         <details>
-          <summary className="cursor-pointer text-sm font-semibold text-plum-900">+ Nouveau code promo</summary>
+          <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Nouveau code promo</summary>
           <div className="mt-4"><PromoForm initial={empty} create live={!d.isDemo} /></div>
         </details>
       </Card>

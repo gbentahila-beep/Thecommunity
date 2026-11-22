@@ -20,10 +20,10 @@ export async function sendTransferInstructions(paymentId: string, o: { reminder?
     if (!p || !bank || !p.reference) return;
     const who = await recipient(p.userId);
     if (!who.to) return;
-    let what = "Abonnement The Host Club";
+    let what = "Abonnement Wenzy";
     if (p.reservationId) {
       const r = (await db.doc(`reservations/${p.reservationId}`).get()).data();
-      what = r?.sessionSnapshot?.title?.[who.locale] ?? r?.sessionSnapshot?.title?.fr ?? "The Host Club";
+      what = r?.sessionSnapshot?.title?.[who.locale] ?? r?.sessionSnapshot?.title?.fr ?? "Wenzy";
     }
     const deadline = p.transferDeadline instanceof Timestamp ? dateTimeFor(p.transferDeadline.toDate(), who.locale) : null;
     const mail = transferInstructionsMail({
@@ -43,7 +43,7 @@ export async function sendTransferExpired(reservationId: string): Promise<void> 
     if (!r || r.paymentMethod !== "bank_transfer") return;
     const who = await recipient(r.userId);
     if (!who.to) return;
-    const title = r.sessionSnapshot?.title?.[who.locale] ?? r.sessionSnapshot?.title?.fr ?? "The Host Club";
+    const title = r.sessionSnapshot?.title?.[who.locale] ?? r.sessionSnapshot?.title?.fr ?? "Wenzy";
     const mail = transferExpiredMail({ locale: who.locale, firstName: who.firstName, title, reference: r.transferReference ?? "", reservationId });
     await sendMail({ to: who.to, toName: who.name, locale: who.locale, ...mail, kind: "transfer_expired", refs: { reservationId } });
   } catch (e) {

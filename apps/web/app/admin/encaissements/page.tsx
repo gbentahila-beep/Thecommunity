@@ -11,7 +11,7 @@ const PERIODS = { tout: "Toutes les dates", "a-venir": "À venir", passees: "Pas
 
 /**
  * Étape 11e — suivi de la tarification en deux parts : ce qui est encaissé en ligne, la part fixe attendue
- * et réglée sur place (jamais encaissée par The Host Club), présences, annulations et remboursements.
+ * et réglée sur place (jamais encaissée par Wenzy), présences, annulations et remboursements.
  */
 export default async function TwoPartDashboard({ searchParams }: PageProps<"/admin/encaissements">) {
   const sp = await searchParams;
@@ -22,7 +22,7 @@ export default async function TwoPartDashboard({ searchParams }: PageProps<"/adm
   const period = (one("periode") in PERIODS ? one("periode") : "tout") as keyof typeof PERIODS;
 
   const partnerOf = (experienceId: string) => d.economics[experienceId]?.partnerId ?? "";
-  const partnerName = (id: string) => d.partners.find((p) => p.id === id)?.name ?? (id ? "Partenaire archivé" : "The Host Club");
+  const partnerName = (id: string) => d.partners.find((p) => p.id === id)?.name ?? (id ? "Partenaire archivé" : "Wenzy");
   const paid = new Map<string, number>();
   const refunded = new Map<string, number>();
   for (const p of d.payments) {
@@ -72,7 +72,7 @@ export default async function TwoPartDashboard({ searchParams }: PageProps<"/adm
     <>
       <PageHeader
         title="En ligne / sur place"
-        subtitle="Ce qui est encaissé en ligne (part organisation) et ce qui est réglé sur place au partenaire (jamais encaissé par The Host Club)."
+        subtitle="Ce qui est encaissé en ligne (part organisation) et ce qui est réglé sur place au partenaire (jamais encaissé par Wenzy)."
         actions={<CsvExportButton filename="en-ligne-sur-place.csv" rows={csv} log={d.isDemo ? undefined : { kind: "two_part" }} />}
       />
       <form className="mb-4 flex flex-wrap gap-2" aria-label="Filtres">
@@ -84,14 +84,14 @@ export default async function TwoPartDashboard({ searchParams }: PageProps<"/adm
         <label className="sr-only" htmlFor="partenaire">Partenaire</label>
         <select id="partenaire" name="partenaire" defaultValue={partnerFilter} className={select}>
           <option value="">Tous les organisateurs</option>
-          <option value="aucun">The Host Club (sans partenaire)</option>
+          <option value="aucun">Wenzy (sans partenaire)</option>
           {usedPartners.map((id) => <option key={id} value={id}>{partnerName(id)}</option>)}
         </select>
         <label className="sr-only" htmlFor="periode">Période</label>
         <select id="periode" name="periode" defaultValue={period} className={select}>
           {Object.entries(PERIODS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
-        <button className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">Filtrer</button>
+        <button className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white">Filtrer</button>
         {(expFilter || partnerFilter || period !== "tout") && <Link href="/admin/encaissements" className="self-center text-sm text-muted underline">Effacer</Link>}
       </form>
 
@@ -107,7 +107,7 @@ export default async function TwoPartDashboard({ searchParams }: PageProps<"/adm
         <Table head={["Date", "Expérience", "Partenaire", "Formule", "Places", "Présents", "En ligne (net)", "Remboursé", "Sur place attendu", "Sur place réglé", "Annul."]} caption="Suivi par date">
           {rows.slice(0, 300).map((x) => (
             <tr key={x.sessionId}>
-              <td className="whitespace-nowrap text-muted"><Link href={`/admin/sessions/${x.sessionId}`} className="hover:text-plum-900">{adminDate(x.startAt)}</Link></td>
+              <td className="whitespace-nowrap text-muted"><Link href={`/admin/sessions/${x.sessionId}`} className="hover:text-brand-900">{adminDate(x.startAt)}</Link></td>
               <td className="font-medium text-ink">{x.e?.title.fr ?? "Expérience supprimée"}</td>
               <td>{x.partner}</td>
               <td className="text-sm">{MODEL_LABELS[x.model]}</td>

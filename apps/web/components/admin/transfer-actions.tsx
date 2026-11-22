@@ -42,7 +42,7 @@ export function TransferAction({ kind, id, amount, reference, live }: { kind: "r
   return (
     <div className="space-y-1.5">
       {!confirm ? (
-        <button type="button" onClick={() => setConfirm(true)} className="rounded-full bg-plum-900 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-plum-800">
+        <button type="button" onClick={() => setConfirm(true)} className="rounded-full bg-brand-900 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-brand-800">
           {label}
         </button>
       ) : (
@@ -53,7 +53,7 @@ export function TransferAction({ kind, id, amount, reference, live }: { kind: "r
               : <>Confirmez : <strong>{amount}</strong> remboursés par virement à la personne.</>}
           </p>
           <div className="mt-2 flex gap-2">
-            <button type="button" disabled={busy} onClick={run} className="rounded-full bg-plum-900 px-3 py-1.5 font-semibold text-white disabled:opacity-60">{busy ? "…" : "Confirmer"}</button>
+            <button type="button" disabled={busy} onClick={run} className="rounded-full bg-brand-900 px-3 py-1.5 font-semibold text-white disabled:opacity-60">{busy ? "…" : "Confirmer"}</button>
             <button type="button" disabled={busy} onClick={() => setConfirm(false)} className="rounded-full border border-line px-3 py-1.5 font-semibold text-muted">Annuler</button>
           </div>
         </div>

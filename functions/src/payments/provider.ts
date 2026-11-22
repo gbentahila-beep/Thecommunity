@@ -54,7 +54,7 @@ export async function paymentSettings(): Promise<PaymentSettings> {
   return { provider, mode };
 }
 
-/** Coordonnées bancaires de The Host Club (settings/bankTransfer), ou null si absentes ou incomplètes. */
+/** Coordonnées bancaires de Wenzy (settings/bankTransfer), ou null si absentes ou incomplètes. */
 export async function bankDetails(): Promise<BankDetails | null> {
   const parsed = bankDetailsSchema.safeParse((await db.doc("settings/bankTransfer").get()).data() ?? {});
   return parsed.success ? parsed.data : null;

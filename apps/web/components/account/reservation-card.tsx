@@ -32,11 +32,11 @@ export async function ReservationCard({ reservation }: { reservation: Reservatio
           </Link>
         </h3>
         <p className="flex items-center gap-1.5 text-sm text-muted">
-          <CalendarDays className="size-4 shrink-0 text-plum-700" aria-hidden />
+          <CalendarDays className="size-4 shrink-0 text-brand-700" aria-hidden />
           {formatLongDate(s.startAt, locale)} · {formatTimeRange(s.startAt, s.endAt, locale)}
         </p>
         <p className="flex items-center gap-1.5 text-sm text-muted">
-          <MapPin className="size-4 shrink-0 text-plum-700" aria-hidden />
+          <MapPin className="size-4 shrink-0 text-brand-700" aria-hidden />
           {s.district}
           {reservation.seats > 1 && <span>· {t("seats", { count: reservation.seats })}</span>}
         </p>

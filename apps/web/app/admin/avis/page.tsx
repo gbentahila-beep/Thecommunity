@@ -30,7 +30,7 @@ export default async function ReviewsAdminPage({ searchParams }: { searchParams:
       <PageHeader title="Avis" subtitle={`${reviews.length} avis · moyenne ${avg.toFixed(1)} / 5${isDemo ? " · démonstration" : ""}`} />
       <nav aria-label="Filtrer les avis" className="mb-4 flex flex-wrap gap-2">
         {(Object.keys(VIEWS) as (keyof typeof VIEWS)[]).map((k) => (
-          <Link key={k} href={k === "tous" ? "/admin/avis" : `/admin/avis?vue=${k}`} aria-current={view === k ? "page" : undefined} className={`rounded-full px-3.5 py-1.5 text-sm ${view === k ? "bg-plum-900 font-semibold text-white" : "bg-white text-ink"}`}>
+          <Link key={k} href={k === "tous" ? "/admin/avis" : `/admin/avis?vue=${k}`} aria-current={view === k ? "page" : undefined} className={`rounded-full px-3.5 py-1.5 text-sm ${view === k ? "bg-brand-900 font-semibold text-white" : "bg-white text-ink"}`}>
             {VIEWS[k]} ({counts[k]})
           </Link>
         ))}
@@ -44,7 +44,7 @@ export default async function ReviewsAdminPage({ searchParams }: { searchParams:
               <Fragment key={r.id}>
                 <tr data-testid="admin-review">
                   <td className="whitespace-nowrap text-muted">{adminDate(r.createdAt, false)}</td>
-                  <td>{e ? <Link href={`/admin/experiences/${e.id}`} className="font-medium text-ink hover:text-plum-900">{e.title.fr}</Link> : "—"}</td>
+                  <td>{e ? <Link href={`/admin/experiences/${e.id}`} className="font-medium text-ink hover:text-brand-900">{e.title.fr}</Link> : "—"}</td>
                   <td><Stars value={r.rating} /></td>
                   <td className="max-w-md text-sm text-ink/85">{r.comment || <span className="text-muted">—</span>}</td>
                   <td className="whitespace-nowrap">{r.publicName}</td>
@@ -60,7 +60,7 @@ export default async function ReviewsAdminPage({ searchParams }: { searchParams:
                   <tr className="bg-cream/40">
                     <td colSpan={7}>
                       <details open={(r.reportsOpen ?? 0) > 0 || r.photo?.status === "pending"} data-testid="review-panel">
-                        <summary className="cursor-pointer text-sm font-medium text-plum-900">Suivi : signalements, photo, réponse, historique</summary>
+                        <summary className="cursor-pointer text-sm font-medium text-brand-900">Suivi : signalements, photo, réponse, historique</summary>
                         <div className="mt-3 grid gap-4 lg:grid-cols-2">
                           <div className="space-y-3">
                             {r.openReports.length > 0 && (

@@ -73,7 +73,7 @@ const TONES = {
   amber: "bg-amber-100 text-amber-900",
   red: "bg-red-100 text-red-900",
   gray: "bg-stone-200 text-stone-700",
-  plum: "bg-plum-100 text-plum-900",
+  brand: "bg-brand-100 text-brand-900",
 } as const;
 
 export function Badge({ tone, children }: { tone: keyof typeof TONES; children: ReactNode }) {
@@ -86,7 +86,7 @@ export function FillBar({ value, max, label }: { value: number; max: number; lab
   return (
     <div className="flex items-center gap-2" title={label ?? `${value} / ${max}`}>
       <div className="h-2 w-24 overflow-hidden rounded-full bg-cream-deep" role="meter" aria-valuemin={0} aria-valuemax={max} aria-valuenow={value} aria-label={label ?? "Remplissage"}>
-        <div className="h-full rounded-full bg-plum-700" style={{ width: `${ratio * 100}%` }} />
+        <div className="h-full rounded-full bg-brand-700" style={{ width: `${ratio * 100}%` }} />
       </div>
       <span className="tabular-nums text-xs text-muted">{value}/{max}</span>
     </div>
@@ -106,7 +106,7 @@ export function BarList({ items, format }: { items: { label: string; value: numb
           </span>
           {/* Piste commune pleine largeur : les longueurs sont comparables d'une barre à l'autre. */}
           <span className="mt-1.5 block h-2.5" aria-hidden>
-            <span className="block h-full rounded-e-[4px] bg-plum-700" style={{ width: `${Math.max(1, (i.value / max) * 100)}%` }} />
+            <span className="block h-full rounded-e-[4px] bg-brand-700" style={{ width: `${Math.max(1, (i.value / max) * 100)}%` }} />
           </span>
         </li>
       ))}
@@ -115,5 +115,5 @@ export function BarList({ items, format }: { items: { label: string; value: numb
 }
 
 export function DemoNote({ children }: { children: ReactNode }) {
-  return <p className="rounded-xl bg-plum-50 px-3 py-2 text-xs text-plum-900">{children}</p>;
+  return <p className="rounded-xl bg-brand-50 px-3 py-2 text-xs text-brand-900">{children}</p>;
 }

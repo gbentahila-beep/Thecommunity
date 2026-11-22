@@ -22,7 +22,7 @@ export default async function AdminDashboard() {
         title="Tableau de bord"
         subtitle={`Casablanca · sessions des 3 prochaines semaines · mis à jour ${adminDate(d.now.toISOString())}`}
         actions={
-          <Link href="/admin/experiences/nouvelle" className="rounded-full bg-plum-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">
+          <Link href="/admin/experiences/nouvelle" className="rounded-full bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">
             + Nouvelle expérience
           </Link>
         }
@@ -54,7 +54,7 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <Card title="Prochaines sessions" actions={<Link href="/admin/sessions" className="text-sm font-medium text-plum-900">Tout voir →</Link>}>
+        <Card title="Prochaines sessions" actions={<Link href="/admin/sessions" className="text-sm font-medium text-brand-900">Tout voir →</Link>}>
           <Table head={["Date", "Expérience", "Remplissage", "Attente", ""]} caption="Prochaines sessions">
             {upcoming.map((x) => {
               const e = d.experiences.get(x.experienceId)!;
@@ -64,7 +64,7 @@ export default async function AdminDashboard() {
                   <td className="font-medium text-ink">{e.title.fr}</td>
                   <td><FillBar value={x.seatsConfirmed} max={x.capacity} /></td>
                   <td className="tabular-nums">{x.waitlistCount || "—"}</td>
-                  <td className="text-end"><Link href={`/admin/sessions/${x.id}`} className="font-medium text-plum-900">Ouvrir</Link></td>
+                  <td className="text-end"><Link href={`/admin/sessions/${x.id}`} className="font-medium text-brand-900">Ouvrir</Link></td>
                 </tr>
               );
             })}
@@ -83,7 +83,7 @@ export default async function AdminDashboard() {
                       <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-700" aria-hidden />
                       <span>
                         <span className="font-semibold">Remplissage faible</span> — {d.experiences.get(d.sessions.find((x) => x.id === a.sessionId)!.experienceId)!.title.fr},{" "}
-                        <Link className="text-plum-900 underline" href={`/admin/sessions/${a.sessionId}`}>{adminDate(d.sessions.find((x) => x.id === a.sessionId)!.startAt)}</Link>
+                        <Link className="text-brand-900 underline" href={`/admin/sessions/${a.sessionId}`}>{adminDate(d.sessions.find((x) => x.id === a.sessionId)!.startAt)}</Link>
                         {" "}({seatsAvailable(d.sessions.find((x) => x.id === a.sessionId)!)} places libres)
                       </span>
                     </li>
@@ -92,7 +92,7 @@ export default async function AdminDashboard() {
                       <Clock className="mt-0.5 size-4 shrink-0 text-amber-700" aria-hidden />
                       <span>
                         <span className="font-semibold">Paiement en attente</span> — réservation{" "}
-                        <Link className="whitespace-nowrap text-plum-900 underline" href={`/admin/reservations?q=${a.reservationId}`}>{a.reservationId}</Link>
+                        <Link className="whitespace-nowrap text-brand-900 underline" href={`/admin/reservations?q=${a.reservationId}`}>{a.reservationId}</Link>
                       </span>
                     </li>
                   ),

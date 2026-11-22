@@ -48,7 +48,7 @@ export function ProposalForm({ live, categories, forGroup }: { live: boolean; /*
     }
   };
 
-  const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-plum-700 focus:outline-none aria-[invalid=true]:border-red-400";
+  const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-brand-700 focus:outline-none aria-[invalid=true]:border-red-400";
   const fieldProps = (k: keyof Values) => ({ id: `pr-${k}`, "aria-invalid": Boolean(errors[k]), "aria-describedby": errors[k] ? `pr-${k}-err` : undefined, className: input });
   const err = (k: keyof Values) => (errors[k] ? <p id={`pr-${k}-err`} className="mt-1 text-sm text-red-800">{errors[k]}</p> : null);
   const label = (k: keyof Values, text: string, hint?: string) => (
@@ -66,7 +66,7 @@ export function ProposalForm({ live, categories, forGroup }: { live: boolean; /*
   }
   return (
     <form onSubmit={submit} noValidate className="space-y-5 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="proposal-form">
-      {forGroup && <p className="rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900" data-testid="proposal-for-group">{t("forGroup", { label: forGroup.label })}</p>}
+      {forGroup && <p className="rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-900" data-testid="proposal-for-group">{t("forGroup", { label: forGroup.label })}</p>}
       <div>{label("title", t("titleLabel"))}<input {...fieldProps("title")} value={v.title} maxLength={80} onChange={(e) => set("title", e.target.value)} placeholder={t("titlePlaceholder")} />{err("title")}</div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>{label("categoryId", t("categoryLabel"))}
@@ -90,11 +90,11 @@ export function ProposalForm({ live, categories, forGroup }: { live: boolean; /*
         <div>{label("priceIdeaDh", t("priceLabel"), t("priceHint"))}<input {...fieldProps("priceIdeaDh")} inputMode="decimal" value={v.priceIdeaDh} onChange={(e) => set("priceIdeaDh", e.target.value)} />{err("priceIdeaDh")}</div>
       </div>
       <label className="flex items-start gap-3 text-sm text-ink">
-        <input type="checkbox" checked={v.willHost} onChange={(e) => set("willHost", e.target.checked)} className="mt-0.5 size-5 accent-plum-900" />
+        <input type="checkbox" checked={v.willHost} onChange={(e) => set("willHost", e.target.checked)} className="mt-0.5 size-5 accent-brand-900" />
         <span>{t("willHost")}</span>
       </label>
       <div>{label("notes", t("notesLabel"))}<textarea {...fieldProps("notes")} rows={2} maxLength={500} value={v.notes} onChange={(e) => set("notes", e.target.value)} />{err("notes")}</div>
-      <p className="rounded-xl bg-plum-50 p-3 text-sm text-plum-900">{t("reviewNote")}</p>
+      <p className="rounded-xl bg-brand-50 p-3 text-sm text-brand-900">{t("reviewNote")}</p>
       <button type="submit" disabled={state === "busy"} className="btn btn-primary w-full">
         {state === "busy" ? t("sending") : t("submit")}
       </button>

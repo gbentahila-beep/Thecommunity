@@ -14,7 +14,7 @@ const MESSAGES: Record<string, string> = {
   promoFormat: "Lettres, chiffres et tirets (3 à 20).", required: "Champ obligatoire.", min1: "Doit être supérieur à 0.", percent: "Entre 1 et 100 %.",
   dateOrder: "La fin doit suivre le début.", tooMany: "Valeur trop élevée.", tooLong: "Trop long.", date: "Date invalide.",
 };
-const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100 disabled:bg-cream";
+const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100 disabled:bg-cream";
 
 /** Créer ou modifier un code promo. Le compteur d'utilisations est tenu par le serveur. */
 export function PromoForm({ initial, create, live }: { initial: PromoFormValues; create: boolean; live: boolean }) {
@@ -83,7 +83,7 @@ export function PromoForm({ initial, create, live }: { initial: PromoFormValues;
       <p className="text-xs text-muted">Chaque personne peut utiliser un code une seule fois. Il s&apos;applique après le prix membre, sur les réservations directes.</p>
       {live ? (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-4 py-2 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+          <button type="submit" disabled={state === "busy"} className="rounded-full bg-brand-900 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-60">
             {state === "busy" ? "Enregistrement…" : create ? "Créer le code" : "Enregistrer le code"}
           </button>
           {state === "saved" && <p role="status" className="text-sm text-emerald-800">{create ? "Code créé." : "Enregistré."}</p>}

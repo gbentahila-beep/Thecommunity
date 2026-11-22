@@ -34,14 +34,14 @@ export default async function ProposePage({ params, searchParams }: PageProps<"/
       {!trusted ? (
         <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="proposal-not-trusted">
           <p className="text-ink/85">{t("notTrusted")}</p>
-          <Link href="/contact" className="mt-3 inline-block font-semibold text-plum-900 underline">{t("contactUs")}</Link>
+          <Link href="/contact" className="mt-3 inline-block font-semibold text-brand-900 underline">{t("contactUs")}</Link>
         </section>
       ) : (
         <>
           <ProposalForm live={!space.isDemo} forGroup={forGroup} categories={categories.map((c) => ({ id: c.id, label: tr(c.name, locale) }))} />
           {mine.length > 0 && (
             <section aria-labelledby="my-proposals" className="space-y-3">
-              <h2 id="my-proposals" className="font-display text-2xl font-medium text-plum-900">{t("mine")}</h2>
+              <h2 id="my-proposals" className="font-display text-2xl font-medium text-brand-900">{t("mine")}</h2>
               <ul className="space-y-2">
                 {mine.map((p) => (
                   <li key={p.id} className="rounded-2xl bg-white p-4 shadow-card" data-testid="my-proposal">

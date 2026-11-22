@@ -10,7 +10,7 @@ export { welcomeTitleKeys } from "./welcome-keys";
 export const EMPTY_PREFERENCES: BookingPreferences = { diet: "none", allergies: "", languages: [], consent: false };
 export const needsConsent = (p: BookingPreferences) => p.diet !== "none" || p.allergies.trim() !== "";
 
-const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-plum-700 focus:outline-none";
+const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-brand-700 focus:outline-none";
 
 /** Régime, allergies, langues de table (facultatif). L'accord n'est demandé que s'il y a quelque chose à transmettre. */
 export function PreferencesFields({ value, onChange, disabled, consentError, idPrefix = "pref", needs = { food: true, languages: true } }: {
@@ -49,7 +49,7 @@ export function PreferencesFields({ value, onChange, disabled, consentError, idP
           {SPOKEN_LANGUAGES.map((l) => {
             const on = value.languages.includes(l);
             return (
-              <label key={l} className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transition ${on ? "border-plum-900 bg-plum-900 text-white" : "border-line bg-white text-ink"}`}>
+              <label key={l} className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transition ${on ? "border-brand-900 bg-brand-900 text-white" : "border-line bg-white text-ink"}`}>
                 <input
                   type="checkbox"
                   className="sr-only"

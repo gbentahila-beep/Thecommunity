@@ -21,7 +21,7 @@ export default async function HelpAdminPage() {
               <tr key={s.article}>
                 <td>
                   {a ? (
-                    <Link href={`/aide/${s.article}`} target="_blank" className="font-medium text-ink hover:text-plum-900">{a.title.fr}</Link>
+                    <Link href={`/aide/${s.article}`} target="_blank" className="font-medium text-ink hover:text-brand-900">{a.title.fr}</Link>
                   ) : (
                     <span className="text-muted">{s.article} (article retiré)</span>
                   )}

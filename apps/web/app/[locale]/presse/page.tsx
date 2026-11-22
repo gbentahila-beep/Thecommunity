@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/presse">
   return { title: PRESS.title[l], description: PRESS.intro[l] };
 }
 
-const h2 = "font-display text-3xl font-medium text-plum-900";
+const h2 = "font-display text-3xl font-medium text-brand-900";
 const card = "rounded-[var(--radius-card)] bg-white p-5 shadow-card";
 
 /** Kit presse : présentation (3 longueurs), faits clés, fondatrice, logos, couleurs, typographies, photos, contact. */
@@ -75,7 +75,7 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
             <h2 className={h2}>{P.founderTitle[l]}</h2>
             <div className={`${card} mt-5`}>
               <p className="leading-relaxed text-ink">{P.founderText[l]}</p>
-              <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold text-plum-900">
+              <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold text-brand-900">
                 <Link href="/a-propos" className="underline underline-offset-4">{P.founderMore[l]}</Link>
                 <a href={AYA_INSTAGRAM.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 underline underline-offset-4">
                   <AtSign className="size-4" aria-hidden />
@@ -92,15 +92,15 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
           <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {P.logos.map((g) => (
               <li key={g.file} className="overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card">
-                <div className={`grid h-36 place-items-center p-6 ${g.dark ? "bg-plum-900" : "bg-cream"}`}>
+                <div className={`grid h-36 place-items-center p-6 ${g.dark ? "bg-brand-900" : "bg-cream"}`}>
                   {/* eslint-disable-next-line @next/next/no-img-element -- aperçu vectoriel du fichier téléchargeable */}
                   <img src={`/presse/${g.file}.svg`} alt={g.label[l]} className="max-h-24 w-auto max-w-full" />
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-2 p-4">
                   <p className="text-sm font-medium text-ink">{g.label[l]}</p>
                   <p className="flex gap-2 text-xs font-semibold">
-                    <a href={`/presse/${g.file}.svg`} download className="rounded-full border border-line px-3 py-1.5 text-plum-900 hover:bg-plum-50">SVG</a>
-                    <a href={`/presse/${g.file}.png`} download className="rounded-full border border-line px-3 py-1.5 text-plum-900 hover:bg-plum-50">PNG</a>
+                    <a href={`/presse/${g.file}.svg`} download className="rounded-full border border-line px-3 py-1.5 text-brand-900 hover:bg-brand-50">SVG</a>
+                    <a href={`/presse/${g.file}.png`} download className="rounded-full border border-line px-3 py-1.5 text-brand-900 hover:bg-brand-50">PNG</a>
                   </p>
                 </div>
               </li>
@@ -141,7 +141,7 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
                 </div>
                 <div className="flex items-center justify-between gap-2 p-4">
                   <p className="text-sm text-muted">{p.alt[l]}</p>
-                  <a href={`/presse/${p.file}`} download className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-xs font-semibold text-plum-900 hover:bg-plum-50">
+                  <a href={`/presse/${p.file}`} download className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-xs font-semibold text-brand-900 hover:bg-brand-50">
                     <Download className="size-3.5" aria-hidden />
                     {P.download[l]}
                   </a>
@@ -152,10 +152,10 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
           <p className="mt-3 text-sm text-muted">{P.photosNote[l]}</p>
         </section>
 
-        <section aria-labelledby="contact-presse" className="rounded-3xl bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] p-6 text-cream sm:p-10">
+        <section aria-labelledby="contact-presse" className="rounded-3xl bg-ciel p-6 text-cream sm:p-10">
           <h2 id="contact-presse" className="section-title">{P.contactTitle[l]}</h2>
           <p className="mt-3 max-w-2xl leading-relaxed text-cream/85">{P.contactText[l]}</p>
-          <Link href="/contact" className="mt-6 inline-flex items-center gap-2 rounded-full bg-cream px-5 py-3 text-sm font-semibold text-plum-900 hover:bg-white">
+          <Link href="/contact" className="mt-6 inline-flex items-center gap-2 rounded-full bg-cream px-5 py-3 text-sm font-semibold text-brand-900 hover:bg-white">
             <Mail className="size-4" aria-hidden />
             {P.contactCta[l]}
           </Link>

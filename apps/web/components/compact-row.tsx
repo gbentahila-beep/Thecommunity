@@ -29,7 +29,7 @@ export async function CompactRow({ experience, session, priority = false }: { ex
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
           <h3 className="min-w-0 text-[15px] leading-snug font-semibold text-ink">
-            <Link href={`/experiences/${experience.slug}`} className="after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:rounded-2xl focus-visible:after:outline-2 focus-visible:after:outline-plum-700">
+            <Link href={`/experiences/${experience.slug}`} className="after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:rounded-2xl focus-visible:after:outline-2 focus-visible:after:outline-brand-700">
               {tr(experience.title, locale)}
             </Link>
           </h3>
@@ -44,8 +44,8 @@ export async function CompactRow({ experience, session, priority = false }: { ex
           {category && <span className={`${pill} bg-cream-deep text-ink/80`}>{tr(category.shortName, locale)}</span>}
           {budget?.kind === "range" && <span className={`${pill} bg-cream-deep text-ink/80`}>{tp("restaurantPill", { amount: budgetText(budget, locale as "fr" | "ar" | "en") })}</span>}
           {experience.venue.revealPolicy === "on_group_reveal" && <span className={`${pill} bg-cream-deep text-ink/80`}>{tp("surprisePill")}</span>}
-          {experience.audience === "women" && <span className={`${pill} bg-plum-100 text-plum-900`}>{t("women")}</span>}
-          {full ? <span className={`${pill} bg-ink/80 text-white`}>{t("full")}</span> : badge && <span className={`${pill} ${badge === "featured" ? "bg-plum-900 text-white" : "bg-badge text-plum-900"}`}>{t(`badge_${badge}`)}</span>}
+          {experience.audience === "women" && <span className={`${pill} bg-brand-100 text-brand-900`}>{t("women")}</span>}
+          {full ? <span className={`${pill} bg-ink/80 text-white`}>{t("full")}</span> : badge && <span className={`${pill} ${badge === "featured" ? "bg-brand-900 text-white" : "bg-badge text-brand-900"}`}>{t(`badge_${badge}`)}</span>}
         </div>
       </div>
     </article>

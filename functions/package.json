@@ -2,7 +2,7 @@
   "name": "@thecommunity/functions",
   "version": "0.1.0",
   "private": true,
-  "description": "Cloud Functions for Firebase (v2) — logique serveur sécurisée de The Host Club",
+  "description": "Cloud Functions for Firebase (v2) — logique serveur sécurisée de Wenzy",
   "main": "lib/index.js",
   "engines": {
     "node": "22"

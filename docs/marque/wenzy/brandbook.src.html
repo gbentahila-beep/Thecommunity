@@ -1,0 +1,745 @@
+<title>Wenzy, brand book</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+/* Layout : un brand book d'agence en planches pleine largeur, dans les couleurs de la marque (choix assumé d'un seul thème, clair). */
+:root {
+  --creme: #F6F1EA; --encre: #141414; --corail: #FF6A4D; --violet: #C25BE8;
+  --sable: #EDE4D8; --taupe: #66625C; --ligne: #E3D9CB; --blanc: #FFFFFF;
+  --rose-clair: #FFE1D8; --lilas-clair: #F0DEF9;
+  --grad: linear-gradient(100deg, #FF6A4D 0%, #C25BE8 100%);
+  --serif: "Instrument Serif", Georgia, serif; --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --ar-titre: "Amiri", serif; --ar-texte: "IBM Plex Sans Arabic", sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box }
+html { scroll-behavior: smooth }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } }
+body { background: var(--creme); color: var(--encre); font: 400 16px/1.6 var(--sans); padding-block: 0 0 }
+.in { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+h1, h2, h3, h4 { margin: 0; font-family: var(--serif); font-weight: 400; line-height: 1; text-wrap: balance }
+p { margin: 0 }
+.g { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em }
+.eyebrow { font: 600 .74rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--taupe) }
+.lede { max-width: 64ch; color: var(--taupe); font-size: 1.05rem }
+a { color: inherit }
+:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; border-radius: 4px }
+
+/* couverture */
+.cover { background: var(--encre); color: var(--creme); margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px); position: relative; overflow: hidden }
+.cover .motif { position: absolute; inset: 0; opacity: .95; background-size: cover; background-position: 70% 40%; -webkit-mask-image: linear-gradient(100deg, transparent 0%, transparent 35%, #000 75%); mask-image: linear-gradient(100deg, transparent 0%, transparent 35%, #000 75%) }
+.cover .in { position: relative; padding-block: clamp(4rem, 12vw, 8rem) clamp(3rem, 8vw, 5rem); display: grid; gap: 2rem }
+.cover img.logo { width: min(440px, 80%) }
+.cover h1 { font-size: clamp(2.8rem, 8vw, 5.6rem); max-width: 14ch }
+.cover .meta { display: flex; flex-wrap: wrap; gap: .6rem 2rem; font-size: .9rem; color: #bdb6ab }
+
+/* sommaire */
+.toc { background: var(--creme); border-bottom: 1px solid var(--ligne) }
+.toc .in { padding-block: 1.5rem; display: grid; gap: .8rem }
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .3rem 1.5rem }
+.toc a { display: flex; gap: .7rem; text-decoration: none; padding: .35rem 0; border-bottom: 1px solid transparent; font-size: .95rem }
+.toc a:hover { border-bottom-color: var(--ligne) }
+.toc a span { color: var(--taupe); font-variant-numeric: tabular-nums; width: 1.6rem }
+
+/* planches */
+.pl { padding-block: clamp(3rem, 8vw, 5.5rem); border-bottom: 1px solid var(--ligne) }
+.pl.dark { background: var(--encre); color: var(--creme); border-bottom-color: #2a2a2a }
+.pl.dark .lede, .pl.dark .eyebrow, .pl.dark .muted { color: #b5aea3 }
+.pl .in { display: grid; gap: 2rem }
+.ph { display: grid; gap: .9rem }
+.ph h2 { font-size: clamp(2.4rem, 6vw, 4rem) }
+.muted { color: var(--taupe) }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem }
+.grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem }
+@media (max-width: 860px) { .grid3, .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (max-width: 600px) { .grid2, .grid3, .grid4 { grid-template-columns: 1fr } }
+.card { background: var(--blanc); border-radius: 20px; padding: 1.3rem; display: grid; gap: .6rem; align-content: start; box-shadow: 0 0 0 1px var(--ligne) }
+.pl.dark .card { background: #1e1e1e; box-shadow: 0 0 0 1px #2c2c2c }
+.card h3 { font-size: 1.7rem }
+.card p, .card li { font-size: .93rem; color: var(--taupe) }
+.pl.dark .card p, .pl.dark .card li { color: #b5aea3 }
+.card ul { margin: 0; padding-left: 1.1rem; display: grid; gap: .25rem }
+.cap { font-size: .8rem; color: var(--taupe); margin-top: .45rem }
+.pl.dark .cap { color: #9d968b }
+.k { font: 600 .7rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase }
+
+/* 01 ton */
+.words { display: flex; flex-wrap: wrap; gap: .6rem }
+.words span { font: 400 clamp(1.6rem, 3.5vw, 2.4rem)/1 var(--serif); padding: .55rem 1.1rem .6rem; border-radius: 999px; background: var(--blanc); box-shadow: 0 0 0 1px var(--ligne) }
+.words span.no { background: transparent; box-shadow: 0 0 0 1px var(--ligne); color: var(--taupe); text-decoration: line-through; text-decoration-thickness: 1px }
+.mood { display: grid; grid-template-columns: 1.3fr 1fr 1fr; grid-template-rows: 220px 220px; gap: .8rem }
+.mood > * { border-radius: 18px; overflow: hidden; min-width: 0 }
+.mood img { width: 100%; height: 100%; object-fit: cover; display: block }
+.mood .a { grid-row: 1 / 3 }
+.mood .q { background: var(--encre); color: var(--creme); padding: 1.3rem; display: grid; align-content: end }
+.mood .q p { font: 400 clamp(1.5rem, 2.6vw, 2.1rem)/1.02 var(--serif) }
+.mood .q2 { background: var(--grad); color: var(--encre); padding: 1.3rem; display: grid; align-content: end }
+.mood .q2 p { font: 400 clamp(1.5rem, 2.6vw, 2.1rem)/1.02 var(--serif) }
+@media (max-width: 760px) { .mood { grid-template-columns: 1fr 1fr; grid-template-rows: 200px 200px 200px } .mood .a { grid-row: auto; grid-column: 1 / -1 } }
+.saynot { background: var(--blanc); border-radius: 20px; box-shadow: 0 0 0 1px var(--ligne); overflow-x: auto }
+.saynot table { border-collapse: collapse; width: 100%; min-width: 560px }
+.saynot th, .saynot td { text-align: left; padding: .9rem 1.2rem; border-bottom: 1px solid var(--ligne); vertical-align: top; font-size: .95rem }
+.saynot th { font: 600 .72rem/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--taupe) }
+.saynot td:first-child { color: var(--encre) }
+.saynot td:last-child { color: var(--taupe); text-decoration: line-through; text-decoration-color: #cbbfb0 }
+.saynot tr:last-child td { border-bottom: 0 }
+
+/* 02 typo */
+.spec { background: var(--blanc); border-radius: 22px; padding: clamp(1.3rem, 3vw, 2rem); box-shadow: 0 0 0 1px var(--ligne); display: grid; gap: 1rem }
+.spec .big { font: 400 clamp(4rem, 12vw, 8rem)/.9 var(--serif) }
+.spec .alpha { font: 400 clamp(1.4rem, 3vw, 2rem)/1.3 var(--serif); color: var(--taupe); word-break: break-word }
+.spec .alpha.s { font-family: var(--sans); font-size: clamp(1.1rem, 2.4vw, 1.5rem) }
+.spec .big.s { font-family: var(--sans); font-weight: 600; letter-spacing: -.04em }
+.scale { background: var(--blanc); border-radius: 22px; box-shadow: 0 0 0 1px var(--ligne); overflow: hidden }
+.scale > div { display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: baseline; padding: 1rem 1.3rem; border-bottom: 1px solid var(--ligne); min-width: 0 }
+.scale > div:last-child { border-bottom: 0 }
+.scale .lab { font-size: .8rem; color: var(--taupe); font-variant-numeric: tabular-nums }
+.scale .lab b { display: block; color: var(--encre); font-size: .85rem }
+.scale .s1 { font: 400 clamp(2.6rem, 6vw, 4.5rem)/1 var(--serif) }
+.scale .s2 { font: 400 clamp(2rem, 4.5vw, 3rem)/1 var(--serif) }
+.scale .s3 { font: 400 clamp(1.6rem, 3.2vw, 2rem)/1.05 var(--serif) }
+.scale .s4 { font: 600 1.1rem/1.4 var(--sans) }
+.scale .s5 { font: 400 1.0625rem/1.65 var(--sans); max-width: 60ch }
+.scale .s6 { font: 500 .8rem/1.4 var(--sans); color: var(--taupe) }
+.scale .s7 { font: 600 .72rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase }
+@media (max-width: 600px) { .scale > div { grid-template-columns: 1fr; gap: .3rem } }
+.ar { direction: rtl; text-align: right }
+.ar .t { font: 700 clamp(2rem, 5vw, 3rem)/1.3 var(--ar-titre) }
+.ar .p { font: 400 1.05rem/1.9 var(--ar-texte); color: var(--taupe) }
+
+/* 03 couleurs */
+.colors { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr; grid-template-rows: 260px 150px; gap: .8rem }
+.col { border-radius: 20px; padding: 1.1rem 1.2rem; display: grid; align-content: space-between; min-width: 0 }
+.col b { font: 400 1.9rem/1 var(--serif) }
+.col span { font-size: .8rem; line-height: 1.5; font-variant-numeric: tabular-nums }
+.col.c-creme { background: var(--creme); box-shadow: 0 0 0 1px var(--ligne) }
+.col.c-encre { background: var(--encre); color: var(--creme) }
+.col.c-grad { background: var(--grad); grid-column: 3 / 5; color: var(--encre) }
+.col.c-corail { background: var(--corail); color: var(--encre) }
+.col.c-violet { background: var(--violet); color: var(--encre) }
+.col.c-sable { background: var(--sable) }
+.col.c-taupe { background: var(--taupe); color: var(--creme) }
+@media (max-width: 760px) { .colors { grid-template-columns: 1fr 1fr; grid-template-rows: auto } .col { min-height: 140px } .col.c-grad { grid-column: 1 / -1 } }
+.ratio { display: flex; height: 54px; border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px var(--ligne) }
+.ratio div { display: grid; place-items: center; font-size: .78rem; font-weight: 600 }
+.pairs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem }
+@media (max-width: 760px) { .pairs { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+.pair { border-radius: 16px; padding: 1rem; display: grid; gap: .3rem; min-height: 110px; align-content: space-between }
+.pair p { font: 400 1.5rem/1 var(--serif) }
+.pair span { font-size: .75rem }
+
+/* 04 logo */
+.logo-hero { background: var(--blanc); border-radius: 24px; padding: clamp(3rem, 9vw, 6rem) 1.5rem; display: grid; place-items: center; box-shadow: 0 0 0 1px var(--ligne) }
+.logo-hero img { width: min(600px, 90%) }
+.lv { border-radius: 18px; padding: 2rem 1.4rem; display: grid; place-items: center; min-height: 150px }
+.lv img { width: min(260px, 80%) }
+.anat { background: var(--blanc); border-radius: 22px; padding: 1.4rem; box-shadow: 0 0 0 1px var(--ligne); display: grid; gap: 1rem }
+.anat .stage { position: relative; display: grid; place-items: center; padding: 3rem 1rem 2rem; background: var(--creme); border-radius: 14px }
+.anat .stage img { width: min(420px, 85%) }
+.anat .labels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem }
+@media (max-width: 600px) { .anat .labels { grid-template-columns: 1fr } }
+.anat .labels div { font-size: .88rem; color: var(--taupe) }
+.anat .labels b { display: block; color: var(--encre); font: 400 1.4rem/1.1 var(--serif); margin-bottom: .2rem }
+.clear { display: grid; place-items: center; background: var(--creme); border-radius: 14px; padding: 2rem 1rem }
+.clear div { outline: 1.5px dashed var(--violet); padding: 26px; position: relative }
+.clear img { width: 190px; display: block }
+.dont { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem }
+@media (max-width: 760px) { .dont { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+.dont figure { margin: 0; display: grid; gap: .4rem }
+.dont .box { background: var(--blanc); border-radius: 14px; height: 120px; display: grid; place-items: center; overflow: hidden; position: relative; box-shadow: 0 0 0 1px var(--ligne) }
+.dont .box::after { content: ""; position: absolute; top: 10px; right: 10px; width: 22px; height: 22px; border-radius: 50%; background: #141414 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Cpath d='M7 7l8 8M15 7l-8 8' stroke='%23F6F1EA' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center/22px no-repeat }
+.dont img { width: 62% }
+.dont figcaption { font-size: .82rem; color: var(--taupe) }
+
+/* 05 icône */
+.icons { display: flex; flex-wrap: wrap; gap: 1.2rem; align-items: end }
+.icons figure { margin: 0; display: grid; gap: .4rem; justify-items: center; font-size: .8rem; color: var(--taupe) }
+.icons img { display: block }
+.homescreen { background: linear-gradient(165deg, #f4c3a1 0%, #e88a77 45%, #7a58a8 100%); border-radius: 24px; padding: 1.3rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem .8rem; max-width: 380px }
+.homescreen div { display: grid; justify-items: center; gap: .3rem; font: 500 .66rem/1 var(--sans); color: #fff }
+.homescreen img, .homescreen i { width: 58px; height: 58px; border-radius: 14px; display: block }
+.homescreen i { background: rgb(255 255 255 / .32) }
+.browser { background: var(--blanc); border-radius: 14px; box-shadow: 0 0 0 1px var(--ligne); overflow: hidden; max-width: 520px }
+.browser .tabs { background: #ebe5dc; padding: .5rem .5rem 0; display: flex; gap: .3rem }
+.browser .tab { background: var(--blanc); border-radius: 10px 10px 0 0; padding: .5rem .8rem; display: flex; gap: .5rem; align-items: center; font-size: .8rem; min-width: 0 }
+.browser .tab.o { background: transparent; color: var(--taupe) }
+.browser .tab img { width: 16px; height: 16px; border-radius: 3px; flex: none }
+.browser .tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.browser .bar { padding: .6rem .8rem; font-size: .8rem; color: var(--taupe) }
+
+/* 06 motif */
+.motif-big { border-radius: 24px; height: 380px; background-size: cover; background-position: center }
+.crops { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem }
+.crops div { aspect-ratio: 4 / 5; border-radius: 16px; background-size: 260%; }
+@media (max-width: 600px) { .crops { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+.wall { width: 150px; aspect-ratio: 9 / 19; border-radius: 22px; background-size: 300%; background-position: 30% 40%; display: grid; justify-items: center; align-content: space-between; padding: 1.4rem .8rem 2rem; border: 5px solid #0d0d0d }
+.wall span { font: 300 2rem/1 var(--sans); color: #fff }
+.wall img { width: 80% }
+.motif-apps { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: .8rem }
+@media (max-width: 760px) { .motif-apps { grid-template-columns: 1fr } }
+.mapp { border-radius: 18px; overflow: hidden; position: relative; min-height: 230px; background-size: cover; background-position: center; display: grid; place-items: center; padding: 1.4rem }
+.mapp .inner { background: var(--blanc); box-shadow: 0 12px 30px -16px rgb(0 0 0 / .35); border-radius: 14px; padding: 1rem 1.2rem; display: grid; gap: .3rem; max-width: 300px }
+.mapp .inner { color: var(--encre) }
+.mapp .inner p { font: 400 1.6rem/1 var(--serif) }
+.mapp .inner p.k { font: 600 .7rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase }
+.tote { width: 170px; height: 200px; background: #E9DFD0; border-radius: 6px 6px 18px 18px; position: relative; display: grid; place-items: center; box-shadow: 0 18px 30px -18px rgb(0 0 0 / .45) }
+.tote::before { content: ""; position: absolute; top: -48px; left: 42px; width: 86px; height: 70px; border: 7px solid #E9DFD0; border-bottom: 0; border-radius: 50px 50px 0 0 }
+.tote img { width: 120px }
+
+/* 07 papeterie */
+.paper { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-items: start }
+@media (max-width: 860px) { .paper { grid-template-columns: 1fr } }
+.bcards { display: grid; gap: 1rem; justify-items: start }
+.bcard { width: min(340px, 100%); aspect-ratio: 85 / 55; border-radius: 10px; box-shadow: 0 18px 36px -20px rgb(0 0 0 / .4); padding: 1.2rem; display: grid; position: relative; overflow: hidden }
+.bcard.front { background: var(--encre); place-items: center; background-size: 300px }
+.bcard.front img { width: 58% }
+.bcard.back { background: var(--creme); align-content: space-between; color: var(--encre) }
+.bcard.back .n { font: 400 1.7rem/1 var(--serif) }
+.bcard.back .r { font-size: .74rem; color: var(--taupe) }
+.bcard.back .c { font-size: .72rem; line-height: 1.55 }
+.bcard.back img { position: absolute; right: 1.1rem; bottom: 1.1rem; width: 74px }
+.bcard.back .bar { position: absolute; left: 0; right: 0; top: 0; height: 6px; background: var(--grad) }
+.letter { background: var(--blanc); aspect-ratio: 210 / 297; border-radius: 6px; box-shadow: 0 18px 40px -24px rgb(0 0 0 / .4); padding: 8% 9%; display: grid; grid-template-rows: auto auto 1fr auto; gap: 1.2rem; font-size: .7rem; color: var(--taupe); max-width: 420px; width: 100% }
+.letter img { width: 34% }
+.letter .to { color: var(--encre); line-height: 1.5 }
+.letter .body p { margin-bottom: .6em; line-height: 1.6 }
+.letter .body p.h { font: 400 1.4rem/1.1 var(--serif); color: var(--encre) }
+.letter .foot { display: flex; justify-content: space-between; border-top: 1px solid var(--ligne); padding-top: .6rem; font-size: .6rem; gap: .5rem; flex-wrap: wrap }
+.letter .foot i { display: block; height: 3px; width: 46px; background: var(--grad); border-radius: 3px; align-self: center }
+.invoice { background: var(--blanc); border-radius: 14px; box-shadow: 0 0 0 1px var(--ligne); padding: 1.3rem; display: grid; gap: .8rem; font-size: .82rem }
+.invoice .top { display: flex; justify-content: space-between; align-items: start; gap: 1rem }
+.invoice .top img { width: 110px }
+.invoice .top b { font: 400 1.6rem/1 var(--serif) }
+.invoice table { width: 100%; border-collapse: collapse }
+.invoice td { padding: .5rem 0; border-bottom: 1px solid var(--ligne) }
+.invoice td:last-child { text-align: right; font-variant-numeric: tabular-nums }
+.invoice .tot td { border-bottom: 0; font-weight: 700; font-size: .95rem }
+.invoice .tot td:last-child span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent }
+.sig { background: var(--blanc); border-radius: 14px; box-shadow: 0 0 0 1px var(--ligne); padding: 1.2rem; display: grid; gap: .6rem; font-size: .85rem }
+.sig .row { display: flex; gap: 1rem; align-items: center; border-top: 1px solid var(--ligne); padding-top: .8rem }
+.sig .row img { width: 92px }
+.sig .row div { border-left: 3px solid; border-image: var(--grad) 1; padding-left: .9rem; line-height: 1.5 }
+.sig b { font-weight: 600 }
+.sig .t { color: var(--taupe); font-size: .78rem }
+
+/* 08 à table */
+.table-items { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 1.25rem; align-items: center }
+@media (max-width: 860px) { .table-items { grid-template-columns: 1fr } }
+.place { background: var(--blanc); border-radius: 8px; box-shadow: 0 16px 30px -18px rgb(0 0 0 / .4); padding: 1.6rem 1.2rem 1.4rem; display: grid; gap: .5rem; justify-items: center; text-align: center; position: relative }
+.place::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px; background: var(--grad); border-radius: 8px 8px 0 0 }
+.place .k { color: var(--taupe) }
+.place .n { font: 400 2.8rem/1 var(--serif) }
+.place img { width: 64px; margin-top: .3rem }
+.welcome { background: var(--encre); color: var(--creme); border-radius: 12px; padding: 1.6rem; display: grid; gap: 1rem; box-shadow: 0 18px 36px -20px rgb(0 0 0 / .5) }
+.welcome h3 { font-size: 2rem }
+.welcome ol { margin: 0; padding-left: 1.2rem; display: grid; gap: .5rem; font-size: .92rem; color: #d9d2c6 }
+.welcome .ar2 { direction: rtl; text-align: right; font: 400 .95rem/1.8 var(--ar-texte); color: #b5aea3; border-top: 1px solid #2c2c2c; padding-top: .8rem }
+.tent { display: grid; justify-items: center; gap: .5rem }
+.tent .face { width: 200px; background: var(--grad); border-radius: 10px 10px 4px 4px; padding: 1.2rem; display: grid; gap: .6rem; justify-items: center; color: var(--encre); box-shadow: 0 18px 30px -18px rgb(0 0 0 / .5) }
+.tent .face p { font: 400 1.9rem/1 var(--serif) }
+.qr { width: 84px; height: 84px; background: var(--creme); border-radius: 8px; padding: 8px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px }
+.qr i { background: var(--encre); border-radius: 1px }
+.qr i.o { background: transparent }
+.tent .foot { width: 220px; height: 14px; background: #d8ccbb; border-radius: 0 0 8px 8px }
+
+/* 09 affichage */
+.billboard { border-radius: 14px; overflow: hidden; display: grid; grid-template-columns: 1.1fr 1fr; aspect-ratio: 4 / 3; max-height: 520px; width: 100%; box-shadow: 0 24px 50px -30px rgb(0 0 0 / .5) }
+@media (max-width: 600px) { .billboard { aspect-ratio: auto; grid-template-columns: 1fr } .billboard img { aspect-ratio: 4 / 3 } }
+.billboard .t { background: var(--encre); color: var(--creme); padding: clamp(1.4rem, 4vw, 2.6rem); display: grid; align-content: space-between; gap: 1rem }
+.billboard .t p { font: 400 clamp(2.2rem, 5.4vw, 4.2rem)/.95 var(--serif) }
+.billboard .t img { width: 46% }
+.billboard img.ph { width: 100%; height: 100%; object-fit: cover; display: block }
+.posters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem }
+@media (max-width: 760px) { .posters { grid-template-columns: 1fr 1fr } }
+@media (max-width: 480px) { .posters { grid-template-columns: 1fr } }
+.poster { aspect-ratio: 297 / 420; border-radius: 6px; overflow: hidden; position: relative; display: grid; align-content: space-between; padding: 1.2rem; box-shadow: 0 18px 36px -22px rgb(0 0 0 / .5) }
+.poster img.ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover }
+.poster > * { position: relative }
+.poster .h { font: 400 clamp(1.7rem, 3vw, 2.3rem)/.98 var(--serif) }
+.poster img.lg { width: 48% }
+.poster.p1 { background: var(--creme) }
+.poster.p2 { color: var(--creme) }
+.poster.p2::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(20 20 20 / .1), rgb(20 20 20 / .75)); z-index: 0 }
+.poster.p3 { background: var(--grad); color: var(--encre) }
+.poster .ar3 { direction: rtl; text-align: right; font: 700 clamp(1.7rem, 3vw, 2.2rem)/1.35 var(--ar-titre) }
+.poster .small { font-size: .78rem }
+
+/* 10 réseaux */
+.social { display: grid; grid-template-columns: 1fr 1fr 0.8fr; gap: 1rem; align-items: start }
+@media (max-width: 860px) { .social { grid-template-columns: 1fr 1fr } }
+@media (max-width: 520px) { .social { grid-template-columns: 1fr } }
+.post { aspect-ratio: 1; border-radius: 14px; overflow: hidden; position: relative; display: grid; align-content: end; padding: 1.2rem; color: var(--creme) }
+.post img.ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover }
+.post::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgb(20 20 20 / .8)); z-index: 1 }
+.post > *:not(img) { position: relative; z-index: 2 }
+.post .h { font: 400 2rem/1 var(--serif) }
+.post .tag { justify-self: start; background: var(--grad); color: var(--encre); font: 600 .7rem/1 var(--sans); padding: .4rem .7rem; border-radius: 999px; margin-bottom: .6rem }
+.post2 { aspect-ratio: 1; border-radius: 14px; background: var(--encre); color: var(--creme); padding: 1.4rem; display: grid; align-content: space-between; background-size: 340px }
+.post2 .h { font: 400 2.1rem/1 var(--serif) }
+.post2 img { width: 40% }
+.story { aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; position: relative; display: grid; align-content: space-between; padding: 1.1rem; color: var(--encre); background: var(--grad) }
+.story .bars { display: flex; gap: 4px }
+.story .bars i { flex: 1; height: 3px; border-radius: 3px; background: rgb(20 20 20 / .25) }
+.story .bars i:first-child { background: var(--encre) }
+.story .h { font: 400 2rem/1 var(--serif) }
+.story .sticker { background: var(--creme); border-radius: 14px; padding: .8rem; display: grid; gap: .4rem; font-size: .8rem }
+.story .sticker b { font: 400 1.3rem/1 var(--serif) }
+.story .sticker span { background: var(--encre); color: var(--creme); border-radius: 999px; text-align: center; padding: .5rem; font-weight: 600 }
+.profile { background: var(--blanc); border-radius: 18px; box-shadow: 0 0 0 1px var(--ligne); padding: 1.2rem; display: grid; gap: .8rem; margin-top: 1rem }
+.profile .top { display: flex; gap: 1rem; align-items: center }
+.profile .av { width: 76px; height: 76px; border-radius: 50%; padding: 3px; background: var(--grad); flex: none }
+.profile .av img { width: 100%; height: 100%; border-radius: 50%; display: block; border: 3px solid #fff }
+.profile .stats { display: flex; gap: 1.2rem; font-size: .8rem; color: var(--taupe) }
+.profile .stats b { display: block; color: var(--encre); font-size: 1rem }
+.profile .bio { font-size: .85rem; line-height: 1.5 }
+.profile .bio b { font-weight: 600 }
+.hl { display: flex; gap: .8rem }
+.hl div { display: grid; justify-items: center; gap: .3rem; font-size: .7rem; color: var(--taupe) }
+.hl i { width: 52px; height: 52px; border-radius: 50%; background: var(--encre); box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--ligne); display: grid; place-items: center; font: italic 400 1.2rem/1 var(--serif); color: var(--creme) }
+
+/* 11 objets */
+.objects { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; align-items: stretch }
+@media (max-width: 860px) { .objects { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (max-width: 480px) { .objects { grid-template-columns: 1fr } }
+.obj { background: var(--sable); border-radius: 18px; padding: 2.4rem 1rem 1rem; display: grid; justify-items: center; align-content: space-between; gap: 1rem; min-height: 280px }
+.obj p { font-size: .82rem; color: var(--taupe); justify-self: start }
+.stickers { position: relative; width: 190px; height: 170px }
+.stk { position: absolute; display: grid; place-items: center; box-shadow: 0 8px 16px -8px rgb(0 0 0 / .35) }
+.stk.a { width: 120px; height: 120px; border-radius: 50%; background: var(--grad); left: 0; top: 0; transform: rotate(-8deg); border: 5px solid #fff }
+.stk.a span { font: italic 400 1.35rem/1 var(--serif); color: var(--encre); text-align: center }
+.stk.b { width: 130px; height: 58px; border-radius: 999px; background: var(--encre); right: 0; bottom: 6px; transform: rotate(6deg); border: 5px solid #fff }
+.stk.b img { width: 74% }
+.badge { width: 150px; background: var(--blanc); border-radius: 14px; padding: 1.2rem 1rem; display: grid; gap: .6rem; justify-items: center; position: relative; box-shadow: 0 16px 28px -18px rgb(0 0 0 / .45) }
+.badge::before { content: ""; position: absolute; top: -40px; width: 12px; height: 46px; background: var(--grad); border-radius: 6px }
+.badge .ph { width: 64px; height: 64px; border-radius: 50%; background: var(--sable) center/cover }
+.badge b { font: 400 1.4rem/1 var(--serif) }
+.badge span { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--taupe) }
+.badge img { width: 70px }
+.window { width: 180px; height: 180px; border-radius: 50%; border: 2px solid rgb(20 20 20 / .1); background: rgb(255 255 255 / .35); display: grid; place-items: center; text-align: center; padding: 1.6rem }
+.window div { display: grid; gap: .5rem; justify-items: center }
+.window img { width: 110px }
+.window span { font: 600 .6rem/1.3 var(--sans); letter-spacing: .14em; text-transform: uppercase }
+
+/* 12 site */
+.ui { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-items: start }
+@media (max-width: 860px) { .ui { grid-template-columns: 1fr } }
+.uibox { background: var(--blanc); border-radius: 20px; box-shadow: 0 0 0 1px var(--ligne); padding: 1.3rem; display: grid; gap: 1rem }
+.btns { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center }
+.b1 { background: var(--grad); color: var(--encre); font: 600 .95rem/1 var(--sans); padding: .95rem 1.4rem; border-radius: 999px }
+.b2 { background: var(--encre); color: var(--creme); font: 600 .95rem/1 var(--sans); padding: .95rem 1.4rem; border-radius: 999px }
+.b3 { box-shadow: inset 0 0 0 1.5px var(--encre); font: 600 .95rem/1 var(--sans); padding: .95rem 1.4rem; border-radius: 999px }
+.b4 { font: 600 .95rem/1 var(--sans); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--violet) }
+.pills { display: flex; flex-wrap: wrap; gap: .5rem }
+.pill { font: 600 .78rem/1 var(--sans); padding: .5rem .8rem; border-radius: 999px }
+.field { display: grid; gap: .35rem; font-size: .85rem }
+.field span { font-weight: 600 }
+.field div { border-radius: 14px; box-shadow: inset 0 0 0 1.5px var(--ligne); padding: .85rem 1rem; color: var(--taupe) }
+.field div.f { box-shadow: inset 0 0 0 2px var(--violet); color: var(--encre) }
+.xp { border-radius: 22px; overflow: hidden; background: var(--creme); box-shadow: 0 0 0 1px var(--ligne); display: grid }
+.xp img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block }
+.xp .b { padding: 1.1rem; display: grid; gap: .45rem }
+.xp .t { font: 400 1.8rem/1 var(--serif) }
+.xp .m { font-size: .85rem; color: var(--taupe) }
+.xp .row { display: flex; justify-content: space-between; align-items: center; margin-top: .4rem; gap: .6rem }
+.xp .faces { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: var(--taupe) }
+.xp .faces i { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--creme); margin-left: -9px; background: center/cover }
+.xp .faces i:first-child { margin-left: 0 }
+.nav { background: var(--blanc); border-radius: 999px; box-shadow: 0 8px 24px -12px rgb(0 0 0 / .3), 0 0 0 1px var(--ligne); display: flex; align-items: center; justify-content: space-between; padding: .45rem .5rem .45rem 1.1rem }
+.nav img { height: 30px }
+.nav .r { display: flex; gap: .5rem; align-items: center }
+.nav .b1 { padding: .65rem 1rem; font-size: .82rem }
+.nav .bg { width: 20px; height: 12px; border-top: 2px solid var(--encre); border-bottom: 2px solid var(--encre); margin: 0 .4rem }
+.tokens { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; font-size: .8rem; color: var(--taupe) }
+.tokens div { background: var(--creme); border-radius: 12px; padding: .8rem; display: grid; gap: .2rem }
+.tokens b { color: var(--encre); font-size: .9rem }
+
+/* règles d'or */
+.gold { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; counter-reset: r }
+@media (max-width: 860px) { .gold { grid-template-columns: 1fr 1fr } }
+@media (max-width: 520px) { .gold { grid-template-columns: 1fr } }
+.gold div { background: #1e1e1e; border-radius: 18px; padding: 1.3rem; display: grid; gap: .5rem; box-shadow: 0 0 0 1px #2c2c2c; counter-increment: r }
+.gold div::before { content: counter(r); font: 400 2.6rem/1 var(--serif); background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; width: max-content; padding-right: .1em }
+.gold b { font: 400 1.5rem/1.1 var(--serif); color: var(--creme) }
+.gold p { font-size: .9rem; color: #b5aea3 }
+.files { background: #1e1e1e; border-radius: 18px; box-shadow: 0 0 0 1px #2c2c2c; overflow-x: auto }
+.files table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: .88rem }
+.files td, .files th { text-align: left; padding: .7rem 1.1rem; border-bottom: 1px solid #2c2c2c }
+.files th { font: 600 .7rem/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: #9d968b }
+.files td:first-child { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem; color: var(--creme) }
+.files td:last-child { color: #b5aea3 }
+footer.end { background: var(--encre); color: #9d968b; padding-block: 2.5rem calc(2.5rem + env(safe-area-inset-bottom, 0px)) }
+footer.end .in { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; font-size: .85rem }
+footer.end img { width: 120px }
+</style>
+
+<!-- ============ COUVERTURE ============ -->
+<header class="cover">
+  <div class="motif" style="background-image:url({{MOTIF_TUILE}})"></div>
+  <div class="in">
+    <img class="logo" src="{{LOGO_CREME}}" alt="Wenzy">
+    <h1>Le brand book. <span class="g">Your people are out there.</span></h1>
+    <div class="meta"><span>Version 1 · 21 novembre 2026</span><span>Direction « Coucher de soleil »</span><span>Casablanca · Rabat · Marrakech · Tanger · Agadir</span></div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sommaire">
+  <div class="in">
+    <p class="eyebrow">Sommaire</p>
+    <ol>
+      <li><a href="#ton"><span>01</span>Ton et ambiance</a></li>
+      <li><a href="#typo"><span>02</span>Typographie</a></li>
+      <li><a href="#couleurs"><span>03</span>Couleurs</a></li>
+      <li><a href="#logo"><span>04</span>Logo</a></li>
+      <li><a href="#icone"><span>05</span>Icône et favicon</a></li>
+      <li><a href="#motif"><span>06</span>Le ciel de 19 h</a></li>
+      <li><a href="#papeterie"><span>07</span>Papeterie</a></li>
+      <li><a href="#table"><span>08</span>À table</a></li>
+      <li><a href="#affichage"><span>09</span>Affichage</a></li>
+      <li><a href="#reseaux"><span>10</span>Réseaux sociaux</a></li>
+      <li><a href="#objets"><span>11</span>Objets</a></li>
+      <li><a href="#site"><span>12</span>Sur le site</a></li>
+      <li><a href="#regles"><span>✦</span>Règles d'or et fichiers</a></li>
+    </ol>
+  </div>
+</nav>
+
+<!-- ============ 01 TON ============ -->
+<section class="pl" id="ton" aria-labelledby="t01">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 01</p>
+      <h2 id="t01">Ton et <span class="g">ambiance</span></h2>
+      <p class="lede">Wenzy fait se rencontrer des inconnus autour d'une table, d'un atelier ou d'une sortie. On parle comme un ami qui organise bien les choses : chaleureux, précis, jamais insistant. On ne promet pas l'amour, on promet une bonne soirée et des gens à revoir.</p>
+    </div>
+    <div class="words" aria-label="Mots-clés">
+      <span>Chaleureux</span><span>Curieux</span><span>Élégant</span><span>Casablancais</span><span>Inclusif</span><span>Spontané</span><span class="no">Dating</span><span class="no">Networking</span>
+    </div>
+    <div class="mood">
+      <div class="a"><img src="{{IMG_SOIREE}}" alt="Deux personnes qui rient lors d'une soirée"></div>
+      <div><img src="{{IMG_DINER}}" alt="Une convive souriante à table"></div>
+      <div class="q"><p>Six inconnus. Une table. De nouveaux amis.</p></div>
+      <div class="q2"><p>Vous ne connaissez personne ? C'est le principe.</p></div>
+      <div><img src="{{IMG_ATELIER}}" alt="Un atelier de céramique en groupe"></div>
+    </div>
+    <div class="grid3">
+      <div class="card"><h3>La voix</h3><ul><li>Phrases courtes, concrètes, positives.</li><li>Vouvoiement en français, tutoiement jamais.</li><li>Un détail vrai vaut mieux qu'un superlatif.</li></ul></div>
+      <div class="card"><h3>Les photos</h3><ul><li>De vrais gens, de vrais lieux à Casablanca.</li><li>Lumière chaude du soir, rires, mains, tables partagées.</li><li>Jamais de banque d'images, jamais de couple seul.</li></ul></div>
+      <div class="card"><h3>Les langues</h3><ul><li>Français par défaut, arabe et anglais à égalité.</li><li>L'accroche reste en anglais : « Your people are out there. »</li><li>En arabe : phrases simples, compréhensibles au Maroc.</li></ul></div>
+    </div>
+    <div class="saynot">
+      <table>
+        <thead><tr><th>On dit</th><th>On ne dit pas</th></tr></thead>
+        <tbody>
+          <tr><td>Rejoignez une table de six personnes.</td><td>Trouvez l'âme sœur ce soir.</td></tr>
+          <tr><td>Vous ne connaissez personne ? C'est le principe.</td><td>Événement networking exclusif.</td></tr>
+          <tr><td>Il reste 2 places jeudi.</td><td>Dépêchez-vous, c'est presque complet !!!</td></tr>
+          <tr><td>Le restaurant vous est révélé la veille.</td><td>Surprise totale garantie.</td></tr>
+          <tr><td>Merci d'être venu·e. On vous garde une place la semaine prochaine ?</td><td>Notez votre expérience sur 5.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 TYPO ============ -->
+<section class="pl" id="typo" aria-labelledby="t02">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 02</p>
+      <h2 id="t02">Typographie</h2>
+      <p class="lede">Deux familles, gratuites et libres d'usage. Une serif élégante pour les titres, qui donne le côté soirée ; une sans-serif nette pour tout le reste. Un seul mot par titre peut passer en dégradé.</p>
+    </div>
+    <div class="grid2">
+      <div class="spec"><p class="k muted">Titres · Instrument Serif</p><p class="big">Aa <span class="g"><i>Gg</i></span></p><p class="alpha">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789 · « » ! ? &amp;</p></div>
+      <div class="spec"><p class="k muted">Texte · Inter</p><p class="big s">Aa Gg</p><p class="alpha s">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789 · Regular, Medium, SemiBold</p></div>
+    </div>
+    <div class="scale" aria-label="Hiérarchie">
+      <div><p class="lab"><b>Affiche</b>Serif · 72 / 44 px</p><p class="s1">Your people are <span class="g">out there.</span></p></div>
+      <div><p class="lab"><b>Titre 1</b>Serif · 48 / 34 px</p><p class="s2">Le dîner du jeudi</p></div>
+      <div><p class="lab"><b>Titre 2</b>Serif · 32 / 26 px</p><p class="s3">Comment ça marche</p></div>
+      <div><p class="lab"><b>Sous-titre</b>Inter SemiBold · 18 px</p><p class="s4">Six personnes, un restaurant choisi pour vous</p></div>
+      <div><p class="lab"><b>Texte</b>Inter Regular · 17 / 16 px</p><p class="s5">Vous réservez votre place, on compose la table selon vos réponses, et le restaurant vous est révélé la veille. Il ne vous reste qu'à venir.</p></div>
+      <div><p class="lab"><b>Légende</b>Inter Medium · 13 px</p><p class="s6">Jeudi 20 h · Maarif · 350 MAD</p></div>
+      <div><p class="lab"><b>Étiquette</b>Inter SemiBold · 12 px · capitales</p><p class="s7">Cette semaine</p></div>
+    </div>
+    <div class="grid2">
+      <div class="spec ar"><p class="k muted" style="direction:ltr;text-align:left">Arabe · titres Amiri, texte IBM Plex Sans Arabic</p><p class="t">وينزي · ناسك كاينين</p><p class="p">احجز مكانك على طاولة من ستة أشخاص، ونحن نختار المطعم ونجمع المجموعة. لا تحتاج إلا أن تأتي.</p></div>
+      <div class="card"><h3>Règles</h3><ul><li>Titres en Instrument Serif, jamais en gras artificiel.</li><li>Un seul mot en dégradé par titre, au-dessus de 28 px.</li><li>L'italique de la serif pour une citation ou un prénom.</li><li>Texte courant entre 16 et 18 px, 65 caractères par ligne au plus.</li><li>En arabe : pas d'italique, interligne plus grand (1,8).</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 COULEURS ============ -->
+<section class="pl" id="couleurs" aria-labelledby="t03">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 03</p>
+      <h2 id="t03">Couleurs</h2>
+      <p class="lede">Une base calme, crème et encre, et une seule couleur forte : le dégradé corail → violet, le ciel de Casablanca à 19 h. Le dégradé se mérite : il marque l'action principale, un mot clé, un moment.</p>
+    </div>
+    <div class="colors">
+      <div class="col c-creme"><b>Crème</b><span>#F6F1EA · RVB 246 241 234<br>CMJN 2 4 7 0 · fond principal</span></div>
+      <div class="col c-encre"><b>Encre</b><span>#141414 · RVB 20 20 20<br>CMJN 0 0 0 95 · texte, fonds sombres</span></div>
+      <div class="col c-grad"><b>Le dégradé</b><span>Corail → Violet, 100°<br>Boutons principaux, mot clé, temps forts</span></div>
+      <div class="col c-corail"><b>Corail</b><span>#FF6A4D<br>RVB 255 106 77</span></div>
+      <div class="col c-violet"><b>Violet</b><span>#C25BE8<br>RVB 194 91 232</span></div>
+      <div class="col c-sable"><b>Sable</b><span>#EDE4D8 · surfaces</span></div>
+      <div class="col c-taupe"><b>Taupe</b><span>#66625C · texte secondaire</span></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Proportions</h3><div class="ratio"><div style="flex:60;background:#F6F1EA">60 % crème</div><div style="flex:25;background:#141414;color:#F6F1EA">25 % encre</div><div style="flex:10;background:linear-gradient(100deg,#FF6A4D,#C25BE8)">10 %</div><div style="flex:5;background:#EDE4D8"></div></div><p>Beaucoup de crème, de l'encre pour le contraste, le dégradé en touche finale. Plus il y a de dégradé, moins il a d'effet.</p></div>
+      <div class="card"><h3>Lisibilité</h3><p>Sur le dégradé, le texte est toujours en <b style="color:#141414">encre</b> : il reste lisible de bout en bout (contraste AA). Le texte en dégradé est réservé aux titres de plus de 28 px. Le corail et le violet seuls ne servent jamais pour du texte courant.</p></div>
+    </div>
+    <div class="pairs" aria-label="Associations">
+      <div class="pair" style="background:#F6F1EA;box-shadow:0 0 0 1px #E3D9CB"><p>Encre sur crème</p><span>Par défaut</span></div>
+      <div class="pair" style="background:#141414;color:#F6F1EA"><p>Crème sur encre</p><span>Soirées, affiches</span></div>
+      <div class="pair" style="background:linear-gradient(100deg,#FF6A4D,#C25BE8);color:#141414"><p>Encre sur dégradé</p><span>Boutons, temps forts</span></div>
+      <div class="pair" style="background:#141414"><p class="g">Dégradé sur encre</p><span style="color:#b5aea3">Titres, un mot clé</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 LOGO ============ -->
+<section class="pl" id="logo" aria-labelledby="t04">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 04</p>
+      <h2 id="t04">Le logo</h2>
+      <p class="lede">Deux écritures qui se rencontrent : « wen » net et solide, « zy » écrit à la main dans le dégradé, collé au « n ». Comme deux inconnus à la même table, qui finissent la soirée ensemble.</p>
+    </div>
+    <div class="logo-hero"><img src="{{LOGO_ENCRE}}" alt="Logo Wenzy"></div>
+    <div class="anat">
+      <div class="stage"><img src="{{LOGO_ENCRE}}" alt=""></div>
+      <div class="labels">
+        <div><b>« wen »</b>Lettres géométriques, épaisses, en encre. La solidité, l'organisation.</div>
+        <div><b>« zy »</b>Écrit à la main, en dégradé corail → violet. La spontanéité, la rencontre.</div>
+        <div><b>La jonction</b>Le « z » touche le « n » : les deux parties ne se séparent jamais.</div>
+      </div>
+    </div>
+    <div class="grid4">
+      <div><div class="lv" style="background:#F6F1EA;box-shadow:0 0 0 1px #E3D9CB"><img src="{{LOGO_ENCRE}}" alt="Principale"></div><p class="cap"><b>Principale</b> · fond clair</p></div>
+      <div><div class="lv" style="background:#141414"><img src="{{LOGO_CREME}}" alt="Inversée"></div><p class="cap"><b>Inversée</b> · fond sombre</p></div>
+      <div><div class="lv" style="background:linear-gradient(100deg,#FF6A4D,#C25BE8)"><img src="{{LOGO_BLANC}}" alt="Blanche"></div><p class="cap"><b>Blanche</b> · dégradé ou photo</p></div>
+      <div><div class="lv" style="background:#fff;box-shadow:0 0 0 1px #E3D9CB"><img src="{{LOGO_NOIR}}" alt="Une couleur"></div><p class="cap"><b>Une couleur</b> · impression, tampon</p></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Zone de protection</h3><div class="clear"><div><img src="{{LOGO_ENCRE}}" alt=""></div></div><p>Autour du logo, un espace libre au moins égal à la hauteur du « n ».</p></div>
+      <div class="card"><h3>Taille minimale</h3><p>Écran : 80 px de large. Impression : 25 mm de large. En dessous, on utilise l'icône.</p><p>Sur une photo, toujours la version blanche, posée sur une zone calme de l'image.</p></div>
+    </div>
+    <div class="dont" aria-label="À ne pas faire">
+      <figure><div class="box"><img src="{{LOGO_ENCRE}}" alt="" style="transform:scaleX(1.5)"></div><figcaption>Déformer</figcaption></figure>
+      <figure><div class="box"><img src="{{LOGO_ENCRE}}" alt="" style="filter:hue-rotate(120deg)"></div><figcaption>Changer les couleurs</figcaption></figure>
+      <figure><div class="box"><img src="{{LOGO_ENCRE}}" alt="" style="transform:rotate(-14deg)"></div><figcaption>Incliner</figcaption></figure>
+      <figure><div class="box"><img src="{{LOGO_ENCRE}}" alt="" style="filter:drop-shadow(6px 6px 3px rgb(0 0 0 / .45))"></div><figcaption>Ajouter une ombre</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 ICONE ============ -->
+<section class="pl" id="icone" aria-labelledby="t05">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 05</p>
+      <h2 id="t05">Icône et favicon</h2>
+      <p class="lede">Le mot entier, dans un carré aux coins arrondis. Pas de lettre isolée : on reconnaît Wenzy tout de suite, sur l'écran d'un téléphone comme dans un onglet.</p>
+    </div>
+    <div class="icons">
+      <figure><img src="{{ICONE_ENCRE}}" alt="Icône principale" width="120" height="120"><figcaption>Principale · encre</figcaption></figure>
+      <figure><img src="{{ICONE_CREME}}" alt="Icône crème" width="120" height="120" style="border-radius:26px;box-shadow:0 0 0 1px #E3D9CB"><figcaption>Crème</figcaption></figure>
+      <figure><img src="{{ICONE_DEGRADE}}" alt="Icône dégradé" width="120" height="120"><figcaption>Dégradé · événements</figcaption></figure>
+      <figure><img src="{{ICONE_ENCRE}}" alt="" width="64" height="64"><figcaption>64 px</figcaption></figure>
+      <figure><img src="{{FAVICON}}" alt="" width="32" height="32"><figcaption>32 px</figcaption></figure>
+    </div>
+    <div class="grid2">
+      <div class="homescreen" aria-label="Écran d'accueil"><div><img src="{{ICONE_ENCRE}}" alt=""><span>Wenzy</span></div><div><i></i><span>&nbsp;</span></div><div><i></i><span>&nbsp;</span></div><div><i></i><span>&nbsp;</span></div><div><i></i><span>&nbsp;</span></div><div><i></i><span>&nbsp;</span></div><div><i></i><span>&nbsp;</span></div><div><i></i><span>&nbsp;</span></div></div>
+      <div style="display:grid;gap:1rem;align-content:start"><div class="browser"><div class="tabs"><span class="tab"><img src="{{FAVICON}}" alt=""><span>Wenzy · Dîners entre inconnus</span></span><span class="tab o"><span>Nouvel onglet</span></span></div><div class="bar">wenzy.ma</div></div><p class="muted" style="font-size:.9rem">L'icône principale est sur fond encre : c'est elle qui ressort le mieux parmi les autres applications. La version dégradé est réservée aux temps forts (lancement d'une ville, événement spécial).</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 MOTIF ============ -->
+<section class="pl dark" id="motif" aria-labelledby="t06">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 06</p>
+      <h2 id="t06">Le ciel <span class="g">de 19 h</span></h2>
+      <p class="lede">Pas de dessin : de grandes taches de couleur floues, corail, abricot et violet, comme le ciel de Casablanca au coucher du soleil. Le ciel habille les fonds d'écran, les stories, les couvertures et les cartes cadeaux. Chaque support le recadre autrement : il n'est jamais deux fois le même.</p>
+    </div>
+    <div class="motif-big" style="background-image:url({{MOTIF_ENCRE}})" role="img" aria-label="Le ciel de 19 h sur fond encre"></div>
+    <div class="crops" aria-label="Trois cadrages du ciel">
+      <div style="background-image:url({{MOTIF_ENCRE}});background-position:0% 0%"></div>
+      <div style="background-image:url({{MOTIF_ENCRE}});background-position:100% 30%"></div>
+      <div style="background-image:url({{MOTIF_CREME}});background-position:40% 100%"></div>
+      <div style="background-image:url({{MOTIF_CREME}});background-position:90% 0%"></div>
+    </div>
+    <div class="motif-apps">
+      <div class="mapp" style="background-image:url({{MOTIF_CREME}})"><div class="inner"><p class="k" style="color:#66625C">Fond de section</p><p>Comment ça marche</p></div></div>
+      <div class="mapp" style="background:#262626"><div class="wall" style="background-image:url({{MOTIF_ENCRE}})"><span>19:00</span><img src="{{LOGO_BLANC}}" alt=""></div></div>
+      <div class="mapp" style="background-image:url({{MOTIF_ENCRE}})"><div class="inner"><p class="k" style="color:#66625C">Carte cadeau</p><p>Offrez une table</p></div></div>
+    </div>
+    <div class="grid3">
+      <div class="card"><h3>Toujours flou</h3><p>Jamais de contour net ni de forme reconnaissable : c'est une lumière, pas une illustration.</p></div>
+      <div class="card"><h3>Trois couleurs</h3><p>Corail, violet et une touche d'abricot (#FF9A6B), sur encre ou sur crème. Rien d'autre.</p></div>
+      <div class="card"><h3>Le texte au calme</h3><p>Le texte se pose sur une carte crème ou sur une zone unie du ciel. À l'impression : export haute définition (300 dpi).</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 PAPETERIE ============ -->
+<section class="pl" id="papeterie" aria-labelledby="t07">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 07</p>
+      <h2 id="t07">Papeterie</h2>
+      <p class="lede">Sobre, crème et encre, avec un filet de dégradé comme signature. Les mêmes règles pour le papier, les factures du site et les e-mails.</p>
+    </div>
+    <div class="paper">
+      <div style="display:grid;gap:1.25rem">
+        <div class="bcards">
+          <div class="bcard front"><img src="{{LOGO_CREME}}" alt="Carte de visite, recto"></div>
+          <div class="bcard back"><i class="bar"></i><div><p class="n">Prénom Nom</p><p class="r">Fonction · Wenzy</p></div><p class="c">+212 6 00 00 00 00<br>prenom@wenzy.ma<br>wenzy.ma</p><img src="{{LOGO_ENCRE}}" alt=""></div>
+        </div>
+        <p class="cap">Carte de visite 85 × 55 mm, recto encre, verso crème avec le filet de dégradé.</p>
+        <div class="sig"><p class="k muted">Signature e-mail</p><p>Bonne soirée,</p><div class="row"><img src="{{LOGO_ENCRE}}" alt=""><div><b>Prénom Nom</b><br><span class="t">Fonction · +212 6 00 00 00 00 · wenzy.ma</span></div></div></div>
+      </div>
+      <div style="display:grid;gap:1.25rem;justify-items:center">
+        <div class="letter"><img src="{{LOGO_ENCRE}}" alt=""><p class="to">Restaurant partenaire<br>Boulevard d'Anfa, Casablanca</p><div class="body"><p class="h">Merci d'accueillir nos tables.</p><p>Chaque jeudi, six personnes qui ne se connaissent pas s'installent chez vous. Voici le récapitulatif des réservations du mois et les prochaines dates.</p><p>À très vite,</p></div><div class="foot"><span>Wenzy · Casablanca</span><i></i><span>wenzy.ma</span></div></div>
+        <div class="invoice" style="width:100%;max-width:420px"><div class="top"><img src="{{LOGO_ENCRE}}" alt=""><div style="text-align:right"><b>Facture</b><p class="muted">N° WZ-2026-0142</p></div></div><table><tbody><tr><td>Dîner entre inconnus · jeu. 27 nov.</td><td>350,00 MAD</td></tr><tr><td>Frais de service</td><td>15,00 MAD</td></tr><tr class="tot"><td>Total payé</td><td><span>365,00 MAD</span></td></tr></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 A TABLE ============ -->
+<section class="pl" id="table" aria-labelledby="t08" style="background:#EDE4D8">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 08</p>
+      <h2 id="t08">À table</h2>
+      <p class="lede">Les objets que les participants ont entre les mains pendant la soirée. Ce sont eux qui font la photo qu'on partage le lendemain.</p>
+    </div>
+    <div class="table-items">
+      <div class="place"><p class="k">Table 3</p><p class="n">Yasmine</p><img src="{{LOGO_ENCRE}}" alt=""></div>
+      <div class="welcome"><h3>Pour briser la glace</h3><ol><li>Quel est l'endroit de Casablanca que vous feriez découvrir à un ami ?</li><li>La dernière chose qui vous a fait rire aux larmes ?</li><li>Si vous ouvriez un restaurant demain, il servirait quoi ?</li></ol><p class="ar2">ما هو المكان في الدار البيضاء الذي ستُعرّف عليه صديقاً؟</p></div>
+      <div class="tent"><div class="face"><p class="k">Réservé</p><p>Table Wenzy</p><div class="qr" aria-hidden="true">{{QR}}</div></div><div class="foot"></div><p class="cap">Chevalet pour les lieux partenaires</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 09 AFFICHAGE ============ -->
+<section class="pl" id="affichage" aria-labelledby="t09">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 09</p>
+      <h2 id="t09">Affichage</h2>
+      <p class="lede">Un message court, une vraie photo, le logo. Le français, l'arabe et l'anglais ont chacun leur affiche plutôt que trois langues sur la même.</p>
+    </div>
+    <div class="billboard"><div class="t"><img src="{{LOGO_CREME}}" alt="Wenzy"><p>Your people are <span class="g">out there.</span></p><p class="muted" style="font:500 .9rem/1.4 var(--sans)">Dîners et sorties entre inconnus · wenzy.ma</p></div><img class="ph" src="{{IMG_SOIREE}}" alt=""></div>
+    <p class="cap">Panneau 4 × 3 m.</p>
+    <div class="posters">
+      <div class="poster p1"><img class="lg" src="{{LOGO_ENCRE}}" alt=""><p class="h">Six inconnus. Une table. <span class="g">De nouveaux amis.</span></p><p class="small muted">Jeudi soir · Casablanca · wenzy.ma</p></div>
+      <div class="poster p2"><img class="ph" src="{{IMG_SPORT}}" alt=""><img class="lg" src="{{LOGO_BLANC}}" alt="" style="position:relative;z-index:1"><p class="h" style="position:relative;z-index:1">Le samedi matin, on court ensemble.</p></div>
+      <div class="poster p3"><img class="lg" src="{{LOGO_NOIR}}" alt=""><p class="ar3" lang="ar">ستة غرباء.<br>طاولة واحدة.<br>أصدقاء جدد.</p><p class="small" style="direction:rtl;text-align:right;font-family:var(--ar-texte)" lang="ar">wenzy.ma · الدار البيضاء</p></div>
+    </div>
+    <p class="cap">Affiches A3 : français sur crème, photo avec logo blanc, arabe sur dégradé.</p>
+  </div>
+</section>
+
+<!-- ============ 10 RESEAUX ============ -->
+<section class="pl" id="reseaux" aria-labelledby="t10">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 10</p>
+      <h2 id="t10">Réseaux sociaux</h2>
+      <p class="lede">Instagram d'abord. Trois formats qui reviennent : la photo d'une soirée, la phrase sur fond encre, la story en dégradé qui donne envie de réserver.</p>
+    </div>
+    <div class="social">
+      <div style="display:grid;gap:1rem">
+        <div class="post"><img class="ph" src="{{IMG_DINER2}}" alt=""><span class="tag">Dîners</span><p class="h">Jeudi dernier, au Maarif.</p></div>
+        <div class="post2"><img src="{{LOGO_CREME}}" alt=""><p class="h">Vous ne connaissez personne ? <span class="g">C'est le principe.</span></p></div>
+      </div>
+      <div class="story"><div class="bars"><i></i><i></i><i></i></div><p class="h">Il reste 2 places jeudi soir.</p><div class="sticker"><b>Le dîner du jeudi</b><p class="muted">Maarif · 20 h · 350 MAD</p><span>Réserver</span></div></div>
+      <div>
+        <div class="profile"><div class="top"><div class="av"><img src="{{ICONE_ENCRE}}" alt=""></div><div class="stats"><div><b>48</b>publications</div><div><b>3 120</b>abonnés</div></div></div><p class="bio"><b>Wenzy</b><br>Dîners et sorties entre inconnus 🍽<br>Casablanca · bientôt Rabat et Marrakech<br>wenzy.ma</p><div class="hl"><div><i>D</i>Dîners</div><div><i>S</i>Sport</div><div><i>A</i>Ateliers</div><div><i>?</i>FAQ</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11 OBJETS ============ -->
+<section class="pl" id="objets" aria-labelledby="t11">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 11</p>
+      <h2 id="t11">Objets</h2>
+      <p class="lede">Peu d'objets, mais beaux : ceux que les gens gardent et montrent.</p>
+    </div>
+    <div class="objects">
+      <div class="obj"><div class="tote"><img src="{{LOGO_ENCRE}}" alt=""></div><p>Sac en toile écrue, logo encre et dégradé.</p></div>
+      <div class="obj"><div class="stickers"><div class="stk a"><span>out<br>there.</span></div><div class="stk b"><img src="{{LOGO_CREME}}" alt=""></div></div><p>Autocollants pour ordinateurs et gourdes.</p></div>
+      <div class="obj"><div class="badge"><div class="ph" style="background-image:url({{IMG_PORTRAIT}})"></div><b>Aya</b><span>Équipe Wenzy</span><img src="{{LOGO_ENCRE}}" alt=""></div><p>Badge de l'équipe sur place.</p></div>
+      <div class="obj"><div class="window"><div><span>Lieu partenaire</span><img src="{{LOGO_ENCRE}}" alt=""><span>Tables chaque jeudi</span></div></div><p>Vitrophanie pour les lieux partenaires.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 SITE ============ -->
+<section class="pl" id="site" aria-labelledby="t12">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Planche 12</p>
+      <h2 id="t12">Sur le site</h2>
+      <p class="lede">Les briques de base du site et de l'application. Elles reprennent tout ce qui précède : crème, encre, un dégradé pour l'action principale, des titres en serif.</p>
+    </div>
+    <div class="nav"><img src="{{LOGO_ENCRE}}" alt="Wenzy"><span class="r"><span class="b1">Réserver</span><span class="bg" aria-hidden="true"></span></span></div>
+    <div class="ui">
+      <div class="uibox">
+        <p class="k muted">Boutons</p>
+        <div class="btns"><span class="b1">Réserver ma place</span><span class="b2">Voir les dates</span><span class="b3">Plus tard</span><span class="b4">Comment ça marche</span></div>
+        <p class="k muted">Pastilles d'univers</p>
+        <div class="pills"><span class="pill" style="background:#FFE1D8;color:#A8381F">Dîners</span><span class="pill" style="background:#F0DEF9;color:#7A2FA0">Sorties</span><span class="pill" style="background:#FBE7C9;color:#7A4E0E">Ateliers</span><span class="pill" style="background:#DDEFE2;color:#2F6B45">Sport et bien-être</span><span class="pill" style="background:#E3E6FA;color:#3A44A0">Jeux</span></div>
+        <p class="k muted">Champs</p>
+        <div class="field"><span>Votre prénom</span><div>Yasmine</div></div>
+        <div class="field"><span>Votre e-mail</span><div class="f">yasmine@exemple.ma</div></div>
+        <p class="k muted">Mesures</p>
+        <div class="tokens"><div><b>999 px</b>Boutons, pastilles</div><div><b>24 px</b>Cartes</div><div><b>14 px</b>Champs</div></div>
+      </div>
+      <div class="xp"><img src="{{IMG_DINER}}" alt=""><div class="b"><span class="pill" style="background:#FFE1D8;color:#A8381F;justify-self:start">Dîners</span><p class="t">Le dîner du jeudi</p><p class="m">Jeudi 20 h · Maarif · restaurant révélé la veille</p><div class="row"><div class="faces"><i style="background-image:url({{IMG_PORTRAIT}})"></i><i style="background-color:#FF6A4D"></i><i style="background-color:#C25BE8"></i><i style="background-color:#141414"></i>4 / 6 inscrits</div><span class="b1" style="padding:.7rem 1rem;font-size:.85rem">350 MAD · Réserver</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REGLES D'OR ============ -->
+<section class="pl dark" id="regles" aria-labelledby="t13">
+  <div class="in">
+    <div class="ph">
+      <p class="eyebrow">Pour finir</p>
+      <h2 id="t13">Les règles <span class="g">d'or</span></h2>
+    </div>
+    <div class="gold">
+      <div><b>« wen » et « zy » ne se séparent jamais</b><p>Le logo est un seul bloc. On ne le réécrit pas avec une police.</p></div>
+      <div><b>Le dégradé est rare</b><p>Une action principale, un mot clé, un temps fort. Pas plus de 10 % d'une page.</p></div>
+      <div><b>Du texte en encre sur le dégradé</b><p>Jamais de blanc sur le corail : on garde la lisibilité partout.</p></div>
+      <div><b>De vraies photos</b><p>Des gens d'ici, des lieux d'ici, une lumière chaude. Aucune banque d'images.</p></div>
+      <div><b>On parle d'amitié, pas de rencontres amoureuses</b><p>Wenzy rassemble des groupes. Jamais de vocabulaire de dating.</p></div>
+      <div><b>Trois langues, trois versions</b><p>Une affiche, un post, un e-mail par langue plutôt qu'un mélange.</p></div>
+    </div>
+    <div class="files">
+      <table>
+        <thead><tr><th>Fichier</th><th>Usage</th></tr></thead>
+        <tbody>
+          <tr><td>logo/final/wenzy-logo-encre.svg · -creme.svg</td><td>Logo principal et inversé</td></tr>
+          <tr><td>logo/final/wenzy-logo-blanc.svg · -noir.svg</td><td>Une couleur : photo, dégradé, impression</td></tr>
+          <tr><td>logo/final/wenzy-icone-*.svg · -1024/512/192.png</td><td>Icônes d'application et du site</td></tr>
+          <tr><td>logo/final/favicon.ico · wenzy-apple-touch-icon-180.png</td><td>Navigateur et écran d'accueil iPhone</td></tr>
+          <tr><td>logo/final/wenzy-og-1200x630.png</td><td>Image de partage sur les réseaux</td></tr>
+          <tr><td>motif/ciel-encre.svg · ciel-creme.svg</td><td>Le ciel de 19 h, fond flou</td></tr>
+          <tr><td>Polices : Instrument Serif, Inter, Amiri, IBM Plex Sans Arabic</td><td>Gratuites (Google Fonts, licence OFL)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer class="end"><div class="in"><img src="{{LOGO_CREME}}" alt="Wenzy"><span>Brand book Wenzy · version 1 · novembre 2026</span></div></footer>

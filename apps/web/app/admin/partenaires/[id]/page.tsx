@@ -18,7 +18,7 @@ export default async function PartnerPage({ params, searchParams }: { params: Pr
   const exps = Object.entries(d.economics).filter(([, eco]) => eco.partnerId === p.id).flatMap(([eid]) => (d.experiences.has(eid) ? [d.experiences.get(eid)!] : []));
   return (
     <>
-      <Link href="/admin/partenaires" className="mb-3 inline-block text-sm font-medium text-plum-900">← Partenaires</Link>
+      <Link href="/admin/partenaires" className="mb-3 inline-block text-sm font-medium text-brand-900">← Partenaires</Link>
       <PageHeader title={p.name} subtitle={<Badge tone={PARTNER_STATUS_TONES[p.status]}>{PARTNER_STATUS_LABELS[p.status]}</Badge>} />
       {sp.cree === "1" && <p role="status" className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900">Partenaire ajouté.</p>}
       {sp.depuis === "candidature" && (
@@ -34,13 +34,13 @@ export default async function PartnerPage({ params, searchParams }: { params: Pr
               <p className="text-sm text-muted">Aucune. Le partenaire se choisit dans la fiche d&apos;une expérience (section « Partenaire et économie »).</p>
             ) : (
               <ul className="space-y-1 text-sm">
-                {exps.map((e) => <li key={e.id}><Link href={`/admin/experiences/${e.id}`} className="text-plum-900 underline">{e.title.fr}</Link></li>)}
+                {exps.map((e) => <li key={e.id}><Link href={`/admin/experiences/${e.id}`} className="text-brand-900 underline">{e.title.fr}</Link></li>)}
               </ul>
             )}
           </Card>
           <Card title="Supports à imprimer">
             <p className="mb-3 text-sm text-muted">Chevalet « Réservé » aux couleurs de la marque, avec un QR code vers le site, à poser sur la table du groupe.</p>
-            <Link href={`/admin/partenaires/${p.id}/chevalet`} className="inline-flex rounded-full border border-plum-900 px-4 py-2 text-sm font-semibold text-plum-900 hover:bg-plum-50">Chevalet « Réservé »</Link>
+            <Link href={`/admin/partenaires/${p.id}/chevalet`} className="inline-flex rounded-full border border-brand-900 px-4 py-2 text-sm font-semibold text-brand-900 hover:bg-brand-50">Chevalet « Réservé »</Link>
           </Card>
           <Card title="Archiver ou supprimer">
             <p className="mb-3 text-sm text-muted">Un partenaire archivé n&apos;est plus proposé dans les fiches d&apos;expériences ; son historique est conservé.</p>

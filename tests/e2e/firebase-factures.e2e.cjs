@@ -126,7 +126,7 @@ async function payOnTestPage(page) {
   await row.getByRole('button', { name: 'Renvoyer par e-mail' }).click();
   assert(await visible(row.getByText("Rangé dans la boîte d'envoi (test).")), 'renvoi par e-mail depuis le back-office');
   await admin.goto(`${base}/admin/parametres`);
-  await admin.getByLabel('Raison sociale').fill('The Host Club SARL');
+  await admin.getByLabel('Raison sociale').fill('Wenzy SARL');
   await admin.getByLabel('ICE', { exact: true }).fill('123');
   await admin.getByLabel('Adresse du siège').fill('Bd d\'Anfa, Casablanca');
   await admin.getByRole('button', { name: 'Enregistrer', exact: true }).click();

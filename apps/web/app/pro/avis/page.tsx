@@ -23,7 +23,7 @@ export default async function ProReviewsPage() {
       />
       <Card className="mb-6">
         <p className="flex flex-wrap items-center gap-2 text-sm" data-testid="pro-rating">
-          <span className="font-display text-3xl text-plum-900">{count ? avg.toFixed(1) : "—"}</span>
+          <span className="font-display text-3xl text-brand-900">{count ? avg.toFixed(1) : "—"}</span>
           {count > 0 && <Stars value={avg} />}
           <span className="text-muted">{count ? `sur 5 · ${count} avis sur l'ensemble de vos activités` : "Pas encore d'avis."}</span>
         </p>
@@ -43,8 +43,8 @@ export default async function ProReviewsPage() {
               <p className="text-xs text-muted">{adminDate(r.createdAt, false)}</p>
               {r.comment && <p className="mt-2 text-[15px] text-ink/90">« {r.comment} »</p>}
               {r.reply?.text && (
-                <div className="mt-3 rounded-xl bg-plum-50 px-4 py-3 text-sm" data-testid="pro-review-reply">
-                  <p className="font-semibold text-plum-900">Réponse de {r.reply.authorName}</p>
+                <div className="mt-3 rounded-xl bg-brand-50 px-4 py-3 text-sm" data-testid="pro-review-reply">
+                  <p className="font-semibold text-brand-900">Réponse de {r.reply.authorName}</p>
                   <p className="mt-1 whitespace-pre-line text-ink/85">{r.reply.text}</p>
                 </div>
               )}

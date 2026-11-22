@@ -19,7 +19,7 @@ const MESSAGES: Record<string, string> = {
   tooMany: "Valeur trop élevée.",
   invalidDate: "Date invalide.",
 };
-const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100 disabled:bg-cream";
+const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100 disabled:bg-cream";
 
 /** Fiche partenaire (ajout ou modification). Validée dans le navigateur puis par le serveur (qui fait foi). */
 export function PartnerForm({ id, initial, cities, live }: { id?: string; initial: PartnerFormValues; cities: { id: string; label: string }[]; live: boolean }) {
@@ -121,7 +121,7 @@ export function PartnerForm({ id, initial, cities, live }: { id?: string; initia
           Une alerte apparaît sur le tableau de bord quand elle manque, a expiré ou expire dans moins de 30 jours.
         </p>
         <label className="flex items-center gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" disabled={!live} checked={v.insurance?.verified === true} onChange={(e) => set("insurance", { ...(v.insurance ?? { verified: false }), verified: e.target.checked })} className="size-4 accent-plum-900" />
+          <input type="checkbox" disabled={!live} checked={v.insurance?.verified === true} onChange={(e) => set("insurance", { ...(v.insurance ?? { verified: false }), verified: e.target.checked })} className="size-4 accent-brand-900" />
           Attestation d&apos;assurance vue par l&apos;équipe
         </label>
         <div>
@@ -146,14 +146,14 @@ export function PartnerForm({ id, initial, cities, live }: { id?: string; initia
       </div>
       {live ? (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+          <button type="submit" disabled={state === "busy"} className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-60">
             {state === "busy" ? "Enregistrement…" : id ? "Enregistrer les modifications" : "Ajouter le partenaire"}
           </button>
           {state === "saved" && <p role="status" className="text-sm text-emerald-800">Enregistré.</p>}
           {state === "error" && <p role="alert" className="text-sm text-red-800">Enregistrement impossible : vérifiez les champs signalés.</p>}
         </div>
       ) : (
-        <p className="rounded-xl bg-plum-50 px-3 py-2 text-xs text-plum-900">Démonstration : l&apos;ajout et la modification des partenaires fonctionnent sur le site en ligne.</p>
+        <p className="rounded-xl bg-brand-50 px-3 py-2 text-xs text-brand-900">Démonstration : l&apos;ajout et la modification des partenaires fonctionnent sur le site en ligne.</p>
       )}
     </form>
   );

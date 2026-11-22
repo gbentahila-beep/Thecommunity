@@ -30,7 +30,7 @@ export default async function VenueSheetPage({ params }: PageProps<"/admin/sessi
   for (const p of people) for (const l of p.r.preferences?.languages ?? []) langs.set(l, (langs.get(l) ?? 0) + 1);
   return (
     <>
-      <p className="mb-2 text-sm print:hidden"><Link href={`/admin/sessions/${s.id}`} className="text-plum-900">← Participants</Link></p>
+      <p className="mb-2 text-sm print:hidden"><Link href={`/admin/sessions/${s.id}`} className="text-brand-900">← Participants</Link></p>
       <PageHeader title="Fiche pour le lieu" subtitle={`${e.title.fr} · ${adminDate(s.startAt)}`} actions={<PrintButton label="Imprimer / PDF" />} />
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title="Accueil">
@@ -40,7 +40,7 @@ export default async function VenueSheetPage({ params }: PageProps<"/admin/sessi
             <div><dt className="text-xs text-muted">Date et heure</dt><dd>{adminDate(s.startAt)}</dd></div>
             <div><dt className="text-xs text-muted">Participants confirmés</dt><dd className="text-lg font-semibold">{seats}</dd></div>
           </dl>
-          <p className="mt-4 text-sm">Accueil sous le nom « The Host Club ».</p>
+          <p className="mt-4 text-sm">Accueil sous le nom « Wenzy ».</p>
         </Card>
         <Card title="Régimes et allergies">
           {shared.length === 0 ? (

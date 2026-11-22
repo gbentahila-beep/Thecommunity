@@ -18,7 +18,7 @@ export function RefundRequestForm({ reservationId, live }: { reservationId: stri
   if (state === "sent") return <p role="status" className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900" data-testid="refund-sent">{t("sent")}</p>;
   return (
     <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="refund-request">
-      <h2 className="font-display text-xl font-medium text-plum-900">{t("title")}</h2>
+      <h2 className="font-display text-xl font-medium text-brand-900">{t("title")}</h2>
       {!open ? (
         <button type="button" onClick={() => setOpen(true)} className="btn btn-secondary btn-sm mt-3">{t("submit")}…</button>
       ) : (

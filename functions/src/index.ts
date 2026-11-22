@@ -1,5 +1,5 @@
 /**
- * Cloud Functions de The Host Club (v2, région europe-west1).
+ * Cloud Functions de Wenzy (v2, région europe-west1).
  * Comptes et rôles (phase 3), réservations, paiement de test, demandes, annulation et liste d'attente (phase 4).
  * Prestataire de paiement réel (phase 5), groupes (phase 6) et notifications (phase 7) viendront s'ajouter ici.
  */

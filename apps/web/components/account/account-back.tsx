@@ -12,7 +12,7 @@ export function AccountBack() {
   const pathname = usePathname();
   if (!UNDER_PROFILE.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return null;
   return (
-    <Link href="/espace/compte" className="-ms-1 mb-4 inline-flex items-center gap-1 rounded-full py-1 pe-3 text-sm font-semibold text-plum-900 hover:bg-white" data-testid="account-back">
+    <Link href="/espace/compte" className="-ms-1 mb-4 inline-flex items-center gap-1 rounded-full py-1 pe-3 text-sm font-semibold text-brand-900 hover:bg-white" data-testid="account-back">
       <ChevronLeft className="size-4 rtl:-scale-x-100" aria-hidden />
       {t("myProfile")}
     </Link>

@@ -59,7 +59,7 @@ async function login(page, email, password, suite) {
   await login(admin, 'admin@thecommunity.test', 'Demo2026!', '/admin/parametres');
   await admin.waitForURL('**/admin/parametres', { timeout: 25000 });
   await admin.getByLabel(/Virement bancaire/).check();
-  await admin.locator('#pay-holder').fill('The Host Club (compte fictif)');
+  await admin.locator('#pay-holder').fill('Wenzy (compte fictif)');
   await admin.locator('#pay-bank').fill("Banque d'essai");
   await admin.locator('#pay-rib').fill('1234');
   await admin.getByRole('button', { name: 'Enregistrer le mode de paiement' }).click();

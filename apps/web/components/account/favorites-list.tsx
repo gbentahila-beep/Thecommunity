@@ -28,7 +28,7 @@ export function FavoritesList({ experiences }: { experiences: FavoriteCandidate[
             {e.status === "archived" ? (
               <span className="mt-1 inline-block rounded-full bg-stone-200 px-2 py-0.5 text-[11px] font-semibold text-stone-700">{t("favArchived")}</span>
             ) : (
-              <span className={`mt-0.5 block text-xs font-medium ${e.status === "dated" ? "text-plum-700" : "text-muted"}`}>
+              <span className={`mt-0.5 block text-xs font-medium ${e.status === "dated" ? "text-brand-700" : "text-muted"}`}>
                 {e.status === "dated" ? t("favNext", { date: e.when ?? "" }) : t("favNoDate")}
               </span>
             )}
@@ -37,9 +37,9 @@ export function FavoritesList({ experiences }: { experiences: FavoriteCandidate[
             type="button"
             onClick={() => toggleFavorite(e.id)}
             aria-label={tc("removeFavorite")}
-            className="grid size-10 place-items-center rounded-full text-plum-700 hover:bg-plum-50"
+            className="grid size-10 place-items-center rounded-full text-brand-700 hover:bg-brand-50"
           >
-            <Heart className="size-5 fill-plum-700" aria-hidden />
+            <Heart className="size-5 fill-brand-700" aria-hidden />
           </button>
         </li>
       ))}

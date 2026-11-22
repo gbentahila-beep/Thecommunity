@@ -24,7 +24,7 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
       </header>
 
       <section aria-labelledby="contacts-title" className="space-y-3">
-        <h2 id="contacts-title" className="font-display text-2xl font-medium text-plum-900">{t("contacts")}</h2>
+        <h2 id="contacts-title" className="font-display text-2xl font-medium text-brand-900">{t("contacts")}</h2>
         {data.connections.length === 0 ? (
           <p className="rounded-[var(--radius-card)] border border-dashed border-line bg-white/60 p-5 text-sm text-muted">{t("noContacts")}</p>
         ) : (
@@ -33,7 +33,7 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
               const o = otherOf(c, me);
               return (
                 <li key={c.id} className="flex flex-wrap items-center gap-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="meet-contact">
-                  <span className="grid size-12 shrink-0 place-items-center rounded-full bg-plum-50 font-display text-xl text-plum-900" aria-hidden>{o.firstName.slice(0, 1)}</span>
+                  <span className="grid size-12 shrink-0 place-items-center rounded-full bg-brand-50 font-display text-xl text-brand-900" aria-hidden>{o.firstName.slice(0, 1)}</span>
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-ink">{o.firstName}</p>
                     <p className="text-sm text-muted">{t("metAt", { title: c.experienceTitle, date: c.metAt ? formatLongDate(c.metAt, locale).replace(/^./, (x) => (locale === "fr" ? x.toLowerCase() : x)) : "" })}</p>
@@ -47,11 +47,11 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
       </section>
 
       <section aria-labelledby="groups-title" className="space-y-3">
-        <h2 id="groups-title" className="font-display text-2xl font-medium text-plum-900">{t("groups")}</h2>
+        <h2 id="groups-title" className="font-display text-2xl font-medium text-brand-900">{t("groups")}</h2>
         <p className="text-sm text-muted">{t("groupsIntro")}</p>
         {data.groups.length === 0 ? (
           <p className="rounded-[var(--radius-card)] border border-dashed border-line bg-white/60 p-5 text-sm text-muted">
-            {t("noGroups")} <Link href="/experiences" className="font-semibold text-plum-900 underline underline-offset-4">{t("discover")}</Link>
+            {t("noGroups")} <Link href="/experiences" className="font-semibold text-brand-900 underline underline-offset-4">{t("discover")}</Link>
           </p>
         ) : (
           data.groups.map((g) => (
@@ -73,7 +73,7 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
                 ))}
               </ul>
               {data.trustedHost && (
-                <Link href={`/espace/proposer?groupe=${g.id}`} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-plum-900 underline underline-offset-4">
+                <Link href={`/espace/proposer?groupe=${g.id}`} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand-900 underline underline-offset-4">
                   <HeartHandshake className="size-4" aria-hidden />
                   {t("proposeToGroup")}
                 </Link>

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { firebase } from "@/lib/firebase/client";
 
-const input = "w-32 rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-plum-700 disabled:bg-cream";
+const input = "w-32 rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-brand-700 disabled:bg-cream";
 
 /** Frais de service (super-admin) : aucun, montant par place ou pourcentage. S'appliquent aux nouvelles réservations payantes. */
 export function ServiceFeeForm({ initial, canEdit }: { initial: ServiceFee; canEdit: boolean }) {
@@ -50,7 +50,7 @@ export function ServiceFeeForm({ initial, canEdit }: { initial: ServiceFee; canE
       <p className="text-xs text-muted">Affichés avant le paiement, ajoutés après les remises, jamais sur une place gratuite ; remboursés avec la place. Les réservations déjà faites ne changent pas.</p>
       {canEdit && (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-4 py-2 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-60">{state === "busy" ? "Enregistrement…" : "Enregistrer les frais"}</button>
+          <button type="submit" disabled={state === "busy"} className="rounded-full bg-brand-900 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-60">{state === "busy" ? "Enregistrement…" : "Enregistrer les frais"}</button>
           {state === "saved" && <p role="status" className="text-sm text-emerald-800">Enregistré.</p>}
           {state === "error" && <p role="alert" className="text-sm text-red-800">Valeur invalide ou enregistrement impossible.</p>}
         </div>

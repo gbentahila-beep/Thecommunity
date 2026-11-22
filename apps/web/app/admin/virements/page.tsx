@@ -52,7 +52,7 @@ export default async function TransfersPage({ searchParams }: PageProps<"/admin/
       <form className="mb-4 mt-6 flex flex-wrap gap-2" role="search">
         <label className="sr-only" htmlFor="q">Référence, nom ou e-mail</label>
         <input id="q" name="q" defaultValue={q} placeholder="Référence (THC-…), nom ou e-mail" className="min-w-64 flex-1 rounded-full border border-line bg-white px-4 py-2.5 text-sm" />
-        <button className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">Rechercher</button>
+        <button className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white">Rechercher</button>
         {q && <Link href="/admin/virements" className="self-center text-sm text-muted underline">Effacer</Link>}
       </form>
 
@@ -66,9 +66,9 @@ export default async function TransfersPage({ searchParams }: PageProps<"/admin/
               const x = what(p);
               return (
                 <tr key={p.id} data-testid={`transfer-${p.reference}`}>
-                  <td className="whitespace-nowrap font-mono font-semibold text-plum-900">{p.reference}</td>
+                  <td className="whitespace-nowrap font-mono font-semibold text-brand-900">{p.reference}</td>
                   <td><span className="block font-medium text-ink">{w.name}</span><span className="block text-xs text-muted">{w.email}</span></td>
-                  <td>{x.href ? <Link href={x.href} className="hover:text-plum-900">{x.label}</Link> : x.label}{x.date && <span className="block text-xs text-muted">{x.date}</span>}</td>
+                  <td>{x.href ? <Link href={x.href} className="hover:text-brand-900">{x.label}</Link> : x.label}{x.date && <span className="block text-xs text-muted">{x.date}</span>}</td>
                   <td className="whitespace-nowrap tabular-nums font-semibold">{dh(p.amount)}</td>
                   <td className="whitespace-nowrap">{p.deadline ? <>{adminDate(p.deadline)}{late(p) && <span className="mt-0.5 block"><Badge tone="red">Dépassée</Badge></span>}</> : "—"}</td>
                   <td className="min-w-40"><TransferAction kind="receive" id={p.id} amount={dh(p.amount)} reference={p.reference} live={!d.isDemo} /></td>
@@ -117,7 +117,7 @@ export default async function TransfersPage({ searchParams }: PageProps<"/admin/
                   <td>{w.name}</td>
                   <td>{what(p).label}</td>
                   <td className="tabular-nums">{dh(p.amount)}</td>
-                  <td>{p.invoiceId ? <a href={`/api/factures/${p.invoiceId}`} className="font-mono text-xs text-plum-900 underline">{p.invoiceNumber}</a> : "—"}</td>
+                  <td>{p.invoiceId ? <a href={`/api/factures/${p.invoiceId}`} className="font-mono text-xs text-brand-900 underline">{p.invoiceNumber}</a> : "—"}</td>
                 </tr>
               );
             })}

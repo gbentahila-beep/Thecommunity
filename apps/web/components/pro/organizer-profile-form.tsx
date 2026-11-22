@@ -8,7 +8,7 @@ import { useState } from "react";
 import { mediaUrl } from "@/components/media";
 import { firebase } from "@/lib/firebase/client";
 
-const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100";
+const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100";
 type Values = { description: string; descriptionAr: string; descriptionEn: string; website: string; instagram: string; phone: string; address: string; logoPath: string };
 
 /** Étape 20 — profil public (page organisateur) et coordonnées ; logo dans le dossier public de l'organisateur. */
@@ -75,7 +75,7 @@ export function OrganizerProfileForm({ orgId, initial, live }: { orgId: string; 
         <div><label htmlFor="p-address" className="mb-1 block text-sm font-medium">Adresse (équipe seulement)</label><input {...field("address")} /></div>
       </div>
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-5 py-2.5 font-semibold text-white disabled:opacity-60">{state === "busy" ? "Enregistrement…" : "Enregistrer le profil"}</button>
+        <button type="submit" disabled={state === "busy"} className="rounded-full bg-brand-900 px-5 py-2.5 font-semibold text-white disabled:opacity-60">{state === "busy" ? "Enregistrement…" : "Enregistrer le profil"}</button>
         {state === "saved" && <p role="status" className="text-sm text-emerald-800">Enregistré.{live ? "" : " (démonstration : rien n'est enregistré)"}</p>}
         {state === "error" && <p role="alert" className="text-sm text-red-800">Enregistrement impossible : vérifiez les champs (présentation : 30 caractères minimum).</p>}
       </div>

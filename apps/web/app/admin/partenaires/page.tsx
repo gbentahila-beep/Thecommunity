@@ -29,7 +29,7 @@ export default async function PartnersAdminPage({ searchParams }: { searchParams
         title="Partenaires"
         subtitle={`${d.partners.filter((p) => p.status !== "archived").length} partenaires · ${pending.length} candidature(s) à traiter`}
         actions={
-          <Link href="/admin/partenaires/nouveau" className="inline-flex items-center gap-2 rounded-full bg-plum-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">
+          <Link href="/admin/partenaires/nouveau" className="inline-flex items-center gap-2 rounded-full bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">
             <Plus className="size-4" aria-hidden /> Nouveau partenaire
           </Link>
         }
@@ -54,8 +54,8 @@ export default async function PartnersAdminPage({ searchParams }: { searchParams
                   <span className="text-xs text-muted">{a.createdAt ? adminDate(a.createdAt) : ""}</span>
                 </div>
                 <p className="mt-1 text-sm">
-                  {a.contactName} · <a href={`mailto:${a.email}`} className="text-plum-900 underline">{a.email}</a>
-                  {a.phone && <> · <a href={`tel:${a.phone}`} className="text-plum-900 underline">{a.phone}</a></>}
+                  {a.contactName} · <a href={`mailto:${a.email}`} className="text-brand-900 underline">{a.email}</a>
+                  {a.phone && <> · <a href={`tel:${a.phone}`} className="text-brand-900 underline">{a.phone}</a></>}
                   {a.link && <> · <span className="break-all">{a.link}</span></>}
                 </p>
                 <p className="mt-2 whitespace-pre-line text-sm text-ink/85">{a.message}</p>
@@ -72,7 +72,7 @@ export default async function PartnersAdminPage({ searchParams }: { searchParams
             key={f.key}
             href={f.key === "current" ? "/admin/partenaires" : "/admin/partenaires?vue=archived"}
             aria-current={filter === f.key ? "page" : undefined}
-            className={`rounded-full px-4 py-2 text-sm font-medium ${filter === f.key ? "bg-plum-900 text-white" : "bg-white text-ink hover:bg-cream"}`}
+            className={`rounded-full px-4 py-2 text-sm font-medium ${filter === f.key ? "bg-brand-900 text-white" : "bg-white text-ink hover:bg-cream"}`}
           >
             {f.label}
           </Link>

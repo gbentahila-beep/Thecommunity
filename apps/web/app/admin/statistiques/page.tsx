@@ -32,7 +32,7 @@ export default async function StatsAdminPage({ searchParams }: { searchParams: P
             key={p.key}
             href={p.key === "upcoming" ? "/admin/statistiques" : `/admin/statistiques?periode=${p.key}`}
             aria-current={p.key === period ? "page" : undefined}
-            className={`rounded-full px-4 py-2 text-sm font-medium ${p.key === period ? "bg-plum-900 text-white" : "bg-white text-ink hover:bg-cream"}`}
+            className={`rounded-full px-4 py-2 text-sm font-medium ${p.key === period ? "bg-brand-900 text-white" : "bg-white text-ink hover:bg-cream"}`}
           >
             {p.label}
           </Link>

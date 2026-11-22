@@ -4,7 +4,7 @@
  * le site affiche « à compléter » à sa place. Ne jamais reprendre les informations d'une autre société.
  */
 export const LEGAL_INFO = {
-  /** Raison sociale de la société éditrice (ex. « The Host Club SARL »). */
+  /** Raison sociale de la société éditrice (ex. « Wenzy SARL »). */
   publisher: null as string | null,
   /** Adresse du siège social. */
   address: null as string | null,

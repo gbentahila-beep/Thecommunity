@@ -1,5 +1,5 @@
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-export const CONTACT_EMAIL = "contact@thehostclub.ma"; // hypothèse : domaine à confirmer
+export const CONTACT_EMAIL = "contact@wenzy.ma"; // hypothèse : domaine à confirmer
 export const DEFAULT_CITY = "casablanca";
 
 import type { CSSProperties } from "react";
@@ -15,8 +15,8 @@ export const CATEGORY_STYLES: Record<string, CategoryTone> = {
   discover: { text: "text-cat-discover", bg: "bg-cat-discover/10", dot: "bg-cat-discover" },
 };
 
-/** Couleur par défaut d'une catégorie créée sans couleur (prune du site). */
-export const DEFAULT_CATEGORY_COLOR = "#722637";
+/** Couleur par défaut d'une catégorie créée sans couleur (violet du site). */
+export const DEFAULT_CATEGORY_COLOR = "#8A35B5";
 
 /**
  * Étape 19 : couleur d'une catégorie. Les cinq historiques gardent la palette du site, sauf si le super-admin

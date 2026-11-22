@@ -59,7 +59,7 @@ export function PriceTag({
     ) : (
       <span className="inline-flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
         <span className={`${big} font-bold text-ink`}>{fmt(shown)}</span>
-        <span className="text-xs font-medium text-plum-800" data-testid="member-price">
+        <span className="text-xs font-medium text-brand-800" data-testid="member-price">
           {fmt(memberAmount + onSite)} {memberLabel}
         </span>
       </span>

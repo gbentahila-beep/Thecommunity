@@ -48,9 +48,9 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
       <section className="grid items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
         <div className="order-2 lg:order-1">
           <p className="text-sm font-semibold text-ink/80">{ta("heroEyebrow")}</p>
-          <h1 className="mt-4 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-plum-900 sm:text-6xl">
+          <h1 className="mt-4 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-brand-900 sm:text-6xl">
             {ta("heroLine1")}
-            <span className="block text-plum-700 italic rtl:not-italic">{ta("heroLine2")}</span>
+            <span className="block text-brand-700 italic rtl:not-italic">{ta("heroLine2")}</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink/80">{t("aboutText")}</p>
           <Link href="/experiences" className="btn btn-primary mt-7">
@@ -70,7 +70,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
           <Image src="/images/aya-snoussi.webp" alt={ta("photoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
         </div>
         <div>
-          <p className="text-sm font-semibold tracking-[0.2em] text-plum-700 uppercase">{ta("founderEyebrow")}</p>
+          <p className="text-sm font-semibold tracking-[0.2em] text-brand-700 uppercase">{ta("founderEyebrow")}</p>
           <h2 id="founder" className="section-title mt-3">{ta("founderName")}</h2>
           <p className="mt-1 text-muted">{ta("founderRole")}</p>
           <div className="mt-6 space-y-4 text-[17px] leading-relaxed text-ink/85">
@@ -96,7 +96,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {values.map(({ icon: Icon, title, text }) => (
             <li key={title} className="rounded-[var(--radius-card)] bg-white p-6 shadow-card">
-              <span className="grid size-11 place-items-center rounded-full bg-plum-50 text-plum-900">
+              <span className="grid size-11 place-items-center rounded-full bg-brand-50 text-brand-900">
                 <Icon className="size-5" aria-hidden />
               </span>
               <p className="mt-4 text-lg font-semibold text-ink">{title}</p>

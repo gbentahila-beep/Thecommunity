@@ -6,7 +6,7 @@ export const RESERVATION_STATUS = {
   cancelled: ["Annulée", "gray"],
   expired: ["Expirée", "gray"],
   refunded: ["Remboursée", "gray"],
-  attended: ["Vécue", "plum"],
+  attended: ["Vécue", "brand"],
   no_show: ["Absent", "red"],
 } as const;
 

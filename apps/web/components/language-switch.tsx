@@ -36,8 +36,8 @@ export function LanguageSwitch({ className = "" }: { className?: string }) {
               aria-current={current ? "true" : undefined}
               className={`rounded-full px-2.5 py-1.5 text-sm font-medium transition ${
                 current
-                  ? "bg-plum-900 text-white"
-                  : "text-plum-900 hover:bg-cream-deep"
+                  ? "bg-brand-900 text-white"
+                  : "text-brand-900 hover:bg-cream-deep"
               }`}
             >
               {LABELS[l].short}

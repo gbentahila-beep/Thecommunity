@@ -30,7 +30,7 @@ export default async function BecomeOrganizerPage({ params }: PageProps<"/[local
       <ul className="grid gap-4 sm:grid-cols-3">
         {why.map(({ icon: Icon, title, text }) => (
           <li key={title} className="card p-5">
-            <Icon className="size-6 text-plum-900" aria-hidden />
+            <Icon className="size-6 text-brand-900" aria-hidden />
             <p className="mt-3 font-semibold text-ink">{title}</p>
             <p className="mt-1 text-sm text-ink/75">{text}</p>
           </li>
@@ -41,7 +41,7 @@ export default async function BecomeOrganizerPage({ params }: PageProps<"/[local
         <ol className="mt-4 space-y-3">
           {[t("step1"), t("step2"), t("step3"), t("step4")].map((s, i) => (
             <li key={s} className="flex gap-3">
-              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-plum-900 text-sm font-semibold text-white">{i + 1}</span>
+              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-brand-900 text-sm font-semibold text-white">{i + 1}</span>
               <span className="pt-1 text-ink/85">{s}</span>
             </li>
           ))}
@@ -53,7 +53,7 @@ export default async function BecomeOrganizerPage({ params }: PageProps<"/[local
         <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
       </NextLink>
       <section aria-labelledby="org-roles" className="info-box text-start">
-        <h2 id="org-roles" className="font-display text-[1.45rem] font-medium text-plum-900">{t("roles")}</h2>
+        <h2 id="org-roles" className="font-display text-[1.45rem] font-medium text-brand-900">{t("roles")}</h2>
         <ul className="mt-3 space-y-2 text-[15px] text-ink/85">
           <li>{t("roleVenue")}</li>
           <li>{t("roleOrganizer")}</li>
@@ -61,8 +61,8 @@ export default async function BecomeOrganizerPage({ params }: PageProps<"/[local
         </ul>
       </section>
       <p className="flex flex-col gap-2">
-        <Link href="/aide/partenaires" className="font-medium text-plum-900 underline underline-offset-4">{t("help")}</Link>
-        <Link href="/devenir-partenaire" className="font-medium text-plum-900 underline underline-offset-4">{t("venueLink")}</Link>
+        <Link href="/aide/partenaires" className="font-medium text-brand-900 underline underline-offset-4">{t("help")}</Link>
+        <Link href="/devenir-partenaire" className="font-medium text-brand-900 underline underline-offset-4">{t("venueLink")}</Link>
       </p>
     </StaticPage>
   );

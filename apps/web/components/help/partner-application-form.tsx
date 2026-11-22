@@ -17,7 +17,7 @@ export function PartnerApplicationForm() {
   const locale = useLocale();
   const [state, setState] = useState<"idle" | "busy" | "sent" | "error">("idle");
   if (state === "sent") return <p role="status" className="rounded-2xl bg-emerald-50 p-5 text-emerald-900">{t("sent")}</p>;
-  const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[16px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100";
+  const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[16px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100";
   const label = "mb-1.5 block text-sm font-medium";
   return (
     <form
@@ -46,7 +46,7 @@ export function PartnerApplicationForm() {
         }
       }}
     >
-      <h2 className="font-display text-2xl font-medium text-plum-900">{t("formTitle")}</h2>
+      <h2 className="font-display text-2xl font-medium text-brand-900">{t("formTitle")}</h2>
       <Honeypot />
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block"><span className={label}>{t("contactName")}</span><input name="contactName" required maxLength={80} autoComplete="name" className={input} /></label>

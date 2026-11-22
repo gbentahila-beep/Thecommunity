@@ -44,8 +44,8 @@ export function MenuAuth() {
   }
   return (
     <div className="space-y-3">
-      <Link href="/connexion" className={`${primary} bg-plum-900 text-white hover:bg-plum-800`}>{t("login")}</Link>
-      <Link href="/inscription" className={`${primary} border border-line bg-white text-plum-900 hover:border-plum-700`}>{t("signup")}</Link>
+      <Link href="/connexion" className={`${primary} bg-brand-900 text-white hover:bg-brand-800`}>{t("login")}</Link>
+      <Link href="/inscription" className={`${primary} border border-line bg-white text-brand-900 hover:border-brand-700`}>{t("signup")}</Link>
     </div>
   );
 }

@@ -41,7 +41,7 @@ export function ExperienceGallery({ photos, children }: { photos: Photo[]; child
 
   if (!cover) return null;
   const current = photos[index] ?? cover;
-  const thumb = "relative block w-full overflow-hidden rounded-[var(--radius-card)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-plum-300";
+  const thumb = "relative block w-full overflow-hidden rounded-[var(--radius-card)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-200";
 
   return (
     <>
@@ -55,7 +55,7 @@ export function ExperienceGallery({ photos, children }: { photos: Photo[]; child
             <button
               type="button"
               onClick={() => open(0)}
-              className="absolute bottom-4 end-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3.5 py-2 text-sm font-semibold text-plum-900 shadow-card"
+              className="absolute bottom-4 end-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3.5 py-2 text-sm font-semibold text-brand-900 shadow-card"
               data-testid="gallery-all"
             >
               <Images className="size-4" aria-hidden />

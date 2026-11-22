@@ -51,7 +51,7 @@ export default async function MailAdminPage() {
                   <div className="mt-3 space-y-2">
                     {m.error && <p className="text-xs text-red-800">Erreur : {m.error}</p>}
                     {m.refs.invoiceId && (
-                      <a href={`/api/factures/${m.refs.invoiceId}`} className="text-xs font-semibold text-plum-900 underline">Ouvrir la pièce jointe (PDF)</a>
+                      <a href={`/api/factures/${m.refs.invoiceId}`} className="text-xs font-semibold text-brand-900 underline">Ouvrir la pièce jointe (PDF)</a>
                     )}
                     {/* Aperçu isolé : aucun script, aucun accès à la page. */}
                     <iframe title={`Aperçu : ${m.subject}`} srcDoc={m.html} sandbox="" className="h-[520px] w-full rounded-xl border border-line bg-white" />

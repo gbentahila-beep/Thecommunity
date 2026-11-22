@@ -86,7 +86,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
 
   return (
     <div className="space-y-6">
-      <Link href="/espace/reservations" className="inline-flex items-center gap-2 text-sm font-medium text-plum-900">
+      <Link href="/espace/reservations" className="inline-flex items-center gap-2 text-sm font-medium text-brand-900">
         <ArrowLeft className="size-4 rtl:-scale-x-100" aria-hidden />
         {t("back")}
       </Link>
@@ -173,7 +173,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           <h1 className="page-title">{title}</h1>
           <dl className="space-y-3">
             <div className="flex gap-3">
-              <CalendarDays className="mt-0.5 size-5 shrink-0 text-plum-700" aria-hidden />
+              <CalendarDays className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
               <div>
                 <dt className="sr-only">{t("when")}</dt>
                 <dd className="font-medium text-ink">{dateFmt(s.startAt)}</dd>
@@ -181,7 +181,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
               </div>
             </div>
             <div className="flex gap-3">
-              <MapPin className="mt-0.5 size-5 shrink-0 text-plum-700" aria-hidden />
+              <MapPin className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
               <div>
                 <dt className="sr-only">{t("where")}</dt>
                 {r.venue ? (
@@ -209,7 +209,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                 {t("addToCalendar")}
               </a>
             )}
-            <Link href={`/experiences/${s.slug}`} className="inline-flex items-center rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-plum-900 hover:bg-cream">
+            <Link href={`/experiences/${s.slug}`} className="inline-flex items-center rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-brand-900 hover:bg-cream">
               {t("seeExperience")}
             </Link>
           </div>
@@ -218,12 +218,12 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
 
       {qr && (
         <section aria-labelledby="ticket-title" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="ticket">
-          <h2 id="ticket-title" className="font-display text-2xl font-medium text-plum-900">{tk("title")}</h2>
+          <h2 id="ticket-title" className="font-display text-2xl font-medium text-brand-900">{tk("title")}</h2>
           <div className="mt-3 flex flex-col items-center gap-3 sm:flex-row sm:items-start sm:gap-5">
             <div role="img" aria-label={tk("title")} className="size-48 shrink-0 rounded-xl ring-1 ring-line [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: qr }} />
             <div className="space-y-2 text-sm text-ink">
               <p>{tk("text")}</p>
-              <p className="font-mono text-base font-semibold tracking-wider text-plum-900">{tk("code", { code: ticketCode(r.id) })}</p>
+              <p className="font-mono text-base font-semibold tracking-wider text-brand-900">{tk("code", { code: ticketCode(r.id) })}</p>
               {r.partnerPaymentStatus === "due_on_site" && <p className="text-muted">{tk("onSite")}</p>}
             </div>
           </div>
@@ -237,14 +237,14 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
 
       {group && (
         <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-          <h2 className="font-display text-2xl font-medium text-plum-900">
+          <h2 className="font-display text-2xl font-medium text-brand-900">
             {t("group")} · {group.label}
           </h2>
           <p className="mt-1 text-sm text-muted">{t("groupPrivacy")}</p>
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
             {group.members.map((m) => (
               <li key={m.uid} className="flex items-center gap-3 rounded-2xl bg-cream/70 p-3">
-                <span className="grid size-11 shrink-0 place-items-center rounded-full bg-plum-100 font-display text-lg text-plum-900" aria-hidden>
+                <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-100 font-display text-lg text-brand-900" aria-hidden>
                   {m.firstName.charAt(0)}
                 </span>
                 <span>
@@ -260,7 +260,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
       )}
 
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-plum-900">{t("receipt")}</h2>
+        <h2 className="font-display text-2xl font-medium text-brand-900">{t("receipt")}</h2>
         <dl className="mt-3 divide-y divide-line text-[15px]">
           {r.seats > 1 && (
             <div className="flex justify-between py-2.5">
@@ -337,7 +337,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
 
       {(isActive || r.status === "pending_payment") && questions.length > 0 && (
         <section id="questionnaire" aria-labelledby="questionnaire-title" className="scroll-mt-28 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="questionnaire">
-          <h2 id="questionnaire-title" className="font-display text-2xl font-medium text-plum-900">{tq("title")}</h2>
+          <h2 id="questionnaire-title" className="font-display text-2xl font-medium text-brand-900">{tq("title")}</h2>
           <p className="mb-4 mt-1 text-sm text-muted">{r.questionnaire ? tq("introDone") : tq("intro")}</p>
           <QuestionnaireForm reservationId={r.id} questions={questions} initial={r.questionnaire?.answers ?? null} editable={FIREBASE_ENABLED && isUpcoming} />
         </section>
@@ -345,7 +345,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
 
       {(isActive || r.status === "pending_payment") && (needs.food || needs.languages) && (
         <section aria-labelledby="prefs" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-          <h2 id="prefs" className="font-display text-2xl font-medium text-plum-900">{tp(welcomeTitleKeys(needs).edit)}</h2>
+          <h2 id="prefs" className="font-display text-2xl font-medium text-brand-900">{tp(welcomeTitleKeys(needs).edit)}</h2>
           <p className="mb-4 mt-1 text-sm text-muted">{tp(welcomeTitleKeys(needs).intro)}</p>
           <PreferencesEditor
             needs={needs}
@@ -364,8 +364,8 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
       {invoices.length > 0 && (
         <section aria-labelledby="documents" className="space-y-3">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 id="documents" className="font-display text-2xl font-medium text-plum-900">{ti("reservationDocs")}</h2>
-            <Link href="/espace/factures" className="text-sm font-medium text-plum-900 underline-offset-4 hover:underline">{ti("seeAll")}</Link>
+            <h2 id="documents" className="font-display text-2xl font-medium text-brand-900">{ti("reservationDocs")}</h2>
+            <Link href="/espace/factures" className="text-sm font-medium text-brand-900 underline-offset-4 hover:underline">{ti("seeAll")}</Link>
           </div>
           <InvoiceList invoices={invoices} />
         </section>
@@ -413,7 +413,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
       )}
       {(review || canReview(r, now)) && (
         <section id="avis" className="scroll-mt-28 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-          <h2 className="font-display text-2xl font-medium text-plum-900">{t("reviewTitle")}</h2>
+          <h2 className="font-display text-2xl font-medium text-brand-900">{t("reviewTitle")}</h2>
           {review ? (
             <div className="mt-3 space-y-2">
               <Stars value={review.rating} />
@@ -423,8 +423,8 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                 <p className="text-sm text-muted" data-testid="review-photo-status">{t(`reviewPhoto_${review.photo.status}`)}</p>
               )}
               {review.reply?.text && (
-                <div className="rounded-xl bg-plum-50 px-4 py-3" data-testid="review-reply-member">
-                  <p className="text-sm font-semibold text-plum-900">{t("reviewReplyFrom", { name: review.reply.authorName })}</p>
+                <div className="rounded-xl bg-brand-50 px-4 py-3" data-testid="review-reply-member">
+                  <p className="text-sm font-semibold text-brand-900">{t("reviewReplyFrom", { name: review.reply.authorName })}</p>
                   <p className="mt-1 whitespace-pre-line text-sm text-ink/85">{review.reply.text}</p>
                 </div>
               )}
@@ -433,10 +433,10 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
             <ReviewForm reservationId={r.id} />
           ) : (
             <div className="mt-3">
-              <div className="flex gap-1 text-plum-200" aria-hidden>
+              <div className="flex gap-1 text-brand-200" aria-hidden>
                 {[1, 2, 3, 4, 5].map((i) => <Star key={i} className="size-7" />)}
               </div>
-              <button type="button" disabled className="mt-4 cursor-not-allowed rounded-full bg-plum-900/40 px-5 py-2.5 text-sm font-semibold text-white">
+              <button type="button" disabled className="mt-4 cursor-not-allowed rounded-full bg-brand-900/40 px-5 py-2.5 text-sm font-semibold text-white">
                 {t("reviewCta")}
               </button>
             </div>

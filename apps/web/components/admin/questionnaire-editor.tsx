@@ -16,7 +16,7 @@ const MATCHES: { id: QuestionMatch; label: string }[] = [
   { id: "mix", label: "Mélanger les réponses" },
   { id: "none", label: "Information pour l'équipe seulement" },
 ];
-const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100";
+const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100";
 
 /**
  * 18a — Questionnaire d'une expérience (10 questions au plus), rempli par chaque participant après sa réservation.
@@ -44,9 +44,9 @@ export function QuestionnaireEditor({ value, onChange, error }: { value: Questio
 
   return (
     <div className="space-y-4 sm:col-span-2" data-testid="questionnaire-editor">
-      <div className="rounded-xl bg-plum-50 p-3 text-sm text-plum-900">
+      <div className="rounded-xl bg-brand-50 p-3 text-sm text-brand-900">
         <p className="font-semibold">Questionnaire (facultatif, {QUESTIONNAIRE_MAX} questions au plus)</p>
-        <p className="mt-1 text-plum-900/85">
+        <p className="mt-1 text-brand-900/85">
           Chaque participant le remplit après sa réservation. Les réponses servent à composer les tables et les équipes (ex. 4 joueurs de même niveau par terrain de padel),
           puis sont effacées 30 jours après l&apos;expérience. Uniquement des choix, jamais de texte libre.
         </p>
@@ -60,14 +60,14 @@ export function QuestionnaireEditor({ value, onChange, error }: { value: Questio
           </select>
         </div>
         {template && !confirmReplace && (
-          <button type="button" onClick={() => (value.length ? setConfirmReplace(true) : applyTemplate())} className="rounded-full border border-plum-900 px-4 py-2 text-sm font-semibold text-plum-900 hover:bg-plum-50">
+          <button type="button" onClick={() => (value.length ? setConfirmReplace(true) : applyTemplate())} className="rounded-full border border-brand-900 px-4 py-2 text-sm font-semibold text-brand-900 hover:bg-brand-50">
             Utiliser ce modèle
           </button>
         )}
         {confirmReplace && (
           <span role="alert" className="flex flex-wrap items-center gap-2 text-sm">
             Remplacer les {value.length} question{value.length > 1 ? "s" : ""} actuelle{value.length > 1 ? "s" : ""} ?
-            <button type="button" onClick={applyTemplate} className="rounded-full bg-plum-900 px-3 py-1.5 font-semibold text-white">Oui, remplacer</button>
+            <button type="button" onClick={applyTemplate} className="rounded-full bg-brand-900 px-3 py-1.5 font-semibold text-white">Oui, remplacer</button>
             <button type="button" onClick={() => setConfirmReplace(false)} className="rounded-full border border-line px-3 py-1.5">Non</button>
           </span>
         )}
@@ -79,7 +79,7 @@ export function QuestionnaireEditor({ value, onChange, error }: { value: Questio
         {value.map((q, i) => (
           <li key={q.id} className="rounded-xl border border-line p-3" data-testid="question">
             <div className="flex items-start gap-2">
-              <span className="mt-2 grid size-7 shrink-0 place-items-center rounded-full bg-plum-900 text-xs font-semibold text-white">{i + 1}</span>
+              <span className="mt-2 grid size-7 shrink-0 place-items-center rounded-full bg-brand-900 text-xs font-semibold text-white">{i + 1}</span>
               <div className="min-w-0 flex-1 space-y-3">
                 <div>
                   <label htmlFor={`q-${q.id}-label`} className="mb-1 block text-sm font-medium text-ink">Question (français)</label>
@@ -112,12 +112,12 @@ export function QuestionnaireEditor({ value, onChange, error }: { value: Questio
                       </li>
                     ))}
                   </ul>
-                  <button type="button" disabled={q.options.length >= QUESTION_OPTIONS_MAX} onClick={() => update(i, { options: [...q.options, { fr: "", ar: "", en: "" }] })} className="mt-1.5 inline-flex items-center gap-1 text-sm font-semibold text-plum-900 disabled:opacity-40">
+                  <button type="button" disabled={q.options.length >= QUESTION_OPTIONS_MAX} onClick={() => update(i, { options: [...q.options, { fr: "", ar: "", en: "" }] })} className="mt-1.5 inline-flex items-center gap-1 text-sm font-semibold text-brand-900 disabled:opacity-40">
                     <Plus className="size-4" aria-hidden /> Ajouter une réponse
                   </button>
                 </fieldset>
                 <label className="flex items-center gap-2 text-sm">
-                  <input type="checkbox" checked={q.required} onChange={(e) => update(i, { required: e.target.checked })} className="size-4 accent-plum-900" /> Réponse obligatoire
+                  <input type="checkbox" checked={q.required} onChange={(e) => update(i, { required: e.target.checked })} className="size-4 accent-brand-900" /> Réponse obligatoire
                 </label>
                 <details className="rounded-lg bg-cream/60 p-2.5">
                   <summary className="cursor-pointer text-xs font-semibold text-ink">Traductions arabe et anglaise (recommandé)</summary>
@@ -142,7 +142,7 @@ export function QuestionnaireEditor({ value, onChange, error }: { value: Questio
           </li>
         ))}
       </ol>
-      <button type="button" disabled={value.length >= QUESTIONNAIRE_MAX} onClick={() => onChange([...value, nextQuestionDraft(value)])} className="inline-flex items-center gap-1.5 rounded-full border border-plum-900 px-4 py-2 text-sm font-semibold text-plum-900 hover:bg-plum-50 disabled:opacity-40">
+      <button type="button" disabled={value.length >= QUESTIONNAIRE_MAX} onClick={() => onChange([...value, nextQuestionDraft(value)])} className="inline-flex items-center gap-1.5 rounded-full border border-brand-900 px-4 py-2 text-sm font-semibold text-brand-900 hover:bg-brand-50 disabled:opacity-40">
         <Plus className="size-4" aria-hidden /> Ajouter une question ({value.length}/{QUESTIONNAIRE_MAX})
       </button>
       {error && <p role="alert" className="text-sm text-red-700">{error}</p>}

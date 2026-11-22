@@ -148,7 +148,7 @@ export type Experience = {
   cancellationPolicyId: string;
   /** Étape 20 : « pending_review » (envoyée par un organisateur, à valider) et « rejected » (refusée par l'équipe). */
   status: "draft" | "pending_review" | "published" | "rejected" | "archived";
-  /** Étape 19 : organisateur (absent = The Host Club) et sous-catégorie. */
+  /** Étape 19 : organisateur (absent = Wenzy) et sous-catégorie. */
   organizerId?: string | null;
   organizerSnapshot?: { name: string; slug: string } | null;
   subcategoryId?: string | null;

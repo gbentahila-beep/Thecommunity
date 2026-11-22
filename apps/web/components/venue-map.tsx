@@ -27,7 +27,7 @@ export function VenueMap({ lat, lng, place }: { lat: number; lng: number; place:
       ) : (
         <div className="grid h-40 place-items-center rounded-2xl border border-dashed border-line bg-cream/60 px-4 text-center">
           <div>
-            <button type="button" onClick={() => setShown(true)} className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-plum-900 shadow-card">
+            <button type="button" onClick={() => setShown(true)} className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-900 shadow-card">
               <MapPinned className="size-4" aria-hidden />
               {t("show")}
             </button>
@@ -35,7 +35,7 @@ export function VenueMap({ lat, lng, place }: { lat: number; lng: number; place:
           </div>
         </div>
       )}
-      <a href={directions} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-plum-900 underline underline-offset-4">
+      <a href={directions} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-900 underline underline-offset-4">
         <Navigation className="size-4" aria-hidden />
         {t("directions")}
       </a>

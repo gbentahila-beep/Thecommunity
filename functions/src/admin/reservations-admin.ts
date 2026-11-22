@@ -207,7 +207,7 @@ export const adminCheckIn = onCall({ region: REGION }, async (req) => {
 });
 
 /**
- * Étape 11 : part partenaire réglée (ou non) sur place. Information de suivi uniquement : The Host Club
+ * Étape 11 : part partenaire réglée (ou non) sur place. Information de suivi uniquement : Wenzy
  * n'encaisse jamais cette part. Sans objet pour une expérience « tout en ligne ».
  */
 export const adminSetPartnerPayment = onCall({ region: REGION }, async (req) => {

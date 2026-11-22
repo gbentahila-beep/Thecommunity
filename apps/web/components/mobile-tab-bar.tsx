@@ -34,9 +34,9 @@ export function MobileTabBar() {
               href={href}
               aria-current={active ? "page" : undefined}
               aria-label={href === "/menu" ? menuLabel : undefined}
-              className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] leading-4 font-medium ${active ? "text-plum-900" : "text-muted"}`}
+              className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] leading-4 font-medium ${active ? "text-brand-900" : "text-muted"}`}
             >
-              <span className={`relative grid h-7 w-12 place-items-center rounded-full transition ${active ? "bg-plum-100" : ""}`}>
+              <span className={`relative grid h-7 w-12 place-items-center rounded-full transition ${active ? "bg-brand-100" : ""}`}>
                 <Icon className="size-[21px]" strokeWidth={active ? 2.2 : 1.6} aria-hidden />
                 {href === "/menu" && <UnreadBadge className="-end-0.5 -top-1" />}
               </span>

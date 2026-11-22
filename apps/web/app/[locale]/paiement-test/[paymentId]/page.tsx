@@ -47,7 +47,7 @@ export default async function TestPaymentPage({ params }: PageProps<"/[locale]/p
         <section className="mt-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
           <p className="font-semibold text-ink">{plan ? tr(plan.name, locale) : ""}</p>
           <p className="mt-1 text-sm text-muted">{t("membershipPeriod")}</p>
-          <p className="mt-4 text-3xl font-bold text-plum-900">{formatMoney({ amount: pay.amount, currency: pay.currency }, lang)}</p>
+          <p className="mt-4 text-3xl font-bold text-brand-900">{formatMoney({ amount: pay.amount, currency: pay.currency }, lang)}</p>
         </section>
         {pending ? (
           <TestPaymentActions paymentId={paymentId} reservationId="" returnTo="/abonnement" />
@@ -76,7 +76,7 @@ export default async function TestPaymentPage({ params }: PageProps<"/[locale]/p
         <p className="mt-1 text-sm text-muted">
           {formatLongDate(startAt, locale)} · {t("seats", { count: r.seats })}
         </p>
-        <p className="mt-4 text-3xl font-bold text-plum-900">{formatMoney({ amount: pay.amount, currency: pay.currency }, lang)}</p>
+        <p className="mt-4 text-3xl font-bold text-brand-900">{formatMoney({ amount: pay.amount, currency: pay.currency }, lang)}</p>
         {pending && holdIso && r.status === "pending_payment" && <p className="mt-2 text-sm text-muted">{t("holdUntil", { time: formatTime(holdIso, locale) })}</p>}
       </section>
 

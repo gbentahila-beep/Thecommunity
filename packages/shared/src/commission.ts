@@ -2,7 +2,7 @@ import { z } from "zod";
 import { CATEGORY_ID_PATTERN } from "./constants";
 
 /**
- * Étape 21 — commissions de The Host Club sur les activités des organisateurs.
+ * Étape 21 — commissions de Wenzy sur les activités des organisateurs.
  *
  * Règles (commissionRules) : globale, par catégorie, par organisateur ou par activité, chacune avec une date
  * d'effet. La plus précise l'emporte (activité > organisateur > catégorie > globale) ; à précision égale, la plus
@@ -10,7 +10,7 @@ import { CATEGORY_ID_PATTERN } from "./constants";
  * taux ne touche jamais une réservation existante (contrat organisateur, art. 5).
  *
  * Base : ce que le participant paie en ligne pour l'activité, hors frais de service (qui reviennent entièrement
- * à The Host Club). Montants en centimes.
+ * à Wenzy). Montants en centimes.
  */
 
 export const COMMISSION_SCOPES = ["experience", "organizer", "category", "global"] as const;

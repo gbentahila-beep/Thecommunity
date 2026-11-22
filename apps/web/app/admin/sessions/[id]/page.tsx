@@ -45,19 +45,19 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
 
   return (
     <>
-      <p className="mb-2 text-sm"><Link href="/admin/sessions" className="text-plum-900">← Sessions</Link></p>
+      <p className="mb-2 text-sm"><Link href="/admin/sessions" className="text-brand-900">← Sessions</Link></p>
       <PageHeader
         title={e.title.fr}
         subtitle={`${adminDate(s.startAt)} · ${e.district} · ${MODE_LABELS[e.bookingMode]}`}
         actions={
           <>
             <CsvExportButton filename={`participants-${s.id}.csv`} rows={csv} log={d.isDemo ? undefined : { kind: "participants", targetId: s.id }} />
-            <Link href={`/admin/sessions/${s.id}/supports`} className="rounded-full border border-plum-900 px-4 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-50">Supports imprimés</Link>
-            <Link href={`/admin/sessions/${s.id}/fiche-lieu`} className="rounded-full border border-plum-900 px-4 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-50">
+            <Link href={`/admin/sessions/${s.id}/supports`} className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">Supports imprimés</Link>
+            <Link href={`/admin/sessions/${s.id}/fiche-lieu`} className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">
               Fiche pour le lieu
             </Link>
             {grouped && (
-              <Link href={`/admin/sessions/${s.id}/groupes`} className="rounded-full bg-plum-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">
+              <Link href={`/admin/sessions/${s.id}/groupes`} className="rounded-full bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">
                 Composer les groupes
               </Link>
             )}
@@ -86,7 +86,7 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
           {rows.map(({ r, u }) => (
             <tr key={r.id}>
               <td className="font-medium text-ink">
-                <Link href={`/admin/utilisateurs?q=${encodeURIComponent(u.email)}`} className="hover:text-plum-900">{u.firstName} {u.lastName}</Link>
+                <Link href={`/admin/utilisateurs?q=${encodeURIComponent(u.email)}`} className="hover:text-brand-900">{u.firstName} {u.lastName}</Link>
               </td>
               <td className="text-muted"><span className="block">{u.email}</span><span className="block tabular-nums">{u.phone}</span></td>
               <td className="tabular-nums">{ageBand(ageOn(u.birthDate))}</td>

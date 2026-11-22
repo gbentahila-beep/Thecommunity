@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 const STYLES: Record<ReservationStatus, string> = {
   pending_payment: "bg-amber-100 text-amber-900",
   confirmed: "bg-emerald-100 text-emerald-900",
-  attended: "bg-plum-100 text-plum-900",
+  attended: "bg-brand-100 text-brand-900",
   cancelled: "bg-stone-200 text-stone-700",
   refunded: "bg-stone-200 text-stone-700",
   expired: "bg-stone-200 text-stone-700",

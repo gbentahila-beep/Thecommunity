@@ -27,12 +27,12 @@ export function HelpFeedback({ article }: { article: string }) {
   if (state === "yes") return <p role="status" className="rounded-2xl bg-emerald-50 p-4 text-emerald-900">{t("thanksYes")}</p>;
   if (state === "no")
     return (
-      <p role="status" className="rounded-2xl bg-plum-50 p-4 text-plum-900">
+      <p role="status" className="rounded-2xl bg-brand-50 p-4 text-brand-900">
         {t("thanksNo")}{" "}
         <Link href="/contact" className="font-semibold underline underline-offset-4">{tf("contact")}</Link>
       </p>
     );
-  const btn = "inline-flex items-center gap-2 rounded-full border border-plum-900 px-5 py-2.5 text-sm font-semibold text-plum-900 transition hover:bg-plum-900 hover:text-white disabled:opacity-60";
+  const btn = "inline-flex items-center gap-2 rounded-full border border-brand-900 px-5 py-2.5 text-sm font-semibold text-brand-900 transition hover:bg-brand-900 hover:text-white disabled:opacity-60";
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
       <p className="me-auto font-semibold text-ink">{t("wasHelpful")}</p>

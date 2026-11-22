@@ -11,7 +11,7 @@ export function ContactForm() {
   const t = useTranslations("pages");
   const [state, setState] = useState<"idle" | "busy" | "sent" | "error">("idle");
   if (state === "sent") return <p role="status" className="rounded-2xl bg-emerald-50 p-4 text-emerald-900">{t("contactSent")}</p>;
-  const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[16px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100";
+  const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[16px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100";
   return (
     <form
       className="relative space-y-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card"

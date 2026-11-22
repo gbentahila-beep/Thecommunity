@@ -36,7 +36,7 @@ export default async function ProTicketPage({ params }: PageProps<"/pro/billets/
         </dl>
         <div className="mt-4"><CheckInButtons reservationId={r.id} status={r.status} live={!space.isDemo} canCheckIn={canCheckIn} /></div>
       </Card>
-      <Link href="/pro/billets" className="mt-4 inline-block text-sm text-plum-900 underline">← Autre billet</Link>
+      <Link href="/pro/billets" className="mt-4 inline-block text-sm text-brand-900 underline">← Autre billet</Link>
     </div>
   );
 }

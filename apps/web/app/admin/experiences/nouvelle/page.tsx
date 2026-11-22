@@ -16,10 +16,10 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
   const initial = proposal ? proposalToValues(proposal, d.now) : emptyExperienceValues(d.now);
   return (
     <div className="max-w-3xl">
-      <p className="mb-2 text-sm"><Link href={proposal ? "/admin/propositions" : "/admin/experiences"} className="text-plum-900">← {proposal ? "Sorties proposées" : "Expériences"}</Link></p>
+      <p className="mb-2 text-sm"><Link href={proposal ? "/admin/propositions" : "/admin/experiences"} className="text-brand-900">← {proposal ? "Sorties proposées" : "Expériences"}</Link></p>
       <PageHeader title="Nouvelle expérience" subtitle="Fiche, format, économie et dates en une seule fois." />
       {proposal && (
-        <p role="status" data-testid="from-proposal" className="mb-4 rounded-2xl bg-plum-50 px-4 py-3 text-sm text-plum-900">
+        <p role="status" data-testid="from-proposal" className="mb-4 rounded-2xl bg-brand-50 px-4 py-3 text-sm text-brand-900">
           Pré-remplie à partir de la proposition de <strong>{proposal.firstName}</strong> (« {proposal.title} »). Complétez le lieu exact, le prix, la sécurité et les dates :
           rien n&apos;est publié avant votre enregistrement, et {proposal.firstName} est prévenu·e quand la fiche est créée. Dates envisagées : {proposal.datesIdea}.
         </p>

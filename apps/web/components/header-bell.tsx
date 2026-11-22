@@ -23,7 +23,7 @@ export function HeaderBell({ className = "", mobile = false }: { className?: str
   }, []);
   if (!show) return null;
   return (
-    <Link href="/espace/notifications" aria-label={aria} data-testid="header-bell" className={`relative grid size-10 place-items-center rounded-full text-plum-900 transition hover:bg-cream-deep ${className}`}>
+    <Link href="/espace/notifications" aria-label={aria} data-testid="header-bell" className={`relative grid size-10 place-items-center rounded-full text-brand-900 transition hover:bg-cream-deep ${className}`}>
       <Bell className="size-5" aria-hidden />
       <UnreadBadge className="-end-0.5 -top-0.5" />
     </Link>

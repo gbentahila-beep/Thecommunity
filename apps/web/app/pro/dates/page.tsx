@@ -24,8 +24,8 @@ export default async function ProDatesPage({ searchParams }: PageProps<"/pro/dat
     <>
       <PageHeader title="Dates" subtitle="Ajoutez des dates depuis la fiche de chaque activité (section « Dates »)." />
       <div className="mb-4 flex gap-2 text-sm">
-        <Link href="/pro/dates" aria-current={!past ? "page" : undefined} className={`rounded-full px-4 py-1.5 font-medium ${!past ? "bg-plum-900 text-white" : "bg-white text-ink"}`}>À venir</Link>
-        <Link href="/pro/dates?vue=passees" aria-current={past ? "page" : undefined} className={`rounded-full px-4 py-1.5 font-medium ${past ? "bg-plum-900 text-white" : "bg-white text-ink"}`}>Passées</Link>
+        <Link href="/pro/dates" aria-current={!past ? "page" : undefined} className={`rounded-full px-4 py-1.5 font-medium ${!past ? "bg-brand-900 text-white" : "bg-white text-ink"}`}>À venir</Link>
+        <Link href="/pro/dates?vue=passees" aria-current={past ? "page" : undefined} className={`rounded-full px-4 py-1.5 font-medium ${past ? "bg-brand-900 text-white" : "bg-white text-ink"}`}>Passées</Link>
       </div>
       <Card>
         {list.length === 0 ? (
@@ -41,7 +41,7 @@ export default async function ProDatesPage({ searchParams }: PageProps<"/pro/dat
                   <td className="w-44"><FillBar value={s.seatsConfirmed} max={s.capacity} /></td>
                   <td>{s.waitlistCount || "—"}</td>
                   <td><Badge tone={st[1]}>{st[0]}</Badge></td>
-                  <td className="text-end"><Link href={`/pro/dates/${s.id}`} className="font-semibold text-plum-900">Participants</Link></td>
+                  <td className="text-end"><Link href={`/pro/dates/${s.id}`} className="font-semibold text-brand-900">Participants</Link></td>
                 </tr>
               );
             })}

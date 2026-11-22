@@ -54,10 +54,10 @@ export function PolicyForm({ live, canEdit }: { live: boolean; canEdit: boolean 
             </li>
           ))}
         </ul>
-        {rules.length < 6 && canEdit && <button type="button" onClick={() => setRules([...rules, { hoursBefore: "24", refundPercent: "0" }])} className="mt-2 text-sm font-semibold text-plum-900 underline">+ Ajouter un palier</button>}
+        {rules.length < 6 && canEdit && <button type="button" onClick={() => setRules([...rules, { hoursBefore: "24", refundPercent: "0" }])} className="mt-2 text-sm font-semibold text-brand-900 underline">+ Ajouter un palier</button>}
         {parsedRules.every((r) => Number.isFinite(r.hoursBefore) && Number.isFinite(r.refundPercent)) && <p className="mt-2 text-xs text-muted">Aperçu : {describePolicy(parsedRules)}</p>}
       </fieldset>
-      {canEdit && <button type="submit" className="rounded-full bg-plum-900 px-5 py-2 text-sm font-semibold text-white">Enregistrer la politique</button>}
+      {canEdit && <button type="submit" className="rounded-full bg-brand-900 px-5 py-2 text-sm font-semibold text-white">Enregistrer la politique</button>}
       {msg && <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-emerald-800" : "text-red-800"}`}>{msg.text}</p>}
     </form>
   );
@@ -74,7 +74,7 @@ export function PaymentModelsForm({ initial, live, canEdit }: { initial: Payment
         {PAYMENT_MODELS.map((m) => (
           <li key={m}>
             <label className="flex items-start gap-2 text-sm">
-              <input type="checkbox" className="mt-0.5 size-4 accent-plum-900" checked={models.includes(m)} disabled={!canEdit} onChange={(e) => setModels(e.target.checked ? [...models, m] : models.filter((x) => x !== m))} />
+              <input type="checkbox" className="mt-0.5 size-4 accent-brand-900" checked={models.includes(m)} disabled={!canEdit} onChange={(e) => setModels(e.target.checked ? [...models, m] : models.filter((x) => x !== m))} />
               <span><strong>{PAYMENT_MODEL_LABELS[m].title}</strong> — {PAYMENT_MODEL_LABELS[m].text}</span>
             </label>
           </li>
@@ -94,7 +94,7 @@ export function PaymentModelsForm({ initial, live, canEdit }: { initial: Payment
               setMsg({ ok: false, text: "Enregistrement impossible." });
             }
           }}
-          className="rounded-full bg-plum-900 px-5 py-2 text-sm font-semibold text-white"
+          className="rounded-full bg-brand-900 px-5 py-2 text-sm font-semibold text-white"
         >
           Enregistrer les modes
         </button>

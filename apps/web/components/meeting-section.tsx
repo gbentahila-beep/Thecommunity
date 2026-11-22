@@ -20,12 +20,12 @@ export function MeetingSection({ meeting, t }: { meeting: MeetingSummary; t: Lab
     t.newPeople && { icon: Repeat, text: t.newPeople },
   ].filter(Boolean) as { icon: typeof Users; text: string }[];
   return (
-    <section aria-labelledby="meeting-title" className="rounded-[var(--radius-card)] bg-plum-50 p-5 sm:p-6" data-testid="meeting">
-      <h2 id="meeting-title" className="font-display text-2xl font-medium text-plum-900">{t.title}</h2>
+    <section aria-labelledby="meeting-title" className="rounded-[var(--radius-card)] bg-brand-50 p-5 sm:p-6" data-testid="meeting">
+      <h2 id="meeting-title" className="font-display text-2xl font-medium text-brand-900">{t.title}</h2>
       <ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {items.map(({ icon: Icon, text }) => (
           <li key={text} className="flex items-start gap-3 text-[15px] text-ink">
-            <Icon className="mt-0.5 size-5 shrink-0 text-plum-700" aria-hidden />
+            <Icon className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
             <span>{text}</span>
           </li>
         ))}

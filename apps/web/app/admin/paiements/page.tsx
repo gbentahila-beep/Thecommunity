@@ -34,7 +34,7 @@ export default async function PaymentsAdminPage() {
                 <td><Badge tone={STATUS[p.status][1]}>{STATUS[p.status][0]}</Badge></td>
                 <td className="whitespace-nowrap">
                   {p.invoiceId ? (
-                    <a href={`/api/factures/${p.invoiceId}`} className="font-mono text-xs text-plum-900 underline">{p.invoiceNumber}</a>
+                    <a href={`/api/factures/${p.invoiceId}`} className="font-mono text-xs text-brand-900 underline">{p.invoiceNumber}</a>
                   ) : (
                     <span className="text-muted">—</span>
                   )}

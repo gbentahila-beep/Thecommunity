@@ -31,13 +31,13 @@ export default async function FaqPage({ params }: PageProps<"/[locale]/faq">) {
           <details key={i.q} className="group p-5">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink [&::-webkit-details-marker]:hidden">
               {i.q}
-              <ChevronDown className="size-5 shrink-0 text-plum-700 transition group-open:rotate-180" aria-hidden />
+              <ChevronDown className="size-5 shrink-0 text-brand-700 transition group-open:rotate-180" aria-hidden />
             </summary>
             <p className="mt-3 leading-relaxed text-ink/80">{i.a}</p>
           </details>
         ))}
       </div>
-      <Link href="/aide" className="inline-flex items-center gap-2 font-semibold text-plum-900 underline-offset-4 hover:underline">
+      <Link href="/aide" className="inline-flex items-center gap-2 font-semibold text-brand-900 underline-offset-4 hover:underline">
         {t("faqMore")}
         <ArrowRight className="size-4 rtl:rotate-180" aria-hidden />
       </Link>

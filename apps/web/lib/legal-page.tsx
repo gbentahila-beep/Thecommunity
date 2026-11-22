@@ -26,14 +26,14 @@ export function legalPage(key: LegalKey) {
           <ol className="space-y-1 text-sm">
             {doc.sections.map((s, i) => (
               <li key={i}>
-                <a href={`#s${i + 1}`} className="text-plum-900 underline-offset-4 hover:underline">{s.title}</a>
+                <a href={`#s${i + 1}`} className="text-brand-900 underline-offset-4 hover:underline">{s.title}</a>
               </li>
             ))}
           </ol>
         </nav>
         {doc.sections.map((s, i) => (
           <section key={i} id={`s${i + 1}`} className="scroll-mt-28 space-y-3">
-            <h2 className="font-display text-2xl font-medium text-plum-900">{s.title}</h2>
+            <h2 className="font-display text-2xl font-medium text-brand-900">{s.title}</h2>
             {s.body.map((b, j) =>
               typeof b === "string" ? (
                 <p key={j} className="leading-relaxed text-ink/85">{richText(b, missing)}</p>
@@ -45,7 +45,7 @@ export function legalPage(key: LegalKey) {
                 <div key={j}>
                   {/* Ordinateur : vrai tableau. Mobile : une fiche par ligne. */}
                   <table className="hidden w-full overflow-hidden rounded-[var(--radius-card)] bg-white text-start text-sm shadow-card sm:table">
-                    <thead className="bg-plum-50 text-plum-900">
+                    <thead className="bg-brand-50 text-brand-900">
                       <tr>{b.table.head.map((h) => <th key={h} scope="col" className="px-4 py-3 text-start font-semibold">{h}</th>)}</tr>
                     </thead>
                     <tbody className="divide-y divide-line">
@@ -63,7 +63,7 @@ export function legalPage(key: LegalKey) {
                         <dl className="mt-2 space-y-1.5 text-sm">
                           {r.slice(1).map((c, m) => (
                             <div key={m}>
-                              <dt className="text-xs font-semibold tracking-wide text-plum-700 uppercase">{b.table.head[m + 1]}</dt>
+                              <dt className="text-xs font-semibold tracking-wide text-brand-700 uppercase">{b.table.head[m + 1]}</dt>
                               <dd className="leading-relaxed text-ink/80">{richText(c, missing)}</dd>
                             </div>
                           ))}

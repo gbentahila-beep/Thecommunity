@@ -97,7 +97,7 @@ export function ReservationAdminActions({
         )}
         {onSite && (status === "confirmed" || status === "attended") && (
           onSite.status === "due_on_site" ? (
-            <button type="button" disabled={busy} onClick={() => run("adminSetPartnerPayment", { reservationId, paid: true })} className={`${btn} border-plum-700 text-plum-900 hover:bg-plum-50`}>
+            <button type="button" disabled={busy} onClick={() => run("adminSetPartnerPayment", { reservationId, paid: true })} className={`${btn} border-brand-700 text-brand-900 hover:bg-brand-50`}>
               Part partenaire réglée
             </button>
           ) : (
@@ -125,7 +125,7 @@ export function ReservationAdminActions({
             {moveTargets.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
           </select>
           <p className="text-xs text-muted">Le montant payé est conservé ; la personne est prévenue ; la place libérée ici est proposée à la liste d&apos;attente.</p>
-          <button type="button" disabled={busy || !target} onClick={() => run("adminMoveReservation", { reservationId, targetSessionId: target })} className="rounded-full bg-plum-900 px-4 py-2 text-xs font-semibold text-white disabled:opacity-60">
+          <button type="button" disabled={busy || !target} onClick={() => run("adminMoveReservation", { reservationId, targetSessionId: target })} className="rounded-full bg-brand-900 px-4 py-2 text-xs font-semibold text-white disabled:opacity-60">
             {busy ? "…" : "Confirmer le déplacement"}
           </button>
         </div>
@@ -136,9 +136,9 @@ export function ReservationAdminActions({
           {amounts.paid ? (
             <fieldset className="space-y-1">
               <legend className="font-medium">Remboursement</legend>
-              <label className="flex items-center gap-2"><input type="radio" name={`refund-${reservationId}`} checked={refund === "full"} onChange={() => setRefund("full")} className="accent-plum-900" /> Intégral ({amounts.full}) — recommandé quand l&apos;équipe annule</label>
-              <label className="flex items-center gap-2"><input type="radio" name={`refund-${reservationId}`} checked={refund === "policy"} onChange={() => setRefund("policy")} className="accent-plum-900" /> Selon la politique d&apos;annulation ({amounts.policy})</label>
-              <label className="flex items-center gap-2"><input type="radio" name={`refund-${reservationId}`} checked={refund === "none"} onChange={() => setRefund("none")} className="accent-plum-900" /> Aucun remboursement</label>
+              <label className="flex items-center gap-2"><input type="radio" name={`refund-${reservationId}`} checked={refund === "full"} onChange={() => setRefund("full")} className="accent-brand-900" /> Intégral ({amounts.full}) — recommandé quand l&apos;équipe annule</label>
+              <label className="flex items-center gap-2"><input type="radio" name={`refund-${reservationId}`} checked={refund === "policy"} onChange={() => setRefund("policy")} className="accent-brand-900" /> Selon la politique d&apos;annulation ({amounts.policy})</label>
+              <label className="flex items-center gap-2"><input type="radio" name={`refund-${reservationId}`} checked={refund === "none"} onChange={() => setRefund("none")} className="accent-brand-900" /> Aucun remboursement</label>
             </fieldset>
           ) : (
             <p className="text-xs text-muted">Pas encore payée : rien à rembourser.</p>

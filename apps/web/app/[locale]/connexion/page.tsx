@@ -20,11 +20,11 @@ export default async function LoginPage({ params }: PageProps<"/[locale]/connexi
       footer={
         <>
           {t("noAccount")}{" "}
-          <Link href="/inscription" className="font-semibold text-plum-900 underline underline-offset-4">
+          <Link href="/inscription" className="font-semibold text-brand-900 underline underline-offset-4">
             {t("goSignup")}
           </Link>
           {!FIREBASE_ENABLED && (
-            <Link href="/espace" className="mt-3 block font-medium text-plum-900 underline underline-offset-4">
+            <Link href="/espace" className="mt-3 block font-medium text-brand-900 underline underline-offset-4">
               {t("demoSpace")}
             </Link>
           )}

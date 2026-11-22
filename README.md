@@ -1,4 +1,4 @@
-# The Host Club — plateforme d'expériences sociales au Maroc
+# Wenzy — plateforme d'expériences sociales au Maroc
 
 Découvrir des expériences, rencontrer de nouvelles personnes et sortir de sa routine. Lancement à Casablanca, puis Rabat, Marrakech, Tanger, Agadir.
 
@@ -21,5 +21,7 @@ npm run test && npm run typecheck && npm run lint && npm run build
 Firebase en local : `npm run emulators` puis `npm run seed` (voir [`docs/12-phase-3-avancement.md`](docs/12-phase-3-avancement.md)).
 
 👉 À faire avant la mise en ligne : [`docs/11-checklist-avant-lancement.md`](docs/11-checklist-avant-lancement.md)
+
+Identité de marque : [`docs/21-identite-wenzy.md`](docs/21-identite-wenzy.md) et le brand book [`docs/marque/wenzy/brand-book.html`](docs/marque/wenzy/brand-book.html).
 
 Structure : `apps/web` (site Next.js), `packages/shared` (logique métier partagée), `docs/` (architecture et décisions).

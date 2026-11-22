@@ -27,12 +27,12 @@ export function ApplicationActions({ applicationId, status, partnerId }: { appli
   };
   const btn = "rounded-full border px-3 py-1.5 text-xs font-semibold disabled:opacity-50";
   if (status === "converted" && partnerId)
-    return <Link href={`/admin/partenaires/${partnerId}`} className="text-xs font-semibold text-plum-900 underline">Voir la fiche partenaire</Link>;
+    return <Link href={`/admin/partenaires/${partnerId}`} className="text-xs font-semibold text-brand-900 underline">Voir la fiche partenaire</Link>;
   return (
     <div className="flex flex-wrap items-center gap-2">
       {status === "new" ? (
         <>
-          <button type="button" disabled={busy} onClick={() => run("convert")} className={`${btn} border-plum-900 bg-plum-900 text-white hover:bg-plum-800`}>Créer le partenaire</button>
+          <button type="button" disabled={busy} onClick={() => run("convert")} className={`${btn} border-brand-900 bg-brand-900 text-white hover:bg-brand-800`}>Créer le partenaire</button>
           <button type="button" disabled={busy} onClick={() => run("decline")} className={`${btn} border-line text-ink hover:bg-cream`}>Écarter</button>
         </>
       ) : (

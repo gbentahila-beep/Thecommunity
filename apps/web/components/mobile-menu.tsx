@@ -157,7 +157,7 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
                 {discover.map((it, i) => (
                   <Row key={it.href} href={it.href} onClick={close} current={pathname === it.href}>
                     {it.dot ? <span className={`size-2.5 shrink-0 rounded-full ${it.dot}`} style={it.dotStyle} aria-hidden /> : null}
-                    <span className={i === 0 ? "font-semibold text-plum-900" : ""}>{it.label}</span>
+                    <span className={i === 0 ? "font-semibold text-brand-900" : ""}>{it.label}</span>
                   </Row>
                 ))}
               </Group>

@@ -46,7 +46,7 @@ export default async function ProReservationsPage({ searchParams }: PageProps<"/
             {Object.entries(PERIODS).map(([k, label]) => <option key={k} value={k}>{label}</option>)}
           </select>
         </label>
-        <button className="rounded-full bg-plum-900 px-5 py-2 text-sm font-semibold text-white">Filtrer</button>
+        <button className="rounded-full bg-brand-900 px-5 py-2 text-sm font-semibold text-white">Filtrer</button>
         {(exp || status || period !== "all") && <Link href="/pro/reservations" className="px-2 py-2 text-sm text-muted underline">Effacer</Link>}
       </form>
       <Card>

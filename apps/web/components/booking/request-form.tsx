@@ -67,7 +67,7 @@ export function RequestForm({ sessionId, maxSeats, messageRequired, instagramReq
     }
   };
 
-  const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-plum-700 focus:outline-none";
+  const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-brand-700 focus:outline-none";
   return (
     <form onSubmit={submit} className="mt-6 space-y-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card" noValidate>
       {maxSeats > 1 && (

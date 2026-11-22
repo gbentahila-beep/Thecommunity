@@ -14,7 +14,7 @@ export function HeaderAuth() {
       <div className="flex items-center gap-1">
         <Link href="/espace/reservations" className="rounded-full px-3 py-2 text-[15px] font-medium whitespace-nowrap text-ink hover:bg-cream-deep">{t("bookings")}</Link>
         <Link href="/espace/rencontres" className="rounded-full px-3 py-2 text-[15px] font-medium whitespace-nowrap text-ink hover:bg-cream-deep">{t("meet")}</Link>
-        <Link href="/espace/compte" aria-label={t("myProfile")} className="ms-1 grid size-10 place-items-center rounded-full bg-plum-100 text-sm font-semibold text-plum-900 transition hover:bg-plum-200">
+        <Link href="/espace/compte" aria-label={t("myProfile")} className="ms-1 grid size-10 place-items-center rounded-full bg-brand-100 text-sm font-semibold text-brand-900 transition hover:bg-brand-200">
           {initialsOf(member)}
         </Link>
       </div>

@@ -23,13 +23,13 @@ export async function CityMenu({ currentCityId = DEFAULT_CITY, variant = "pill",
           className="flex cursor-pointer list-none items-center gap-2 rounded-full bg-cream-deep px-3 py-2 xl:px-4 text-sm font-medium text-ink transition hover:bg-sand [&::-webkit-details-marker]:hidden"
           aria-label={t("chooseCity")}
         >
-          <MapPin className="size-4 text-plum-900" aria-hidden />
+          <MapPin className="size-4 text-brand-900" aria-hidden />
           <span className="hidden 2xl:inline">{current ? tr(current.name, locale) : ""}</span>
           <ChevronDown className="size-4 transition group-open:rotate-180" aria-hidden />
         </summary>
       ) : (
         <summary
-          className={`inline-flex cursor-pointer list-none items-center gap-1 rounded-lg transition [&::-webkit-details-marker]:hidden ${variant === "title" ? "text-plum-900 underline decoration-plum-200 decoration-2 underline-offset-[6px] hover:decoration-plum-700" : "text-[15px] font-semibold text-plum-900 hover:text-plum-700"}`}
+          className={`inline-flex cursor-pointer list-none items-center gap-1 rounded-lg transition [&::-webkit-details-marker]:hidden ${variant === "title" ? "text-brand-900 underline decoration-brand-200 decoration-2 underline-offset-[6px] hover:decoration-brand-700" : "text-[15px] font-semibold text-brand-900 hover:text-brand-700"}`}
           aria-label={`${t("chooseCity")} : ${current ? tr(current.name, locale) : ""}`}
           data-testid="city-select"
         >
@@ -47,7 +47,7 @@ export async function CityMenu({ currentCityId = DEFAULT_CITY, variant = "pill",
                 className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm hover:bg-cream"
               >
                 {tr(city.name, locale)}
-                {city.id === current?.id && <span className="size-2 rounded-full bg-plum-700" aria-hidden />}
+                {city.id === current?.id && <span className="size-2 rounded-full bg-brand-700" aria-hidden />}
               </Link>
             ) : (
               <span className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-muted">

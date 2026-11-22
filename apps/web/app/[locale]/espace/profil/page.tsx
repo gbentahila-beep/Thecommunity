@@ -21,7 +21,7 @@ function Row({ label, children, step, editLabel }: { label: string; children: Re
       <dd className="text-ink">{children || "—"}</dd>
       {step && (
         <dd>
-          <Link href={`/bienvenue?edition=1&etape=${step}`} className="text-sm font-semibold text-plum-800 underline-offset-4 hover:underline" aria-label={`${editLabel} : ${label}`}>
+          <Link href={`/bienvenue?edition=1&etape=${step}`} className="text-sm font-semibold text-brand-800 underline-offset-4 hover:underline" aria-label={`${editLabel} : ${label}`}>
             {editLabel}
           </Link>
         </dd>
@@ -34,7 +34,7 @@ function Chips({ items }: { items: string[] }) {
   return (
     <span className="flex flex-wrap gap-1.5">
       {items.map((i) => (
-        <span key={i} className="rounded-full bg-plum-50 px-3 py-1 text-sm text-plum-900">{i}</span>
+        <span key={i} className="rounded-full bg-brand-50 px-3 py-1 text-sm text-brand-900">{i}</span>
       ))}
     </span>
   );
@@ -51,7 +51,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-center gap-4">
-        <span className="grid size-20 place-items-center rounded-full bg-plum-100 font-display text-3xl text-plum-900" aria-hidden>
+        <span className="grid size-20 place-items-center rounded-full bg-brand-100 font-display text-3xl text-brand-900" aria-hidden>
           {p.firstName.charAt(0)}
         </span>
         <div className="flex-1">
@@ -65,12 +65,12 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
       </header>
 
       <p className="flex items-start gap-2.5 rounded-2xl border border-line bg-white/70 p-4 text-sm text-ink/80">
-        <Eye className="mt-0.5 size-4 shrink-0 text-plum-700" aria-hidden />
+        <Eye className="mt-0.5 size-4 shrink-0 text-brand-700" aria-hidden />
         {t("visibility")}
       </p>
 
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-plum-900">{t("identity")}</h2>
+        <h2 className="font-display text-2xl font-medium text-brand-900">{t("identity")}</h2>
         <dl className="mt-2 divide-y divide-line">
           <Row label={t("email")}><span dir="ltr">{p.email}</span></Row>
           <Row step="phone" editLabel={e} label={t("phone")}><span dir="ltr">{p.phone}</span></Row>
@@ -81,7 +81,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
       </section>
 
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-plum-900">{t("interests")}</h2>
+        <h2 className="font-display text-2xl font-medium text-brand-900">{t("interests")}</h2>
         <dl className="mt-2 divide-y divide-line">
           <Row step="languages" editLabel={e} label={t("languages")}><Chips items={p.languages.map((l) => tl(`languages.${l}`))} /></Row>
           <Row step="interests" editLabel={e} label={t("interests")}><Chips items={p.interests.map((i) => tl(`interests.${i}`))} /></Row>
@@ -94,7 +94,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
       </section>
 
       <section className="card p-5" data-testid="profile-more">
-        <h2 className="font-display text-2xl font-medium text-plum-900">{tm("title")}</h2>
+        <h2 className="font-display text-2xl font-medium text-brand-900">{tm("title")}</h2>
         <dl className="mt-2 divide-y divide-line">
           <Row step="vibe" editLabel={e} label={tm("vibe")}>{p.groupVibe ? tl(`vibe.${p.groupVibe}`) : ""}</Row>
           <Row step="conversation" editLabel={e} label={tm("conversation")}>{p.conversationStyle ? tl(`conversation.${p.conversationStyle}`) : ""}</Row>
@@ -111,7 +111,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
       </section>
 
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-plum-900">{t("about")}</h2>
+        <h2 className="font-display text-2xl font-medium text-brand-900">{t("about")}</h2>
         <dl className="mt-2 divide-y divide-line">
           <Row label={t("profession")}>{p.profession}</Row>
           <Row step="photo" editLabel={e} label={t("bio")}>{p.bio}</Row>

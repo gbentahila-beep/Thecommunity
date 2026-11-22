@@ -49,7 +49,7 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
     image: `${SITE_URL}${a.cover}`,
     inLanguage: lang,
     mainEntityOfPage: `${SITE_URL}${pathOf(locale, slug)}`,
-    publisher: { "@type": "Organization", name: "The Host Club" },
+    publisher: { "@type": "Organization", name: "Wenzy" },
   };
   return (
     <PageShell className="py-10 sm:py-14">
@@ -57,9 +57,9 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
       <div className="mx-auto max-w-3xl">
         <nav aria-label={t("breadcrumb")} className="text-sm text-muted">
           <ol className="flex flex-wrap items-center gap-1.5">
-            <li><Link href="/blog" className="hover:text-plum-900 hover:underline">{t("title")}</Link></li>
+            <li><Link href="/blog" className="hover:text-brand-900 hover:underline">{t("title")}</Link></li>
             <li aria-hidden><ChevronRight className="size-3.5 rtl:rotate-180" /></li>
-            <li><Link href={`/blog/theme/${cat.key}`} className="hover:text-plum-900 hover:underline">{cat.title[lang]}</Link></li>
+            <li><Link href={`/blog/theme/${cat.key}`} className="hover:text-brand-900 hover:underline">{cat.title[lang]}</Link></li>
           </ol>
         </nav>
         <article className="mt-6">

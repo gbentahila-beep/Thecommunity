@@ -7,7 +7,7 @@ import { useState } from "react";
 import type { PaymentSettingsView } from "@/lib/data/admin-mail";
 import { firebase } from "@/lib/firebase/client";
 
-const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-plum-700 disabled:bg-cream";
+const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-brand-700 disabled:bg-cream";
 const MESSAGES: Record<string, string> = {
   tooShort: "Trop court.", tooLong: "Trop long.", ribFormat: "Le RIB compte 24 chiffres.", ibanFormat: "IBAN marocain : MA suivi de 26 chiffres.",
   swiftFormat: "Code SWIFT / BIC invalide (8 ou 11 caractères).", min12: "12 h minimum.", max120: "120 h maximum.", max72: "72 h maximum.",
@@ -83,7 +83,7 @@ export function PaymentSettingsForm({ initial, canEdit }: { initial: PaymentSett
       <p className="text-xs text-muted">Le changement s&apos;applique aux nouveaux paiements. Les virements déjà en attente restent à valider dans « Virements ». Aucune coordonnée bancaire de client n&apos;est jamais demandée ni enregistrée.</p>
       {canEdit && (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-4 py-2 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-60">{state === "busy" ? "Enregistrement…" : "Enregistrer le mode de paiement"}</button>
+          <button type="submit" disabled={state === "busy"} className="rounded-full bg-brand-900 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-60">{state === "busy" ? "Enregistrement…" : "Enregistrer le mode de paiement"}</button>
           {state === "saved" && <p role="status" className="text-sm text-emerald-800">Enregistré.</p>}
           {state === "error" && <p role="alert" className="text-sm text-red-800">{Object.keys(errors).length ? "Vérifiez les champs signalés." : "Enregistrement impossible."}</p>}
         </div>

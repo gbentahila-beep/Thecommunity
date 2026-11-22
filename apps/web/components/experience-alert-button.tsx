@@ -59,7 +59,7 @@ export function ExperienceAlertButton({ experienceId, slug }: { experienceId: st
           setBusy(false);
         }}
         className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold disabled:opacity-60 ${
-          state === "on" ? "border border-plum-900 bg-white text-plum-900" : "bg-plum-900 text-white"
+          state === "on" ? "border border-brand-900 bg-white text-brand-900" : "bg-brand-900 text-white"
         }`}
       >
         <BellRing className="size-4" aria-hidden />

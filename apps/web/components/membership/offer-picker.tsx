@@ -38,13 +38,13 @@ export function OfferPicker({ offers, initialId, mode, cta, renew }: { offers: O
               role="radio"
               aria-checked={on}
               onClick={() => setSelected(o.id)}
-              className={`relative flex w-[78%] shrink-0 snap-center flex-col items-start rounded-3xl bg-white p-5 text-start shadow-card transition sm:w-auto ${on ? "ring-[3px] ring-plum-800" : "ring-1 ring-line hover:ring-plum-200"}`}
+              className={`relative flex w-[78%] shrink-0 snap-center flex-col items-start rounded-3xl bg-white p-5 text-start shadow-card transition sm:w-auto ${on ? "ring-[3px] ring-brand-800" : "ring-1 ring-line hover:ring-brand-200"}`}
               data-testid="membership-offer"
             >
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${o.highlight ? "bg-plum-900 text-white" : o.best ? "bg-plum-100 text-plum-900" : "bg-cream-deep text-ink"}`}>
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${o.highlight ? "bg-brand-900 text-white" : o.best ? "bg-brand-100 text-brand-900" : "bg-cream-deep text-ink"}`}>
                 {o.highlight ? t("badgeRecommended") : o.best ? t("badgeBest") : o.months === 1 ? t("badgeFlexible") : t("badgeSave", { percent: o.savingPercent })}
               </span>
-              <span className="mt-4 font-display text-2xl font-medium text-plum-900">{t("months", { count: o.months })}</span>
+              <span className="mt-4 font-display text-2xl font-medium text-brand-900">{t("months", { count: o.months })}</span>
               <span className="mt-2 flex items-baseline gap-1">
                 <span className="text-[2rem] leading-none font-bold text-ink">{o.perMonth}</span>
                 <span className="text-sm text-muted">{t("perMonth")}</span>
@@ -53,9 +53,9 @@ export function OfferPicker({ offers, initialId, mode, cta, renew }: { offers: O
                 {o.reference && <s className="me-1.5 text-muted">{o.reference}</s>}
                 {o.months === 1 ? t("paidMonth", { price: o.price }) : t("paidOnce", { price: o.price, count: o.months })}
               </span>
-              {o.saving && <span className="mt-1 text-sm font-semibold text-plum-800">{t("youSave", { amount: o.saving })}</span>}
+              {o.saving && <span className="mt-1 text-sm font-semibold text-brand-800">{t("youSave", { amount: o.saving })}</span>}
               {o.breakEven !== null && <span className="mt-3 text-xs text-muted">{t("breakEven", { count: o.breakEven })}</span>}
-              <span className={`absolute end-4 bottom-4 grid size-7 place-items-center rounded-full ${on ? "bg-plum-800 text-white" : "border-2 border-ink/20 bg-white"}`} aria-hidden>
+              <span className={`absolute end-4 bottom-4 grid size-7 place-items-center rounded-full ${on ? "bg-brand-800 text-white" : "border-2 border-ink/20 bg-white"}`} aria-hidden>
                 {on && <Check className="size-4" strokeWidth={3} />}
               </span>
             </button>

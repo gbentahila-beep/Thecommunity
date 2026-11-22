@@ -57,7 +57,7 @@ export default async function SettingsAdminPage() {
                     {c.name.ar && <span className="text-muted" lang="ar">{c.name.ar}</span>}
                     <span className="font-mono text-xs text-muted">/{c.id}</span>
                     <Badge tone={c.isActive ? "green" : "amber"}>{c.isActive ? "Ouverte" : c.isComingSoon ? "Bientôt" : "Masquée"}</Badge>
-                    <span className="ms-auto text-sm font-semibold text-plum-900">{company ? (me?.role === "superadmin" ? "Modifier" : "Voir") : "Voir"}</span>
+                    <span className="ms-auto text-sm font-semibold text-brand-900">{company ? (me?.role === "superadmin" ? "Modifier" : "Voir") : "Voir"}</span>
                   </summary>
                   <div className="mt-3">
                     <CityForm city={c} canEdit={Boolean(company) && me?.role === "superadmin"} />
@@ -68,7 +68,7 @@ export default async function SettingsAdminPage() {
           </ul>
           {company && me?.role === "superadmin" && (
             <details className="mt-3 rounded-xl border border-dashed border-line p-3">
-              <summary className="cursor-pointer text-sm font-semibold text-plum-900">+ Ajouter une ville</summary>
+              <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Ajouter une ville</summary>
               <div className="mt-3"><CityForm canEdit nextOrder={cities.length + 1} /></div>
             </details>
           )}
@@ -86,7 +86,7 @@ export default async function SettingsAdminPage() {
                     <span className="font-mono text-xs text-muted">/{c.id}</span>
                     {c.parentId && <Badge tone="gray">Sous-catégorie</Badge>}
                     {c.isActive === false && <Badge tone="gray">Masquée</Badge>}
-                    <span className="ms-auto text-sm font-semibold text-plum-900">{company && me?.role === "superadmin" ? "Modifier" : "Voir"}</span>
+                    <span className="ms-auto text-sm font-semibold text-brand-900">{company && me?.role === "superadmin" ? "Modifier" : "Voir"}</span>
                   </summary>
                   <div className="mt-3">
                     <CategoryForm category={c} canEdit={Boolean(company) && me?.role === "superadmin"} parents={parents} hasChildren={categories.some((x) => x.parentId === c.id)} />
@@ -97,7 +97,7 @@ export default async function SettingsAdminPage() {
           </ul>
           {company && me?.role === "superadmin" && (
             <details className="mt-3 rounded-xl border border-dashed border-line p-3">
-              <summary className="cursor-pointer text-sm font-semibold text-plum-900">+ Ajouter une catégorie ou une sous-catégorie</summary>
+              <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Ajouter une catégorie ou une sous-catégorie</summary>
               <div className="mt-3"><CategoryForm canEdit parents={parents} nextOrder={categories.length + 1} /></div>
             </details>
           )}
@@ -109,12 +109,12 @@ export default async function SettingsAdminPage() {
             {policies.map((p) => (
               <li key={p.id} className="py-2">
                 <span className="font-medium">{p.label.fr}</span> <span className="font-mono text-xs text-muted">{p.id}</span>
-                <p className="text-muted">{describePolicy(p.rules)} · annulation par l&apos;organisateur ou par The Host Club : 100 %</p>
+                <p className="text-muted">{describePolicy(p.rules)} · annulation par l&apos;organisateur ou par Wenzy : 100 %</p>
               </li>
             ))}
           </ul>
           <details className="rounded-xl border border-dashed border-line p-3">
-            <summary className="cursor-pointer text-sm font-semibold text-plum-900">+ Nouvelle politique</summary>
+            <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Nouvelle politique</summary>
             <div className="mt-3"><PolicyForm live={Boolean(company)} canEdit={!company || me?.role === "superadmin"} /></div>
           </details>
         </Card>

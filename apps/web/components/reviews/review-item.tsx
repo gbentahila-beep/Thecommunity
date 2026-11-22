@@ -22,8 +22,8 @@ export async function ReviewItem({ review, locale, showReport = true }: { review
         </div>
       )}
       {review.reply?.text && (
-        <div className="mt-3 rounded-xl bg-plum-50 px-4 py-3" data-testid="review-reply">
-          <p className="text-sm font-semibold text-plum-900">
+        <div className="mt-3 rounded-xl bg-brand-50 px-4 py-3" data-testid="review-reply">
+          <p className="text-sm font-semibold text-brand-900">
             {t("replyFrom", { name: review.reply.authorName })}
             {review.reply.at && <span className="font-normal text-muted"> · {formatLongDate(review.reply.at, locale)}</span>}
           </p>

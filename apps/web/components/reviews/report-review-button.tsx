@@ -30,7 +30,7 @@ export function ReportReviewButton({ reviewId }: { reviewId: string }) {
   if (state === "sent") return <p role="status" className="mt-3 text-sm text-emerald-800">{FIREBASE_ENABLED ? t("sent") : t("demo")}</p>;
   if (!open)
     return (
-      <button type="button" onClick={() => setOpen(true)} className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-muted hover:text-plum-900">
+      <button type="button" onClick={() => setOpen(true)} className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-muted hover:text-brand-900">
         <Flag className="size-3.5" aria-hidden />
         {t("report")}
       </button>
@@ -38,7 +38,7 @@ export function ReportReviewButton({ reviewId }: { reviewId: string }) {
   if (!signedIn)
     return (
       <p className="mt-3 text-sm text-muted">
-        <Link href={`/connexion?suite=${encodeURIComponent(pathname)}`} className="font-semibold text-plum-900 underline underline-offset-4">{t("loginToReport")}</Link>
+        <Link href={`/connexion?suite=${encodeURIComponent(pathname)}`} className="font-semibold text-brand-900 underline underline-offset-4">{t("loginToReport")}</Link>
       </p>
     );
   return (

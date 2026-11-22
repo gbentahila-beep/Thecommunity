@@ -13,9 +13,9 @@ export async function BlogHero({ as = "h1" }: { as?: "h1" | "p" }) {
   const Title = as;
   return (
     <header className="max-w-3xl">
-      <p className="text-sm font-semibold tracking-[0.18em] text-plum-700 uppercase">{t("title")}</p>
-      <Title className="mt-3 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-plum-900 sm:text-6xl lg:text-7xl">
-        {t("heroTitleA")} <span className="text-plum-700 italic rtl:not-italic">{t("heroTitleB")}</span>
+      <p className="text-sm font-semibold tracking-[0.18em] text-brand-700 uppercase">{t("title")}</p>
+      <Title className="mt-3 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-brand-900 sm:text-6xl lg:text-7xl">
+        {t("heroTitleA")} <span className="text-brand-700 italic rtl:not-italic">{t("heroTitleB")}</span>
       </Title>
       <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink/80">{t("heroText")}</p>
       <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{t("intro")}</p>
@@ -38,7 +38,7 @@ export async function BlogTabs({ active, locale }: { active: BlogCategoryKey | "
               <Link
                 href={tab.href}
                 aria-current={on ? "page" : undefined}
-                className={`inline-flex min-h-12 items-center rounded-full px-5 text-[15px] font-semibold whitespace-nowrap transition ${on ? "bg-plum-900 text-white shadow-card" : "border border-line bg-white text-ink hover:border-plum-700 hover:text-plum-900"}`}
+                className={`inline-flex min-h-12 items-center rounded-full px-5 text-[15px] font-semibold whitespace-nowrap transition ${on ? "bg-brand-900 text-white shadow-card" : "border border-line bg-white text-ink hover:border-brand-700 hover:text-brand-900"}`}
               >
                 {tab.label}
               </Link>
@@ -67,7 +67,7 @@ export async function FeaturedArticle({ a, locale }: { a: BlogArticle; locale: s
           <Link href={`/blog/${a.slug}`} className="after:absolute after:inset-0">{a.title[lang]}</Link>
         </h2>
         <p className="mt-3 text-[16px] leading-relaxed text-ink/75">{a.excerpt[lang]}</p>
-        <span aria-hidden className="mt-6 inline-flex items-center gap-2 font-semibold text-plum-900">
+        <span aria-hidden className="mt-6 inline-flex items-center gap-2 font-semibold text-brand-900">
           {t("startHere")} <ArrowRight className="size-4 transition group-hover:translate-x-1 rtl:-scale-x-100" />
         </span>
       </div>
@@ -88,7 +88,7 @@ export async function CompactList({ articles, locale, showTheme = true }: { arti
               <Image src={a.cover} alt="" fill sizes="112px" className={`object-cover transition duration-500 group-hover:scale-105 ${a.coverPosition ?? ""}`} />
             </span>
             <span className="min-w-0">
-              <span className="block text-[17px] leading-snug font-semibold text-ink group-hover:text-plum-900 sm:text-xl">{a.title[lang]}</span>
+              <span className="block text-[17px] leading-snug font-semibold text-ink group-hover:text-brand-900 sm:text-xl">{a.title[lang]}</span>
               <span className="mt-1.5 block text-sm text-muted">
                 {showTheme && <>{catTitle(a.category, locale)} · </>}
                 {t("readTime", { minutes: a.minutes })}
@@ -114,10 +114,10 @@ export async function UsefulAlso({ articles, locale, title }: { articles: BlogAr
           <li key={a.slug}>
             <Link href={`/blog/${a.slug}`} className="group flex items-center justify-between gap-4 py-5">
               <span className="min-w-0">
-                <span className="block text-[17px] leading-snug font-semibold text-ink group-hover:text-plum-900 sm:text-xl">{a.title[lang]}</span>
+                <span className="block text-[17px] leading-snug font-semibold text-ink group-hover:text-brand-900 sm:text-xl">{a.title[lang]}</span>
                 <span className="mt-1 block text-sm text-muted">{catTitle(a.category, locale)} · {t("readTime", { minutes: a.minutes })}</span>
               </span>
-              <span aria-hidden className="grid size-11 shrink-0 place-items-center rounded-full bg-cream-deep text-ink transition group-hover:bg-plum-900 group-hover:text-white">
+              <span aria-hidden className="grid size-11 shrink-0 place-items-center rounded-full bg-cream-deep text-ink transition group-hover:bg-brand-900 group-hover:text-white">
                 <ChevronRight className="size-5 rtl:rotate-180" />
               </span>
             </Link>
@@ -142,7 +142,7 @@ export async function CityCard() {
         <Link href="/experiences" className="btn btn-primary">
           {t("findGroup")}
         </Link>
-        <Link href="/#villes" className="inline-flex min-h-12 items-center justify-center rounded-full border border-line bg-white px-6 font-semibold text-ink transition hover:border-plum-700">
+        <Link href="/#villes" className="inline-flex min-h-12 items-center justify-center rounded-full border border-line bg-white px-6 font-semibold text-ink transition hover:border-brand-700">
           {t("otherCity")}
         </Link>
       </div>
@@ -156,19 +156,19 @@ export function ArticleBody({ blocks, summaryLabel }: { blocks: BlogBlock[]; sum
     <div className="space-y-5 text-[17px] leading-relaxed text-ink/85">
       {blocks.map((b, i) => {
         if (typeof b === "string") return <p key={i}>{richText(b, "")}</p>;
-        if (Array.isArray(b)) return <ul key={i} className="list-disc space-y-2 ps-5 marker:text-plum-700">{b.map((li, k) => <li key={k}>{richText(li, "")}</li>)}</ul>;
-        if ("h" in b) return <h2 key={i} className="pt-4 font-display text-2xl font-medium text-plum-900 sm:text-3xl">{b.h}</h2>;
-        if ("ol" in b) return <ol key={i} className="list-decimal space-y-3 ps-6 marker:font-semibold marker:text-plum-700">{b.ol.map((li, k) => <li key={k} className="ps-1">{richText(li, "")}</li>)}</ol>;
+        if (Array.isArray(b)) return <ul key={i} className="list-disc space-y-2 ps-5 marker:text-brand-700">{b.map((li, k) => <li key={k}>{richText(li, "")}</li>)}</ul>;
+        if ("h" in b) return <h2 key={i} className="pt-4 font-display text-2xl font-medium text-brand-900 sm:text-3xl">{b.h}</h2>;
+        if ("ol" in b) return <ol key={i} className="list-decimal space-y-3 ps-6 marker:font-semibold marker:text-brand-700">{b.ol.map((li, k) => <li key={k} className="ps-1">{richText(li, "")}</li>)}</ol>;
         if ("summary" in b) {
           return (
-            <section key={i} aria-label={summaryLabel} className="rounded-2xl border border-plum-100 bg-white p-5 shadow-card" data-testid="article-summary">
-              <p className="text-xs font-semibold uppercase tracking-wide text-plum-700">{summaryLabel}</p>
-              <ul className="mt-2 list-disc space-y-1.5 ps-5 text-[16px] text-ink marker:text-plum-700">{b.summary.map((li, k) => <li key={k}>{richText(li, "")}</li>)}</ul>
+            <section key={i} aria-label={summaryLabel} className="rounded-2xl border border-brand-100 bg-white p-5 shadow-card" data-testid="article-summary">
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{summaryLabel}</p>
+              <ul className="mt-2 list-disc space-y-1.5 ps-5 text-[16px] text-ink marker:text-brand-700">{b.summary.map((li, k) => <li key={k}>{richText(li, "")}</li>)}</ul>
             </section>
           );
         }
         return (
-          <aside key={i} className="flex gap-3 rounded-2xl bg-plum-50 p-5 text-plum-900">
+          <aside key={i} className="flex gap-3 rounded-2xl bg-brand-50 p-5 text-brand-900">
             <Lightbulb className="mt-0.5 size-5 shrink-0" aria-hidden />
             <p>{richText(b.tip, "")}</p>
           </aside>
@@ -182,10 +182,10 @@ export function ArticleBody({ blocks, summaryLabel }: { blocks: BlogBlock[]; sum
 export async function BlogCta() {
   const t = await getTranslations("blog");
   return (
-    <section className="mt-16 rounded-3xl bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] px-6 py-10 text-center text-white sm:px-10">
+    <section className="mt-16 rounded-3xl bg-ciel px-6 py-10 text-center text-white sm:px-10">
       <h2 className="section-title">{t("ctaTitle")}</h2>
       <p className="mx-auto mt-3 max-w-xl text-white/80">{t("ctaText")}</p>
-      <Link href="/experiences" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-6 font-semibold text-plum-900 transition hover:bg-cream">
+      <Link href="/experiences" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-6 font-semibold text-brand-900 transition hover:bg-cream">
         {t("ctaButton")}
         <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
       </Link>

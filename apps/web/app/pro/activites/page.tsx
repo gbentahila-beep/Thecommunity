@@ -16,7 +16,7 @@ export default async function ProActivitiesPage() {
       <PageHeader
         title="Mes activités"
         subtitle="Brouillon → envoyée pour validation → en ligne. L'équipe relit chaque nouvelle activité."
-        actions={<Link href="/pro/activites/nouvelle" className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">+ Nouvelle activité</Link>}
+        actions={<Link href="/pro/activites/nouvelle" className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">+ Nouvelle activité</Link>}
       />
       {d.experiences.length === 0 ? (
         <Card><p className="text-sm text-muted">Aucune activité pour l&apos;instant. Créez la première : titre, description, lieu, prix et dates.</p></Card>
@@ -34,7 +34,7 @@ export default async function ProActivitiesPage() {
                   <td><Badge tone={st.tone}>{st.label}</Badge></td>
                   <td className="text-muted">{next ? new Intl.DateTimeFormat("fr-FR", { timeZone: "Africa/Casablanca", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(next.startAt)) : "—"}</td>
                   <td>{bookings}</td>
-                  <td className="text-end"><Link href={`/pro/activites/${e.id}`} className="font-semibold text-plum-900">Modifier</Link></td>
+                  <td className="text-end"><Link href={`/pro/activites/${e.id}`} className="font-semibold text-brand-900">Modifier</Link></td>
                 </tr>
               );
             })}

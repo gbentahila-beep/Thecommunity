@@ -6,7 +6,7 @@ import { useState } from "react";
 import type { CompanySettings } from "@/lib/data/admin-mail";
 import { firebase } from "@/lib/firebase/client";
 
-const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100 disabled:bg-cream";
+const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100 disabled:bg-cream";
 
 /**
  * Paramètres → Société et e-mails (super-admin). Les informations sont figées sur chaque NOUVEAU document ;
@@ -58,9 +58,9 @@ export function CompanyForm({ initial, canEdit }: { initial: CompanySettings; ca
         }
       }}
     >
-      {!canEdit && <p className="rounded-xl bg-plum-50 px-3 py-2 text-xs text-plum-900">Lecture seule : modification réservée aux super-admins.</p>}
+      {!canEdit && <p className="rounded-xl bg-brand-50 px-3 py-2 text-xs text-brand-900">Lecture seule : modification réservée aux super-admins.</p>}
       <div className="grid gap-4 sm:grid-cols-2">
-        {field("legalName", "Raison sociale", "Ex. « The Host Club SARL »")}
+        {field("legalName", "Raison sociale", "Ex. « Wenzy SARL »")}
         {field("ice", "ICE", "15 chiffres", { inputMode: "numeric", maxLength: "15" })}
         <div className="sm:col-span-2">{field("address", "Adresse du siège")}</div>
         {field("if", "Identifiant fiscal (IF)")}
@@ -94,13 +94,13 @@ export function CompanyForm({ initial, canEdit }: { initial: CompanySettings; ca
           <span><strong>Brevo</strong> — envoi réel. Nécessite la clé Brevo enregistrée comme secret Cloud (jamais ici) ; sinon les envois échouent et restent visibles dans la boîte d&apos;envoi.</span>
         </label>
         <div className="grid gap-4 sm:grid-cols-2">
-          {field("fromName", "Nom de l'expéditeur", "Ex. The Host Club")}
+          {field("fromName", "Nom de l'expéditeur", "Ex. Wenzy")}
           {field("fromEmail", "Adresse de l'expéditeur", "Domaine vérifié chez Brevo", { type: "email" })}
         </div>
       </fieldset>
       {canEdit && (
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+          <button type="submit" disabled={state === "busy"} className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-60">
             {state === "busy" ? "Enregistrement…" : "Enregistrer"}
           </button>
           {state === "saved" && <p role="status" className="text-sm text-emerald-800">Enregistré. Les prochains documents utiliseront ces informations.</p>}

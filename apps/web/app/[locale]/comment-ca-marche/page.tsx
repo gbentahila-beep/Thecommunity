@@ -31,7 +31,7 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
         <ol className="mt-8 space-y-4" data-testid="booking-steps">
           {[1, 2, 3, 4, 5].map((i) => (
             <li key={i} className="flex gap-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-plum-900 font-display text-lg text-white" aria-hidden>{i}</span>
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-900 font-display text-lg text-white" aria-hidden>{i}</span>
               <span>
                 <span className="block text-lg font-semibold text-ink">{t(`step${i}Title`)}</span>
                 <span className="mt-1 block text-[15px] text-muted">{t(`step${i}Text`)}</span>
@@ -42,7 +42,7 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
       </section>
       <Universes categories={categories} title={t("formatsTitle")} />
       <div className="mx-auto mt-6 max-w-4xl space-y-12">
-        <section aria-labelledby="safety" className="rounded-3xl bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] p-6 text-cream sm:p-10">
+        <section aria-labelledby="safety" className="rounded-3xl bg-ciel p-6 text-cream sm:p-10">
           <h2 id="safety" className="section-title">{t("safetyTitle")}</h2>
           <p className="mt-3 max-w-2xl leading-relaxed text-cream/85">{t("safetyText")}</p>
         </section>

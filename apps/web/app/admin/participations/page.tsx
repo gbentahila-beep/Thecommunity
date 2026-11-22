@@ -67,7 +67,7 @@ function RequestCard({ item }: { item: AdminRequestItem }) {
   return (
     <article className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <p className="flex items-center gap-2 text-sm font-medium text-plum-900">
+        <p className="flex items-center gap-2 text-sm font-medium text-brand-900">
           <CalendarDays className="size-4 shrink-0" aria-hidden />
           {fr(r.sessionSnapshot.title)} · {adminDate(r.sessionSnapshot.startAt)}
         </p>
@@ -92,7 +92,7 @@ function RequestCard({ item }: { item: AdminRequestItem }) {
             {r.seats > 1 && <> · <strong className="text-ink">{r.seats} places demandées</strong></>}
           </p>
           {r.instagram && (
-            <a href={`https://www.instagram.com/${r.instagram}/`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-medium text-plum-900 underline">
+            <a href={`https://www.instagram.com/${r.instagram}/`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-medium text-brand-900 underline">
               <AtSign className="size-3.5" aria-hidden />
               {r.instagram}
             </a>
@@ -102,7 +102,7 @@ function RequestCard({ item }: { item: AdminRequestItem }) {
 
       {r.message && (
         <blockquote className="mt-4 flex gap-2 rounded-2xl bg-cream/70 p-3 text-sm text-ink">
-          <MessageSquareQuote className="mt-0.5 size-4 shrink-0 text-plum-700" aria-hidden />
+          <MessageSquareQuote className="mt-0.5 size-4 shrink-0 text-brand-700" aria-hidden />
           <span className="whitespace-pre-line">{r.message}</span>
         </blockquote>
       )}

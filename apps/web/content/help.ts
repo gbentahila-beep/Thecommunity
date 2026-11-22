@@ -30,18 +30,18 @@ const HELP_CATEGORIES_RAW: HelpCategoryRaw[] = [
 const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
   // ——— Bien démarrer ———
   {
-    slug: "comment-fonctionne-the-host-club",
+    slug: "comment-fonctionne-wenzy",
     category: "start",
-    title: { fr: "Comment fonctionne The Host Club ?", en: "How does The Host Club work?" },
+    title: { fr: "Comment fonctionne Wenzy ?", en: "How does Wenzy work?" },
     summary: { fr: "Des expériences en petit groupe pour rencontrer de nouvelles personnes, sans rien organiser.", en: "Small-group experiences to meet new people, with nothing to organise." },
     body: {
       fr: [
-        "The Host Club organise à Casablanca des expériences en petit groupe : dîners, ateliers, sport, jeux, sorties. Vous choisissez une date, nous nous occupons du lieu, du groupe et de l'accueil.",
+        "Wenzy organise à Casablanca des expériences en petit groupe : dîners, ateliers, sport, jeux, sorties. Vous choisissez une date, nous nous occupons du lieu, du groupe et de l'accueil.",
         ["Choisissez une expérience dans le [catalogue](/experiences).", "Réservez votre place (venir seul·e, c'est très bien).", "Le jour J, retrouvez votre groupe dans un lieu public ou chez un partenaire sélectionné."],
         "Ce n'est pas une application de rencontre amoureuse : l'idée est d'élargir son cercle et de découvrir sa ville autrement.",
       ],
       en: [
-        "The Host Club organises small-group experiences in Casablanca: dinners, workshops, sport, games, outings. You pick a date; we take care of the venue, the group and the welcome.",
+        "Wenzy organises small-group experiences in Casablanca: dinners, workshops, sport, games, outings. You pick a date; we take care of the venue, the group and the welcome.",
         ["Choose an experience in the [catalogue](/experiences).", "Book your seat (coming alone is perfectly fine).", "On the day, meet your group in a public place or at a selected partner venue."],
         "This is not a dating app: the idea is to widen your circle and discover your city differently.",
       ],
@@ -82,7 +82,7 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
         "Coming with someone? Depending on the experience, you can book several seats at once (the maximum is shown when you book).",
       ],
     },
-    related: ["comment-fonctionne-the-host-club", "regime-allergies-et-langues"],
+    related: ["comment-fonctionne-wenzy", "regime-allergies-et-langues"],
   },
   // ——— Expériences et réservations ———
   {
@@ -427,14 +427,14 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     summary: { fr: "Inscription, validation, relecture des activités, commission et reversements.", en: "Sign-up, approval, activity review, commission and payouts." },
     body: {
       fr: [
-        "Clubs, ateliers, guides, coachs : vous pouvez aussi publier vos propres activités sur The Host Club, depuis l'[espace organisateur](/pro).",
+        "Clubs, ateliers, guides, coachs : vous pouvez aussi publier vos propres activités sur Wenzy, depuis l'[espace organisateur](/pro).",
         ["Créez votre compte organisateur : présentation, catégories, pièces justificatives (registre de commerce ou statut d'auto-entrepreneur, attestation d'assurance) et acceptation du [contrat organisateur](/contrat-organisateur).", "L'équipe vérifie votre demande, en général sous 48 h ouvrées, et peut vous demander un complément.", "Créez vos activités et vos dates, puis « Envoyer pour validation » : chaque nouvelle activité est relue avant sa mise en ligne.", "Suivez vos réservations, pointez vos participants à l'entrée (code ou QR code du billet), acceptez ou refusez les demandes, annulez une date si besoin (chacun est remboursé intégralement)."],
-        "The Host Club encaisse le paiement en ligne pour votre compte, garde sa commission (taux indiqué dans « Finances ») et vous reverse le reste par virement, au plus tard 15 jours après chaque activité.",
+        "Wenzy encaisse le paiement en ligne pour votre compte, garde sa commission (taux indiqué dans « Finances ») et vous reverse le reste par virement, au plus tard 15 jours après chaque activité.",
       ],
       en: [
-        "Clubs, workshops, guides, coaches: you can also list your own activities on The Host Club, from the [organizer space](/pro).",
+        "Clubs, workshops, guides, coaches: you can also list your own activities on Wenzy, from the [organizer space](/pro).",
         ["Create your organizer account: introduction, categories, supporting documents (trade register or self-employed status, insurance certificate) and acceptance of the [organizer agreement](/contrat-organisateur).", "The team reviews your application, usually within 2 working days, and may ask for more information.", "Create your activities and dates, then “Submit for review”: every new activity is checked before going live.", "Follow your bookings, check participants in at the door (ticket code or QR code), accept or decline requests, cancel a date if needed (everyone is fully refunded)."],
-        "The Host Club collects online payment on your behalf, keeps its commission (rate shown under “Finances”) and transfers the rest to you no later than 15 days after each activity.",
+        "Wenzy collects online payment on your behalf, keeps its commission (rate shown under “Finances”) and transfers the rest to you no later than 15 days after each activity.",
       ],
     },
     related: ["devenir-partenaire", "remuneration-partenaire"],
@@ -448,13 +448,13 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     body: {
       fr: [
         "Avant chaque date, notre équipe vous communique le nombre de participants confirmés et les besoins particuliers (régimes, allergies), sans autre donnée personnelle.",
-        ["Prévoyez la table ou l'espace convenu à l'heure indiquée.", "Accueillez le groupe sous le nom « The Host Club ».", "Prévenez-nous immédiatement en cas d'imprévu (retard, fermeture, problème technique)."],
-        "Lieu partenaire qui accueille nos groupes : tout passe par votre interlocuteur The Host Club. Organisateur qui publie ses propres activités : vous retrouvez vos dates, vos participants (régimes et allergies compris, avec leur accord) et le pointage à l'entrée dans l'[espace organisateur](/pro).",
+        ["Prévoyez la table ou l'espace convenu à l'heure indiquée.", "Accueillez le groupe sous le nom « Wenzy ».", "Prévenez-nous immédiatement en cas d'imprévu (retard, fermeture, problème technique)."],
+        "Lieu partenaire qui accueille nos groupes : tout passe par votre interlocuteur Wenzy. Organisateur qui publie ses propres activités : vous retrouvez vos dates, vos participants (régimes et allergies compris, avec leur accord) et le pointage à l'entrée dans l'[espace organisateur](/pro).",
       ],
       en: [
         "Before each date, our team sends you the number of confirmed participants and any special needs (diets, allergies), with no other personal data.",
-        ["Have the agreed table or space ready at the stated time.", "Welcome the group under the name “The Host Club”.", "Tell us immediately if anything comes up (delay, closure, technical problem)."],
-        "Partner venue hosting our groups: everything goes through your The Host Club contact. Organiser publishing your own activities: your dates, participants (diets and allergies included, with their consent) and check-in are in the [organiser area](/pro).",
+        ["Have the agreed table or space ready at the stated time.", "Welcome the group under the name “Wenzy”.", "Tell us immediately if anything comes up (delay, closure, technical problem)."],
+        "Partner venue hosting our groups: everything goes through your Wenzy contact. Organiser publishing your own activities: your dates, participants (diets and allergies included, with their consent) and check-in are in the [organiser area](/pro).",
       ],
     },
     related: ["annulations-cote-partenaire", "incident-avec-un-participant"],
@@ -631,7 +631,7 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
           "L'équipe la relit, vérifie le lieu, la sécurité et le prix, puis crée la fiche de l'expérience : rien n'est publié sans elle.",
           "Vous êtes prévenu dans vos notifications, que la proposition soit retenue ou non."
         ],
-        "L'expérience publiée est organisée et vendue par The Host Club, aux mêmes conditions que les autres. Vous n'avez jamais à encaisser d'argent auprès des participants.",
+        "L'expérience publiée est organisée et vendue par Wenzy, aux mêmes conditions que les autres. Vous n'avez jamais à encaisser d'argent auprès des participants.",
         "Pas encore membre de confiance ? Une idée de sortie est toujours la bienvenue : [écrivez-nous](/contact)."
       ],
       "en": [
@@ -641,12 +641,12 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
           "The team reviews it, checks the venue, safety and price, then creates the experience page: nothing is published without it.",
           "You're told in your notifications whether the proposal goes ahead or not."
         ],
-        "The published experience is organised and sold by The Host Club, on the same terms as the others. You never collect money from participants.",
+        "The published experience is organised and sold by Wenzy, on the same terms as the others. You never collect money from participants.",
         "Not a trusted member yet? Outing ideas are always welcome: [write to us](/contact)."
       ]
     },
     "related": [
-      "comment-fonctionne-the-host-club"
+      "comment-fonctionne-wenzy"
     ]
   },
   {
@@ -667,7 +667,7 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
         ],
         "La gamme du restaurant vous donne un repère : Casual (environ 100 à 200 DH par personne), Premium (200 à 400 DH), Exclusive (400 à 600 DH). Ce sont des ordres de grandeur ; le budget indiqué sur la fiche fait foi.",
         "Lieu surprise : le nom du restaurant est dévoilé la veille avec votre groupe, mais la fiche affiche dès la réservation le quartier, la gamme, la cuisine, l'ambiance et le budget. Exemples : [Secret Dinner](/experiences/secret-dinner-gauthier), [Dîner gastronomique secret](/experiences/diner-gastronomique-secret-anfa).",
-        "Ce qui est payé sur place l'est directement au restaurant : The Host Club ne l'encaisse jamais. En cas d'annulation, seul le montant payé en ligne est concerné par les [conditions d'annulation](/aide/annuler-une-reservation).",
+        "Ce qui est payé sur place l'est directement au restaurant : Wenzy ne l'encaisse jamais. En cas d'annulation, seul le montant payé en ligne est concerné par les [conditions d'annulation](/aide/annuler-une-reservation).",
       ],
       en: [
         "Every page states clearly what you'll pay, online and on site. There are three cases:",
@@ -678,10 +678,10 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
         ],
         "The restaurant's range gives you a benchmark: Casual (about 100 to 200 DH per person), Premium (200 to 400 DH), Exclusive (400 to 600 DH). These are orders of magnitude; the budget shown on the page prevails.",
         "Surprise venue: the restaurant's name is revealed the day before with your group, but the page shows the neighbourhood, range, cuisine, atmosphere and budget from the moment you book. Examples: [Secret Dinner](/experiences/secret-dinner-gauthier), [Secret fine-dining dinner](/experiences/diner-gastronomique-secret-anfa).",
-        "What you pay on site goes directly to the restaurant: The Host Club never collects it. If you cancel, only the amount paid online is covered by the [cancellation terms](/aide/annuler-une-reservation).",
+        "What you pay on site goes directly to the restaurant: Wenzy never collects it. If you cancel, only the amount paid online is covered by the [cancellation terms](/aide/annuler-une-reservation).",
       ],
     },
-    related: ["comment-fonctionne-the-host-club"],
+    related: ["comment-fonctionne-wenzy"],
   },
   {
     "slug": "assurance-et-activites-physiques",

@@ -24,7 +24,7 @@ export default async function ProEditActivityPage({ params }: PageProps<"/pro/ac
     <div className="max-w-4xl">
       <PageHeader
         title={e.title.fr}
-        subtitle={<span className="inline-flex flex-wrap items-center gap-2"><Badge tone={st.tone}>{st.label}</Badge>{e.status === "published" && <Link href={`/experiences/${e.slug}`} className="text-plum-900 underline">Voir sur le site</Link>}</span>}
+        subtitle={<span className="inline-flex flex-wrap items-center gap-2"><Badge tone={st.tone}>{st.label}</Badge>{e.status === "published" && <Link href={`/experiences/${e.slug}`} className="text-brand-900 underline">Voir sur le site</Link>}</span>}
       />
       {e.status === "rejected" && e.rejectionMessage && (
         <p role="note" className="mb-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900" data-testid="rejection-message"><strong>Message de l&apos;équipe :</strong> {e.rejectionMessage}</p>

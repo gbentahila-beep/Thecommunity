@@ -8,7 +8,7 @@
 
 import { BLOG_ARTICLES_AR, BLOG_CATEGORIES_AR, CITY_GUIDE_FAQ_AR } from "./blog-ar";
 
-export type BlogCategoryKey = "city-guide" | "conversation" | "amitie" | "the-host-club";
+export type BlogCategoryKey = "city-guide" | "conversation" | "amitie" | "wenzy";
 type LRaw = { fr: string; en: string };
 type L = { fr: string; en: string; ar: string };
 export type BlogBlock = string | string[] | { h: string } | { ol: string[] } | { tip: string } | { summary: string[] };
@@ -32,14 +32,14 @@ const BLOG_CATEGORIES_RAW: BlogCategoryRaw[] = [
   { key: "city-guide", title: { fr: "City guide", en: "City guide" }, description: { fr: "Casablanca autrement : où aller, quoi faire, comment y rencontrer du monde.", en: "Casablanca differently: where to go, what to do, how to meet people there." } },
   { key: "conversation", title: { fr: "Conversation", en: "Conversation" }, description: { fr: "Des questions et des conseils pour lancer, nourrir et apaiser une discussion.", en: "Questions and tips to start, deepen and calm a conversation." } },
   { key: "amitie", title: { fr: "Amitié", en: "Friendship" }, description: { fr: "Se faire des amis à l'âge adulte, sans pression et pour de vrai.", en: "Making friends as an adult, without pressure and for real." } },
-  { key: "the-host-club", title: { fr: "Comment fonctionne The Host Club", en: "How The Host Club works" }, description: { fr: "Tout savoir avant votre première expérience.", en: "Everything to know before your first experience." } },
+  { key: "wenzy", title: { fr: "Comment fonctionne Wenzy", en: "How Wenzy works" }, description: { fr: "Tout savoir avant votre première expérience.", en: "Everything to know before your first experience." } },
 ];
 
 /** FAQ affichée en bas de l'onglet City guide. */
 const CITY_GUIDE_FAQ_RAW: { q: LRaw; a: LRaw }[] = [
   {
     q: { fr: "Où sortir seul à Casablanca sans se sentir seul ?", en: "Where can you go out alone in Casablanca without feeling lonely?" },
-    a: { fr: "Les activités en petit groupe sont idéales : cours de sport collectifs, ateliers créatifs, jeux, dîners organisés. Le cadre crée la conversation à votre place. C'est exactement ce que proposent les expériences The Host Club.", en: "Small-group activities are ideal: group fitness classes, creative workshops, games, organised dinners. The setting starts the conversation for you. That's exactly what The Host Club experiences offer." },
+    a: { fr: "Les activités en petit groupe sont idéales : cours de sport collectifs, ateliers créatifs, jeux, dîners organisés. Le cadre crée la conversation à votre place. C'est exactement ce que proposent les expériences Wenzy.", en: "Small-group activities are ideal: group fitness classes, creative workshops, games, organised dinners. The setting starts the conversation for you. That's exactly what Wenzy experiences offer." },
   },
   {
     q: { fr: "Faut-il parler arabe pour rencontrer du monde ?", en: "Do you need to speak Arabic to meet people?" },
@@ -676,10 +676,10 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
       ],
     },
   },
-  // ——— Comment fonctionne The Host Club ———
+  // ——— Comment fonctionne Wenzy ———
   {
     slug: "diner-avec-des-inconnus",
-    category: "the-host-club",
+    category: "wenzy",
     title: { fr: "Dîner avec des inconnus : c'est quoi, et comment ça se passe ?", en: "Dinner with strangers: what is it, and how does it work?" },
     excerpt: { fr: "Une table, quelques personnes qui ne se connaissent pas, un restaurant choisi pour vous : le principe, le déroulé de la soirée et les questions qu'on se pose avant.", en: "One table, a few people who don't know each other, a restaurant chosen for you: the idea, how the evening goes and the questions people ask beforehand." },
     date: D,
@@ -732,16 +732,16 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
     },
   },
   {
-    slug: "the-host-club-guide-complet",
-    category: "the-host-club",
-    title: { fr: "The Host Club, le guide complet", en: "The Host Club: the complete guide" },
+    slug: "wenzy-guide-complet",
+    category: "wenzy",
+    title: { fr: "Wenzy, le guide complet", en: "Wenzy: the complete guide" },
     excerpt: { fr: "Les univers, la réservation, le paiement, les groupes, le billet, l'abonnement, l'annulation : tout ce qu'il faut savoir en une page.", en: "Universes, booking, payment, groups, tickets, membership, cancellation: everything you need to know on one page." },
     date: D,
     cover: "/images/photos/a-propos-hero.webp",
     body: {
       fr: [
         { summary: ["Des expériences en petit groupe à Casablanca, dans des univers variés (dîners, sport, jeux, ateliers, sorties, vie sociale, culture), pour rencontrer de nouvelles personnes sans rien organiser.", "Réservation directe ou sur demande, liste d'attente quand c'est complet.", "Paiement uniquement sur le site, avec le moyen indiqué au moment de réserver ; billet avec QR code dès la confirmation.", "Conditions d'annulation affichées sur chaque fiche ; abonnement de 1 à 12 mois, sans renouvellement automatique."] },
-        "The Host Club organise des expériences en petit groupe à Casablanca pour rencontrer de nouvelles personnes, sans avoir à organiser quoi que ce soit. Vous choisissez, nous nous occupons du lieu, du groupe et de l'accueil. Voici l'essentiel, en une page.",
+        "Wenzy organise des expériences en petit groupe à Casablanca pour rencontrer de nouvelles personnes, sans avoir à organiser quoi que ce soit. Vous choisissez, nous nous occupons du lieu, du groupe et de l'accueil. Voici l'essentiel, en une page.",
         { h: "Nos univers" },
         ["Dîners & gastronomie : une table de nouvelles têtes dans un restaurant partenaire, ou un brunch.", "Sport & bien-être : padel, course, yoga, pilates, randonnée, cours collectifs.", "Jeux : paintball, quiz, blind tests, jeux de société, énigmes en équipe.", "Ateliers : cuisine, poterie, peinture, fabriquer quelque chose ensemble.", "Sorties : balades, visites, rooftops, lieux à découvrir.", "Échanges & vie sociale : échanges de langues, clubs de lecture, rendez-vous des nouveaux arrivants.", "Culture & apprentissage : visites guidées, conférences, initiations et masterclasses."],
         "De nouveaux univers s'ajoutent au fil des saisons : retrouvez-les tous dans le [catalogue](/experiences).",
@@ -764,7 +764,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
       ],
       en: [
         { summary: ["Small-group experiences in Casablanca, across a range of universes (dinners, sport, games, workshops, outings, social life, culture), to meet new people without organising anything.", "Direct booking or on request, and a waiting list when it's full.", "Payment only on the website, with the method shown when you book; a ticket with a QR code as soon as it's confirmed.", "Cancellation terms shown on every page; membership from 1 to 12 months, no automatic renewal."] },
-        "The Host Club organises small-group experiences in Casablanca so you can meet new people without organising anything. You choose; we take care of the venue, the group and the welcome. Here are the essentials, on one page.",
+        "Wenzy organises small-group experiences in Casablanca so you can meet new people without organising anything. You choose; we take care of the venue, the group and the welcome. Here are the essentials, on one page.",
         { h: "Our universes" },
         ["Dinners & food: a table of new faces at a partner restaurant, or a brunch.", "Sport & wellbeing: padel, running, yoga, pilates, hiking, group classes.", "Games: paintball, quizzes, music quizzes, board games, team puzzles.", "Workshops: cooking, pottery, painting, making something together.", "Outings: walks, visits, rooftops, places to discover.", "Social life & exchanges: language exchanges, book clubs, newcomer get-togethers.", "Culture & learning: guided tours, talks, introductions and masterclasses."],
         "New universes are added as the seasons go by: find them all in the [catalogue](/experiences).",
@@ -789,7 +789,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
   },
   {
     slug: "comment-nous-composons-les-tables",
-    category: "the-host-club",
+    category: "wenzy",
     title: { fr: "Comment nous composons les groupes", en: "How we put groups together" },
     excerpt: { fr: "Langues, âges, rencontres passées, centres d'intérêt : les critères que nous utilisons, ce que nous ne regardons jamais, et pourquoi un humain relit toujours.", en: "Languages, ages, past meetings, interests: the criteria we use, what we never look at, and why a person always reviews." },
     date: D,
@@ -838,20 +838,20 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
     },
   },
   {
-    slug: "the-host-club-est-il-sur",
-    category: "the-host-club",
-    title: { fr: "The Host Club est-il sûr ?", en: "Is The Host Club safe?" },
+    slug: "wenzy-est-il-sur",
+    category: "wenzy",
+    title: { fr: "Wenzy est-il sûr ?", en: "Is Wenzy safe?" },
     excerpt: { fr: "Lieux publics, règles de la communauté, informations limitées, signalements, données effacées : ce que nous faisons, et ce que vous pouvez faire.", en: "Public venues, community rules, limited information, reporting, deleted data: what we do, and what you can do." },
     date: D,
     cover: "/images/photos/comment-groupe-3.webp",
     body: {
       fr: [
-        { summary: ["Toujours des lieux publics ou des partenaires sélectionnés, jamais chez un participant.", "Votre groupe ne voit que votre prénom, votre photo de profil et vos centres d'intérêt.", "Chaque signalement est lu par l'équipe ; régime et allergies sont effacés 30 jours après l'expérience.", "Vous ne payez qu'à The Host Club, jamais à un participant."] },
+        { summary: ["Toujours des lieux publics ou des partenaires sélectionnés, jamais chez un participant.", "Votre groupe ne voit que votre prénom, votre photo de profil et vos centres d'intérêt.", "Chaque signalement est lu par l'équipe ; régime et allergies sont effacés 30 jours après l'expérience.", "Vous ne payez qu'à Wenzy, jamais à un participant."] },
         "Rencontrer de nouvelles personnes doit être enthousiasmant, pas inquiétant. La sécurité fait partie de la conception de chaque expérience, avant, pendant et après.",
         { h: "Ce que nous faisons" },
         ["Toutes les expériences ont lieu dans des lieux publics ou chez des partenaires sélectionnés, jamais chez un participant.", "Nos expériences sont réservées aux adultes, et chaque membre accepte nos [règles de la communauté](/charte) avant de réserver.", "Votre groupe ne voit que l'essentiel : votre prénom et vos centres d'intérêt. Ni nom de famille, ni téléphone, ni adresse.", "Chaque signalement est lu et traité par notre équipe ; les comportements contraires aux règles peuvent entraîner une suspension ou une exclusion.", "Votre régime et vos allergies ne sont transmis au lieu qu'avec votre accord, puis effacés automatiquement 30 jours après l'expérience."],
         { h: "Le paiement" },
-        "Vous ne payez qu'à The Host Club : sur notre site, ou par virement sur le compte de la société indiqué sur la page de paiement, avec votre référence. Nous ne demandons jamais de payer un particulier ni d'envoyer de l'argent par message. Une demande de ce type est une arnaque : signalez-la-nous.",
+        "Vous ne payez qu'à Wenzy : sur notre site, ou par virement sur le compte de la société indiqué sur la page de paiement, avec votre référence. Nous ne demandons jamais de payer un particulier ni d'envoyer de l'argent par message. Une demande de ce type est une arnaque : signalez-la-nous.",
         { h: "Ce que vous pouvez faire" },
         ["Prévenir un proche du lieu et de l'horaire.", "Prévoir votre trajet retour avant de partir.", "Garder vos affaires et votre verre à portée de vue.", "Partager vos coordonnées seulement si vous le souhaitez, et quand vous le souhaitez.", "Partir à tout moment : tout est facultatif, « non » est une réponse suffisante."],
         { h: "Si quelque chose ne va pas" },
@@ -859,12 +859,12 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         { tip: "Tous les conseils sont réunis sur notre page [Sécurité](/securite)." },
       ],
       en: [
-        { summary: ["Always public places or selected partners, never at a participant's home.", "Your group only sees your first name, profile photo and interests.", "Every report is read by the team; diet and allergies are deleted 30 days after the experience.", "You only ever pay The Host Club, never another participant."] },
+        { summary: ["Always public places or selected partners, never at a participant's home.", "Your group only sees your first name, profile photo and interests.", "Every report is read by the team; diet and allergies are deleted 30 days after the experience.", "You only ever pay Wenzy, never another participant."] },
         "Meeting new people should feel exciting, not worrying. Safety is built into the design of every experience, before, during and after.",
         { h: "What we do" },
         ["Every experience takes place in a public place or at a selected partner venue, never at a participant's home.", "Our experiences are for adults only, and every member accepts our [community rules](/charte) before booking.", "Your group only sees the essentials: your first name and interests. No surname, phone number or address.", "Every report is read and handled by our team; behaviour that breaks the rules can lead to suspension or exclusion.", "Your diet and allergies are only passed on to the venue with your consent, then deleted automatically 30 days after the experience."],
         { h: "Payment" },
-        "You only ever pay The Host Club: on our website, or by bank transfer to the company account shown on the payment page, with your reference. We never ask you to pay an individual or to send money by message. Any such request is a scam: please report it to us.",
+        "You only ever pay Wenzy: on our website, or by bank transfer to the company account shown on the payment page, with your reference. We never ask you to pay an individual or to send money by message. Any such request is a scam: please report it to us.",
         { h: "What you can do" },
         ["Tell someone close where you'll be and when.", "Plan your way home before you leave.", "Keep your belongings and your drink in sight.", "Share your contact details only if and when you want to.", "Leave at any time: everything is optional, and “no” is a complete answer."],
         { h: "If something feels wrong" },
@@ -875,7 +875,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
   },
   {
     slug: "reserver-sa-premiere-experience",
-    category: "the-host-club",
+    category: "wenzy",
     title: { fr: "Réserver sa première expérience, étape par étape", en: "Booking your first experience, step by step" },
     excerpt: { fr: "Du choix de l'univers jusqu'au jour J : le parcours complet, le paiement, le billet et trois conseils pour une première fois sans stress.", en: "From choosing a universe to the big day: the full journey, payment, your ticket and three tips for a stress-free first time." },
     date: D,
@@ -925,15 +925,15 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
   },
   {
     slug: "est-ce-une-application-de-rencontre",
-    category: "the-host-club",
-    title: { fr: "The Host Club, est-ce une application de rencontre ?", en: "Is The Host Club a dating app?" },
+    category: "wenzy",
+    title: { fr: "Wenzy, est-ce une application de rencontre ?", en: "Is Wenzy a dating app?" },
     excerpt: { fr: "Non, et c'est voulu. Ce qui nous distingue d'une application de rencontre amoureuse, et ce que nous faisons pour que chacun se sente à l'aise.", en: "No, and that's deliberate. What sets us apart from a dating app, and what we do so everyone feels at ease." },
     date: D,
     cover: "/images/photos/univers-jeux-vinyles.webp",
     body: {
       fr: [
-        { summary: ["Non : The Host Club sert à se faire des amis et à élargir son cercle.", "Pas de profils à faire défiler, pas de tête-à-tête : des groupes autour d'une activité.", "Des liens de toutes sortes peuvent naître, mais la séduction n'est jamais l'objectif.", "Un comportement insistant peut être signalé et entraîner une exclusion."] },
-        "Non. The Host Club réunit des personnes pour se faire de nouveaux amis, élargir son cercle et partager un bon moment. Ce n'est pas un service de rencontre amoureuse, et c'est un choix assumé : beaucoup de gens cherchent simplement des personnes avec qui sortir, parler, rire, sans arrière-pensée.",
+        { summary: ["Non : Wenzy sert à se faire des amis et à élargir son cercle.", "Pas de profils à faire défiler, pas de tête-à-tête : des groupes autour d'une activité.", "Des liens de toutes sortes peuvent naître, mais la séduction n'est jamais l'objectif.", "Un comportement insistant peut être signalé et entraîner une exclusion."] },
+        "Non. Wenzy réunit des personnes pour se faire de nouveaux amis, élargir son cercle et partager un bon moment. Ce n'est pas un service de rencontre amoureuse, et c'est un choix assumé : beaucoup de gens cherchent simplement des personnes avec qui sortir, parler, rire, sans arrière-pensée.",
         { h: "Ce qui change tout" },
         ["Pas de profils à faire défiler ni de photos à noter : vous découvrez les gens en vrai.", "Des groupes, pas des tête-à-tête : la conversation circule, personne n'est sur la sellette.", "Une activité au centre : le repas, le jeu ou l'atelier donne un prétexte et un rythme.", "Un mélange voulu : des âges proches, mais aussi des profils et des parcours variés.", "Pas de messagerie entre participants : vos coordonnées restent à vous, vous les partagez si vous le souhaitez."],
         { h: "Et si une affinité naît ?" },
@@ -943,8 +943,8 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         { tip: "Envie de nouvelles amitiés ? [Voir les expériences](/experiences)." },
       ],
       en: [
-        { summary: ["No: The Host Club is for making friends and widening your circle.", "No profiles to scroll, no one-on-ones: groups around an activity.", "All kinds of connections can happen, but romance is never the goal.", "Pushy behaviour can be reported and may lead to exclusion."] },
-        "No. The Host Club brings people together to make new friends, widen their circle and share a good time. It isn't a dating service, and that's a deliberate choice: many people are simply looking for people to go out, talk and laugh with, with no ulterior motive.",
+        { summary: ["No: Wenzy is for making friends and widening your circle.", "No profiles to scroll, no one-on-ones: groups around an activity.", "All kinds of connections can happen, but romance is never the goal.", "Pushy behaviour can be reported and may lead to exclusion."] },
+        "No. Wenzy brings people together to make new friends, widen their circle and share a good time. It isn't a dating service, and that's a deliberate choice: many people are simply looking for people to go out, talk and laugh with, with no ulterior motive.",
         { h: "What makes the difference" },
         ["No profiles to scroll or photos to rate: you meet people in person.", "Groups, not one-on-ones: the conversation flows and nobody is in the hot seat.", "An activity at the centre: the meal, game or workshop gives a reason and a rhythm.", "A deliberate mix: similar ages, but varied backgrounds and paths.", "No messaging between participants: your contact details stay yours, to share if you wish."],
         { h: "What if a connection sparks?" },
@@ -956,9 +956,9 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
     },
   },
   {
-    slug: "the-host-club-est-il-fait-pour-vous",
-    category: "the-host-club",
-    title: { fr: "The Host Club est-il fait pour vous ? Le petit test avant de réserver", en: "Is The Host Club for you? A quick self-check before you book" },
+    slug: "wenzy-est-il-fait-pour-vous",
+    category: "wenzy",
+    title: { fr: "Wenzy est-il fait pour vous ? Le petit test avant de réserver", en: "Is Wenzy for you? A quick self-check before you book" },
     excerpt: { fr: "Huit questions honnêtes pour savoir si nos expériences vous correspondent, quel univers choisir, et ce qu'il faut savoir si vous êtes plutôt réservé.", en: "Eight honest questions to see whether our experiences suit you, which universe to pick, and what to know if you're on the quiet side." },
     date: D,
     cover: "/images/photos/univers-ateliers.webp",
@@ -1010,14 +1010,14 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
   // ——— 18 : toutes les activités ———
   {
     slug: "toutes-les-activites",
-    category: "the-host-club",
-    title: {"fr": "Dîners, padel, paintball, ateliers : tout ce que vous pouvez faire avec The Host Club", "en": "Dinners, padel, paintball, workshops: everything you can do with The Host Club"},
+    category: "wenzy",
+    title: {"fr": "Dîners, padel, paintball, ateliers : tout ce que vous pouvez faire avec Wenzy", "en": "Dinners, padel, paintball, workshops: everything you can do with Wenzy"},
     excerpt: {"fr": "Le dîner n'est qu'une porte d'entrée. Sport, jeux, ateliers, sorties : comment chaque format vous fait rencontrer du monde, et comment nous composons les groupes.", "en": "Dinner is just one way in. Sport, games, workshops, outings: how each format helps you meet people, and how we put the groups together."},
     date: "2026-11-19",
     cover: "/images/photos/univers-ateliers.webp",
     body: {
       fr: [
-        {"summary": ["The Host Club ne se limite pas au dîner : sport, jeux, ateliers, sorties, vie sociale et culture.", "Chaque format a sa façon de créer le lien : la table, l'équipe, le terrain, l'atelier.", "Pour le sport, un court questionnaire forme des groupes de même niveau ; pour le jeu, il mélange les profils.", "Vous venez seul·e : nous composons le groupe et nous occupons du reste."]},
+        {"summary": ["Wenzy ne se limite pas au dîner : sport, jeux, ateliers, sorties, vie sociale et culture.", "Chaque format a sa façon de créer le lien : la table, l'équipe, le terrain, l'atelier.", "Pour le sport, un court questionnaire forme des groupes de même niveau ; pour le jeu, il mélange les profils.", "Vous venez seul·e : nous composons le groupe et nous occupons du reste."]},
         "On nous connaît pour les dîners entre inconnus, mais l'idée est plus large : rencontrer de nouvelles personnes en faisant quelque chose ensemble. Un match de padel, une partie de paintball, un atelier de poterie ou une balade créent souvent plus vite le lien qu'une conversation debout.",
         {"h": "Des univers variés, une même idée"},
         ["Dîners & gastronomie : tables de nouvelles têtes, brunchs, ateliers cuisine.", "Sport & bien-être : padel, course, yoga, pilates, randonnée.", "Jeux : paintball, quiz, blind tests, jeux d'énigmes en équipe.", "Ateliers : poterie, peinture, cuisine, tout ce qui se fabrique à plusieurs.", "Sorties : balades, visites, rooftops, lieux à découvrir.", "Échanges & vie sociale : échanges de langues, clubs de lecture, rendez-vous des nouveaux arrivants.", "Culture & apprentissage : visites guidées, conférences, initiations et masterclasses."],
@@ -1028,7 +1028,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         {"tip": "Envie d'essayer autre chose qu'un dîner ? [Voir toutes les expériences](/experiences). Et pour comprendre le questionnaire : [à quoi il sert](/blog/le-questionnaire-avant-votre-experience)."},
       ],
       en: [
-        {"summary": ["The Host Club isn't just dinners: sport, games, workshops, outings, social life and culture.", "Each format builds connection its own way: the table, the team, the court, the workshop.", "For sport, a short questionnaire forms same-level groups; for games, it mixes profiles.", "You come alone: we put the group together and take care of the rest."]},
+        {"summary": ["Wenzy isn't just dinners: sport, games, workshops, outings, social life and culture.", "Each format builds connection its own way: the table, the team, the court, the workshop.", "For sport, a short questionnaire forms same-level groups; for games, it mixes profiles.", "You come alone: we put the group together and take care of the rest."]},
         "People know us for dinners with strangers, but the idea is broader: meeting new people by doing something together. A padel match, a paintball game, a pottery workshop or a walk often builds connection faster than a standing conversation.",
         {"h": "Many universes, one idea"},
         ["Dinners & food: tables of new faces, brunches, cooking workshops.", "Sport & wellbeing: padel, running, yoga, pilates, hiking.", "Games: paintball, quizzes, music quizzes, team puzzles.", "Workshops: pottery, painting, cooking, anything made together.", "Outings: walks, visits, rooftops, places to discover.", "Social life & exchanges: language exchanges, book clubs, newcomer get-togethers.", "Culture & learning: guided tours, talks, introductions and masterclasses."],
@@ -1042,7 +1042,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
   },
   {
     slug: "le-questionnaire-avant-votre-experience",
-    category: "the-host-club",
+    category: "wenzy",
     title: {"fr": "Le questionnaire avant votre expérience : à quoi sert-il ?", "en": "The questionnaire before your experience: what is it for?"},
     excerpt: {"fr": "Dix questions au plus, uniquement à choix, pour vous placer avec les bonnes personnes : ce qu'on vous demande, ce qu'on en fait, et ce qu'on n'en fait jamais.", "en": "Ten questions at most, multiple choice only, to place you with the right people: what we ask, what we do with it, and what we never do."},
     date: "2026-11-19",
@@ -1074,32 +1074,32 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
   },
   {
     slug: "proposer-votre-propre-sortie",
-    category: "the-host-club",
+    category: "wenzy",
     title: {"fr": "Proposer votre propre sortie : comment ça marche ?", "en": "Proposing your own outing: how does it work?"},
     excerpt: {"fr": "Les membres de confiance peuvent soumettre leurs idées de sorties. L'équipe les vérifie, les organise et les publie : le parcours d'une proposition, de l'idée à la fiche.", "en": "Trusted members can submit their outing ideas. The team checks, organises and publishes them: the journey of a proposal, from idea to page."},
     date: "2026-11-19",
     cover: "/images/photos/galerie-08.webp",
     body: {
       fr: [
-        {"summary": ["Les membres de confiance peuvent proposer leurs propres sorties depuis leur espace.", "L'équipe vérifie le lieu, la sécurité et le prix avant toute publication.", "L'expérience est organisée et vendue par The Host Club, aux mêmes conditions que les autres.", "Le membre qui propose n'encaisse jamais d'argent auprès des participants."]},
+        {"summary": ["Les membres de confiance peuvent proposer leurs propres sorties depuis leur espace.", "L'équipe vérifie le lieu, la sécurité et le prix avant toute publication.", "L'expérience est organisée et vendue par Wenzy, aux mêmes conditions que les autres.", "Le membre qui propose n'encaisse jamais d'argent auprès des participants."]},
         "Vous connaissez un club de padel génial, une boucle de randonnée parfaite ou un atelier qui mériterait d'être partagé ? Certains habitués peuvent désormais proposer leurs idées de sorties.",
         {"h": "Qui peut proposer ?"},
         "Les membres de confiance : des habitués à qui l'équipe ouvre cette possibilité. La rubrique « Proposer une sortie » apparaît alors dans leur espace. Vous n'êtes pas encore concerné ? Une idée est toujours la bienvenue : [écrivez-nous](/contact).",
         {"h": "De l'idée à la fiche"},
         {"ol": ["Vous décrivez votre idée : univers, déroulé, quartier, lieu envisagé, dates, nombre de participants et prix envisagé.", "L'équipe la relit et vérifie le lieu, son assurance pour une activité physique, la sécurité et le prix.", "Si elle est retenue, nous créons la fiche de l'expérience, avec son questionnaire si besoin, et vous prévenons.", "Le jour J, si vous le souhaitez, vous participez à la sortie avec le groupe."]},
         {"h": "Les règles du jeu"},
-        ["Rien n'est publié sans l'équipe.", "L'expérience est vendue par The Host Club : vous ne demandez jamais d'argent directement aux participants.", "Nos [règles de la communauté](/charte) s'appliquent à tous, organisateurs compris.", "Proposer n'est pas un emploi : vous n'êtes pas rémunéré à ce titre, sauf accord écrit distinct."],
+        ["Rien n'est publié sans l'équipe.", "L'expérience est vendue par Wenzy : vous ne demandez jamais d'argent directement aux participants.", "Nos [règles de la communauté](/charte) s'appliquent à tous, organisateurs compris.", "Proposer n'est pas un emploi : vous n'êtes pas rémunéré à ce titre, sauf accord écrit distinct."],
         {"tip": "Membre de confiance ? Rendez-vous dans [votre espace](/espace/proposer) pour proposer votre première sortie."},
       ],
       en: [
-        {"summary": ["Trusted members can propose their own outings from their account.", "The team checks the venue, safety and price before anything is published.", "The experience is organised and sold by The Host Club, on the same terms as the others.", "The member who proposes never collects money from participants."]},
+        {"summary": ["Trusted members can propose their own outings from their account.", "The team checks the venue, safety and price before anything is published.", "The experience is organised and sold by Wenzy, on the same terms as the others.", "The member who proposes never collects money from participants."]},
         "Know a great padel club, a perfect hiking loop or a workshop worth sharing? Some regulars can now propose their outing ideas.",
         {"h": "Who can propose?"},
         "Trusted members: regulars the team opens this up to. A “Propose an outing” section then appears in their account. Not there yet? Ideas are always welcome: [write to us](/contact).",
         {"h": "From idea to page"},
         {"ol": ["You describe your idea: universe, how it goes, neighbourhood, venue in mind, dates, number of participants and intended price.", "The team reviews it and checks the venue, its insurance for a physical activity, safety and price.", "If it goes ahead, we create the experience page, with its questionnaire if needed, and let you know.", "On the day, if you wish, you take part in the outing with the group."]},
         {"h": "The rules of the game"},
-        ["Nothing is published without the team.", "The experience is sold by The Host Club: you never ask participants for money directly.", "Our [community rules](/charte) apply to everyone, organisers included.", "Proposing isn't a job: you aren't paid for it, unless agreed separately in writing."],
+        ["Nothing is published without the team.", "The experience is sold by Wenzy: you never ask participants for money directly.", "Our [community rules](/charte) apply to everyone, organisers included.", "Proposing isn't a job: you aren't paid for it, unless agreed separately in writing."],
         {"tip": "A trusted member? Head to [your account](/espace/proposer) to propose your first outing."},
       ],
     },
@@ -1170,7 +1170,7 @@ export const blogCategory = (key: string) => BLOG_CATEGORIES.find((c) => c.key =
 export const articlesIn = (key: BlogCategoryKey) => BLOG_ARTICLES.filter((a) => a.category === key);
 
 /** Article mis en avant « Commencer ici ». */
-export const START_HERE = "the-host-club-guide-complet";
+export const START_HERE = "wenzy-guide-complet";
 /**
  * « Les plus lus » : notre sélection tant que les lectures ne sont pas mesurées (docs/17, 8i).
  * Sert aussi d'ordre « Plus lus » dans « Parcourir les articles ».

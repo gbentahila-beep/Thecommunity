@@ -20,7 +20,7 @@ export default async function InvoicesPage({ params }: PageProps<"/[locale]/espa
         <p className="mt-2 text-ink/75">{t("intro")}</p>
       </div>
       {isDemo ? (
-        <p className="rounded-2xl bg-plum-50 p-4 text-sm text-plum-900">{t("demo")}</p>
+        <p className="rounded-2xl bg-brand-50 p-4 text-sm text-brand-900">{t("demo")}</p>
       ) : invoices.length === 0 ? (
         <p className="rounded-[var(--radius-card)] bg-white p-5 text-ink/80 shadow-card">{t("empty")}</p>
       ) : (

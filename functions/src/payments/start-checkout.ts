@@ -61,7 +61,7 @@ export const startCheckout = onCall({ region: REGION }, async (req) => {
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
   });
-  const title = r.sessionSnapshot?.title?.fr ?? "The Host Club";
+  const title = r.sessionSnapshot?.title?.fr ?? "Wenzy";
   const checkout = await provider.createCheckout({
     paymentId: payRef.id,
     reservationId: res.id,

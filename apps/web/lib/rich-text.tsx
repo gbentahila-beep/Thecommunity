@@ -11,7 +11,7 @@ export function richText(text: string, missing: string): ReactNode {
     const ext = p.match(/^\[([^\]]+)\]\((https:\/\/[^)]*)\)$/);
     if (ext) {
       return (
-        <a key={i} href={ext[2]!} target="_blank" rel="noopener noreferrer" className="font-medium text-plum-900 underline decoration-plum-700/40 underline-offset-4 hover:decoration-plum-900">
+        <a key={i} href={ext[2]!} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-900 underline decoration-brand-700/40 underline-offset-4 hover:decoration-brand-900">
           {ext[1]}
         </a>
       );
@@ -19,7 +19,7 @@ export function richText(text: string, missing: string): ReactNode {
     const link = p.match(/^\[([^\]]+)\]\((\/[^)]*)\)$/);
     if (link) {
       return (
-        <Link key={i} href={link[2]!} className="font-medium text-plum-900 underline decoration-plum-700/40 underline-offset-4 hover:decoration-plum-900">
+        <Link key={i} href={link[2]!} className="font-medium text-brand-900 underline decoration-brand-700/40 underline-offset-4 hover:decoration-brand-900">
           {link[1]}
         </Link>
       );

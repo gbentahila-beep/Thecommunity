@@ -22,7 +22,7 @@ export default async function ContactPage({ params }: PageProps<"/[locale]/conta
         href={`mailto:${CONTACT_EMAIL}`}
         className="flex items-center gap-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card transition hover:shadow-float"
       >
-        <span className="grid size-12 place-items-center rounded-full bg-plum-50 text-plum-900">
+        <span className="grid size-12 place-items-center rounded-full bg-brand-50 text-brand-900">
           <Mail className="size-5" aria-hidden />
         </span>
         <span>
