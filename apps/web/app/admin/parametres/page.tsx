@@ -7,7 +7,9 @@ import { CompanyForm } from "@/components/admin/company-form";
 import { CategoryForm, CityForm } from "@/components/admin/place-forms";
 import { requireAdmin } from "@/lib/auth/admin";
 import { getAdminData } from "@/lib/data/admin";
-import { getCompanySettings, getPaymentSettings, getWenzyPrice } from "@/lib/data/admin-mail";
+import { getAllocationSettings, getCompanySettings, getPaymentSettings, getWenzyPrice } from "@/lib/data/admin-mail";
+import { AllocationSettingsForm, WhatsAppSettingsForm } from "@/components/admin/allocation-settings-form";
+import { DEFAULT_ALLOCATION_SETTINGS } from "@thecommunity/shared";
 import { PaymentSettingsForm } from "@/components/admin/payment-settings-form";
 import { WenzyPriceForm } from "@/components/admin/wenzy-price-form";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
@@ -22,7 +24,7 @@ export default async function SettingsAdminPage() {
     getWenzyPrice(),
     getPaymentSettings(),
   ]);
-  const [policies, models] = await Promise.all([getCancellationPolicies(), organizerPaymentModels()]);
+  const [policies, models, alloc] = await Promise.all([getCancellationPolicies(), organizerPaymentModels(), getAllocationSettings()]);
   const byOrder = (a: { order?: number }, b: { order?: number }) => (a.order ?? 0) - (b.order ?? 0);
   const mains = categories.filter((c) => !c.parentId).sort(byOrder);
   const orderedCategories = mains.flatMap((m) => [m, ...categories.filter((c) => c.parentId === m.id).sort(byOrder)]);
@@ -125,7 +127,7 @@ export default async function SettingsAdminPage() {
         <Card title="Prix Wenzy et réservations">
           <dl className="mb-4 grid grid-cols-2 gap-3 text-sm">
             <div><dt className="text-xs text-muted">Blocage d&apos;une place pendant le paiement</dt><dd>15 minutes</dd></div>
-            <div><dt className="text-xs text-muted">Fermeture des réservations</dt><dd>12 h avant (dîners) · 2 h (autres)</dd></div>
+            <div><dt className="text-xs text-muted">Fermeture des réservations</dt><dd>12 h avant (Tables ; au plus tard 18 h la veille pour un début avant 14 h) · 2 h (autres)</dd></div>
             <div><dt className="text-xs text-muted">Âge minimum</dt><dd>18 ans</dd></div>
           </dl>
           {wenzyPrice !== null ? (
@@ -133,6 +135,12 @@ export default async function SettingsAdminPage() {
           ) : (
             <p className="text-sm text-muted" data-testid="wenzy-price-demo">Prix Wenzy : 35 DH par place, frais compris. Démonstration : il se règle ici sur le site en ligne (super-admin).</p>
           )}
+        </Card>
+        <Card title="Lieux : délais de réponse">
+          <AllocationSettingsForm initial={alloc?.allocation ?? DEFAULT_ALLOCATION_SETTINGS} live={Boolean(alloc)} />
+        </Card>
+        <Card title="WhatsApp">
+          {alloc ? <WhatsAppSettingsForm initial={{ ...alloc.whatsapp }} canEdit={me?.role === "superadmin"} /> : <p className="text-sm text-muted">Démonstration : messages prédéfinis à envoyer depuis WhatsApp Web ; l&apos;envoi automatique s&apos;active avec un compte WhatsApp Business API.</p>}
         </Card>
       </div>
     </>

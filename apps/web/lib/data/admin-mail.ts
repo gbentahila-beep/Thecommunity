@@ -122,3 +122,16 @@ export async function getSiteHealth(): Promise<SiteHealth | null> {
     issues: Array.isArray(h.issues) ? h.issues : [],
   };
 }
+
+/** docs/22 § 17.H : délais de réponse des lieux et réglages WhatsApp (null en démonstration). */
+export async function getAllocationSettings() {
+  if (!FIREBASE_ENABLED) return null;
+  await requireAdmin();
+  const { allocationSettingsOf } = await import("@thecommunity/shared");
+  const [a, w] = await Promise.all([adminDb().doc("settings/allocation").get(), adminDb().doc("settings/whatsapp").get()]);
+  const x = w.data() ?? {};
+  return {
+    allocation: allocationSettingsOf(a.data()),
+    whatsapp: { provider: x.provider === "meta" ? "meta" : "outbox", phoneNumberId: String(x.phoneNumberId ?? ""), language: String(x.language ?? "fr"), templates: { request: String(x.templates?.request ?? "wenzy_demande_lieu"), reminder: String(x.templates?.reminder ?? "wenzy_relance_lieu"), recap: String(x.templates?.recap ?? "wenzy_recap_lieu") } } as const,
+  };
+}

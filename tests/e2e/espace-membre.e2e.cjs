@@ -135,10 +135,26 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   assert(await page.getByTestId('proposal-sent').isVisible(), 'proposition : confirmation (démonstration)');
   assert(await page.getByTestId('my-proposal').count() >= 1, 'proposition : « Mes propositions » listées');
 
+  // Étape H : billet des Tables, heure de révélation, déplacer sa réservation, table et messages après la rencontre, page du lieu
+  await page.goto(base + '/reserver/ses-diner-inconnus-1', { waitUntil: 'load' });
+  assert(/Réservations jusqu'au/.test(await page.getByTestId('tables-ticket').innerText()), 'réservation Tables : carte billet avec la fermeture');
+  assert(/Comment on compose les tables/.test(await page.getByTestId('tables-ticket').innerText()), 'réservation Tables : comment on compose les tables');
+  await page.goto(base + '/espace/reservations/res-demo-diner', { waitUntil: 'load' });
+  assert(/Le lieu arrive le/.test(await page.getByTestId('venue-arrives').innerText()), 'réservation : heure exacte de révélation du lieu');
+  await page.getByTestId('move-reservation').getByRole('button', { name: 'Déplacer sur une autre date' }).click();
+  assert(await page.getByTestId('move-reservation').getByLabel('Nouvelle date').locator('option').count() >= 1, 'déplacer : autres dates proposées');
+  await page.goto(base + '/espace/reservations/res-demo-escape', { waitUntil: 'load' });
+  assert(/Arrivé·e/.test(await page.getByTestId('my-table').innerText()), 'après le check-in : qui est arrivé');
+  await page.getByRole('link', { name: 'Écrire à ma table' }).click();
+  await page.waitForURL('**/espace/rencontres/table/**');
+  assert(await page.getByTestId('table-chat').getByRole('listitem').count() >= 1, 'messages de la table après la rencontre');
+  await page.goto(base + '/partenaire/demande/demo', { waitUntil: 'load' });
+  assert(await page.getByTestId('partner-response').getByRole('button', { name: 'Accepter' }).isVisible(), 'page du lieu : accepter ou refuser la demande');
+
   // Arabe
   await page.goto(base + '/ar/espace', { waitUntil: 'load' });
   assert(await page.evaluate(() => document.documentElement.dir) === 'rtl', 'espace en arabe RTL');
-  for (const p of ['/espace', '/espace/reservations/res-demo-diner', '/bienvenue', '/ar/espace/profil']) {
+  for (const p of ['/espace', '/espace/reservations/res-demo-diner', '/bienvenue', '/ar/espace/profil', '/reserver/ses-diner-inconnus-1', '/partenaire/demande/demo', '/ar/espace/reservations/res-demo-diner']) {
     await page.goto(base + p, { waitUntil: 'load' });
     assert(!(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)), 'pas de débordement : ' + p);
   }

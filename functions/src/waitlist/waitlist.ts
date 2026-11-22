@@ -1,4 +1,4 @@
-import { audienceRefusal, bookingClosesAt, maxSeatsFor, reservationRequestSchema, seatsAvailable, isSecretVenue } from "@thecommunity/shared";
+import { answerIssues, audienceRefusal, bookingClosesAt, maxSeatsFor, reservationRequestSchema, seatsAvailable, isSecretVenue, type QuestionDef } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -17,7 +17,7 @@ export const joinWaitlist = onCall({ region: REGION }, async (req) => {
   if (token.email_verified !== true) refuse("email_not_verified", "Confirmez votre adresse e-mail.");
   const parsed = reservationRequestSchema.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats } = parsed.data;
+  const { sessionId, seats, answers, preferences } = parsed.data;
   await requireMemberReady(uid);
 
   const sessRef = db.doc(`sessions/${sessionId}`);
@@ -37,6 +37,9 @@ export const joinWaitlist = onCall({ region: REGION }, async (req) => {
     if (lock.exists) refuse("already_booked", "Vous avez déjà une place pour cette date.");
     if (entry.exists && ["waiting", "offered"].includes(entry.data()!.status)) refuse("already_waiting", "Déjà sur la liste d'attente.");
     if (seatsAvailable(s as never) >= seats) refuse("seats_available", "Des places sont disponibles : réservez directement.");
+    // docs/22 § 17.H (H15) : le questionnaire se remplit en s'inscrivant sur la liste ; il suit la place proposée.
+    const questions = (Array.isArray(e!.questionnaire) ? e!.questionnaire : []) as QuestionDef[];
+    if (questions.length > 0 && answerIssues(questions, answers ?? {}).length > 0) refuse("questionnaire_required", "Répondez au questionnaire pour vous inscrire.");
 
     const snap = s.experienceSnapshot ?? {};
     tx.set(entryRef, {
@@ -44,6 +47,8 @@ export const joinWaitlist = onCall({ region: REGION }, async (req) => {
       sessionId,
       seats,
       status: "waiting",
+      ...(questions.length > 0 && answers ? { answers } : {}),
+      ...(preferences ? { preferences } : {}),
       sessionSnapshot: {
         title: snap.title ?? e!.title,
         slug: snap.slug ?? e!.slug,

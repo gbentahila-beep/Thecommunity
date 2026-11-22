@@ -56,7 +56,29 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.waitForURL(/\/admin\/experiences\/[^/]+$/);
   assert(await page.getByTestId('add-sessions').isVisible(), 'fiche rendez-vous : ajouter des dates');
   await go('/admin/partenaires/nouveau');
-  assert(await page.getByTestId('partner-hosting').isVisible(), 'fiche partenaire : accueil des Tables (tables, places, jours, WhatsApp)');
+  assert(await page.getByTestId('partner-hosting').isVisible(), 'fiche partenaire : accueil des rendez-vous Wenzy');
+
+  // Étape H : fiche du lieu pour l'attribution, attribution des lieux, date à risque, réglages
+  await go('/admin/partenaires/p-resto-gauthier');
+  assert(await page.getByTestId('partner-tiers').getByLabel('Premium').isChecked(), 'fiche du lieu : gammes cochées');
+  assert(await page.getByTestId('partner-formats').getByLabel('Dîner').isChecked(), 'fiche du lieu : formats acceptés');
+  assert(await page.getByTestId('partner-slots').locator('li').count() >= 5, 'fiche du lieu : créneaux habituels avec capacité');
+  await go('/admin/attribution');
+  assert(await page.getByTestId('calls').locator('li').count() >= 1, 'Attribution des lieux : appels à passer');
+  assert(/WhatsApp Web/.test(await page.getByTestId('calls').innerText()), 'Attribution des lieux : lien WhatsApp Web prérempli');
+  await page.getByTestId('calls').getByRole('link', { name: 'Confirmer' }).first().click();
+  await page.waitForURL('**/admin/sessions/**');
+  assert(await page.getByTestId('allocation-row').count() === 2, 'date : demandes aux lieux (une confirmée, une en attente)');
+  assert(/Confirmé/.test(await page.getByTestId('allocation').innerText()) && /En attente de réponse/.test(await page.getByTestId('allocation').innerText()), 'date : statut de chaque demande');
+  await go('/admin/aujourdhui');
+  const risky = page.getByTestId('today-list').locator(':scope > li', { hasText: 'À risque' }).first();
+  assert(await risky.isVisible(), "Aujourd'hui : date à risque signalée");
+  assert(/lieu à relancer ou appeler/.test(await page.getByTestId('today-list').innerText()), "Aujourd'hui : lieux à appeler");
+  await risky.getByRole('link').first().click();
+  await page.waitForURL('**/admin/sessions/**');
+  assert(await page.getByTestId('risk').isVisible(), 'date à risque : décisions proposées');
+  await go('/admin/parametres');
+  assert(await page.getByTestId('allocation-settings').isVisible(), 'Paramètres : délais de réponse des lieux');
 
   // Formulaire : validation
   await go('/admin/experiences/nouvelle?modele=vide');

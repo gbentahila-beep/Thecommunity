@@ -8,6 +8,7 @@ import { invalidArgument, requireAuth } from "../lib/guards";
 import { membershipRef, membershipTerms, planRef } from "../membership/state";
 import { reservationDoc } from "./reservation-doc";
 import { notifyQuestionnaire } from "./questionnaire";
+import { venueCapacity } from "../tables/allocation";
 
 import { refuse } from "./refuse";
 export { refuse };
@@ -74,6 +75,17 @@ export async function runReservation(o: ReservationRun) {
 
 type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers };
 
+/** Plafond de vente d'une date à lieu attribué, avant l'attribution (null = pas de plafond). */
+async function capacityBefore(sessionId: string): Promise<number | null> {
+  const s = (await db.doc(`sessions/${sessionId}`).get()).data();
+  if (!s || s.allocation) return null;
+  const e = (await db.doc(`experiences/${s.experienceId}`).get()).data();
+  if (!e) return null;
+  const cap = await venueCapacity(sessionId, s, e);
+  if (cap !== null && cap !== s.venueCapacity) await db.doc(`sessions/${sessionId}`).update({ venueCapacity: cap }).catch(() => undefined);
+  return cap;
+}
+
 async function runReservationOnce(o: ReservationRun) {
   const { uid, sessionId, seats } = o;
   // Étape 21 : règles de commission (cache d'une minute), lues hors transaction.
@@ -83,6 +95,8 @@ async function runReservationOnce(o: ReservationRun) {
   const sessRef = db.doc(`sessions/${sessionId}`);
   const lockRef = sessRef.collection("seatLocks").doc(uid);
   const requestRef = o.requestId ? db.doc(`bookingRequests/${o.requestId}`) : null;
+  // docs/22, décision 43 : plafond de vente d'après la capacité des lieux compatibles (lieu attribué), lu hors transaction.
+  const venueCap = await capacityBefore(sessionId);
   // Code promo : réservation directe uniquement (hypothèse 5f).
   const promoRef = o.promoCode && !requestRef ? db.doc(`promoCodes/${o.promoCode}`) : null;
 
@@ -161,7 +175,7 @@ async function runReservationOnce(o: ReservationRun) {
     const view = {
       status: s.status as string,
       startAt: (s.startAt as Timestamp).toDate(),
-      capacity: s.capacity as number,
+      capacity: venueCap === null ? (s.capacity as number) : Math.min(s.capacity as number, venueCap),
       seatsConfirmed: s.seatsConfirmed as number,
       seatsHeld: (s.seatsHeld as number) - releasedHold,
     };

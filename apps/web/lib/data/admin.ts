@@ -4,13 +4,13 @@
  * - Mode Firebase : lecture Firestore par le serveur, APRÈS vérification du rôle admin / superadmin
  *   (cookie de session). Les règles Firestore restent la barrière côté navigateur.
  */
-import { seatsAvailable, type CategoryKey, type SessionVenue } from "@thecommunity/shared";
+import { isTablesFlow, seatsAvailable, type CategoryKey, type SessionVenue } from "@thecommunity/shared";
 import { connection } from "next/server";
 import { cache } from "react";
 import { requireAdmin } from "@/lib/auth/admin";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES } from "./demo";
-import { buildAdminData, DEMO_ECONOMICS } from "./demo-admin";
+import { buildAdminData, DEMO_ECONOMICS, type AdminVenueRequest } from "./demo-admin";
 import { fsAdminData, fsDataRequests } from "./admin-firestore";
 
 export const getAdminData = cache(async function getAdminData() {
@@ -22,8 +22,11 @@ export const getAdminData = cache(async function getAdminData() {
     return { ...data, now, admin, isDemo: false, usersById: new Map(data.users.map((u) => [u.uid, u])) };
   }
   const data = buildAdminData(now);
+  const demo = demoAllocation(data.sessions, now);
   return {
     ...data,
+    sessions: demo.sessions,
+    venueRequests: demo.requests,
     recentSessions: [] as typeof data.sessions,
     now,
     admin: null,
@@ -38,6 +41,33 @@ export const getAdminData = cache(async function getAdminData() {
 });
 
 export type AdminData = Awaited<ReturnType<typeof getAdminData>>;
+
+/**
+ * Démonstration (docs/22 § 17.H) : la première date de Tables à lieu attribué a ses demandes aux lieux (une acceptée,
+ * une en attente), la suivante est « à risque ».
+ */
+function demoAllocation<S extends { id: string; experienceId: string; startAt: string; seatsConfirmed: number; status: string }>(sessions: S[], now: Date) {
+  const exps = new Map(DEMO_EXPERIENCES.map((e) => [e.id, e]));
+  const tables = sessions.filter((s) => s.status !== "cancelled" && new Date(s.startAt).getTime() > now.getTime() && isTablesFlow(exps.get(s.experienceId)) && exps.get(s.experienceId)?.venue.revealPolicy === "on_group_reveal");
+  const first = tables[0];
+  const second = tables.find((s) => s.experienceId !== first?.experienceId);
+  const requests: AdminVenueRequest[] = [];
+  if (first) {
+    const e = exps.get(first.experienceId)!;
+    const base = { sessionId: first.id, title: e.title.fr, format: "Dîner", tier: e.venueTier ?? "premium", unit: "table" as const, startAt: first.startAt, round: 1 };
+    const sent = new Date(now.getTime() - 40 * 60_000).toISOString();
+    requests.push(
+      { ...base, id: "vr-demo-1", partnerId: "p-resto-gauthier", partnerName: "Restaurant partenaire Gauthier", partnerWhatsapp: "+212 600 000 001", partnerEmail: "resto@example.com", tables: 3, people: Math.min(15, first.seatsConfirmed), status: "confirmed", reference: "W-DEMO01", token: "demo-token-1", sentAt: sent, respondedAt: new Date(now.getTime() - 20 * 60_000).toISOString(), responseBy: "partner" },
+      { ...base, id: "vr-demo-2", partnerId: "p-resto-racine", partnerName: "Bistrot partenaire Racine", partnerWhatsapp: "+212 600 000 002", partnerEmail: "bistrot@example.com", tables: 2, people: Math.max(0, first.seatsConfirmed - 15), status: "sent", reference: "W-DEMO02", token: "demo-token-2", sentAt: sent },
+    );
+  }
+  const out = sessions.map((s) =>
+    s.id === first?.id ? { ...s, allocation: { status: "requested" as const, needed: 5, people: s.seatsConfirmed, confirmed: 3, round: 1 } }
+    : s.id === second?.id ? { ...s, risk: { status: "at_risk" as const } }
+    : s,
+  );
+  return { sessions: out, requests };
+}
 
 export async function getDataRequests() {
   if (!FIREBASE_ENABLED) return [];

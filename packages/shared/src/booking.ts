@@ -2,6 +2,8 @@ import { z } from "zod";
 import { bookingPreferencesSchema, promoCodeSchema, promoDiscount, serviceFeeAmount, type PromoRule, type ServiceFee } from "./promo";
 import { questionnaireAnswersSchema } from "./questionnaire";
 import { seatsAvailable } from "./seats";
+import { MOROCCO_TIMEZONE } from "./constants";
+import { zonedDateTimeToUtc, zonedParts } from "./time";
 import type { BookingMode, CurrencyCode, Pricing } from "./types";
 
 /** Durée pendant laquelle une place reste bloquée le temps du paiement (hypothèse validée : 15 min). */
@@ -31,7 +33,20 @@ export function bookingCloseHours(mode: BookingMode): number {
 }
 
 export function bookingClosesAt(startAt: Date, mode: BookingMode): Date {
-  return new Date(startAt.getTime() - bookingCloseHours(mode) * 3_600_000);
+  const closes = new Date(startAt.getTime() - bookingCloseHours(mode) * 3_600_000);
+  if (mode !== "social_dinner") return closes;
+  // docs/22, décision 42 : début avant 14 h → fermeture au plus tard à 18 h la veille (on appelle les lieux de jour).
+  const z = zonedParts(startAt, MOROCCO_TIMEZONE);
+  if (z.hour >= 14) return closes;
+  const eve = localOnDayBefore(startAt, 18);
+  return eve.getTime() < closes.getTime() ? eve : closes;
+}
+
+/** `hour` h (heure du Maroc) la veille du jour de `instant`. */
+export function localOnDayBefore(instant: Date, hour: number): Date {
+  const z = zonedParts(instant, MOROCCO_TIMEZONE);
+  const d = new Date(Date.UTC(z.year, z.month - 1, z.day - 1));
+  return zonedDateTimeToUtc({ year: d.getUTCFullYear(), month: d.getUTCMonth() + 1, day: d.getUTCDate(), hour, minute: 0 }, MOROCCO_TIMEZONE);
 }
 
 /** Demande de réservation envoyée par le navigateur ; tout le reste (prix, places) est décidé par le serveur. */

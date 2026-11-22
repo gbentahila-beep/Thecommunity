@@ -254,18 +254,6 @@ export function newExperiencesMail(o: { locale: string; items: { title: string; 
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, list, cta: { label: t.cta, href: `${SITE_URL}${prefix(l)}/experiences` }, footer: t.footer }) };
 }
 
-/** docs/22, décision 17 : pas assez d'inscrits pour une table ; chacun choisit une autre date ou le remboursement. */
-export function minimumMail(o: { locale: string; firstName: string; title: string; when: string; deadline: string; reservationId: string }) {
-  const l = lang(o.locale);
-  const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
-  const t = {
-    fr: { subject: `Choisissez : ${o.title}`, heading: `${o.firstName ? `${o.firstName}, p` : "P"}as encore assez d'inscrits`, p: [`« ${o.title} », ${o.when} : il n'y a pas assez d'inscrits pour former une table.`, `Choisissez une autre date ou le remboursement intégral, avant le ${o.deadline}. Sans réponse, vous serez remboursé·e automatiquement.`], cta: "Choisir" },
-    en: { subject: `Your choice: ${o.title}`, heading: "Not enough people yet", p: [`“${o.title}”, ${o.when}: there aren't enough people to form a table.`, `Choose another date or a full refund before ${o.deadline}. Without an answer, you'll be refunded automatically.`], cta: "Choose" },
-    ar: { subject: `اختر: ${o.title}`, heading: "عدد المسجلين غير كافٍ بعد", p: [`« ${o.title} »، ${o.when}: عدد المسجلين غير كافٍ لتكوين مائدة.`, `اختر موعدًا آخر أو استردادًا كاملًا قبل ${o.deadline}. بدون رد، سيتم الاسترداد تلقائيًا.`], cta: "اختيار" },
-  }[l];
-  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
-}
-
 /** docs/22 § 8 : 5 h avant, le lieu, l'adresse et la cuisine, avec le résumé de la table sans les noms. */
 export function venueRevealedMail(o: { locale: string; firstName: string; title: string; when: string; venue: string | null; cuisine: string | null; summary: string | null; checkInFrom: string; reservationId: string }) {
   const l = lang(o.locale);
@@ -301,4 +289,24 @@ export function teamAlertMail(o: { subject: string; paragraphs: string[]; path: 
     subject: o.subject,
     ...layout("fr", { heading: o.subject, paragraphs: o.paragraphs, cta: { label: "Ouvrir dans le back-office", href: `${SITE_URL}${o.path}` }, footer: "Alerte automatique du back-office Wenzy." }),
   };
+}
+
+/** Demande, relance ou récapitulatif envoyé à un lieu partenaire (même texte que le message WhatsApp). */
+export function venueMessageMail(o: { subject: string; text: string; link: string; cta: string }) {
+  return {
+    subject: o.subject,
+    ...layout("fr", { heading: o.subject, paragraphs: o.text.split("\n").filter((l) => !l.includes(o.link)), cta: { label: o.cta, href: o.link }, footer: "Message envoyé par Wenzy à ses lieux partenaires. Une question ? Répondez à cet e-mail ou appelez-nous." }),
+  };
+}
+
+/** Décision 46 : pas assez d'inscrits ; une autre date (ou un événement compatible) est proposée. */
+export function proposalMail(o: { locale: string; firstName: string; title: string; when: string; proposed: string; deadline: string; reservationId: string }) {
+  const l = lang(o.locale);
+  const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
+  const t = {
+    fr: { subject: `Une autre date vous est proposée : ${o.title}`, heading: `${o.firstName ? `${o.firstName}, p` : "P"}as assez d'inscrits`, p: [`« ${o.title} », ${o.when} : il n'y a pas assez d'inscrits pour former une table.`, `Nous vous proposons : ${o.proposed}. Acceptez-la sans repayer, ou choisissez le remboursement intégral, avant le ${o.deadline}. Sans réponse, vous serez remboursé·e automatiquement.`], cta: "Répondre" },
+    en: { subject: `Another date is suggested: ${o.title}`, heading: "Not enough people", p: [`“${o.title}”, ${o.when}: there aren't enough people to form a table.`, `We suggest: ${o.proposed}. Accept it at no extra cost, or choose a full refund, before ${o.deadline}. Without an answer, you'll be refunded automatically.`], cta: "Answer" },
+    ar: { subject: `نقترح عليك موعدًا آخر: ${o.title}`, heading: "عدد المسجلين غير كافٍ", p: [`« ${o.title} »، ${o.when}: عدد المسجلين غير كافٍ لتكوين مائدة.`, `نقترح عليك: ${o.proposed}. اقبله دون دفع إضافي، أو اختر الاسترداد الكامل، قبل ${o.deadline}. بدون رد، سيتم الاسترداد تلقائيًا.`], cta: "الرد" },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
 }

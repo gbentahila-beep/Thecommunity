@@ -28,6 +28,7 @@ import {
   Wallet,
   LayoutTemplate,
   CalendarCheck,
+  Route,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -35,6 +36,7 @@ import { usePathname } from "next/navigation";
 export const ADMIN_LINKS = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { href: "/admin/aujourdhui", label: "Aujourd'hui", icon: CalendarCheck },
+  { href: "/admin/attribution", label: "Attribution des lieux", icon: Route },
   { href: "/admin/experiences", label: "Expériences", icon: Sparkles },
   { href: "/admin/modeles", label: "Modèles", icon: LayoutTemplate },
   { href: "/admin/sessions", label: "Sessions & groupes", icon: CalendarRange },

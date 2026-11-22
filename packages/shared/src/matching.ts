@@ -46,7 +46,7 @@ export type MatchPerson = {
 export type MatchQuestion = { id: string; kind: QuestionKind; match: QuestionMatch };
 export type MatchConfig = { minSize: number; targetSize: number; maxSize: number };
 /** avoidPairs (étape 31) : personnes qui ont demandé à ne plus être réunies — jamais à la même table si possible. */
-export type MatchOptions = { pastPairs?: Set<string>; questions?: MatchQuestion[]; avoidPairs?: Set<string> };
+export type MatchOptions = { pastPairs?: Set<string>; questions?: MatchQuestion[]; avoidPairs?: Set<string>; /** Nombre de tables imposé (tables confirmées par les lieux, docs/22). */ count?: number };
 
 export const pairKey = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
@@ -154,7 +154,7 @@ export function questionnaireCost(g: Pick<MatchPerson, "answers">[], questions: 
 /** Propose des groupes (listes d'uid). */
 export function composeGroups(people: MatchPerson[], c: MatchConfig, o: MatchOptions = {}): string[][] {
   const total = people.reduce((a, p) => a + p.seats, 0);
-  const n = groupCount(total, c);
+  const n = o.count && o.count > 0 ? Math.min(o.count, people.length) : groupCount(total, c);
   if (n === 0) return [];
   const groups: MatchPerson[][] = Array.from({ length: n }, () => []);
   // Les réservations à plusieurs places d'abord, puis les langues les plus rares (plus dures à placer).

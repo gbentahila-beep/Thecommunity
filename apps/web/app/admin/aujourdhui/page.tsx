@@ -1,4 +1,4 @@
-import { VENUE_REVEAL_HOURS } from "@thecommunity/shared";
+import { bookingClosesAt, revealAtFor } from "@thecommunity/shared";
 import Link from "next/link";
 import { adminDate, Badge, Card, PageHeader } from "@/components/admin/ui";
 import { getAdminData } from "@/lib/data/admin";
@@ -9,8 +9,8 @@ const HOUR = 3_600_000;
 type Todo = { tone: "red" | "amber" | "green" | "gray"; text: string };
 
 /**
- * Aujourd'hui (docs/22 § 11) : les dates des 7 prochains jours et ce qu'il reste à faire — lieu secret à renseigner
- * (au plus tard 5 h avant), tables, minimum non atteint, check-ins en cours.
+ * Aujourd'hui (docs/22 § 11 et § 17.H) : les dates des 7 prochains jours et ce qu'il reste à faire — date à risque,
+ * attribution des lieux, lieux à appeler, tables à valider, check-ins en cours.
  */
 export default async function TodayPage() {
   const d = await getAdminData();
@@ -26,13 +26,27 @@ export default async function TodayPage() {
     const grouped = e.bookingMode === "social_dinner" || e.bookingMode === "group";
     const secret = e.venue.revealPolicy === "on_group_reveal";
     const hasVenue = (d.sessionVenues[s.id]?.length ?? 0) > 0 || Boolean(e.venue.name);
-    const revealAt = start - VENUE_REVEAL_HOURS * HOUR;
-    if (secret && !hasVenue) {
-      const left = revealAt - now;
-      todos.push({ tone: left < 24 * HOUR ? "red" : "amber", text: left > 0 ? `Lieu à renseigner avant le ${adminDate(new Date(revealAt).toISOString())} (${s.seatsConfirmed} inscrits)` : "Lieu non renseigné : la révélation est bloquée" });
+    const revealAt = revealAtFor(s.startAt).getTime();
+    const closesAt = bookingClosesAt(new Date(s.startAt), e.bookingMode).getTime();
+    // docs/22 § 17.H : date à risque, attribution des lieux, appels à passer.
+    if (s.risk?.status === "at_risk") todos.push({ tone: "red", text: "À risque : décision à prendre" });
+    else if (s.risk?.status === "proposed") todos.push({ tone: "amber", text: "Autre date proposée : réponses en cours" });
+    const reqs = d.venueRequests.filter((r) => r.sessionId === s.id);
+    const pending = reqs.filter((r) => r.status === "sent").length;
+    if (pending) todos.push({ tone: start - now < 8 * HOUR ? "red" : "amber", text: `${pending} lieu${pending > 1 ? "x" : ""} à relancer ou appeler` });
+    const a = s.allocation;
+    if (secret && a?.status === "short") todos.push({ tone: "red", text: `${a.missing ?? "?"} table${(a.missing ?? 0) > 1 ? "s" : ""} sans lieu` });
+    else if (secret && a?.status === "requested") todos.push({ tone: "amber", text: `Lieux : ${a.confirmed ?? 0} / ${a.needed ?? "?"} tables confirmées` });
+    else if (secret && a?.status === "confirmed") todos.push({ tone: "green", text: "Lieux confirmés" });
+    else if (secret && a?.status === "manual") todos.push({ tone: "gray", text: "Lieux choisis à la main" });
+    else if (secret && !hasVenue) {
+      if (s.venueCapacity === 0) todos.push({ tone: "red", text: "Aucun lieu compatible : ventes bloquées" });
+      todos.push(now >= closesAt && s.seatsConfirmed > 0 ? { tone: "red", text: "Attribution des lieux non lancée" } : { tone: "gray", text: `Lieux choisis à la fermeture (${adminDate(new Date(closesAt).toISOString())})` });
+      if (now >= revealAt && s.groupsStatus !== "revealed") todos.push({ tone: "red", text: "Révélation bloquée : lieux non confirmés" });
     } else if (secret && !(d.sessionVenues[s.id]?.length)) {
       todos.push({ tone: "gray", text: `Lieu habituel : ${e.venue.name}` });
     }
+    if (s.groupsNeedReview) todos.push({ tone: "amber", text: "Table à valider" });
     const min = e.groupConfig?.minSize ?? 0;
     if (grouped && min > 0 && s.seatsConfirmed < min && start - now < 24 * HOUR) todos.push({ tone: "red", text: `Minimum non atteint : ${s.seatsConfirmed} inscrit${s.seatsConfirmed > 1 ? "s" : ""} pour ${min} par table` });
     if (grouped && s.seatsConfirmed > 0) {

@@ -131,7 +131,20 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
 
   return (
     <div className="mt-6 space-y-4">
-      {maxSeats > 1 && (
+      {maxSeats === 2 && (
+        <fieldset className="rounded-[var(--radius-card)] bg-white p-4 shadow-card" data-testid="seats-choice">
+          <legend className="sr-only">{t("seatsLabel")}</legend>
+          <div className="grid grid-cols-2 gap-2">
+            {[1, 2].map((n) => (
+              <label key={n} className={`flex cursor-pointer items-center justify-center rounded-2xl border px-3 py-3 text-sm font-semibold ${seats === n ? "border-brand-900 bg-brand-50 text-brand-900" : "border-line text-ink"}`}>
+                <input type="radio" name="seats" className="sr-only" checked={seats === n} disabled={busy} onChange={() => changeSeats(n)} />
+                {n === 1 ? t("seatsSolo") : t("seatsPlusOne")}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
+      {maxSeats > 2 && (
         <div className="flex items-center justify-between rounded-[var(--radius-card)] bg-white p-4 shadow-card">
           <span id="seats-label" className="font-medium text-ink">{t("seatsLabel")}</span>
           <div className="flex items-center gap-3" role="group" aria-labelledby="seats-label">
@@ -265,14 +278,18 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={submit}
-        disabled={busy}
-        className="btn btn-primary w-full"
-      >
-        {busy ? t("working") : free ? t("freeCta") : transfer ? t("payCtaTransfer", { amount: money(total) }) : t("payCtaAmount", { amount: money(total) })}
-      </button>
+      {/* docs/22 § 8 : barre fixe en bas sur téléphone, « 35 DH · 1 place · Continuer ». */}
+      <div className="sticky bottom-0 z-10 -mx-4 border-t border-line bg-cream/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0" data-testid="booking-bar">
+        <div className="flex items-center gap-3">
+          <p className="min-w-0 flex-1 text-sm text-ink sm:hidden">
+            <span className="block font-semibold tabular-nums">{free ? t("freeShort") : money(total)}</span>
+            <span className="text-muted">{t("seatsCount", { count: seats })}</span>
+          </p>
+          <button type="button" onClick={submit} disabled={busy} className="btn btn-primary flex-1 sm:w-full">
+            {busy ? t("working") : free ? t("freeCta") : transfer ? t("payCtaTransfer", { amount: money(total) }) : t("payCtaAmount", { amount: money(total) })}
+          </button>
+        </div>
+      </div>
       {!free && <p className="text-center text-xs text-muted">{transfer ? t("holdNoteTransfer", { hours: transfer.hours, cutoff: transfer.cutoff }) : t("holdNote")}</p>}
     </div>
   );

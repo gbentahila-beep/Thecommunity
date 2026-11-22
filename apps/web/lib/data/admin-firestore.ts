@@ -2,7 +2,7 @@ import "server-only";
 import type { CancellationPolicy, Category, City, Experience, Session, SessionVenue } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase/admin";
-import type { AdminGroup, AdminPayment, AdminReservation, AdminUser, Partner, PromoCode } from "./demo-admin";
+import type { AdminGroup, AdminPayment, AdminReservation, AdminUser, AdminVenueRequest, Partner, PromoCode } from "./demo-admin";
 
 const iso = (v: unknown) => (v instanceof Timestamp ? v.toDate().toISOString() : typeof v === "string" ? v : new Date(0).toISOString());
 function plain<T>(value: unknown): T {
@@ -41,7 +41,7 @@ function estimateFinance(r: DocumentData, eco: Economics | undefined) {
 /** Toutes les données du back-office, lues par le serveur (après vérification du rôle admin). */
 export async function fsAdminData(now: Date) {
   const db = adminDb();
-  const [sessionsSnap, expSnap, privSnap, resSnap, paySnap, usersSnap, partnersSnap, promosSnap, groupsSnap, waitSnap, citiesSnap, catSnap] = await Promise.all([
+  const [sessionsSnap, expSnap, privSnap, resSnap, paySnap, usersSnap, partnersSnap, promosSnap, groupsSnap, waitSnap, citiesSnap, catSnap, requestsSnap] = await Promise.all([
     // Dates à venir + celles des 3 derniers jours (pointage le jour J, annulations de dernière minute).
     db.collection("sessions").where("startAt", ">=", Timestamp.fromMillis(now.getTime() - 3 * 86_400_000)).orderBy("startAt").limit(500).get(),
     db.collection("experiences").get(),
@@ -55,6 +55,8 @@ export async function fsAdminData(now: Date) {
     db.collectionGroup("waitlist").get(),
     db.collection("cities").orderBy("order").get(),
     db.collection("categories").orderBy("order").get(),
+    // docs/22 § 17.H : demandes aux lieux des dates récentes et à venir.
+    db.collection("venueRequests").where("startAt", ">=", Timestamp.fromMillis(now.getTime() - 3 * 86_400_000)).get(),
   ]);
 
   const economics: Record<string, Economics> = {};
@@ -163,7 +165,18 @@ export async function fsAdminData(now: Date) {
   }
   const cities = citiesSnap.docs.map((d) => plain<City>({ id: d.id, ...d.data() }));
   const categories = catSnap.docs.map((d) => plain<Category>({ id: d.id, ...d.data() }));
-  return { sessions, recentSessions, experiences, economics, sessionVenues, reservations, payments, users, partners, promos, groups, waitlists, cities, categories };
+  const venueRequests: AdminVenueRequest[] = requestsSnap.docs.map((d) => {
+    const r = d.data();
+    return {
+      id: d.id, sessionId: r.sessionId, partnerId: r.partnerId, partnerName: r.partnerName ?? "", partnerWhatsapp: r.partnerWhatsapp ?? "", partnerEmail: r.partnerEmail ?? "",
+      title: r.title ?? "", format: r.format ?? "", tier: r.tier ?? null, unit: r.unit ?? "table", startAt: iso(r.startAt), tables: Number(r.tables ?? 0), people: Number(r.people ?? 0),
+      status: r.status, round: Number(r.round ?? 1), reference: r.reference ?? "", token: r.token ?? "", ...(r.fixed ? { fixed: true } : {}),
+      ...(r.sentAt ? { sentAt: iso(r.sentAt) } : {}), ...(r.remindedAt ? { remindedAt: iso(r.remindedAt) } : {}), ...(r.respondedAt ? { respondedAt: iso(r.respondedAt) } : {}),
+      ...(r.response?.by ? { responseBy: r.response.by } : {}), ...(r.manualWhatsappAt ? { manualWhatsappAt: iso(r.manualWhatsappAt) } : {}),
+      ...(r.recap?.text ? { recapText: String(r.recap.text) } : {}), ...(r.recapSentAt ? { recapSentAt: iso(r.recapSentAt) } : {}),
+    };
+  });
+  return { sessions, recentSessions, experiences, economics, sessionVenues, reservations, payments, users, partners, promos, groups, waitlists, cities, categories, venueRequests };
 }
 
 /** Demandes d'export / suppression (loi 09-08), les plus récentes d'abord. */

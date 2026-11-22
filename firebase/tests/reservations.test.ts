@@ -17,7 +17,10 @@ import { sendTransferReminders } from "../../functions/src/payments/transfer-rem
 import { expiredBackupFolders } from "../../functions/src/maintenance/backup";
 import { runHealthCheck, uninsuredPhysicalExperiences } from "../../functions/src/maintenance/health";
 import { sendDueReminders } from "../../functions/src/notify/reminders";
-import { DEFAULT_EVENT_TEMPLATES, DEFAULT_HOME_SETTINGS, QUESTIONNAIRE_TEMPLATES } from "@thecommunity/shared";
+import { runSessionAutomation } from "../../functions/src/tables/automation";
+import { processPendingRequests } from "../../functions/src/tables/allocation";
+import { checkInSelf } from "../../functions/src/reservations/self-check-in";
+import { DEFAULT_EVENT_TEMPLATES, DEFAULT_HOME_SETTINGS, QUESTIONNAIRE_TEMPLATES, tablesTimeline, zonedParts } from "@thecommunity/shared";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -1259,18 +1262,20 @@ describe("composition des tables (6)", () => {
     expect(g1).toMatchObject({ status: "revealed", label: "Table 1", seats: 4 });
     expect(g1.members[0]).toMatchObject({ firstName: "P0", interests: ["food"] });
     expect(g1.members[0].email).toBeUndefined();
-    const notes = await db().collection(`users/${all[0]}/notifications`).where("type", "==", "group_revealed").get();
+    // Tables (docs/22 § 17.H) : « Votre lieu est révélé » ; la table et les prénoms se découvrent au check-in.
+    const notes = await db().collection(`users/${all[0]}/notifications`).where("type", "==", "venue_revealed").get();
     expect(notes.size).toBe(1);
     const mails = await db().collection("mail").where("refs.sessionId", "==", sid).get();
     expect(mails.size).toBe(8);
-    expect(mails.docs[0]!.data()).toMatchObject({ kind: "group_revealed", status: "outbox" });
+    expect(mails.docs[0]!.data()).toMatchObject({ kind: "venue_revealed", status: "outbox" });
+    expect(r0.tableSummary).toMatchObject({ others: 3 });
     // Après la révélation : plus de proposition automatique ; un changement à la main prévient les personnes déplacées.
     expect(await refusal(adm.call("adminProposeGroups", { sessionId: sid }))).toBe("failed-precondition:already_revealed");
     await adm.call("adminSaveGroups", { sessionId: sid, groups: [{ label: "Table 1", memberIds: [...all.slice(1, 4), all[4]!] }, { label: "Table 2", memberIds: [all[0]!, ...all.slice(5)] }] });
     const moved = (await db().collection("reservations").where("sessionId", "==", sid).where("userId", "==", all[0]).get()).docs[0]!.data();
     expect(moved.groupId).toBe(`${sid}_t2`);
-    expect((await db().collection(`users/${all[0]}/notifications`).where("type", "==", "group_revealed").get()).size).toBe(2);
-    expect((await db().collection(`users/${all[2]}/notifications`).where("type", "==", "group_revealed").get()).size).toBe(1);
+    expect((await db().collection(`users/${all[0]}/notifications`).where("type", "==", "group_revealed").get()).size).toBe(1);
+    expect((await db().collection(`users/${all[2]}/notifications`).where("type", "==", "group_revealed").get()).size).toBe(0);
   });
 
   it("plafond de 50 places par date", async () => {
@@ -2512,4 +2517,204 @@ describe("« Mes rencontres » (31)", () => {
     await team.call("adminSaveExperience", { experienceId, data, addSessions: false, images: [] });
     expect(await notes(b.uid, "outing_for_group")).toBe(1);
   }, 120_000);
+});
+
+describe("attribution des lieux et parcours des Tables (Étape H)", () => {
+  const HOUR = 3_600_000;
+  /** Rendez-vous Tables à lieu attribué (Dîner Premium), sans lieu habituel, tables de 3 à 5. */
+  async function tablesSession(o: { startInHours?: number; capacity?: number } = {}) {
+    const sid = await makeSession({ capacity: o.capacity ?? 20, mode: "social_dinner", startInHours: o.startInHours ?? 72 });
+    const s = await session(sid);
+    const expId = s.experienceId as string;
+    await db().doc(`experiences/${expId}`).update({
+      groupConfig: { minSize: 3, targetSize: 4, maxSize: 5 }, templateId: "diner", venueTier: "premium", cityId: "casablanca",
+      venue: { name: "", address: "", revealPolicy: "on_group_reveal", geo: null },
+    });
+    return { sid, expId, start: (s.startAt as Timestamp).toDate() };
+  }
+  /** Lieu compatible avec un créneau qui couvre `start`. */
+  async function partner(name: string, start: Date, units: number, extra: Record<string, unknown> = {}) {
+    const z = zonedParts(start, "Africa/Casablanca");
+    const t = `${String(z.hour).padStart(2, "0")}:${String(z.minute).padStart(2, "0")}`;
+    const ref = db().collection("partners").doc();
+    await ref.set({ name: `${name} ${run}`, type: "restaurant", status: "active", cityId: "casablanca", address: `1 rue ${name}, Casablanca`, contactEmail: `${name.toLowerCase()}.${run}@example.com`, whatsapp: "06 12 34 56 78",
+      tiers: ["premium"], formats: ["diner"], unit: "table", unitMin: 3, unitMax: 5, cuisine: `Cuisine ${name}`, level: "occasional", slots: [{ weekday: z.weekday, from: t, to: t, units }], ...extra });
+    return ref.id;
+  }
+  async function people(sid: string, n: number) {
+    const out: Client[] = [];
+    for (let i = 0; i < n; i++) {
+      const u = await member();
+      await db().doc(`users/${u.uid}`).set({ firstName: `T${i}`, birthDate: `${1988 + i}-03-04`, languages: ["fr"], interests: ["food"], sector: "tech", email: `t${i}.${run}.${sid.slice(0, 4)}@example.com` }, { merge: true });
+      await paidReservation(u, sid);
+      out.push(u);
+    }
+    return out;
+  }
+  const requestsOf = async (sid: string) => (await db().collection("venueRequests").where("sessionId", "==", sid).get()).docs.map((d) => ({ id: d.id, ...d.data() }) as Record<string, unknown> & { id: string });
+
+  it("plafond de vente : jamais plus de places que les lieux compatibles ne peuvent en accueillir", async () => {
+    const { sid, start } = await tablesSession();
+    expect(await refusal((await member()).call("createReservation", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:full");
+    const pid = await partner("Plafond", start, 1);
+    await people(sid, 5);
+    expect(await refusal((await member()).call("createReservation", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:full");
+    expect((await session(sid)).venueCapacity).toBe(5);
+    await db().doc(`partners/${pid}`).update({ status: "archived" }); // n'interfère pas avec les tests suivants (même créneau)
+  });
+
+  it("fermeture : lieux choisis, demandes envoyées ; refus → autre lieu ; confirmations → révélation avec résumé sans les noms ; 1 h avant : récapitulatif", async () => {
+    const { sid, start } = await tablesSession();
+    const a = await partner("Alpha", start, 2, { level: "regular" });
+    await partner("Beta", start, 2);
+    const group = await people(sid, 10);
+    const t = tablesTimeline(start);
+    // Fermeture : 3 tables (10 personnes, tables de 3 à 5) → Alpha 2 (régulier d'abord), Beta 1.
+    await runSessionAutomation(sid, t.closesAt.getTime() + 60_000);
+    let reqs = await requestsOf(sid);
+    expect(reqs.map((r) => [String(r.partnerName).split(" ")[0], r.tables, r.status]).sort()).toEqual([["Alpha", 2, "sent"], ["Beta", 1, "sent"]]);
+    expect((await session(sid)).allocation).toMatchObject({ status: "requested", needed: 3, people: 10 });
+    const mails = await db().collection("mail").where("refs.sessionId", "==", sid).where("kind", "==", "venue_request").get();
+    expect(mails.size).toBe(2);
+    expect((await db().collection("whatsapp").where("refs.requestId", "==", reqs[0]!.id).get()).docs[0]!.data()).toMatchObject({ status: "outbox", to: "212612345678", kind: "request" });
+    const alpha = reqs.find((r) => r.partnerId === a)!;
+    const beta = reqs.find((r) => r.partnerId !== a)!;
+    // Le lien sécurisé : mauvais jeton refusé ; Alpha accepte.
+    const anon = await member();
+    expect(await refusal(anon.call("partnerRespondRequest", { requestId: alpha.id, token: "x".repeat(32), accept: true }))).toBe("not-found:not_found");
+    expect(await anon.call("partnerRespondRequest", { requestId: alpha.id, token: alpha.token, accept: true })).toEqual({ status: "confirmed" });
+    // Un nouveau lieu est ajouté ; Beta refuse au téléphone : le logiciel propose Gamma (nouvelle demande).
+    const c = await partner("Gamma", start, 1);
+    const adm = await member({ role: "admin" });
+    expect(await refusal(group[0]!.call("adminRequestAction", { requestId: beta.id, action: "refuse" }))).toBe("permission-denied:");
+    await adm.call("adminRequestAction", { requestId: beta.id, action: "refuse" });
+    reqs = await requestsOf(sid);
+    const gamma = reqs.find((r) => r.partnerId === c)!;
+    expect(gamma).toMatchObject({ status: "sent", tables: 1, round: 2 });
+    // Pas encore toutes confirmées : la révélation attend (aucun lieu attribué avant confirmation).
+    expect((await session(sid)).allocation).toMatchObject({ status: "requested", confirmed: 2 });
+    expect((await db().doc(`sessions/${sid}/private/venues`).get()).exists).toBe(false);
+    await adm.call("adminRequestAction", { requestId: gamma.id, action: "confirm_phone" });
+    expect((await session(sid)).allocation).toMatchObject({ status: "confirmed", confirmed: 3 });
+    const venues = (await db().doc(`sessions/${sid}/private/venues`).get()).data()!.venues as { name: string; tables: number; cuisine: string }[];
+    expect(venues.map((v) => [v.tables, v.cuisine.split(" ")[1]]).sort()).toEqual([[1, "Gamma"], [2, "Alpha"]]);
+    // Révélation : 3 tables composées dans les lieux confirmés ; lieu, cuisine et résumé sans les noms.
+    await runSessionAutomation(sid, t.revealAt.getTime() + 60_000);
+    expect((await session(sid)).groupsStatus).toBe("revealed");
+    const groups = (await db().collection("groups").where("sessionId", "==", sid).get()).docs.map((d) => d.data());
+    expect(groups).toHaveLength(3);
+    expect(groups.every((g) => g.namesAtCheckIn === true)).toBe(true);
+    const r0 = (await db().collection("reservations").where("sessionId", "==", sid).where("userId", "==", group[0]!.uid).get()).docs[0]!.data();
+    expect(r0.venue.name).toMatch(/Alpha|Gamma/);
+    expect(r0.venue.cuisine).toMatch(/Cuisine (Alpha|Gamma)/);
+    expect(r0.tableSummary).toMatchObject({ languages: ["fr"], sectors: ["tech"] });
+    expect(JSON.stringify(r0.tableSummary)).not.toMatch(/T\d/);
+    expect((await db().collection(`users/${group[0]!.uid}/notifications`).where("type", "==", "venue_revealed").get()).size).toBe(1);
+    expect((await db().collection("mail").where("refs.sessionId", "==", sid).where("kind", "==", "venue_revealed").get()).size).toBe(10);
+    // Check-in : on rejoint la liste des arrivés de sa table.
+    await checkInSelf(group[0]!.uid, (await db().collection("reservations").where("sessionId", "==", sid).where("userId", "==", group[0]!.uid).get()).docs[0]!.id, new Date(start.getTime() - 10 * 60_000));
+    expect((await db().doc(`groups/${r0.groupId}`).get()).data()!.arrivedUids).toEqual([group[0]!.uid]);
+    // 1 h avant : récapitulatif à chaque lieu (prénoms par table).
+    await runSessionAutomation(sid, t.finalAt.getTime() + 60_000);
+    const recaps = await db().collection("mail").where("refs.sessionId", "==", sid).where("kind", "==", "venue_recap").get();
+    expect(recaps.size).toBe(2);
+    const alphaRecap = (await db().doc(`venueRequests/${alpha.id}`).get()).data()!.recap;
+    expect(alphaRecap.tables).toHaveLength(2);
+    expect(alphaRecap.tables[0].names[0]).toMatch(/^T\d/);
+  });
+
+  it("sans réponse : relance après 1 h, puis autre lieu après 2 h", async () => {
+    const { sid, start } = await tablesSession();
+    await partner("Lent", start, 1);
+    await partner("Relais", start, 1);
+    await people(sid, 4);
+    const t = tablesTimeline(start);
+    await runSessionAutomation(sid, t.closesAt.getTime() + 60_000);
+    const [first] = await requestsOf(sid);
+    const sentAt = ((await db().doc(`venueRequests/${first!.id}`).get()).data()!.sentAt as Timestamp).toMillis();
+    expect(await processPendingRequests(sentAt + 61 * 60_000, sid)).toEqual({ reminded: 1, expired: 0 });
+    expect(await processPendingRequests(sentAt + 121 * 60_000, sid)).toEqual({ reminded: 0, expired: 1 });
+    const after = await requestsOf(sid);
+    expect(after.map((r) => r.status).sort()).toEqual(["expired", "sent"]);
+  });
+
+  it("date à risque : alerte la veille ; autre date proposée ; accepter déplace, refuser rembourse", async () => {
+    const { sid, expId, start } = await tablesSession();
+    const other = db().collection("sessions").doc();
+    await other.set({ ...(await session(sid)), startAt: Timestamp.fromMillis(start.getTime() + 24 * HOUR), seatsConfirmed: 0, seatsHeld: 0 });
+    await db().doc(`experiences/${expId}/private/venue`).set({ name: "Habituel", address: "2 rue Habituelle, Casablanca", geo: null, partnerName: "" });
+    const [u1, u2] = await people(sid, 2);
+    await runSessionAutomation(sid, start.getTime() - 23 * HOUR);
+    expect((await session(sid)).risk).toMatchObject({ status: "at_risk" });
+    const adm = await member({ role: "admin" });
+    expect(await adm.call("adminRiskDecision", { sessionId: sid, action: "propose", targetSessionId: other.id })).toMatchObject({ ok: true, notified: 2 });
+    const r1 = (await db().collection("reservations").where("sessionId", "==", sid).where("userId", "==", u1!.uid).get()).docs[0]!;
+    const r2 = (await db().collection("reservations").where("sessionId", "==", sid).where("userId", "==", u2!.uid).get()).docs[0]!;
+    expect(r1.data().proposal).toMatchObject({ kind: "date", status: "pending", targetSessionId: other.id });
+    await u1!.call("respondProposal", { reservationId: r1.id, accept: true });
+    expect(await reservation(r1.id)).toMatchObject({ sessionId: other.id, status: "confirmed", proposal: { status: "accepted" } });
+    await u2!.call("respondProposal", { reservationId: r2.id, accept: false });
+    expect((await reservation(r2.id)).status).toBe("refunded");
+    expect(await session(other.id)).toMatchObject({ seatsConfirmed: 1 });
+    expect(await session(sid)).toMatchObject({ seatsConfirmed: 0 });
+  });
+
+  it("déplacer sa réservation sur une autre date, jusqu'à la fermeture", async () => {
+    const sid = await makeSession({ startInHours: 72 });
+    const s = await session(sid);
+    const other = db().collection("sessions").doc();
+    await other.set({ ...s, startAt: Timestamp.fromMillis((s.startAt as Timestamp).toMillis() + 7 * 24 * HOUR), seatsConfirmed: 0, seatsHeld: 0 });
+    const foreign = await makeSession({ startInHours: 96 });
+    const u = await member();
+    const { reservationId } = await paidReservation(u, sid);
+    expect(await refusal(u.call("moveMyReservation", { reservationId, targetSessionId: foreign }))).toBe("failed-precondition:different_experience");
+    expect(await refusal((await member()).call("moveMyReservation", { reservationId, targetSessionId: other.id }))).toBe("not-found:not_found");
+    await u.call("moveMyReservation", { reservationId, targetSessionId: other.id });
+    expect(await reservation(reservationId)).toMatchObject({ sessionId: other.id, status: "confirmed" });
+    expect(await session(sid)).toMatchObject({ seatsConfirmed: 0 });
+    expect(await session(other.id)).toMatchObject({ seatsConfirmed: 1 });
+    // Date déjà fermée : plus de déplacement.
+    const soon = await makeSession({ startInHours: 48 });
+    const v = await member();
+    const later = db().collection("sessions").doc();
+    await later.set({ ...(await session(soon)), startAt: Timestamp.fromMillis(Date.now() + 96 * HOUR), seatsConfirmed: 0, seatsHeld: 0 });
+    const own = await paidReservation(v, soon);
+    await db().doc(`sessions/${soon}`).update({ startAt: Timestamp.fromMillis(Date.now() + HOUR) });
+    expect(await refusal(v.call("moveMyReservation", { reservationId: own.reservationId, targetSessionId: later.id }))).toBe("failed-precondition:closed");
+  });
+
+  it("messages de la table : après le check-in, 2 h après le début", async () => {
+    const sid = await makeSession({ startInHours: -3, mode: "social_dinner" });
+    const a = await member();
+    const b = await member();
+    const gid = `${sid}_t1`;
+    await db().doc(`groups/${gid}`).set({ sessionId: sid, label: "Table 1", status: "revealed", namesAtCheckIn: true, memberIds: [a.uid, b.uid], arrivedUids: [a.uid], members: [{ uid: a.uid, firstName: "Ana", interests: [] }, { uid: b.uid, firstName: "Bilal", interests: [] }] });
+    expect(await refusal(b.call("sendTableMessage", { groupId: gid, text: "Salut" }))).toBe("not-found:not_found");
+    await a.call("sendTableMessage", { groupId: gid, text: "Merci pour la soirée !" });
+    const msgs = (await db().collection(`groups/${gid}/messages`).get()).docs.map((d) => d.data());
+    expect(msgs).toMatchObject([{ uid: a.uid, firstName: "Ana", text: "Merci pour la soirée !" }]);
+  });
+
+  it("liste d'attente : questionnaire exigé à l'inscription, repris sur la place proposée", async () => {
+    const q = QUESTIONNAIRE_TEMPLATES.find((x) => x.questions.length > 0)!;
+    const sid = await makeSession({ capacity: 1, extra: { questionnaire: q.questions } });
+    const first = await member();
+    const answers = Object.fromEntries(q.questions.map((x) => [x.id, 0]));
+    await first.call("createReservation", { sessionId: sid, seats: 1, answers });
+    const w = await member();
+    expect(await refusal(w.call("joinWaitlist", { sessionId: sid, seats: 1 }))).toBe("failed-precondition:questionnaire_required");
+    expect(await w.call("joinWaitlist", { sessionId: sid, seats: 1, answers })).toEqual({ status: "waiting" });
+    expect((await db().doc(`sessions/${sid}/waitlist/${w.uid}`).get()).data()!.answers).toEqual(answers);
+  });
+
+  it("lieu fixe (activité) : demande de confirmation au lieu la veille", async () => {
+    const sid = await makeSession({ startInHours: 20 });
+    const s = await session(sid);
+    const pid = await partner("Fixe", (s.startAt as Timestamp).toDate(), 2, { formats: ["padel"], unit: "court" });
+    await db().doc(`experiences/${s.experienceId}/private/economics`).set({ partnerId: pid, model: "own" });
+    await paidReservation(await member(), sid);
+    await runSessionAutomation(sid, Date.now());
+    const [req] = await requestsOf(sid);
+    expect(req).toMatchObject({ fixed: true, status: "sent", people: 1, partnerId: pid });
+  });
 });

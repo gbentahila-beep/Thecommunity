@@ -1,4 +1,4 @@
-import { bookingRefusal, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
+import { bookingClosesAt, isTablesFlow, revealAtFor, bookingRefusal, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -122,6 +122,8 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         {t("back")}
       </Link>
       <h1 className="page-title mt-4">{onRequest ? tr2("pageTitle") : t("title")}</h1>
+
+      {isTablesFlow(exp) && <TablesTicket exp={exp} startAt={session.startAt} locale={locale} />}
 
       <section className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card">
         <div className="flex gap-4 p-4">
@@ -271,7 +273,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
       ) : refusal === "full" ? (
         <>
           <Notice title={t("fullTitle")} text={t("fullText")} />
-          <WaitlistBox sessionId={session.id} maxSeats={maxSeatsFor(exp)} position={visitor.waitPosition} />
+          <WaitlistBox sessionId={session.id} maxSeats={maxSeatsFor(exp)} position={visitor.waitPosition} questions={exp.questionnaire ?? []} />
         </>
       ) : visitor.transfer && transferClosed(new Date(session.startAt), visitor.transfer) && !onRequest ? (
         <Notice title={t("transferTooLateTitle")} text={t("transferTooLateText", { cutoff: visitor.transfer.cutoff })} />
@@ -330,4 +332,43 @@ function Notice({ title, text }: { title: string; text: string }) {
 /** Langues du profil reconnues comme langues de table. */
 function profileLanguages(l: string[] | undefined) {
   return (l ?? []).filter((x): x is SpokenLanguage => (SPOKEN_LANGUAGES as readonly string[]).includes(x)).slice(0, 5);
+}
+
+/**
+ * Carte « billet » des Tables (docs/22 § 8) : date en grand, Début · Langues · Tables de 4 à 6, fermeture des
+ * réservations, heure de révélation du lieu, et « Comment on compose les tables » d'après les réglages du rendez-vous.
+ */
+async function TablesTicket({ exp, startAt, locale }: { exp: { bookingMode: "social_dinner" | "group" | "individual" | "open" | string; groupConfig?: { minSize: number; maxSize: number } | null; languages?: string[] }; startAt: string; locale: string }) {
+  const [t, tl] = await Promise.all([getTranslations("ticketCard"), getTranslations("labels.languages")]);
+  const closes = bookingClosesAt(new Date(startAt), "social_dinner").toISOString();
+  const reveal = revealAtFor(startAt).toISOString();
+  const at = (iso: string) => (locale === "fr" ? `${formatLongDate(iso, locale).toLowerCase()} à ${formatTime(iso, locale)}` : `${formatLongDate(iso, locale)} ${formatTime(iso, locale)}`);
+  const langs = (exp.languages ?? []).map((l) => tl(l as never)).join(", ");
+  const min = exp.groupConfig?.minSize ?? 4;
+  const max = exp.groupConfig?.maxSize ?? 6;
+  const steps = [t("how1"), t("how2", { min, max }), t("how3", { when: at(reveal) }), t("how4")];
+  return (
+    <section className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-brand-900 text-white shadow-card" data-testid="tables-ticket">
+      <div className="border-b border-dashed border-white/30 p-5">
+        <p className="text-sm uppercase tracking-wide text-white/70">{t("label")}</p>
+        <p className="font-display text-3xl font-medium capitalize">{formatLongDate(startAt, locale)}</p>
+        <p className="mt-2 text-sm text-white/90">{t("start", { time: formatTime(startAt, locale) })}{langs ? ` · ${langs}` : ""} · {t("tables", { min, max })}</p>
+      </div>
+      <div className="space-y-1 p-5 text-sm text-white/90">
+        <p>{t("closes", { when: at(closes) })}</p>
+        <p>{t("reveal", { when: at(reveal) })}</p>
+      </div>
+      <div className="bg-white/10 p-5">
+        <h2 className="text-sm font-semibold">{t("howTitle")}</h2>
+        <ol className="mt-3 flex snap-x gap-3 overflow-x-auto pb-1">
+          {steps.map((x, i) => (
+            <li key={i} className="min-w-[70%] snap-start rounded-2xl bg-white/10 p-3 text-sm sm:min-w-[45%]">
+              <span className="block text-xs font-semibold text-white/70">{i + 1}</span>
+              {x}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
 }

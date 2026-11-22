@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { isTablesFlow, minimumChoiceSchema, minimumMet, tableMessageSchema, tableSummary, tablesOutOfBounds, tablesTimeline } from "./tables";
+import { bookingClosesAt } from "./booking";
+import { MOROCCO_TIMEZONE } from "./constants";
+import { zonedDateTimeToUtc, zonedParts } from "./time";
+import { isTablesFlow, minimumMet, proposalResponseSchema, revealAtFor, riskDecisionSchema, tableMessageSchema, tableSummary, tablesOutOfBounds, tablesTimeline } from "./tables";
 
 describe("parcours des Tables (docs/22 § 17.H)", () => {
   it("horaires d'une date : fermeture 12 h, révélation 5 h, tables 1 h avant, check-in, messages", () => {
@@ -11,6 +14,21 @@ describe("parcours des Tables (docs/22 § 17.H)", () => {
     expect(t.checkInUntil.toISOString()).toBe("2026-11-26T20:30:00.000Z");
     expect(t.chatFrom.toISOString()).toBe("2026-11-26T21:30:00.000Z");
     expect(t.chatUntil.toISOString()).toBe("2026-12-10T21:30:00.000Z");
+  });
+
+  it("matin et midi (décision 42) : fermeture au plus tard 18 h la veille, révélation ramenée à 21 h la veille", () => {
+    const at = (day: number, hour: number) => zonedDateTimeToUtc({ year: 2026, month: 11, day, hour, minute: 0 }, MOROCCO_TIMEZONE);
+    const local = (d: Date) => { const z = zonedParts(d, MOROCCO_TIMEZONE); return `${z.day} ${z.hour}h`; };
+    // Brunch dimanche 29 à 11 h : fermeture samedi 18 h, révélation samedi 21 h.
+    expect(local(bookingClosesAt(at(29, 11), "social_dinner"))).toBe("28 18h");
+    expect(local(revealAtFor(at(29, 11)))).toBe("28 21h");
+    // Déjeuner 13 h : fermeture la veille 18 h ; révélation 8 h le jour même (pas la nuit).
+    expect(local(bookingClosesAt(at(29, 13), "social_dinner"))).toBe("28 18h");
+    expect(local(revealAtFor(at(29, 13)))).toBe("29 8h");
+    // Dîner 20 h : 12 h et 5 h avant, inchangés ; activité : 2 h avant.
+    expect(local(bookingClosesAt(at(29, 20), "social_dinner"))).toBe("29 8h");
+    expect(local(revealAtFor(at(29, 20)))).toBe("29 15h");
+    expect(local(bookingClosesAt(at(29, 11), "group"))).toBe("29 9h");
   });
 
   it("seules les tables composées suivent ce parcours", () => {
@@ -40,9 +58,10 @@ describe("parcours des Tables (docs/22 § 17.H)", () => {
   });
 
   it("choix minimum et messages : validés", () => {
-    expect(minimumChoiceSchema.safeParse({ reservationId: "r1", choice: "move" }).success).toBe(false);
-    expect(minimumChoiceSchema.safeParse({ reservationId: "r1", choice: "move", targetSessionId: "s2" }).success).toBe(true);
-    expect(minimumChoiceSchema.safeParse({ reservationId: "r1", choice: "refund" }).success).toBe(true);
+    expect(riskDecisionSchema.safeParse({ sessionId: "s1", action: "propose" }).success).toBe(false);
+    expect(riskDecisionSchema.safeParse({ sessionId: "s1", action: "propose", targetSessionId: "s2" }).success).toBe(true);
+    expect(riskDecisionSchema.safeParse({ sessionId: "s1", action: "keep" }).success).toBe(true);
+    expect(proposalResponseSchema.safeParse({ reservationId: "r1", accept: true }).success).toBe(true);
     expect(tableMessageSchema.safeParse({ groupId: "g", text: " " }).success).toBe(false);
     expect(tableMessageSchema.safeParse({ groupId: "g", text: "x".repeat(501) }).success).toBe(false);
   });

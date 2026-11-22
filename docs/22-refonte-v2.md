@@ -43,7 +43,7 @@ Mise à jour du 22 novembre 2026, après les échanges sur les dîners, le prix,
 | 14 | **Lieu secret par défaut.** La fiche ne montre ni nom, ni adresse, ni quartier, **ni cuisine** : seulement le format, la gamme et l'ambiance. **La cuisine se remplit à la création mais ne s'affiche qu'avec le lieu**, 5 h avant. Phrase unique, sans émoticône : « Le lieu et l'adresse vous sont révélés 5 h avant. » |
 | 15 | *(Revue le 22 novembre : attribution automatique, § 17.H.)* **Lieu choisi par l'admin, date par date** : à la création ou plus tard, **au plus tard 5 h avant**. Même restaurant à chaque date ou restaurants différents ; **plusieurs restaurants possibles** pour une même date ; un restaurant qui convient peut devenir le **lieu habituel** du rendez-vous. |
 | 16 | **Réservations fermées 12 h avant**, pour laisser à l'admin le temps de réserver le ou les restaurants. |
-| 17 | **Pas assez d'inscrits** pour une table complète : chaque inscrit **choisit** entre une autre date et le remboursement. |
+| 17 | *(Remplacée par la décision 46.)* **Pas assez d'inscrits** pour une table complète : chaque inscrit **choisit** entre une autre date et le remboursement. |
 | 18 | **Nombre qui ne tombe pas juste** (ex. 7 pour des tables de 4 à 6) : le logiciel propose une table de 7, **l'admin valide à chaque fois**. |
 | 19 | **5 h avant** : révélation du lieu. **1 h avant** : tables composées automatiquement (l'admin peut vérifier). **Check-in** : on voit sa table et qui est déjà arrivé, seulement après son propre check-in. |
 | 20 | **Heure de début seulement**, pas d'heure de fin. |
@@ -87,6 +87,18 @@ Mise à jour du 22 novembre 2026, après les échanges sur les dîners, le prix,
 | 37 | **Résumé de la table sans les noms à la révélation (5 h avant)** : âges, langues, secteurs et centres d'intérêt des autres convives. Les prénoms viennent au check-in. |
 | 38 | **Déplacer sa réservation sur une autre date** du même rendez-vous, jusqu'à la fermeture des réservations (12 h avant), sans repayer. |
 | 39 | **Échanger après la rencontre** : messages possibles entre les personnes de la même table après l'événement, sans montrer numéro ni réseaux (à rapprocher de l'existant « Mes rencontres »). |
+
+### Attribution des lieux (validé le 22 novembre, § 17.H)
+| # | Décision |
+|---|---|
+| 41 | **Le logiciel choisit les lieux** après la fermeture, d'après leur fiche (format, gamme, jour, créneau, capacité), répartit les tables entre plusieurs lieux et prépare les demandes. Pas d'OpenTable. « Lieu » = tout partenaire (restaurant, café, padel, escape game, studio, atelier). La **gamme est sur la fiche du lieu** ; la **cuisine vient du restaurant attribué**. |
+| 42 | **Horaires** : fermeture 12 h avant, **au plus tard 18 h la veille** pour un début avant 14 h ; révélation 5 h avant, **ramenée à 21 h la veille** si elle tombe entre 22 h et 8 h. |
+| 43 | **Plafond de vente** : jamais plus de places que les lieux compatibles ne peuvent en accueillir sur ce créneau ; au-delà « complet », liste d'attente et alerte à l'équipe. |
+| 44 | **WhatsApp** : messages prédéfinis ; l'admin clique pour ouvrir WhatsApp Web avec le numéro et le message déjà remplis. L'**envoi automatique** est codé tout de suite et s'active quand le compte WhatsApp Business API existera (pas encore de numéro). E-mail automatique en plus. |
+| 45 | **Confirmation explicite** de chaque lieu (lien cliqué ou « Confirmé par téléphone »), même pour les lieux réguliers. Aucune place n'est attribuée avant. Relance après 1 h, autre lieu proposé après 2 h sans réponse (réglable). |
+| 46 | **Minimum non atteint (remplace la décision 17)** : alerte « à risque » la veille ; l'équipe choisit maintenir, proposer une autre date, regrouper avec un événement compatible, ou annuler. Chacun accepte ou est remboursé intégralement ; jamais déplacé sans son accord ; sans réponse à l'heure limite, remboursé. |
+| 47 | **Lieu fixe ou attribué**, par événement : fixe (affiché dès la fiche, créneau négocié ; confirmation la veille et récapitulatif) par défaut pour les activités ; attribué (secret jusqu'à la révélation) par défaut pour les Tables. |
+| 48 | **Avant le lancement** : ne lancer que les formats et gammes pour lesquels il y a des lieux ; demander le compte WhatsApp Business API ; accord écrit avec les lieux (étape L) ; signalement d'un participant et incidents (étape J). |
 
 ### Gammes
 | # | Décision |
@@ -396,7 +408,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | **E — Prix unique et univers** ✅ | Réglage « Prix Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; « 35 DH » partout ; **les 4 univers** (Tables, formats et gammes compris) | Faite (journal § 19) |
 | **F — Modèles dans l'appli** ✅ | Choix univers → format → gamme ; formulaire pré-rempli aux champs strictement nécessaires (§ 7) ; places 1 ou 2 ; accès ; réservé aux femmes ; alcool ; conditions d'annulation ; *Paramètres → Modèles* ; « Enregistrer comme modèle » | Faite (journal § 19) |
 | **G — Rendez-vous et lieux** ✅ | Rendez-vous récurrents, lieu par date (plus tard possible), plusieurs lieux, lieu habituel, fiches des lieux partenaires, « Aujourd'hui » | Faite (journal § 19) |
-| **H — Attribution des lieux et parcours** (en cours) | **H-a** fiche du lieu complétée (gammes, formats, créneaux et capacités), moteur d'attribution, plafond de vente, demandes aux lieux (e-mail, WhatsApp, appel) et confirmation par l'équipe, réattribution, espace partenaire par lien. **H-b** écran de réservation, déplacer sa réservation, événements à risque, révélation après confirmation, check-in, messages après la rencontre, liste d'attente. Détail § 17.H | Questions § 18, puis démonstration |
+| **H — Attribution des lieux et parcours** ✅ | **H-a** fiche du lieu complétée (gammes, formats, créneaux et capacités), moteur d'attribution, plafond de vente, demandes aux lieux (e-mail, WhatsApp, appel) et confirmation par l'équipe, réattribution, espace partenaire par lien. **H-b** écran de réservation, déplacer sa réservation, événements à risque, révélation après confirmation, check-in, messages après la rencontre, liste d'attente. Détail § 17.H | Faite (journal § 19) |
 | **I — Carnet et Pass** | Offres, crédits, accès abonnés, garde-fous, migration des abonnés | Démonstration |
 | **J — Organisateurs et rôles** | Encaissement sur place, formulaire court, pointage, Statistiques ; suppression des reversements, commissions, propositions et membres de confiance | Démonstration |
 | **K — Découvrir et agenda** | Agenda de l'accueil, filtres, moment de la journée | Démonstration |
@@ -428,11 +440,21 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 |---|---|
 | **H9 Écran de réservation et confirmation** | Carte « billet » (date en grand, Début · Langues · Tables de 4 à 6, « Réservations jusqu'au … »), « Moi seul·e / Moi + 1 », « Comment on compose les tables », barre fixe « 35 DH · 1 place · Continuer ». Confirmation : « Le lieu arrive le … à … », sans QR code, bouton « Déplacer sur une autre date ». |
 | **H10 Déplacer sa réservation** | Sur une autre date du même rendez-vous, jusqu'à la fermeture, sans repayer, s'il reste de la place. (Code serveur fait, à brancher sur l'écran.) |
-| **H11 Événements à risque (minimum)** | Voir la question 5 ci-dessous : politique à valider. |
+| **H11 Événements à risque (minimum)** | Décision 46 : alerte « à risque » la veille ; maintenir, autre date, regroupement ou annulation ; chacun accepte ou est remboursé. |
 | **H12 Révélation** | Seulement quand les lieux sont **confirmés** : tables composées dans les lieux confirmés, puis chacun reçoit le lieu, l'adresse, la carte, **la cuisine du restaurant attribué** et le **résumé de sa table sans les noms**. Lieu non confirmé à l'heure : alerte à l'équipe, révélation dès confirmation. Un lieu qui se désiste après la révélation : réattribution, et seules les personnes concernées reçoivent le nouveau lieu. |
 | **H13 Check-in** | Après son propre check-in : sa table, les prénoms, qui est déjà arrivé. Avant : le résumé sans les noms. |
 | **H14 Après la rencontre** | Messages entre les personnes de la table qui ont fait leur check-in, ouverts 2 h après le début, pendant 14 jours, sans numéro ni réseaux. « Revoir cette personne » existe déjà (Mes rencontres). |
 | **H15 Liste d'attente** | Questionnaire (s'il y en a un) et préférences remplis en s'inscrivant ; ils suivent la place proposée. |
+
+**Modèles WhatsApp à faire valider par Meta** (quand le compte WhatsApp Business API existera ; noms par défaut, modifiables dans *Paramètres → WhatsApp*) :
+
+| Nom | Texte (les {{n}} sont remplis par Wenzy) |
+|---|---|
+| `wenzy_demande_lieu` | Bonjour {{1}}, c'est Wenzy. Demande de réservation : {{2}}, {{3}}. Chacun règle sa consommation sur place. Accepter ou refuser : {{4}} |
+| `wenzy_relance_lieu` | Bonjour {{1}}, petit rappel de Wenzy : notre demande pour {{2}} ({{3}}) attend votre réponse : {{4}} |
+| `wenzy_recap_lieu` | Bonjour {{1}}, voici le récapitulatif Wenzy pour {{2}} : {{3}}. Prénoms, régimes et allergies : {{4}} |
+
+Le jeton d'accès Meta se règle comme secret Cloud `WHATSAPP_TOKEN` (comme la clé d'envoi des e-mails), jamais dans la base.
 
 **Reporté à l'Étape I** : « pas de check-in = absence » (avec ses conséquences sur le pass). **Étape J** : signalement d'un participant et suivi des incidents, indicateurs (taux de remplissage, annulations, retour des participants).
 
@@ -440,17 +462,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 
 ## 18. Questions ouvertes
 
-Posées le 22 novembre (attribution des lieux, § 17.H) — réponses à reporter ici puis dans le § 1.
-
-| # | Question | Recommandation |
-|---|---|---|
-| Q1 | **Horaires des événements du matin et du midi** : avec « fermeture 12 h avant » et « révélation 5 h avant », un brunch à 11 h ferme à 23 h et se révèle à 6 h : impossible d'appeler les lieux la nuit. | Fermeture : 12 h avant, **mais au plus tard 18 h la veille** pour un début avant 14 h. Révélation : 5 h avant, **ramenée à 21 h la veille** si elle tombe entre 22 h et 8 h. |
-| Q2 | **Plafond de vente** d'après les capacités déclarées des lieux compatibles (§ 17.H, H4) ? | Oui. |
-| Q3 | **WhatsApp automatique** : il faut un compte WhatsApp Business API (numéro dédié, vérification Meta, messages modèles validés, coût par conversation). | Coder l'envoi automatique tout de suite, mais démarrer avec l'e-mail automatique + un **bouton « Envoyer sur WhatsApp »** (message pré-rempli ouvert sur le téléphone de l'équipe) + l'appel, le temps d'obtenir le compte. |
-| Q4 | **Confirmation des lieux** : toujours explicite (lien cliqué ou « confirmé par téléphone ») ? | Oui, au lancement, même pour les lieux réguliers. |
-| Q5 | **Minimum non atteint** : choix automatique « autre date / remboursement » (décision 17), ou gestion souple avec décision de l'équipe ? | Souple : alerte « à risque » la veille ; l'équipe choisit maintenir (si le lieu accepte un petit groupe), proposer une autre date, regrouper avec un événement compatible, ou annuler. Chacun accepte ou est remboursé intégralement ; jamais déplacé sans son accord ; sans réponse à l'heure limite, remboursé. « Autre activité » plus tard. |
-| Q6 | **Activités (padel, yoga, escape game, ateliers)** : lieu fixe affiché dès la fiche, ou lieu attribué automatiquement et secret ? | Un réglage par événement : **« Lieu fixe »** (affiché, créneau négocié ; le moteur vérifie la capacité et envoie confirmation et récapitulatif) ou **« Lieu attribué »** (secret jusqu'à la révélation). Par défaut : fixe pour les activités, attribué pour les Tables. |
-| Q7 | **Délais de réponse des lieux** | Relance après 1 h, nouveau lieu proposé après 2 h sans réponse ; réglable dans *Paramètres*. |
+Aucune pour l'instant. Les questions Q1 à Q7 du 22 novembre sont tranchées (décisions 41 à 48).
 
 ---
 
@@ -515,3 +527,23 @@ Posées le 22 novembre (attribution des lieux, § 17.H) — réponses à reporte
 
 **À faire en ligne** : compléter le bloc « Accueil des Tables » des restaurants partenaires (tables, places, jours, WhatsApp).
 
+### Étape H livrée (22 novembre)
+| Changement | Ce qui change |
+|---|---|
+| **Fiche du lieu** | Bloc « Accueil des rendez-vous Wenzy » : gammes, formats et activités acceptés (les 14 modèles), ce qu'on réserve (table, terrain, session, places) avec personnes min. et max., **créneaux habituels** (jour, heures de début, nombre de tables), **fermetures et ouvertures exceptionnelles**, cuisine, budget moyen, niveau (régulier ou occasionnel), WhatsApp du responsable. Historique calculé : demandes, acceptations, refus, délai de réponse. |
+| **Horaires (décision 42)** | Fermeture 12 h avant, au plus tard 18 h la veille pour un début avant 14 h ; révélation 5 h avant, ramenée à 21 h la veille la nuit. |
+| **Plafond de vente (décision 43)** | La réservation est refusée (« complet », liste d'attente) au-delà de ce que les lieux compatibles peuvent accueillir sur ce créneau, capacité partagée avec les autres dates du même soir. Alerte à l'équipe. Sans lieu compatible, rien ne se vend. |
+| **Attribution automatique (décision 41)** | À la fermeture : tables nécessaires, lieux compatibles, réguliers et fiables d'abord, répartition équilibrée, une demande par lieu (e-mail automatique, WhatsApp automatique quand le compte existera, sinon boîte d'envoi). Lien sécurisé « Accepter / Refuser » pour le lieu, sans compte. Refus ou absence de réponse (relance après 1 h, autre lieu après 2 h, réglable) : le logiciel propose un autre lieu. Tables sans lieu : alerte à l'équipe. Lieux choisis à la main ou lieu habituel : l'attribution automatique s'arrête pour la date. |
+| **Back-office** | Page **Attribution des lieux** (appels à passer, état de chaque date) ; sur la page d'une date, carte « Attribution des lieux » : **Ouvrir WhatsApp Web** (numéro et message prédéfini déjà remplis), WhatsApp sur téléphone, Appeler, **Confirmé par téléphone**, Refusé, Relancer, Relancer l'attribution, récapitulatif sur WhatsApp. *Aujourd'hui* : date à risque, lieux à relancer, tables confirmées, tables sans lieu, table à valider. *Paramètres* : délais de réponse des lieux, envoi WhatsApp (à la main ou automatique). |
+| **Lieu fixe (décision 47)** | Activité à lieu affiché : demande de confirmation au lieu la veille (nombre d'inscrits), récapitulatif 1 h avant ; un refus alerte l'équipe. |
+| **Révélation** | Seulement quand tous les lieux sont confirmés : tables composées dans les lieux confirmés (une table hors limites, ex. 7, est signalée à l'équipe), puis « Votre lieu est révélé » : lieu, adresse, **cuisine du restaurant attribué**, **résumé de la table sans les noms** (convives, âges, langues, secteurs, centres d'intérêt), heure du check-in. Lieux non confirmés à l'heure : alerte, révélation dès confirmation. |
+| **1 h avant** | Tables remises à jour (annulations), récapitulatif à chaque lieu (tables, prénoms, régimes et allergies partagés) par e-mail et WhatsApp, visible aussi sur la page du lieu. |
+| **Date à risque (décision 46)** | La veille, moins d'inscrits que le minimum d'une table : alerte. L'équipe maintient, propose une autre date ou un regroupement avec un événement du même format et de la même gamme, ou annule. Chacun accepte (déplacé sans repayer) ou est remboursé intégralement ; sans réponse, remboursé. |
+| **Participant** | Carte « billet » des Tables (date, début, langues, tables de X à Y, fermeture, heure de révélation, « Comment on compose les tables ») ; « Moi seul·e / Moi + 1 » ; barre fixe en bas avec le prix et le nombre de places ; « Le lieu arrive le … à … » ; **Déplacer sur une autre date** jusqu'à la fermeture ; carte de proposition (accepter ou être remboursé) ; résumé de la table avant le check-in, **prénoms et « Arrivé·e » après son check-in** ; **messages de la table** (après check-in, de 2 h après le début à 14 jours) ; liste d'attente avec le questionnaire. |
+| **Sécurité** | Demandes aux lieux et messages WhatsApp lisibles par l'équipe seulement ; groupe des Tables lisible par un membre seulement après son check-in ; messages de la table réservés aux personnes arrivées. |
+
+**Tests** : unitaires 171 (horaires, moteur d'attribution, WhatsApp, messages prédéfinis, résumé de table) ; émulateurs : plafond de vente, attribution complète (demandes, lien du lieu, refus et nouveau lieu, confirmation par téléphone, révélation avec résumé, check-in, récapitulatif), relance puis autre lieu, date à risque et proposition, déplacer sa réservation, messages de la table, liste d'attente avec questionnaire, lieu fixe, règles d'accès : 186 réussis ; mêmes 9 échecs d'environnement. Les 9 suites de bout en bout de démonstration passent (nouveaux écrans vérifiés).
+
+**À faire de ton côté** : remplir la fiche de chaque lieu (gammes, formats, créneaux et nombre de tables, WhatsApp, e-mail) **avant de mettre en ligne**, sinon les Tables ne peuvent plus se vendre (plafond à 0) ; demander le compte WhatsApp Business API et faire valider les 3 modèles ci-dessus.
+
+**Restent pour plus tard** : préférences (régime, langues) à l'inscription sur liste d'attente (elles se renseignent sur la réservation ensuite) ; le lieu qui modifie lui-même ses créneaux ; « autre activité » proposée quand une date est à risque.

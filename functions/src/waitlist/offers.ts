@@ -77,7 +77,8 @@ export function writeOffers(
       holdUntilMs: Math.min(o.now + WAITLIST_OFFER_HOURS * 3_600_000, closesAt),
       memberUnitAmount,
       serviceFee: member && o.candidates.plan?.waiveServiceFee === true ? NO_SERVICE_FEE : o.candidates.serviceFee,
-      extra: { fromWaitlist: true },
+      preferences: w.preferences ?? undefined,
+      extra: { fromWaitlist: true, ...(w.answers ? { questionnaire: { answers: w.answers, answeredAt: Timestamp.fromMillis(o.now) } } : {}) },
     });
     tx.set(resRef, doc);
     tx.set(o.sessRef.collection("seatLocks").doc(entry.id), { reservationId: resRef.id, createdAt: FieldValue.serverTimestamp() });

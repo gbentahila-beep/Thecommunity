@@ -65,6 +65,8 @@ export type SessionVenue = {
   address: string;
   geo?: { lat: number; lng: number } | null;
   tables?: number | null;
+  /** Cuisine du restaurant (fiche du lieu, docs/22 décision 41), révélée avec le lieu. */
+  cuisine?: string | null;
   /** Après la date : l'équipe note le lieu (« bien » ou « à revoir »). */
   rating?: "good" | "bad" | null;
 };

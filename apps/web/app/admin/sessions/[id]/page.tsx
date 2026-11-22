@@ -1,4 +1,6 @@
-import { ageBand, ageOn, pricingOf, refundAmountFor, seatsAvailable, VENUE_REVEAL_HOURS } from "@thecommunity/shared";
+import { ageBand, ageOn, bookingClosesAt, pricingOf, refundAmountFor, revealAtFor, seatsAvailable, unitWord, venueRequestText, whatsappMobileUrl, whatsappWebUrl } from "@thecommunity/shared";
+import { AllocationCard, RiskCard } from "@/components/admin/allocation-card";
+import { SITE_URL } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CsvExportButton } from "@/components/admin/csv-export";
@@ -33,7 +35,31 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
   // docs/22, décision 15 : lieu secret → lieu(x) renseigné(s) date par date, au plus tard 5 h avant.
   const secret = e.venue.revealPolicy === "on_group_reveal";
   const venues = d.sessionVenues[s.id] ?? [];
-  const revealAt = new Date(start.getTime() - VENUE_REVEAL_HOURS * 3_600_000);
+  const revealAt = revealAtFor(start);
+  // docs/22 § 17.H : demandes aux lieux de cette date (attribution automatique, ou lieu fixe).
+  const requests = d.venueRequests.filter((r) => r.sessionId === s.id).sort((a, b) => a.round - b.round || a.partnerName.localeCompare(b.partnerName));
+  const tierLabel = (t: string | null) => (t ? t.charAt(0).toUpperCase() + t.slice(1) : null);
+  const allocationRows = requests.map((r) => {
+    const link = `${SITE_URL}/partenaire/demande/${r.id}?t=${r.token}`;
+    const info = { venue: r.partnerName, title: r.title, when: adminDate(r.startAt), format: r.format, tier: tierLabel(r.tier), tables: r.tables, people: r.people, unit: r.unit, reference: r.reference, link };
+    return {
+      id: r.id, partnerName: r.partnerName, tables: r.tables, people: r.people, unitWord: unitWord(r.unit, r.tables), status: r.status, round: r.round, reference: r.reference, fixed: r.fixed,
+      sentLabel: r.sentAt ? adminDate(r.sentAt) : "", responseLabel: r.respondedAt ? `${r.responseBy === "team" ? "confirmé par l'équipe" : "réponse du lieu"} ${adminDate(r.respondedAt)}` : r.remindedAt ? `relancé ${adminDate(r.remindedAt)}` : "",
+      phone: r.partnerWhatsapp, waWeb: whatsappWebUrl(r.partnerWhatsapp, venueRequestText(info)), waMobile: whatsappMobileUrl(r.partnerWhatsapp, venueRequestText(info)),
+      recapWaWeb: r.recapText ? whatsappWebUrl(r.partnerWhatsapp, r.recapText) : null, link,
+    };
+  });
+  const alloc = s.allocation;
+  const closesAt = bookingClosesAt(start, e.bookingMode);
+  const allocationSummary = alloc
+    ? alloc.status === "manual" ? "Lieux choisis à la main par l'équipe (ci-dessous) : l'attribution automatique est arrêtée pour cette date."
+    : `${alloc.people ?? s.seatsConfirmed} inscrits · ${alloc.needed ?? "?"} table${(alloc.needed ?? 0) > 1 ? "s" : ""} nécessaire${(alloc.needed ?? 0) > 1 ? "s" : ""} · ${alloc.confirmed ?? 0} confirmée${(alloc.confirmed ?? 0) > 1 ? "s" : ""}${alloc.missing ? ` · ${alloc.missing} sans lieu disponible` : ""}${alloc.status === "confirmed" ? " · tous les lieux sont confirmés" : ""}.`
+    : `Les lieux sont choisis automatiquement à la fermeture des réservations (${adminDate(closesAt.toISOString())}), d'après les fiches des lieux. ${s.venueCapacity != null ? `Capacité des lieux compatibles : ${s.venueCapacity} personnes.` : ""}`;
+  const riskOptions = s.risk?.status === "at_risk"
+    ? d.sessions.filter((x) => x.id !== s.id && (x.status === "published" || x.status === "full") && new Date(x.startAt).getTime() > d.now.getTime() && seatsAvailable(x) >= s.seatsConfirmed && (x.experienceId === s.experienceId || (() => { const oe = d.experiences.get(x.experienceId); return Boolean(oe && (oe.templateId || oe.subcategoryId) === (e.templateId || e.subcategoryId) && (oe.venueTier ?? null) === (e.venueTier ?? null)); })()))
+      .slice(0, 20).map((x) => ({ id: x.id, label: `${x.experienceId === s.experienceId ? "Autre date" : `Regrouper avec ${d.experiences.get(x.experienceId)?.title.fr ?? ""}`} · ${adminDate(x.startAt)} (${x.seatsConfirmed} inscrits)` }))
+    : [];
+  const riskSummary = s.risk ? ({ at_risk: `${s.seatsConfirmed} inscrit${s.seatsConfirmed > 1 ? "s" : ""} pour un minimum de ${e.groupConfig?.minSize ?? "?"} par table. Personne n'est déplacé sans son accord.`, kept: "Date maintenue par l'équipe.", proposed: `Proposition envoyée${s.risk.deadline ? `, réponses jusqu'au ${adminDate(s.risk.deadline)}` : ""} : chacun accepte ou est remboursé ; sans réponse, remboursé.`, closed: "Proposition terminée." } as Record<string, string>)[s.risk.status] ?? "" : "";
   const twoPart = pricingOf(e).model !== "online_only" || rows.some((x) => x.r.onSite);
   const onSiteRows = rows.filter((x) => x.r.onSite && (x.r.status === "confirmed" || x.r.status === "attended"));
   const onSiteExpected = onSiteRows.reduce((a, x) => a + (x.r.onSite?.amount ?? 0), 0);
@@ -86,16 +112,26 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
           {onSiteRows.some((x) => x.r.onSite?.amount == null) ? "consommation libre" : <strong>{dh(onSiteExpected)} attendus</strong>} · {onSitePaid.length} / {onSiteRows.length} réglée{onSitePaid.length > 1 ? "s" : ""}.
         </p>
       )}
+      {s.risk && (
+        <Card title={s.risk.status === "at_risk" ? "Date à risque" : "Minimum non atteint"} className="mt-6">
+          <RiskCard sessionId={s.id} status={s.risk.status} options={riskOptions} live={!d.isDemo} summary={riskSummary} />
+        </Card>
+      )}
+      {(secret || requests.length > 0) && (
+        <Card title={secret ? "Attribution des lieux" : "Confirmation du lieu"} className="mt-6">
+          <AllocationCard sessionId={s.id} summary={secret ? allocationSummary : "Le lieu fixe reçoit une demande de confirmation la veille, puis le récapitulatif 1 h avant."} rows={allocationRows} live={!d.isDemo} canRun={secret && s.seatsConfirmed > 0 && alloc?.status !== "manual" && d.now.getTime() < start.getTime()} />
+        </Card>
+      )}
       {secret && (
-        <Card title={`Lieu de cette date${venues.length > 1 ? "s" : ""}`} className="mt-6">
+        <Card title={`Lieu de cette date${venues.length > 1 ? "s" : ""} (à la main)`} className="mt-6">
           <p className="mb-3 text-sm text-muted" data-testid="venue-deadline">
-            {venues.length ? `Révélé aux participants le ${adminDate(revealAt.toISOString())} (5 h avant).` : `À renseigner au plus tard le ${adminDate(revealAt.toISOString())} (5 h avant), quand vous connaissez le nombre d'inscrits (${s.seatsConfirmed}).`}
+            {venues.length ? `Révélé aux participants le ${adminDate(revealAt.toISOString())}.` : `Facultatif : les lieux confirmés par l'attribution apparaissent ici. Pour choisir vous-même (la révélation part le ${adminDate(revealAt.toISOString())}), renseignez-les : l'attribution automatique s'arrête alors pour cette date.`}
           </p>
           <SessionVenuesForm
             sessionId={s.id}
             initial={venues}
             defaultVenue={e.venue.name ? { name: e.venue.name, address: e.venue.address } : null}
-            partners={d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, name: p.name, address: p.address ?? "", tables: p.tables ?? 0 }))}
+            partners={d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, name: p.name, address: p.address ?? "", tables: Math.max(0, ...(p.slots ?? []).map((x) => Number(x.units) || 0)) }))}
             live={!d.isDemo}
             past={d.now.getTime() > start.getTime()}
           />

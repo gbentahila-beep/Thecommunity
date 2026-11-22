@@ -1,5 +1,5 @@
 import { SelfCheckIn } from "@/components/account/self-check-in";
-import { VENUE_REVEAL_HOURS, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds } from "@thecommunity/shared";
+import { VENUE_REVEAL_HOURS, bookingClosesAt, isTablesFlow, revealAtFor, seatsAvailable, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -19,7 +19,8 @@ import { InvoiceList } from "@/components/account/invoice-list";
 import { PreferencesEditor } from "@/components/booking/preferences-editor";
 import { welcomeTitleKeys } from "@/components/booking/welcome-keys";
 import { QuestionnaireForm } from "@/components/account/questionnaire-form";
-import { getCity, getExperienceBySlug } from "@/lib/data";
+import { getCity, getExperienceBySlug, getSession, getUpcomingSessions } from "@/lib/data";
+import { MoveReservation, ProposalCard } from "@/components/booking/move-reservation";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { buildIcs, icsDataUri } from "@/lib/ics";
@@ -84,6 +85,20 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const showTicket = r.status === "confirmed" && isUpcoming && needsTicket(experience, r);
   const needs = welcomeNeeds({ categoryId: experience?.categoryId ?? s.categoryId, bookingMode: experience?.bookingMode ?? s.bookingMode, foodServed: experience?.foodServed });
   const qr = showTicket ? await qrSvg(`${SITE_URL}${ticketScanPath(r.id)}`) : null;
+  // docs/22 § 17.H : Tables — heure de révélation, déplacer sa réservation, proposition, résumé de table, prénoms au check-in.
+  const tablesFlow = isTablesFlow(experience);
+  const when = (iso: string) => (locale === "fr" ? `${formatLongDate(iso, locale).toLowerCase()} à ${formatTime(iso, locale)}` : `${formatLongDate(iso, locale)} ${formatTime(iso, locale)}`);
+  const revealWhen = when(revealAtFor(s.startAt).toISOString());
+  const closesAt = experience ? bookingClosesAt(new Date(s.startAt), experience.bookingMode) : null;
+  const proposal = r.proposal?.status === "pending" && isActive ? r.proposal : null;
+  const proposedSession = proposal ? await getSession(proposal.targetSessionId).catch(() => null) : null;
+  const canMove = isActive && isUpcoming && !proposal && experience && closesAt !== null && closesAt.getTime() > now.getTime();
+  const moveOptions = canMove
+    ? (await getUpcomingSessions({ experienceId: experience!.id })).filter((x) => x.id !== r.sessionId && seatsAvailable(x) >= r.seats && bookingClosesAt(new Date(x.startAt), experience!.bookingMode).getTime() > now.getTime()).slice(0, 12).map((x) => ({ id: x.id, label: when(x.startAt) }))
+    : [];
+  const namesHidden = Boolean(group?.namesAtCheckIn) && !r.arrivedAt && r.status !== "attended";
+  const summary = r.tableSummary && r.tableSummary.others > 0 && (namesHidden || !group) ? r.tableSummary : null;
+  const [tlang, tsec, tts] = await Promise.all([getTranslations("labels.languages"), getTranslations("labels.sector"), getTranslations("tableSummary")]);
 
   return (
     <div className="space-y-6">
@@ -194,7 +209,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                 ) : (
                   <>
                     <dd className="font-medium text-ink">{cityName}</dd>
-                    <dd className="text-sm text-muted">{t("venueHidden", { hours: VENUE_REVEAL_HOURS })}</dd>
+                    <dd className="text-sm text-muted" data-testid="venue-arrives">{tablesFlow ? tts("venueArrives", { when: revealWhen }) : t("venueHidden", { hours: VENUE_REVEAL_HOURS })}</dd>
                   </>
                 )}
               </div>
@@ -218,6 +233,25 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </div>
       </article>
 
+      {proposal && proposedSession && (
+        <ProposalCard reservationId={r.id} proposed={`${tr(proposedSession.experience.title, locale)} · ${when(proposedSession.startAt)}`} deadline={when(proposal.deadline)} />
+      )}
+
+      {canMove && closesAt && <MoveReservation reservationId={r.id} options={moveOptions} until={when(closesAt.toISOString())} />}
+
+      {summary && (
+        <section className="card p-5" data-testid="table-summary">
+          <h2 className="font-display text-[1.45rem] font-medium text-brand-900">{tts("title")}</h2>
+          <p className="mt-1 text-[15px] text-ink/80">{tts("others", { count: summary.others })}{summary.ageMin !== null && summary.ageMax !== null ? ` · ${summary.ageMin === summary.ageMax ? tts("age", { age: summary.ageMin }) : tts("ages", { min: summary.ageMin, max: summary.ageMax })}` : ""}</p>
+          <dl className="mt-3 space-y-1.5 text-sm">
+            {summary.languages.length > 0 && <div><dt className="inline font-medium text-ink">{tts("languages")} : </dt><dd className="inline text-muted">{summary.languages.map((l) => tlang(l as never)).join(", ")}</dd></div>}
+            {summary.sectors.length > 0 && <div><dt className="inline font-medium text-ink">{tts("sectors")} : </dt><dd className="inline text-muted">{summary.sectors.map((x) => tsec(x as never)).join(", ")}</dd></div>}
+            {summary.interests.length > 0 && <div><dt className="inline font-medium text-ink">{tts("interests")} : </dt><dd className="inline text-muted">{summary.interests.map((i) => tl(i as never)).join(", ")}</dd></div>}
+          </dl>
+          <p className="mt-3 text-xs text-muted">{tts("namesAtCheckIn")}</p>
+        </section>
+      )}
+
       {qr && (
         <section aria-labelledby="ticket-title" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="ticket">
           <h2 id="ticket-title" className="font-display text-2xl font-medium text-brand-900">{tk("title")}</h2>
@@ -237,8 +271,8 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         <SelfCheckIn reservationId={r.id} state={checkIn} arrived={Boolean(r.arrivedAt)} onSiteHost={Boolean(experience?.onSiteHost)} hasGroup={Boolean(group)} />
       )}
 
-      {group && (
-        <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
+      {group && !namesHidden && (
+        <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="my-table">
           <h2 className="font-display text-2xl font-medium text-brand-900">
             {t("group")} · {group.label}
           </h2>
@@ -254,10 +288,14 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                     {m.firstName} {m.uid === profile.uid && <span className="font-normal text-muted">({t("you")})</span>}
                   </span>
                   <span className="text-sm text-muted">{m.interests.map((i) => tl(i)).join(" · ")}</span>
+                  {group.namesAtCheckIn && (group.arrivedUids ?? []).includes(m.uid) && <span className="mt-0.5 block text-xs font-semibold text-emerald-800">{tts("arrived")}</span>}
                 </span>
               </li>
             ))}
           </ul>
+          {group.namesAtCheckIn && (group.arrivedUids ?? []).includes(profile.uid) && (
+            <Link href={`/espace/rencontres/table/${group.id}`} className="mt-4 inline-flex rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-brand-900 hover:bg-cream">{tts("chat")}</Link>
+          )}
         </section>
       )}
 

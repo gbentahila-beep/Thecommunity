@@ -30,3 +30,4 @@ export * from "./recommend";
 export * from "./venue";
 export * from "./event-templates";
 export * from "./tables";
+export * from "./allocation";

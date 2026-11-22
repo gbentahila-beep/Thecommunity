@@ -139,6 +139,15 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow write: if false;
     }
+    // docs/22 § 17.H : demandes aux lieux (avec le jeton du lien sécurisé) et messages WhatsApp : équipe seulement.
+    match /venueRequests/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    match /whatsapp/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
     match /paymentEvents/{eventId} {
       allow read: if isSuperAdmin();
       allow write: if false;
@@ -147,11 +156,19 @@ service cloud.firestore {
     // ---------- Groupes ----------
     // Un membre ne voit son groupe qu'une fois révélé.
     match /groups/{groupId} {
+      // Tables (docs/22 § 17.H) : les prénoms ne se voient qu'après son propre check-in.
       allow read: if isAdmin()
-        || (signedIn() && request.auth.uid in resource.data.memberIds && resource.data.status == 'revealed');
+        || (signedIn() && request.auth.uid in resource.data.memberIds && resource.data.status == 'revealed'
+            && (resource.data.get('namesAtCheckIn', false) == false || request.auth.uid in resource.data.get('arrivedUids', [])));
       allow write: if false;
       match /private/{doc} {
         allow read: if isAdmin();
+        allow write: if false;
+      }
+      // Messages de la table après la rencontre : seulement les personnes qui ont fait leur check-in.
+      match /messages/{messageId} {
+        allow read: if isAdmin()
+          || (signedIn() && request.auth.uid in get(/databases/$(database)/documents/groups/$(groupId)).data.get('arrivedUids', []));
         allow write: if false;
       }
     }

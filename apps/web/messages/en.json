@@ -404,7 +404,11 @@
     "transferTooLateTitle": "Bank transfer not possible for this date",
     "transferTooLateText": "The transfer must reach us at least {cutoff} hours before the experience: this date is too close. Please choose a later date.",
     "physicalTerms": "I have read and accept the [terms for physical activities](/conditions-activites-physiques), and I confirm I'm fit to take part in this activity.",
-    "physicalTermsRequired": "Tick the box to accept the terms for physical activities."
+    "physicalTermsRequired": "Tick the box to accept the terms for physical activities.",
+    "seatsSolo": "Just me",
+    "seatsPlusOne": "Me + 1",
+    "freeShort": "Free",
+    "seatsCount": "{count, plural, one {# seat} other {# seats}}"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -1906,5 +1910,68 @@
     "none": "—",
     "yes": "Yes",
     "no": "No"
+  },
+  "move": {
+    "title": "Change date",
+    "text": "You can move your booking to another date of this event, at no extra cost, until {until}.",
+    "cta": "Move to another date",
+    "none": "No other date available yet",
+    "pick": "New date",
+    "confirm": "Move my booking",
+    "busy": "One moment…",
+    "done": "Done: your booking is on the new date.",
+    "errors": {
+      "closed": "Bookings for this date are closed: it can no longer be moved.",
+      "target_closed": "Bookings for the chosen date are closed.",
+      "full": "Not enough seats left on the chosen date.",
+      "other": "Couldn't move your booking right now. Please try again."
+    }
+  },
+  "proposal": {
+    "title": "Not enough people for this date",
+    "text": "We suggest: {proposed}. Accept at no extra cost, or choose a full refund, before {deadline}. Without an answer, you'll be refunded automatically.",
+    "accept": "I accept this date",
+    "refuse": "I'd rather get a refund",
+    "refuseConfirm": "Cancel your booking and get a full refund?",
+    "error": "Couldn't send your answer. Please try again."
+  },
+  "tableSummary": {
+    "title": "Your table",
+    "venueArrives": "The venue arrives on {when}.",
+    "others": "{count, plural, one {# other guest} other {# other guests}}",
+    "age": "{age} years old",
+    "ages": "{min} to {max} years old",
+    "languages": "Languages",
+    "sectors": "Fields",
+    "interests": "Interests",
+    "namesAtCheckIn": "First names appear after you check in on site.",
+    "arrived": "Here",
+    "chat": "Message my table"
+  },
+  "tableChat": {
+    "back": "My connections",
+    "title": "{label}: messages",
+    "window": "Open until {until}.",
+    "empty": "No messages yet. A word to thank your table?",
+    "label": "Your message",
+    "send": "Send",
+    "busy": "Sending…",
+    "privacy": "No phone numbers or social accounts are shown.",
+    "closed": "Messages open 2 hours after the start and stay open for 14 days.",
+    "error": "Couldn't send right now.",
+    "you": "You",
+    "demoMessage": "Thanks for a lovely evening, let's do it again!"
+  },
+  "ticketCard": {
+    "label": "Your table",
+    "start": "Starts {time}",
+    "tables": "Tables of {min} to {max}",
+    "closes": "Bookings until {when}.",
+    "reveal": "The venue and address arrive on {when}.",
+    "howTitle": "How tables are put together",
+    "how1": "Your profile is enough: languages, age, interests and conversation style.",
+    "how2": "We bring compatible people together, at tables of {min} to {max}, with a shared language.",
+    "how3": "On {when}, you get the venue, the address and a preview of your table, without names.",
+    "how4": "On site, check in: you'll meet your table and see first names."
   }
 }

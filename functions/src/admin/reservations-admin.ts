@@ -9,6 +9,7 @@ import { requireOrganizer, requireTeamOrOrganizerOf } from "../organizers/access
 import { cancelReservationCore, idSchema } from "../reservations/cancel-reservation";
 import { refuse } from "../reservations/create-reservation";
 import { moveReservationCore } from "../tables/move";
+import { cancelRequests } from "../tables/allocation";
 
 const reasonSchema = z.string().trim().min(2, "required").max(200, "tooLong");
 
@@ -98,6 +99,7 @@ export const adminCancelSession = onCall({ region: REGION, timeoutSeconds: 300 }
     await notify(w.id, "event_cancelled", { fr: "Expérience annulée", ar: "تم إلغاء التجربة" }, { fr: "La date pour laquelle vous étiez sur liste d'attente est annulée.", ar: "تم إلغاء الموعد الذي كنت على قائمة انتظاره." }, "/experiences");
   }
   await audit({ actorUid: actor.uid, actorRole: actor.role, action: "session.cancel", targetType: "session", targetId: sessionId, after: { reason, reservations: active.size, refunded, failures } });
+  await cancelRequests(sessionId).catch(() => undefined);
   return { ok: true, cancelled: active.size - failures.length, refunded, failures };
 });
 
@@ -138,6 +140,7 @@ export const adminCheckIn = onCall({ region: REGION }, async (req) => {
     if (!r) throw new HttpsError("not-found", "Réservation introuvable.", { reason: "not_found" });
     if (!["confirmed", "attended", "no_show"].includes(r.status)) refuse("not_checkable", "Seule une réservation confirmée se pointe.");
     if ((r.sessionSnapshot.startAt as Timestamp).toMillis() - Date.now() > 3 * 3_600_000) refuse("too_early", "Le pointage ouvre 3 h avant le début.");
+    if (presence === "attended" && r.groupId) tx.set(db.doc(`groups/${r.groupId}`), { arrivedUids: FieldValue.arrayUnion(r.userId) }, { merge: true });
     tx.update(resRef, {
       status: presence,
       checkedInAt: presence === "confirmed" ? null : FieldValue.serverTimestamp(),

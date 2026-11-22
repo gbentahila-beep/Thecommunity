@@ -1,6 +1,7 @@
 "use client";
 
-import { PARTNER_STATUSES, PARTNER_TYPES, partnerInputSchema, type PartnerInput } from "@thecommunity/shared";
+import { DEFAULT_EVENT_TEMPLATES, PARTNER_STATUSES, PARTNER_TYPES, partnerInputSchema, VENUE_TIERS, VENUE_UNITS, type PartnerInput, type PartnerSlot } from "@thecommunity/shared";
+import type { ReactNode } from "react";
 import { httpsCallable } from "firebase/functions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -18,6 +19,11 @@ const MESSAGES: Record<string, string> = {
   min0: "Doit être positif.",
   tooMany: "Valeur trop élevée.",
   invalidDate: "Date invalide.",
+  min1: "Au moins 1.",
+  order: "Le minimum doit être inférieur ou égal au maximum.",
+  timeOrder: "L'heure de fin doit suivre l'heure de début.",
+  time: "Heure invalide.",
+  date: "Date invalide.",
 };
 const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100 disabled:bg-cream";
 
@@ -138,15 +144,7 @@ export function PartnerForm({ id, initial, cities, live }: { id?: string; initia
           {err("insurance")}
         </div>
       </fieldset>
-      <fieldset className="grid gap-4 rounded-xl border border-line p-4 sm:grid-cols-2" data-testid="partner-hosting">
-        <legend className="px-1 text-sm font-semibold">Accueil des Tables</legend>
-        <p className="text-xs text-muted sm:col-span-2">Sert à choisir le lieu d&apos;une date selon le nombre d&apos;inscrits, et au message envoyé au lieu 1 h avant.</p>
-        {field("tables", "Nombre de tables disponibles", { inputMode: "numeric" })}
-        {field("seatsPerTable", "Places par table", { inputMode: "numeric" })}
-        {field("days", "Jours possibles", { placeholder: "Ex. mardi au jeudi" })}
-        {field("whatsapp", "WhatsApp du lieu", { inputMode: "tel" })}
-        <div className="sm:col-span-2">{field("memberPerk", "Avantage pour les abonnés (facultatif)", { placeholder: "Ex. –10 % sur l'addition" })}</div>
-      </fieldset>
+      <HostingFields v={v} set={set} field={field} err={err} live={live} />
       <div>
         <label htmlFor="pf-notes" className="mb-1 block text-sm font-medium">Notes internes</label>
         <textarea id="pf-notes" rows={4} className={input} value={v.notes} disabled={!live} onChange={(e) => set("notes", e.target.value)} />
@@ -165,5 +163,105 @@ export function PartnerForm({ id, initial, cities, live }: { id?: string; initia
         <p className="rounded-xl bg-brand-50 px-3 py-2 text-xs text-brand-900">Démonstration : l&apos;ajout et la modification des partenaires fonctionnent sur le site en ligne.</p>
       )}
     </form>
+  );
+}
+
+const DAYS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+const UNIT_LABELS: Record<(typeof VENUE_UNITS)[number], string> = { table: "Table", court: "Terrain", session: "Session", spot: "Places (cours, atelier)" };
+const TIER_LABELS: Record<(typeof VENUE_TIERS)[number], string> = { casual: "Casual", premium: "Premium", exclusive: "Exclusive" };
+const small = "rounded-xl border border-line bg-white px-2.5 py-2 text-sm outline-none focus:border-brand-700 disabled:bg-cream";
+
+/**
+ * Fiche du lieu pour l'attribution automatique (docs/22, décision 41) : gammes, formats acceptés, ressource réservée,
+ * créneaux habituels avec leur capacité, ouvertures et fermetures exceptionnelles, cuisine, budget, niveau.
+ */
+function HostingFields({ v, set, field, err, live }: {
+  v: PartnerFormValues;
+  set: <K extends keyof PartnerFormValues>(k: K, value: PartnerFormValues[K]) => void;
+  field: (k: keyof PartnerFormValues, label: string, extra?: Record<string, string>) => ReactNode;
+  err: (k: string) => ReactNode;
+  live: boolean;
+}) {
+  const toggle = <T extends string>(list: T[], x: T) => (list.includes(x) ? list.filter((y) => y !== x) : [...list, x]);
+  const slots = v.slots ?? [];
+  const exceptions = v.exceptions ?? [];
+  const setSlot = (i: number, patch: Partial<PartnerSlot>) => set("slots", slots.map((s, k) => (k === i ? { ...s, ...patch } : s)));
+  return (
+    <fieldset className="grid gap-4 rounded-xl border border-line p-4 sm:grid-cols-2" data-testid="partner-hosting">
+      <legend className="px-1 text-sm font-semibold">Accueil des rendez-vous Wenzy</legend>
+      <p className="text-xs text-muted sm:col-span-2">Le logiciel choisit les lieux d&apos;une date d&apos;après ces informations (format, gamme, jour, heure, capacité), puis leur envoie la demande.</p>
+      <div className="sm:col-span-2">
+        <span className="mb-1 block text-sm font-medium">Gammes</span>
+        <div className="flex flex-wrap gap-3" data-testid="partner-tiers">
+          {VENUE_TIERS.map((t) => (
+            <label key={t} className="flex items-center gap-2 text-sm"><input type="checkbox" disabled={!live} checked={(v.tiers ?? []).includes(t)} onChange={() => set("tiers", toggle(v.tiers ?? [], t))} />{TIER_LABELS[t]}</label>
+          ))}
+        </div>
+      </div>
+      <div className="sm:col-span-2">
+        <span className="mb-1 block text-sm font-medium">Formats et activités acceptés</span>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" data-testid="partner-formats">
+          {DEFAULT_EVENT_TEMPLATES.map((t) => (
+            <label key={t.id} className="flex items-center gap-2 text-sm"><input type="checkbox" disabled={!live} checked={(v.formats ?? []).includes(t.id)} onChange={() => set("formats", toggle(v.formats ?? [], t.id))} />{t.name}</label>
+          ))}
+        </div>
+      </div>
+      <div>
+        <label htmlFor="pf-unit" className="mb-1 block text-sm font-medium">Ce qu&apos;on réserve</label>
+        <select id="pf-unit" className={input} disabled={!live} value={v.unit ?? "table"} onChange={(e) => set("unit", e.target.value as PartnerFormValues["unit"])}>
+          {VENUE_UNITS.map((u) => <option key={u} value={u}>{UNIT_LABELS[u]}</option>)}
+        </select>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        {field("unitMin", "Personnes min.", { inputMode: "numeric" })}
+        {field("unitMax", "Personnes max.", { inputMode: "numeric" })}
+      </div>
+      <div className="sm:col-span-2" data-testid="partner-slots">
+        <span className="mb-1 block text-sm font-medium">Créneaux habituels</span>
+        <p className="mb-2 text-xs text-muted">Jour, heures de début acceptées et nombre de {(v.unit ?? "table") === "table" ? "tables" : "ressources"} disponibles. Ex. lundi, de 19:30 à 20:30, 4 tables.</p>
+        <ul className="space-y-2">
+          {slots.map((s, i) => (
+            <li key={i} className="flex flex-wrap items-center gap-2">
+              <select aria-label="Jour" className={small} disabled={!live} value={s.weekday} onChange={(e) => setSlot(i, { weekday: Number(e.target.value) })}>
+                {DAYS.map((d, k) => <option key={d} value={k}>{d}</option>)}
+              </select>
+              <input aria-label="De" type="time" className={small} disabled={!live} value={s.from} onChange={(e) => setSlot(i, { from: e.target.value })} />
+              <span className="text-sm text-muted">à</span>
+              <input aria-label="À" type="time" className={small} disabled={!live} value={s.to} onChange={(e) => setSlot(i, { to: e.target.value })} />
+              <input aria-label="Nombre" inputMode="numeric" className={`${small} w-20`} disabled={!live} value={String(s.units)} onChange={(e) => setSlot(i, { units: e.target.value as unknown as number })} />
+              {live && <button type="button" className="text-sm font-semibold text-red-800" onClick={() => set("slots", slots.filter((_, k) => k !== i))}>Retirer</button>}
+            </li>
+          ))}
+        </ul>
+        {live && <button type="button" className="mt-2 text-sm font-semibold text-brand-900" onClick={() => set("slots", [...slots, { weekday: 1, from: "19:30", to: "20:30", units: 2 }])}>+ Ajouter un créneau</button>}
+        {err("slots")}
+      </div>
+      <div className="sm:col-span-2" data-testid="partner-exceptions">
+        <span className="mb-1 block text-sm font-medium">Fermetures et ouvertures exceptionnelles</span>
+        <p className="mb-2 text-xs text-muted">Une date précise remplace le créneau habituel (0 = fermé ce jour-là).</p>
+        <ul className="space-y-2">
+          {exceptions.map((x, i) => (
+            <li key={i} className="flex flex-wrap items-center gap-2">
+              <input aria-label="Date" type="date" className={small} disabled={!live} value={x.date} onChange={(e) => set("exceptions", exceptions.map((y, k) => (k === i ? { ...y, date: e.target.value } : y)))} />
+              <input aria-label="Nombre" inputMode="numeric" className={`${small} w-20`} disabled={!live} value={String(x.units)} onChange={(e) => set("exceptions", exceptions.map((y, k) => (k === i ? { ...y, units: e.target.value as unknown as number } : y)))} />
+              {live && <button type="button" className="text-sm font-semibold text-red-800" onClick={() => set("exceptions", exceptions.filter((_, k) => k !== i))}>Retirer</button>}
+            </li>
+          ))}
+        </ul>
+        {live && <button type="button" className="mt-2 text-sm font-semibold text-brand-900" onClick={() => set("exceptions", [...exceptions, { date: "", units: 0 }])}>+ Ajouter une date</button>}
+        {err("exceptions")}
+      </div>
+      {field("cuisine", "Cuisine (révélée avec le lieu)", { placeholder: "Ex. méditerranéenne" })}
+      {field("avgBudget", "Budget moyen par personne (DH)", { inputMode: "numeric" })}
+      <div>
+        <label htmlFor="pf-level" className="mb-1 block text-sm font-medium">Niveau</label>
+        <select id="pf-level" className={input} disabled={!live} value={v.level ?? "occasional"} onChange={(e) => set("level", e.target.value as PartnerFormValues["level"])}>
+          <option value="regular">Régulier (capacité négociée)</option>
+          <option value="occasional">Occasionnel (à confirmer à chaque fois)</option>
+        </select>
+      </div>
+      {field("whatsapp", "WhatsApp du responsable", { inputMode: "tel" })}
+      <div className="sm:col-span-2">{field("memberPerk", "Avantage pour les abonnés (facultatif)", { placeholder: "Ex. –10 % sur l'addition" })}</div>
+    </fieldset>
   );
 }

@@ -32,7 +32,8 @@ export function venueByGroup(groups: { id: string; label: string }[], venues: Se
   const idx = assignGroupsToVenues(sorted.length, venues);
   return new Map(sorted.map((g, i) => {
     const v = venues[idx[i]!]!;
-    return [g.id, { name: v.name, address: v.address, ...(cuisine ? { cuisine } : {}) }];
+    const c = v.cuisine || cuisine;
+    return [g.id, { name: v.name, address: v.address, ...(c ? { cuisine: c } : {}) }];
   }));
 }
 
@@ -75,6 +76,8 @@ export const adminSetSessionVenues = onCall({ region: REGION, timeoutSeconds: 12
     });
   }
   if (v.data.makeDefault && venues[0]) batch.set(db.doc(`experiences/${s.experienceId}/private/venue`), defaultVenueDoc(venues[0], partners.get(venues[0].partnerId ?? "")?.data()?.name), { merge: true });
+  // Lieux choisis à la main : ils priment sur l'attribution automatique (docs/22 § 17.H, H3).
+  if (venues.length > 0) batch.update(sessRef, { "allocation.status": "manual", "allocation.updatedAt": FieldValue.serverTimestamp() });
   await batch.commit();
   const updated = s.groupsStatus === "revealed" && e.venue?.revealPolicy === "on_group_reveal" && venues.length > 0 ? await refreshRevealed(sessRef.id, s.experienceId, e) : 0;
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "session.venues", targetType: "session", targetId: sessRef.id, after: { venues: venues.map((x) => x.name), applied, makeDefault: v.data.makeDefault, updated } });

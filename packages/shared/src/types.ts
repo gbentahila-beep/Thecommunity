@@ -240,6 +240,10 @@ export type Session = {
   /** Composition des tables (6) : état, à revoir après une annulation, fiche hôte. */
   groupsStatus?: "none" | "proposed" | "validated" | "revealed";
   groupsNeedReview?: boolean;
+  /** docs/22 § 17.H : attribution automatique des lieux, date à risque, plafond de vente. */
+  allocation?: { status: "requested" | "short" | "confirmed" | "manual"; needed?: number; people?: number; confirmed?: number; missing?: number; round?: number } | null;
+  risk?: { status: "at_risk" | "kept" | "proposed" | "closed"; kind?: "date" | "merge"; targetSessionId?: string; deadline?: string } | null;
+  venueCapacity?: number | null;
   isDemo?: boolean;
 };
 
@@ -364,6 +368,10 @@ export type Reservation = {
   groupId?: string;
   /** Arrivée indiquée par le participant lui-même (docs/16) ; le pointage de l'organisateur reste à part. */
   arrivedAt?: string;
+  /** Résumé de la table sans les noms, montré à la révélation (docs/22, décision 37). */
+  tableSummary?: { others: number; ageMin: number | null; ageMax: number | null; languages: string[]; sectors: string[]; interests: string[] } | null;
+  /** Date à risque (décision 46) : autre date ou regroupement proposé ; accepter, ou être remboursé. */
+  proposal?: { kind: "date" | "merge"; targetSessionId: string; deadline: string; status: "pending" | "accepted" | "refused" | "expired" } | null;
   paidAt?: string;
   /** Fin du blocage des places pendant le paiement (réservation « pending_payment »). */
   holdExpiresAt?: string;
@@ -402,6 +410,9 @@ export type Group = {
   status: "proposed" | "validated" | "revealed";
   memberIds: string[];
   members: { uid: string; firstName: string; photoPath?: string; interests: Interest[] }[];
+  /** Tables (docs/22 § 17.H) : prénoms visibles après son check-in ; qui est déjà arrivé. */
+  namesAtCheckIn?: boolean;
+  arrivedUids?: string[];
   isDemo?: boolean;
 };
 
@@ -410,6 +421,8 @@ export type NotificationType =
   | "payment_confirmed"
   | "reminder"
   | "group_revealed"
+  | "venue_revealed"
+  | "table_message"
   | "event_updated"
   | "event_cancelled"
   | "waitlist_offer"

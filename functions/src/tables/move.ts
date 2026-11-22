@@ -14,7 +14,7 @@ import { readWaitlist, writeOffers } from "../waitlist/offers";
  * - membre (décision 38) : jusqu'à la fermeture de sa date (12 h avant pour les Tables), vers une date encore ouverte,
  *   sans repayer ; `minimum` : choix « autre date » quand le minimum n'est pas atteint (sa date est déjà fermée).
  */
-export async function moveReservationCore(o: { reservationId: string; targetSessionId: string; actorUid: string; by: "user" | "admin"; minimum?: boolean }) {
+export async function moveReservationCore(o: { reservationId: string; targetSessionId: string; actorUid: string; by: "user" | "admin"; proposal?: boolean }) {
   const resRef = db.doc(`reservations/${o.reservationId}`);
   return db.runTransaction(async (tx) => {
     const res = await tx.get(resRef);
@@ -37,13 +37,14 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
     const e = exp.data() ?? {};
     const now = Date.now();
     if (!t) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
-    if (t.experienceId !== r.experienceId) refuse("different_experience", "La nouvelle date doit être de la même expérience.");
+    // Proposition de l'équipe (décision 46) : la date proposée peut être un autre événement compatible (regroupement).
+    const proposed = o.proposal === true && r.proposal?.status === "pending" && r.proposal.targetSessionId === o.targetSessionId;
+    if (o.proposal && !proposed) refuse("no_proposal", "Aucune proposition en cours pour cette date.");
+    if (t.experienceId !== r.experienceId && !proposed) refuse("different_experience", "La nouvelle date doit être de la même expérience.");
     if (!["published", "full"].includes(t.status)) refuse("not_open", "La nouvelle date n'est pas ouverte.");
     if ((t.startAt as Timestamp).toMillis() <= now) refuse("already_started", "La nouvelle date est passée.");
-    if (o.by === "user") {
-      if (o.minimum ? r.minimumChoice?.status !== "pending" : now >= bookingClosesAt((f.startAt as Timestamp).toDate(), e.bookingMode).getTime()) {
-        refuse("closed", "Les réservations de cette date sont fermées.");
-      }
+    if (o.by === "user" && !proposed) {
+      if (now >= bookingClosesAt((f.startAt as Timestamp).toDate(), e.bookingMode).getTime()) refuse("closed", "Les réservations de cette date sont fermées.");
       if (now >= bookingClosesAt((t.startAt as Timestamp).toDate(), e.bookingMode).getTime()) refuse("target_closed", "Les réservations de la nouvelle date sont fermées.");
     }
     if (toLock.exists) refuse("already_booked", "Une place est déjà réservée sur la nouvelle date.");
@@ -61,7 +62,10 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
       tableSummary: FieldValue.delete(),
       reminders: FieldValue.delete(),
       ...(e.venue?.revealPolicy === "on_group_reveal" ? { venue: FieldValue.delete() } : {}),
-      ...(o.minimum ? { minimumChoice: { status: "moved", at: Timestamp.fromMillis(now), to: o.targetSessionId } } : {}),
+      ...(proposed ? { "proposal.status": "accepted", "proposal.answeredAt": Timestamp.fromMillis(now) } : {}),
+      ...(t.experienceId !== r.experienceId
+        ? { experienceId: t.experienceId, "sessionSnapshot.title": t.experienceSnapshot?.title ?? r.sessionSnapshot?.title, "sessionSnapshot.slug": t.experienceSnapshot?.slug ?? r.sessionSnapshot?.slug, "sessionSnapshot.coverImagePath": t.experienceSnapshot?.coverImagePath ?? "" }
+        : {}),
       moves: FieldValue.arrayUnion({ from: r.sessionId, to: o.targetSessionId, at: Timestamp.fromMillis(now), by: o.actorUid, self: o.by === "user" }),
       updatedAt: FieldValue.serverTimestamp(),
     });

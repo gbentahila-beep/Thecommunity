@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { bookingClosesAt, SELF_CHECKIN_AFTER_MIN, SELF_CHECKIN_BEFORE_MIN } from "./booking";
+import { bookingClosesAt, localOnDayBefore, SELF_CHECKIN_AFTER_MIN, SELF_CHECKIN_BEFORE_MIN } from "./booking";
+import { MOROCCO_TIMEZONE } from "./constants";
+import { zonedParts } from "./time";
 import { ageOn } from "./profile";
 import { VENUE_REVEAL_HOURS } from "./venue";
 
@@ -26,6 +28,17 @@ export function isTablesFlow(e: { bookingMode?: string; groupConfig?: unknown } 
 
 export type TablesTimeline = { closesAt: Date; revealAt: Date; finalAt: Date; checkInFrom: Date; checkInUntil: Date; chatFrom: Date; chatUntil: Date };
 
+/**
+ * Révélation du lieu (décision 42) : 5 h avant, ramenée à 21 h la veille si elle tombe la nuit (entre 22 h et 8 h,
+ * heure du Maroc), pour les débuts du matin et du midi.
+ */
+export function revealAtFor(startAt: Date | string): Date {
+  const start = new Date(startAt);
+  const at = new Date(start.getTime() - VENUE_REVEAL_HOURS * HOUR);
+  const h = zonedParts(at, MOROCCO_TIMEZONE).hour;
+  return h >= 22 || h < 8 ? localOnDayBefore(start, 21) : at;
+}
+
 /** Les heures clés d'une date de Tables. */
 export function tablesTimeline(startAt: Date | string): TablesTimeline {
   const start = new Date(startAt);
@@ -33,7 +46,7 @@ export function tablesTimeline(startAt: Date | string): TablesTimeline {
   const chatFrom = new Date(t + TABLE_CHAT_OPENS_AFTER_HOURS * HOUR);
   return {
     closesAt: bookingClosesAt(start, "social_dinner"),
-    revealAt: new Date(t - VENUE_REVEAL_HOURS * HOUR),
+    revealAt: revealAtFor(start),
     finalAt: new Date(t - TABLES_FINAL_HOURS * HOUR),
     checkInFrom: new Date(t - SELF_CHECKIN_BEFORE_MIN * 60_000),
     checkInUntil: new Date(t + SELF_CHECKIN_AFTER_MIN * 60_000),
@@ -86,11 +99,23 @@ const idSchema = z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/);
 /** Déplacer sa réservation sur une autre date du même rendez-vous (décision 38). */
 export const moveReservationSchema = z.object({ reservationId: idSchema, targetSessionId: idSchema });
 
-/** Minimum non atteint (décision 17) : chaque inscrit choisit une autre date ou le remboursement. */
-export const minimumChoiceSchema = z.discriminatedUnion("choice", [
-  z.object({ reservationId: idSchema, choice: z.literal("refund") }),
-  z.object({ reservationId: idSchema, choice: z.literal("move"), targetSessionId: idSchema }),
+/**
+ * Événement à risque (décision 46) : l'équipe maintient, propose une autre date (même rendez-vous), regroupe avec un
+ * événement compatible (même format et gamme), ou annule. Chacun accepte la proposition ou est remboursé.
+ */
+export const riskDecisionSchema = z.discriminatedUnion("action", [
+  z.object({ sessionId: idSchema, action: z.literal("keep") }),
+  z.object({ sessionId: idSchema, action: z.literal("propose"), targetSessionId: idSchema }),
 ]);
+/** Réponse du participant à une proposition (autre date ou regroupement). */
+export const proposalResponseSchema = z.object({ reservationId: idSchema, accept: z.boolean() });
+/** Heure limite pour répondre à une proposition : la fermeture de la date proposée, au plus tard la révélation de la sienne. */
+export function proposalDeadline(ownStart: Date | string, targetClosesAt: Date): Date {
+  const own = revealAtFor(ownStart);
+  return targetClosesAt.getTime() < own.getTime() ? targetClosesAt : own;
+}
+/** Événement à risque : la veille (24 h avant), moins d'inscrits que le minimum d'une table. */
+export const RISK_CHECK_HOURS = 24;
 
 /** Message entre les personnes d'une table, après la rencontre (décision 39). */
 export const tableMessageSchema = z.object({ groupId: idSchema, text: z.string().trim().min(1, "required").max(TABLE_MESSAGE_MAX, "tooLong") });

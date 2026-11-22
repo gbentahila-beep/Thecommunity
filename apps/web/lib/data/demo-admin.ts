@@ -1,3 +1,4 @@
+import type { PartnerHosting } from "@thecommunity/shared";
 /**
  * ⚠️ DONNÉES DE DÉMONSTRATION DU BACK-OFFICE — membres, réservations, paiements,
  * partenaires et codes promo fictifs, générés de façon déterministe.
@@ -111,21 +112,68 @@ export type Partner = {
   applicationId?: string;
   /** 18c : assurance responsabilité civile du lieu, vue par l'équipe. */
   insurance?: { verified: boolean; insurer?: string; policyNumber?: string; expiresOn?: string };
-  /** docs/22 : accueil des Tables (capacité, jours, contact, avantage abonnés). */
-  tables?: number;
-  seatsPerTable?: number;
-  days?: string;
+  /** docs/22, décision 41 : fiche du lieu pour l'attribution automatique. */
+  tiers?: PartnerHosting["tiers"];
+  formats?: string[];
+  unit?: PartnerHosting["unit"];
+  unitMin?: number;
+  unitMax?: number;
+  slots?: PartnerHosting["slots"];
+  exceptions?: PartnerHosting["exceptions"];
+  cuisine?: string;
+  avgBudget?: number;
+  level?: PartnerHosting["level"];
+  /** Historique calculé par le serveur (demandes reçues, acceptées, refusées, délai moyen de réponse en minutes). */
+  stats?: { requests?: number; accepted?: number; refused?: number; avgResponseMinutes?: number };
   whatsapp?: string;
   memberPerk?: string;
 };
 
+/** Demande à un lieu (docs/22 § 17.H) telle que vue par l'équipe. */
+export type AdminVenueRequest = {
+  id: string;
+  sessionId: string;
+  partnerId: string;
+  partnerName: string;
+  partnerWhatsapp: string;
+  partnerEmail: string;
+  title: string;
+  format: string;
+  tier: string | null;
+  unit: "table" | "court" | "session" | "spot";
+  startAt: string;
+  tables: number;
+  people: number;
+  status: "sent" | "confirmed" | "refused" | "expired" | "cancelled";
+  round: number;
+  reference: string;
+  token: string;
+  fixed?: boolean;
+  sentAt?: string;
+  remindedAt?: string;
+  respondedAt?: string;
+  responseBy?: "partner" | "team";
+  manualWhatsappAt?: string;
+  recapText?: string;
+  recapSentAt?: string;
+};
+
 export const DEMO_PARTNERS: Partner[] = [
-  { id: "p-resto-gauthier", name: "Restaurant partenaire Gauthier", type: "restaurant", district: "Gauthier", contactName: "M. Kabbaj", contactEmail: "resto@example.com", defaultCommissionPercent: 0, status: "active", address: "12 rue de Gauthier, Casablanca", tables: 4, seatsPerTable: 6, days: "Mardi au jeudi", whatsapp: "+212 600 000 001", memberPerk: "–10 % sur l'addition pour les abonnés" },
+  { id: "p-resto-gauthier", name: "Restaurant partenaire Gauthier", type: "restaurant", district: "Gauthier", contactName: "M. Kabbaj", contactEmail: "resto@example.com", defaultCommissionPercent: 0, status: "active", address: "12 rue de Gauthier, Casablanca", whatsapp: "+212 600 000 001", memberPerk: "–10 % sur l'addition pour les abonnés",
+    tiers: ["casual", "premium"], formats: ["diner", "dejeuner"], unit: "table", unitMin: 4, unitMax: 6, cuisine: "Méditerranéenne", avgBudget: 220, level: "regular", stats: { requests: 12, accepted: 11, refused: 1, avgResponseMinutes: 35 },
+    slots: [{weekday: 1, from: "19:30", to: "21:00", units: 4}, {weekday: 2, from: "19:30", to: "21:00", units: 4}, {weekday: 3, from: "19:30", to: "21:00", units: 4}, {weekday: 4, from: "19:30", to: "21:00", units: 4}, {weekday: 5, from: "19:30", to: "21:00", units: 3}, {weekday: 6, from: "19:30", to: "21:00", units: 3}] },
+  { id: "p-resto-racine", name: "Bistrot partenaire Racine", type: "restaurant", district: "Racine", contactName: "Mme Chraibi", contactEmail: "bistrot@example.com", defaultCommissionPercent: 0, status: "active", address: "8 boulevard Racine, Casablanca", whatsapp: "+212 600 000 002",
+    tiers: ["premium", "exclusive"], formats: ["diner", "brunch"], unit: "table", unitMin: 4, unitMax: 6, cuisine: "Française", avgBudget: 320, level: "occasional", stats: { requests: 5, accepted: 3, refused: 2, avgResponseMinutes: 80 },
+    slots: [{weekday: 1, from: "19:30", to: "21:00", units: 3}, {weekday: 3, from: "19:30", to: "21:00", units: 3}, {weekday: 4, from: "19:30", to: "21:00", units: 3}, {weekday: 6, from: "19:30", to: "21:00", units: 3}, {weekday: 0, from: "10:30", to: "12:00", units: 4}] },
+  { id: "p-cafe-maarif", name: "Café partenaire Maarif", type: "restaurant", district: "Maarif", contactName: "M. Tazi", contactEmail: "cafe@example.com", defaultCommissionPercent: 0, status: "active", address: "3 rue du Maarif, Casablanca", whatsapp: "+212 600 000 003",
+    tiers: ["casual"], formats: ["cafe", "brunch"], unit: "table", unitMin: 4, unitMax: 5, cuisine: "Café de spécialité", avgBudget: 60, level: "regular",
+    slots: [{weekday: 0, from: "09:00", to: "18:00", units: 3}, {weekday: 1, from: "09:00", to: "18:00", units: 3}, {weekday: 2, from: "09:00", to: "18:00", units: 3}, {weekday: 3, from: "09:00", to: "18:00", units: 3}, {weekday: 4, from: "09:00", to: "18:00", units: 3}, {weekday: 5, from: "09:00", to: "18:00", units: 3}, {weekday: 6, from: "09:00", to: "18:00", units: 3}] },
   { id: "p-studio-anfa", name: "Studio partenaire Anfa", type: "studio", district: "Anfa", contactName: "Mme Alami", contactEmail: "studio@example.com", defaultCommissionPercent: 20, status: "active" },
   { id: "p-escape-maarif", name: "Escape room partenaire", type: "venue", district: "Maarif", contactName: "M. Senhaji", contactEmail: "escape@example.com", defaultCommissionPercent: 15, status: "active" },
   { id: "p-atelier-cil", name: "Atelier céramique partenaire", type: "workshop", district: "CIL", contactName: "Mme Tahiri", contactEmail: "atelier@example.com", defaultCommissionPercent: 18, status: "active" },
   { id: "p-rooftop", name: "Rooftop partenaire", type: "venue", district: "Centre-ville", contactName: "M. Lazrak", contactEmail: "rooftop@example.com", defaultCommissionPercent: 0, status: "active" },
-  { id: "p-padel-anfa", name: "Club de padel partenaire", type: "venue", district: "Anfa", contactName: "M. Bennis", contactEmail: "padel@example.com", defaultCommissionPercent: 0, status: "active", insurance: { verified: true, insurer: "Assureur du club", expiresOn: "2027-06-30" } },
+  { id: "p-padel-anfa", name: "Club de padel partenaire", type: "venue", district: "Anfa", contactName: "M. Bennis", contactEmail: "padel@example.com", defaultCommissionPercent: 0, status: "active", insurance: { verified: true, insurer: "Assureur du club", expiresOn: "2027-06-30" },
+    whatsapp: "+212 600 000 004", tiers: [], formats: ["padel"], unit: "court", unitMin: 4, unitMax: 4, level: "regular", slots: [{weekday: 6, from: "09:00", to: "12:00", units: 2}, {weekday: 2, from: "19:00", to: "21:00", units: 2}] },
   { id: "p-paintball-bouskoura", name: "Terrain de paintball partenaire", type: "venue", district: "Bouskoura", contactName: "Mme Idrissi", contactEmail: "paintball@example.com", defaultCommissionPercent: 0, status: "active" },
   { id: "p-maison-habous", name: "Maison d'hôtes Habous", type: "workshop", district: "Habous", contactName: "Mme Berrada", contactEmail: "habous@example.com", defaultCommissionPercent: 20, status: "prospect" },
 ];

@@ -404,7 +404,11 @@
     "transferTooLateTitle": "Paiement par virement impossible pour cette date",
     "transferTooLateText": "Le virement doit nous parvenir au plus tard {cutoff} h avant l'expérience : cette date est trop proche. Choisissez une date plus lointaine.",
     "physicalTerms": "J'ai lu et j'accepte les [conditions de participation aux activités physiques](/conditions-activites-physiques), et je confirme être en état de pratiquer cette activité.",
-    "physicalTermsRequired": "Cochez la case pour accepter les conditions de participation aux activités physiques."
+    "physicalTermsRequired": "Cochez la case pour accepter les conditions de participation aux activités physiques.",
+    "seatsSolo": "Moi seul·e",
+    "seatsPlusOne": "Moi + 1",
+    "freeShort": "Gratuit",
+    "seatsCount": "{count, plural, one {# place} other {# places}}"
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -1906,5 +1910,68 @@
     "none": "—",
     "yes": "Oui",
     "no": "Non"
+  },
+  "move": {
+    "title": "Changer de date",
+    "text": "Vous pouvez déplacer votre réservation sur une autre date de ce rendez-vous, sans repayer, jusqu'au {until}.",
+    "cta": "Déplacer sur une autre date",
+    "none": "Aucune autre date disponible pour l'instant",
+    "pick": "Nouvelle date",
+    "confirm": "Déplacer ma réservation",
+    "busy": "Un instant…",
+    "done": "C'est fait : votre réservation est sur la nouvelle date.",
+    "errors": {
+      "closed": "Les réservations de cette date sont fermées : le déplacement n'est plus possible.",
+      "target_closed": "Les réservations de la date choisie sont fermées.",
+      "full": "Plus assez de places sur la date choisie.",
+      "other": "Déplacement impossible pour le moment. Réessayez dans un instant."
+    }
+  },
+  "proposal": {
+    "title": "Pas assez d'inscrits pour cette date",
+    "text": "Nous vous proposons : {proposed}. Acceptez sans repayer, ou choisissez le remboursement intégral, avant le {deadline}. Sans réponse, vous serez remboursé·e automatiquement.",
+    "accept": "J'accepte cette date",
+    "refuse": "Je préfère être remboursé·e",
+    "refuseConfirm": "Annuler votre réservation et être remboursé·e intégralement ?",
+    "error": "Réponse impossible pour le moment. Réessayez dans un instant."
+  },
+  "tableSummary": {
+    "title": "Votre table",
+    "venueArrives": "Le lieu arrive le {when}.",
+    "others": "{count, plural, one {# autre convive} other {# autres convives}}",
+    "age": "{age} ans",
+    "ages": "{min} à {max} ans",
+    "languages": "Langues",
+    "sectors": "Secteurs",
+    "interests": "Centres d'intérêt",
+    "namesAtCheckIn": "Les prénoms s'affichent après votre check-in, sur place.",
+    "arrived": "Arrivé·e",
+    "chat": "Écrire à ma table"
+  },
+  "tableChat": {
+    "back": "Mes rencontres",
+    "title": "{label} : messages",
+    "window": "Ouverts jusqu'au {until}.",
+    "empty": "Aucun message pour l'instant. Un mot pour remercier votre table ?",
+    "label": "Votre message",
+    "send": "Envoyer",
+    "busy": "Envoi…",
+    "privacy": "Ni numéro ni réseaux ne sont affichés.",
+    "closed": "Les messages s'ouvrent 2 h après le début et restent ouverts 14 jours.",
+    "error": "Envoi impossible pour le moment.",
+    "you": "Vous",
+    "demoMessage": "Merci pour cette belle soirée, à refaire !"
+  },
+  "ticketCard": {
+    "label": "Votre table",
+    "start": "Début {time}",
+    "tables": "Tables de {min} à {max}",
+    "closes": "Réservations jusqu'au {when}.",
+    "reveal": "Le lieu et l'adresse arrivent le {when}.",
+    "howTitle": "Comment on compose les tables",
+    "how1": "Votre profil suffit : langues, âge, centres d'intérêt et façon d'être en conversation.",
+    "how2": "Le logiciel réunit des personnes compatibles, par tables de {min} à {max}, avec une langue commune.",
+    "how3": "Le {when}, vous recevez le lieu, l'adresse et un aperçu de votre table, sans les noms.",
+    "how4": "Sur place, faites votre check-in : vous découvrez votre table et les prénoms."
   }
 }

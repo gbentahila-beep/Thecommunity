@@ -52,3 +52,5 @@ export { sendReminders } from "./notify/reminders";
 export { adminSetSessionVenues, adminSessionVenueAction } from "./experiences/venues";
 export { adminAddSessions } from "./experiences/add-sessions";
 export { moveMyReservation } from "./tables/move";
+export { partnerRespondRequest, adminRequestAction, adminAllocate, adminSaveAllocationSettings, adminSaveWhatsAppSettings, adminRiskDecision, respondProposal, sendTableMessage } from "./tables/callables";
+export { tablesAutomation } from "./tables/automation";

@@ -39,6 +39,9 @@ beforeEach(async () => {
     await setDoc(doc(db, "bookingRequests/s1_salma"), { userId: "salma", sessionId: "s1", status: "pending", message: "Bonjour" });
     await setDoc(doc(db, "groups/g1"), { memberIds: ["salma", "karim"], status: "revealed" });
     await setDoc(doc(db, "groups/g2"), { memberIds: ["salma"], status: "validated" });
+    await setDoc(doc(db, "groups/g3"), { memberIds: ["salma", "karim"], status: "revealed", namesAtCheckIn: true, arrivedUids: ["karim"] });
+    await setDoc(doc(db, "groups/g3/messages/m1"), { uid: "karim", text: "Merci !" });
+    await setDoc(doc(db, "venueRequests/r1"), { token: "secret", partnerId: "p1" });
     await setDoc(doc(db, "promoCodes/BIENVENUE20"), { value: 20 });
     await setDoc(doc(db, "settings/public"), { locales: ["fr", "ar"] });
     await setDoc(doc(db, "settings/booking"), { holdMinutes: 15 });
@@ -156,6 +159,14 @@ describe("réservations, paiements, groupes", () => {
     await assertFails(getDoc(doc(salma(), "groups/g2")));
     await assertFails(getDoc(doc(as("inconnu"), "groups/g1")));
     await assertSucceeds(getDoc(doc(admin(), "groups/g2")));
+  });
+  it("Tables : prénoms et messages seulement après son check-in ; demandes aux lieux réservées à l'équipe", async () => {
+    await assertSucceeds(getDoc(doc(karim(), "groups/g3")));
+    await assertFails(getDoc(doc(salma(), "groups/g3")));
+    await assertSucceeds(getDoc(doc(karim(), "groups/g3/messages/m1")));
+    await assertFails(getDoc(doc(salma(), "groups/g3/messages/m1")));
+    await assertFails(getDoc(doc(salma(), "venueRequests/r1")));
+    await assertSucceeds(getDoc(doc(admin(), "venueRequests/r1")));
   });
 });
 

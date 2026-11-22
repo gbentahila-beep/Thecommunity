@@ -23,6 +23,8 @@ export async function checkInSelf(uid: string, reservationId: string, now = new 
     if (state === "early") refuse("too_early", "L'arrivée s'indique à partir de 30 minutes avant le début.");
     if (state === "closed") refuse("too_late", "L'expérience a commencé il y a plus d'une heure.");
     tx.update(ref, { arrivedAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
+    // docs/22 § 17.H (H13) : après son check-in, on voit sa table et qui est déjà arrivé.
+    if (r.groupId) tx.set(db.doc(`groups/${r.groupId}`), { arrivedUids: FieldValue.arrayUnion(uid) }, { merge: true });
     return { arrivedAt: now.toISOString() };
   });
 }

@@ -164,6 +164,7 @@ export function buildDemoMemberData(now: Date = new Date()) {
       sessionSnapshot: snapshot(escape, pEscape.startAt, pEscape.endAt),
       venue: { name: "Escape room partenaire", address: "Rue Abou Dhabi, Maarif, Casablanca" },
       groupId: "grp-demo-escape",
+      arrivedAt: new Date(new Date(pEscape.startAt).getTime() - 10 * 60_000).toISOString(),
       paidAt: new Date(now.getTime() - 20 * DAY).toISOString(),
       reviewId: "r4",
       createdAt: new Date(now.getTime() - 20 * DAY).toISOString(),
@@ -186,6 +187,9 @@ export function buildDemoMemberData(now: Date = new Date()) {
         { uid: "u-sofia", firstName: "Sofia", interests: ["travel", "wellness", "music"] },
         { uid: "u-yassine", firstName: "Yassine", interests: ["sport", "games", "nightlife"] },
       ],
+      // docs/22 § 17.H : prénoms visibles après le check-in ; messages de la table ouverts 14 jours.
+      namesAtCheckIn: true,
+      arrivedUids: [DEMO_MEMBER.uid, "u-karim", "u-lina", "u-omar", "u-sofia"],
       isDemo: true,
     },
   ];
