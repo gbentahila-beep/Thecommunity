@@ -253,3 +253,52 @@ export function newExperiencesMail(o: { locale: string; items: { title: string; 
   }[l];
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, list, cta: { label: t.cta, href: `${SITE_URL}${prefix(l)}/experiences` }, footer: t.footer }) };
 }
+
+/** docs/22, décision 17 : pas assez d'inscrits pour une table ; chacun choisit une autre date ou le remboursement. */
+export function minimumMail(o: { locale: string; firstName: string; title: string; when: string; deadline: string; reservationId: string }) {
+  const l = lang(o.locale);
+  const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
+  const t = {
+    fr: { subject: `Choisissez : ${o.title}`, heading: `${o.firstName ? `${o.firstName}, p` : "P"}as encore assez d'inscrits`, p: [`« ${o.title} », ${o.when} : il n'y a pas assez d'inscrits pour former une table.`, `Choisissez une autre date ou le remboursement intégral, avant le ${o.deadline}. Sans réponse, vous serez remboursé·e automatiquement.`], cta: "Choisir" },
+    en: { subject: `Your choice: ${o.title}`, heading: "Not enough people yet", p: [`“${o.title}”, ${o.when}: there aren't enough people to form a table.`, `Choose another date or a full refund before ${o.deadline}. Without an answer, you'll be refunded automatically.`], cta: "Choose" },
+    ar: { subject: `اختر: ${o.title}`, heading: "عدد المسجلين غير كافٍ بعد", p: [`« ${o.title} »، ${o.when}: عدد المسجلين غير كافٍ لتكوين مائدة.`, `اختر موعدًا آخر أو استردادًا كاملًا قبل ${o.deadline}. بدون رد، سيتم الاسترداد تلقائيًا.`], cta: "اختيار" },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
+}
+
+/** docs/22 § 8 : 5 h avant, le lieu, l'adresse et la cuisine, avec le résumé de la table sans les noms. */
+export function venueRevealedMail(o: { locale: string; firstName: string; title: string; when: string; venue: string | null; cuisine: string | null; summary: string | null; checkInFrom: string; reservationId: string }) {
+  const l = lang(o.locale);
+  const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
+  const t = {
+    fr: { subject: `Votre lieu est révélé : ${o.title}`, heading: `${o.firstName ? `${o.firstName}, v` : "V"}otre lieu est révélé`, p: [`« ${o.title} », ${o.when}.`, ...(o.venue ? [`Rendez-vous : ${o.venue}.`] : []), ...(o.cuisine ? [`Cuisine : ${o.cuisine}.`] : []), ...(o.summary ? [`À votre table : ${o.summary}.`] : []), `Check-in à partir de ${o.checkInFrom} depuis votre réservation : vous y découvrirez votre table et les prénoms.`], cta: "Voir ma réservation" },
+    en: { subject: `Your venue is revealed: ${o.title}`, heading: `${o.firstName ? `${o.firstName}, y` : "Y"}our venue is revealed`, p: [`“${o.title}”, ${o.when}.`, ...(o.venue ? [`Meeting point: ${o.venue}.`] : []), ...(o.cuisine ? [`Cuisine: ${o.cuisine}.`] : []), ...(o.summary ? [`At your table: ${o.summary}.`] : []), `Check in from ${o.checkInFrom} in your booking: you'll see your table and first names there.`], cta: "View my booking" },
+    ar: { subject: `تم الكشف عن المكان: ${o.title}`, heading: "تم الكشف عن مكانك", p: [`« ${o.title} »، ${o.when}.`, ...(o.venue ? [`المكان: ${o.venue}.`] : []), ...(o.cuisine ? [`المطبخ: ${o.cuisine}.`] : []), ...(o.summary ? [`على مائدتك: ${o.summary}.`] : []), `سجّل وصولك ابتداءً من ${o.checkInFrom} من صفحة حجزك: ستكتشف هناك مائدتك والأسماء.`], cta: "عرض حجزي" },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
+}
+
+/** docs/22 § 13 : 1 h avant, message au lieu (nombre de tables, prénoms, régimes et allergies partagés). */
+export function venueBriefMail(o: { venue: string; title: string; when: string; tables: { label: string; names: string[] }[]; people: number; notes: string[] }) {
+  return {
+    subject: `Wenzy · ${o.when} · ${o.tables.length} table${o.tables.length > 1 ? "s" : ""}, ${o.people} personne${o.people > 1 ? "s" : ""}`,
+    ...layout("fr", {
+      heading: `Ce soir chez ${o.venue}`,
+      paragraphs: [
+        `« ${o.title} », ${o.when} : ${o.tables.length} table${o.tables.length > 1 ? "s" : ""}, ${o.people} personne${o.people > 1 ? "s" : ""}.`,
+        ...o.tables.map((t) => `${t.label} : ${t.names.join(", ")}.`),
+        o.notes.length ? `Régimes et allergies : ${o.notes.join(" ; ")}.` : "Aucun régime ni allergie signalé.",
+        "Chacun règle sa consommation sur place. Merci pour votre accueil !",
+      ],
+      footer: "Message envoyé par Wenzy à ses lieux partenaires, 1 h avant chaque rendez-vous.",
+    }),
+  };
+}
+
+/** Alerte à l'équipe (lieu à renseigner, minimum non atteint, table de 7…), en français. */
+export function teamAlertMail(o: { subject: string; paragraphs: string[]; path: string }) {
+  return {
+    subject: o.subject,
+    ...layout("fr", { heading: o.subject, paragraphs: o.paragraphs, cta: { label: "Ouvrir dans le back-office", href: `${SITE_URL}${o.path}` }, footer: "Alerte automatique du back-office Wenzy." }),
+  };
+}

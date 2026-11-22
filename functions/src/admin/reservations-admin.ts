@@ -8,7 +8,7 @@ import { invalidArgument, requireAuth, requireRole, roleOf } from "../lib/guards
 import { requireOrganizer, requireTeamOrOrganizerOf } from "../organizers/access";
 import { cancelReservationCore, idSchema } from "../reservations/cancel-reservation";
 import { refuse } from "../reservations/create-reservation";
-import { readWaitlist, writeOffers } from "../waitlist/offers";
+import { moveReservationCore } from "../tables/move";
 
 const reasonSchema = z.string().trim().min(2, "required").max(200, "tooLong");
 
@@ -111,64 +111,7 @@ export const adminMoveReservation = onCall({ region: REGION }, async (req) => {
   const parsed = z.object({ reservationId: idSchema, targetSessionId: idSchema }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { reservationId, targetSessionId } = parsed.data;
-  const resRef = db.doc(`reservations/${reservationId}`);
-
-  const moved = await db.runTransaction(async (tx) => {
-    const res = await tx.get(resRef);
-    const r = res.data();
-    if (!r) throw new HttpsError("not-found", "Réservation introuvable.", { reason: "not_found" });
-    if (r.status !== "confirmed" && r.status !== "pending_payment") refuse("not_movable", "Seule une réservation active peut être déplacée.");
-    if (r.sessionId === targetSessionId) refuse("same_session", "C'est déjà cette date.");
-    const fromRef = db.doc(`sessions/${r.sessionId}`);
-    const toRef = db.doc(`sessions/${targetSessionId}`);
-    const [from, to, fromLock, toLock] = await Promise.all([
-      tx.get(fromRef),
-      tx.get(toRef),
-      tx.get(fromRef.collection("seatLocks").doc(r.userId)),
-      tx.get(toRef.collection("seatLocks").doc(r.userId)),
-    ]);
-    const f = from.data()!;
-    const t = to.data();
-    if (!t) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
-    if (t.experienceId !== r.experienceId) refuse("different_experience", "La nouvelle date doit être de la même expérience.");
-    if (!["published", "full"].includes(t.status)) refuse("not_open", "La nouvelle date n'est pas ouverte.");
-    if ((t.startAt as Timestamp).toMillis() <= Date.now()) refuse("already_started", "La nouvelle date est passée.");
-    if (toLock.exists) refuse("already_booked", "Cette personne a déjà une place sur la nouvelle date.");
-    const n = r.seats as number;
-    const held = r.status === "pending_payment";
-    const toAvailable = t.capacity - t.seatsConfirmed - t.seatsHeld;
-    if (toAvailable < n) refuse("full", "Plus assez de places sur la nouvelle date.");
-    const exp = await tx.get(db.doc(`experiences/${r.experienceId}`));
-    const candidates = await readWaitlist(tx, fromRef);
-
-    tx.update(resRef, {
-      sessionId: targetSessionId,
-      "sessionSnapshot.startAt": t.startAt,
-      "sessionSnapshot.endAt": t.endAt,
-      moves: FieldValue.arrayUnion({ from: r.sessionId, to: targetSessionId, at: Timestamp.now(), by: actor.uid }),
-      updatedAt: FieldValue.serverTimestamp(),
-    });
-    if (fromLock.data()?.reservationId === res.id) tx.delete(fromLock.ref);
-    tx.set(toLock.ref, { reservationId: res.id, createdAt: FieldValue.serverTimestamp() });
-    tx.update(toRef, {
-      seatsConfirmed: FieldValue.increment(held ? 0 : n),
-      seatsHeld: FieldValue.increment(held ? n : 0),
-      status: toAvailable - n <= 0 ? "full" : "published",
-      updatedAt: FieldValue.serverTimestamp(),
-    });
-    const fromAvailable = f.capacity - (f.seatsConfirmed - (held ? 0 : n)) - (f.seatsHeld - (held ? n : 0));
-    const offers = exp.exists ? writeOffers(tx, { sessRef: fromRef, s: f, e: exp.data()!, candidates, available: fromAvailable, now: Date.now() }) : { heldDelta: 0, confirmedDelta: 0, waitingDelta: 0 };
-    const left = fromAvailable - offers.heldDelta - offers.confirmedDelta;
-    tx.update(fromRef, {
-      seatsConfirmed: FieldValue.increment((held ? 0 : -n) + offers.confirmedDelta),
-      seatsHeld: FieldValue.increment((held ? -n : 0) + offers.heldDelta),
-      waitlistCount: FieldValue.increment(offers.waitingDelta),
-      ...(["published", "full"].includes(f.status) ? { status: left > 0 ? "published" : "full" } : {}),
-      ...(["validated", "revealed"].includes(f.groupsStatus) ? { groupsNeedReview: true } : {}),
-      updatedAt: FieldValue.serverTimestamp(),
-    });
-    return { userId: r.userId as string, from: r.sessionId as string, startAt: (t.startAt as Timestamp).toDate() };
-  });
+  const moved = await moveReservationCore({ reservationId, targetSessionId, actorUid: actor.uid, by: "admin" });
 
   const when = moved.startAt.toLocaleString("fr-FR", { timeZone: "Africa/Casablanca", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   const whenAr = moved.startAt.toLocaleString("ar-MA", { timeZone: "Africa/Casablanca", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });

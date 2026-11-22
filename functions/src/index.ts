@@ -51,3 +51,4 @@ export { adminProposeGroups, adminSaveGroups, adminRevealGroups } from "./groups
 export { sendReminders } from "./notify/reminders";
 export { adminSetSessionVenues, adminSessionVenueAction } from "./experiences/venues";
 export { adminAddSessions } from "./experiences/add-sessions";
+export { moveMyReservation } from "./tables/move";
