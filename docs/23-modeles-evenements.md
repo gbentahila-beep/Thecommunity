@@ -460,7 +460,7 @@ Tes photos, enregistrées dans le site (`apps/web/public/images/modeles/`), à v
 | Modèle | Photo reçue | Fichier |
 |---|---|---|
 | Café | Trois mains qui trinquent avec des cafés | `cafe.webp` · **validée** |
-| Brunch | Table de brunch vue du dessus | `brunch.webp` |
+| Brunch | Table de brunch vue du dessus | `brunch.webp` · **validée** |
 | Dîner | Longue table dressée, sans personne | `diner.webp` |
 | Afterwork | Groupe attablé le soir | `afterwork.webp` |
 | Échange de langues | Cafés et carnets, un doigt qui pointe une page | `echange-langues.webp` |
