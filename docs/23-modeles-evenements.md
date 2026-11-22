@@ -269,13 +269,14 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 
 ### Jouer : équipes composées, lieu affiché
 
-**J1 · Escape game** · **L**
+**J1 · Escape game** — Sortir · **L** · **VALIDÉ**
 - **Titre** : Escape game · **Google** : Escape game entre inconnus à Casablanca
 - **Accroche** : Une heure pour sortir ensemble, avec des coéquipiers que vous ne connaissez pas encore.
-- **Description** : Nous formons des équipes de quatre à six personnes, mêlant habitués et débutants. Une heure d'énigmes dans une salle partenaire, puis un verre pour refaire la partie. La session se règle sur place.
-- **Quand** : vendredi 19h00, 1 h · **Sur place** : ≈ 120–180 DH
-- **Inclus** : des équipes composées pour vous, la salle réservée · **Pas inclus** : la session (sur place), les boissons
-- **Questionnaire** : Jeu en équipe · **Image** : `escape-game.webp` ✓
+- **Description** : Nous formons des équipes de quatre à six personnes, en mêlant habitués et débutants, dans une salle partenaire. Une heure d'énigmes à résoudre ensemble.
+- **Quand** : vendredi 19h00, 1 h · **Format** : équipes de 4 à 6, 12 places (2 salles) · **Lieu** : affiché (salle partenaire)
+- **Sur place** : ≈ 120–180 DH par personne (la session) · **Inclus** : Des équipes composées pour vous · La salle réservée
+- **Niveau** : tous niveaux · **Questionnaire** : Jeu en équipe · **Image** : `escape-game.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non · français et darija · annulation gratuite jusqu'à 48 h avant
 
 **J2 · Paintball** · 2
 - **Titre** : Paintball · **Accroche** : Deux équipes équilibrées et beaucoup de rires.
@@ -299,20 +300,23 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 - **Description** : Séance d'essais puis course sur une piste partenaire, briefing sécurité compris.
 - **Quand** : samedi 15h00 · **Sur place** : ≈ 200–300 DH · activité physique · **Image** : ✗
 
-**J6 · Soirée jeux de société** · **L**
+**J6 · Soirée jeux** — Sortir · **L** · **VALIDÉ**
 - **Titre** : Soirée jeux · **Google** : Soirée jeux de société entre inconnus à Casablanca
-- **Accroche** : Des jeux simples, des règles expliquées, et des fous rires garantis.
-- **Description** : Des tables de quatre à six autour de jeux faciles à apprendre, dans un café ludique partenaire. On change de table en cours de soirée pour rencontrer d'autres joueurs. Chacun règle sa consommation.
-- **Quand** : mardi 19h30, 2 h 30 · **Lieu** : affiché (café ludique) · **Sur place** : conso ≈ 40–80 DH
-- **Inclus** : les jeux et leurs règles expliquées · **Pas inclus** : vos consommations
-- **Questionnaire** : Tables · **Image** : `jeux.webp` ✓
+- **Accroche** : Des jeux simples, des règles expliquées, et des fous rires.
+- **Description** : Des tables de quatre à six autour de jeux faciles à apprendre, dans un café ludique partenaire. On change de table en cours de soirée pour jouer avec d'autres personnes.
+- **Quand** : mardi 19h30, 2 h 30 · **Format** : tables de 4 à 6, 18 places · **Lieu** : affiché (café ludique)
+- **Sur place** : votre consommation, ≈ 40–80 DH · **Inclus** : Les jeux · Les règles expliquées
+- **Questionnaire** : aucun (le profil suffit) · **Image** : `soiree-jeux.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non · français et darija · annulation gratuite jusqu'à 48 h avant
 
-**J7 · Quiz & blind test** · **L**
+**J7 · Quiz** — Sortir · **L** · **VALIDÉ**
 - **Titre** : Quiz · **Google** : Quiz et blind test entre inconnus à Casablanca
-- **Accroche** : Culture générale, musique, fous rires : une équipe d'inconnus pour gagner.
-- **Description** : Nous composons des équipes de quatre à six personnes. Six manches de quiz et de blind test animées dans un café ou un bar partenaire. Chacun règle sa consommation.
-- **Quand** : jeudi 20h00, 2 h · **Sur place** : conso ≈ 60–120 DH
-- **Questionnaire** : Jeu en équipe · **Image** : ✗
+- **Accroche** : Culture générale, musique et fous rires, avec une équipe d'inconnus.
+- **Description** : Nous composons des équipes de quatre à six personnes. Six manches de quiz et de blind test, animées dans un café ou un bar partenaire.
+- **Quand** : jeudi 20h00, 2 h · **Format** : équipes de 4 à 6, 24 places · **Lieu** : affiché (café ou bar partenaire)
+- **Sur place** : votre consommation, ≈ 60–120 DH · **Inclus** : Des équipes composées pour vous · L'animation du quiz
+- **Questionnaire** : Jeu en équipe · **Image** : `quiz.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non · français et darija · annulation gratuite jusqu'à 48 h avant
 
 **J8 · Karaoké** · 2
 - **Titre** : Karaoké · **Accroche** : Personne ne chante juste, c'est tout l'intérêt.
