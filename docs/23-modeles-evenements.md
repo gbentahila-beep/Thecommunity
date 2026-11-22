@@ -466,12 +466,12 @@ Tes photos, enregistrées dans le site (`apps/web/public/images/modeles/`), à v
 | Échange de langues | Cafés et carnets, un doigt qui pointe une page | `echange-langues.webp` · **validée** |
 | Running | Coureurs de dos | `running.webp` · **validée** |
 | Padel | Raquettes et balles sur un terrain bleu | `padel.webp` · **validée** |
-| Yoga | Cours en plein air | `yoga.webp` |
-| Pilates | Cours en studio aux murs colorés | `pilates.webp` |
-| Escape game | Néon « Escape rooms » | `escape-game.webp` |
-| Soirée jeux | Partie de cartes vue du dessus | `soiree-jeux.webp` |
-| Quiz | Néon « Game on » | `quiz.webp` |
-| Céramique | Mains sur un tour de potier | `ceramique.webp` |
+| Yoga | Cours en plein air | `yoga.webp` · **validée** |
+| Pilates | Cours en studio aux murs colorés | `pilates.webp` · **validée** |
+| Escape game | Néon « Escape rooms » | `escape-game.webp` · **validée** |
+| Soirée jeux | Partie de cartes vue du dessus | `soiree-jeux.webp` · **validée** |
+| Quiz | Néon « Game on » | `quiz.webp` · **validée** |
+| Céramique | Mains sur un tour de potier | `ceramique.webp` · **validée** |
 
 **À m'envoyer pour le lancement, au moment voulu** : **Déjeuner** et **Visite guidée**. Les autres modèles (phase 2 et plus tard) viendront ensuite ; je te dirai lesquelles manquent à chaque étape.
 
