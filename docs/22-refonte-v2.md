@@ -109,6 +109,10 @@ Conséquence assumée : Wenzy ne paie plus jamais un lieu ou un prestataire à l
 
 ## 7. Créer un événement (équipe ; organisateur au § 10)
 
+### 7.0 Partir d'un modèle
+
+Toute création commence par **un modèle** qui pré-remplit tout, du titre au questionnaire, image comprise. On peut aussi partir de zéro. L'équipe crée ses propres modèles dans l'appli (**Paramètres → Modèles**, ou « Enregistrer comme modèle » depuis un événement). Le lieu partenaire se choisit tout de suite ou plus tard. **Liste complète des 46 modèles à valider : [docs/23](23-modeles-evenements.md).**
+
 ### 7.1 Format récurrent, puis dates
 1. **Créer un rendez-vous** (une seule fois). C'est là qu'est tout le formulaire.
 2. **Ajouter des dates** : date, heure, et éventuellement « répéter chaque semaine ». Rien d'autre.
@@ -325,6 +329,7 @@ Elles portent seulement sur les frais Wenzy. La mention « à régler sur place,
 ## 14. Données et code (repères pour le développement)
 
 - **Réglage global « Frais Wenzy »** : 3 000 + 500 centimes. Plus de prix par expérience.
+- **Modèles** : collection `eventTemplates/{id}` (mêmes champs qu'un rendez-vous, sans date ni lieu ; image ; actif ou masqué ; ordre). Les modèles validés de docs/23 sont créés au déploiement ; l'équipe les modifie ensuite dans l'appli.
 - **Expérience** : `onSite { type: none | fixed | consumption, amount, budgetMin, budgetMax, description }`, `tables { min, max, maxTables? }`, `access { mode: open | early | members, earlyDays }`, `venueMode: shown | secret`. On retire `memberPrice`, `pricing.model`, `economicsModel`, `costPerSeat`, `commission*`, `paymentModel`, `depositPercent`, `proposalId`, et `groupTarget`.
 - **Date** : `closesAt` (12 h avant, réglable), `revealAt` (5 h avant), `earlyAccessUntil`, et dans `sessions/{id}/private/venues` la liste des lieux (lieu partenaire ou saisie libre, nom, adresse, coordonnées, nombre de tables).
 - **Automatisations** (une tâche planifiée toutes les 5 à 15 min, sur le modèle de `sendReminders`) : fermeture et minimum (12 h avant), relances « lieu à renseigner », répartition et révélation (5 h avant), composition des tables et message au lieu (1 h avant), absences (après la fin).
@@ -345,12 +350,13 @@ Chaque lot met à jour ses propres écrans, e-mails et articles d'aide. **Les do
 |---|---|---|
 | **0, corrections** | Fuites du lieu et du quartier (fiche, cartes, référencement, recherche, base) ; QR code seulement avec hôtesse ; questionnaire avant le paiement et obligatoire | — |
 | **1, prix unique** | Réglage « Frais Wenzy » ; « sur place » fixe, consommation ou rien ; retrait des autres modes, du prix membre et de la marge ; affichage « 35 DH » partout ; factures des frais seulement ; univers « Tables » et ses formats | Nom de l'univers |
-| **2, créer et gérer** | Rendez-vous récurrents et dates ; formulaire par type ; lieu par date (secret par défaut, plusieurs lieux) ; fiches de lieux partenaires ; back-office « Aujourd'hui » | 1 |
+| **2, créer et gérer** | **Modèles** (les 13 du lancement, puis les autres ; Paramètres → Modèles ; « Enregistrer comme modèle ») ; rendez-vous récurrents et dates ; formulaire par type ; lieu par date (secret par défaut, plusieurs lieux) ; fiches de lieux partenaires ; back-office « Aujourd'hui » | 1 |
 | **3, parcours Tables** | Écran de réservation façon billet ; fermeture 12 h avant et minimum (choix autre date ou remboursement) ; révélation 5 h avant ; tables 1 h avant (table de 7 à valider) ; message au lieu ; check-in qui dévoile la table et les présents | 2 |
 | **4, Carnet et Pass** | Offres, crédits, accès « abonnés d'abord / uniquement », garde-fous et absences, migration des abonnés actuels | 1 et 3 (absences) |
 | **5, organisateurs** | Formulaire court, encaissement sur place, pointage, Statistiques ; suppression des reversements, des commissions, des propositions et des membres de confiance | 1 |
 | **6, textes** | Accueil, Comment ça marche, FAQ, aide, blog, presse en FR / EN / AR ; CGU, CGV, contrat organisateur, conditions de vente des organisateurs, confidentialité, règles, sécurité ; relecture juridique | 1 à 5 |
 | **7, Découvrir et agenda** | Agenda à l'accueil ; filtres (§ 12) ; format Café | 1 |
+| **8, vitrine complète** | **Toutes les activités du site recréées de A à Z à partir des modèles validés**, avec leurs images, pour voir le rendu final (démonstration et site d'essai) | 1 à 7 |
 
 **Mise en ligne en deux vagues** : le lot 0 tout de suite ; les lots 1 à 7 ensemble, une fois les textes juridiques validés.
 
@@ -358,7 +364,7 @@ Chaque lot met à jour ses propres écrans, e-mails et articles d'aide. **Les do
 
 ## 16. Points encore ouverts
 
-Aucun pour l'instant : nom de l'univers (« Tables »), codes promo (gardés) et lieu par date (§ 7.3) sont tranchés.
+- **Modèles d'événements** : liste, style des titres, contenus et images à valider (docs/23 § 8).
 
 ---
 
