@@ -1,5 +1,5 @@
 import { carnetCredits, isMemberActive } from "@thecommunity/shared";
-import { BadgeCheck, Bell, ChevronRight, History, Lightbulb, ReceiptText, SlidersHorizontal, type LucideIcon } from "lucide-react";
+import { BadgeCheck, Bell, ChevronRight, History, ReceiptText, SlidersHorizontal, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { LogoutButton } from "@/components/auth/logout-button";
@@ -68,7 +68,6 @@ export default async function AccountHubPage({ params }: PageProps<"/[locale]/es
         rows={[
           { href: "/espace/preferences", label: t("navPreferences"), icon: SlidersHorizontal },
           { href: "/abonnement?depuis=profil", label: t("navMembership"), icon: BadgeCheck, hint: member ? t("hubMemberActive") : credits ? t("hubCredits", { count: credits }) : undefined },
-          ...(p.trustedHost ? [{ href: "/espace/proposer", label: t("navPropose"), icon: Lightbulb }] : []),
         ]}
       />
       <Group

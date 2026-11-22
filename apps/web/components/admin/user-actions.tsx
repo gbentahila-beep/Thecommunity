@@ -32,7 +32,7 @@ export function UserActions({
   trustedHost?: boolean;
 }) {
   const [currentRole, setRole] = useState(role);
-  const [trusted, setTrusted] = useState(trustedHost);
+  void trustedHost; // docs/22, décision 30 : membres de confiance supprimés.
   const [currentStatus, setStatus] = useState(status);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -75,16 +75,6 @@ export function UserActions({
           </select>
         </>
       )}
-      <button
-        type="button"
-        disabled={busy || currentStatus === "suspended"}
-        aria-pressed={trusted}
-        onClick={() => run("adminSetTrustedHost", { uid, trusted: !trusted }, () => setTrusted(!trusted))}
-        title="Un membre de confiance peut proposer ses propres sorties, relues par l'équipe avant publication."
-        className={`rounded-full px-3 py-1 text-xs font-semibold ${trusted ? "bg-brand-900 text-white hover:bg-brand-800" : "border border-brand-900 text-brand-900 hover:bg-brand-50"} disabled:opacity-40`}
-      >
-        {trusted ? "Membre de confiance ✓" : "Rendre membre de confiance"}
-      </button>
       <button
         type="button"
         disabled={busy}

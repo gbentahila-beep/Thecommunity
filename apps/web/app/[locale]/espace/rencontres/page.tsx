@@ -1,5 +1,4 @@
 import { otherOf } from "@thecommunity/shared";
-import { HeartHandshake } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { InviteForm, MeetActions } from "@/components/account/meet-actions";
 import { Link } from "@/i18n/navigation";
@@ -72,12 +71,6 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
                   </li>
                 ))}
               </ul>
-              {data.trustedHost && (
-                <Link href={`/espace/proposer?groupe=${g.id}`} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand-900 underline underline-offset-4">
-                  <HeartHandshake className="size-4" aria-hidden />
-                  {t("proposeToGroup")}
-                </Link>
-              )}
             </article>
           ))
         )}

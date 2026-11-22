@@ -80,9 +80,10 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await yassine.getByRole('button', { name: 'Ne plus être réuni·e avec Yassine' }).click();
   await yassine.getByRole('button', { name: 'Confirmer' }).click();
   assert(await visible(yassine.getByTestId('meet-avoided')), '31 : « Ne plus être réuni·e » avec confirmation');
-  await group.getByRole('link', { name: 'Proposer une sortie à ce groupe' }).click();
-  await p.waitForURL(/\/espace\/proposer\?groupe=/);
-  assert(await visible(p.getByTestId('proposal-for-group')), '31 : proposer une sortie à l\'ancien groupe (membre de confiance)');
+  // docs/22, décision 30 : plus de propositions de sorties ; à la place, signaler une personne (décision 48).
+  assert(await group.getByRole('link', { name: 'Proposer une sortie à ce groupe' }).count() === 0, 'J : plus de « Proposer une sortie »');
+  await yassine.getByTestId('report-open').click();
+  assert(await visible(yassine.getByRole('button', { name: 'Envoyer le signalement' })), 'J : signaler une personne de sa table');
 
   // ——— 30 ———
   await p.goto(base + '/espace/profil', { waitUntil: 'load' });

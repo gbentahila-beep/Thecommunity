@@ -1,18 +1,12 @@
 "use client";
 
 import {
-  DEFAULT_COMMISSION_PERCENT,
   DEFAULT_WENZY_PRICE,
   templateSlug,
   tierRange,
   type EventTemplate,
-  DEPOSIT_MAX,
-  DEPOSIT_MIN,
   experienceInputSchema,
   formatMoney,
-  PAYMENT_MODEL_LABELS,
-  PAYMENT_MODELS,
-  splitForModel,
   type PaymentModel,
   MOROCCO_TIMEZONE,
   planSessionDates,
@@ -298,12 +292,6 @@ export function ExperienceForm({
     }
     return null;
   }, [v.pricingModel, v.partnerPriceDh, v.budgetMinDh, v.budgetMaxDh, v.venueTier, v.subcategoryId]);
-  /** Étape 22 : aperçu de la part en ligne / sur place selon le mode choisi (activités d'organisateurs). */
-  const proSplit = useMemo(() => {
-    const total = dhToCents(v.priceDh);
-    if (!pro || total == null) return null;
-    return splitForModel(v.paymentModel ?? "full_online", total, { depositPercent: Number(v.depositPercent) || undefined, ratePercent: organizer?.ratePercent ?? DEFAULT_COMMISSION_PERCENT, fixedPerSeat: organizer?.fixedPerSeat ?? 0 });
-  }, [pro, v.priceDh, v.paymentModel, v.depositPercent, organizer?.ratePercent, organizer?.fixedPerSeat]);
   const choosePricing = (id: ExperienceFormValues["pricingModel"]) => set("pricingModel", id);
   const choosePartner = (id: string) => set("partnerId", id);
 
@@ -592,41 +580,13 @@ export function ExperienceForm({
         </>)}
 
         {pro && (
-          <fieldset className="sm:col-span-2" data-testid="payment-model">
-            <legend className="mb-2 text-sm font-medium text-ink">Comment vos participants paient-ils ?</legend>
-            <div className="grid gap-2 sm:grid-cols-3" role="radiogroup">
-              {(organizer?.models ?? PAYMENT_MODELS).map((m) => {
-                const on = v.paymentModel === m;
-                return (
-                  <label key={m} className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3 text-sm ${on ? "border-brand-900 bg-brand-50 ring-2 ring-brand-100" : "border-line bg-white"}`}>
-                    <span className="flex items-center gap-2 font-semibold text-ink">
-                      <input type="radio" name="paymentModel" value={m} checked={on} onChange={() => set("paymentModel", m)} className="size-4 accent-brand-900" />
-                      {PAYMENT_MODEL_LABELS[m].title}
-                    </span>
-                    <span className="text-xs text-muted">{PAYMENT_MODEL_LABELS[m].text}</span>
-                  </label>
-                );
-              })}
-            </div>
-            {err("paymentModel")}
-          </fieldset>
-        )}
-        {pro && v.paymentModel === "deposit" && (
-          <div><Label k="depositPercent" hint={`Entre ${DEPOSIT_MIN} et ${DEPOSIT_MAX} % du prix ; jamais moins que la commission.`}>Acompte payé en ligne (%)</Label><input {...field("depositPercent")} inputMode="numeric" value={v.depositPercent} onChange={(e) => set("depositPercent", e.target.value)} />{err("depositPercent")}</div>
-        )}
-        {pro && proSplit && (
-          <p className="rounded-xl bg-cream px-4 py-3 text-sm text-ink sm:col-span-2" data-testid="payment-preview">
-            {v.paymentModel === "full_online"
-              ? `Le participant paie ${formatMoney({ amount: proSplit.onlineUnit, currency: "MAD" })} en ligne.`
-              : `Le participant paie ${formatMoney({ amount: proSplit.onlineUnit, currency: "MAD" })} en ligne, puis ${formatMoney({ amount: proSplit.onSiteUnit, currency: "MAD" })} sur place${organizer?.asTeam ? " à l'organisateur" : ", directement à vous"}.`}{" "}
-            <span className="text-muted">(commission actuelle : {organizer?.ratePercent ?? DEFAULT_COMMISSION_PERCENT} %)</span>
-          </p>
-        )}
-        {pro && (
           <div className="grid gap-4 rounded-xl border border-line p-4 sm:col-span-2 sm:grid-cols-2" data-testid="part-online">
             <p className="text-sm font-semibold text-ink sm:col-span-2">Prix de l&apos;activité</p>
-            <div><Label k="priceDh" hint="Prix total de l'activité pour une place (en ligne et sur place compris).">Prix total par place (DH)</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
-            {proSelf && <p className="text-xs text-muted sm:col-span-2">La commission de Wenzy et le calendrier de reversement figurent dans votre contrat organisateur et dans « Finances ».</p>}
+            <div><Label k="priceDh" hint="Ce que le participant vous règle sur place, pour une place (0 si rien).">Prix de l&apos;activité, payé sur place (DH)</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
+            <p className="rounded-xl bg-cream px-4 py-3 text-sm text-ink sm:col-span-2" data-testid="payment-preview">
+              {/* docs/22, décision 31 : 35 DH en ligne (ou le pass) à Wenzy, le prix de l'activité sur place à l'organisateur. */}
+              Le participant paie {formatMoney({ amount: wenzyPrice, currency: "MAD" })} en ligne (ou son pass){Number(v.priceDh) > 0 ? `, puis ${formatMoney({ amount: Math.round(Number(v.priceDh) * 100), currency: "MAD" })} sur place${organizer?.asTeam ? " à l'organisateur" : ", directement à vous"}` : ""}. Wenzy ne prend aucune commission sur votre prix.
+            </p>
           </div>
         )}
         {mode === "edit" && bookedSeats > 0 && (

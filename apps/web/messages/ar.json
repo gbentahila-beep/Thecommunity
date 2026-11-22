@@ -1653,7 +1653,13 @@
     "tierAny": "كل الفئات",
     "tier_casual": "Casual",
     "tier_premium": "Premium",
-    "tier_exclusive": "Exclusive"
+    "tier_exclusive": "Exclusive",
+    "moment": "وقت اليوم",
+    "momentAny": "أي وقت",
+    "moment_morning": "الصباح",
+    "moment_noon": "الظهر",
+    "moment_afternoon": "بعد الظهر",
+    "moment_evening": "المساء"
   },
   "gallery": {
     "title": "الصور",
@@ -2033,5 +2039,21 @@
     "terms4": "باس جديد يمدّد الباس الحالي؛ ودفتر جديد يضيف أرصدته ويمدّد صلاحيتها إلى 3 أشهر.",
     "termsLink": "الشروط العامة للبيع",
     "breakEvenMonth": "مربح ابتداءً من {count} خرجات في الشهر"
+  },
+  "report": {
+    "open": "الإبلاغ عن {name}",
+    "reason": "السبب",
+    "details": "ماذا حدث",
+    "send": "إرسال البلاغ",
+    "cancel": "إلغاء",
+    "privacy": "بلاغك سري: يقرأه فريق Wenzy فقط. في حالة خطر فوري، اتصل بالرقم 19 (الشرطة).",
+    "done": "شكرًا، توصّل الفريق ببلاغك.",
+    "error": "صف ما حدث (5 أحرف على الأقل)، ثم أعد المحاولة.",
+    "reasons": {
+      "behaviour": "سلوك غير لائق",
+      "harassment": "تحرّش",
+      "safety": "السلامة",
+      "other": "آخر"
+    }
   }
 }

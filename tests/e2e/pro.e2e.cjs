@@ -21,7 +21,7 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   assert(await page.getByText('Espace organisateur de démonstration').isVisible(), 'bandeau démonstration');
   assert(await page.getByTestId('pro-stats').getByText('Réservations payées').isVisible(), 'chiffres clés');
   const nav = page.getByRole('navigation', { name: 'Espace organisateur' }).first();
-  for (const l of ['Tableau de bord', 'Mes activités', 'Dates', 'Réservations', 'Demandes', 'Billets (pointage)', 'Finances', 'Profil public']) assert(await nav.getByRole('link', { name: l }).isVisible(), `menu : ${l}`);
+  for (const l of ['Tableau de bord', 'Mes activités', 'Dates', 'Réservations', 'Demandes', 'Pointage', 'Statistiques', 'Profil public']) assert(await nav.getByRole('link', { name: l }).isVisible(), `menu : ${l}`);
 
   // 2. Activités : seulement celles du club, formulaire sans réglages de l'équipe
   await nav.getByRole('link', { name: 'Mes activités' }).click();
@@ -38,15 +38,9 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   await page.goto(base + '/pro/activites/exp-diner-inconnus', { waitUntil: 'load' });
   assert(await page.getByText('Page introuvable').isVisible() || (await page.title()).includes('404') || await page.getByText(/introuvable/i).first().isVisible(), 'activité d\'un autre (Wenzy) : introuvable');
   await page.goto(base + '/pro/activites/nouvelle', { waitUntil: 'load' });
-  // Étape 22 : mode de paiement (A/B/C) avec aperçu « en ligne / sur place »
-  assert((await page.getByTestId('payment-model').getByRole('radio').count()) === 3, 'nouvelle activité : 3 modes de paiement proposés');
+  // docs/22, décision 31 : 35 DH en ligne, prix de l'activité sur place, sans commission.
   await page.locator('#f-priceDh').fill('200');
-  await page.getByTestId('payment-model').getByText('Acompte en ligne').click();
-  await page.locator('#f-depositPercent').fill('30');
-  assert(/60 DH en ligne, puis 140 DH sur place/.test((await page.getByTestId('payment-preview').textContent()).replace(/\u202f|\u00a0/g, ' ')), 'acompte 30 % : 60 DH en ligne, 140 DH sur place');
-  await page.getByTestId('payment-model').getByText('Frais de réservation en ligne').click();
-  assert(/24 DH en ligne, puis 176 DH sur place/.test((await page.getByTestId('payment-preview').textContent()).replace(/\u202f|\u00a0/g, ' ')), 'frais de réservation = commission (12 % Sport) : 24 DH en ligne');
-  await page.getByTestId('payment-model').getByText('Tout en ligne').click();
+  assert(/35 DH en ligne \(ou son pass\), puis 200 DH sur place/.test((await page.getByTestId('payment-preview').textContent()).replace(/\u202f|\u00a0/g, ' ')), 'J : 35 DH en ligne, 200 DH sur place, sans commission');
   await page.locator('#f-priceDh').fill('');
   assert((await page.locator('#f-status option').allTextContents()).join('|') === 'Brouillon (non visible)|Envoyer pour validation', 'nouvelle activité : brouillon ou « Envoyer pour validation »');
   await page.getByRole('button', { name: 'Vérifier le formulaire' }).click();
@@ -124,21 +118,9 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   await page.goto(base + '/admin/experiences?vue=review', { waitUntil: 'load' });
   assert(await page.getByText('Rien à valider.').isVisible(), 'filtre « À valider » (vide en démonstration)');
 
-  // 6. Étape 21 : finances de l'organisateur, commissions et reversements côté équipe
+  // 6. docs/22 § 12 : « Finances » devient « Statistiques » (plus de reversements ni de commissions)
   await page.goto(base + '/pro/finances', { waitUntil: 'load' });
-  assert(await page.getByTestId('pro-finance-kpis').getByText('Commission Wenzy').isVisible(), 'finances : chiffres clés');
-  assert(/Bouger : 12 %/.test(await page.getByTestId('pro-rates').textContent()), 'finances : taux applicable (règle « Bouger » 12 %)');
-  const ledger = await page.getByTestId('pro-ledger').allTextContents();
-  assert(ledger.length >= 1 && ledger.every((t) => /Padel entre inconnus/.test(t)), `finances : ${ledger.length} écritures, toutes sur le padel`);
-  assert(await page.getByTestId('pro-payout').filter({ hasText: 'Viré' }).count() === 1, 'finances : un reversement « viré »');
-  await page.locator('#bank-holder').fill('Club Padel Anfa SARL');
-  await page.locator('#bank-name').fill('Banque démo');
-  await page.locator('#bank-rib').fill('1234');
-  await page.getByRole('button', { name: 'Enregistrer le RIB' }).click();
-  assert(await visible(page.getByRole('alert').filter({ hasText: '24 chiffres' })), 'RIB : 24 chiffres exigés');
-  await page.locator('#bank-rib').fill('0011 1100 0000 1234 5678 9012');
-  await page.getByRole('button', { name: 'Enregistrer le RIB' }).click();
-  assert(await visible(page.getByRole('status').filter({ hasText: 'Enregistré' })), 'RIB valide accepté (démonstration)');
+  assert(/\/pro\/statistiques$/.test(new URL(page.url()).pathname) && await page.getByTestId('pro-stats').isVisible(), 'J : Statistiques à la place de Finances');
   await page.goto(base + '/admin/commissions', { waitUntil: 'load' });
   assert(await page.getByTestId('commission-rule').count() === 2, 'commissions : 2 règles (générale 15 %, Sport 12 %)');
   await page.locator('#rule-scope').selectOption('organizer');
@@ -162,7 +144,7 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   assert(await page.locator('footer').getByRole('link', { name: 'عقد المنظّم' }).isVisible(), 'pied de page arabe : contrat organisateur');
   const m = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage();
   m.on('pageerror', (e) => errs.push(e.message));
-  for (const path of ['/pro', '/pro/activites', '/pro/dates', '/pro/reservations', '/pro/billets', '/pro/profil', '/pro/finances', '/pro/inscription', '/admin/organisateurs', '/admin/organisateurs/org-club-padel-anfa', '/admin/commissions', '/admin/reversements', '/contrat-organisateur']) {
+  for (const path of ['/pro', '/pro/activites', '/pro/dates', '/pro/reservations', '/pro/billets', '/pro/profil', '/pro/statistiques', '/pro/inscription', '/admin/organisateurs', '/admin/organisateurs/org-club-padel-anfa', '/admin/commissions', '/admin/reversements', '/contrat-organisateur']) {
     await m.goto(base + path, { waitUntil: 'load' });
     assert(await m.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), `mobile sans débordement : ${path}`);
   }

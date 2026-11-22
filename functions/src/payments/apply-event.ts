@@ -75,7 +75,8 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
       if (promoCode && !redemption?.exists) redeemPromo(tx, promoCode, r.userId, res.id);
     };
     // Étape 21 : commission (figée à la réservation ; calculée maintenant si elle manque) et écriture au registre.
-    const commission = r.commission ?? (r.organizerId && exp.exists ? commissionSnapshot(rules, exp.data()!, r.experienceId, (r.pricing?.total ?? 0) - (r.pricing?.fees ?? 0), r.seats ?? 1) : null);
+    // docs/22, décision 31 : plus de commission sur les activités d'organisateurs (anciennes réservations : celle figée).
+    const commission = r.commission ?? null;
     const settle = () => writeSaleEntry(tx, res.id, { ...r, commission });
     const commissionField = commission && !r.commission ? { commission } : {};
 

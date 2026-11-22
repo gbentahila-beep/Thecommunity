@@ -164,17 +164,13 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     admission: v.admission,
   };
 
-  // Étape 22 : activité d'un organisateur — mode de paiement A (tout en ligne), B (acompte) ou C (frais de
-  // réservation) parmi ceux activés par l'équipe. Le prix saisi est le prix TOTAL par place ; la part en ligne et
-  // la part sur place (à l'organisateur) sont calculées ici, la commission de la règle en vigueur incluse.
+  // docs/22, décision 31 : activité d'un organisateur — le participant paie le prix Wenzy en ligne (35 DH, ou son
+  // pass), puis le prix de l'activité sur place, à l'organisateur. Plus de commission ni de reversement.
   let marketplace: { paymentModel: string; depositPercent: number | null; totalUnit: number; onlineUnit: number; onSiteUnit: number } | null = null;
   if (ownerOrgId) {
-    const enabled = ((await db.doc("settings/payment").get()).get("organizerPaymentModels") as string[] | undefined) ?? [...PAYMENT_MODELS];
-    if (!enabled.includes(v.paymentModel)) invalidArgument([{ path: ["paymentModel"], message: "paymentModelDisabled" }]);
-    const totalUnit = Math.round((v.priceDh ?? 0) * 100);
-    const c = resolveCommission(await commissionRules(), { experienceId: id, organizerId: ownerOrgId, categoryId: v.categoryId, at: moroccoToday() });
-    const split = splitForModel(v.paymentModel, totalUnit, { depositPercent: v.depositPercent, ratePercent: c.ratePercent, fixedPerSeat: c.fixedPerSeat });
-    marketplace = { paymentModel: v.paymentModel, depositPercent: v.paymentModel === "deposit" ? (v.depositPercent ?? 30) : null, totalUnit, ...split };
+    const onSiteUnit = Math.round((v.priceDh ?? 0) * 100);
+    const onlineUnit = v.free ? 0 : wenzyPriceOf(bookingSettings.data());
+    marketplace = { paymentModel: "booking_fee", depositPercent: null, totalUnit: onlineUnit + onSiteUnit, onlineUnit, onSiteUnit };
   }
   const orgName = org?.name ?? ((existing.data()?.organizerSnapshot?.name as string | undefined) ?? "");
 
@@ -182,7 +178,9 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   // la part partenaire (prix fixe ou consommation libre) est toujours réglée sur place, jamais encaissée.
   const pricing =
     marketplace && marketplace.paymentModel !== "full_online"
-      ? { model: "fixed_partner", currency: "MAD", partner: { name: orgName, paymentMode: "on_site", pricingType: "fixed", price: { amount: marketplace.onSiteUnit, currency: "MAD" }, description: "" } }
+      ? marketplace.onSiteUnit > 0
+        ? { model: "fixed_partner", currency: "MAD", partner: { name: orgName, paymentMode: "on_site", pricingType: "fixed", price: { amount: marketplace.onSiteUnit, currency: "MAD" }, description: "" } }
+        : { model: "online_only", currency: "MAD", partner: null }
       : v.pricingModel === "online_only"
       ? { model: "online_only", currency: "MAD", partner: null }
       : {

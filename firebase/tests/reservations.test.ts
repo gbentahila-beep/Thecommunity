@@ -2049,7 +2049,9 @@ describe("organisateurs (20)", () => {
     const expId = String(res.experienceId);
     const e = (await db().doc(`experiences/${expId}`).get()).data()!;
     expect(e).toMatchObject({ status: "pending_review", organizerId: orgId, organizerSnapshot: { name: "Club Padel Test" }, membersOnly: false, memberPrice: null });
-    expect(e.pricing.model).toBe("online_only");
+    // docs/22, décision 31 : 35 DH en ligne, le prix de l'activité sur place à l'organisateur.
+    expect(e.pricing.model).toBe("fixed_partner");
+    expect(e.price.amount).toBe(3500);
     expect((await db().doc(`experiences/${expId}/private/economics`).get()).data()).toMatchObject({ model: "organizer", organizerId: orgId, costPerSeat: null, commissionPercent: null });
     const sessions = await db().collection("sessions").where("experienceId", "==", expId).get();
     expect(sessions.docs.map((d) => [d.get("status"), d.get("organizerId")])).toEqual([["draft", orgId]]);
@@ -2190,52 +2192,17 @@ describe("commissions et reversements (21)", () => {
     expect(log.docs.map((d) => d.get("action"))).toContain("commission.rule.create");
   });
 
-  it("réservation : taux copié, écriture « vente » au paiement ; rien pour une expérience de Wenzy", async () => {
-    // Le cache des règles (1 min) peut garder l'ancienne liste dans une autre instance de l'émulateur : on attend.
-    await new Promise((r) => setTimeout(r, 61_000));
-    const { sessionId } = await publishActivity(`Céramique ${run}`);
+  it("docs/22, décision 31 : 35 DH en ligne, prix de l'activité sur place ; aucune commission ni écriture au registre", async () => {
+    const { experienceId, sessionId } = await publishActivity(`Céramique ${run}`);
+    const e = (await db().doc(`experiences/${experienceId}`).get()).data()!;
+    expect(e).toMatchObject({ price: { amount: 3500 }, pricing: { model: "fixed_partner", partner: { price: { amount: 20000 } } } });
+    expect((await session(sessionId)).price.amount).toBe(3500);
     const { reservationId } = await buy(sessionId, 2);
     const r = await reservation(reservationId);
-    expect(r.commission).toMatchObject({ scope: "organizer", ratePercent: 10, fixedPerSeat: 500, base: 40000, amount: 5000 });
-    const sale = (await db().doc(`commissionLedger/sale_${reservationId}`).get()).data()!;
-    expect(sale).toMatchObject({ kind: "sale", organizerId: orgId, gross: 40000, commission: 5000, payable: 35000, status: "due" });
-    const thc = await makeSession({ price: 10000 });
-    const t = await buy(thc);
-    expect((await reservation(t.reservationId)).commission).toBeUndefined();
-    expect((await db().doc(`commissionLedger/sale_${t.reservationId}`).get()).exists).toBe(false);
-  }, 120_000);
-
-  it("remboursement : la part remboursée n'est pas reversée, commission rendue ; reversement après l'activité", async () => {
-    const { sessionId } = await publishActivity(`Céramique bis ${run}`);
-    const kept = await buy(sessionId, 1);
-    const cancelled = await buy(sessionId, 1);
-    await cancelled.u.call("cancelReservation", { reservationId: cancelled.reservationId });
-    const refund = (await db().collection("commissionLedger").where("reservationId", "==", cancelled.reservationId).where("kind", "==", "refund").get()).docs[0]!.data();
-    expect(refund).toMatchObject({ gross: -20000, commission: -2500, payable: -17500, status: "due" });
-    // Activité encore à venir : rien à reverser.
-    expect(await refusal(team.call("adminCreatePayout", { organizerId: orgId }))).toBe("failed-precondition:missing_bank_details");
-    expect(await refusal(pro.call("organizerSaveBankDetails", { holder: "Atelier Test SARL", bankName: "Banque Test", rib: "123" }))).toBe("invalid-argument:");
-    await pro.call("organizerSaveBankDetails", { holder: "Atelier Test SARL", bankName: "Banque Test", rib: "0011 1100 0000 1234 5678 9012" });
-    expect(await refusal(team.call("adminCreatePayout", { organizerId: orgId }))).toBe("failed-precondition:nothing_to_pay");
-    // L'activité est passée (simulé) : toutes les écritures dues deviennent reversables.
-    const due = await db().collection("commissionLedger").where("organizerId", "==", orgId).where("status", "==", "due").get();
-    await Promise.all(due.docs.map((d) => d.ref.update({ sessionStartAt: Timestamp.fromMillis(Date.now() - 3 * 86_400_000) })));
-    const expected = due.docs.reduce((a, d) => a + Number(d.get("payable")), 0);
-    expect(await refusal(pro.call("adminCreatePayout", { organizerId: orgId }))).toBe("permission-denied:");
-    const { payoutId, amount, entries } = await team.call("adminCreatePayout", { organizerId: orgId });
-    expect(amount).toBe(expected);
-    expect(entries).toBe(due.size);
-    const p = (await db().doc(`payouts/${payoutId}`).get()).data()!;
-    expect(p).toMatchObject({ organizerId: orgId, status: "pending", bank: { ribLast4: "9012" } });
-    expect(JSON.stringify(p)).not.toContain("0011110000001234");
-    expect((await db().doc(`commissionLedger/sale_${kept.reservationId}`).get()).data()).toMatchObject({ status: "in_payout", payoutId });
-    expect(await refusal(team.call("adminCreatePayout", { organizerId: orgId }))).toBe("failed-precondition:nothing_to_pay");
-    await team.call("adminMarkPayoutPaid", { payoutId, reference: "VIR-TEST-001" });
-    expect((await db().doc(`payouts/${payoutId}`).get()).data()).toMatchObject({ status: "paid", reference: "VIR-TEST-001" });
-    expect((await db().doc(`commissionLedger/sale_${kept.reservationId}`).get()).get("status")).toBe("paid");
-    expect(await refusal(team.call("adminMarkPayoutPaid", { payoutId, reference: "VIR-TEST-002" }))).toBe("failed-precondition:already_paid");
-    const notes = await db().collection(`users/${pro.uid}/notifications`).where("type", "==", "payout_paid").get();
-    expect(notes.size).toBe(1);
+    expect(r.pricing).toMatchObject({ total: 7000 });
+    expect(r.onSiteAmount).toBe(40000);
+    expect(r.commission).toBeUndefined();
+    expect((await db().doc(`commissionLedger/sale_${reservationId}`).get()).exists).toBe(false);
   }, 120_000);
 });
 
@@ -2287,25 +2254,14 @@ describe("paiements A/B/C, politiques d'annulation, remboursements (22)", () => 
     await new Promise((r) => setTimeout(r, 61_000));
   }, 120_000);
 
-  it("modes B et C : part en ligne et part sur place calculées par le serveur ; mode désactivé refusé", async () => {
-    const b = await publish(activity(`Acompte ${run}`, { paymentModel: "deposit", depositPercent: 30 }));
+  it("activité d'organisateur : le prix saisi se paie sur place, 35 DH en ligne ; sans prix, tout en ligne", async () => {
+    const b = await publish(activity(`Balade ${run}`));
     const eb = (await db().doc(`experiences/${b.experienceId}`).get()).data()!;
-    expect(eb).toMatchObject({ paymentModel: "deposit", depositPercent: 30, totalPrice: { amount: 20000 }, price: { amount: 6000 } });
-    expect(eb.pricing).toMatchObject({ model: "fixed_partner", partner: { name: `Balades Test ${run}`, price: { amount: 14000 } } });
-    expect((await session(b.sessionId)).price.amount).toBe(6000);
-    const c = await publish(activity(`Frais ${run}`, { paymentModel: "booking_fee" }));
-    expect((await db().doc(`experiences/${c.experienceId}`).get()).data()).toMatchObject({ paymentModel: "booking_fee", price: { amount: 3000 }, pricing: { partner: { price: { amount: 17000 } } } });
-    // Commission sur le prix total, jamais plus que l'encaissé ; l'organisateur reçoit le reste de l'acompte.
+    expect(eb).toMatchObject({ paymentModel: "booking_fee", price: { amount: 3500 }, pricing: { model: "fixed_partner", partner: { name: `Balades Test ${run}`, price: { amount: 20000 } } } });
+    const c = await publish(activity(`Gratuite sur place ${run}`, { priceDh: 0 }));
+    expect((await db().doc(`experiences/${c.experienceId}`).get()).data()).toMatchObject({ price: { amount: 3500 }, pricing: { model: "online_only" } });
     const { reservationId } = await buy(b.sessionId, 1);
-    expect((await reservation(reservationId)).commission).toMatchObject({ base: 6000, amount: 3000, paymentModel: "deposit", activityTotal: 20000 });
-    expect((await db().doc(`commissionLedger/sale_${reservationId}`).get()).data()).toMatchObject({ gross: 6000, commission: 3000, payable: 3000 });
-    const fee = await buy(c.sessionId, 1);
-    expect((await db().doc(`commissionLedger/sale_${fee.reservationId}`).get()).data()).toMatchObject({ gross: 3000, commission: 3000, payable: 0 });
-    // Mode désactivé par l'équipe : refusé.
-    expect(await refusal(team.call("adminSaveOrganizerPaymentModels", { models: ["full_online"] }))).toBe("permission-denied:");
-    await sup.call("adminSaveOrganizerPaymentModels", { models: ["full_online"] });
-    expect(await refusal(pro.call("organizerSaveExperience", { data: activity(`Refusé ${run}`, { paymentModel: "deposit", depositPercent: 30 }), addSessions: false, images: [] }))).toBe("invalid-argument:");
-    await sup.call("adminSaveOrganizerPaymentModels", { models: ["full_online", "deposit", "booking_fee"] });
+    expect((await reservation(reservationId)).commission).toBeUndefined();
   }, 120_000);
 
   it("politique d'annulation : copiée sur la réservation, appliquée à l'annulation ; la standard ne se modifie pas", async () => {
@@ -2332,17 +2288,15 @@ describe("paiements A/B/C, politiques d'annulation, remboursements (22)", () => 
     expect(await refusal(u.call("requestRefund", { reservationId, reason: "other", message: "Je redemande une seconde fois pour voir." }))).toBe("failed-precondition:already_requested");
     expect(await refusal(u.call("adminDecideRefund", { requestId: reservationId, decision: "full" }))).toBe("permission-denied:");
     expect(await refusal(team.call("adminDecideRefund", { requestId: reservationId, decision: "decline" }))).toBe("invalid-argument:");
-    const res = await team.call("adminDecideRefund", { requestId: reservationId, decision: "partial", amountDh: 50, message: "Geste commercial pour la durée écourtée." });
-    expect(res).toMatchObject({ status: "partially_refunded", amount: 5000 });
+    const res = await team.call("adminDecideRefund", { requestId: reservationId, decision: "partial", amountDh: 10, message: "Geste commercial pour la durée écourtée." });
+    expect(res).toMatchObject({ status: "partially_refunded", amount: 1000 });
     expect(await refusal(team.call("adminDecideRefund", { requestId: reservationId, decision: "full" }))).toBe("failed-precondition:already_decided");
     const r = await reservation(reservationId);
-    expect(r.refundedAmount).toBe(5000);
+    expect(r.refundedAmount).toBe(1000);
     expect((await payment(String(r.paymentId))).status).toBe("partially_refunded");
-    const entry = (await db().collection("commissionLedger").where("reservationId", "==", reservationId).where("kind", "==", "refund").get()).docs[0]!.data();
-    expect(entry).toMatchObject({ gross: -5000, commission: -750, payable: -4250 });
-    // Annulation ensuite : le remboursement est plafonné à ce qui reste (15 000 au plus), jamais plus que l'encaissé.
+    // Annulation ensuite : le remboursement est plafonné à ce qui reste (25 DH sur les 35 DH payés en ligne).
     await u.call("cancelReservation", { reservationId });
-    expect((await reservation(reservationId)).cancellation.refundAmount).toBe(15000);
+    expect((await reservation(reservationId)).cancellation.refundAmount).toBe(2500);
     expect((await payment(String(r.paymentId))).status).toBe("refunded");
     const notes = await db().collection(`users/${u.uid}/notifications`).where("type", "==", "refund_accepted").get();
     expect(notes.size).toBe(1);

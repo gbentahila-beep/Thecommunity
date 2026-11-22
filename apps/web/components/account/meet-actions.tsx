@@ -77,6 +77,7 @@ export function MeetActions({ groupId, otherUid, firstName, wished, avoided, mat
         </button>
       )}
       {a && <span className="text-xs text-muted" data-testid="meet-avoided">{t("avoided")}</span>}
+      <ReportButton groupId={groupId} otherUid={otherUid} firstName={firstName} live={live} />
       {msg && <p role={msg.ok ? "status" : "alert"} className={`w-full text-xs ${msg.ok ? "text-emerald-800" : "text-red-800"}`}>{msg.text}</p>}
     </div>
   );
@@ -124,6 +125,46 @@ export function InviteForm({ toUid, firstName, sessions, live }: { toUid: string
       </label>
       <button type="submit" disabled={busy} className="btn btn-primary btn-sm">{t("sendInvite")}</button>
       {msg && <p role={msg.ok ? "status" : "alert"} className={`w-full text-sm ${msg.ok ? "text-emerald-800" : "text-red-800"}`}>{msg.text}</p>}
+    </form>
+  );
+}
+
+/** Signaler une personne de sa table (docs/22, décision 48) : privé, lu par l'équipe seulement. */
+function ReportButton({ groupId, otherUid, firstName, live }: { groupId: string; otherUid: string; firstName: string; live: boolean }) {
+  const t = useTranslations("report");
+  const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState("behaviour");
+  const [details, setDetails] = useState("");
+  const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
+  if (state === "done") return <p role="status" className="w-full text-xs text-emerald-800">{t("done")}</p>;
+  if (!open) return <button type="button" onClick={() => setOpen(true)} className="text-xs text-muted underline hover:text-red-800" data-testid="report-open">{t("open", { name: firstName })}</button>;
+  return (
+    <form
+      className="w-full space-y-2 rounded-xl bg-cream p-3 text-sm"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        if (details.trim().length < 5) return setState("error");
+        setState("busy");
+        try {
+          if (live) await call("reportParticipant", { groupId, otherUid, reason, details: details.trim() });
+          setState("done");
+        } catch {
+          setState("error");
+        }
+      }}
+    >
+      <label className="flex flex-col gap-1 font-medium">{t("reason")}
+        <select className="rounded-lg border border-line bg-white px-2 py-1.5" value={reason} onChange={(e) => setReason(e.target.value)}>
+          {(["behaviour", "harassment", "safety", "other"] as const).map((r) => <option key={r} value={r}>{t(`reasons.${r}`)}</option>)}
+        </select>
+      </label>
+      <label className="flex flex-col gap-1 font-medium">{t("details")}<textarea rows={3} maxLength={1000} className="rounded-lg border border-line bg-white px-2 py-1.5" value={details} onChange={(e) => setDetails(e.target.value)} /></label>
+      <div className="flex gap-2">
+        <button type="submit" disabled={state === "busy"} className="rounded-full bg-red-800 px-3 py-1.5 text-xs font-semibold text-white">{t("send")}</button>
+        <button type="button" onClick={() => setOpen(false)} className="text-xs text-muted underline">{t("cancel")}</button>
+      </div>
+      <p className="text-xs text-muted">{t("privacy")}</p>
+      {state === "error" && <p role="alert" className="text-xs text-red-800">{t("error")}</p>}
     </form>
   );
 }

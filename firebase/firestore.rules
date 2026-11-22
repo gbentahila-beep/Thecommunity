@@ -140,6 +140,11 @@ service cloud.firestore {
       allow write: if false;
     }
     // docs/22 § 17.H : demandes aux lieux (avec le jeton du lien sécurisé) et messages WhatsApp : équipe seulement.
+    // docs/22 : signalements de participants — équipe seulement.
+    match /reports/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
     match /venueRequests/{id} {
       allow read: if isAdmin();
       allow write: if false;

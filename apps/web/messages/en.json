@@ -1653,7 +1653,13 @@
     "tierAny": "All ranges",
     "tier_casual": "Casual",
     "tier_premium": "Premium",
-    "tier_exclusive": "Exclusive"
+    "tier_exclusive": "Exclusive",
+    "moment": "Time of day",
+    "momentAny": "Any time",
+    "moment_morning": "Morning",
+    "moment_noon": "Lunchtime",
+    "moment_afternoon": "Afternoon",
+    "moment_evening": "Evening"
   },
   "gallery": {
     "title": "Photos",
@@ -2033,5 +2039,21 @@
     "terms4": "A new pass extends the current one; a new pack adds its credits and extends their validity to 3 months.",
     "termsLink": "Terms of sale",
     "breakEvenMonth": "Worth it from {count} outings a month"
+  },
+  "report": {
+    "open": "Report {name}",
+    "reason": "Reason",
+    "details": "What happened",
+    "send": "Send report",
+    "cancel": "Cancel",
+    "privacy": "Your report stays confidential: only the Wenzy team reads it. If you're in immediate danger, call 19 (police).",
+    "done": "Thank you, the team has received your report.",
+    "error": "Describe what happened (at least 5 characters), then try again.",
+    "reasons": {
+      "behaviour": "Inappropriate behaviour",
+      "harassment": "Harassment",
+      "safety": "Safety",
+      "other": "Other"
+    }
   }
 }

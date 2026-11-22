@@ -410,7 +410,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | **G — Rendez-vous et lieux** ✅ | Rendez-vous récurrents, lieu par date (plus tard possible), plusieurs lieux, lieu habituel, fiches des lieux partenaires, « Aujourd'hui » | Faite (journal § 19) |
 | **H — Attribution des lieux et parcours** ✅ | **H-a** fiche du lieu complétée (gammes, formats, créneaux et capacités), moteur d'attribution, plafond de vente, demandes aux lieux (e-mail, WhatsApp, appel) et confirmation par l'équipe, réattribution, espace partenaire par lien. **H-b** écran de réservation, déplacer sa réservation, événements à risque, révélation après confirmation, check-in, messages après la rencontre, liste d'attente. Détail § 17.H | Faite (journal § 19) |
 | **I — Carnet et Pass** ✅ | Offres, crédits, accès abonnés, garde-fous, migration des abonnés. Détail § 17.I | Faite (journal § 19) |
-| **J — Organisateurs et rôles** | Encaissement sur place, formulaire court, pointage, Statistiques ; suppression des reversements, commissions, propositions et membres de confiance | Démonstration |
+| **J — Organisateurs et rôles** ✅ | Encaissement sur place, formulaire court, pointage, Statistiques ; suppression des reversements, commissions, propositions et membres de confiance ; signalement d'un participant | Faite (journal § 19) |
 | **K — Découvrir et agenda** | Agenda de l'accueil, filtres, moment de la journée | Démonstration |
 | **L — Textes** | Tous les textes FR / EN / AR (§ 15), juridique compris, à faire relire | Relecture |
 | **M — Vitrine** | **Suppression de tous les événements existants** (avec ta confirmation), puis **création des nouveaux** à partir des modèles validés, avec leurs images | Rendu final |
@@ -577,4 +577,15 @@ Aucune pour l'instant. Les questions Q1 à Q7 du 22 novembre sont tranchées (d�
 **Tests** : unitaires 168 (offres, couverture des places, absences, suspension) ; émulateurs : réglage des offres, achat d'un pass et prolongation, carnet et ajout de crédits, réserver avec le pass (place incluse, 2 réservations au maximum, « + 1 » payé), avec le carnet (crédits, rendu dans les délais), accès abonnés et anticipé, liste d'attente prioritaire, offrir et retirer, absences et suspension, factures : 188 réussis ; mêmes 9 échecs d'environnement. Les 9 suites de bout en bout de démonstration passent (Carnet et Pass ajoutés).
 
 **À faire en ligne** : ouvrir *Carnet et Pass* dans le back-office et cliquer « Enregistrer » une fois (les offres remplacent l'ancienne formule). La suite de bout en bout Firebase « abonnement » (firebase-membership) est à réécrire avec celle de la tarification, à l'étape J.
+
+### Étape J livrée (22 novembre, nuit)
+| Changement | Ce qui change |
+|---|---|
+| **Prix des activités d'organisateurs** | Le participant paie le prix Wenzy en ligne (35 DH, ou son pass ou son carnet), puis le prix de l'activité **sur place, directement à l'organisateur**. Le formulaire de l'organisateur ne demande plus que « Prix de l'activité, payé sur place » (0 si rien) et affiche l'aperçu. Plus de modes A/B/C, ni d'acompte. |
+| **Plus de commissions ni de reversements** | Les nouvelles réservations n'ont plus de commission ni d'écriture au registre. Les pages *Commissions*, *Reversements*, *En ligne / sur place* et *Sorties proposées* sortent du menu (l'historique reste consultable par leur adresse, pour la comptabilité des anciennes ventes). |
+| **Espace organisateur** | « Finances » devient **Statistiques** (réservations, dates à venir, remplissage, présents et absents, par activité) ; « Billets (pointage) » devient **Pointage**. |
+| **Membres de confiance et propositions** | Supprimés : plus de « Proposer une sortie » (la page renvoie vers l'espace), plus de badge ni de bouton dans *Utilisateurs*, plus de lien dans *Mes rencontres*. |
+| **Signaler un participant** (décision 48) | Dans *Mes rencontres*, « Signaler … » pour une personne de sa table ou de son groupe : motif (comportement, harcèlement, sécurité, autre) et description ; confidentiel. L'équipe reçoit une alerte ; page **Signalements** du back-office (à traiter, traité, sans suite, note interne, nombre de signalements par personne). |
+
+**Tests** : émulateurs adaptés (prix des activités d'organisateurs, plus de commission) ; suites de bout en bout pro, espace membre et rencontres mises à jour.
 

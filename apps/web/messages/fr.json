@@ -1653,7 +1653,13 @@
     "tierAny": "Toutes les gammes",
     "tier_casual": "Casual",
     "tier_premium": "Premium",
-    "tier_exclusive": "Exclusive"
+    "tier_exclusive": "Exclusive",
+    "moment": "Moment de la journée",
+    "momentAny": "N'importe quand",
+    "moment_morning": "Matin",
+    "moment_noon": "Midi",
+    "moment_afternoon": "Après-midi",
+    "moment_evening": "Soir"
   },
   "gallery": {
     "title": "Photos",
@@ -2033,5 +2039,21 @@
     "terms4": "Un nouveau pass prolonge le pass en cours ; un nouveau carnet ajoute ses crédits et repousse leur validité à 3 mois.",
     "termsLink": "Conditions générales de vente",
     "breakEvenMonth": "Rentable dès {count} sorties par mois"
+  },
+  "report": {
+    "open": "Signaler {name}",
+    "reason": "Motif",
+    "details": "Ce qui s'est passé",
+    "send": "Envoyer le signalement",
+    "cancel": "Annuler",
+    "privacy": "Votre signalement reste confidentiel : seule l'équipe Wenzy le lit. En cas de danger immédiat, appelez le 19 (police).",
+    "done": "Merci, l'équipe a reçu votre signalement.",
+    "error": "Décrivez ce qui s'est passé (5 caractères au moins), puis réessayez.",
+    "reasons": {
+      "behaviour": "Comportement inapproprié",
+      "harassment": "Harcèlement",
+      "safety": "Sécurité",
+      "other": "Autre"
+    }
   }
 }

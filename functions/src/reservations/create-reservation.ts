@@ -197,7 +197,6 @@ async function runReservationOnce(o: ReservationRun) {
       promo,
       serviceFee: readServiceFee(bookingSettings.data()?.serviceFee),
       preferences: o.preferences ?? (request?.data()?.preferences ? storedPreferences(request.data()!.preferences) : undefined),
-      commissionRules: rules,
       policies,
       extra: {
         ...(requestRef ? { requestId: requestRef.id } : {}),

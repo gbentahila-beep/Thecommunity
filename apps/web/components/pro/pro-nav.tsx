@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarRange, Inbox, LayoutDashboard, Menu, ScanLine, Sparkles, Star, Store, Ticket, Wallet, X } from "lucide-react";
+import { BarChart3, CalendarRange, Inbox, LayoutDashboard, Menu, ScanLine, Sparkles, Star, Store, Ticket, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,9 +12,9 @@ export const PRO_LINKS = [
   { href: "/pro/dates", label: "Dates", icon: CalendarRange },
   { href: "/pro/reservations", label: "Réservations", icon: Ticket },
   { href: "/pro/demandes", label: "Demandes", icon: Inbox },
-  { href: "/pro/billets", label: "Billets (pointage)", icon: ScanLine },
+  { href: "/pro/billets", label: "Pointage", icon: ScanLine },
   { href: "/pro/avis", label: "Avis", icon: Star },
-  { href: "/pro/finances", label: "Finances", icon: Wallet },
+  { href: "/pro/statistiques", label: "Statistiques", icon: BarChart3 },
   { href: "/pro/profil", label: "Profil public", icon: Store },
 ] as const;
 

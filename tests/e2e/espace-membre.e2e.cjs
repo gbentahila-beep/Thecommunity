@@ -123,17 +123,9 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.goto(base + '/espace/reservations?onglet=annulees', { waitUntil: 'load' });
   assert(await page.getByText('Remboursée').isVisible(), 'onglet annulées');
 
-  // 18d : proposer une sortie (membre de confiance en démonstration)
+  // docs/22, décision 30 : « Proposer une sortie » supprimé (redirection vers l'espace).
   await page.goto(base + '/espace/proposer', { waitUntil: 'load' });
-  await page.getByRole('button', { name: 'Envoyer ma proposition' }).click();
-  assert(await page.getByText('Trop court.').count() >= 1, 'proposition : champs vérifiés');
-  await page.getByLabel('Titre de la sortie').fill('Padel du dimanche');
-  await page.getByLabel(/^Description/).fill('Deux terrains, tous niveaux, puis un café ensemble au club de Racine.');
-  await page.getByLabel('Quartier').fill('Racine');
-  await page.getByLabel(/^Dates envisagées/).fill('Dimanches matin');
-  await page.getByRole('button', { name: 'Envoyer ma proposition' }).click();
-  assert(await page.getByTestId('proposal-sent').isVisible(), 'proposition : confirmation (démonstration)');
-  assert(await page.getByTestId('my-proposal').count() >= 1, 'proposition : « Mes propositions » listées');
+  assert(/\/espace$/.test(new URL(page.url()).pathname), 'J : « Proposer une sortie » supprimé');
 
   // Étape H : billet des Tables, heure de révélation, déplacer sa réservation, table et messages après la rencontre, page du lieu
   await page.goto(base + '/reserver/ses-diner-inconnus-1', { waitUntil: 'load' });
