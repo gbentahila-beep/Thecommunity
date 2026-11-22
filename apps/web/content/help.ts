@@ -3,7 +3,7 @@
  * Français : référence. Anglais : traduction. Arabe : content/help-ar.ts (fusionné ci-dessous).
  * Liens internes : syntaxe [texte](/chemin). Jetons {{…}} : informations légales (lib/legal-info.ts) ou « à compléter ».
  */
-import { ACCEPTED_HOLD_HOURS, HOLD_MINUTES, MEMBERSHIP_RENEW_WINDOW_DAYS, REVIEW_WINDOW_DAYS, WAITLIST_OFFER_HOURS } from "@thecommunity/shared";
+import { ACCEPTED_HOLD_HOURS, HOLD_MINUTES, REVIEW_WINDOW_DAYS, WAITLIST_OFFER_HOURS } from "@thecommunity/shared";
 import { HELP_ARTICLES_AR, HELP_CATEGORIES_AR } from "./help-ar";
 
 export type HelpAudience = "clients" | "partners";
@@ -255,18 +255,18 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
   {
     slug: "renouveler-mon-abonnement",
     category: "membership",
-    title: { fr: "Renouveler mon abonnement", en: "Renewing my membership" },
-    summary: { fr: `Le renouvellement s'ouvre ${MEMBERSHIP_RENEW_WINDOW_DAYS} jours avant l'échéance, sans perdre de jours.`, en: `Renewal opens ${MEMBERSHIP_RENEW_WINDOW_DAYS} days before expiry, without losing any days.` },
+    title: { fr: "Prolonger mon pass ou racheter un carnet", en: "Extending my pass or buying another pack" },
+    summary: { fr: "Un pass s'achète à tout moment et prolonge le pass en cours ; un carnet ajoute 3 crédits.", en: "A pass can be bought any time and extends your current one; a pack adds 3 credits." },
     body: {
       fr: [
-        `${MEMBERSHIP_RENEW_WINDOW_DAYS} jours avant la fin de votre abonnement, un bouton « Renouveler » apparaît sur la page [Abonnement](/abonnement).`,
-        "La nouvelle période s'ajoute à la fin de la période en cours : renouveler en avance ne vous fait perdre aucun jour.",
-        "Sans renouvellement, l'abonnement s'arrête simplement à son échéance et les prix publics s'appliquent de nouveau.",
+        "Sur la page [Abonnement](/abonnement), achetez un nouveau pass quand vous voulez : sa durée s'ajoute à la fin du pass en cours, sans perdre de jours.",
+        "Un nouveau carnet ajoute 3 crédits à ceux qui vous restent, et repousse leur validité à 3 mois.",
+        "Sans nouvel achat, le pass s'arrête à sa date de fin et chaque place se paie de nouveau 35 DH.",
       ],
       en: [
-        `${MEMBERSHIP_RENEW_WINDOW_DAYS} days before your membership ends, a “Renew” button appears on the [Membership](/abonnement) page.`,
-        "The new period is added to the end of the current one: renewing early doesn't lose you any days.",
-        "If you don't renew, membership simply ends on its expiry date and public prices apply again.",
+        "On the [Membership](/abonnement) page, buy a new pass whenever you like: its duration is added to the end of your current pass, without losing any days.",
+        "A new pack adds 3 credits to the ones you have left, and extends their validity to 3 months.",
+        "Without a new purchase, the pass ends on its end date and each seat costs 35 DH again.",
       ],
     },
     related: ["comment-fonctionne-l-abonnement"],

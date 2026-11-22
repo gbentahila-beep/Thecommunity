@@ -73,6 +73,13 @@ export async function cancelReservationCore(o: {
       },
       updatedAt: FieldValue.serverTimestamp(),
     });
+    // docs/22 § 17.I : crédits du carnet rendus si l'annulation est dans les délais remboursés (ou décidée par l'équipe).
+    const credits = Number(r.pricing?.coverage?.carnetSeats ?? 0);
+    const giveBack = r.status === "pending_payment" || o.refundMode === "full" || (o.refundMode === "policy" && refundAmountFor(policy, 100, startAt, new Date(now)) > 0);
+    if (credits > 0 && giveBack) {
+      tx.set(db.doc(`carnets/${r.userId}`), { credits: FieldValue.increment(credits), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+      tx.set(db.collection(`carnets/${r.userId}/movements`).doc(), { delta: credits, reason: "cancellation", reservationId: res.id, at: FieldValue.serverTimestamp() });
+    }
     if (lock.data()?.reservationId === res.id) tx.delete(lockRef);
     if (entry.exists && entry.data()?.reservationId === res.id) tx.update(entryRef, { status: "left", updatedAt: FieldValue.serverTimestamp() });
 

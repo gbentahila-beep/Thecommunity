@@ -9,6 +9,7 @@ import { loadSession, proposeGroupsCore, reconcileGroups, revealGroupsCore, vali
 import { cancelReservationCore } from "../reservations/cancel-reservation";
 import { cancelRequests, isAllocated, processPendingRequests, requestFixedVenue, runAllocation, sendRecap, venueCapacity } from "./allocation";
 import { teamAlert } from "./team";
+import { markAbsences } from "../membership/absences";
 
 const HOUR = 3_600_000;
 const SYSTEM = "system";
@@ -65,6 +66,12 @@ async function stepSession(id: string, s: DocumentData, e: DocumentData, now: nu
   const title = String(e.title?.fr ?? "");
   const when = dateTimeFr(start);
   const sessRef = db.doc(`sessions/${id}`);
+
+  // 0. Pas de check-in = absence, 1 h après le début (docs/22 § 17.I, décision 8).
+  if (now >= start.getTime() + HOUR) {
+    out.absences = (out.absences ?? 0) + (await markAbsences(id, s, e, now));
+    return;
+  }
 
   // 7. Proposition arrivée à échéance : qui n'a pas répondu est remboursé ; date vidée → annulée.
   if (s.risk?.status === "proposed" && s.risk.deadline && (s.risk.deadline as Timestamp).toMillis() <= now) {

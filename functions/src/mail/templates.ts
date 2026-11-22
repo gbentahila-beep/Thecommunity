@@ -49,13 +49,14 @@ export function reservationConfirmedMail(o: { locale: string; firstName: string;
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: [...t.p, ...(o.onSite ? [o.onSite] : []), ...(o.test ? [TEST_NOTE[l]] : [])], cta: { label: t.cta, href }, footer: FOOTER[l] }) };
 }
 
-export function membershipMail(o: { locale: string; firstName: string; planName: string; until: string; total: string; number: string; test: boolean }) {
+export function membershipMail(o: { locale: string; firstName: string; planName: string; until: string; total: string; number: string; test: boolean; carnet?: boolean }) {
   const l = lang(o.locale);
   const href = `${SITE_URL}${prefix(l)}/abonnement`;
+  // docs/22 § 17.I : pass (places incluses) ou carnet (crédits).
   const t = {
-    fr: { subject: "Bienvenue parmi les membres", heading: `Merci${o.firstName ? `, ${o.firstName}` : ""} !`, p: [`Votre abonnement « ${o.planName} » est actif jusqu'au ${o.until}. Vos prix membres s'appliquent dès maintenant.`, `${o.total} · document ${o.number}.`], cta: "Mon abonnement" },
-    en: { subject: "Welcome to the members", heading: `Thank you${o.firstName ? `, ${o.firstName}` : ""}!`, p: [`Your “${o.planName}” membership is active until ${o.until}. Member prices apply right away.`, `${o.total} · document ${o.number}.`], cta: "My membership" },
-    ar: { subject: "مرحبًا بك بين الأعضاء", heading: `شكرًا${o.firstName ? ` ${o.firstName}` : ""}!`, p: [`اشتراكك « ${o.planName} » مفعّل حتى ${o.until}. أسعار الأعضاء تُطبَّق من الآن.`, `${o.total} · الوثيقة ${o.number}.`], cta: "اشتراكي" },
+    fr: { subject: o.carnet ? "Votre carnet est prêt" : "Votre pass est actif", heading: `Merci${o.firstName ? `, ${o.firstName}` : ""} !`, p: [o.carnet ? `« ${o.planName} » : vos crédits sont valables jusqu'au ${o.until}. 1 crédit par place, à choisir au moment de réserver.` : `« ${o.planName} » est actif jusqu'au ${o.until} : vos places sont incluses, sans frais Wenzy.`, `${o.total} · document ${o.number}.`], cta: o.carnet ? "Mon carnet" : "Mon pass" },
+    en: { subject: o.carnet ? "Your pack is ready" : "Your pass is active", heading: `Thank you${o.firstName ? `, ${o.firstName}` : ""}!`, p: [o.carnet ? `“${o.planName}”: your credits are valid until ${o.until}. 1 credit per seat, chosen when you book.` : `“${o.planName}” is active until ${o.until}: your seats are included, no Wenzy fees.`, `${o.total} · document ${o.number}.`], cta: o.carnet ? "My pack" : "My pass" },
+    ar: { subject: o.carnet ? "دفترك جاهز" : "الباس الخاص بك مفعّل", heading: `شكرًا${o.firstName ? ` ${o.firstName}` : ""}!`, p: [o.carnet ? `« ${o.planName} »: رصيدك صالح حتى ${o.until}. رصيد واحد لكل مكان، تختاره عند الحجز.` : `« ${o.planName} » مفعّل حتى ${o.until}: أماكنك مشمولة دون رسوم Wenzy.`, `${o.total} · الوثيقة ${o.number}.`], cta: o.carnet ? "دفتري" : "الباس" },
   }[l];
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: [...t.p, ...(o.test ? [TEST_NOTE[l]] : [])], cta: { label: t.cta, href }, footer: FOOTER[l] }) };
 }
@@ -309,4 +310,23 @@ export function proposalMail(o: { locale: string; firstName: string; title: stri
     ar: { subject: `نقترح عليك موعدًا آخر: ${o.title}`, heading: "عدد المسجلين غير كافٍ", p: [`« ${o.title} »، ${o.when}: عدد المسجلين غير كافٍ لتكوين مائدة.`, `نقترح عليك: ${o.proposed}. اقبله دون دفع إضافي، أو اختر الاسترداد الكامل، قبل ${o.deadline}. بدون رد، سيتم الاسترداد تلقائيًا.`], cta: "الرد" },
   }[l];
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
+}
+
+/** Garde-fous du pass (décision 8) : avertissement après une absence, suspension après la deuxième. */
+export function absenceMail(o: { locale: string; firstName: string; title: string; suspendedUntil: string | null }) {
+  const l = lang(o.locale);
+  const href = `${SITE_URL}${prefix(l)}/abonnement`;
+  const s = o.suspendedUntil;
+  const t = {
+    fr: s
+      ? { subject: "Votre pass est suspendu 2 semaines", heading: "Pass suspendu", p: [`Deuxième absence sans check-in (« ${o.title} »). Votre pass est suspendu jusqu'au ${s} : vous pouvez réserver, mais vos places ne sont plus incluses d'ici là.`, "Un empêchement ? Annulez depuis votre réservation : la place revient à quelqu'un d'autre."] }
+      : { subject: "Absence notée", heading: `${o.firstName ? `${o.firstName}, n` : "N"}ous ne vous avons pas vu`, p: [`Pas de check-in pour « ${o.title} » : c'est noté comme une absence.`, "C'est un avertissement : à la prochaine absence, votre pass sera suspendu 2 semaines. Un empêchement ? Annulez depuis votre réservation."] },
+    en: s
+      ? { subject: "Your pass is suspended for 2 weeks", heading: "Pass suspended", p: [`Second no-show without check-in (“${o.title}”). Your pass is suspended until ${s}: you can still book, but your seats aren't included until then.`, "Can't make it? Cancel from your booking so someone else can take your seat."] }
+      : { subject: "No-show noted", heading: "We missed you", p: [`No check-in for “${o.title}”: it's noted as a no-show.`, "This is a warning: next time, your pass will be suspended for 2 weeks. Can't make it? Cancel from your booking."] },
+    ar: s
+      ? { subject: "تم تعليق الباس لمدة أسبوعين", heading: "الباس معلّق", p: [`غياب ثانٍ دون تسجيل الوصول (« ${o.title} »). الباس معلّق حتى ${s}: يمكنك الحجز، لكن أماكنك لم تعد مشمولة حتى ذلك الحين.`, "طرأ لك مانع؟ ألغِ من صفحة حجزك ليستفيد غيرك من المكان."] }
+      : { subject: "تم تسجيل غياب", heading: "افتقدناك", p: [`لا تسجيل وصول في « ${o.title} »: سُجّل كغياب.`, "هذا تنبيه: في الغياب القادم، سيُعلّق الباس أسبوعين. طرأ لك مانع؟ ألغِ من صفحة حجزك."] },
+  }[l];
+  return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: l === "fr" ? "Mon pass" : l === "en" ? "My pass" : "الباس", href }, footer: NOTICE_FOOTER[l] }) };
 }

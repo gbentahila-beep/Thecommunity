@@ -13,7 +13,7 @@ import type {
   Session,
   UserProfile,
 } from "@thecommunity/shared";
-import { crowdSummary, MEETING_MIN_PARTICIPANTS, MEMBERSHIP_PLAN_ID, normalizeHomeSettings, publicExperience, type Crowd, type Interest, type HomeSettings, type Membership, type MembershipPlan, type Organizer } from "@thecommunity/shared";
+import { crowdSummary, MEETING_MIN_PARTICIPANTS, MEMBERSHIP_PLAN_ID, normalizeHomeSettings, publicExperience, type Crowd, type Interest, type HomeSettings, type Carnet, type Membership, type MembershipPlan, type Organizer } from "@thecommunity/shared";
 import { Timestamp, type DocumentSnapshot } from "firebase-admin/firestore";
 import { unstable_cache } from "next/cache";
 import { adminDb } from "@/lib/firebase/admin";
@@ -132,7 +132,7 @@ async function fsMembershipPlanRaw(): Promise<MembershipPlan | null> {
   const snap = await adminDb().doc(`membershipPlans/${MEMBERSHIP_PLAN_ID}`).get();
   const p = snap.data();
   if (p?.isActive !== true) return null;
-  return { id: snap.id, name: p.name, price: { amount: p.price?.amount ?? 0, currency: "MAD" }, offers: Array.isArray(p.offers) ? p.offers : undefined, waiveServiceFee: p.waiveServiceFee === true, discountPercent: p.discountPercent ?? 0, earlyAccessHours: p.earlyAccessHours ?? 0, benefits: p.benefits ?? [], isActive: true };
+  return { id: snap.id, name: p.name, offers: Array.isArray(p.offers) ? p.offers : undefined, earlyAccessHours: p.earlyAccessHours ?? 0, benefits: p.benefits ?? [], isActive: true };
 }
 
 async function fsReviewsRaw(experienceId?: string): Promise<Review[]> {
@@ -151,12 +151,15 @@ export async function fsMemberData(uid: string) {
     db.collection(`users/${uid}/notifications`).orderBy("createdAt", "desc").limit(50).get(),
     db.collection("bookingRequests").where("userId", "==", uid).orderBy("createdAt", "desc").limit(50).get(),
   ]);
-  const [waitSnap, myReviewsSnap, memSnap] = await Promise.all([
+  const [waitSnap, myReviewsSnap, memSnap, carSnap] = await Promise.all([
     db.collectionGroup("waitlist").where("userId", "==", uid).limit(50).get(),
     db.collection("reviews").where("userId", "==", uid).limit(100).get(),
     db.doc(`memberships/${uid}`).get(),
+    db.doc(`carnets/${uid}`).get(),
   ]);
   const membership = memSnap.exists ? withId<Membership>(memSnap) : null;
+  // docs/22 § 17.I : crédits du carnet.
+  const carnet = carSnap.exists ? withId<Carnet>(carSnap) : null;
   const myReviews = myReviewsSnap.docs.map((d) => withId<Review>(d));
   const waitlists = waitSnap.docs.map((d) => withId<WaitlistEntry>(d));
   const requests = reqSnap.docs.map((d) => withId<BookingRequest>(d));
@@ -184,7 +187,7 @@ export async function fsMemberData(uid: string) {
     ...p,
   } as UserProfile;
   const notifications = notifSnap.docs.map((d) => withId<AppNotification>(d));
-  return { profile, reservations, groups, notifications, requests, waitlists, myReviews, membership };
+  return { profile, reservations, groups, notifications, requests, waitlists, myReviews, membership, carnet };
 }
 
 export const fsCities = cached(fsCitiesRaw, "fsCities");

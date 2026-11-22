@@ -20,6 +20,7 @@ import { sendDueReminders } from "../../functions/src/notify/reminders";
 import { runSessionAutomation } from "../../functions/src/tables/automation";
 import { processPendingRequests } from "../../functions/src/tables/allocation";
 import { checkInSelf } from "../../functions/src/reservations/self-check-in";
+import { markAbsences } from "../../functions/src/membership/absences";
 import { DEFAULT_EVENT_TEMPLATES, DEFAULT_HOME_SETTINGS, QUESTIONNAIRE_TEMPLATES, tablesTimeline, zonedParts } from "@thecommunity/shared";
 
 const PROJECT = "demo-thecommunity";
@@ -769,129 +770,169 @@ describe("expériences sans date et alerte « prochaines dates »", () => {
   });
 });
 
-describe("abonnement annuel", () => {
+describe("Carnet et Pass (Étape I)", () => {
   let team: Client;
-  const planInput = { nameFr: "Wenzy Membre", nameAr: "", priceDh: 990, discountPercent: 15, earlyAccessHours: 48, benefitsFr: "-15 % sur toutes les expériences\nAccès anticipé", benefitsAr: "", isActive: true };
+  const HOUR = 3_600_000;
+  const offers = [
+    { id: "carnet3", priceDh: 70, isActive: true },
+    { id: "pass7", priceDh: 49, isActive: true },
+    { id: "pass30", priceDh: 99, isActive: true },
+    { id: "pass90", priceDh: 249, isActive: false },
+    { id: "pass180", priceDh: 449, isActive: true },
+    { id: "pass365", priceDh: 790, isActive: true },
+  ];
+  const planInput = { nameFr: "Carnet et Pass", isActive: true, offers, highlightId: "pass180" };
   beforeAll(async () => {
     team = await member({ role: "admin" });
+    await team.call("adminSaveMembershipPlan", planInput);
   });
   afterAll(async () => {
     await db().doc("membershipPlans/annual").set({ isActive: false, earlyAccessHours: 0 }, { merge: true });
   });
   const membership = async (uid: string) => (await db().doc(`memberships/${uid}`).get()).data();
-  async function subscribe(u: Client) {
-    const { paymentId } = await u.call("startMembershipCheckout", {});
-    return u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
+  const carnet = async (uid: string) => (await db().doc(`carnets/${uid}`).get()).data();
+  const invoice = async (id: string) => (await db().doc(`invoices/${id}`).get()).data();
+  async function buy(u: Client, offerId: string) {
+    const { paymentId } = await u.call("startMembershipCheckout", { offerId });
+    return { paymentId: paymentId as string, ...(await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" })) };
   }
 
-  it("l'équipe règle la formule ; inactive, on ne peut pas souscrire", async () => {
+  it("l'équipe règle les offres ; inactives ou désactivées, on ne peut pas acheter", async () => {
     const u = await member();
     expect(await refusal(u.call("adminSaveMembershipPlan", planInput))).toBe("permission-denied:");
-    await team.call("adminSaveMembershipPlan", { ...planInput, isActive: false });
-    expect(await refusal(u.call("startMembershipCheckout", {}))).toBe("failed-precondition:membership_unavailable");
-    await team.call("adminSaveMembershipPlan", planInput);
-    expect((await db().doc("membershipPlans/annual").get()).data()).toMatchObject({ price: { amount: 99000 }, discountPercent: 15, earlyAccessHours: 48, isActive: true, benefits: [{ fr: "-15 % sur toutes les expériences" }, { fr: "Accès anticipé" }] });
-  });
-
-  it("souscription : paiement de 990 DH lu dans la formule, abonnement actif 12 mois, renouvellement 30 jours avant", async () => {
-    const u = await member();
-    const { paymentId } = await u.call("startMembershipCheckout", { amount: 1 });
-    expect(await payment(paymentId as string)).toMatchObject({ purpose: "membership", amount: 99000, userId: u.uid, status: "initiated" });
-    expect(await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" })).toMatchObject({ outcome: "confirmed", purpose: "membership" });
-    const m = (await membership(u.uid))!;
-    expect(m).toMatchObject({ status: "active", source: "purchase", planId: "annual" });
-    const months = ((m.endAt as Timestamp).toMillis() - Date.now()) / (30.4 * 86_400_000);
-    expect(months).toBeGreaterThan(11.8);
-    expect(months).toBeLessThan(12.2);
-    expect(await refusal(u.call("startMembershipCheckout", {}))).toBe("failed-precondition:already_member");
-    // Échéance dans 10 jours : renouvellement possible, la nouvelle période part de l'échéance.
-    const soon = Date.now() + 10 * 86_400_000;
-    await db().doc(`memberships/${u.uid}`).update({ endAt: Timestamp.fromMillis(soon) });
-    await subscribe(u);
-    const renewed = ((await membership(u.uid))!.endAt as Timestamp).toMillis();
-    expect((renewed - soon) / (30.4 * 86_400_000)).toBeGreaterThan(11.8);
-    const notes = await db().collection(`users/${u.uid}/notifications`).where("type", "==", "membership_active").get();
-    expect(notes.size).toBe(2);
-  });
-
-  it("formules par durée : l'offre choisie fixe le prix et la durée ; offre désactivée ou inconnue refusée", async () => {
-    const offers = [
-      { months: 1, priceDh: 129, isActive: true },
-      { months: 3, priceDh: 339, isActive: true },
-      { months: 6, priceDh: 590, isActive: false },
-      { months: 12, priceDh: 990, isActive: true },
-    ];
-    await team.call("adminSaveMembershipPlan", { ...planInput, offers, highlightMonths: 3, waiveServiceFee: true });
     const saved = (await db().doc("membershipPlans/annual").get()).data()!;
-    expect(saved.waiveServiceFee).toBe(true);
-    expect(saved.offers.find((o: { months: number }) => o.months === 3)).toMatchObject({ id: "3m", price: { amount: 33900 }, isActive: true, highlight: true });
-    const u = await member();
-    expect(await refusal(u.call("startMembershipCheckout", { offerId: "6m" }))).toBe("failed-precondition:membership_unavailable");
-    expect(await refusal(u.call("startMembershipCheckout", { offerId: "2m" }))).toBe("invalid-argument:");
-    const { paymentId } = await u.call("startMembershipCheckout", { offerId: "3m" });
-    expect(await payment(paymentId as string)).toMatchObject({ amount: 33900, months: 3, offerId: "3m" });
-    await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
-    const months = (((await membership(u.uid))!.endAt as Timestamp).toMillis() - Date.now()) / (30.4 * 86_400_000);
-    expect(months).toBeGreaterThan(2.8);
-    expect(months).toBeLessThan(3.2);
+    expect(saved.offers.find((o: { id: string }) => o.id === "pass180")).toMatchObject({ kind: "pass", days: 180, price: { amount: 44900 }, highlight: true });
+    expect(await refusal(u.call("startMembershipCheckout", { offerId: "pass90" }))).toBe("failed-precondition:membership_unavailable");
+    expect(await refusal(u.call("startMembershipCheckout", { offerId: "x" }))).toBe("invalid-argument:");
+    await team.call("adminSaveMembershipPlan", { ...planInput, isActive: false });
+    expect(await refusal(u.call("startMembershipCheckout", { offerId: "pass30" }))).toBe("failed-precondition:membership_unavailable");
     await team.call("adminSaveMembershipPlan", planInput);
   });
 
-  it("prix membre appliqué par le serveur : -15 %, ou prix membre précis de l'expérience", async () => {
-    const memberU = await member();
-    const publicU = await member();
-    await subscribe(memberU);
-    const sid = await makeSession({ price: 30000 });
-    const m = await memberU.call("createReservation", { sessionId: sid, seats: 2 });
-    expect(m).toMatchObject({ total: 51000 });
-    expect((await reservation(m.reservationId as string)).pricing).toMatchObject({ unitAmount: 30000, subtotal: 60000, memberDiscount: 9000, total: 51000 });
-    const p = await publicU.call("createReservation", { sessionId: sid, seats: 1 });
-    expect(p).toMatchObject({ total: 30000 });
-    const special = await makeSession({ price: 30000, memberPrice: 20000 });
-    expect(await memberU.call("createReservation", { sessionId: special, seats: 1 })).toMatchObject({ total: 20000 });
-  });
-
-  it("expérience réservée aux membres ; accès anticipé de 48 h aux nouvelles dates", async () => {
-    const memberU = await member();
-    const publicU = await member();
-    await subscribe(memberU);
-    const vip = await makeSession({ membersOnly: true });
-    expect(await refusal(publicU.call("createReservation", { sessionId: vip, seats: 1 }))).toBe("failed-precondition:members_only");
-    expect(await refusal(publicU.call("joinWaitlist", { sessionId: vip, seats: 1 }))).toBe("failed-precondition:members_only");
-    expect(await memberU.call("createReservation", { sessionId: vip, seats: 1 })).toMatchObject({ status: "pending_payment" });
-    const fresh = await makeSession({ createdHoursAgo: 1 });
-    expect(await refusal(publicU.call("createReservation", { sessionId: fresh, seats: 1 }))).toBe("failed-precondition:members_early_access");
-    expect(await memberU.call("createReservation", { sessionId: fresh, seats: 1 })).toMatchObject({ status: "pending_payment" });
-    const older = await makeSession({ createdHoursAgo: 72 });
-    expect(await publicU.call("createReservation", { sessionId: older, seats: 1 })).toMatchObject({ status: "pending_payment" });
-  });
-
-  it("offrir puis retirer un abonnement (journalisé) ; la place proposée depuis la liste d'attente est au prix membre", async () => {
+  it("pass 1 mois : 99 DH lus dans l'offre, 30 jours ; un nouveau pass prolonge depuis la fin", async () => {
     const u = await member();
-    expect(await refusal(u.call("adminGrantMembership", { uid: u.uid, months: 3, reason: "test" }))).toBe("permission-denied:");
-    await team.call("adminGrantMembership", { uid: u.uid, months: 3, reason: "Partenaire" });
-    expect(await membership(u.uid)).toMatchObject({ status: "active", source: "gift" });
+    const { paymentId } = await u.call("startMembershipCheckout", { offerId: "pass30", amount: 1 });
+    expect(await payment(paymentId as string)).toMatchObject({ purpose: "membership", amount: 9900, kind: "pass", days: 30, label: "Pass 1 mois" });
+    expect(await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" })).toMatchObject({ outcome: "confirmed", purpose: "membership" });
+    const end1 = ((await membership(u.uid))!.endAt as Timestamp).toMillis();
+    expect(Math.round((end1 - Date.now()) / 86_400_000)).toBe(30);
+    await buy(u, "pass7");
+    const end2 = ((await membership(u.uid))!.endAt as Timestamp).toMillis();
+    expect(Math.round((end2 - end1) / 86_400_000)).toBe(7);
+    const inv = await invoice(`inv_${paymentId}`);
+    expect(inv!.lines[0]).toMatchObject({ label: "Pass 1 mois" });
+    expect(inv!.lines[0].detail).toMatch(/^Du .+ au .+$/);
+  });
 
-    // Liste d'attente : la place proposée à un membre est au prix membre.
-    const sid = await makeSession({ capacity: 1, price: 30000 });
+  it("carnet : 3 crédits valables 3 mois ; un nouveau carnet ajoute ses crédits", async () => {
+    const u = await member();
+    const { paymentId } = await buy(u, "carnet3");
+    expect(await carnet(u.uid)).toMatchObject({ credits: 3 });
+    expect(Math.round((((await carnet(u.uid))!.expiresAt as Timestamp).toMillis() - Date.now()) / 86_400_000)).toBe(90);
+    await buy(u, "carnet3");
+    expect((await carnet(u.uid))!.credits).toBe(6);
+    expect((await invoice(`inv_${paymentId}`))!.lines[0]).toMatchObject({ label: "Carnet 3 sorties", detail: "3 crédits, valables 3 mois" });
+  });
+
+  it("réserver avec le pass : place incluse (confirmée sans payer), 2 réservations à venir au maximum ; « + 1 » payé", async () => {
+    const u = await member();
+    await buy(u, "pass30");
+    const sids = [await makeSession({ price: 3500 }), await makeSession({ price: 3500 }), await makeSession({ price: 3500 })];
+    const r1 = await u.call("createReservation", { sessionId: sids[0], seats: 1 });
+    expect(r1).toMatchObject({ status: "confirmed", total: 0 });
+    expect((await reservation(r1.reservationId as string)).pricing).toMatchObject({ memberDiscount: 3500, total: 0, coverage: { passSeats: 1, carnetSeats: 0 } });
+    expect(await u.call("createReservation", { sessionId: sids[1], seats: 2 })).toMatchObject({ status: "pending_payment", total: 3500 });
+    // La 2e réservation n'est pas encore payée : une seule réservation confirmée couverte par le pass.
+    const preview = (await u.call("previewPricing", { sessionId: sids[2], seats: 1 })) as { pricing: { total: number }; pass: boolean; passLimitReached: boolean };
+    expect(preview).toMatchObject({ pass: true, passLimitReached: false, pricing: { total: 0 } });
+    await u.call("createReservation", { sessionId: sids[2], seats: 1 });
+    const fourth = await makeSession({ price: 3500 });
+    const p4 = (await u.call("previewPricing", { sessionId: fourth, seats: 1 })) as { pricing: { total: number }; passLimitReached: boolean };
+    expect(p4).toMatchObject({ passLimitReached: true, pricing: { total: 3500 } });
+  });
+
+  it("réserver avec le carnet : 1 crédit par place, invité compris ; crédit rendu si l'annulation est dans les délais", async () => {
+    const u = await member();
+    await buy(u, "carnet3");
+    const sid = await makeSession({ price: 3500, startInHours: 96 });
+    const r = await u.call("createReservation", { sessionId: sid, seats: 2, useCarnet: true });
+    expect(r).toMatchObject({ status: "confirmed", total: 0 });
+    expect((await carnet(u.uid))!.credits).toBe(1);
+    await u.call("cancelReservation", { reservationId: r.reservationId });
+    expect((await carnet(u.uid))!.credits).toBe(3);
+    // Sans le cocher, le carnet n'est pas utilisé.
+    expect(await u.call("createReservation", { sessionId: await makeSession({ price: 3500 }), seats: 1 })).toMatchObject({ status: "pending_payment", total: 3500 });
+    // Annulation trop tardive (moins de 48 h) : le crédit est consommé.
+    const late = await makeSession({ price: 3500, startInHours: 20 });
+    const lr = await u.call("createReservation", { sessionId: late, seats: 1, useCarnet: true });
+    await u.call("cancelReservation", { reservationId: lr.reservationId });
+    expect((await carnet(u.uid))!.credits).toBe(2);
+  });
+
+  it("pass : événement abonnés uniquement et accès anticipé ; le carnet ne les ouvre pas", async () => {
+    const passU = await member();
+    const carnetU = await member();
+    await buy(passU, "pass30");
+    await buy(carnetU, "carnet3");
+    const vip = await makeSession({ membersOnly: true, price: 3500 });
+    expect(await refusal(carnetU.call("createReservation", { sessionId: vip, seats: 1 }))).toBe("failed-precondition:members_only");
+    expect(await passU.call("createReservation", { sessionId: vip, seats: 1 })).toMatchObject({ status: "confirmed" });
+    const fresh = await makeSession({ createdHoursAgo: 1, price: 3500, extra: { earlyAccessDays: 2 } });
+    expect(await refusal(carnetU.call("createReservation", { sessionId: fresh, seats: 1, useCarnet: true }))).toBe("failed-precondition:members_early_access");
+  });
+
+  it("liste d'attente : priorité au pass, place incluse ; offrir puis retirer un pass (journalisé)", async () => {
+    const early = await member();
+    const passU = await member();
+    expect(await refusal(passU.call("adminGrantMembership", { uid: passU.uid, days: 30, reason: "test" }))).toBe("permission-denied:");
+    await team.call("adminGrantMembership", { uid: passU.uid, days: 30, credits: 2, reason: "Partenaire" });
+    expect(await membership(passU.uid)).toMatchObject({ status: "active", source: "gift" });
+    expect((await carnet(passU.uid))!.credits).toBe(2);
+    const sid = await makeSession({ capacity: 1, price: 3500 });
     const holder = await member();
     const { reservationId } = await paidReservation(holder, sid);
-    await u.call("joinWaitlist", { sessionId: sid, seats: 1 });
+    await early.call("joinWaitlist", { sessionId: sid, seats: 1 });
+    await passU.call("joinWaitlist", { sessionId: sid, seats: 1 });
     await holder.call("cancelReservation", { reservationId });
-    const offer = (await db().doc(`sessions/${sid}/waitlist/${u.uid}`).get()).data()!;
-    expect((await reservation(offer.reservationId)).pricing).toMatchObject({ memberDiscount: 4500, total: 25500 });
-
-    await team.call("adminRevokeMembership", { uid: u.uid, reason: "Erreur" });
-    expect((await membership(u.uid))!.status).toBe("revoked");
-    const other = await makeSession({ price: 30000 });
-    expect(await u.call("createReservation", { sessionId: other, seats: 1 })).toMatchObject({ total: 30000 });
-    const logs = (await db().collection("auditLogs").where("targetId", "==", u.uid).get()).docs.map((d) => d.data().action).sort();
+    const offer = (await db().doc(`sessions/${sid}/waitlist/${passU.uid}`).get()).data()!;
+    expect(offer.status).toBe("converted");
+    expect((await reservation(offer.reservationId)).pricing).toMatchObject({ memberDiscount: 3500, total: 0 });
+    expect((await db().doc(`sessions/${sid}/waitlist/${early.uid}`).get()).data()!.status).toBe("waiting");
+    await team.call("adminRevokeMembership", { uid: passU.uid, reason: "Erreur" });
+    expect(await passU.call("createReservation", { sessionId: await makeSession({ price: 3500 }), seats: 1 })).toMatchObject({ total: 3500 });
+    const logs = (await db().collection("auditLogs").where("targetId", "==", passU.uid).get()).docs.map((d) => d.data().action).sort();
     expect(logs).toEqual(["membership.grant", "membership.revoke"]);
+  });
+
+  it("pas de check-in = absence : 1re avertissement, 2e pass suspendu 14 jours ; l'équipe annule une absence", async () => {
+    const u = await member();
+    await db().doc(`users/${u.uid}`).set({ email: `absent.${run}@example.com` }, { merge: true });
+    await buy(u, "pass30");
+    const one = await makeSession({ price: 3500, startInHours: 30 });
+    const two = await makeSession({ price: 3500, startInHours: 31 });
+    const r1 = await u.call("createReservation", { sessionId: one, seats: 1 });
+    const r2 = await u.call("createReservation", { sessionId: two, seats: 1 });
+    const s1 = await session(one);
+    const s2 = await session(two);
+    await markAbsences(one, s1, (await db().doc(`experiences/${s1.experienceId}`).get()).data()!, (s1.startAt as Timestamp).toMillis() + 2 * HOUR);
+    expect((await reservation(r1.reservationId as string)).status).toBe("no_show");
+    expect((await membership(u.uid))!.suspendedUntil ?? null).toBeNull();
+    expect((await db().collection("mail").where("refs.reservationId", "==", r1.reservationId).where("kind", "==", "absence_warning").get()).size).toBe(1);
+    const at2 = (s2.startAt as Timestamp).toMillis() + 2 * HOUR;
+    await markAbsences(two, s2, (await db().doc(`experiences/${s2.experienceId}`).get()).data()!, at2);
+    const until = ((await membership(u.uid))!.suspendedUntil as Timestamp).toMillis();
+    expect(Math.round((until - at2) / 86_400_000)).toBe(14);
+    // Suspendu : la place n'est plus incluse.
+    expect(await u.call("createReservation", { sessionId: await makeSession({ price: 3500 }), seats: 1 })).toMatchObject({ total: 3500 });
+    // La personne était là : l'équipe annule l'absence, la suspension est levée.
+    await team.call("adminCancelAbsence", { reservationId: r2.reservationId });
+    expect((await reservation(r2.reservationId as string)).status).toBe("attended");
+    expect((await membership(u.uid))!.suspendedUntil ?? null).toBeNull();
   });
 
   it("règles : la formule active est publique, l'abonnement n'est lisible que par son titulaire", async () => {
     const u = await member();
-    await subscribe(u);
+    await buy(u, "pass30");
     const { getFirestore, doc, getDoc, setDoc, connectFirestoreEmulator } = await import("firebase/firestore");
     const { initializeApp: initClient } = await import("firebase/app");
     const { getAuth: clientAuth, connectAuthEmulator: connectAuth, signInWithEmailAndPassword: signIn } = await import("firebase/auth");
@@ -984,14 +1025,14 @@ describe("factures, avoirs et e-mails (5c)", () => {
     }
   });
 
-  it("abonnement payé : facture d'abonnement avec la période", async () => {
-    await db().doc("membershipPlans/annual").set({ name: { fr: "Membre annuel" }, price: { amount: 99000, currency: "MAD" }, isActive: true, discountPercent: 15, earlyAccessHours: 0 }, { merge: true });
+  it("abonnement payé : facture du pass avec la période", async () => {
+    await db().doc("membershipPlans/annual").set({ name: { fr: "Carnet et Pass" }, isActive: true, earlyAccessHours: 0 }, { merge: true });
     const u = await member();
-    const { paymentId } = await u.call("startMembershipCheckout", {});
+    const { paymentId } = await u.call("startMembershipCheckout", { offerId: "pass365" });
     await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
     const inv = await invoice(`inv_${paymentId}`);
-    expect(inv).toMatchObject({ purpose: "membership", reservationId: null, totals: { ttc: 99000 } });
-    expect(inv!.lines[0].label).toBe("Abonnement Membre annuel");
+    expect(inv).toMatchObject({ purpose: "membership", reservationId: null, totals: { ttc: 79000 } });
+    expect(inv!.lines[0].label).toBe("Pass 1 an");
     expect(inv!.lines[0].detail).toMatch(/^Du .+ au .+$/);
     expect((await mailsFor(`inv_${paymentId}`))[0]).toMatchObject({ kind: "membership_invoice" });
   });
@@ -1501,16 +1542,16 @@ describe("tarification en deux parts (11)", () => {
     const code = `DEUX${run}`.toUpperCase().slice(0, 20);
     await team.call("adminSavePromo", { create: true, data: { code, type: "percent", value: 20, validFrom: "", validTo: "2099-12-31", maxRedemptions: 5, firstBookingOnly: false, isActive: true, description: "" } });
     const u = await member();
-    await team.call("adminGrantMembership", { uid: u.uid, months: 3, reason: "test 11" });
+    await team.call("adminGrantMembership", { uid: u.uid, days: 90, reason: "test 11" });
     const sid = await makeSession({ price: 25000, memberPrice: 20000 });
     await withPricing(sid, fixed);
     const { pricing } = (await u.call("previewPricing", { sessionId: sid, seats: 1, promoCode: code })) as { pricing: { subtotal: number; memberDiscount: number; discount: number; total: number } };
     expect(pricing.subtotal).toBe(25000);
-    expect(pricing.memberDiscount).toBe(5000); // 250 → 200 DH (prix membre, part en ligne)
-    expect(pricing.discount).toBe(4000); // 20 % de 200 DH, jamais des 200 DH du partenaire
+    expect(pricing.memberDiscount).toBe(3500); // docs/22 § 17.I : le pass couvre la place, au plus le prix Wenzy (35 DH)
+    expect(pricing.discount).toBe(4300); // 20 % des 215 DH restants en ligne, jamais de la part du partenaire
     const { reservationId } = await u.call("createReservation", { sessionId: sid, seats: 1, promoCode: code });
     const r = await reservation(reservationId as string);
-    expect(r.pricing.total).toBe(16000 + (r.pricing.fees ?? 0));
+    expect(r.pricing.total).toBe(17200 + (r.pricing.fees ?? 0));
     expect(r.onSiteAmount).toBe(20000); // la part sur place reste entière
   });
 

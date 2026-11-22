@@ -35,7 +35,7 @@ export function SubscribeButton({ label, offerId }: { label: string; offerId?: s
             goToCheckout(redirectUrl, (href) => router.push(href));
           } catch (err) {
             const reason = (err as { details?: { reason?: string } }).details?.reason;
-            setError(reason === "already_member" || reason === "membership_unavailable" ? t(`errors.${reason}`) : tb(`errors.${bookingErrorOf(err)}`));
+            setError(reason === "offer_card_only" || reason === "membership_unavailable" ? t(`errors.${reason}`) : tb(`errors.${bookingErrorOf(err)}`));
             setBusy(false);
           }
         }}

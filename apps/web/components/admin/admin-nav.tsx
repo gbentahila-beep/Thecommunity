@@ -45,7 +45,7 @@ export const ADMIN_LINKS = [
   { href: "/admin/reservations", label: "Réservations", icon: Ticket },
   { href: "/admin/billets", label: "Billets (scan)", icon: ScanLine },
   { href: "/admin/avis", label: "Avis", icon: Star },
-  { href: "/admin/abonnement", label: "Abonnement", icon: BadgeCheck },
+  { href: "/admin/abonnement", label: "Carnet et Pass", icon: BadgeCheck },
   { href: "/admin/utilisateurs", label: "Utilisateurs", icon: Users },
   { href: "/admin/partenaires", label: "Partenaires", icon: Handshake },
   { href: "/admin/organisateurs", label: "Organisateurs", icon: Store },

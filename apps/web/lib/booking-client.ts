@@ -56,7 +56,7 @@ async function freshUser() {
   return user;
 }
 
-export async function createReservation(sessionId: string, seats: number, opts: { promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers } = {}) {
+export async function createReservation(sessionId: string, seats: number, opts: { promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers; useCarnet?: boolean } = {}) {
   await freshUser();
   // Champs absents plutôt que vides : le SDK transmettrait `undefined` comme `null`, refusé par le serveur.
   const extra = Object.fromEntries(Object.entries(opts).filter(([, v]) => v !== undefined && v !== null));
@@ -65,10 +65,15 @@ export async function createReservation(sessionId: string, seats: number, opts: 
 }
 
 /** Prix exact calculé par le serveur (prix membre, code promo, frais de service), avant de réserver. */
-export async function previewPricing(sessionId: string, seats: number, promoCode?: string) {
+export async function previewPricing(sessionId: string, seats: number, promoCode?: string, useCarnet?: boolean) {
+  return (await previewBooking(sessionId, seats, promoCode, useCarnet)).pricing;
+}
+
+/** Prix et situation de la personne (pass, garde-fou, crédits du carnet), docs/22 § 17.I. */
+export async function previewBooking(sessionId: string, seats: number, promoCode?: string, useCarnet?: boolean) {
   await freshUser();
-  const res = await httpsCallable(firebase().functions, "previewPricing")({ sessionId, seats, ...(promoCode ? { promoCode } : {}) });
-  return (res.data as { pricing: Pricing }).pricing;
+  const res = await httpsCallable(firebase().functions, "previewPricing")({ sessionId, seats, ...(promoCode ? { promoCode } : {}), ...(useCarnet ? { useCarnet: true } : {}) });
+  return res.data as { pricing: Pricing; pass?: boolean; passLimitReached?: boolean; credits?: number };
 }
 
 /** Raison d'un refus de code promo (ou null si ce n'en est pas un). */

@@ -2,7 +2,7 @@
  * Centre d'aide — version arabe (traduction de la version française, qui fait foi).
  * Mêmes liens internes [texte](/chemin) et jetons {{…}} ; mêmes délais, issus des règles partagées.
  */
-import { ACCEPTED_HOLD_HOURS, HOLD_MINUTES, MEMBERSHIP_RENEW_WINDOW_DAYS, REVIEW_WINDOW_DAYS, WAITLIST_OFFER_HOURS } from "@thecommunity/shared";
+import { ACCEPTED_HOLD_HOURS, HOLD_MINUTES, REVIEW_WINDOW_DAYS, WAITLIST_OFFER_HOURS } from "@thecommunity/shared";
 import type { HelpBlock, HelpCategoryKey } from "./help";
 
 export const HELP_CATEGORIES_AR: Record<HelpCategoryKey, { title: string; description: string }> = {
@@ -141,10 +141,10 @@ export const HELP_ARTICLES_AR: Record<string, { title: string; summary: string; 
     ],
   },
   "renouveler-mon-abonnement": {
-    title: "تجديد اشتراكي",
-    summary: `يُفتح التجديد ${MEMBERSHIP_RENEW_WINDOW_DAYS} يوماً قبل انتهاء الاشتراك، دون أن تخسر أي يوم.`,
+    title: "تمديد الباس أو شراء دفتر جديد",
+    summary: "يُشترى الباس في أي وقت ويمدّد الباس الحالي؛ والدفتر يضيف 3 أرصدة.",
     body: [
-      `قبل ${MEMBERSHIP_RENEW_WINDOW_DAYS} يوماً من نهاية اشتراكك، يظهر زر «تجديد» في صفحة [الاشتراك](/abonnement).`,
+      "في صفحة [الاشتراك](/abonnement)، اشترِ باسًا جديدًا متى شئت: تُضاف مدته إلى نهاية الباس الحالي دون أن تخسر أي يوم.",
       "تُضاف المدة الجديدة إلى نهاية الفترة الحالية: التجديد المبكر لا يُفقدك أي يوم.",
       "دون تجديد، يتوقف الاشتراك ببساطة عند انتهائه وتُطبَّق الأسعار العامة من جديد.",
     ],

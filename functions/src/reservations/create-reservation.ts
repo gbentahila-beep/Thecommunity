@@ -1,11 +1,11 @@
-import { answerIssues, audienceRefusal, bookingClosesAt, bookingRefusal, HOLD_MINUTES, PHYSICAL_TERMS_VERSION, promoRefusal, readServiceFee, reservationRequestSchema, tooYoung, type BookingPreferences, type QuestionDef, type QuestionnaireAnswers, NO_SERVICE_FEE } from "@thecommunity/shared";
+import { answerIssues, audienceRefusal, bookingClosesAt, bookingRefusal, HOLD_MINUTES, PHYSICAL_TERMS_VERSION, promoRefusal, readServiceFee, reservationRequestSchema, tooYoung, wenzyPriceOf, type BookingPreferences, type QuestionDef, type QuestionnaireAnswers, NO_SERVICE_FEE } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { commissionRules } from "../commissions/ledger";
 import { cancellationPolicies } from "../catalog/policies";
 import { invalidArgument, requireAuth } from "../lib/guards";
-import { membershipRef, membershipTerms, planRef } from "../membership/state";
+import { carnetRef, membershipRef, membershipTerms, passUpcoming, planRef } from "../membership/state";
 import { reservationDoc } from "./reservation-doc";
 import { notifyQuestionnaire } from "./questionnaire";
 import { venueCapacity } from "../tables/allocation";
@@ -33,10 +33,10 @@ export async function reserveSeats(caller: { uid: string; emailVerified: boolean
   const clean = data && typeof data === "object" ? Object.fromEntries(Object.entries(data).filter(([, v]) => v !== null && v !== undefined)) : data;
   const parsed = reservationRequestSchema.safeParse(clean);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats, promoCode, preferences, physicalTermsAccepted, answers } = parsed.data;
+  const { sessionId, seats, promoCode, preferences, physicalTermsAccepted, answers, useCarnet } = parsed.data;
 
   await requireMemberReady(uid);
-  const out = await runReservation({ uid, sessionId, seats, promoCode, preferences, physicalTermsAccepted, answers });
+  const out = await runReservation({ uid, sessionId, seats, promoCode, preferences, physicalTermsAccepted, answers, useCarnet });
   // 18a : réservation gratuite confirmée tout de suite → invitation à remplir le questionnaire.
   if (out.status === "confirmed" && !out.resumed) await notifyQuestionnaire(out.reservationId).catch(() => undefined);
   return out;
@@ -73,7 +73,7 @@ export async function runReservation(o: ReservationRun) {
   }
 }
 
-type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers };
+type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers; useCarnet?: boolean };
 
 /** Plafond de vente d'une date à lieu attribué, avant l'attribution (null = pas de plafond). */
 async function capacityBefore(sessionId: string): Promise<number | null> {
@@ -101,7 +101,7 @@ async function runReservationOnce(o: ReservationRun) {
   const promoRef = o.promoCode && !requestRef ? db.doc(`promoCodes/${o.promoCode}`) : null;
 
   return db.runTransaction(async (tx) => {
-    const [sess, lock, request, wait, planSnap, memSnap, bookingSettings, promoSnap, redemption, pastBookings, userSnap] = await Promise.all([
+    const [sess, lock, request, wait, planSnap, memSnap, bookingSettings, promoSnap, redemption, pastBookings, userSnap, carnetSnap] = await Promise.all([
       tx.get(sessRef),
       tx.get(lockRef),
       requestRef ? tx.get(requestRef) : Promise.resolve(null),
@@ -113,7 +113,10 @@ async function runReservationOnce(o: ReservationRun) {
       promoRef ? tx.get(promoRef.collection("redemptions").doc(uid)) : Promise.resolve(null),
       promoRef ? tx.get(db.collection("reservations").where("userId", "==", uid).where("status", "in", ["confirmed", "attended"]).limit(1)) : Promise.resolve(null),
       tx.get(db.doc(`users/${uid}`)),
+      tx.get(carnetRef(uid)),
     ]);
+    // docs/22 § 17.I : réservations à venir déjà couvertes par le pass (garde-fou : 2 au maximum).
+    const upcomingWithPass = await passUpcoming(uid, Date.now(), tx);
     if (!sess.exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
     const s = sess.data()!;
     const exp = await tx.get(db.doc(`experiences/${s.experienceId}`));
@@ -134,7 +137,7 @@ async function runReservationOnce(o: ReservationRun) {
     const answers = (o.answers ?? (request?.data()?.questionnaire?.answers as QuestionnaireAnswers | undefined)) || undefined;
     if (questions.length > 0 && !requestRef && answerIssues(questions, answers ?? {}).length > 0) refuse("questionnaire_required", "Répondez au questionnaire pour réserver.");
     const questionnaire = questions.length > 0 && answers && answerIssues(questions, answers).length === 0 ? { answers, answeredAt: Timestamp.fromMillis(now) } : null;
-    const terms = membershipTerms({ plan: planSnap.data(), membership: memSnap.data(), s, e, now, byTeam: Boolean(requestRef) });
+    const terms = membershipTerms({ plan: planSnap.data(), membership: memSnap.data(), carnet: carnetSnap.data(), s, e, now, byTeam: Boolean(requestRef), seats, passUpcoming: upcomingWithPass, useCarnet: o.useCarnet, wenzyPrice: wenzyPriceOf(bookingSettings.data()) });
     if (request) {
       const r = request.data();
       if (!r || r.status !== "pending" || r.userId !== uid || r.sessionId !== sessionId) refuse("request_not_pending", "Cette demande a déjà été traitée.");
@@ -190,9 +193,9 @@ async function runReservationOnce(o: ReservationRun) {
       sessionId,
       seats,
       holdUntilMs: Math.min(now + (o.holdMs ?? HOLD_MINUTES * 60_000), bookingClosesAt(view.startAt, e.bookingMode).getTime()),
-      memberUnitAmount: terms.memberUnitAmount,
+      coverage: terms.coverage,
       promo,
-      serviceFee: terms.waiveFees ? NO_SERVICE_FEE : readServiceFee(bookingSettings.data()?.serviceFee),
+      serviceFee: readServiceFee(bookingSettings.data()?.serviceFee),
       preferences: o.preferences ?? (request?.data()?.preferences ? storedPreferences(request.data()!.preferences) : undefined),
       commissionRules: rules,
       policies,
@@ -205,6 +208,12 @@ async function runReservationOnce(o: ReservationRun) {
       },
     });
     tx.set(resRef, doc);
+    // Crédits du carnet utilisés : retirés tout de suite (rendus si la place n'est pas payée à temps ou annulée dans les délais).
+    const usedCredits = pricing.coverage?.carnetSeats ?? 0;
+    if (usedCredits > 0) {
+      tx.update(carnetRef(uid), { credits: FieldValue.increment(-usedCredits), updatedAt: FieldValue.serverTimestamp() });
+      tx.set(carnetRef(uid).collection("movements").doc(), { delta: -usedCredits, reason: "reservation", reservationId: resRef.id, at: FieldValue.serverTimestamp() });
+    }
     // Gratuite grâce au code : utilisée tout de suite (sinon, comptée au paiement).
     if (free && pricing.promoCode && promoRef) redeemPromo(tx, promoRef.id, uid, resRef.id);
     // Inscrit(e) sur la liste d'attente de cette date ? Sa réservation directe l'en retire.

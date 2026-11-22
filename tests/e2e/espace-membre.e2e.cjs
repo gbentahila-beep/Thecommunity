@@ -151,10 +151,20 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.goto(base + '/partenaire/demande/demo', { waitUntil: 'load' });
   assert(await page.getByTestId('partner-response').getByRole('button', { name: 'Accepter' }).isVisible(), 'page du lieu : accepter ou refuser la demande');
 
+  // Étape I : Carnet et Pass
+  await page.goto(base + '/abonnement', { waitUntil: 'load' });
+  assert(await page.getByTestId('membership-offer').count() === 3, 'Carnet et Pass : Carnet, Pass 1 mois, Pass 6 mois');
+  assert(/Recommandé/.test(await page.getByTestId('membership-offer').nth(2).innerText()) && /449/.test(await page.getByTestId('membership-offer').nth(2).innerText()), 'Pass 6 mois mis en avant, 449 DH');
+  await page.getByTestId('more-offers').click();
+  assert(await page.getByTestId('membership-offer').count() === 6, 'autres durées : semaine, 3 mois, 1 an');
+  assert(/incluse/.test(await page.getByTestId('pass-benefits').innerText()), 'avantages du pass : place incluse');
+  await page.goto(base + '/espace/compte', { waitUntil: 'load' });
+  assert(/2 crédits/.test(await page.getByTestId('account-hub').innerText()), 'Mon profil : crédits du carnet');
+
   // Arabe
   await page.goto(base + '/ar/espace', { waitUntil: 'load' });
   assert(await page.evaluate(() => document.documentElement.dir) === 'rtl', 'espace en arabe RTL');
-  for (const p of ['/espace', '/espace/reservations/res-demo-diner', '/bienvenue', '/ar/espace/profil', '/reserver/ses-diner-inconnus-1', '/partenaire/demande/demo', '/ar/espace/reservations/res-demo-diner']) {
+  for (const p of ['/espace', '/espace/reservations/res-demo-diner', '/bienvenue', '/ar/espace/profil', '/reserver/ses-diner-inconnus-1', '/partenaire/demande/demo', '/ar/espace/reservations/res-demo-diner', '/abonnement', '/ar/abonnement']) {
     await page.goto(base + p, { waitUntil: 'load' });
     assert(!(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)), 'pas de débordement : ' + p);
   }

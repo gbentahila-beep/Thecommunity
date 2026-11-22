@@ -79,6 +79,8 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   assert(await page.getByTestId('risk').isVisible(), 'date à risque : décisions proposées');
   await go('/admin/parametres');
   assert(await page.getByTestId('allocation-settings').isVisible(), 'Paramètres : délais de réponse des lieux');
+  await go('/admin/abonnement');
+  assert(await page.getByTestId('plan-offer').count() === 6, 'Carnet et Pass : 6 offres réglables');
 
   // Formulaire : validation
   await go('/admin/experiences/nouvelle?modele=vide');

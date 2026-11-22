@@ -338,6 +338,8 @@ export type Pricing = {
   fees: number;
   total: number;
   currency: CurrencyCode;
+  /** Places incluses dans le pass ou réglées avec le carnet (le montant est dans memberDiscount). */
+  coverage?: { passSeats: number; carnetSeats: number };
 };
 
 export type Reservation = {

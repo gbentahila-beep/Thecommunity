@@ -42,7 +42,8 @@ export { replyToReview, reportReview, adminResolveReviewReports, adminDecideRevi
 export { setMeetAgain, setAvoid, inviteToSession } from "./meet/meet";
 export { setExperienceAlert } from "./experiences/alerts";
 export { sendNewExperienceAlerts, subscribeNewExperienceAlerts, confirmNewExperienceAlerts, stopNewExperienceAlerts } from "./experiences/new-experience-alerts";
-export { adminSaveMembershipPlan, startMembershipCheckout, adminGrantMembership, adminRevokeMembership } from "./membership/membership";
+export { adminSaveMembershipPlan, startMembershipCheckout, adminGrantMembership, adminRevokeMembership, adminLiftSuspension } from "./membership/membership";
+export { adminCancelAbsence } from "./membership/absences";
 export { adminInvoiceAction, adminSaveCompanySettings } from "./invoices/admin";
 export { adminSavePartner, adminPartnerAction, adminPartnerApplicationAction } from "./catalog/partners";
 export { adminSaveCity, adminSaveCategory } from "./catalog/places";

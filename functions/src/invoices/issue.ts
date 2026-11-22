@@ -118,10 +118,13 @@ export async function ensureInvoice(paymentId: string): Promise<{ id: string; cr
         : [];
       if (linesTotal(lines) !== p.amount) lines = [{ label: title, detail, quantity: 1, unitAmount: p.amount, amount: p.amount }];
     } else {
+      // docs/22 § 17.I : pass (période) ou carnet (crédits et validité).
       const [plan, period] = await Promise.all([tx.get(db.doc(`membershipPlans/${p.planId}`)), tx.get(db.doc(`memberships/${p.userId}/periods/${paymentId}`))]);
       const per = period.data();
-      const detail = per ? `Du ${dateFr(per.startAt.toDate())} au ${dateFr(per.endAt.toDate())}` : `${Number(p.months) || 12} mois`;
-      lines = [{ label: `Abonnement ${plan.data()?.name?.fr ?? "annuel"}`, detail, quantity: 1, unitAmount: p.amount, amount: p.amount }];
+      const carnet = p.kind === "carnet";
+      const detail = carnet ? `${Number(p.credits) || 3} crédits, valables ${Math.round((Number(p.days) || 90) / 30)} mois` : per ? `Du ${dateFr(per.startAt.toDate())} au ${dateFr(per.endAt.toDate())}` : `${Number(p.months) || 12} mois`;
+      const label = typeof p.label === "string" && p.label ? p.label : `Abonnement ${plan.data()?.name?.fr ?? "annuel"}`;
+      lines = [{ label, detail, quantity: 1, unitAmount: p.amount, amount: p.amount }];
     }
     const { info, vatRate } = companyFrom(companySnap.data());
     const test = p.mode === "test" || p.provider === "sandbox";
@@ -230,9 +233,12 @@ export async function emailInvoice(invoiceId: string): Promise<{ id: string; sta
   if (inv.kind === "credit_note") {
     mail = refundMail({ locale, firstName, what: String(inv.lines[0]?.label ?? "").replace(/^Remboursement — /, ""), amount: total, number: inv.number, relatedNumber: inv.relatedInvoiceNumber ?? "", test: inv.test });
   } else if (inv.purpose === "membership") {
-    const mem = (await db.doc(`memberships/${inv.userId}`).get()).data();
-    const until = mem?.endAt instanceof Timestamp ? dateFr(mem.endAt.toDate()) : "";
-    mail = membershipMail({ locale, firstName, planName: String(inv.lines[0]?.label ?? "").replace(/^Abonnement /, ""), until, total, number: inv.number, test: inv.test });
+    const label = String(inv.lines[0]?.label ?? "");
+    const carnet = label.startsWith("Carnet");
+    const doc = (await db.doc(carnet ? `carnets/${inv.userId}` : `memberships/${inv.userId}`).get()).data();
+    const end = carnet ? doc?.expiresAt : doc?.endAt;
+    const until = end instanceof Timestamp ? dateFr(end.toDate()) : "";
+    mail = membershipMail({ locale, firstName, planName: label.replace(/^Abonnement /, ""), until, total, number: inv.number, test: inv.test, carnet });
   } else {
     const r = (await db.doc(`reservations/${inv.reservationId}`).get()).data();
     const title = r?.sessionSnapshot?.title?.[locale] ?? r?.sessionSnapshot?.title?.fr ?? inv.lines[0]?.label ?? "";

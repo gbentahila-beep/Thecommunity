@@ -9,6 +9,7 @@ import {
   wenzyPriceInputSchema,
   templateInputSchema,
   NO_SERVICE_FEE,
+  wenzyPriceOf,
 } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -16,7 +17,7 @@ import { z } from "zod";
 import { audit } from "../lib/audit";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth, requireRole, roleOf } from "../lib/guards";
-import { membershipRef, membershipTerms, planRef } from "../membership/state";
+import { carnetRef, membershipRef, membershipTerms, passUpcoming, planRef } from "../membership/state";
 import { refuse } from "../reservations/refuse";
 import { preferencesDoc } from "../reservations/reservation-doc";
 
@@ -26,13 +27,13 @@ import { preferencesDoc } from "../reservations/reservation-doc";
  */
 export const previewPricing = onCall({ region: REGION }, async (req) => {
   const { uid } = requireAuth(req);
-  const parsed = reservationRequestSchema.pick({ sessionId: true, seats: true, promoCode: true }).safeParse(req.data);
+  const parsed = reservationRequestSchema.pick({ sessionId: true, seats: true, promoCode: true, useCarnet: true }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats, promoCode } = parsed.data;
+  const { sessionId, seats, promoCode, useCarnet } = parsed.data;
   const sess = await db.doc(`sessions/${sessionId}`).get();
   if (!sess.exists) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
   const s = sess.data()!;
-  const [exp, plan, mem, booking, promo, redemption, past] = await Promise.all([
+  const [exp, plan, mem, booking, promo, redemption, past, carnet, upcoming] = await Promise.all([
     db.doc(`experiences/${s.experienceId}`).get(),
     planRef().get(),
     membershipRef(uid).get(),
@@ -40,10 +41,12 @@ export const previewPricing = onCall({ region: REGION }, async (req) => {
     promoCode ? db.doc(`promoCodes/${promoCode}`).get() : Promise.resolve(null),
     promoCode ? db.doc(`promoCodes/${promoCode}/redemptions/${uid}`).get() : Promise.resolve(null),
     promoCode ? db.collection("reservations").where("userId", "==", uid).where("status", "in", ["confirmed", "attended"]).limit(1).get() : Promise.resolve(null),
+    carnetRef(uid).get(),
+    passUpcoming(uid, Date.now()),
   ]);
   const e = exp.data() ?? {};
   const now = Date.now();
-  const terms = membershipTerms({ plan: plan.data(), membership: mem.data(), s, e, now, byTeam: false });
+  const terms = membershipTerms({ plan: plan.data(), membership: mem.data(), carnet: carnet.data(), s, e, now, byTeam: false, seats, passUpcoming: upcoming, useCarnet, wenzyPrice: wenzyPriceOf(booking.data()) });
   let rule: { code: string; type: "percent" | "fixed"; value: number } | undefined;
   if (promoCode) {
     const pd = promo?.data();
@@ -55,11 +58,12 @@ export const previewPricing = onCall({ region: REGION }, async (req) => {
     rule = { code: promo!.id, type: pd!.type, value: pd!.value };
   }
   const pricing = computePricing(s.price.amount, seats, s.price.currency, {
-    memberUnitAmount: terms.memberUnitAmount,
+    coverage: terms.coverage,
     promo: rule,
-    serviceFee: terms.waiveFees ? NO_SERVICE_FEE : readServiceFee(booking.data()?.serviceFee),
+    serviceFee: readServiceFee(booking.data()?.serviceFee),
   });
-  return { pricing };
+  // docs/22 § 17.I : l'écran de réservation affiche le pass, les crédits du carnet et le garde-fou.
+  return { pricing, pass: terms.member, passLimitReached: terms.passLimitReached, credits: terms.credits };
 });
 
 /** Le membre modifie son régime, ses allergies ou ses langues de table jusqu'au début de l'expérience. */

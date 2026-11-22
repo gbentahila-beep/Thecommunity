@@ -10,6 +10,7 @@ import { cancelReservationCore, idSchema } from "../reservations/cancel-reservat
 import { refuse } from "../reservations/create-reservation";
 import { moveReservationCore } from "../tables/move";
 import { cancelRequests } from "../tables/allocation";
+import { recordAbsence } from "../membership/absences";
 
 const reasonSchema = z.string().trim().min(2, "required").max(200, "tooLong");
 
@@ -148,6 +149,11 @@ export const adminCheckIn = onCall({ region: REGION }, async (req) => {
       updatedAt: FieldValue.serverTimestamp(),
     });
   });
+  // docs/22 § 17.I : absence pointée par l'équipe ou l'organisateur sur une place incluse dans le pass.
+  if (presence === "no_show") {
+    const r = (await resRef.get()).data();
+    if (r && Number(r.pricing?.coverage?.passSeats ?? 0) > 0) await recordAbsence(r.userId, reservationId, String(r.sessionSnapshot?.title?.fr ?? ""));
+  }
   await audit({ actorUid: actor.uid, actorRole: actor.role, action: `reservation.checkin.${presence}`, targetType: "reservation", targetId: reservationId });
   return { ok: true };
 });

@@ -1,4 +1,4 @@
-import { formatMoney, memberUnitPrice, type Experience, type ExperiencePricing, type MembershipPlan, type Money, type RestaurantBudget } from "@thecommunity/shared";
+import { formatMoney, type Experience, type ExperiencePricing, type MembershipPlan, type Money, type RestaurantBudget } from "@thecommunity/shared";
 
 /** « 200–300 DH » (fourchette) ou « 299 DH » (montant exact). */
 export function budgetText(b: RestaurantBudget, lang: "fr" | "ar" | "en"): string {
@@ -7,10 +7,10 @@ export function budgetText(b: RestaurantBudget, lang: "fr" | "ar" | "en"): strin
 }
 
 /** Prix membre d'une place pour cette expérience, si une formule d'abonnement est proposée (sinon null). */
+/** docs/22 : plus de prix membre (le pass inclut la place, le carnet la règle) ; gardé pour les anciens appels. */
 export function memberAmountFor(plan: MembershipPlan | null, publicPrice: Money, experience: Pick<Experience, "memberPrice">): number | null {
-  if (!plan) return null;
-  const m = memberUnitPrice(publicPrice.amount, plan, experience.memberPrice?.amount ?? null);
-  return m < publicPrice.amount ? m : null;
+  void [plan, publicPrice, experience];
+  return null;
 }
 
 /** Traductions de l'espace « twoPart » (passées par la page, qui a déjà son traducteur). */

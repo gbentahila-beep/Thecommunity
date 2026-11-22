@@ -409,7 +409,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | **F — Modèles dans l'appli** ✅ | Choix univers → format → gamme ; formulaire pré-rempli aux champs strictement nécessaires (§ 7) ; places 1 ou 2 ; accès ; réservé aux femmes ; alcool ; conditions d'annulation ; *Paramètres → Modèles* ; « Enregistrer comme modèle » | Faite (journal § 19) |
 | **G — Rendez-vous et lieux** ✅ | Rendez-vous récurrents, lieu par date (plus tard possible), plusieurs lieux, lieu habituel, fiches des lieux partenaires, « Aujourd'hui » | Faite (journal § 19) |
 | **H — Attribution des lieux et parcours** ✅ | **H-a** fiche du lieu complétée (gammes, formats, créneaux et capacités), moteur d'attribution, plafond de vente, demandes aux lieux (e-mail, WhatsApp, appel) et confirmation par l'équipe, réattribution, espace partenaire par lien. **H-b** écran de réservation, déplacer sa réservation, événements à risque, révélation après confirmation, check-in, messages après la rencontre, liste d'attente. Détail § 17.H | Faite (journal § 19) |
-| **I — Carnet et Pass** | Offres, crédits, accès abonnés, garde-fous, migration des abonnés | Démonstration |
+| **I — Carnet et Pass** ✅ | Offres, crédits, accès abonnés, garde-fous, migration des abonnés. Détail § 17.I | Faite (journal § 19) |
 | **J — Organisateurs et rôles** | Encaissement sur place, formulaire court, pointage, Statistiques ; suppression des reversements, commissions, propositions et membres de confiance | Démonstration |
 | **K — Découvrir et agenda** | Agenda de l'accueil, filtres, moment de la journée | Démonstration |
 | **L — Textes** | Tous les textes FR / EN / AR (§ 15), juridique compris, à faire relire | Relecture |
@@ -457,6 +457,19 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 Le jeton d'accès Meta se règle comme secret Cloud `WHATSAPP_TOKEN` (comme la clé d'envoi des e-mails), jamais dans la base.
 
 **Reporté à l'Étape I** : « pas de check-in = absence » (avec ses conséquences sur le pass). **Étape J** : signalement d'un participant et suivi des incidents, indicateurs (taux de remplissage, annulations, retour des participants).
+
+### 17.I Détail de l'Étape I (Carnet et Pass)
+
+| Sous-étape | Contenu |
+|---|---|
+| **I1 Offres** | Carnet 3 sorties (70 DH, 3 crédits, valable 3 mois) ; Pass 1 semaine 49 DH, 1 mois 99 DH, 3 mois 249 DH, 6 mois 449 DH (mis en avant), 1 an 790 DH. Prix et offres proposées réglables dans le back-office. |
+| **I2 Achat** | Achat depuis la page Abonnement (et le pass semaine proposé au moment de payer une réservation). Par virement : carnet et pass d'un mois et plus seulement ; le pass semaine arrive avec la carte. Un pass s'achète à tout moment et prolonge le pass en cours ; un carnet ajoute 3 crédits. |
+| **I3 Réserver avec un pass ou un carnet** | Pass : la place de la personne est incluse (« Inclus dans votre pass », 0 DH), accès anticipé, événements abonnés uniquement, priorité sur la liste d'attente. Carnet : 1 crédit par place, sans accès anticipé. Valable aussi pour les activités d'organisateurs (décision 7). |
+| **I4 Garde-fous** | Pass : 2 réservations à venir au maximum. Pas de check-in = absence ; 1re absence : avertissement ; 2e : pass suspendu 2 semaines. |
+| **I5 Écrans** | Page Abonnement refaite ; dans l'espace membre, le pass ou le carnet (fin, crédits, avertissements) ; à la réservation, le prix inclus ou le crédit utilisé. Back-office : abonnés, carnets, absences, suspensions ; offrir un pass ou des crédits, annuler une absence, lever une suspension. |
+| **I6 Migration** | Chaque abonné actuel garde la durée qui lui reste, sous forme de pass. |
+
+**Choix par défaut (modifiables)** : le pass couvre la place de son titulaire ; la place « + 1 » se paie (35 DH) ou se règle avec un crédit du carnet. Les crédits du carnet servent aussi pour un invité. Un nouveau carnet repousse la fin de validité de tous les crédits à 3 mois. Annulation : un crédit revient si l'annulation est dans les délais remboursés des conditions de l'événement. Les absences se comptent sur 90 jours, et repartent de zéro après une suspension. L'absence est notée automatiquement 1 h après le début quand l'événement fonctionne au check-in ; avec billet (hôtesse, organisateur), c'est le pointage qui fait foi.
 
 ---
 
@@ -547,3 +560,21 @@ Aucune pour l'instant. Les questions Q1 à Q7 du 22 novembre sont tranchées (d�
 **À faire de ton côté** : remplir la fiche de chaque lieu (gammes, formats, créneaux et nombre de tables, WhatsApp, e-mail) **avant de mettre en ligne**, sinon les Tables ne peuvent plus se vendre (plafond à 0) ; demander le compte WhatsApp Business API et faire valider les 3 modèles ci-dessus.
 
 **Restent pour plus tard** : préférences (régime, langues) à l'inscription sur liste d'attente (elles se renseignent sur la réservation ensuite) ; le lieu qui modifie lui-même ses créneaux ; « autre activité » proposée quand une date est à risque.
+
+### Étape I livrée (22 novembre)
+| Changement | Ce qui change |
+|---|---|
+| **Offres** | Carnet 3 sorties 70 DH (3 crédits, valables 3 mois) ; Pass 1 semaine 49 DH, 1 mois 99 DH, 3 mois 249 DH, **6 mois 449 DH (mis en avant)**, 1 an 790 DH. Prix, offres proposées et offre mise en avant réglables dans *Carnet et Pass* (back-office). Plus de réduction « membre » ni de prix membre. |
+| **Page Abonnement** | Carnet, Pass 1 mois, Pass 6 mois, puis « Autres durées » (semaine, 3 mois, 1 an) ; repères « Rentable dès 3 sorties par mois », « 3 sorties, 1 offerte » ; ce que donnent le pass et le carnet ; la situation de la personne (pass jusqu'au…, suspendu jusqu'au…, absences, crédits et leur validité). Par virement : pas de pass semaine (il arrive avec la carte). |
+| **Achat** | Un pass s'achète à tout moment et prolonge le pass en cours ; un carnet ajoute 3 crédits et repousse leur validité à 3 mois. Facture « Pass 6 mois » (période) ou « Carnet 3 sorties » (crédits et validité), e-mail adapté. |
+| **Réserver** | Pass : place incluse (« Inclus dans votre pass », 0 DH, confirmée sans payer), la place « + 1 » se paie ou se règle avec le carnet ; 2 réservations à venir au maximum (au-delà, la place se paie, message à l'écran). Carnet : case « Utiliser mon carnet (N crédits) », 1 crédit par place, invité compris ; crédit rendu si la place n'est pas payée à temps ou si l'annulation est dans les délais remboursés. Lien « Pass 1 semaine, 49 DH » au moment de payer. Couvre aussi les activités d'organisateurs (au plus le prix Wenzy par place). |
+| **Avantages du pass** | Accès anticipé et événements abonnés uniquement (pas le carnet), priorité sur la liste d'attente (la place proposée est incluse). |
+| **Absences (décision 8)** | 1 h après le début, pas de check-in = absence (événements sans billet ; avec billet, le pointage fait foi). Sur une place incluse dans le pass : 1re absence → avertissement (notification et e-mail), 2e sur 90 jours → pass suspendu 14 jours. L'équipe peut annuler une absence (la suspension qui en venait est levée) ou lever une suspension. |
+| **Back-office** | Page *Carnet et Pass* : offres, offrir un pass (jours) ou des crédits, liste des pass (fin, absences, suspension), carnets (crédits, validité), absences récentes avec « Annuler l'absence ». |
+| **Espace membre** | *Mon profil* : « Pass actif » ou le nombre de crédits ; la page Abonnement montre le détail. |
+| **Migration (I6)** | Rien à faire : les abonnés actuels gardent leur date de fin, désormais comme un pass (place incluse au lieu de la réduction). |
+
+**Tests** : unitaires 168 (offres, couverture des places, absences, suspension) ; émulateurs : réglage des offres, achat d'un pass et prolongation, carnet et ajout de crédits, réserver avec le pass (place incluse, 2 réservations au maximum, « + 1 » payé), avec le carnet (crédits, rendu dans les délais), accès abonnés et anticipé, liste d'attente prioritaire, offrir et retirer, absences et suspension, factures : 188 réussis ; mêmes 9 échecs d'environnement. Les 9 suites de bout en bout de démonstration passent (Carnet et Pass ajoutés).
+
+**À faire en ligne** : ouvrir *Carnet et Pass* dans le back-office et cliquer « Enregistrer » une fois (les offres remplacent l'ancienne formule). La suite de bout en bout Firebase « abonnement » (firebase-membership) est à réécrire avec celle de la tarification, à l'étape J.
+

@@ -83,7 +83,7 @@ export function reservationLines(o: {
   fees?: number;
 }): InvoiceLine[] {
   const lines: InvoiceLine[] = [{ label: o.title, detail: o.dateLabel, quantity: o.seats, unitAmount: o.unitAmount, amount: o.unitAmount * o.seats }];
-  if (o.memberDiscount > 0) lines.push({ label: "Remise membre", quantity: 1, unitAmount: -o.memberDiscount, amount: -o.memberDiscount });
+  if (o.memberDiscount > 0) lines.push({ label: "Inclus (pass ou carnet)", quantity: 1, unitAmount: -o.memberDiscount, amount: -o.memberDiscount });
   if (o.discount && o.discount > 0) lines.push({ label: o.promoCode ? `Code promo ${o.promoCode}` : "Remise", quantity: 1, unitAmount: -o.discount, amount: -o.discount });
   if (o.fees && o.fees > 0) lines.push({ label: "Frais de service", quantity: 1, unitAmount: o.fees, amount: o.fees });
   return lines;

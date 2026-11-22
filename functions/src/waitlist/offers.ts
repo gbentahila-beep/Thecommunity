@@ -1,10 +1,10 @@
-import { bookingClosesAt, memberUnitPrice, readServiceFee, WAITLIST_OFFER_HOURS, type ServiceFee, NO_SERVICE_FEE } from "@thecommunity/shared";
+import { bookingClosesAt, readServiceFee, WAITLIST_OFFER_HOURS, wenzyPriceOf, type ServiceFee } from "@thecommunity/shared";
 import { Timestamp, type DocumentData, type DocumentReference, type QueryDocumentSnapshot, type Transaction } from "firebase-admin/firestore";
 import { db, FieldValue } from "../lib/admin";
 import { memberFromDoc, membershipRef, planRef } from "../membership/state";
 import { reservationDoc } from "../reservations/reservation-doc";
 
-export type WaitlistCandidates = { entries: QueryDocumentSnapshot[]; locked: Set<string>; plan: DocumentData | undefined; memberships: Map<string, DocumentData | undefined>; serviceFee: ServiceFee };
+export type WaitlistCandidates = { entries: QueryDocumentSnapshot[]; locked: Set<string>; plan: DocumentData | undefined; memberships: Map<string, DocumentData | undefined>; serviceFee: ServiceFee; wenzyPrice: number };
 
 /**
  * LECTURES (à faire avant toute écriture de la transaction) : les premières personnes en attente
@@ -18,12 +18,16 @@ export async function readWaitlist(tx: Transaction, sessRef: DocumentReference):
     tx.get(planRef()),
     tx.get(db.doc("settings/booking")),
   ]);
+  const memberships = new Map(mems.map((m) => [m.id, m.data()]));
+  // docs/22 § 17.I : priorité aux personnes qui ont un pass, puis ordre d'inscription.
+  const entries = [...q.docs].sort((a, b) => Number(memberFromDoc(memberships.get(b.id))) - Number(memberFromDoc(memberships.get(a.id))));
   return {
-    entries: q.docs,
+    entries,
     locked: new Set(locks.filter((l) => l.exists).map((l) => l.id)),
     plan: plan.data(),
-    memberships: new Map(mems.map((m) => [m.id, m.data()])),
+    memberships,
     serviceFee: readServiceFee(booking.data()?.serviceFee),
+    wenzyPrice: wenzyPriceOf(booking.data()),
   };
 }
 
@@ -61,12 +65,11 @@ export function writeOffers(
     }
     const seats = (w.seats as number) ?? 1;
     if (seats > remaining) continue;
-    // Prix membre pour une personne abonnée (l'accès anticipé ne s'applique pas : elle attendait déjà).
+    // Pass : la place de la personne est incluse (l'accès anticipé ne s'applique pas : elle attendait déjà).
     const member = memberFromDoc(o.candidates.memberships.get(entry.id), new Date(o.now));
     if (o.e.membersOnly === true && !member) continue;
-    const memberUnitAmount = member
-      ? memberUnitPrice(o.s.price.amount, { discountPercent: Number(o.candidates.plan?.discountPercent ?? 0) }, o.e.memberPrice?.amount ?? null)
-      : undefined;
+    const cap = Math.min(Number(o.s.price?.amount ?? 0), o.candidates.wenzyPrice);
+    const coverage = member && cap > 0 ? { passSeats: 1, carnetSeats: 0, cap } : undefined;
     const resRef = db.collection("reservations").doc();
     const { doc, free } = reservationDoc({
       s: o.s,
@@ -75,8 +78,8 @@ export function writeOffers(
       sessionId: o.sessRef.id,
       seats,
       holdUntilMs: Math.min(o.now + WAITLIST_OFFER_HOURS * 3_600_000, closesAt),
-      memberUnitAmount,
-      serviceFee: member && o.candidates.plan?.waiveServiceFee === true ? NO_SERVICE_FEE : o.candidates.serviceFee,
+      coverage,
+      serviceFee: o.candidates.serviceFee,
       preferences: w.preferences ?? undefined,
       extra: { fromWaitlist: true, ...(w.answers ? { questionnaire: { answers: w.answers, answeredAt: Timestamp.fromMillis(o.now) } } : {}) },
     });

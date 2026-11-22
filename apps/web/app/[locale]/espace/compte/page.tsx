@@ -1,4 +1,4 @@
-import { isMemberActive } from "@thecommunity/shared";
+import { carnetCredits, isMemberActive } from "@thecommunity/shared";
 import { BadgeCheck, Bell, ChevronRight, History, Lightbulb, ReceiptText, SlidersHorizontal, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
@@ -47,6 +47,7 @@ export default async function AccountHubPage({ params }: PageProps<"/[locale]/es
   const p = space.profile;
   const city = p.cityId ? await getCity(p.cityId) : null;
   const member = isMemberActive(space.membership ?? null, space.now);
+  const credits = carnetCredits(space.carnet ?? null, space.now);
   const initials = `${p.firstName.charAt(0)}${(p.lastName ?? "").charAt(0)}`.toUpperCase();
   const since = p.createdAt ? new Intl.DateTimeFormat(locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR", { month: "long", year: "numeric" }).format(new Date(p.createdAt)) : null;
   return (
@@ -66,7 +67,7 @@ export default async function AccountHubPage({ params }: PageProps<"/[locale]/es
         title={t("hubAccount")}
         rows={[
           { href: "/espace/preferences", label: t("navPreferences"), icon: SlidersHorizontal },
-          { href: "/abonnement?depuis=profil", label: t("navMembership"), icon: BadgeCheck, hint: member ? t("hubMemberActive") : undefined },
+          { href: "/abonnement?depuis=profil", label: t("navMembership"), icon: BadgeCheck, hint: member ? t("hubMemberActive") : credits ? t("hubCredits", { count: credits }) : undefined },
           ...(p.trustedHost ? [{ href: "/espace/proposer", label: t("navPropose"), icon: Lightbulb }] : []),
         ]}
       />

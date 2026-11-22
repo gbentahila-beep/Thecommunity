@@ -26,6 +26,12 @@ export async function expireReservation(reservationId: string, now = Date.now())
     const candidates = await readWaitlist(tx, sessRef);
 
     tx.update(resRef, { status: "expired", updatedAt: FieldValue.serverTimestamp() });
+    // docs/22 § 17.I : crédits du carnet pris pour cette place non payée, rendus.
+    const credits = Number(r.pricing?.coverage?.carnetSeats ?? 0);
+    if (credits > 0) {
+      tx.set(db.doc(`carnets/${r.userId}`), { credits: FieldValue.increment(credits), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+      tx.set(db.collection(`carnets/${r.userId}/movements`).doc(), { delta: credits, reason: "hold_expired", reservationId: resRef.id, at: FieldValue.serverTimestamp() });
+    }
     if (entry?.exists && entry.data()?.reservationId === reservationId) {
       tx.update(entryRef, { status: "expired", updatedAt: FieldValue.serverTimestamp() });
     }

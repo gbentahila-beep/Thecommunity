@@ -6,6 +6,7 @@
 import { DEMO_DINNER_EXPERIENCES, DEMO_DINNER_SCHEDULE } from "./demo-dinners";
 import { DEMO_MORE_EXPERIENCES, DEMO_MORE_REVIEWS, DEMO_MORE_SCHEDULE } from "./demo-more";
 import {
+  DEFAULT_OFFERS,
   DEFAULT_CANCELLATION_POLICY,
   MOROCCO_TIMEZONE,
   mad,
@@ -590,24 +591,10 @@ export function buildDemoSessions(now: Date = new Date()): Session[] {
 /** Formule d'abonnement de démonstration (mode sans Firebase). */
 export const DEMO_MEMBERSHIP_PLAN: MembershipPlan = {
   id: "annual",
-  name: { fr: "Wenzy Membre", ar: "عضوية Wenzy" },
-  price: { amount: 99000, currency: "MAD" },
-  // Proposition (21 novembre) : 4 durées payées en une fois, -20 % et frais de service offerts. Réglable dans le back-office.
-  offers: [
-    { id: "1m", months: 1, price: { amount: 12900, currency: "MAD" }, isActive: true },
-    { id: "3m", months: 3, price: { amount: 33900, currency: "MAD" }, isActive: true },
-    { id: "6m", months: 6, price: { amount: 59000, currency: "MAD" }, isActive: true, highlight: true },
-    { id: "12m", months: 12, price: { amount: 99000, currency: "MAD" }, isActive: true },
-  ],
-  waiveServiceFee: true,
-  discountPercent: 20,
-  earlyAccessHours: 48,
-  benefits: [
-    { fr: "-20 % sur toutes les expériences", ar: "خصم 20٪ على جميع التجارب", en: "20% off every experience" },
-    { fr: "Frais de service offerts sur chaque réservation", ar: "رسوم الخدمة مجانية في كل حجز", en: "No service fee on any booking" },
-    { fr: "Accès aux nouvelles dates 48 h avant tout le monde", ar: "الوصول إلى المواعيد الجديدة قبل الجميع بـ48 ساعة", en: "New dates 48 hours before everyone else" },
-    { fr: "Expériences réservées aux membres", ar: "تجارب مخصصة للأعضاء", en: "Members-only experiences" },
-  ],
+  name: { fr: "Carnet et Pass", ar: "الدفتر والباس", en: "Pack and Pass" },
+  // docs/22, décision 6 : Carnet 3 sorties et Pass de 1 semaine à 1 an.
+  offers: DEFAULT_OFFERS,
+  benefits: [],
   isActive: true,
 };
 

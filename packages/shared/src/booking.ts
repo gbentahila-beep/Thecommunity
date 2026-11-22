@@ -61,6 +61,8 @@ export const reservationRequestSchema = z.object({
   physicalTermsAccepted: z.boolean().optional(),
   /** Réponses au questionnaire de l'expérience, données AVANT le paiement (docs/22) ; vérifiées par le serveur. */
   answers: questionnaireAnswersSchema.optional(),
+  /** docs/22 § 17.I : régler les places avec les crédits du carnet. */
+  useCarnet: z.boolean().optional(),
 });
 export type ReservationRequest = z.infer<typeof reservationRequestSchema>;
 
@@ -115,17 +117,22 @@ export function computePricing(
   unitAmount: number,
   seats: number,
   currency: CurrencyCode,
-  opts: { memberUnitAmount?: number; promo?: PromoRule & { code: string }; serviceFee?: ServiceFee } = {},
+  opts: { memberUnitAmount?: number; promo?: PromoRule & { code: string }; serviceFee?: ServiceFee; coverage?: { passSeats: number; carnetSeats: number; cap: number } } = {},
 ): Pricing {
   const subtotal = unitAmount * seats;
   const memberUnit = opts.memberUnitAmount;
-  const memberDiscount = memberUnit != null && memberUnit < unitAmount ? (unitAmount - memberUnit) * seats : 0;
+  // docs/22 § 17.I : places incluses dans le pass ou réglées avec le carnet (au plus le prix Wenzy par place).
+  const cov = opts.coverage && opts.coverage.passSeats + opts.coverage.carnetSeats > 0 ? opts.coverage : null;
+  const memberDiscount = cov
+    ? Math.min(seats, cov.passSeats + cov.carnetSeats) * Math.min(unitAmount, cov.cap)
+    : memberUnit != null && memberUnit < unitAmount ? (unitAmount - memberUnit) * seats : 0;
   const afterMember = subtotal - memberDiscount;
   const discount = opts.promo ? promoDiscount(opts.promo, afterMember) : 0;
   const net = afterMember - discount;
   const fees = net > 0 && opts.serviceFee ? serviceFeeAmount(opts.serviceFee, net, seats) : 0;
   return {
     unitAmount, seats, subtotal, memberDiscount, discount, ...(opts.promo && discount > 0 ? { promoCode: opts.promo.code } : {}), fees, total: net + fees, currency,
+    ...(cov ? { coverage: { passSeats: cov.passSeats, carnetSeats: Math.min(cov.carnetSeats, seats - Math.min(seats, cov.passSeats)) } } : {}),
   };
 }
 

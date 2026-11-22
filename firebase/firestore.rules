@@ -196,6 +196,15 @@ service cloud.firestore {
       allow write: if false;
     }
     // Abonnement d'une personne : elle seule et l'équipe ; activé uniquement par le serveur (paiement, cadeau).
+    // docs/22 § 17.I : carnet (crédits) — lisible par son titulaire, écrit par le serveur seulement.
+    match /carnets/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+      match /movements/{id} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if false;
+      }
+    }
     match /memberships/{uid} {
       allow read: if isOwner(uid) || isAdmin();
       allow write: if false;

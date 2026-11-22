@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { QuestionnaireFields } from "@/components/account/questionnaire-fields";
 import { PhysicalTermsCheckbox } from "@/components/booking/physical-terms";
-import { authReady, bookingErrorOf, createReservation, previewPricing, promoErrorOf, startCheckout, type BookingError } from "@/lib/booking-client";
+import { authReady, bookingErrorOf, createReservation, previewBooking, promoErrorOf, startCheckout, type BookingError } from "@/lib/booking-client";
 import { goToCheckout } from "./go-to-checkout";
 import { EMPTY_PREFERENCES, needsConsent, PreferencesFields, welcomeTitleKeys, type WelcomeNeeds } from "./preferences-fields";
 
@@ -55,15 +55,20 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
   const [answers, setAnswers] = useState<QuestionnaireAnswers>({});
   const [missing, setMissing] = useState<string[]>([]);
   const request = useRef(0);
+  // docs/22 § 17.I : pass (place incluse, garde-fou) et carnet (crédits), d'après le serveur.
+  const [useCarnet, setUseCarnet] = useState(true);
+  const [sub, setSub] = useState<{ pass: boolean; passLimitReached: boolean; credits: number }>({ pass: false, passLimitReached: false, credits: 0 });
   const money = (amount: number) => formatMoney({ amount, currency }, lang);
 
   /** Demande le prix au serveur ; seule la dernière réponse compte. Un code refusé est retiré. */
-  const quote = async (n: number, code: string | undefined) => {
+  const quote = async (n: number, code: string | undefined, carnet: boolean = useCarnet) => {
     const id = ++request.current;
     try {
       await authReady();
-      const p = await previewPricing(sessionId, n, code);
+      const res = await previewBooking(sessionId, n, code, carnet);
+      const p = res.pricing;
       if (id !== request.current) return;
+      setSub({ pass: Boolean(res.pass), passLimitReached: Boolean(res.passLimitReached), credits: Number(res.credits ?? 0) });
       setPricing(p);
       setPromo(code);
       setPromoError(null);
@@ -111,7 +116,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
     setError(null);
     try {
       await authReady();
-      const r = await createReservation(sessionId, seats, { promoCode: promo, preferences: shared ? { ...prefs, allergies: prefs.allergies.trim() } : undefined, physicalTermsAccepted: physical ? true : undefined, answers: questions.length ? answers : undefined });
+      const r = await createReservation(sessionId, seats, { promoCode: promo, preferences: shared ? { ...prefs, allergies: prefs.allergies.trim() } : undefined, physicalTermsAccepted: physical ? true : undefined, answers: questions.length ? answers : undefined, useCarnet: useCarnet && sub.credits > 0 ? true : undefined });
       if (r.status === "confirmed") {
         router.push(`/espace/reservations/${r.reservationId}?reservation=confirmee`);
         return;
@@ -174,7 +179,12 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
       {pricing && pricing.seats === seats && (pricing.memberDiscount || pricing.discount || pricing.fees) ? (
         <dl aria-label={t("summary")} className="space-y-1.5 rounded-[var(--radius-card)] bg-white p-4 text-sm shadow-card">
           <div className="flex justify-between"><dt>{t("subtotal")} ({seats})</dt><dd className="tabular-nums">{money(pricing.subtotal)}</dd></div>
-          {pricing.memberDiscount ? <div className="flex justify-between text-emerald-800"><dt>{t("memberDiscountLine")}</dt><dd className="tabular-nums">−{money(pricing.memberDiscount)}</dd></div> : null}
+          {pricing.memberDiscount ? (
+            <div className="flex justify-between text-emerald-800">
+              <dt>{pricing.coverage ? [pricing.coverage.passSeats ? t("passIncluded") : null, pricing.coverage.carnetSeats ? t("carnetUsed", { count: pricing.coverage.carnetSeats }) : null].filter(Boolean).join(" · ") : t("memberDiscountLine")}</dt>
+              <dd className="tabular-nums">−{money(pricing.memberDiscount)}</dd>
+            </div>
+          ) : null}
           {pricing.discount ? <div className="flex justify-between text-emerald-800"><dt>{t("promoLine", { code: pricing.promoCode ?? "" })}</dt><dd className="tabular-nums">−{money(pricing.discount)}</dd></div> : null}
           {pricing.fees ? <div className="flex justify-between"><dt>{t("feesLine")}</dt><dd className="tabular-nums">{money(pricing.fees)}</dd></div> : null}
           <div className="flex justify-between border-t border-line pt-1.5 font-semibold"><dt>{onSite ? t2("payNowLine") : t("totalLine")}</dt><dd className="tabular-nums">{money(pricing.total)}</dd></div>
@@ -193,6 +203,21 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
             {onSite.description ? ` ${t2("whatOnSite", { description: onSite.description })}` : ""}
           </p>
         </section>
+      )}
+
+      {(sub.pass || sub.credits > 0) && (
+        <section className="space-y-2 rounded-[var(--radius-card)] bg-white p-4 text-sm shadow-card" data-testid="booking-subscription">
+          {sub.pass && <p className={sub.passLimitReached ? "text-amber-900" : "font-semibold text-emerald-800"}>{sub.passLimitReached ? t("passLimit") : t("passCovers")}</p>}
+          {sub.credits > 0 && (
+            <label className="flex items-center gap-2 font-medium text-ink">
+              <input type="checkbox" checked={useCarnet} disabled={busy} onChange={(e) => { setUseCarnet(e.target.checked); void quote(seats, promo, e.target.checked); }} />
+              {t("useCarnet", { count: sub.credits })}
+            </label>
+          )}
+        </section>
+      )}
+      {!sub.pass && total > 0 && (
+        <p className="text-sm text-muted" data-testid="week-pass">{t("weekPassHint")} <Link href="/abonnement" className="font-semibold text-brand-900 underline underline-offset-4">{t("weekPassCta")}</Link></p>
       )}
 
       <div className="rounded-[var(--radius-card)] bg-white p-4 shadow-card">

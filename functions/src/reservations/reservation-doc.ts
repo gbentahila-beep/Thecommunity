@@ -15,8 +15,10 @@ export function reservationDoc(o: {
   sessionId: string;
   seats: number;
   holdUntilMs: number;
-  /** Prix membre par place (abonné·e) ; absent = prix public. */
+  /** Prix membre par place (anciennes formules) ; absent = prix public. */
   memberUnitAmount?: number;
+  /** docs/22 § 17.I : places incluses dans le pass ou réglées avec le carnet. */
+  coverage?: { passSeats: number; carnetSeats: number; cap: number };
   /** Code promo validé (5f) et frais de service en vigueur. */
   promo?: PromoRule & { code: string };
   serviceFee?: ServiceFee;
@@ -31,6 +33,7 @@ export function reservationDoc(o: {
   const { s, e, uid, sessionId, seats } = o;
   const pricing = computePricing(s.price.amount, seats, s.price.currency, {
     memberUnitAmount: o.memberUnitAmount,
+    coverage: o.coverage,
     promo: o.promo,
     serviceFee: o.serviceFee ?? NO_SERVICE_FEE,
   });

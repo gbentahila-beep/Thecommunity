@@ -1,6 +1,6 @@
 import { Timestamp, type DocumentSnapshot, type Transaction } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
-import { nextMembershipPeriod } from "@thecommunity/shared";
+import { addPassAndCredits } from "../membership/membership";
 import { db, FieldValue } from "../lib/admin";
 import { commissionRules, commissionSnapshot, writeSaleEntry } from "../commissions/ledger";
 import { afterPaymentSettled } from "../invoices/issue";
@@ -148,8 +148,9 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
 }
 
 /**
- * Paiement d'un abonnement annuel : à la réussite (montant vérifié), l'abonnement est activé ou prolongé
- * de la durée achetée (12 mois par défaut ; à partir de l'échéance en cours si l'on renouvelle en avance), dans la même transaction.
+ * Paiement d'un carnet ou d'un pass (docs/22 § 17.I) : à la réussite (montant vérifié), le pass est prolongé de sa
+ * durée (à partir de sa fin s'il est en cours) ou les crédits du carnet sont ajoutés, dans la même transaction.
+ * Anciens paiements d'abonnement (par mois) : convertis en pass de la même durée.
  */
 async function applyMembershipPayment(
   tx: Transaction,
@@ -158,11 +159,14 @@ async function applyMembershipPayment(
   payRef: FirebaseFirestore.DocumentReference,
   p: FirebaseFirestore.DocumentData,
 ): Promise<{ outcome: ApplyOutcome; purpose: "membership"; refund?: { amount: number; reason: string } }> {
-  const memRef = db.doc(`memberships/${p.userId}`);
-  const mem = await tx.get(memRef);
   const logged = Object.fromEntries(Object.entries(ev).filter(([, v]) => v !== undefined));
-  tx.set(evRef, { ...logged, receivedAt: FieldValue.serverTimestamp() });
   const base = { processedEventIds: FieldValue.arrayUnion(ev.id), updatedAt: FieldValue.serverTimestamp() };
+  const ok = p.status === "initiated" && ev.status !== "failed" && ev.amount === p.amount && ev.currency === p.currency;
+  const kind = p.kind === "carnet" ? "carnet" : "pass";
+  const days = kind === "pass" ? Number(p.days) || (Number(p.months) || 12) * 30 : 0;
+  // Lectures d'abord (règle des transactions), écritures ensuite.
+  if (ok) await addPassAndCredits(tx, p.userId, { days, credits: kind === "carnet" ? Number(p.credits) || 3 : 0, carnetDays: kind === "carnet" ? Number(p.days) || 90 : undefined, source: "purchase", paymentId: payRef.id, amount: p.amount });
+  tx.set(evRef, { ...logged, receivedAt: FieldValue.serverTimestamp() });
   if (p.status !== "initiated") {
     tx.update(payRef, base);
     return { outcome: "ignored", purpose: "membership" };
@@ -172,35 +176,13 @@ async function applyMembershipPayment(
     return { outcome: "failed", purpose: "membership" };
   }
   tx.update(payRef, { ...base, status: "succeeded", providerRef: ev.providerRef ?? p.providerRef ?? null, paidAmount: ev.amount });
-  if (ev.amount !== p.amount || ev.currency !== p.currency) {
-    return { outcome: "refunded", purpose: "membership", refund: { amount: ev.amount, reason: "amount_mismatch" } };
-  }
-  const current = mem.data();
-  const months = [1, 3, 6, 12].includes(Number(p.months)) ? Number(p.months) : 12;
-  const period = nextMembershipPeriod(current ? { status: current.status, endAt: (current.endAt as Timestamp).toDate() } : null, new Date(), months);
-  tx.set(memRef, {
-    uid: p.userId,
-    planId: p.planId,
-    status: "active",
-    source: "purchase",
-    startAt: current && current.status === "active" && (current.endAt as Timestamp).toMillis() > Date.now() ? current.startAt : Timestamp.fromDate(period.startAt),
-    endAt: Timestamp.fromDate(period.endAt),
-    lastPaymentId: payRef.id,
-    ...(current ? {} : { createdAt: FieldValue.serverTimestamp() }),
-    updatedAt: FieldValue.serverTimestamp(),
-  }, { merge: true });
-  tx.set(memRef.collection("periods").doc(payRef.id), {
-    startAt: Timestamp.fromDate(period.startAt),
-    endAt: Timestamp.fromDate(period.endAt),
-    paymentId: payRef.id,
-    amount: p.amount,
-    source: "purchase",
-    createdAt: FieldValue.serverTimestamp(),
-  });
+  if (!ok) return { outcome: "refunded", purpose: "membership", refund: { amount: ev.amount, reason: "amount_mismatch" } };
   tx.set(db.collection(`users/${p.userId}/notifications`).doc(), {
     type: "membership_active",
-    title: { fr: "Bienvenue parmi les membres !", ar: "مرحبًا بك بين الأعضاء!" },
-    body: { fr: "Votre abonnement est actif : vos prix membres s'appliquent dès maintenant.", ar: "اشتراكك مفعّل: أسعار الأعضاء تُطبَّق من الآن." },
+    title: kind === "pass" ? { fr: "Votre pass est actif", ar: "الباس الخاص بك مفعّل", en: "Your pass is active" } : { fr: "Votre carnet est prêt", ar: "دفترك جاهز", en: "Your pack is ready" },
+    body: kind === "pass"
+      ? { fr: "Vos places sont incluses : réservez sans payer les frais Wenzy.", ar: "أماكنك مشمولة: احجز دون دفع رسوم Wenzy.", en: "Your seats are included: book without paying Wenzy fees." }
+      : { fr: "Vos crédits sont disponibles : 1 crédit par place.", ar: "رصيدك متاح: رصيد واحد لكل مكان.", en: "Your credits are ready: 1 credit per seat." },
     link: "/abonnement",
     createdAt: FieldValue.serverTimestamp(),
   });
