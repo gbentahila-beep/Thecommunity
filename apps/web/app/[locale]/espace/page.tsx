@@ -7,6 +7,7 @@ import { ReservationCard } from "@/components/account/reservation-card";
 import { Link } from "@/i18n/navigation";
 import { isMemberActive, recommendFor } from "@thecommunity/shared";
 import { CompactRow } from "@/components/compact-row";
+import { EmptyState } from "@/components/empty-state";
 import { getCategories, getCities, getMembershipPlan, getNextSessionPerExperience } from "@/lib/data";
 import { getMemberSpace } from "@/lib/data/member";
 import { formatLongDate, formatTimeRange } from "@/lib/format";
@@ -17,7 +18,7 @@ import { DEFAULT_CITY } from "@/lib/site";
 export default async function DashboardPage({ params }: PageProps<"/[locale]/espace">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, loc, space, plan, categories, cities] = await Promise.all([getTranslations("account"), getLocale(), getMemberSpace(), getMembershipPlan(), getCategories(), getCities()]);
+  const [t, te, loc, space, plan, categories, cities] = await Promise.all([getTranslations("account"), getTranslations("emptyStates"), getLocale(), getMemberSpace(), getMembershipPlan(), getCategories(), getCities()]);
   // La ville du membre si elle est ouverte, sinon la ville par défaut.
   const cityId = cities.find((c) => c.id === space.profile.cityId && c.isActive)?.id ?? DEFAULT_CITY;
   // Étape 30 : univers préférés, centres d'intérêt, quartier ; jamais déjà réservé ni réservé aux femmes pour qui ne l'est pas.
@@ -34,6 +35,10 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
         <h1 className="page-title">{t("hello", { name: space.profile.firstName })}</h1>
 
       </header>
+
+      {!next && (
+        <EmptyState bab="wen" mood="sleep" prop="calendar" titleAs="h2" title={te("upcomingTitle")} text={te("upcomingText")} action={{ href: "/experiences", label: te("browse") }} data-testid="upcoming-empty" />
+      )}
 
       {next && (
       <section aria-labelledby="next-title">

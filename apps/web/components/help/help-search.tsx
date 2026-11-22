@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useMemo, useState, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
+import { EmptyState } from "@/components/empty-state";
 
 export type HelpIndexEntry = { slug: string; title: string; summary: string; category: string; text: string };
 
@@ -57,7 +58,7 @@ export function HelpSearch({ index, children }: { index: HelpIndexEntry[]; child
               ))}
             </ul>
           ) : (
-            <p className="rounded-[var(--radius-card)] bg-white p-5 text-ink/80 shadow-card">{t("noResults")}</p>
+            <EmptyState variant="compact" bab="wen" mood="wink" text={t("noResults")} />
           )}
         </section>
       ) : (

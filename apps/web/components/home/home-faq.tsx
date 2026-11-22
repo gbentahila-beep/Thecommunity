@@ -1,6 +1,7 @@
 import { ChevronDown, LifeBuoy } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { PrimaryLink } from "@/components/ui";
+import { Bab } from "@/components/brand/bab";
 
 const KEYS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
@@ -9,7 +10,10 @@ export async function HomeFaq() {
   const [t, tf] = await Promise.all([getTranslations("home"), getTranslations("faq")]);
   return (
     <section aria-labelledby="home-faq" className="mx-auto max-w-3xl pt-16 pb-5">
-      <h2 id="home-faq" className="section-title text-center">{t("faqTitle")}</h2>
+      <h2 id="home-faq" className="section-title text-center">
+        {t("faqTitle")}
+        <Bab name="memo" mood="surprised" className="ms-2 inline-block w-12 align-[-8px]" />
+      </h2>
       <div className="mt-8 divide-y divide-line card">
         {KEYS.map((k) => (
           <details key={k} className="group p-5">

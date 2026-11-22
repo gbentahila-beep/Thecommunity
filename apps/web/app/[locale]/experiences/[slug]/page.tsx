@@ -31,6 +31,8 @@ import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { richText } from "@/lib/rich-text";
 import { SITE_URL } from "@/lib/site";
+import { Bab } from "@/components/brand/bab";
+import { babForCategory } from "@/components/brand/bab-art";
 
 export const revalidate = 300;
 
@@ -337,7 +339,8 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
 
           {/* Colonne réservation */}
           <aside id="dates" className="lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-[var(--radius-card)] bg-white p-5 shadow-float">
+            <div className="relative rounded-[var(--radius-card)] bg-white p-5 shadow-float">
+              <Bab name={babForCategory(exp.categoryId)} tilt={-6} className="pointer-events-none absolute -top-[54px] end-5 w-16" />
               <p className="flex flex-wrap items-baseline gap-2">
                 <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" pricing={twoPart} t2={t2} budget={budget} />
                 <span className="text-sm text-muted">{t("perPerson")}</span>

@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { FiltersPanel } from "@/components/catalog-filters";
 import { CityMenu } from "@/components/city-menu";
 import { CategoryIcon } from "@/components/category-icon";
+import { EmptyState } from "@/components/empty-state";
 import { ExperienceRow } from "@/components/experience-row";
 import { ActiveTabScroller } from "./active-tab-scroller";
 import { ForYou } from "@/components/for-you";
@@ -50,11 +51,12 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
   const state: State = { category, sub, when, filters };
   const bySub = <T extends { experience: { subcategoryId?: string | null } }>(xs: T[]) => (sub ? xs.filter((x) => x.experience.subcategoryId === sub) : xs);
 
-  const [t, tc, tcity, tf, rawResults, published, subcategories] = await Promise.all([
+  const [t, tc, tcity, tf, te, rawResults, published, subcategories] = await Promise.all([
     getTranslations("filters"),
     getTranslations("catalog"),
     getTranslations("city"),
     getTranslations("catalogFilters"),
+    getTranslations("emptyStates"),
     getCatalog({ cityId: DEFAULT_CITY, categoryId: category, when, filters }),
     getPublishedExperiences(),
     category ? getSubcategories(category) : Promise.resolve([]),
@@ -299,12 +301,16 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
           )}
         </div>
       ) : results.undated.length === 0 ? (
-        <div className="rounded-[var(--radius-card)] border border-dashed border-line bg-white/60 px-6 py-16 text-center" data-testid="catalog-empty">
-          <p className="text-muted">{filters.q ? tf("emptySearch", { q: filters.q }) : t("empty")}</p>
-          <Link href="/experiences" className="mt-4 inline-block font-semibold text-brand-900 underline underline-offset-4">
-            {t("reset")}
-          </Link>
-        </div>
+        <EmptyState
+          bab={filters.q ? "memo" : "scout"}
+          mood={filters.q ? "surprised" : "lost"}
+          prop={filters.q ? "magnifier" : "map"}
+          title={te("catalogTitle")}
+          text={filters.q ? tf("emptySearch", { q: filters.q }) : t("empty")}
+          action={{ href: "/experiences", label: t("reset") }}
+          className="mx-auto max-w-2xl"
+          data-testid="catalog-empty"
+        />
       ) : null}
       {!filters.q && n === 0 && !category && <ForYou />}
       {results.undated.length > 0 && (

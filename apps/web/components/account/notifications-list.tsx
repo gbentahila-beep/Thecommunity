@@ -7,6 +7,7 @@ import { doc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { useState } from "react";
 import { firebase } from "@/lib/firebase/client";
 import { Link } from "@/i18n/navigation";
+import { EmptyState } from "@/components/empty-state";
 import { tr } from "@/lib/i18n-text";
 
 const ICONS: Partial<Record<AppNotification["type"], typeof Bell>> = {
@@ -24,6 +25,7 @@ const ICONS: Partial<Record<AppNotification["type"], typeof Bell>> = {
 /** Liste des notifications. Phase 2 : « lu » mémorisé le temps de la visite ; phase 3 : écrit dans Firestore (readAt). */
 export function NotificationsList({ initial, nowIso, uid }: { initial: AppNotification[]; nowIso: string; uid?: string }) {
   const t = useTranslations("notificationsPage");
+  const te = useTranslations("emptyStates");
   const locale = useLocale();
   const [items, setItems] = useState(initial);
   const unread = items.filter((n) => !n.readAt).length;
@@ -48,7 +50,7 @@ export function NotificationsList({ initial, nowIso, uid }: { initial: AppNotifi
     return rtf.format(days, "day");
   };
 
-  if (items.length === 0) return <p className="text-muted">{t("empty")}</p>;
+  if (items.length === 0) return <EmptyState bab="scout" mood="sleep" prop="bell" title={te("notificationsTitle")} text={te("notificationsText")} />;
   return (
     <div className="space-y-4">
       <div className="flex justify-end">

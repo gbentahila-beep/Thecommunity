@@ -4,6 +4,7 @@ import { Heart } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { EmptyState } from "@/components/empty-state";
 import { toggleFavorite, useFavorites } from "@/lib/favorites";
 
 /** Ordre décidé côté serveur : date à venir (la plus proche d'abord), sans date, puis archivées (5j). */
@@ -14,7 +15,7 @@ export function FavoritesList({ experiences }: { experiences: FavoriteCandidate[
   const tc = useTranslations("card");
   const ids = useFavorites();
   const items = experiences.filter((e) => ids.includes(e.id));
-  if (items.length === 0) return <p className="card px-5 py-6 text-sm text-muted">{t("noFavorites")}</p>;
+  if (items.length === 0) return <EmptyState variant="compact" bab="toast" mood="wink" text={t("noFavorites")} />;
   return (
     <ul className="card divide-y divide-line/70 overflow-hidden" data-testid="favorites-list">
       {items.map((e) => (
