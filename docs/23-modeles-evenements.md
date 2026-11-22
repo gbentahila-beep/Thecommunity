@@ -330,14 +330,16 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 
 ### Créer (ateliers) : lieu affiché, prix de l'atelier payé sur place
 
-**A1 · Céramique** · **L**
+**A1 · Céramique** — Découvrir · **L** · **VALIDÉ**
 - **Titre** : Céramique · **Google** : Atelier céramique entre inconnus à Casablanca
-- **Accroche** : Les mains dans la terre, la tête ailleurs, et de nouvelles têtes autour de la table.
-- **Description** : Deux heures avec un céramiste pour façonner votre pièce (bol, tasse ou petit vase), en petit groupe. La pièce est cuite et émaillée par l'atelier, à récupérer deux à trois semaines plus tard.
-- **Quand** : samedi 15h00, 2 h · **Sur place** : ≈ 250–350 DH (terre, cuisson, émaillage)
-- **Inclus** : l'atelier, la terre, la cuisson · **Pas inclus** : l'atelier (réglé sur place)
+- **Accroche** : Les mains dans la terre, et de nouvelles têtes autour de la table.
+- **Description** : Un céramiste vous guide pour façonner votre pièce (bol, tasse ou petit vase), en petit groupe.
+- **Quand** : samedi 15h00, 2 h · **Format** : petit groupe, 8 places · **Lieu** : affiché (atelier partenaire)
+- **Sur place** : ≈ 250–350 DH (terre, cuisson, émaillage) · **Inclus** : L'atelier guidé par un céramiste · La terre et la cuisson
 - **Matériel fourni** : terre, outils, tablier · **Tenue** : vêtements qui ne craignent rien · **Niveau** : débutant
-- **Questionnaire** : Atelier (niveau) · **Image** : `atelier-ceramique.webp` ✓
+- **Infos pratiques** : Pièce cuite et émaillée par l'atelier, à récupérer deux à trois semaines plus tard.
+- **Questionnaire** : Atelier · **Image** : `ceramique.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non · français et darija · annulation gratuite jusqu'à 48 h avant
 
 **A2 · Peinture sur zellige** · 2
 - **Titre** : Peinture sur zellige · **Accroche** : Un savoir-faire marocain, revisité à votre façon.
@@ -387,24 +389,29 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 
 ### Découvrir (sorties)
 
-**D1 · Afterwork** · **L**
+**D1 · Afterwork** — Sortir · **L** · **VALIDÉ**
 - **Titre** : Afterwork · **Google** : Afterwork entre inconnus à Casablanca
 - **Accroche** : Après le travail, un verre avec des gens qui ont aussi envie de rencontrer du monde.
-- **Description** : Un bar ou un rooftop partenaire, un espace réservé pour le groupe, et quelques jeux pour briser la glace en arrivant. Idéal pour les nouveaux arrivants. Chacun règle sa consommation, avec ou sans alcool.
-- **Quand** : jeudi 19h30, 2 h · **Format** : libre (pas de tables composées) · **Sur place** : conso ≈ 60–150 DH
-- **Image** : `apero.webp` ✓
+- **Description** : Un espace réservé pour le groupe dans un bar ou un rooftop partenaire, pour faire de nouvelles rencontres en fin de journée.
+- **Quand** : jeudi 19h30, 2 h · **Format** : libre (sans tables composées), 30 places · **Lieu** : affiché (bar ou rooftop partenaire)
+- **Sur place** : votre consommation, ≈ 60–150 DH · **Inclus** : Un espace réservé pour le groupe
+- **Questionnaire** : aucun · **Image** : `afterwork.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non · français et darija · annulation gratuite jusqu'à 48 h avant
 
 **D2 · Rooftop au coucher du soleil** · 2
 - **Titre** : Coucher de soleil · **Accroche** : La ville d'en haut, l'heure dorée, et de nouvelles rencontres.
 - **Description** : Un rooftop partenaire avec vue, un espace réservé pour le groupe au moment du coucher du soleil. Chacun règle sa consommation.
 - **Quand** : vendredi 18h30, 2 h · **Sur place** : conso ≈ 80–150 DH · **Image** : `rooftop-medina.webp` ✓
 
-**D3 · Visite guidée** · **L**
+**D3 · Visite guidée** — Découvrir · **L** · **VALIDÉ**
 - **Titre** : Visite guidée · **Google** : Visite guidée de Casablanca entre inconnus
 - **Accroche** : Casablanca racontée par un guide passionné, en petit groupe.
-- **Description** : Deux heures à pied avec un guide local, au choix Art déco du centre-ville, Habous ou ancienne médina, puis un thé pour finir ensemble. La visite se règle sur place au guide.
-- **Quand** : samedi 10h00, 2 h · plein air · **Sur place** : guide ≈ 100–150 DH
-- **À apporter** : chaussures confortables, eau · **Image** : `artdeco.webp` ✓
+- **Description** : Une balade à pied avec un guide local, au choix : Art déco du centre-ville, Habous ou ancienne médina.
+- **Quand** : samedi 10h00, 2 h · **Format** : groupe, 15 places · **Lieu** : affiché (point de départ de la visite)
+- **Sur place** : ≈ 100–150 DH (le guide) · **Inclus** : La visite guidée
+- **À apporter** : chaussures confortables, eau · **Plein air** : oui
+- **Questionnaire** : aucun · **Image** : `visite-guidee.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non · français et darija · annulation gratuite jusqu'à 48 h avant
 
 **D4 · Balade street art** · 2
 - **Titre** : Street art · **Accroche** : Les fresques de la ville, et les histoires derrière.
@@ -431,12 +438,15 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 - **Description** : Une soirée stand-up en français, en darija ou les deux, avec un verre avant le spectacle pour faire connaissance.
 - **Quand** : vendredi 20h30 · **Sur place** : billet ≈ 100–150 DH · **Image** : ✗
 
-**D9 · Échange de langues** · **L**
+**D9 · Échange de langues** — Sortir · **L** · **VALIDÉ**
 - **Titre** : Échange de langues · **Google** : Échange de langues à Casablanca
 - **Accroche** : Pratiquer une langue en vrai, autour d'un café.
-- **Description** : Des tables par langue (français, anglais, espagnol, arabe, darija…), composées d'après la langue que vous parlez et celle que vous voulez pratiquer. On change de table toutes les 30 minutes. Chacun règle sa consommation.
-- **Quand** : mercredi 19h00, 2 h · **Lieu** : affiché (café) · **Sur place** : conso ≈ 30–60 DH
-- **Questionnaire** : **nouveau modèle « Langues »** (je parle / je veux pratiquer) · **Image** : `langues.webp` ✓
+- **Description** : Des tables par langue, composées d'après la langue que vous voulez pratiquer et celles que vous parlez déjà. On change de table toutes les 30 minutes.
+- **Quand** : mercredi 19h00, 2 h · **Format** : tables de 4 à 6, 24 places · **Lieu** : affiché (café partenaire)
+- **Sur place** : votre consommation, ≈ 30–60 DH · **Inclus** : Des tables par langue composées pour vous
+- **Langues de l'événement** : français, anglais, espagnol, arabe, darija
+- **Questionnaire** : Langues · **Image** : `echange-langues.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non · annulation gratuite jusqu'à 48 h avant
 
 **D10 · Journée plage** · + (été)
 - **Titre** : Journée plage · **Accroche** : Le sable, l'océan, et un groupe pour la journée.
