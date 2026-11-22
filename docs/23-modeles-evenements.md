@@ -133,14 +133,16 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 
 ### Tables
 
-**T1 · Café** — Tables › Café · **L**
+**T1 · Café** — Tables › Café · **L** · **VALIDÉ**
 - **Titre** : Café · **Google** : Café entre inconnus à Casablanca
-- **Accroche** : Un café, une petite table, quelques inconnus : le plus doux des premiers pas.
-- **Description** : Le format idéal pour une première fois. Vous réservez votre place, nous composons une table de quatre à six personnes et choisissons un café partenaire, révélé quelques heures avant. Environ une heure et demie, sans pression : chacun commande ce qu'il veut et règle sa consommation sur place.
-- **Quand** : samedi 10h30 · **Lieu** : secret, gamme Casual, ambiance cosy
-- **Sur place** : consommation, ≈ 30–60 DH
-- **Inclus** : une table réservée dans un café partenaire · **Pas inclus** : vos boissons et viennoiseries
-- **Questionnaire** : Tables · **Image** : `cafe.webp` ✓
+- **Accroche** : Un café, une table, et des discussions avec des gens que vous ne connaissez pas encore.
+- **Description** : Une table de quatre à six personnes composée pour vous, dans un café choisi par notre équipe. On commande, on discute, on fait connaissance, et chacun reste aussi longtemps qu'il le souhaite.
+- **Quand** : samedi 10h30 (heure de début seulement) · **Format** : tables de 4 à 6, nombre de tables libre
+- **Lieu** : secret ; café choisi maintenant ou plus tard ; cuisine remplie mais affichée seulement à la révélation
+- **Gammes** : Casual ≈ 30–60 DH, cosy et détendue · Premium ≈ 60–100 DH, café de spécialité · Exclusive ≈ 100–150 DH, salon de thé raffiné (consommation sur place)
+- **Inclus** : Votre place à une table composée pour vous · La réservation du café · **Pas inclus** : aucune ligne (l'encadré « Ce que vous payez » le dit)
+- **Infos pratiques** : aucune · **Questionnaire** : aucun · **Image** : `cafe.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non par défaut, à cocher selon le lieu · français et darija · annulation gratuite jusqu'à 48 h avant (frais remboursés jusqu'à 48 h avant)
 
 **T2 · Brunch** — Tables › Brunch · **L**
 - **Titre** : Brunch · **Google** : Brunch entre inconnus à Casablanca
@@ -160,14 +162,16 @@ Priorité : **L** = pour le lancement · **2** = phase 2 · **+** = plus tard ou
 - **Inclus** : une table réservée près des bureaux · **Pas inclus** : votre repas et vos boissons
 - **Questionnaire** : Tables · **Image** : ✗
 
-**T4 · Dîner** — Tables › Dîner · **L**
+**T4 · Dîner** — Tables › Dîner · **L** · **VALIDÉ**
 - **Titre** : Dîner · **Google** : Dîner entre inconnus à Casablanca
-- **Accroche** : Une table, des inconnus, un restaurant que vous découvrez le jour même.
-- **Description** : Notre format phare. Vous réservez, vous répondez à quelques questions, et nous composons des tables de quatre à six personnes qui ont de quoi se parler. Le restaurant partenaire est révélé 5 heures avant. Sur place, chacun commande à la carte et règle sa consommation directement au restaurant.
-- **Quand** : mercredi 20h00 · **Lieu** : secret, gamme au choix (Casual par défaut)
-- **Sur place** : consommation, ≈ 150–250 DH (Casual) · ≈ 250–400 DH (Premium)
-- **Inclus** : une table réservée dans un restaurant partenaire · **Pas inclus** : votre repas et vos boissons
-- **Questionnaire** : Tables · **Image** : `diner-inconnus.webp` ✓
+- **Accroche** : Une table, des inconnus, et une adresse à découvrir.
+- **Description** : Notre format phare. Des tables de quatre à six personnes qui ont de quoi se parler, composées à partir de vos profils, dans un restaurant choisi par notre équipe. Une soirée pour rencontrer de nouvelles têtes, à votre rythme.
+- **Quand** : mercredi 20h00 (heure de début seulement) · **Format** : tables de 4 à 6, nombre de tables libre
+- **Lieu** : secret ; restaurant choisi maintenant ou plus tard ; **cuisine remplie mais affichée seulement à la révélation**
+- **Gammes** : Casual ≈ 150–250 DH, conviviale · Premium ≈ 250–400 DH, chic et décontractée · Exclusive ≈ 400–600 DH, haut de gamme (consommation sur place)
+- **Inclus** : Votre place à une table composée pour vous · La réservation du restaurant · **Pas inclus** : aucune ligne
+- **Infos pratiques** : aucune, sauf « Tenue soignée » en Exclusive · **Questionnaire** : aucun · **Image** : `diner.webp`
+- **Réglages** : 35 DH · 1 place par réservation · ouvert à tous · réservé aux femmes : non · alcool : non par défaut, à cocher selon le lieu · français et darija · annulation gratuite jusqu'à 48 h avant (frais remboursés jusqu'à 48 h avant)
 
 **T5 · Grande table** — *fusionné : c'est désormais le Dîner en gamme Exclusive (fiche gardée pour ses textes)*
 - **Titre** : Grande table · **Google** : Dîner gastronomique entre inconnus à Casablanca
@@ -473,8 +477,8 @@ Tes photos, enregistrées dans le site (`apps/web/public/images/modeles/`), à v
 | Quiz | Néon « Game on » | `quiz.webp` · **validée** |
 | Céramique | Mains sur un tour de potier | `ceramique.webp` · **validée** |
 
-| Déjeuner | Buffet vu du dessus, convives qui se servent | `dejeuner.webp` · reçue, **filigrane « Unsplash+ » visible** |
-| Visite guidée | Mosquée Hassan II vue depuis l'océan | `visite-guidee.webp` · reçue |
+| Déjeuner | Assiette de salade au saumon, fourchette dorée, en terrasse (photo en hauteur) | `dejeuner.webp` · nouvelle photo reçue, à valider |
+| Visite guidée | Mosquée Hassan II vue depuis l'océan | `visite-guidee.webp` · **validée** |
 
 Toutes les photos du lancement sont reçues. Les autres modèles (phase 2 et plus tard) viendront ensuite ; je te dirai lesquelles manquent à chaque étape.
 
