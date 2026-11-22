@@ -27,7 +27,7 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   await nav.getByRole('link', { name: 'Mes activités' }).click();
   await page.waitForURL('**/pro/activites');
   const acts = await page.getByTestId('pro-activity').allTextContents();
-  assert(acts.length === 1 && /Padel entre inconnus/.test(acts[0]) && /En ligne/.test(acts[0]), 'mes activités : le padel du club, en ligne (pas les expériences de The Host Club)');
+  assert(acts.length === 1 && /Padel entre inconnus/.test(acts[0]) && /En ligne/.test(acts[0]), 'mes activités : le padel du club, en ligne (pas les expériences de Wenzy)');
   await page.getByRole('link', { name: 'Modifier' }).click();
   await page.waitForURL(/\/pro\/activites\/exp-padel$/);
   assert(await page.getByText('5. Prix', { exact: true }).isVisible(), 'formulaire : section « 5. Prix » simplifiée');
@@ -36,7 +36,7 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
   assert(await page.locator('#f-partnerId').count() === 0 && await page.locator('#f-memberPriceDh').count() === 0, 'formulaire : ni partenaire ni prix membre');
   assert((await page.locator('#f-status option').allTextContents()).includes('Publiée (reste en ligne)'), 'activité en ligne : « reste en ligne » après modification');
   await page.goto(base + '/pro/activites/exp-diner-inconnus', { waitUntil: 'load' });
-  assert(await page.getByText('Page introuvable').isVisible() || (await page.title()).includes('404') || await page.getByText(/introuvable/i).first().isVisible(), 'activité d\'un autre (The Host Club) : introuvable');
+  assert(await page.getByText('Page introuvable').isVisible() || (await page.title()).includes('404') || await page.getByText(/introuvable/i).first().isVisible(), 'activité d\'un autre (Wenzy) : introuvable');
   await page.goto(base + '/pro/activites/nouvelle', { waitUntil: 'load' });
   // Étape 22 : mode de paiement (A/B/C) avec aperçu « en ligne / sur place »
   assert((await page.getByTestId('payment-model').getByRole('radio').count()) === 3, 'nouvelle activité : 3 modes de paiement proposés');
@@ -126,7 +126,7 @@ const visible = (l, ms = 8000) => l.first().waitFor({ state: 'visible', timeout:
 
   // 6. Étape 21 : finances de l'organisateur, commissions et reversements côté équipe
   await page.goto(base + '/pro/finances', { waitUntil: 'load' });
-  assert(await page.getByTestId('pro-finance-kpis').getByText('Commission The Host Club').isVisible(), 'finances : chiffres clés');
+  assert(await page.getByTestId('pro-finance-kpis').getByText('Commission Wenzy').isVisible(), 'finances : chiffres clés');
   assert(/Sport & bien-être : 12 %/.test(await page.getByTestId('pro-rates').textContent()), 'finances : taux applicable (règle « Sport » 12 %)');
   const ledger = await page.getByTestId('pro-ledger').allTextContents();
   assert(ledger.length >= 1 && ledger.every((t) => /Padel entre inconnus/.test(t)), `finances : ${ledger.length} écritures, toutes sur le padel`);

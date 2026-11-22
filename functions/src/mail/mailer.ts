@@ -27,8 +27,8 @@ async function emailSettings(): Promise<{ provider: Provider; fromEmail: string;
   const s = (await db.doc("settings/email").get()).data() ?? {};
   return {
     provider: s.provider === "brevo" ? "brevo" : "outbox",
-    fromEmail: typeof s.fromEmail === "string" && s.fromEmail ? s.fromEmail : "no-reply@thehostclub.ma",
-    fromName: typeof s.fromName === "string" && s.fromName ? s.fromName : "The Host Club",
+    fromEmail: typeof s.fromEmail === "string" && s.fromEmail ? s.fromEmail : "no-reply@wenzy.ma",
+    fromName: typeof s.fromName === "string" && s.fromName ? s.fromName : "Wenzy",
   };
 }
 

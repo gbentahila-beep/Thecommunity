@@ -43,8 +43,8 @@ function wrap(font: PDFFont, text: string, size: number, width: number): string[
 export async function renderInvoicePdf(inv: InvoiceDoc): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
   pdf.setTitle(`${inv.title} ${inv.number}`);
-  pdf.setAuthor(inv.seller?.legalName ?? "The Host Club");
-  pdf.setCreator("The Host Club");
+  pdf.setAuthor(inv.seller?.legalName ?? "Wenzy");
+  pdf.setCreator("Wenzy");
   const page: PDFPage = pdf.addPage([595.28, 841.89]);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -79,7 +79,7 @@ export async function renderInvoicePdf(inv: InvoiceDoc): Promise<Uint8Array> {
   y -= 15;
   const seller = inv.seller
     ? [inv.seller.legalName, inv.seller.address, `ICE : ${inv.seller.ice}`, inv.seller.if ? `IF : ${inv.seller.if}` : "", inv.seller.rc ? `RC : ${inv.seller.rc}` : "", inv.seller.email ?? ""].filter(Boolean)
-    : ["The Host Club", "Société en cours d'immatriculation", "(raison sociale, siège et ICE à compléter)"];
+    : ["Wenzy", "Société en cours d'immatriculation", "(raison sociale, siège et ICE à compléter)"];
   // Les polices standard ne savent pas écrire l'arabe : dans ce cas le nom est omis (l'e-mail identifie le client).
   const encodable = (t: string) => { try { font.encodeText(t); return true; } catch { return false; } };
   const buyer = [encodable(inv.buyer.name) ? inv.buyer.name : "", inv.buyer.email].filter(Boolean);
@@ -145,7 +145,7 @@ export async function renderInvoicePdf(inv: InvoiceDoc): Promise<Uint8Array> {
 
   // Pied de page
   page.drawLine({ start: { x: M, y: M + 20 }, end: { x: M + W, y: M + 20 }, thickness: 0.5, color: LINE });
-  text(`${inv.seller?.legalName ?? "The Host Club"} — ${inv.number}`, M, M + 6, { size: 8, color: MUTED });
+  text(`${inv.seller?.legalName ?? "Wenzy"} — ${inv.number}`, M, M + 6, { size: 8, color: MUTED });
   right("Document généré automatiquement", M + W, M + 6, { size: 8, color: MUTED });
   return pdf.save();
 }

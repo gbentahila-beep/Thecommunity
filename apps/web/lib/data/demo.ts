@@ -611,7 +611,7 @@ export function buildDemoSessions(now: Date = new Date()): Session[] {
 /** Formule d'abonnement de démonstration (mode sans Firebase). */
 export const DEMO_MEMBERSHIP_PLAN: MembershipPlan = {
   id: "annual",
-  name: { fr: "The Host Club Membre", ar: "عضوية The Host Club" },
+  name: { fr: "Wenzy Membre", ar: "عضوية Wenzy" },
   price: { amount: 99000, currency: "MAD" },
   // Proposition (21 novembre) : 4 durées payées en une fois, -20 % et frais de service offerts. Réglable dans le back-office.
   offers: [

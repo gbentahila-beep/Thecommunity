@@ -62,7 +62,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
     const s = q.toString();
     return `/avis${s ? `?${s}` : ""}`;
   };
-  const chip = (on: boolean) => `inline-flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition ${on ? "bg-ink text-white" : "bg-white text-ink ring-1 ring-line hover:ring-plum-300"}`;
+  const chip = (on: boolean) => `inline-flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition ${on ? "bg-ink text-white" : "bg-white text-ink ring-1 ring-line hover:ring-brand-200"}`;
   const usedCats = categories.filter((c) => all.some((r) => catOf(r) === c.id));
 
   return (
@@ -70,7 +70,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
       <header>
         <p className="text-xs font-semibold tracking-[0.18em] text-muted uppercase">{t("eyebrow")}</p>
         <h1 className="page-title mt-2">
-          {t("titleA")} <em className="text-plum-700">{t("titleB")}</em>
+          {t("titleA")} <em className="text-brand-700">{t("titleB")}</em>
         </h1>
         <p className="mt-4 max-w-2xl text-[17px] text-muted">{t("intro")}</p>
       </header>
@@ -132,7 +132,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
               <span className="ms-auto flex items-center gap-1 text-sm">
                 <span className="text-muted">{t("sortLabel")}</span>
                 {SORTS.map((s) => (
-                  <Link key={s} href={href({ tri: s === "recent" ? undefined : s, tout: undefined })} className={`rounded-full px-3 py-1.5 ${sort === s ? "bg-plum-100 font-semibold text-plum-900" : "text-ink/75 hover:bg-cream-deep"}`} aria-current={sort === s ? "true" : undefined}>{t(`sort_${s}`)}</Link>
+                  <Link key={s} href={href({ tri: s === "recent" ? undefined : s, tout: undefined })} className={`rounded-full px-3 py-1.5 ${sort === s ? "bg-brand-100 font-semibold text-brand-900" : "text-ink/75 hover:bg-cream-deep"}`} aria-current={sort === s ? "true" : undefined}>{t(`sort_${s}`)}</Link>
                 ))}
               </span>
             </div>
@@ -165,7 +165,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
                         (long ? (
                           <details className="group mt-3 text-[15px] leading-relaxed text-ink/85">
                             <summary className="cursor-pointer list-none">
-                              <span className="group-open:hidden">{r.comment.slice(0, 190).trimEnd()}… <span className="font-semibold text-plum-900 underline underline-offset-4">{t("readMore")}</span></span>
+                              <span className="group-open:hidden">{r.comment.slice(0, 190).trimEnd()}… <span className="font-semibold text-brand-900 underline underline-offset-4">{t("readMore")}</span></span>
                               <span className="hidden group-open:inline">{r.comment}</span>
                             </summary>
                           </details>

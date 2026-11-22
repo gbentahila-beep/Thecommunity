@@ -21,19 +21,19 @@ export default async function ProHomePage() {
   if (space.status === "none") {
     return (
       <div className="max-w-3xl">
-        <PageHeader title="Proposez vos activités sur The Host Club" subtitle="Clubs, ateliers, guides, restaurants, coachs : touchez des personnes qui veulent sortir et rencontrer du monde à Casablanca." />
+        <PageHeader title="Proposez vos activités sur Wenzy" subtitle="Clubs, ateliers, guides, restaurants, coachs : touchez des personnes qui veulent sortir et rencontrer du monde à Casablanca." />
         <Card>
           <ol className="grid gap-4 sm:grid-cols-2">
             {STEPS.map(([title, text], i) => (
               <li key={title} className="rounded-xl bg-cream p-4">
-                <span className="font-display text-3xl text-plum-200">{i + 1}</span>
+                <span className="font-display text-3xl text-brand-200">{i + 1}</span>
                 <p className="mt-1 font-semibold text-ink">{title}</p>
                 <p className="mt-1 text-sm text-muted">{text}</p>
               </li>
             ))}
           </ol>
-          <p className="mt-5 text-sm text-muted">Commission, encaissement et reversements : tout est expliqué dans le <Link href="/contrat-organisateur" className="font-semibold text-plum-900 underline">contrat organisateur</Link>.</p>
-          <Link href="/pro/inscription" className="mt-5 inline-flex items-center gap-2 rounded-full bg-plum-900 px-6 py-3 font-semibold text-white hover:bg-plum-800">
+          <p className="mt-5 text-sm text-muted">Commission, encaissement et reversements : tout est expliqué dans le <Link href="/contrat-organisateur" className="font-semibold text-brand-900 underline">contrat organisateur</Link>.</p>
+          <Link href="/pro/inscription" className="mt-5 inline-flex items-center gap-2 rounded-full bg-brand-900 px-6 py-3 font-semibold text-white hover:bg-brand-800">
             Créer mon compte organisateur <ArrowRight className="size-4" aria-hidden />
           </Link>
         </Card>
@@ -55,7 +55,7 @@ export default async function ProHomePage() {
         <PageHeader title={space.organizer?.name ?? "Compte organisateur"} subtitle={`Statut : ${ORGANIZER_STATUS_LABELS[space.status]}`} />
         <Card>
           <p className="flex items-start gap-3 text-ink" data-testid="organizer-status">
-            <Icon className="mt-0.5 size-5 shrink-0 text-plum-900" aria-hidden />
+            <Icon className="mt-0.5 size-5 shrink-0 text-brand-900" aria-hidden />
             <span>{texts[space.status]}</span>
           </p>
           {message && (
@@ -64,8 +64,8 @@ export default async function ProHomePage() {
             </blockquote>
           )}
           <div className="mt-5 flex flex-wrap gap-3">
-            {space.status === "info_requested" && <Link href="/pro/inscription" className="rounded-full bg-plum-900 px-5 py-2.5 font-semibold text-white">Compléter ma demande</Link>}
-            <Link href="/contact" className="rounded-full border border-plum-900 px-5 py-2.5 font-semibold text-plum-900">Nous écrire</Link>
+            {space.status === "info_requested" && <Link href="/pro/inscription" className="rounded-full bg-brand-900 px-5 py-2.5 font-semibold text-white">Compléter ma demande</Link>}
+            <Link href="/contact" className="rounded-full border border-brand-900 px-5 py-2.5 font-semibold text-brand-900">Nous écrire</Link>
           </div>
         </Card>
       </div>
@@ -80,8 +80,8 @@ export default async function ProHomePage() {
     <>
       <PageHeader
         title={space.organizer.name}
-        subtitle="Vos activités, dates et réservations sur The Host Club."
-        actions={<Link href="/pro/activites/nouvelle" className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-plum-800">+ Nouvelle activité</Link>}
+        subtitle="Vos activités, dates et réservations sur Wenzy."
+        actions={<Link href="/pro/activites/nouvelle" className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">+ Nouvelle activité</Link>}
       />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" data-testid="pro-stats">
         <StatTile label="Réservations payées" value={String(s.bookings)} hint={`${dh(s.grossTotal)} au total`} />
@@ -90,7 +90,7 @@ export default async function ProHomePage() {
         <StatTile label="Taux d'annulation" value={`${Math.round(s.cancellationRate * 100)} %`} hint={`${s.published} activité${s.published > 1 ? "s" : ""} en ligne${s.inReview ? ` · ${s.inReview} en relecture` : ""}`} />
       </div>
       <div className="mt-6 grid gap-6 xl:grid-cols-[2fr_1fr]">
-        <Card title="Prochaines dates" actions={<Link href="/pro/dates" className="text-sm font-semibold text-plum-900">Tout voir →</Link>}>
+        <Card title="Prochaines dates" actions={<Link href="/pro/dates" className="text-sm font-semibold text-brand-900">Tout voir →</Link>}>
           {next.length === 0 ? (
             <p className="text-sm text-muted">Aucune date à venir. Ajoutez des dates depuis « Mes activités ».</p>
           ) : (
@@ -100,7 +100,7 @@ export default async function ProHomePage() {
                   <span className="w-36 shrink-0 text-muted">{adminDate(x.startAt)}</span>
                   <span className="min-w-40 flex-1 font-medium text-ink">{x.title}</span>
                   <span className="w-40"><FillBar value={x.seatsConfirmed} max={x.capacity} /></span>
-                  <Link href={`/pro/dates/${x.id}`} className="font-semibold text-plum-900">Participants</Link>
+                  <Link href={`/pro/dates/${x.id}`} className="font-semibold text-brand-900">Participants</Link>
                 </li>
               ))}
             </ul>

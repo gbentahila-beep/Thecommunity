@@ -95,7 +95,7 @@ function Section({ title, children, id }: { title: string; children: React.React
   );
 }
 
-const input = "w-full rounded-xl border bg-white px-3 py-2.5 text-[15px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100";
+const input = "w-full rounded-xl border bg-white px-3 py-2.5 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100";
 
 /**
  * Formulaire de création / modification d'une expérience et de ses dates.
@@ -359,7 +359,7 @@ export function ExperienceForm({
             <option value="draft">Brouillon (non visible)</option>
             <option value="published">{proSelf ? (organizer?.currentStatus === "published" ? "Publiée (reste en ligne)" : "Envoyer pour validation") : "Publiée"}</option>
           </select>
-          {proSelf && <p className="mt-1 text-xs text-muted">L&apos;équipe The Host Club relit chaque nouvelle activité avant sa publication. Une activité déjà en ligne le reste quand vous la modifiez.</p>}</div>
+          {proSelf && <p className="mt-1 text-xs text-muted">L&apos;équipe Wenzy relit chaque nouvelle activité avant sa publication. Une activité déjà en ligne le reste quand vous la modifiez.</p>}</div>
       </Section>
 
       <Section title="2. Lieu">
@@ -400,13 +400,13 @@ export function ExperienceForm({
           </select></div>
         {v.admission === "on_request" && (
           <label className="flex items-center gap-2 text-sm sm:col-span-2">
-            <input type="checkbox" checked={v.requestMessageRequired} onChange={(e) => set("requestMessageRequired", e.target.checked)} className="size-4 accent-plum-900" />
+            <input type="checkbox" checked={v.requestMessageRequired} onChange={(e) => set("requestMessageRequired", e.target.checked)} className="size-4 accent-brand-900" />
             Message de motivation obligatoire (« Pourquoi souhaitez-vous participer ? »)
           </label>
         )}
         {v.admission === "on_request" && (
           <label className="flex items-center gap-2 text-sm sm:col-span-2">
-            <input type="checkbox" checked={v.requestInstagramRequired} onChange={(e) => set("requestInstagramRequired", e.target.checked)} className="size-4 accent-plum-900" />
+            <input type="checkbox" checked={v.requestInstagramRequired} onChange={(e) => set("requestInstagramRequired", e.target.checked)} className="size-4 accent-brand-900" />
             Compte Instagram obligatoire
           </label>
         )}
@@ -419,7 +419,7 @@ export function ExperienceForm({
         )}
         {!pro && (
           <label className="flex items-center gap-2 self-end pb-3 text-sm">
-            <input type="checkbox" checked={v.membersOnly} onChange={(e) => set("membersOnly", e.target.checked)} className="size-4 accent-plum-900" />
+            <input type="checkbox" checked={v.membersOnly} onChange={(e) => set("membersOnly", e.target.checked)} className="size-4 accent-brand-900" />
             Réservée aux membres abonnés
           </label>
         )}
@@ -436,7 +436,7 @@ export function ExperienceForm({
               const on = v.languages.includes(l);
               return (
                 <button key={l} type="button" aria-pressed={on} onClick={() => set("languages", on ? v.languages.filter((x) => x !== l) : [...v.languages, l])}
-                  className={`rounded-full border px-3 py-1.5 text-sm ${on ? "border-plum-900 bg-plum-900 text-white" : "border-line bg-white"}`}>
+                  className={`rounded-full border px-3 py-1.5 text-sm ${on ? "border-brand-900 bg-brand-900 text-white" : "border-line bg-white"}`}>
                   {LANG_LABELS[l]}
                 </button>
               );
@@ -445,20 +445,20 @@ export function ExperienceForm({
           {err("languages")}
         </fieldset>
         <label className="flex items-center gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" checked={v.alcoholServed} onChange={(e) => set("alcoholServed", e.target.checked)} className="size-4 accent-plum-900" />
+          <input type="checkbox" checked={v.alcoholServed} onChange={(e) => set("alcoholServed", e.target.checked)} className="size-4 accent-brand-900" />
           De l&apos;alcool est servi pendant l&apos;expérience
         </label>
         <fieldset className="text-sm sm:col-span-2" data-testid="arrival-mode">
           <legend className="mb-1.5 font-medium">Comment les participants signalent-ils leur arrivée ?</legend>
           <label className="flex items-start gap-2 py-1">
-            <input type="radio" name="arrival-mode" checked={!v.onSiteHost} onChange={() => set("onSiteHost", false)} className="mt-0.5 size-4 accent-plum-900" />
+            <input type="radio" name="arrival-mode" checked={!v.onSiteHost} onChange={() => set("onSiteHost", false)} className="mt-0.5 size-4 accent-brand-900" />
             <span>
               Ils l&apos;indiquent dans l&apos;application (par défaut)
               <span className="block text-xs text-muted">Pas d&apos;hôte ni de billet : le jour J, chacun appuie sur « Je suis arrivé·e » et retrouve son groupe seul.</span>
             </span>
           </label>
           <label className="flex items-start gap-2 py-1">
-            <input type="radio" name="arrival-mode" checked={Boolean(v.onSiteHost)} onChange={() => set("onSiteHost", true)} className="mt-0.5 size-4 accent-plum-900" />
+            <input type="radio" name="arrival-mode" checked={Boolean(v.onSiteHost)} onChange={() => set("onSiteHost", true)} className="mt-0.5 size-4 accent-brand-900" />
             <span>
               Leur billet est scanné à l&apos;entrée (hôtesse ou équipe sur place)
               <span className="block text-xs text-muted">Chaque participant reçoit un billet à QR code. Le billet est aussi donné d&apos;office quand une part est à régler au lieu partenaire.</span>
@@ -466,7 +466,7 @@ export function ExperienceForm({
           </label>
         </fieldset>
         <label className="flex items-start gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" checked={Boolean(v.foodServed)} onChange={(e) => set("foodServed", e.target.checked)} className="mt-0.5 size-4 accent-plum-900" />
+          <input type="checkbox" checked={Boolean(v.foodServed)} onChange={(e) => set("foodServed", e.target.checked)} className="mt-0.5 size-4 accent-brand-900" />
           <span>
             Des plats ou boissons sont servis
             <span className="block text-xs text-muted">Régime et allergies demandés à la réservation (toujours le cas pour l&apos;univers Dîners et les dîners composés).</span>
@@ -495,11 +495,11 @@ export function ExperienceForm({
         <div><Label k="whatToBring" hint="Ex. baskets propres, bouteille d'eau, serviette.">À apporter</Label><textarea {...field("whatToBring")} rows={2} value={v.whatToBring ?? ""} onChange={(e) => set("whatToBring", e.target.value)} />{err("whatToBring")}</div>
         <div className="sm:col-span-2"><Label k="dressCode" hint="Ex. tenue de sport, vêtements qui ne craignent pas la peinture.">Tenue conseillée</Label><input {...field("dressCode")} value={v.dressCode ?? ""} onChange={(e) => set("dressCode", e.target.value)} />{err("dressCode")}</div>
         <label className="flex items-start gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" checked={v.outdoor} onChange={(e) => set("outdoor", e.target.checked)} className="mt-0.5 size-4 accent-plum-900" />
+          <input type="checkbox" checked={v.outdoor} onChange={(e) => set("outdoor", e.target.checked)} className="mt-0.5 size-4 accent-brand-900" />
           <span>En plein air<span className="block text-xs text-muted">Affiché sur la fiche : si la météo ne permet pas l&apos;activité, elle est reportée (place gardée ou remboursée, au choix) ou annulée et remboursée.</span></span>
         </label>
         <label className="flex items-start gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" checked={v.physicalActivity} onChange={(e) => set("physicalActivity", e.target.checked)} className="mt-0.5 size-4 accent-plum-900" />
+          <input type="checkbox" checked={v.physicalActivity} onChange={(e) => set("physicalActivity", e.target.checked)} className="mt-0.5 size-4 accent-brand-900" />
           <span>Activité physique<span className="block text-xs text-muted">Chaque participant accepte les <Link href="/conditions-activites-physiques" target="_blank" className="underline">conditions de participation aux activités physiques</Link> avant de réserver (enregistré avec la réservation).</span></span>
         </label>
         {v.physicalActivity && v.partnerId && insurance !== "valid" && (
@@ -518,7 +518,7 @@ export function ExperienceForm({
         {!pro && (<>
         <div className="sm:col-span-2"><Label k="partnerId" hint="Le lieu ou le prestataire de l'expérience. Facultatif.">Partenaire</Label>
           <select {...field("partnerId")} value={v.partnerId ?? ""} onChange={(e) => choosePartner(e.target.value)}>
-            <option value="">— Aucun (organisé entièrement par The Host Club)</option>
+            <option value="">— Aucun (organisé entièrement par Wenzy)</option>
             {partners.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
           </select>{err("partnerId")}</div>
         <fieldset className="sm:col-span-2">
@@ -528,9 +528,9 @@ export function ExperienceForm({
               const disabled = c.needsPartner && !v.partnerId;
               const on = v.pricingModel === c.id;
               return (
-                <label key={c.id} className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3 text-sm ${on ? "border-plum-900 bg-plum-50 ring-2 ring-plum-100" : "border-line bg-white"} ${disabled ? "cursor-not-allowed opacity-50" : ""}`}>
+                <label key={c.id} className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3 text-sm ${on ? "border-brand-900 bg-brand-50 ring-2 ring-brand-100" : "border-line bg-white"} ${disabled ? "cursor-not-allowed opacity-50" : ""}`}>
                   <span className="flex items-center gap-2 font-semibold text-ink">
-                    <input type="radio" name="pricingModel" value={c.id} checked={on} disabled={disabled} onChange={() => choosePricing(c.id)} className="size-4 accent-plum-900" />
+                    <input type="radio" name="pricingModel" value={c.id} checked={on} disabled={disabled} onChange={() => choosePricing(c.id)} className="size-4 accent-brand-900" />
                     {c.title}
                   </span>
                   <span className="text-xs text-muted">{c.text}</span>
@@ -550,9 +550,9 @@ export function ExperienceForm({
               {(organizer?.models ?? PAYMENT_MODELS).map((m) => {
                 const on = v.paymentModel === m;
                 return (
-                  <label key={m} className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3 text-sm ${on ? "border-plum-900 bg-plum-50 ring-2 ring-plum-100" : "border-line bg-white"}`}>
+                  <label key={m} className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3 text-sm ${on ? "border-brand-900 bg-brand-50 ring-2 ring-brand-100" : "border-line bg-white"}`}>
                     <span className="flex items-center gap-2 font-semibold text-ink">
-                      <input type="radio" name="paymentModel" value={m} checked={on} onChange={() => set("paymentModel", m)} className="size-4 accent-plum-900" />
+                      <input type="radio" name="paymentModel" value={m} checked={on} onChange={() => set("paymentModel", m)} className="size-4 accent-brand-900" />
                       {PAYMENT_MODEL_LABELS[m].title}
                     </span>
                     <span className="text-xs text-muted">{PAYMENT_MODEL_LABELS[m].text}</span>
@@ -575,10 +575,10 @@ export function ExperienceForm({
           </p>
         )}
         <div className="grid gap-4 rounded-xl border border-line p-4 sm:col-span-2 sm:grid-cols-2" data-testid="part-online">
-          <p className="text-sm font-semibold text-ink sm:col-span-2">{pro ? "Prix de l'activité" : "Payé en ligne, encaissé par The Host Club"}</p>
+          <p className="text-sm font-semibold text-ink sm:col-span-2">{pro ? "Prix de l'activité" : "Payé en ligne, encaissé par Wenzy"}</p>
           <div><Label k="priceDh" hint={pro ? "Prix total de l'activité pour une place (en ligne et sur place compris)." : "Ce que le client paie à la réservation."}>{pro ? "Prix total par place (DH)" : "Prix par place (DH)"}</Label><input {...field("priceDh")} inputMode="decimal" value={v.priceDh} onChange={(e) => set("priceDh", e.target.value)} />{err("priceDh")}</div>
           {!pro && <div><Label k="memberPriceDh" hint="Facultatif. Vide = réduction de l'abonnement (réglée dans « Abonnement »).">Prix membre (DH)</Label><input {...field("memberPriceDh")} inputMode="decimal" value={v.memberPriceDh} onChange={(e) => set("memberPriceDh", e.target.value)} />{err("memberPriceDh")}</div>}
-          {proSelf && <p className="text-xs text-muted sm:col-span-2">La commission de The Host Club et le calendrier de reversement figurent dans votre contrat organisateur et dans « Finances ».</p>}
+          {proSelf && <p className="text-xs text-muted sm:col-span-2">La commission de Wenzy et le calendrier de reversement figurent dans votre contrat organisateur et dans « Finances ».</p>}
         </div>
 
         {!pro && onSiteMode && (
@@ -598,7 +598,7 @@ export function ExperienceForm({
         )}
 
         {!pro && (<>
-        <div className="grid gap-4 rounded-xl border border-dashed border-plum-200 bg-plum-50/40 p-4 sm:col-span-2 sm:grid-cols-2" data-testid="economics">
+        <div className="grid gap-4 rounded-xl border border-dashed border-brand-200 bg-brand-50/40 p-4 sm:col-span-2 sm:grid-cols-2" data-testid="economics">
           <p className="text-sm font-semibold text-ink sm:col-span-2">Ce que ça nous rapporte <span className="font-normal text-muted">(visible uniquement par l&apos;équipe)</span></p>
           {!onSiteMode && v.partnerId && (
             <div className="sm:col-span-2"><Label k="economicsModel">Accord avec le partenaire</Label>
@@ -643,13 +643,13 @@ export function ExperienceForm({
               <p className="mt-1 text-sm text-muted">Saisissez les prix pour voir l&apos;aperçu.</p>
             )}
           </div>
-          <div className="rounded-xl bg-plum-50 p-4" data-testid="preview-team">
+          <div className="rounded-xl bg-brand-50 p-4" data-testid="preview-team">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">Par place, pour nous</p>
             {eco ? (
               <dl className="mt-1 space-y-0.5 text-sm text-ink">
                 <div className="flex justify-between gap-2"><dt>Nous encaissons</dt><dd className="tabular-nums">{formatMoney({ amount: eco.weCollect, currency: "MAD" })}</dd></div>
                 <div className="flex justify-between gap-2"><dt>{v.economicsModel === "commission" || (!onSiteMode && v.partnerId) ? "Reversé au partenaire" : "Nos coûts"}</dt><dd className="tabular-nums">−{formatMoney({ amount: eco.paidOut, currency: "MAD" })}</dd></div>
-                <div className="flex justify-between gap-2 border-t border-plum-100 pt-1 font-semibold"><dt>Marge</dt><dd className="tabular-nums">{formatMoney({ amount: eco.margin, currency: "MAD" })}</dd></div>
+                <div className="flex justify-between gap-2 border-t border-brand-100 pt-1 font-semibold"><dt>Marge</dt><dd className="tabular-nums">{formatMoney({ amount: eco.margin, currency: "MAD" })}</dd></div>
                 {eco.onSiteCommission != null && <div className="flex justify-between gap-2 text-muted"><dt>+ commission à facturer au partenaire</dt><dd className="tabular-nums">{formatMoney({ amount: eco.onSiteCommission, currency: "MAD" })}</dd></div>}
                 {eco.onSiteCommissionOnConsumption && <p className="text-xs text-muted">+ commission sur la consommation réelle, à facturer au partenaire.</p>}
               </dl>
@@ -658,7 +658,7 @@ export function ExperienceForm({
             )}
           </div>
         </div>
-        <p className="text-xs text-muted sm:col-span-2">Prix membre, abonnement, codes promo et frais de service ne s&apos;appliquent qu&apos;à la part payée en ligne. The Host Club n&apos;encaisse jamais la part réglée au partenaire.</p>
+        <p className="text-xs text-muted sm:col-span-2">Prix membre, abonnement, codes promo et frais de service ne s&apos;appliquent qu&apos;à la part payée en ligne. Wenzy n&apos;encaisse jamais la part réglée au partenaire.</p>
         </>)}
         {mode === "edit" && bookedSeats > 0 && (
           <p role="note" className="flex items-start gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-950 sm:col-span-2">
@@ -670,7 +670,7 @@ export function ExperienceForm({
 
       <Section id="dates" title={mode === "create" ? "6. Dates" : "6. Ajouter des dates (ou reproposer l'expérience)"}>
         <label className="flex items-center gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" checked={addSessions} onChange={(e) => setAddSessions(e.target.checked)} className="size-4 accent-plum-900" />
+          <input type="checkbox" checked={addSessions} onChange={(e) => setAddSessions(e.target.checked)} className="size-4 accent-brand-900" />
           {mode === "create" ? "Programmer des dates maintenant" : "Créer ces nouvelles dates à l'enregistrement"}
         </label>
         {!addSessions && (
@@ -692,7 +692,7 @@ export function ExperienceForm({
           {existingImages.length > 0 && images.length === 0 && (
             <div className="mb-3 flex flex-wrap gap-3">
               {existingImages.map((img) => (
-                <div key={img.path} className="relative size-24 overflow-hidden rounded-xl ring-2 ring-plum-100">
+                <div key={img.path} className="relative size-24 overflow-hidden rounded-xl ring-2 ring-brand-100">
                   {/* eslint-disable-next-line @next/next/no-img-element -- miniature d'une photo existante */}
                   <img src={mediaUrl(img.path)} alt="" className="size-full object-cover" />
                 </div>
@@ -710,7 +710,7 @@ export function ExperienceForm({
                 </button>
               </div>
             ))}
-            <label className="grid size-24 cursor-pointer place-items-center rounded-xl border-2 border-dashed border-line text-muted hover:border-plum-200 hover:text-plum-900">
+            <label className="grid size-24 cursor-pointer place-items-center rounded-xl border-2 border-dashed border-line text-muted hover:border-brand-200 hover:text-brand-900">
               <ImagePlus className="size-6" aria-hidden />
               <span className="sr-only">Ajouter des photos</span>
               <input type="file" multiple accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={(e) => {
@@ -728,7 +728,7 @@ export function ExperienceForm({
       </fieldset>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={saving} className="rounded-full bg-plum-900 px-6 py-3 font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+        <button type="submit" disabled={saving} className="rounded-full bg-brand-900 px-6 py-3 font-semibold text-white hover:bg-brand-800 disabled:opacity-60">
           {live ? (saving ? "Enregistrement…" : "Enregistrer") : "Vérifier le formulaire"}
         </button>
         {!live && <span className="text-xs text-muted">Mode démonstration : rien n&apos;est enregistré.</span>}

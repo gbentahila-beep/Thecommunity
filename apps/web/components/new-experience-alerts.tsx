@@ -45,7 +45,7 @@ export function NewExperienceAlerts({ cities, defaultCity }: { cities: AlertCity
     };
   }, []);
 
-  const field = "w-full rounded-2xl border border-line bg-white px-4 py-3.5 text-[16px] text-ink outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100";
+  const field = "w-full rounded-2xl border border-line bg-white px-4 py-3.5 text-[16px] text-ink outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100";
   const label = "mb-1.5 block text-sm font-medium text-ink";
 
   return (
@@ -54,10 +54,10 @@ export function NewExperienceAlerts({ cities, defaultCity }: { cities: AlertCity
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        className="group mx-auto flex w-full max-w-xl items-center gap-3 rounded-full bg-white px-4 py-3 text-start shadow-card ring-1 ring-line transition hover:ring-plum-200"
+        className="group mx-auto flex w-full max-w-xl items-center gap-3 rounded-full bg-white px-4 py-3 text-start shadow-card ring-1 ring-line transition hover:ring-brand-200"
         data-testid="home-alerts-open"
       >
-        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-plum-50 text-plum-900">
+        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-900">
           <Bell className="size-[18px]" aria-hidden />
         </span>
         <span className="min-w-0 flex-1 text-[15px] font-medium text-ink">{t("title")}</span>
@@ -98,7 +98,7 @@ export function NewExperienceAlerts({ cities, defaultCity }: { cities: AlertCity
 
         {state.kind === "visitor" &&
           (status === "sent" || status === "demo" ? (
-            <p role="status" className="mt-5 rounded-2xl bg-cream p-4 text-sm text-plum-900">{status === "sent" ? t("sent") : t("demo")}</p>
+            <p role="status" className="mt-5 rounded-2xl bg-cream p-4 text-sm text-brand-900">{status === "sent" ? t("sent") : t("demo")}</p>
           ) : (
             <form
               className="mt-5 space-y-4"

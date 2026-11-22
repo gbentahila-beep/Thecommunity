@@ -77,7 +77,7 @@ export async function getServiceFee(): Promise<ServiceFee | null> {
   return readServiceFee((await adminDb().doc("settings/booking").get()).data()?.serviceFee);
 }
 
-/** Mode de paiement (5h) : test ou virement, et coordonnées bancaires de The Host Club (équipe seulement). */
+/** Mode de paiement (5h) : test ou virement, et coordonnées bancaires de Wenzy (équipe seulement). */
 export type PaymentSettingsView = {
   method: "sandbox" | "bank_transfer" | "none";
   bank: { holder: string; bank: string; rib: string; iban: string; swift: string; deadlineHours: number; cutoffHours: number } | null;

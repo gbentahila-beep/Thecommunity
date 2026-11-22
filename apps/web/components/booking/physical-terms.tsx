@@ -19,7 +19,7 @@ export function PhysicalTermsCheckbox({ checked, onChange, error, disabled }: { 
           onChange={(e) => onChange(e.target.checked)}
           aria-invalid={error}
           aria-describedby={error ? "physical-terms-error" : undefined}
-          className="mt-0.5 size-5 shrink-0 accent-plum-900"
+          className="mt-0.5 size-5 shrink-0 accent-brand-900"
         />
         <span>{richText(t.raw("physicalTerms") as string, "")}</span>
       </label>

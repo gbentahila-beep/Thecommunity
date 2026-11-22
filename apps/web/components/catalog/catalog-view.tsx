@@ -165,15 +165,15 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
               </div>
               <div className="space-y-3 pt-1">
                 <label className="flex items-center gap-2.5 text-sm text-ink">
-                  <input type="checkbox" name="debutant" value="1" defaultChecked={filters.beginner} className="size-4 accent-plum-900" />
+                  <input type="checkbox" name="debutant" value="1" defaultChecked={filters.beginner} className="size-4 accent-brand-900" />
                   {tf("beginner")}
                 </label>
                 <label className="flex items-center gap-2.5 text-sm text-ink">
-                  <input type="checkbox" name="dispo" value="1" defaultChecked={filters.available} className="size-4 accent-plum-900" />
+                  <input type="checkbox" name="dispo" value="1" defaultChecked={filters.available} className="size-4 accent-brand-900" />
                   {tf("available")}
                 </label>
                 <label className="flex items-center gap-2.5 text-sm text-ink">
-                  <input type="checkbox" name="public" value="femmes" defaultChecked={filters.women} className="size-4 accent-plum-900" />
+                  <input type="checkbox" name="public" value="femmes" defaultChecked={filters.women} className="size-4 accent-brand-900" />
                   {tf("women")}
                 </label>
               </div>
@@ -191,7 +191,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                 <Link
                   href={hrefOf(state, { category: it.id })}
                   aria-current={on ? "page" : undefined}
-                  className={`relative flex items-center gap-2 px-3 pt-2 pb-3 text-[15px] transition after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:rounded-full ${on ? "font-semibold text-ink after:bg-plum-700" : "text-muted hover:text-ink after:bg-transparent"}`}
+                  className={`relative flex items-center gap-2 px-3 pt-2 pb-3 text-[15px] transition after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:rounded-full ${on ? "font-semibold text-ink after:bg-brand-700" : "text-muted hover:text-ink after:bg-transparent"}`}
                 >
                   {it.id && <CategoryIcon category={it.id} icon={it.icon} className="size-4" />}
                   {it.label}
@@ -211,7 +211,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                   href={hrefOf(state, { sub: it.id })}
                   aria-current={it.id === sub ? "page" : undefined}
                   data-testid="subcategory-chip"
-                  className={`inline-block rounded-full px-3.5 py-1.5 text-[13px] font-medium transition ${it.id === sub ? "bg-plum-100 text-plum-900" : "bg-white/60 text-ink/80 hover:bg-white"}`}
+                  className={`inline-block rounded-full px-3.5 py-1.5 text-[13px] font-medium transition ${it.id === sub ? "bg-brand-100 text-brand-900" : "bg-white/60 text-ink/80 hover:bg-white"}`}
                 >
                   {it.label}
                 </Link>
@@ -225,14 +225,14 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
         <ul className="flex flex-wrap items-center gap-2" aria-label={tf("active")} data-testid="active-filters">
           {chips.map((c) => (
             <li key={c.href}>
-              <Link href={c.href} className="inline-flex items-center gap-1.5 rounded-full bg-plum-50 px-3 py-1.5 text-sm font-medium text-plum-900 hover:bg-plum-100" aria-label={tf("remove", { label: c.label })}>
+              <Link href={c.href} className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1.5 text-sm font-medium text-brand-900 hover:bg-brand-100" aria-label={tf("remove", { label: c.label })}>
                 {c.label}
                 <X className="size-3.5" aria-hidden />
               </Link>
             </li>
           ))}
           <li>
-            <Link href={clearHref} className="text-sm font-semibold text-plum-900 underline underline-offset-4">{tf("clear")}</Link>
+            <Link href={clearHref} className="text-sm font-semibold text-brand-900 underline underline-offset-4">{tf("clear")}</Link>
           </li>
         </ul>
       )}
@@ -246,7 +246,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                 <>
                   <span className="text-[11px] font-semibold tracking-wide uppercase">{cell.weekday}</span>
                   <span className="text-xl leading-none font-semibold">{cell.day}</span>
-                  <span className={`size-1.5 rounded-full ${d.count ? "bg-plum-700" : "bg-transparent"}`} aria-hidden />
+                  <span className={`size-1.5 rounded-full ${d.count ? "bg-brand-700" : "bg-transparent"}`} aria-hidden />
                 </>
               );
               const base = "flex w-12 flex-col items-center gap-1 rounded-2xl py-2";
@@ -257,7 +257,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                       href={filters.date ? `${prefix}${hrefOf(state, { filters: { date: d.key } })}` : `#jour-${d.key}`}
                       aria-current={filters.date === d.key ? "date" : undefined}
                       aria-label={`${formatLongDate(`${d.key}T12:00:00Z`, locale)} : ${t("results", { count: d.count })}`}
-                      className={`${base} ${filters.date === d.key ? "bg-plum-900 text-white" : "text-ink hover:bg-white"}`}
+                      className={`${base} ${filters.date === d.key ? "bg-brand-900 text-white" : "text-ink hover:bg-white"}`}
                     >
                       {inner}
                     </a>
@@ -301,7 +301,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
       ) : results.undated.length === 0 ? (
         <div className="rounded-[var(--radius-card)] border border-dashed border-line bg-white/60 px-6 py-16 text-center" data-testid="catalog-empty">
           <p className="text-muted">{filters.q ? tf("emptySearch", { q: filters.q }) : t("empty")}</p>
-          <Link href="/experiences" className="mt-4 inline-block font-semibold text-plum-900 underline underline-offset-4">
+          <Link href="/experiences" className="mt-4 inline-block font-semibold text-brand-900 underline underline-offset-4">
             {t("reset")}
           </Link>
         </div>

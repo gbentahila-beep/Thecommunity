@@ -27,7 +27,7 @@ export default async function OrganizersAdminPage() {
                 <td><Badge tone={STATUS_TONE[o.status] ?? "gray"}>{ORGANIZER_STATUS_LABELS[o.status]}</Badge></td>
                 <td>{o.activityCounts.published} en ligne{o.activityCounts.pending ? ` · ${o.activityCounts.pending} à relire` : ""}</td>
                 <td className="whitespace-nowrap text-muted">{o.details?.submittedAt ? adminDate(o.details.submittedAt, false) : "—"}</td>
-                <td className="text-end"><Link href={`/admin/organisateurs/${o.id}`} className="font-semibold text-plum-900">Ouvrir</Link></td>
+                <td className="text-end"><Link href={`/admin/organisateurs/${o.id}`} className="font-semibold text-brand-900">Ouvrir</Link></td>
               </tr>
             ))}
           </Table>

@@ -69,10 +69,10 @@ export function HomeSettingsForm({ initial, experiences, live }: { initial: Home
       }}
     >
       <fieldset className="space-y-3" data-testid="home-banner-form">
-        <legend className="font-display text-xl font-medium text-plum-900">Bannière d&apos;annonce</legend>
+        <legend className="font-display text-xl font-medium text-brand-900">Bannière d&apos;annonce</legend>
         <p className="text-sm text-muted">Une ligne en haut de l&apos;accueil (nouvelle activité, ouverture d&apos;une ville, offre). 140 caractères au plus.</p>
         <label className="inline-flex items-center gap-2 text-sm font-medium">
-          <input type="checkbox" checked={banner.enabled} onChange={(e) => setBanner({ ...banner, enabled: e.target.checked })} className="size-4 accent-plum-900" />
+          <input type="checkbox" checked={banner.enabled} onChange={(e) => setBanner({ ...banner, enabled: e.target.checked })} className="size-4 accent-brand-900" />
           Afficher la bannière
         </label>
         <div className="grid gap-3 sm:grid-cols-3">
@@ -86,13 +86,13 @@ export function HomeSettingsForm({ initial, experiences, live }: { initial: Home
       </fieldset>
 
       <fieldset className="space-y-3">
-        <legend className="font-display text-xl font-medium text-plum-900">Sections de l&apos;accueil</legend>
+        <legend className="font-display text-xl font-medium text-brand-900">Sections de l&apos;accueil</legend>
         <p className="text-sm text-muted">Cochez les sections à afficher et rangez-les avec les flèches. L&apos;accroche et la photo du haut ne bougent pas. Une section automatique vide n&apos;apparaît pas.</p>
         <ol className="divide-y divide-line rounded-xl border border-line bg-white" data-testid="home-sections">
           {sections.map((s, i) => (
             <li key={s.id} className="flex items-center gap-3 px-3 py-2 text-sm" data-section={s.id}>
               <label className="flex flex-1 items-center gap-2">
-                <input type="checkbox" checked={s.enabled} onChange={(e) => setSections(sections.map((x) => (x.id === s.id ? { ...x, enabled: e.target.checked } : x)))} className="size-4 accent-plum-900" aria-label={`Afficher : ${HOME_SECTION_LABELS[s.id as HomeSectionId]}`} />
+                <input type="checkbox" checked={s.enabled} onChange={(e) => setSections(sections.map((x) => (x.id === s.id ? { ...x, enabled: e.target.checked } : x)))} className="size-4 accent-brand-900" aria-label={`Afficher : ${HOME_SECTION_LABELS[s.id as HomeSectionId]}`} />
                 <span className={s.enabled ? "text-ink" : "text-muted line-through"}>{HOME_SECTION_LABELS[s.id as HomeSectionId]}</span>
               </label>
               <button type="button" onClick={() => setSections(move(sections, i, -1))} disabled={i === 0} aria-label={`Monter : ${HOME_SECTION_LABELS[s.id]}`} className="grid size-8 place-items-center rounded-full hover:bg-cream disabled:opacity-30"><ArrowUp className="size-4" aria-hidden /></button>
@@ -103,7 +103,7 @@ export function HomeSettingsForm({ initial, experiences, live }: { initial: Home
       </fieldset>
 
       <fieldset className="space-y-3">
-        <legend className="font-display text-xl font-medium text-plum-900">Coups de cœur de l&apos;équipe</legend>
+        <legend className="font-display text-xl font-medium text-brand-900">Coups de cœur de l&apos;équipe</legend>
         <p className="text-sm text-muted">Jusqu&apos;à {HOME_FEATURED_MAX} activités publiées, dans l&apos;ordre choisi : section « Coups de cœur » de l&apos;accueil, badge « Coup de cœur » et première place dans le catalogue (tri « Recommandées »).</p>
         <ol className="space-y-2" data-testid="home-featured">
           {featured.map((id, i) => (
@@ -124,13 +124,13 @@ export function HomeSettingsForm({ initial, experiences, live }: { initial: Home
                 {experiences.filter((e) => !featured.includes(e.id)).map((e) => <option key={e.id} value={e.id}>{e.title}</option>)}
               </select>
             </label>
-            <button type="button" disabled={!pick} onClick={() => { setFeatured([...featured, pick]); setPick(""); }} className="rounded-full border border-plum-900 px-4 py-2 text-sm font-semibold text-plum-900 disabled:opacity-40">Ajouter</button>
+            <button type="button" disabled={!pick} onClick={() => { setFeatured([...featured, pick]); setPick(""); }} className="rounded-full border border-brand-900 px-4 py-2 text-sm font-semibold text-brand-900 disabled:opacity-40">Ajouter</button>
           </div>
         )}
       </fieldset>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={busy} className="rounded-full bg-plum-900 px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-60">Enregistrer l&apos;accueil</button>
+        <button type="submit" disabled={busy} className="rounded-full bg-brand-900 px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-60">Enregistrer l&apos;accueil</button>
         {msg && <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-emerald-800" : "text-red-800"}`}>{msg.text}</p>}
       </div>
     </form>

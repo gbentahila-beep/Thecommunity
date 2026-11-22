@@ -67,7 +67,7 @@ export default async function OrganizerAdminPage({ params }: PageProps<"/admin/o
           <ul className="divide-y divide-line text-sm">
             {activities.map((e) => (
               <li key={e.id} className="flex flex-wrap items-center gap-2 py-2">
-                <Link href={`/admin/experiences/${e.id}`} className="font-medium text-plum-900 underline">{e.title.fr}</Link>
+                <Link href={`/admin/experiences/${e.id}`} className="font-medium text-brand-900 underline">{e.title.fr}</Link>
                 <Badge tone={e.status === "published" ? "green" : e.status === "pending_review" ? "amber" : e.status === "rejected" ? "red" : "gray"}>{{ published: "En ligne", pending_review: "À relire", rejected: "Refusée", draft: "Brouillon", archived: "Archivée" }[e.status]}</Badge>
                 {e.reviewFlag && <Badge tone="amber">Modifiée</Badge>}
               </li>

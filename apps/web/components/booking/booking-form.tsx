@@ -127,7 +127,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
               onClick={() => changeSeats(Math.max(1, seats - 1))}
               disabled={seats <= 1 || busy}
               aria-label={t("fewer")}
-              className="grid size-10 place-items-center rounded-full border border-line text-plum-900 disabled:opacity-40"
+              className="grid size-10 place-items-center rounded-full border border-line text-brand-900 disabled:opacity-40"
             >
               <Minus className="size-4" aria-hidden />
             </button>
@@ -137,7 +137,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
               onClick={() => changeSeats(Math.min(maxSeats, seats + 1))}
               disabled={seats >= maxSeats || busy}
               aria-label={t("more")}
-              className="grid size-10 place-items-center rounded-full border border-line text-plum-900 disabled:opacity-40"
+              className="grid size-10 place-items-center rounded-full border border-line text-brand-900 disabled:opacity-40"
             >
               <Plus className="size-4" aria-hidden />
             </button>
@@ -176,10 +176,10 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
               <Tag className="size-4" aria-hidden />
               {t("promoApplied", { code: promo, amount: money(pricing?.discount ?? 0) })}
             </p>
-            <button type="button" disabled={busy} onClick={() => { setPromoInput(""); void quote(seats, undefined); }} className="font-semibold text-plum-900 underline">{t("promoRemove")}</button>
+            <button type="button" disabled={busy} onClick={() => { setPromoInput(""); void quote(seats, undefined); }} className="font-semibold text-brand-900 underline">{t("promoRemove")}</button>
           </div>
         ) : !promoOpen ? (
-          <button type="button" onClick={() => setPromoOpen(true)} className="flex items-center gap-2 text-sm font-semibold text-plum-900">
+          <button type="button" onClick={() => setPromoOpen(true)} className="flex items-center gap-2 text-sm font-semibold text-brand-900">
             <Tag className="size-4" aria-hidden />
             {t("promoToggle")}
           </button>
@@ -204,7 +204,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
                 maxLength={20}
                 aria-invalid={Boolean(promoError) || undefined}
                 aria-describedby={promoError ? "promo-err" : undefined}
-                className="w-full rounded-2xl border border-line px-4 py-3 text-[15px] uppercase focus:border-plum-700 focus:outline-none"
+                className="w-full rounded-2xl border border-line px-4 py-3 text-[15px] uppercase focus:border-brand-700 focus:outline-none"
               />
             </div>
             <button type="submit" disabled={busy || !promoInput.trim()} className="btn btn-secondary btn-sm">{t("promoApply")}</button>

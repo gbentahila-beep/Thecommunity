@@ -62,7 +62,7 @@ export function QuestionnaireForm({ reservationId, questions, initial, editable 
               {q.options.map((_, k) => {
                 const on = answers[q.id] === k;
                 return (
-                  <label key={k} className={`cursor-pointer rounded-full border px-4 py-2 text-sm transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-plum-700 ${on ? "border-plum-900 bg-plum-900 text-white" : "border-line bg-white text-ink hover:border-plum-700"} ${!editable ? "cursor-default opacity-70" : ""}`}>
+                  <label key={k} className={`cursor-pointer rounded-full border px-4 py-2 text-sm transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-700 ${on ? "border-brand-900 bg-brand-900 text-white" : "border-line bg-white text-ink hover:border-brand-700"} ${!editable ? "cursor-default opacity-70" : ""}`}>
                     <input
                       type="radio"
                       name={`qq-${q.id}`}

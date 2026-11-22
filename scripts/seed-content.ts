@@ -60,7 +60,7 @@ async function main() {
 
   // Formule d'abonnement proposée, NON active : l'équipe règle le prix et l'active dans le back-office.
   const plan = await db.doc("membershipPlans/annual").create({
-    name: { fr: "The Host Club Membre", ar: "عضوية The Host Club" },
+    name: { fr: "Wenzy Membre", ar: "عضوية Wenzy" },
     price: { amount: 99000, currency: "MAD" },
     discountPercent: 15,
     earlyAccessHours: 0,

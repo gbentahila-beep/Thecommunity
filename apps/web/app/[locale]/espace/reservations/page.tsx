@@ -68,7 +68,7 @@ export default async function ReservationsPage({ params, searchParams }: PagePro
             aria-selected={tab.key === current}
             href={`/espace/reservations?onglet=${tab.param}`}
             className={`flex-1 rounded-full px-3 py-2 text-center text-sm font-medium transition ${
-              tab.key === current ? "bg-plum-900 text-white" : "text-ink hover:bg-white"
+              tab.key === current ? "bg-brand-900 text-white" : "text-ink hover:bg-white"
             }`}
           >
             {labels[tab.key]} <span className="opacity-70">({space[tab.key].length})</span>

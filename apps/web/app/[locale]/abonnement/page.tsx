@@ -97,7 +97,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   return (
     <PageShell className="max-w-5xl space-y-6 py-8 sm:py-10">
       {sp.depuis === "profil" && (
-        <Link href="/espace/compte" className="-ms-1 inline-flex items-center gap-1 rounded-full py-1 pe-3 text-sm font-semibold text-plum-900 hover:bg-white" data-testid="account-back">
+        <Link href="/espace/compte" className="-ms-1 inline-flex items-center gap-1 rounded-full py-1 pe-3 text-sm font-semibold text-brand-900 hover:bg-white" data-testid="account-back">
           <ChevronLeft className="size-4 rtl:-scale-x-100" aria-hidden />
           {tn("myProfile")}
         </Link>
@@ -110,24 +110,24 @@ export default async function MembershipPage({ params, searchParams }: PageProps
       <h1 className="page-title">{t("title")}</h1>
 
       <section className="card p-6 text-center sm:p-10" aria-labelledby="membership-hero">
-        <Sparkles className="mx-auto size-7 text-plum-800" aria-hidden />
+        <Sparkles className="mx-auto size-7 text-brand-800" aria-hidden />
         <h2 id="membership-hero" className="section-title mx-auto mt-3 max-w-xl">
           {t("heroTitle", { price: money(cheapest) })}
         </h2>
         <p className="mx-auto mt-4 inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 rounded-full bg-white/85 px-5 py-2.5 text-[15px] font-semibold text-ink shadow-card">
           {t("heroChip", { percent: plan.discountPercent })}
-          {plan.waiveServiceFee && <span className="text-plum-800">· {t("heroChipFees")}</span>}
+          {plan.waiveServiceFee && <span className="text-brand-800">· {t("heroChipFees")}</span>}
         </p>
-        {plan.earlyAccessHours > 0 && <p className="mx-auto mt-4 max-w-md text-[15px] text-ink/80"><span className="font-semibold text-plum-800">{t("heroNew")}</span> {t("heroEarly", { hours: plan.earlyAccessHours })}</p>}
+        {plan.earlyAccessHours > 0 && <p className="mx-auto mt-4 max-w-md text-[15px] text-ink/80"><span className="font-semibold text-brand-800">{t("heroNew")}</span> {t("heroEarly", { hours: plan.earlyAccessHours })}</p>}
       </section>
 
       {me?.active && me.period && (
-        <section className="rounded-[var(--radius-card)] bg-plum-900 p-5 text-white shadow-card">
+        <section className="rounded-[var(--radius-card)] bg-brand-900 p-5 text-white shadow-card">
           <p className="flex items-center gap-2 font-semibold">
             <BadgeCheck className="size-5" aria-hidden />
             {t("activeTitle")}
           </p>
-          <p className="mt-1 text-sm text-plum-50">{t("activeUntil", { date: formatLongDate(me.period.endAt.toISOString(), locale) })}</p>
+          <p className="mt-1 text-sm text-brand-50">{t("activeUntil", { date: formatLongDate(me.period.endAt.toISOString(), locale) })}</p>
           {me.savings > 0 && <p className="mt-3 text-sm">{t("savings", { amount: money(me.savings) })}</p>}
         </section>
       )}
@@ -192,7 +192,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
           <li>{t("terms2")}</li>
           <li>{t("terms3")}</li>
         </ul>
-        <Link href="/cgv" className="mt-3 inline-block text-sm font-semibold text-plum-900 underline underline-offset-4">{t("termsLink")}</Link>
+        <Link href="/cgv" className="mt-3 inline-block text-sm font-semibold text-brand-900 underline underline-offset-4">{t("termsLink")}</Link>
       </details>
     </PageShell>
   );

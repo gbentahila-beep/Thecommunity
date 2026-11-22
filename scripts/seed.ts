@@ -51,7 +51,7 @@ async function main() {
   entries.push(["settings/cancellationPolicies", { policies: [DEFAULT_CANCELLATION_POLICY] }]);
   entries.push(["settings/payment", { provider: "sandbox", mode: "test" }]);
   entries.push(["membershipPlans/annual", {
-    name: { fr: "The Host Club Membre", ar: "عضوية The Host Club" },
+    name: { fr: "Wenzy Membre", ar: "عضوية Wenzy" },
     price: { amount: 99000, currency: "MAD" },
     discountPercent: 15,
     earlyAccessHours: 48,

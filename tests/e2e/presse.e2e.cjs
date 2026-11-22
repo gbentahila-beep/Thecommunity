@@ -24,7 +24,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   }
   await page.getByRole('button', { name: 'Copier' }).first().click();
   const clip = await page.evaluate(() => navigator.clipboard.readText());
-  assert(clip.startsWith('The Host Club organise à Casablanca'), 'présentation copiée dans le presse-papiers');
+  assert(clip.startsWith('Wenzy organise à Casablanca'), 'présentation copiée dans le presse-papiers');
   assert(await page.getByText('Copié').first().isVisible(), 'copie confirmée à l’écran');
   assert(!(await page.content()).match(/\d+\s*(membres|participants)\b/), 'aucun chiffre de fréquentation inventé');
 

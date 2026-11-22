@@ -62,7 +62,7 @@ async function member(tag, firstName) {
   globalThis.__page = pro;
   await login(pro, o.email, o.password, '/pro');
   await pro.waitForURL('**/pro', { timeout: 25000 });
-  assert(await visible(pro.getByRole('heading', { level: 1, name: 'Proposez vos activités sur The Host Club' })), '/pro : présentation pour un membre sans compte organisateur');
+  assert(await visible(pro.getByRole('heading', { level: 1, name: 'Proposez vos activités sur Wenzy' })), '/pro : présentation pour un membre sans compte organisateur');
   await pro.getByRole('link', { name: 'Créer mon compte organisateur' }).click();
   await pro.waitForURL('**/pro/inscription');
   await pro.locator('#o-businessName').fill(name);

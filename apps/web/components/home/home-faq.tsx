@@ -15,15 +15,15 @@ export async function HomeFaq() {
           <details key={k} className="group p-5">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink [&::-webkit-details-marker]:hidden">
               {tf(`q${k}`)}
-              <ChevronDown className="size-5 shrink-0 text-plum-700 transition group-open:rotate-180" aria-hidden />
+              <ChevronDown className="size-5 shrink-0 text-brand-700 transition group-open:rotate-180" aria-hidden />
             </summary>
             <p className="mt-3 leading-relaxed text-ink/80">{tf(`a${k}`)}</p>
           </details>
         ))}
       </div>
       <div className="info-box mt-10 flex flex-col items-center gap-3">
-        <LifeBuoy className="size-7 text-plum-900" aria-hidden />
-        <h3 className="font-display text-[1.45rem] leading-tight font-medium text-plum-900">{t("moreQuestions")}</h3>
+        <LifeBuoy className="size-7 text-brand-900" aria-hidden />
+        <h3 className="font-display text-[1.45rem] leading-tight font-medium text-brand-900">{t("moreQuestions")}</h3>
         <p className="text-ink/75">{t("moreQuestionsText")}</p>
         <PrimaryLink href="/aide" className="mt-2">{t("helpCta")}</PrimaryLink>
       </div>

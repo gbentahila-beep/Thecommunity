@@ -28,7 +28,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
       {
         "title": "1. À quoi servent ces conditions",
         "body": [
-          "Une activité physique demande un effort et comporte des risques propres (chute, entorse, choc, fatigue). Ces conditions vous informent de ces risques, rappellent les règles qui permettent de les limiter et précisent le rôle de chacun : vous, le lieu partenaire et The Host Club."
+          "Une activité physique demande un effort et comporte des risques propres (chute, entorse, choc, fatigue). Ces conditions vous informent de ces risques, rappellent les règles qui permettent de les limiter et précisent le rôle de chacun : vous, le lieu partenaire et Wenzy."
         ]
       },
       {
@@ -70,12 +70,12 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         "title": "6. Le rôle de chacun",
         "body": [
           [
-            "The Host Club organise l'expérience, choisit les lieux partenaires et vérifie qu'ils disposent d'une assurance responsabilité civile.",
+            "Wenzy organise l'expérience, choisit les lieux partenaires et vérifie qu'ils disposent d'une assurance responsabilité civile.",
             "Le lieu partenaire est responsable de ses installations, de son matériel et, le cas échéant, de l'encadrement de l'activité.",
             "Vous êtes responsable de votre comportement, du respect des consignes et des dommages que vous causeriez à d'autres personnes ou au matériel.",
             "Nous vous conseillons d'être couvert par une assurance personnelle (individuelle accident, responsabilité civile) : vérifiez vos contrats."
           ],
-          "Rien dans ces conditions ne limite la responsabilité de The Host Club ou du lieu partenaire pour leurs propres fautes, ni les droits que vous donne la loi."
+          "Rien dans ces conditions ne limite la responsabilité de Wenzy ou du lieu partenaire pour leurs propres fautes, ni les droits que vous donne la loi."
         ]
       },
       {
@@ -102,14 +102,14 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
     title: "Sécurité",
     updated: UPDATED_FR,
     intro:
-      "Rencontrer de nouvelles personnes doit être enthousiasmant, jamais inquiétant. Chaque expérience The Host Club se déroule en groupe, dans un lieu public ou chez un partenaire sélectionné, avec des garde-fous prévus dès sa conception. Cette page explique ce que nous faisons pour vous protéger, et ce que vous pouvez faire pour veiller sur vous et sur les autres.",
+      "Rencontrer de nouvelles personnes doit être enthousiasmant, jamais inquiétant. Chaque expérience Wenzy se déroule en groupe, dans un lieu public ou chez un partenaire sélectionné, avec des garde-fous prévus dès sa conception. Cette page explique ce que nous faisons pour vous protéger, et ce que vous pouvez faire pour veiller sur vous et sur les autres.",
     sections: [
       {
         title: "Nos principes",
         body: [
           [
             "La sécurité avant la croissance : face à un risque, nous choisissons toujours l'option la plus prudente, même si elle nous coûte une réservation ou un membre.",
-            "L'amitié d'abord : The Host Club n'est pas une application de rencontre amoureuse. L'insistance, la pression amoureuse ou sexuelle et les avances répétées non désirées sont interdites.",
+            "L'amitié d'abord : Wenzy n'est pas une application de rencontre amoureuse. L'insistance, la pression amoureuse ou sexuelle et les avances répétées non désirées sont interdites.",
             "Entre adultes : le service est réservé aux personnes de 18 ans et plus. Un compte qui semble appartenir à un mineur peut être restreint, vérifié ou supprimé.",
             "De vraies personnes : chacun se présente sous son vrai prénom. Faux profils, usurpation d'identité et comptes multiples sont interdits ; nous pouvons demander une vérification en cas de doute.",
           ],
@@ -184,7 +184,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         body: [
           [
             "Gardez le contact à votre rythme : partagez vos coordonnées seulement avec les personnes en qui vous avez confiance.",
-            "N'envoyez jamais d'argent. Ne prêtez rien, ne communiquez ni informations bancaires, ni codes, ni cartes cadeaux à une personne rencontrée via The Host Club, aussi touchante que soit son histoire. C'est l'arnaque la plus courante : signalez-la-nous.",
+            "N'envoyez jamais d'argent. Ne prêtez rien, ne communiquez ni informations bancaires, ni codes, ni cartes cadeaux à une personne rencontrée via Wenzy, aussi touchante que soit son histoire. C'est l'arnaque la plus courante : signalez-la-nous.",
             "Rentrez en sécurité : ne prenez pas le volant après avoir bu et ne montez pas avec quelqu'un qui a bu. Préférez un taxi, une application de VTC ou le tramway.",
           ],
         ],
@@ -216,7 +216,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
     title: "Règles de la communauté",
     updated: UPDATED_FR,
     intro:
-      "The Host Club réunit des personnes qui ne se connaissent pas autour d'une table, d'un atelier ou d'une sortie. Cela fonctionne parce que chacun arrive ouvert aux autres — et cela ne tient que si tout le monde se sent en sécurité et respecté. Ces règles disent ce que nous attendons de chaque membre, ce sur quoi nous agissons quand quelque chose ne va pas, et ce qui se passe ensuite.",
+      "Wenzy réunit des personnes qui ne se connaissent pas autour d'une table, d'un atelier ou d'une sortie. Cela fonctionne parce que chacun arrive ouvert aux autres — et cela ne tient que si tout le monde se sent en sécurité et respecté. Ces règles disent ce que nous attendons de chaque membre, ce sur quoi nous agissons quand quelque chose ne va pas, et ce qui se passe ensuite.",
     sections: [
       {
         title: "Où elles s'appliquent",
@@ -224,7 +224,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
           [
             "Pendant les expériences, de l'arrivée au départ, y compris ce qui les prolonge directement (un verre après, le trajet du retour).",
             "Sur le site : profil, avis, demandes de participation et échanges avec l'équipe.",
-            "En dehors de The Host Club, lorsqu'un membre en contacte un autre contre son gré à la suite d'une expérience.",
+            "En dehors de Wenzy, lorsqu'un membre en contacte un autre contre son gré à la suite d'une expérience.",
           ],
           "Pour les conseils pratiques avant, pendant et après une rencontre, consultez notre page [Sécurité](/securite).",
         ],
@@ -288,7 +288,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "Pas de discrimination",
         body: [
-          "Réunir des personnes d'origines, de parcours et d'opinions différents, c'est le cœur de The Host Club. Nous agissons contre toute discrimination, qu'elle vienne d'un participant ou d'un lieu.",
+          "Réunir des personnes d'origines, de parcours et d'opinions différents, c'est le cœur de Wenzy. Nous agissons contre toute discrimination, qu'elle vienne d'un participant ou d'un lieu.",
           [
             "Propos haineux ou dégradants visant l'origine, la religion, la nationalité, le genre, l'orientation sexuelle, le handicap ou l'âge.",
             "Mise à l'écart volontaire : un groupe qui ignore ou isole un convive à cause de ce qu'il est.",
@@ -307,7 +307,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         ],
       },
       {
-        title: "Un usage loyal de The Host Club",
+        title: "Un usage loyal de Wenzy",
         body: [
           [
             "Pas de vente ni de prospection : ne profitez pas d'une expérience pour recruter, vendre, promouvoir votre entreprise ou gagner des abonnés. Parler de son métier, c'est de la conversation ; orienter la soirée vers une transaction, non.",
@@ -381,14 +381,14 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
     title: "Conditions générales d'utilisation",
     updated: UPDATED_FR,
     intro:
-      "Ces conditions encadrent l'accès et l'utilisation du site The Host Club. En créant un compte ou en cochant « J'accepte », vous concluez un contrat électronique avec The Host Club. Si vous ne les acceptez pas, n'utilisez pas le service. Prix, paiement, annulation et abonnement relèvent des [conditions générales de vente](/cgv) ; le comportement attendu de chacun est précisé dans les [règles de la communauté](/charte).",
+      "Ces conditions encadrent l'accès et l'utilisation du site Wenzy. En créant un compte ou en cochant « J'accepte », vous concluez un contrat électronique avec Wenzy. Si vous ne les acceptez pas, n'utilisez pas le service. Prix, paiement, annulation et abonnement relèvent des [conditions générales de vente](/cgv) ; le comportement attendu de chacun est précisé dans les [règles de la communauté](/charte).",
     sections: [
       { title: "1. Éditeur", body: ["Le site est édité par {{publisher}}, dont le siège est situé {{address}} (ICE {{ice}}, RC {{rc}}). Contact : {{supportEmail}}. Hébergement : {{host}}."] },
       {
         title: "2. Le service",
         body: [
-          "The Host Club propose des expériences sociales en petit groupe (repas, ateliers, sport, jeux, sorties) pour rencontrer de nouvelles personnes, dans des lieux publics ou chez des partenaires. Nous choisissons les lieux, composons les groupes, vous informons et restons votre interlocuteur unique.",
-          "The Host Club n'est pas un service de rencontre amoureuse. Des liens peuvent naître entre adultes consentants, mais toute pression amoureuse ou sexuelle, toute insistance et tout comportement qui met le groupe mal à l'aise sont interdits.",
+          "Wenzy propose des expériences sociales en petit groupe (repas, ateliers, sport, jeux, sorties) pour rencontrer de nouvelles personnes, dans des lieux publics ou chez des partenaires. Nous choisissons les lieux, composons les groupes, vous informons et restons votre interlocuteur unique.",
+          "Wenzy n'est pas un service de rencontre amoureuse. Des liens peuvent naître entre adultes consentants, mais toute pression amoureuse ou sexuelle, toute insistance et tout comportement qui met le groupe mal à l'aise sont interdits.",
         ],
       },
       {
@@ -433,7 +433,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         body: [
           "Une expérience se réserve directement ou, si elle est « sur demande », après validation de votre demande par l'équipe. Quand une date est complète, vous pouvez rejoindre la liste d'attente. Le fonctionnement détaillé (prix, délais de paiement, annulation, remboursement) figure dans les [conditions générales de vente](/cgv).",
           "Pour les activités physiques (sport, paintball, randonnée…), réserver ou demander à participer implique d'accepter les [conditions de participation aux activités physiques](/conditions-activites-physiques).",
-          "Membres de confiance : l'équipe peut permettre à des membres habitués de proposer leurs propres idées de sorties. Une proposition n'engage à rien : l'équipe la vérifie (lieu, sécurité, prix) avant toute publication et reste l'organisatrice de l'expérience publiée, vendue par The Host Club aux mêmes conditions que les autres. Le membre qui l'a proposée n'est ni salarié ni prestataire de The Host Club et n'est pas rémunéré à ce titre, sauf accord écrit distinct.",
+          "Membres de confiance : l'équipe peut permettre à des membres habitués de proposer leurs propres idées de sorties. Une proposition n'engage à rien : l'équipe la vérifie (lieu, sécurité, prix) avant toute publication et reste l'organisatrice de l'expérience publiée, vendue par Wenzy aux mêmes conditions que les autres. Le membre qui l'a proposée n'est ni salarié ni prestataire de Wenzy et n'est pas rémunéré à ce titre, sauf accord écrit distinct.",
         ],
       },
       {
@@ -475,7 +475,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "11. Contenus publiés par les membres",
         body: [
-          "Les avis, la photo de profil, la biographie et les messages joints aux demandes restent sous votre responsabilité. Vous accordez à The Host Club, gratuitement et pour la durée nécessaire, une licence non exclusive pour les héberger et les afficher dans le cadre du service (vos avis sont signés de votre prénom et de l'initiale de votre nom). L'équipe peut masquer un contenu inapproprié, faux ou contraire à la loi.",
+          "Les avis, la photo de profil, la biographie et les messages joints aux demandes restent sous votre responsabilité. Vous accordez à Wenzy, gratuitement et pour la durée nécessaire, une licence non exclusive pour les héberger et les afficher dans le cadre du service (vos avis sont signés de votre prénom et de l'initiale de votre nom). L'équipe peut masquer un contenu inapproprié, faux ou contraire à la loi.",
           "Avis : une photo jointe n'est publiée qu'après vérification par l'équipe (n'y montrez personne sans son accord). L'organisateur de l'activité et l'équipe peuvent répondre publiquement sous votre avis. Tout membre ou organisateur peut signaler un avis ; un signalement ne le masque pas automatiquement : l'équipe vérifie et décide, et chaque décision est conservée dans l'historique de l'avis.",
         ],
       },
@@ -488,12 +488,12 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
       },
       {
         title: "13. Propriété intellectuelle",
-        body: ["La marque The Host Club, le site, ses textes, visuels, logiciels et sa présentation sont protégés. Vous bénéficiez d'un droit d'utilisation personnel, non transférable et non commercial ; toute reproduction ou extraction sans autorisation est interdite."],
+        body: ["La marque Wenzy, le site, ses textes, visuels, logiciels et sa présentation sont protégés. Vous bénéficiez d'un droit d'utilisation personnel, non transférable et non commercial ; toute reproduction ou extraction sans autorisation est interdite."],
       },
       {
         title: "14. Responsabilités",
         body: [
-          "The Host Club organise les expériences avec soin, sélectionne ses lieux partenaires, prend des mesures raisonnables de sécurité et informe les participants de tout changement. Nous ne pouvons toutefois garantir qu'une rencontre entre personnes soit sans aucun risque. Dans les limites permises par la loi, nous ne répondons pas des actes des participants, des prestations des lieux partenaires (repas, boissons, activités) ni des cas de force majeure. Les textes et photos de présentation sont indicatifs. Chaque participant reste responsable de son comportement et de sa consommation.",
+          "Wenzy organise les expériences avec soin, sélectionne ses lieux partenaires, prend des mesures raisonnables de sécurité et informe les participants de tout changement. Nous ne pouvons toutefois garantir qu'une rencontre entre personnes soit sans aucun risque. Dans les limites permises par la loi, nous ne répondons pas des actes des participants, des prestations des lieux partenaires (repas, boissons, activités) ni des cas de force majeure. Les textes et photos de présentation sont indicatifs. Chaque participant reste responsable de son comportement et de sa consommation.",
         ],
       },
       {
@@ -517,7 +517,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
   sales: {
     title: "Conditions générales de vente",
     updated: UPDATED_FR,
-    intro: "Ces conditions s'appliquent à toute réservation d'expérience et à l'abonnement achetés sur The Host Club. Les prix, ce qui est inclus et les conditions d'annulation sont toujours affichés avant le paiement.",
+    intro: "Ces conditions s'appliquent à toute réservation d'expérience et à l'abonnement achetés sur Wenzy. Les prix, ce qui est inclus et les conditions d'annulation sont toujours affichés avant le paiement.",
     sections: [
       { title: "1. Vendeur", body: ["{{publisher}}, {{address}} — ICE {{ice}}. Contact : {{supportEmail}}."] },
       {
@@ -525,7 +525,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         body: [
           "Les prix sont indiqués en dirhams marocains (DH), toutes taxes comprises, par place. Ce qui est inclus (repas, boissons, matériel, cours…) est précisé sur la fiche de chaque expérience ; toute consommation supplémentaire se règle directement auprès du lieu. Les membres abonnés bénéficient du prix membre affiché à côté du prix public.",
           "Un code promo s'applique après le prix membre, sur les réservations directes, une fois par personne, dans les conditions indiquées avec le code. D'éventuels frais de service peuvent s'ajouter : ils sont toujours affichés avant le paiement, ne s'appliquent jamais à une place gratuite et sont remboursés avec la place.",
-          "Certaines expériences se règlent en deux parts, toujours indiquées sur la fiche : la part organisation, payée en ligne à la réservation, et une part réglée sur place directement au partenaire (un prix fixe annoncé à l'avance, ou votre consommation). La part sur place n'est jamais encaissée par The Host Club : elle ne figure pas sur notre facture et n'est pas due si votre réservation est annulée. Le prix membre, l'abonnement, les codes promo et les frais de service ne portent que sur la part payée en ligne.",
+          "Certaines expériences se règlent en deux parts, toujours indiquées sur la fiche : la part organisation, payée en ligne à la réservation, et une part réglée sur place directement au partenaire (un prix fixe annoncé à l'avance, ou votre consommation). La part sur place n'est jamais encaissée par Wenzy : elle ne figure pas sur notre facture et n'est pas due si votre réservation est annulée. Le prix membre, l'abonnement, les codes promo et les frais de service ne portent que sur la part payée en ligne.",
         ],
       },
       {
@@ -535,9 +535,9 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
             "Réservation directe : la place est bloquée le temps du paiement (15 minutes pour un paiement par carte ; jusqu'à l'échéance indiquée pour un virement), puis remise en vente si le paiement n'a pas abouti.",
             "Expérience sur demande : aucun paiement à la demande ; si elle est acceptée, la place est réservée 24 heures pour payer.",
             "Liste d'attente : si une place se libère, elle est proposée à la première personne inscrite et réservée 4 heures pour payer.",
-            "Paiement par virement bancaire : après la réservation, une référence unique et les coordonnées bancaires de The Host Club sont communiquées (à l'écran et par e-mail). La place est bloquée jusqu'à l'échéance indiquée : 48 heures au plus, et au plus tard 24 heures avant l'expérience. La réservation est confirmée, avec le billet et la facture, dès que l'équipe constate la réception du virement du montant exact portant la référence.",
+            "Paiement par virement bancaire : après la réservation, une référence unique et les coordonnées bancaires de Wenzy sont communiquées (à l'écran et par e-mail). La place est bloquée jusqu'à l'échéance indiquée : 48 heures au plus, et au plus tard 24 heures avant l'expérience. La réservation est confirmée, avec le billet et la facture, dès que l'équipe constate la réception du virement du montant exact portant la référence.",
             "Virement non reçu à l'échéance : la place est libérée et vous en êtes informé. Un virement arrivé ensuite donne droit à une place s'il en reste, sinon il est intégralement remboursé. Les remboursements d'un virement se font par virement : les coordonnées nécessaires vous sont demandées à ce moment-là et ne sont pas enregistrées sur le site.",
-            "Lorsque le paiement par carte est proposé, il s'effectue auprès d'un prestataire de paiement sécurisé ; The Host Club ne reçoit ni ne conserve aucune donnée de carte. La réservation est confirmée à réception de la confirmation du paiement.",
+            "Lorsque le paiement par carte est proposé, il s'effectue auprès d'un prestataire de paiement sécurisé ; Wenzy ne reçoit ni ne conserve aucune donnée de carte. La réservation est confirmée à réception de la confirmation du paiement.",
             "Âge minimum : certaines expériences sont réservées à partir d'un âge supérieur à 18 ans, indiqué sur leur fiche ; la réservation est refusée si votre date de naissance ne le permet pas.",
             "Activités physiques : la réservation (ou la demande de participation) implique l'acceptation des [conditions de participation aux activités physiques](/conditions-activites-physiques) ; la version acceptée et sa date sont conservées avec la réservation.",
             "Questionnaire : pour certaines expériences, un court questionnaire est proposé après la réservation pour composer les groupes. Il est recommandé mais ne conditionne pas la réservation.",
@@ -556,7 +556,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         ],
       },
       {
-        title: "5. Annulation ou modification par The Host Club",
+        title: "5. Annulation ou modification par Wenzy",
         body: [
           "Si nous annulons une expérience (météo, indisponibilité du partenaire, nombre insuffisant de participants…), vous êtes prévenu et remboursé intégralement. Nous pouvons proposer de déplacer votre réservation vers une autre date de la même expérience ; vous restez libre d'annuler avec remboursement intégral si la nouvelle date ne vous convient pas.",
           "Expérience en plein air : si la météo ne permet pas l'activité, nous vous prévenons au plus tôt. Elle est soit reportée (vous gardez votre place à la nouvelle date, ou êtes intégralement remboursé si elle ne vous convient pas), soit annulée et intégralement remboursée.",
@@ -589,7 +589,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
     title: "Politique de confidentialité",
     updated: UPDATED_FR,
     intro:
-      "Cette politique explique quelles données nous collectons, comment, pourquoi, combien de temps nous les gardons, avec qui elles sont partagées et comment exercer vos droits, conformément à la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel. Elle s'applique au site The Host Club, à l'espace membre et à tous les services qui y sont accessibles.",
+      "Cette politique explique quelles données nous collectons, comment, pourquoi, combien de temps nous les gardons, avec qui elles sont partagées et comment exercer vos droits, conformément à la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel. Elle s'applique au site Wenzy, à l'espace membre et à tous les services qui y sont accessibles.",
     sections: [
       {
         title: "1. L'essentiel",
@@ -751,7 +751,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
       {
         "title": "1. What these terms are for",
         "body": [
-          "A physical activity requires effort and carries its own risks (falls, sprains, knocks, fatigue). These terms tell you about those risks, set out the rules that help limit them and explain each party's role: you, the partner venue and The Host Club."
+          "A physical activity requires effort and carries its own risks (falls, sprains, knocks, fatigue). These terms tell you about those risks, set out the rules that help limit them and explain each party's role: you, the partner venue and Wenzy."
         ]
       },
       {
@@ -793,12 +793,12 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         "title": "6. Who does what",
         "body": [
           [
-            "The Host Club organises the experience, chooses partner venues and checks that they have liability insurance.",
+            "Wenzy organises the experience, chooses partner venues and checks that they have liability insurance.",
             "The partner venue is responsible for its facilities, its equipment and, where relevant, the coaching of the activity.",
             "You are responsible for your behaviour, for following instructions and for any damage you cause to other people or equipment.",
             "We advise you to have personal insurance (personal accident, liability): check your policies."
           ],
-          "Nothing in these terms limits The Host Club's or the partner venue's liability for their own faults, or your rights under the law."
+          "Nothing in these terms limits Wenzy's or the partner venue's liability for their own faults, or your rights under the law."
         ]
       },
       {
@@ -825,14 +825,14 @@ const en: Record<BaseLegalKey, LegalDoc> = {
     title: "Safety",
     updated: UPDATED_EN,
     intro:
-      "Meeting new people should feel exciting, never worrying. Every The Host Club experience happens in a group, in a public place or at a selected partner venue, with safeguards built in from the start. This page explains what we do to protect you, and what you can do to look after yourself and others.",
+      "Meeting new people should feel exciting, never worrying. Every Wenzy experience happens in a group, in a public place or at a selected partner venue, with safeguards built in from the start. This page explains what we do to protect you, and what you can do to look after yourself and others.",
     sections: [
       {
         title: "Our principles",
         body: [
           [
             "Safety before growth: when there is a risk, we always choose the most careful option, even if it costs us a booking or a member.",
-            "Friendship first: The Host Club is not a dating app. Pushiness, romantic or sexual pressure and repeated unwanted advances are prohibited.",
+            "Friendship first: Wenzy is not a dating app. Pushiness, romantic or sexual pressure and repeated unwanted advances are prohibited.",
             "Adults only: the service is for people aged 18 and over. An account that seems to belong to a minor may be restricted, verified or removed.",
             "Real people: everyone uses their real first name. Fake profiles, impersonation and multiple accounts are prohibited; we may ask for verification if in doubt.",
           ],
@@ -907,7 +907,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         body: [
           [
             "Stay in touch at your own pace: share your contact details only with people you trust.",
-            "Never send money. Don't lend anything or share bank details, codes or gift cards with someone you met through The Host Club, however moving their story. It's the most common scam: report it to us.",
+            "Never send money. Don't lend anything or share bank details, codes or gift cards with someone you met through Wenzy, however moving their story. It's the most common scam: report it to us.",
             "Get home safely: don't drive after drinking and don't get in a car with someone who has. Take a taxi, a ride-hailing app or the tram.",
           ],
         ],
@@ -938,7 +938,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
     title: "Community rules",
     updated: UPDATED_EN,
     intro:
-      "The Host Club brings together people who don't know each other around a table, a workshop or an outing. It works because everyone arrives open to others — and it only holds if everyone feels safe and respected. These rules set out what we expect from every member, what we act on when something goes wrong, and what happens next.",
+      "Wenzy brings together people who don't know each other around a table, a workshop or an outing. It works because everyone arrives open to others — and it only holds if everyone feels safe and respected. These rules set out what we expect from every member, what we act on when something goes wrong, and what happens next.",
     sections: [
       {
         title: "Where they apply",
@@ -946,7 +946,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
           [
             "During experiences, from arrival to departure, including what directly follows (a drink afterwards, the journey home).",
             "On the website: profile, reviews, participation requests and exchanges with our team.",
-            "Outside The Host Club, when a member contacts another against their wishes after an experience.",
+            "Outside Wenzy, when a member contacts another against their wishes after an experience.",
           ],
           "For practical advice before, during and after meeting people, see our [Safety](/securite) page.",
         ],
@@ -1010,7 +1010,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "No discrimination",
         body: [
-          "Bringing together people of different backgrounds, paths and opinions is the heart of The Host Club. We act on discrimination in every form, whether it comes from a participant or a venue.",
+          "Bringing together people of different backgrounds, paths and opinions is the heart of Wenzy. We act on discrimination in every form, whether it comes from a participant or a venue.",
           [
             "Hateful or degrading remarks targeting origin, religion, nationality, gender, sexual orientation, disability or age.",
             "Deliberate exclusion: a group ignoring or isolating a guest because of who they are.",
@@ -1029,7 +1029,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         ],
       },
       {
-        title: "Using The Host Club fairly",
+        title: "Using Wenzy fairly",
         body: [
           [
             "No selling or soliciting: don't use an experience to recruit, sell, promote your business or farm followers. Talking about your job is conversation; steering the evening towards a transaction isn't.",
@@ -1101,10 +1101,10 @@ const en: Record<BaseLegalKey, LegalDoc> = {
   terms: {
     title: "Terms of use",
     updated: UPDATED_EN,
-    intro: "These terms govern access to and use of The Host Club. By creating an account or ticking “I accept”, you enter into an electronic contract with The Host Club. If you do not accept them, do not use the service. Prices, payment, cancellation and membership are covered by the [terms of sale](/cgv); the behaviour expected from everyone is set out in the [community rules](/charte). The French version prevails.",
+    intro: "These terms govern access to and use of Wenzy. By creating an account or ticking “I accept”, you enter into an electronic contract with Wenzy. If you do not accept them, do not use the service. Prices, payment, cancellation and membership are covered by the [terms of sale](/cgv); the behaviour expected from everyone is set out in the [community rules](/charte). The French version prevails.",
     sections: [
       { title: "1. Publisher", body: ["The site is published by {{publisher}}, registered office {{address}} (ICE {{ice}}, RC {{rc}}). Contact: {{supportEmail}}. Hosting: {{host}}."] },
-      { title: "2. The service", body: ["The Host Club offers small-group social experiences (meals, workshops, sport, games, outings) to meet new people, in public places or at partner venues. We choose the venues, put the groups together, keep you informed and are your single point of contact.", "The Host Club is not a dating service. Connections may grow between consenting adults, but any romantic or sexual pressure, pushiness or behaviour that makes the group uncomfortable is prohibited."] },
+      { title: "2. The service", body: ["Wenzy offers small-group social experiences (meals, workshops, sport, games, outings) to meet new people, in public places or at partner venues. We choose the venues, put the groups together, keep you informed and are your single point of contact.", "Wenzy is not a dating service. Connections may grow between consenting adults, but any romantic or sexual pressure, pushiness or behaviour that makes the group uncomfortable is prohibited."] },
       {
         title: "3. What we do, and what the venue does",
         body: [
@@ -1142,7 +1142,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
           "If you no longer meet these conditions, your access may end.",
         ],
       },
-      { title: "6. Bookings, requests and waitlists", body: ["An experience is booked directly or, if it is “on request”, once the team approves your request. When a date is full, you can join the waitlist. Prices, payment deadlines, cancellation and refunds are described in the [terms of sale](/cgv).", "For physical activities (sport, paintball, hiking…), booking or requesting to take part means accepting the [terms for physical activities](/conditions-activites-physiques).", "Trusted members: the team may let regular members propose their own outing ideas. A proposal commits no one: the team checks it (venue, safety, price) before anything is published and remains the organiser of the published experience, sold by The Host Club on the same terms as the others. The member who proposed it is neither an employee nor a contractor of The Host Club and is not paid for it, unless agreed separately in writing."] },
+      { title: "6. Bookings, requests and waitlists", body: ["An experience is booked directly or, if it is “on request”, once the team approves your request. When a date is full, you can join the waitlist. Prices, payment deadlines, cancellation and refunds are described in the [terms of sale](/cgv).", "For physical activities (sport, paintball, hiking…), booking or requesting to take part means accepting the [terms for physical activities](/conditions-activites-physiques).", "Trusted members: the team may let regular members propose their own outing ideas. A proposal commits no one: the team checks it (venue, safety, price) before anything is published and remains the organiser of the published experience, sold by Wenzy on the same terms as the others. The member who proposed it is neither an employee nor a contractor of Wenzy and is not paid for it, unless agreed separately in writing."] },
       { title: "7. How groups are put together", body: ["Groups are based on your city, languages, age, interests and questionnaire answers, avoiding seating the same people together again, so that everyone can join the conversation. A person on our team reviews each line-up. This is neither a psychological assessment nor a judgement about you.", "Some experiences also include a short questionnaire (10 questions at most, multiple choice only: level, pace, preferences…) to fill in after booking. Depending on the experience, answers are used to group similar levels (e.g. padel) or to mix profiles; they are never shown to other participants and are deleted 30 days after the experience."] },
       {
         title: "8. Code of conduct",
@@ -1168,7 +1168,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
           "For your part, ask people for their agreement before posting a photo or video of them.",
         ],
       },
-      { title: "11. Member content", body: ["Reviews, profile photo, bio and messages attached to requests remain your responsibility. You grant The Host Club a free, non-exclusive licence, for as long as needed, to host and display them as part of the service (reviews are signed with your first name and last initial). The team may hide content that is inappropriate, false or unlawful.", "Reviews: an attached photo is only published after the team checks it (don't show anyone without their consent). The activity's organizer and the team may reply publicly under your review. Any member or organizer can report a review; a report does not hide it automatically: the team checks and decides, and every decision is kept in the review's history."] },
+      { title: "11. Member content", body: ["Reviews, profile photo, bio and messages attached to requests remain your responsibility. You grant Wenzy a free, non-exclusive licence, for as long as needed, to host and display them as part of the service (reviews are signed with your first name and last initial). The team may hide content that is inappropriate, false or unlawful.", "Reviews: an attached photo is only published after the team checks it (don't show anyone without their consent). The activity's organizer and the team may reply publicly under your review. Any member or organizer can report a review; a report does not hide it automatically: the team checks and decides, and every decision is kept in the review's history."] },
       {
         title: "12. Reports, sanctions and appeals",
         body: [
@@ -1176,8 +1176,8 @@ const en: Record<BaseLegalKey, LegalDoc> = {
           "You can appeal by writing to {{supportEmail}} within 7 days of the notification. The appeal is reviewed by someone who wasn't involved in the original decision, and the answer is reasoned. Every decision is logged.",
         ],
       },
-      { title: "13. Intellectual property", body: ["The Host Club brand, the site, its texts, visuals, software and design are protected. You receive a personal, non-transferable, non-commercial right of use; any reproduction or extraction without permission is prohibited."] },
-      { title: "14. Liability", body: ["The Host Club organises experiences with care, selects its partner venues, takes reasonable safety measures and informs participants of any change. We cannot, however, guarantee that meeting people is entirely risk-free. To the extent permitted by law, we are not liable for participants' acts, partner venues' services (food, drinks, activities) or force majeure. Descriptive texts and photos are indicative. Each participant remains responsible for their own behaviour and consumption."] },
+      { title: "13. Intellectual property", body: ["Wenzy brand, the site, its texts, visuals, software and design are protected. You receive a personal, non-transferable, non-commercial right of use; any reproduction or extraction without permission is prohibited."] },
+      { title: "14. Liability", body: ["Wenzy organises experiences with care, selects its partner venues, takes reasonable safety measures and informs participants of any change. We cannot, however, guarantee that meeting people is entirely risk-free. To the extent permitted by law, we are not liable for participants' acts, partner venues' services (food, drinks, activities) or force majeure. Descriptive texts and photos are indicative. Each participant remains responsible for their own behaviour and consumption."] },
       { title: "15. Duration, account deletion and suspension", body: ["You can request the deletion of your account at any time from your preferences. We may suspend or close an account that breaches these terms or poses a risk to the community."] },
       { title: "16. Personal data", body: ["How we process your data is described in the [privacy policy](/confidentialite), in accordance with Moroccan Law 09-08."] },
       { title: "17. Changes", body: ["These terms may change. The applicable version is the one published on the site with its effective date. You will be informed of significant changes by email before they take effect and may be asked to accept them again; minor wording corrections may be made at any time."] },
@@ -1193,13 +1193,13 @@ const en: Record<BaseLegalKey, LegalDoc> = {
   sales: {
     title: "Terms of sale",
     updated: UPDATED_EN,
-    intro: "These terms apply to every experience booking and to the membership purchased on The Host Club. Prices, what is included and cancellation terms are always shown before payment. The French version prevails.",
+    intro: "These terms apply to every experience booking and to the membership purchased on Wenzy. Prices, what is included and cancellation terms are always shown before payment. The French version prevails.",
     sections: [
       { title: "1. Seller", body: ["{{publisher}}, {{address}} — ICE {{ice}}. Contact: {{supportEmail}}."] },
-      { title: "2. Prices", body: ["Prices are shown in Moroccan dirhams (MAD), all taxes included, per spot. What is included (meal, drinks, equipment, classes…) is stated on each experience page; anything extra is paid directly to the venue. Members pay the member price shown next to the public price.", "A promo code applies after the member price, on direct bookings, once per person, under the conditions stated with the code. A service fee may be added: it is always shown before payment, never applies to a free spot and is refunded with the spot.", "Some experiences are paid in two parts, always shown on the experience page: the organisation part, paid online when you book, and a part paid on site directly to the partner (a fixed price announced in advance, or whatever you order). The on-site part is never collected by The Host Club: it is not on our invoice and is not owed if your booking is cancelled. Member prices, membership, promo codes and service fees only apply to the part paid online."] },
-      { title: "3. Booking and payment", body: [["Direct booking: your spot is held while you pay (15 minutes for a card payment; until the stated deadline for a bank transfer), then released if payment fails.", "On-request experiences: nothing to pay when you apply; once accepted, your spot is held for 24 hours.", "Waitlist: if a spot opens up, it is offered to the first person on the list and held for 4 hours.", "Payment by bank transfer: after booking, you receive a unique reference and The Host Club's bank details (on screen and by email). Your spot is held until the stated deadline: 48 hours at most, and no later than 24 hours before the experience. Your booking is confirmed, with your ticket and invoice, as soon as the team sees the transfer of the exact amount with the reference.", "Transfer not received by the deadline: the spot is released and you are told. A transfer that arrives later gets you a spot if one is left; otherwise it is refunded in full. Refunds of a transfer are made by transfer: we ask for the details needed at that time and do not store them on the site.", "When card payment is offered, it is handled by a secure payment provider; The Host Club never receives or stores card details. Your booking is confirmed once payment is confirmed.", "Minimum age: some experiences are open only above an age higher than 18, shown on their page; the booking is refused if your date of birth doesn't allow it.", "Physical activities: booking (or requesting to take part) means accepting the [terms for physical activities](/conditions-activites-physiques); the accepted version and its date are kept with the booking.", "Questionnaire: for some experiences, a short questionnaire is offered after booking to put the groups together. It's recommended but not a condition of the booking."]] },
+      { title: "2. Prices", body: ["Prices are shown in Moroccan dirhams (MAD), all taxes included, per spot. What is included (meal, drinks, equipment, classes…) is stated on each experience page; anything extra is paid directly to the venue. Members pay the member price shown next to the public price.", "A promo code applies after the member price, on direct bookings, once per person, under the conditions stated with the code. A service fee may be added: it is always shown before payment, never applies to a free spot and is refunded with the spot.", "Some experiences are paid in two parts, always shown on the experience page: the organisation part, paid online when you book, and a part paid on site directly to the partner (a fixed price announced in advance, or whatever you order). The on-site part is never collected by Wenzy: it is not on our invoice and is not owed if your booking is cancelled. Member prices, membership, promo codes and service fees only apply to the part paid online."] },
+      { title: "3. Booking and payment", body: [["Direct booking: your spot is held while you pay (15 minutes for a card payment; until the stated deadline for a bank transfer), then released if payment fails.", "On-request experiences: nothing to pay when you apply; once accepted, your spot is held for 24 hours.", "Waitlist: if a spot opens up, it is offered to the first person on the list and held for 4 hours.", "Payment by bank transfer: after booking, you receive a unique reference and Wenzy's bank details (on screen and by email). Your spot is held until the stated deadline: 48 hours at most, and no later than 24 hours before the experience. Your booking is confirmed, with your ticket and invoice, as soon as the team sees the transfer of the exact amount with the reference.", "Transfer not received by the deadline: the spot is released and you are told. A transfer that arrives later gets you a spot if one is left; otherwise it is refunded in full. Refunds of a transfer are made by transfer: we ask for the details needed at that time and do not store them on the site.", "When card payment is offered, it is handled by a secure payment provider; Wenzy never receives or stores card details. Your booking is confirmed once payment is confirmed.", "Minimum age: some experiences are open only above an age higher than 18, shown on their page; the booking is refused if your date of birth doesn't allow it.", "Physical activities: booking (or requesting to take part) means accepting the [terms for physical activities](/conditions-activites-physiques); the accepted version and its date are kept with the booking.", "Questionnaire: for some experiences, a short questionnaire is offered after booking to put the groups together. It's recommended but not a condition of the booking."]] },
       { title: "4. Cancellation by the member", body: [["Up to 48 hours before the start: full refund.", "Less than 48 hours before the start: no refund (the spot may be offered to the waitlist).", "An experience may have specific conditions, shown on its page before booking."], "Cancel from your member area (My bookings). Refunds go back to the original payment method; how long they take to appear depends on your bank."] },
-      { title: "5. Cancellation or change by The Host Club", body: ["If we cancel an experience (weather, partner unavailable, not enough participants…), you are informed and fully refunded. We may offer to move your booking to another date of the same experience; you remain free to cancel with a full refund if the new date doesn't suit you.", "Outdoor experience: if the weather doesn't allow the activity, we let you know as early as possible. It is either postponed (you keep your spot on the new date, or get a full refund if it doesn't suit you) or cancelled with a full refund.", "Experience that did not take place or was very different from its description: within 7 days, send a request from your booking (My bookings) or write to {{supportEmail}}. We review every request and may refund all or part of what you paid online; our answer is sent by notification and email."] },
+      { title: "5. Cancellation or change by Wenzy", body: ["If we cancel an experience (weather, partner unavailable, not enough participants…), you are informed and fully refunded. We may offer to move your booking to another date of the same experience; you remain free to cancel with a full refund if the new date doesn't suit you.", "Outdoor experience: if the weather doesn't allow the activity, we let you know as early as possible. It is either postponed (you keep your spot on the new date, or get a full refund if it doesn't suit you) or cancelled with a full refund.", "Experience that did not take place or was very different from its description: within 7 days, send a request from your booking (My bookings) or write to {{supportEmail}}. We review every request and may refund all or part of what you paid online; our answer is sent by notification and email."] },
       { title: "6. Membership", body: [["Membership gives access, for the length you choose (1, 3, 6 or 12 months depending on the plans offered), to the benefits described on the Membership page (member price and, depending on the plan, early access to new dates and members-only experiences).", "It is paid once and is not renewed automatically: you can renew from 30 days before it ends, the new period starting at the end date.", "You may withdraw within 7 days of payment by writing to {{supportEmail}}: you are refunded minus any benefits already used (the difference between the public price and the member price of the spots you booked)."]] },
       { title: "7. No-shows", body: ["Not attending without cancelling does not entitle you to a refund. Repeated no-shows or late cancellations may limit access to on-request experiences or lead to a temporary suspension ([Terms of use](/cgu), section 9)."] },
       { title: "8. Invoices", body: ["A document (invoice or receipt) is issued for each payment and a credit note for each refund. They are emailed to you and available in your member area under “My invoices”."] },
@@ -1209,7 +1209,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
   privacy: {
     title: "Privacy policy",
     updated: UPDATED_EN,
-    intro: "This policy explains what data we collect, how, why, how long we keep it, who it is shared with and how to exercise your rights, in accordance with Moroccan Law 09-08 on the protection of individuals with regard to the processing of personal data. It applies to The Host Club website, the member area and every service available through them. The French version prevails.",
+    intro: "This policy explains what data we collect, how, why, how long we keep it, who it is shared with and how to exercise your rights, in accordance with Moroccan Law 09-08 on the protection of individuals with regard to the processing of personal data. It applies to Wenzy website, the member area and every service available through them. The French version prevails.",
     sections: [
       { title: "1. Key points", body: [["We only collect what is useful to organise small-group experiences safely.", "We never sell your data and use no advertising cookies or GPS location.", "Within a group, only your first name, your profile photo (if you added one) and your interests are shared.", "Your diet and allergies are only passed on to the venue with your explicit consent.", "No photo in which you can be recognised is published without your agreement.", "You can view, correct or download your data and delete your account at any time."]] },
       { title: "2. Data controller", body: ["{{publisher}}, {{address}} (ICE {{ice}}), is responsible for the data processed on the site. For any question about your data: {{privacyEmail}}.", "Declaration to the CNDP: {{cndpDeclaration}}. Authorisation to transfer data outside Morocco: {{cndpTransfer}}.", "It is up to you to give us accurate information and keep it up to date from your member area."] },

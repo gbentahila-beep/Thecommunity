@@ -22,7 +22,7 @@ export default async function PayoutsPage() {
       {isDemo && <div className="mb-4"><DemoNote>Démonstration : registre calculé à partir des réservations du padel (Club Padel Anfa).</DemoNote></div>}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-5" data-testid="finance-kpis">
         <StatTile label="Volume organisateurs" value={dh(t.gross)} hint="Payé en ligne pour leurs activités" />
-        <StatTile label="Commissions" value={dh(t.commission)} hint="Revenu de The Host Club" />
+        <StatTile label="Commissions" value={dh(t.commission)} hint="Revenu de Wenzy" />
         <StatTile label="Remboursements" value={dh(t.refunds)} />
         <StatTile label="À reverser" value={dh(t.due + t.inPayout)} hint={`dont ${dh(t.available)} disponibles`} />
         <StatTile label="Déjà reversé" value={dh(t.paid)} />

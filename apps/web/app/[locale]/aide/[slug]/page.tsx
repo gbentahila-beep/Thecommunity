@@ -43,9 +43,9 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
     <PageShell className="max-w-3xl py-10">
       <nav aria-label={t("breadcrumb")} className="text-sm text-muted">
         <ol className="flex flex-wrap items-center gap-1.5">
-          <li><Link href={hub} className="hover:text-plum-900 hover:underline">{t("title")}</Link></li>
+          <li><Link href={hub} className="hover:text-brand-900 hover:underline">{t("title")}</Link></li>
           <li aria-hidden><ChevronRight className="size-3.5 rtl:rotate-180" /></li>
-          <li><Link href={`${hub}#${cat.key}`} className="hover:text-plum-900 hover:underline">{cat.title[lang]}</Link></li>
+          <li><Link href={`${hub}#${cat.key}`} className="hover:text-brand-900 hover:underline">{cat.title[lang]}</Link></li>
         </ol>
       </nav>
       <article className="mt-6">
@@ -70,7 +70,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
       )}
       {related.length > 0 && (
         <section className="mt-12" aria-labelledby="related">
-          <h2 id="related" className="font-display text-2xl font-medium text-plum-900">{t("related")}</h2>
+          <h2 id="related" className="font-display text-2xl font-medium text-brand-900">{t("related")}</h2>
           <ul className="mt-4 divide-y divide-line rounded-[var(--radius-card)] bg-white shadow-card">
             {related.map((r) => (
               <li key={r.slug}>

@@ -5,7 +5,7 @@ import { getAdminData } from "@/lib/data/admin";
 
 export const metadata = { title: "Sessions" };
 
-const STATUS = { published: ["Publiée", "green"], full: ["Complète", "plum"], draft: ["Brouillon", "gray"], cancelled: ["Annulée", "red"], completed: ["Terminée", "gray"] } as const;
+const STATUS = { published: ["Publiée", "green"], full: ["Complète", "brand"], draft: ["Brouillon", "gray"], cancelled: ["Annulée", "red"], completed: ["Terminée", "gray"] } as const;
 
 export default async function SessionsPage() {
   const d = await getAdminData();
@@ -18,7 +18,7 @@ export default async function SessionsPage() {
             {d.recentSessions.map((s) => (
               <li key={s.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
                 <span><span className="text-muted">{adminDate(s.startAt)}</span> · <strong className="text-ink">{d.experiences.get(s.experienceId)?.title.fr}</strong></span>
-                <Link href={`/admin/sessions/${s.id}`} className="font-medium text-plum-900">Participants et pointage</Link>
+                <Link href={`/admin/sessions/${s.id}`} className="font-medium text-brand-900">Participants et pointage</Link>
               </li>
             ))}
           </ul>
@@ -39,8 +39,8 @@ export default async function SessionsPage() {
                 <td><FillBar value={s.seatsConfirmed} max={s.capacity} /></td>
                 <td className="tabular-nums">{s.waitlistCount || "—"}</td>
                 <td className="whitespace-nowrap text-end">
-                  <Link href={`/admin/sessions/${s.id}`} className="font-medium text-plum-900">Participants</Link>
-                  {grouped && <> · <Link href={`/admin/sessions/${s.id}/groupes`} className="font-medium text-plum-900">Groupes</Link></>}
+                  <Link href={`/admin/sessions/${s.id}`} className="font-medium text-brand-900">Participants</Link>
+                  {grouped && <> · <Link href={`/admin/sessions/${s.id}/groupes`} className="font-medium text-brand-900">Groupes</Link></>}
                 </td>
               </tr>
             );

@@ -9,9 +9,9 @@ type T = Record<L, string>;
 export const PRESS = {
   title: { fr: "Kit presse", en: "Press kit", ar: "الملف الصحفي" } as T,
   intro: {
-    fr: "Tout ce qu'il faut pour parler de The Host Club : présentation, faits clés, logos, couleurs et photos. Pour une interview ou des visuels en haute définition, écrivez-nous.",
-    en: "Everything you need to write about The Host Club: overview, key facts, logos, colours and photos. For an interview or high-resolution visuals, get in touch.",
-    ar: "كل ما تحتاجه للحديث عن The Host Club: التعريف، المعطيات الأساسية، الشعارات، الألوان والصور. لإجراء مقابلة أو للحصول على صور عالية الدقة، راسلنا.",
+    fr: "Tout ce qu'il faut pour parler de Wenzy : présentation, faits clés, logos, couleurs et photos. Pour une interview ou des visuels en haute définition, écrivez-nous.",
+    en: "Everything you need to write about Wenzy: overview, key facts, logos, colours and photos. For an interview or high-resolution visuals, get in touch.",
+    ar: "كل ما تحتاجه للحديث عن Wenzy: التعريف، المعطيات الأساسية، الشعارات، الألوان والصور. لإجراء مقابلة أو للحصول على صور عالية الدقة، راسلنا.",
   } as T,
   ctaLogos: { fr: "Télécharger les logos", en: "Download the logos", ar: "تحميل الشعارات" } as T,
   ctaContact: { fr: "Contacter l'équipe", en: "Contact the team", ar: "التواصل مع الفريق" } as T,
@@ -26,25 +26,25 @@ export const PRESS = {
     {
       label: { fr: "En une phrase", en: "One sentence", ar: "في جملة واحدة" } as T,
       text: {
-        fr: "The Host Club organise à Casablanca des expériences pour rencontrer de nouvelles personnes dans la vraie vie : dîners entre inconnus, sport, jeux, ateliers et sorties.",
-        en: "The Host Club hosts experiences in Casablanca for meeting new people in real life: dinners with strangers, sport, games, workshops and nights out.",
-        ar: "ينظّم The Host Club في الدار البيضاء تجارب للتعرّف على أشخاص جدد في الحياة الواقعية: عشاء مع غرباء، رياضة، ألعاب، ورشات وخرجات.",
+        fr: "Wenzy organise à Casablanca des expériences pour rencontrer de nouvelles personnes dans la vraie vie : dîners entre inconnus, sport, jeux, ateliers et sorties.",
+        en: "Wenzy hosts experiences in Casablanca for meeting new people in real life: dinners with strangers, sport, games, workshops and nights out.",
+        ar: "ينظّم Wenzy في الدار البيضاء تجارب للتعرّف على أشخاص جدد في الحياة الواقعية: عشاء مع غرباء، رياضة، ألعاب، ورشات وخرجات.",
       } as T,
     },
     {
       label: { fr: "Version courte", en: "Short version", ar: "نسخة قصيرة" } as T,
       text: {
-        fr: "Né à Casablanca, The Host Club réunit des inconnus autour d'expériences à taille humaine — un dîner, un brunch, un atelier, une séance de sport ou une sortie — dans des lieux partenaires de la ville. Les groupes sont composés avec soin pour que chacun reparte avec de nouvelles connaissances, et peut-être de nouveaux amis.",
-        en: "Born in Casablanca, The Host Club brings strangers together over small-scale experiences — a dinner, a brunch, a workshop, a workout or a night out — at partner venues across the city. Groups are put together with care so that everyone leaves with new acquaintances, and perhaps new friends.",
-        ar: "وُلد The Host Club في الدار البيضاء، ويجمع غرباء حول تجارب على مقاس إنساني — عشاء، فطور متأخر، ورشة، حصة رياضة أو خرجة — في أماكن شريكة بالمدينة. تُشكَّل المجموعات بعناية حتى يغادر كل شخص بمعارف جديدة، وربما بأصدقاء جدد.",
+        fr: "Né à Casablanca, Wenzy réunit des inconnus autour d'expériences à taille humaine — un dîner, un brunch, un atelier, une séance de sport ou une sortie — dans des lieux partenaires de la ville. Les groupes sont composés avec soin pour que chacun reparte avec de nouvelles connaissances, et peut-être de nouveaux amis.",
+        en: "Born in Casablanca, Wenzy brings strangers together over small-scale experiences — a dinner, a brunch, a workshop, a workout or a night out — at partner venues across the city. Groups are put together with care so that everyone leaves with new acquaintances, and perhaps new friends.",
+        ar: "وُلد Wenzy في الدار البيضاء، ويجمع غرباء حول تجارب على مقاس إنساني — عشاء، فطور متأخر، ورشة، حصة رياضة أو خرجة — في أماكن شريكة بالمدينة. تُشكَّل المجموعات بعناية حتى يغادر كل شخص بمعارف جديدة، وربما بأصدقاء جدد.",
       } as T,
     },
     {
       label: { fr: "Version longue", en: "Long version", ar: "نسخة مطوّلة" } as T,
       text: {
-        fr: "The Host Club est né d'un constat simple : à Casablanca, les adresses ne manquent pas, mais rencontrer vraiment quelqu'un reste difficile. Sa fondatrice, Aya Snoussi, a commencé par de petites tables entre inconnus ; les demandes ont vite dépassé les places. Aujourd'hui, le club propose des expériences dans plusieurs univers — dîners et gastronomie, sport et bien-être, jeux, ateliers, sorties, vie sociale, culture — dans des lieux partenaires. On réserve sur le site, en français, en arabe ou en anglais ; l'équipe compose des groupes équilibrés (langues, âges, centres d'intérêt) et accueille chacun par son prénom. The Host Club n'est pas une application de rencontres amoureuses : c'est un lieu pour se faire des amis, hors ligne.",
-        en: "The Host Club started from a simple observation: Casablanca has no shortage of places to go, yet really meeting someone is still hard. Its founder, Aya Snoussi, began with small tables of strangers; requests soon outnumbered the seats. Today the club offers experiences across several worlds — dining, sport and wellbeing, games, workshops, nights out, social life, culture — at partner venues. People book on the website in French, Arabic or English; the team puts together balanced groups (languages, ages, interests) and greets everyone by name. The Host Club is not a dating app: it's a place to make friends, offline.",
-        ar: "انطلق The Host Club من ملاحظة بسيطة: في الدار البيضاء لا تنقص الأماكن، لكن التعرّف الحقيقي على شخص ما يظل صعبًا. بدأت مؤسِّسته آية السنوسي بطاولات صغيرة بين غرباء، وسرعان ما فاقت الطلبات عدد الأماكن. اليوم يقترح النادي تجارب في عوالم متعددة — العشاء وفن الطبخ، الرياضة والرفاه، الألعاب، الورشات، الخرجات، الحياة الاجتماعية، الثقافة — في أماكن شريكة. يتم الحجز على الموقع بالفرنسية أو العربية أو الإنجليزية؛ ويشكّل الفريق مجموعات متوازنة (اللغات، الأعمار، الاهتمامات) ويستقبل كل شخص باسمه. The Host Club ليس تطبيقًا للمواعدة: إنه مكان لتكوين صداقات، خارج الشاشات.",
+        fr: "Wenzy est né d'un constat simple : à Casablanca, les adresses ne manquent pas, mais rencontrer vraiment quelqu'un reste difficile. Sa fondatrice, Aya Snoussi, a commencé par de petites tables entre inconnus ; les demandes ont vite dépassé les places. Aujourd'hui, le club propose des expériences dans plusieurs univers — dîners et gastronomie, sport et bien-être, jeux, ateliers, sorties, vie sociale, culture — dans des lieux partenaires. On réserve sur le site, en français, en arabe ou en anglais ; l'équipe compose des groupes équilibrés (langues, âges, centres d'intérêt) et accueille chacun par son prénom. Wenzy n'est pas une application de rencontres amoureuses : c'est un lieu pour se faire des amis, hors ligne.",
+        en: "Wenzy started from a simple observation: Casablanca has no shortage of places to go, yet really meeting someone is still hard. Its founder, Aya Snoussi, began with small tables of strangers; requests soon outnumbered the seats. Today the club offers experiences across several worlds — dining, sport and wellbeing, games, workshops, nights out, social life, culture — at partner venues. People book on the website in French, Arabic or English; the team puts together balanced groups (languages, ages, interests) and greets everyone by name. Wenzy is not a dating app: it's a place to make friends, offline.",
+        ar: "انطلق Wenzy من ملاحظة بسيطة: في الدار البيضاء لا تنقص الأماكن، لكن التعرّف الحقيقي على شخص ما يظل صعبًا. بدأت مؤسِّسته آية السنوسي بطاولات صغيرة بين غرباء، وسرعان ما فاقت الطلبات عدد الأماكن. اليوم يقترح النادي تجارب في عوالم متعددة — العشاء وفن الطبخ، الرياضة والرفاه، الألعاب، الورشات، الخرجات، الحياة الاجتماعية، الثقافة — في أماكن شريكة. يتم الحجز على الموقع بالفرنسية أو العربية أو الإنجليزية؛ ويشكّل الفريق مجموعات متوازنة (اللغات، الأعمار، الاهتمامات) ويستقبل كل شخص باسمه. Wenzy ليس تطبيقًا للمواعدة: إنه مكان لتكوين صداقات، خارج الشاشات.",
       } as T,
     },
   ],
@@ -76,12 +76,12 @@ export const PRESS = {
     ar: "منطقة الحماية: ارتفاع حرف « o » من كل الجهات. الحجم الأدنى: 90 بكسل عرضًا على الشاشة، و25 ملم في الطباعة. لا تشوّه الشعار ولا تغيّر لونه ولا تضف ظلًا ولا تضعه على صورة مزدحمة: على الخلفيات الداكنة استعمل النسخة الكريمية.",
   } as T,
   logos: [
-    { file: "the-host-club-horizontal-prune", label: { fr: "Logotype — prune", en: "Wordmark — plum", ar: "الشعار النصي — برقوقي" } as T, dark: false },
-    { file: "the-host-club-horizontal-creme", label: { fr: "Logotype — crème (fond foncé)", en: "Wordmark — cream (dark backgrounds)", ar: "الشعار النصي — كريمي (خلفية داكنة)" } as T, dark: true },
-    { file: "the-host-club-horizontal-encre", label: { fr: "Logotype — encre", en: "Wordmark — ink", ar: "الشعار النصي — حبري" } as T, dark: false },
-    { file: "the-host-club-empile-prune", label: { fr: "Version empilée — prune", en: "Stacked — plum", ar: "نسخة مكدّسة — برقوقي" } as T, dark: false },
-    { file: "the-host-club-empile-creme", label: { fr: "Version empilée — crème", en: "Stacked — cream", ar: "نسخة مكدّسة — كريمي" } as T, dark: true },
-    { file: "the-host-club-monogramme", label: { fr: "Monogramme « h. »", en: "Monogram “h.”", ar: "الرمز « h. »" } as T, dark: false },
+    { file: "wenzy-horizontal-prune", label: { fr: "Logotype — prune", en: "Wordmark — plum", ar: "الشعار النصي — برقوقي" } as T, dark: false },
+    { file: "wenzy-horizontal-creme", label: { fr: "Logotype — crème (fond foncé)", en: "Wordmark — cream (dark backgrounds)", ar: "الشعار النصي — كريمي (خلفية داكنة)" } as T, dark: true },
+    { file: "wenzy-horizontal-encre", label: { fr: "Logotype — encre", en: "Wordmark — ink", ar: "الشعار النصي — حبري" } as T, dark: false },
+    { file: "wenzy-empile-prune", label: { fr: "Version empilée — prune", en: "Stacked — plum", ar: "نسخة مكدّسة — برقوقي" } as T, dark: false },
+    { file: "wenzy-empile-creme", label: { fr: "Version empilée — crème", en: "Stacked — cream", ar: "نسخة مكدّسة — كريمي" } as T, dark: true },
+    { file: "wenzy-monogramme", label: { fr: "Monogramme « h. »", en: "Monogram “h.”", ar: "الرمز « h. »" } as T, dark: false },
   ],
 
   colorsTitle: { fr: "Couleurs", en: "Colours", ar: "الألوان" } as T,
@@ -105,9 +105,9 @@ export const PRESS = {
     { file: "photo-table-brunch.jpg", alt: { fr: "Table de brunch dressée, assiettes partagées et marque-places", en: "Brunch table with shared plates and place cards", ar: "طاولة فطور متأخر بأطباق مشتركة وبطاقات أماكن" } as T },
   ],
   photosNote: {
-    fr: "Crédit : « The Host Club ». Usage éditorial uniquement. Les photos où des participants sont reconnaissables sont fournies sur demande, après leur accord.",
-    en: "Credit: “The Host Club”. Editorial use only. Photos in which participants can be recognised are available on request, once they have agreed.",
-    ar: "الحقوق: « The Host Club ». للاستعمال الصحفي فقط. الصور التي يظهر فيها مشاركون يمكن التعرف عليهم تُقدَّم عند الطلب، بعد موافقتهم.",
+    fr: "Crédit : « Wenzy ». Usage éditorial uniquement. Les photos où des participants sont reconnaissables sont fournies sur demande, après leur accord.",
+    en: "Credit: “Wenzy”. Editorial use only. Photos in which participants can be recognised are available on request, once they have agreed.",
+    ar: "الحقوق: « Wenzy ». للاستعمال الصحفي فقط. الصور التي يظهر فيها مشاركون يمكن التعرف عليهم تُقدَّم عند الطلب، بعد موافقتهم.",
   } as T,
   download: { fr: "Télécharger", en: "Download", ar: "تحميل" } as T,
 

@@ -22,7 +22,7 @@ export function PrivateAvatar({ path, name }: { path: string | null; name: strin
     // eslint-disable-next-line @next/next/no-img-element
     <img src={url} alt="" className="size-14 shrink-0 rounded-full object-cover" />
   ) : (
-    <span className="grid size-14 shrink-0 place-items-center rounded-full bg-plum-100 font-display text-xl text-plum-900" aria-hidden>
+    <span className="grid size-14 shrink-0 place-items-center rounded-full bg-brand-100 font-display text-xl text-brand-900" aria-hidden>
       {name.charAt(0).toUpperCase() || "?"}
     </span>
   );

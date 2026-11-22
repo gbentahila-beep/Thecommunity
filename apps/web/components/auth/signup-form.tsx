@@ -47,10 +47,10 @@ export function SignupForm() {
         <p className="mt-1 text-xs text-muted">{t("passwordHint")}</p>
       </div>
       <label className="flex items-start gap-3 text-sm text-ink/80">
-        <input type="checkbox" name="consent" className="mt-0.5 size-5 shrink-0 accent-plum-900" />
+        <input type="checkbox" name="consent" className="mt-0.5 size-5 shrink-0 accent-brand-900" />
         <span>
           {t("consent")}
-          <span className="mt-1 flex flex-wrap gap-x-3 text-plum-900">
+          <span className="mt-1 flex flex-wrap gap-x-3 text-brand-900">
             <Link href="/cgu" className="underline underline-offset-2">{tf("terms")}</Link>
             <Link href="/confidentialite" className="underline underline-offset-2">{tf("privacy")}</Link>
             <Link href="/charte" className="underline underline-offset-2">{tf("charter")}</Link>
@@ -58,7 +58,7 @@ export function SignupForm() {
         </span>
       </label>
       <label className="flex items-start gap-3 text-sm text-ink/80">
-        <input type="checkbox" name="marketing" className="mt-0.5 size-5 shrink-0 accent-plum-900" />
+        <input type="checkbox" name="marketing" className="mt-0.5 size-5 shrink-0 accent-brand-900" />
         <span>{t("marketingOptIn")}</span>
       </label>
       {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">{t(`errors.${error}` as "errors.generic")}</p>}

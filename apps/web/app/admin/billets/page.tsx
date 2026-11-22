@@ -32,7 +32,7 @@ export default async function TicketsPage({ searchParams }: PageProps<"/admin/bi
       <PageHeader title="Billets" subtitle="Vérifier un billet à l'accueil, pointer la présence et la part partenaire." />
       <Card className="mb-5">
         <p className="flex items-start gap-3 text-sm text-ink">
-          <ScanLine className="mt-0.5 size-5 shrink-0 text-plum-900" aria-hidden />
+          <ScanLine className="mt-0.5 size-5 shrink-0 text-brand-900" aria-hidden />
           <span>
             <strong>Scanner :</strong> ouvrez l&apos;appareil photo du téléphone et visez le QR code du billet ; la fiche du billet s&apos;ouvre ici (connectez-vous au back-office une fois sur ce téléphone).
           </span>
@@ -40,7 +40,7 @@ export default async function TicketsPage({ searchParams }: PageProps<"/admin/bi
         <form className="mt-4 flex flex-wrap gap-2" role="search">
           <label className="sr-only" htmlFor="q">Code du billet, nom ou e-mail</label>
           <input id="q" name="q" defaultValue={q} autoCapitalize="characters" placeholder="Code du billet (ex. AB3DE9FG), nom ou e-mail" className="min-w-56 flex-1 rounded-full border border-line bg-white px-4 py-2.5 text-sm" />
-          <button className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">Rechercher</button>
+          <button className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white">Rechercher</button>
         </form>
       </Card>
       {q && (
@@ -53,7 +53,7 @@ export default async function TicketsPage({ searchParams }: PageProps<"/admin/bi
                 const u = d.usersById.get(r.userId);
                 return (
                   <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-sm">
-                    <Link href={ticketPath(r.id)} className="font-medium text-plum-900 underline">{u ? `${u.firstName} ${u.lastName}` : "Compte supprimé"}</Link>
+                    <Link href={ticketPath(r.id)} className="font-medium text-brand-900 underline">{u ? `${u.firstName} ${u.lastName}` : "Compte supprimé"}</Link>
                     <span className="text-muted">{d.experiences.get(r.experienceId)?.title.fr} · {adminDate(r.sessionStartAt)}</span>
                     <Badge tone={RESERVATION_STATUS[r.status][1]}>{RESERVATION_STATUS[r.status][0]}</Badge>
                   </li>

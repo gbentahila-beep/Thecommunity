@@ -50,7 +50,7 @@ async function uniqueSlug(base: string, ignoreId?: string) {
   throw new HttpsError("already-exists", "Impossible de générer une adresse unique.");
 }
 
-/** Organisateur qui enregistre (étape 20) ; absent = l'équipe The Host Club. */
+/** Organisateur qui enregistre (étape 20) ; absent = l'équipe Wenzy. */
 type OrganizerActor = { id: string; name: string; slug: string };
 
 /**
@@ -259,7 +259,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   const archived = existing.data()?.status === "archived";
   if (archived && addSessions) refuse("archived", "Réactivez l'expérience avant d'ajouter des dates.");
   const sessionStatus = effectiveStatus === "published" ? "published" : "draft";
-  // Étape 19 : l'organisateur (null = The Host Club) est recopié sur chaque date (règles d'accès, tableaux de bord).
+  // Étape 19 : l'organisateur (null = Wenzy) est recopié sur chaque date (règles d'accès, tableaux de bord).
   const organizerId = ownerOrgId;
   for (const d of planned) {
     batch.set(db.collection("sessions").doc(), {

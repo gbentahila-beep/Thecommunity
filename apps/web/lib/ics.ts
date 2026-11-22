@@ -10,10 +10,10 @@ export function buildIcs(e: { uid: string; title: string; startAt: string; endAt
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//The Host Club//Reservations//FR",
+    "PRODID:-//Wenzy//Reservations//FR",
     "CALSCALE:GREGORIAN",
     "BEGIN:VEVENT",
-    `UID:${e.uid}@thehostclub`,
+    `UID:${e.uid}@wenzy`,
     `DTSTAMP:${stamp(new Date().toISOString())}`,
     `DTSTART:${stamp(e.startAt)}`,
     `DTEND:${stamp(e.endAt)}`,

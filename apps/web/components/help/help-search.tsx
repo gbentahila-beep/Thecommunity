@@ -25,7 +25,7 @@ export function HelpSearch({ index, children }: { index: HelpIndexEntry[]; child
     <>
       <div className="relative -mt-7 mx-auto max-w-2xl">
         <label htmlFor="help-search" className="sr-only">{t("searchLabel")}</label>
-        <Search className="pointer-events-none absolute start-5 top-1/2 size-5 -translate-y-1/2 text-plum-700" aria-hidden />
+        <Search className="pointer-events-none absolute start-5 top-1/2 size-5 -translate-y-1/2 text-brand-700" aria-hidden />
         <input
           id="help-search"
           type="search"
@@ -33,7 +33,7 @@ export function HelpSearch({ index, children }: { index: HelpIndexEntry[]; child
           onChange={(e) => setQ(e.target.value)}
           placeholder={t("searchPlaceholder")}
           autoComplete="off"
-          className="w-full rounded-full border border-line bg-white py-4 pe-12 ps-13 text-[16px] shadow-float outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100"
+          className="w-full rounded-full border border-line bg-white py-4 pe-12 ps-13 text-[16px] shadow-float outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100"
         />
         {q && (
           <button type="button" onClick={() => setQ("")} aria-label={t("clear")} className="absolute end-3 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full text-muted hover:bg-cream-deep">
@@ -49,7 +49,7 @@ export function HelpSearch({ index, children }: { index: HelpIndexEntry[]; child
               {results.map((r) => (
                 <li key={r.slug}>
                   <Link href={`/aide/${r.slug}`} className="block p-5 transition hover:bg-cream">
-                    <span className="block text-xs font-medium uppercase tracking-wide text-plum-700">{r.category}</span>
+                    <span className="block text-xs font-medium uppercase tracking-wide text-brand-700">{r.category}</span>
                     <span className="mt-1 block font-semibold text-ink">{r.title}</span>
                     <span className="mt-1 block text-sm text-muted">{r.summary}</span>
                   </Link>

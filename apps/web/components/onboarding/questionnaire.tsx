@@ -97,7 +97,7 @@ const EMPTY: Values = {
 };
 
 const inputClass =
-  "w-full rounded-2xl border bg-white px-4 py-3.5 text-[16px] text-ink outline-none transition focus:border-plum-700 focus:ring-2 focus:ring-plum-100";
+  "w-full rounded-2xl border bg-white px-4 py-3.5 text-[16px] text-ink outline-none transition focus:border-brand-700 focus:ring-2 focus:ring-brand-100";
 
 type Question = { kind: "question"; id: string; icon: LucideIcon; fields: Key[]; optional?: boolean; auto?: boolean; body: ReactNode };
 type Fact = { kind: "fact"; id: string; body: ReactNode };
@@ -186,7 +186,7 @@ export function Questionnaire({
               if (!on) setAdvance(String(key));
             }}
             className={`flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3.5 text-start transition disabled:cursor-not-allowed disabled:opacity-60 ${
-              on ? "bg-plum-900 text-white shadow-card" : "bg-white text-ink shadow-card ring-1 ring-line hover:ring-plum-200"
+              on ? "bg-brand-900 text-white shadow-card" : "bg-white text-ink shadow-card ring-1 ring-line hover:ring-brand-200"
             }`}
           >
             <span className="min-w-0">
@@ -204,9 +204,9 @@ export function Questionnaire({
     kind: "fact",
     id,
     body: (
-      <div className="rounded-3xl bg-plum-900 p-6 text-white shadow-float sm:p-8">
+      <div className="rounded-3xl bg-brand-900 p-6 text-white shadow-float sm:p-8">
         {/* Le titre « Le saviez-vous ? » est lu une fois (titre masqué de l'écran) : le surtitre visible est décoratif. */}
-        <p aria-hidden className="text-xs font-semibold tracking-[0.16em] text-plum-100 uppercase">{t("facts.eyebrow")}</p>
+        <p aria-hidden className="text-xs font-semibold tracking-[0.16em] text-brand-100 uppercase">{t("facts.eyebrow")}</p>
         {children}
       </div>
     ),
@@ -266,7 +266,7 @@ export function Questionnaire({
       kind: "question", id: "interests", icon: Heart, fields: ["interests"],
       body: (
         <div className="space-y-4">
-          <p className="inline-flex rounded-full bg-plum-50 px-3 py-1 text-xs font-semibold text-plum-900" aria-live="polite">{t("chosen", { count: values.interests.length, max: INTERESTS_MAX })}</p>
+          <p className="inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-900" aria-live="polite">{t("chosen", { count: values.interests.length, max: INTERESTS_MAX })}</p>
           {chips("interests", INTERESTS.map((i) => ({ id: i, label: tl(`interests.${i}`) })), INTERESTS_MAX)}
           {moreInterests &&
             INTEREST_GROUPS.map((g) => (
@@ -287,7 +287,7 @@ export function Questionnaire({
       <>
         <p className="mt-3 font-display leading-none"><span className="text-6xl">{t("facts.hours.big")}</span> <span className="text-2xl">{t("facts.hours.unit")}</span></p>
         <p className="mt-4 text-[15px] leading-relaxed text-white/90">{t("facts.hours.text")}</p>
-        <p className="mt-3 text-xs text-plum-100">{t("facts.hours.source")}</p>
+        <p className="mt-3 text-xs text-brand-100">{t("facts.hours.source")}</p>
       </>,
     ),
     {
@@ -310,7 +310,7 @@ export function Questionnaire({
       <>
         <p className="mt-3 font-display text-[1.7rem] leading-tight">{t("facts.liking.title")}</p>
         <p className="mt-3 text-[15px] leading-relaxed text-white/90">{t("facts.liking.text")}</p>
-        <p className="mt-3 text-xs text-plum-100">{t("facts.liking.source")}</p>
+        <p className="mt-3 text-xs text-brand-100">{t("facts.liking.source")}</p>
       </>,
     ),
     {
@@ -321,7 +321,7 @@ export function Questionnaire({
       kind: "question", id: "values", icon: Gem, fields: ["lifeValues"], optional: true,
       body: (
         <div className="space-y-3">
-          <p className="inline-flex rounded-full bg-plum-50 px-3 py-1 text-xs font-semibold text-plum-900" aria-live="polite">{t("chosen", { count: values.lifeValues.length, max: LIFE_VALUES_MAX })}</p>
+          <p className="inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-900" aria-live="polite">{t("chosen", { count: values.lifeValues.length, max: LIFE_VALUES_MAX })}</p>
           {chips("lifeValues", LIFE_VALUES.map((v) => ({ id: v, label: tl(`values.${v}`) })), LIFE_VALUES_MAX)}
           {err("lifeValues")}
         </div>
@@ -358,7 +358,7 @@ export function Questionnaire({
         <p className="mt-1 text-white/90">{t("facts.meals.subtitle")}</p>
         <hr className="my-4 border-white/20" />
         <p className="text-[15px] leading-relaxed text-white/90">{t("facts.meals.text")}</p>
-        <p className="mt-3 text-xs text-plum-100">{t("facts.meals.source")}</p>
+        <p className="mt-3 text-xs text-brand-100">{t("facts.meals.source")}</p>
       </>,
     ),
     {
@@ -383,7 +383,7 @@ export function Questionnaire({
             {err("phone")}
           </div>
           <label className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3.5 text-[15px] shadow-card ring-1 ring-line">
-            <input type="checkbox" checked={values.whatsapp} onChange={(e) => set("whatsapp", e.target.checked)} className="size-5 accent-plum-900" />
+            <input type="checkbox" checked={values.whatsapp} onChange={(e) => set("whatsapp", e.target.checked)} className="size-5 accent-brand-900" />
             {t("whatsapp")}
           </label>
         </div>
@@ -404,7 +404,7 @@ export function Questionnaire({
       body: (
         <div className="space-y-5">
           <div className="flex items-center gap-4">
-            <span className="relative grid size-20 shrink-0 place-items-center overflow-hidden rounded-full bg-plum-50 text-plum-700">
+            <span className="relative grid size-20 shrink-0 place-items-center overflow-hidden rounded-full bg-brand-50 text-brand-700">
               {photo?.url ? (
                 // eslint-disable-next-line @next/next/no-img-element -- aperçu local (blob:), non optimisable par next/image
                 <img src={photo.url} alt="" className="size-full object-cover" />
@@ -600,22 +600,22 @@ export function Questionnaire({
   if (done) {
     return (
       <div className="mx-auto max-w-lg" data-testid="onboarding-done">
-        <div className="rounded-3xl bg-plum-900 p-6 text-white shadow-float sm:p-8">
+        <div className="rounded-3xl bg-brand-900 p-6 text-white shadow-float sm:p-8">
           <span className="grid size-12 place-items-center rounded-full ring-2 ring-white/70">
             <Check className="size-6" aria-hidden />
           </span>
           <h2 ref={headingRef} tabIndex={-1} className="mt-5 font-display text-[2rem] leading-tight outline-none">
-            <span className="text-plum-100">{t("doneTitle1")}</span>
+            <span className="text-brand-100">{t("doneTitle1")}</span>
             <br />
             {t("doneTitle2")}
           </h2>
           <p className="mt-3 text-[15px] leading-relaxed text-white/90">{t("doneText")}</p>
           <hr className="my-5 border-white/20" />
-          <p className="text-xs font-semibold tracking-[0.16em] text-plum-100 uppercase">{t("facts.eyebrow")}</p>
+          <p className="text-xs font-semibold tracking-[0.16em] text-brand-100 uppercase">{t("facts.eyebrow")}</p>
           <p className="mt-2 text-[15px] leading-relaxed text-white/90">{t("facts.commute.text")}</p>
-          <p className="mt-2 text-xs text-plum-100">{t("facts.commute.source")}</p>
+          <p className="mt-2 text-xs text-brand-100">{t("facts.commute.source")}</p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <Link href="/experiences" className="btn bg-white text-plum-900 hover:bg-cream">{t("doneCta")}</Link>
+            <Link href="/experiences" className="btn bg-white text-brand-900 hover:bg-cream">{t("doneCta")}</Link>
             <Link href="/espace" className="btn text-white ring-1 ring-white/40 hover:bg-white/10">{t("doneHome")}</Link>
           </div>
         </div>
@@ -642,7 +642,7 @@ export function Questionnaire({
         </button>
         <div className="min-w-0 flex-1">
           <div className="h-1.5 overflow-hidden rounded-full bg-line" aria-hidden>
-            <div className="h-full rounded-full bg-plum-800 transition-[width] duration-300" style={{ width: `${(qNumber / questions.length) * 100}%` }} />
+            <div className="h-full rounded-full bg-brand-800 transition-[width] duration-300" style={{ width: `${(qNumber / questions.length) * 100}%` }} />
           </div>
           <p className="mt-1 text-center text-xs text-muted" data-testid="onboarding-progress">
             {isQuestion ? t("progress", { current: qNumber, total: questions.length }) : t("answered", { current: qNumber, total: questions.length })}
@@ -656,13 +656,13 @@ export function Questionnaire({
       {isQuestion ? (
         <div className="card mt-6 flex min-h-[28rem] flex-col p-6 sm:p-8" key={current.id}>
           {Icon && (
-            <span className="grid size-11 place-items-center rounded-full bg-plum-50 text-plum-900">
+            <span className="grid size-11 place-items-center rounded-full bg-brand-50 text-brand-900">
               <Icon className="size-5" aria-hidden />
             </span>
           )}
-          <h2 ref={headingRef} tabIndex={-1} className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-display text-[1.65rem] leading-tight font-medium text-plum-900 outline-none">
+          <h2 ref={headingRef} tabIndex={-1} className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-display text-[1.65rem] leading-tight font-medium text-brand-900 outline-none">
             {t(`q.${current.id}.title` as "q.name.title")}
-            {current.optional && <span className="rounded-full bg-plum-50 px-2.5 py-0.5 font-sans text-xs font-semibold text-plum-800">{t("optional")}</span>}
+            {current.optional && <span className="rounded-full bg-brand-50 px-2.5 py-0.5 font-sans text-xs font-semibold text-brand-800">{t("optional")}</span>}
           </h2>
           <p className="mt-1.5 text-sm text-muted">{t(`q.${current.id}.hint` as "q.name.hint")}</p>
           <div className="mt-5 flex-1">{current.body}</div>
@@ -702,7 +702,7 @@ function Chip({ selected, onClick, children }: { selected: boolean; onClick: () 
       aria-pressed={selected}
       onClick={onClick}
       className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium transition ${
-        selected ? "bg-plum-900 text-white" : "bg-white text-ink shadow-card ring-1 ring-line hover:ring-plum-200"
+        selected ? "bg-brand-900 text-white" : "bg-white text-ink shadow-card ring-1 ring-line hover:ring-brand-200"
       }`}
     >
       {children}

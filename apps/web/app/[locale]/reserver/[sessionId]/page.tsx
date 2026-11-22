@@ -117,7 +117,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
 
   return (
     <PageShell className="max-w-3xl py-8">
-      <Link href={`/experiences/${exp.slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-plum-900">
+      <Link href={`/experiences/${exp.slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-brand-900">
         <ArrowLeft className="size-4 rtl:-scale-x-100" aria-hidden />
         {t("back")}
       </Link>
@@ -133,11 +133,11 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           <div className="min-w-0 space-y-1.5">
             <h2 className="text-lg font-semibold text-ink">{tr(exp.title, locale)}</h2>
             <p className="flex items-center gap-2 text-sm text-muted">
-              <CalendarDays className="size-4 shrink-0 text-plum-700" aria-hidden />
+              <CalendarDays className="size-4 shrink-0 text-brand-700" aria-hidden />
               {formatLongDate(session.startAt, locale)} · {formatTimeRange(session.startAt, session.endAt, locale)}
             </p>
             <p className="flex items-center gap-2 text-sm text-muted">
-              <MapPin className="size-4 shrink-0 text-plum-700" aria-hidden />
+              <MapPin className="size-4 shrink-0 text-brand-700" aria-hidden />
               {exp.district}, {city ? tr(city.name, locale) : "Casablanca"}
             </p>
           </div>
@@ -150,7 +150,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
               {memberAmount !== null && !isMember && (
                 <span className="mt-1 block text-xs text-muted">
                   {t("publicPriceNote", { price: formatMoney(session.price, lang) })}{" "}
-                  <Link href="/abonnement" className="font-semibold text-plum-900 underline">{tm("become")}</Link>
+                  <Link href="/abonnement" className="font-semibold text-brand-900 underline">{tm("become")}</Link>
                 </span>
               )}
               {isMember && memberAmount !== null && <span className="mt-1 block text-xs font-medium text-emerald-800">{t("memberPriceApplied")}</span>}
@@ -171,14 +171,14 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
       </section>
 
       {onRequest && refusal === null && (
-        <section role="note" className="mt-6 rounded-[var(--radius-card)] bg-plum-50 p-4 text-plum-900">
+        <section role="note" className="mt-6 rounded-[var(--radius-card)] bg-brand-50 p-4 text-brand-900">
           <h2 className="font-semibold">{tr2("noteTitle")}</h2>
           <p className="mt-1 text-sm">{tr2("noteText")}</p>
         </section>
       )}
 
       {visitor?.transfer && refusal === null && !onRequest && (
-        <p role="note" className="mt-6 rounded-xl border border-plum-200 bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("transferModeNote")}</p>
+        <p role="note" className="mt-6 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-900">{t("transferModeNote")}</p>
       )}
 
       {visitor?.testPayments && refusal === null && !onRequest && (
@@ -189,7 +189,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         // Mode démonstration : aucune réservation possible.
         <>
           <Notice title={refusal === "full" ? t("fullTitle") : t("demoTitle")} text={refusal === "full" ? t("fullText") : t("demoText")} />
-          <button type="button" disabled aria-disabled className="mt-6 w-full cursor-not-allowed rounded-full bg-plum-900/40 px-6 py-4 font-semibold text-white">
+          <button type="button" disabled aria-disabled className="mt-6 w-full cursor-not-allowed rounded-full bg-brand-900/40 px-6 py-4 font-semibold text-white">
             {t("payCta")}
           </button>
         </>
@@ -199,9 +199,9 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         <Notice title={t("unavailableTitle")} text={t(`errors.${refusal}`)} />
       ) : visitor.state === "anonymous" ? (
         <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-          {refusal === "full" && <p className="mb-3 text-sm font-medium text-plum-900">{t("fullText")}</p>}
+          {refusal === "full" && <p className="mb-3 text-sm font-medium text-brand-900">{t("fullText")}</p>}
           <h2 className="flex items-center gap-2 font-semibold text-ink">
-            <UserRound className="size-5 text-plum-700" aria-hidden />
+            <UserRound className="size-5 text-brand-700" aria-hidden />
             {t("signInTitle")}
           </h2>
           <p className="mt-1 text-sm text-muted">{t("signInText")}</p>
@@ -209,7 +209,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             <Link href={`/connexion?suite=${encodeURIComponent(here)}`} className="btn btn-primary btn-sm">
               {t("signInCta")}
             </Link>
-            <Link href={`/inscription?suite=${encodeURIComponent(here)}`} className="rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-plum-900">
+            <Link href={`/inscription?suite=${encodeURIComponent(here)}`} className="rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-brand-900">
               {t("signUpCta")}
             </Link>
           </div>
@@ -312,17 +312,17 @@ function isAfterNow(d: Date) {
 
 function MembersOnlyNotice({ title, text, cta }: { title: string; text: string; cta: string }) {
   return (
-    <section className="mt-6 rounded-[var(--radius-card)] bg-plum-900 p-5 text-white">
+    <section className="mt-6 rounded-[var(--radius-card)] bg-brand-900 p-5 text-white">
       <h2 className="font-semibold">{title}</h2>
-      <p className="mt-1 text-sm text-plum-50">{text}</p>
-      <Link href="/abonnement" className="mt-4 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-plum-900">{cta}</Link>
+      <p className="mt-1 text-sm text-brand-50">{text}</p>
+      <Link href="/abonnement" className="mt-4 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-brand-900">{cta}</Link>
     </section>
   );
 }
 
 function Notice({ title, text }: { title: string; text: string }) {
   return (
-    <section role="note" className="mt-6 flex gap-3 rounded-[var(--radius-card)] bg-plum-50 p-4 text-plum-900">
+    <section role="note" className="mt-6 flex gap-3 rounded-[var(--radius-card)] bg-brand-50 p-4 text-brand-900">
       <Info className="mt-0.5 size-5 shrink-0" aria-hidden />
       <div>
         <h2 className="font-semibold">{title}</h2>

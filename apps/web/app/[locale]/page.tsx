@@ -107,14 +107,14 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       ),
     cities: (
       <PageShell key="cities" className="pb-8">
-        <div id="villes" className="scroll-mt-24 rounded-3xl bg-plum-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] px-6 py-12 text-center text-white sm:px-12">
+        <div id="villes" className="scroll-mt-24 rounded-3xl bg-brand-900 bg-[url(/images/brand/motif-fil-prune.svg)] bg-[length:460px_auto] px-6 py-12 text-center text-white sm:px-12">
           <h2 className="font-display text-3xl font-medium sm:text-4xl">{t("citiesTitle")}</h2>
-          <p className="mx-auto mt-3 max-w-xl text-plum-100">{t("citiesText")}</p>
+          <p className="mx-auto mt-3 max-w-xl text-brand-100">{t("citiesText")}</p>
           <ul className="mt-8 flex flex-wrap justify-center gap-2.5">
             {cities.map((c) => (
               <li
                 key={c.id}
-                className={`rounded-full px-4 py-2 text-sm ${c.isActive ? "bg-white font-semibold text-plum-900" : "border border-white/25 text-plum-100"}`}
+                className={`rounded-full px-4 py-2 text-sm ${c.isActive ? "bg-white font-semibold text-brand-900" : "border border-white/25 text-brand-100"}`}
               >
                 {tr(c.name, locale)}
               </li>
@@ -138,7 +138,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     <>
       {banner && (
         <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 lg:px-8" data-testid="home-banner">
-          <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-2xl bg-plum-900 px-5 py-3 text-center text-sm text-white">
+          <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-2xl bg-brand-900 px-5 py-3 text-center text-sm text-white">
             <span>{tr(banner.text, locale)}</span>
             {banner.href && banner.linkLabel && (
               banner.href.startsWith("/") ? (
@@ -154,7 +154,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-7xl lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-8">
           <div className="relative z-10 order-2 px-4 pb-10 pt-8 sm:px-6 lg:order-1 lg:px-0 lg:py-24">
-            <h1 className="animate-fade-up font-display text-[2.75rem] leading-[1.02] font-medium tracking-tight text-plum-900 sm:text-6xl lg:text-[4.25rem]">
+            <h1 className="animate-fade-up font-display text-[2.75rem] leading-[1.02] font-medium tracking-tight text-brand-900 sm:text-6xl lg:text-[4.25rem]">
               {t("heroTitle1")}
               <br />
               {t("heroTitle2")}
@@ -171,7 +171,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                   { icon: ShieldCheck, label: t("trust3") },
                 ].map(({ icon: Icon, label }) => (
                   <li key={label} className="flex items-center gap-3">
-                    <Icon className="size-6 shrink-0 text-plum-900" strokeWidth={1.5} aria-hidden />
+                    <Icon className="size-6 shrink-0 text-brand-900" strokeWidth={1.5} aria-hidden />
                     <span className="text-[15px] leading-snug text-ink">{label}</span>
                   </li>
                 ))}

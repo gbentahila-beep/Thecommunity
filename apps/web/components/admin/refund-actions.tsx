@@ -38,13 +38,13 @@ export function RefundDecision({ requestId, maxDh, live }: { requestId: string; 
     <div className="space-y-2" data-testid="refund-decision">
       <div className="flex flex-wrap gap-2">
         <button type="button" disabled={busy} onClick={() => (mode === "full" ? void run("full") : setMode("full"))} className="rounded-full bg-emerald-700 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-60">{mode === "full" ? "Confirmer le remboursement total" : "Rembourser tout"}</button>
-        <button type="button" disabled={busy} onClick={() => setMode("partial")} className="rounded-full border border-plum-900 px-4 py-1.5 text-sm font-semibold text-plum-900">Rembourser en partie</button>
+        <button type="button" disabled={busy} onClick={() => setMode("partial")} className="rounded-full border border-brand-900 px-4 py-1.5 text-sm font-semibold text-brand-900">Rembourser en partie</button>
         <button type="button" disabled={busy} onClick={() => setMode("decline")} className="rounded-full border border-red-300 bg-white px-4 py-1.5 text-sm font-semibold text-red-800">Refuser</button>
       </div>
       {mode === "partial" && (
         <div className="flex flex-wrap items-end gap-2">
           <label className="text-sm"><span className="mb-1 block font-medium">Montant (DH, {maxDh.toLocaleString("fr-FR")} au plus)</span><input id={`refund-amount-${requestId}`} value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" className="w-36 rounded-lg border border-line bg-white px-3 py-1.5" /></label>
-          <button type="button" disabled={busy} onClick={() => run("partial")} className="rounded-full bg-plum-900 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-60">Confirmer</button>
+          <button type="button" disabled={busy} onClick={() => run("partial")} className="rounded-full bg-brand-900 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-60">Confirmer</button>
         </div>
       )}
       {(mode === "partial" || mode === "decline" || mode === "full") && (

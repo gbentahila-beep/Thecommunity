@@ -28,7 +28,7 @@ export default async function PrintablesPage({ params }: PageProps<"/admin/sessi
     : [{ label: "Tous les participants", names: confirmed.flatMap((r) => [first(r.userId), ...Array.from({ length: r.seats - 1 }, () => `Invité de ${first(r.userId)}`)]) }];
   return (
     <>
-      <p className="mb-2 text-sm print:hidden"><Link href={`/admin/sessions/${s.id}`} className="text-plum-900">← Participants</Link></p>
+      <p className="mb-2 text-sm print:hidden"><Link href={`/admin/sessions/${s.id}`} className="text-brand-900">← Participants</Link></p>
       <PageHeader title="Supports imprimés" subtitle={`${e.title.fr} · ${adminDate(s.startAt)} · ${e.venue.name}`} actions={<PrintButton label="Imprimer / PDF" />} />
       <Card title="Questions pour lancer la conversation">
         <ol className="list-decimal space-y-1.5 ps-5 text-sm">
@@ -36,7 +36,7 @@ export default async function PrintablesPage({ params }: PageProps<"/admin/sessi
         </ol>
         <p className="mt-3 text-xs text-muted">Elles figurent sur les cartes de bienvenue posées sur chaque table : les participants se présentent eux-mêmes.</p>
       </Card>
-      <h2 className="mb-3 mt-8 font-display text-2xl font-medium text-plum-900">Marque-places</h2>
+      <h2 className="mb-3 mt-8 font-display text-2xl font-medium text-brand-900">Marque-places</h2>
       {!groups.length && <p className="mb-3 text-sm text-muted print:hidden">Les tables ne sont pas encore composées : les prénoms sont listés ensemble.</p>}
       {tables.map((t) => (
         <section key={t.label} aria-label={t.label} className="mb-6 break-inside-avoid">
@@ -48,13 +48,13 @@ export default async function PrintablesPage({ params }: PageProps<"/admin/sessi
       ))}
       {groups.length > 0 && (
         <>
-          <h2 className="mb-3 mt-8 font-display text-2xl font-medium text-plum-900 print:break-before-page">Numéros de table</h2>
+          <h2 className="mb-3 mt-8 font-display text-2xl font-medium text-brand-900 print:break-before-page">Numéros de table</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {tables.map((t) => <TableNumberCard key={t.label} label={t.label} />)}
           </div>
         </>
       )}
-      <h2 className="mb-3 mt-8 font-display text-2xl font-medium text-plum-900 print:break-before-page">Cartes de bienvenue</h2>
+      <h2 className="mb-3 mt-8 font-display text-2xl font-medium text-brand-900 print:break-before-page">Cartes de bienvenue</h2>
       <p className="mb-3 text-sm text-muted print:hidden">Une carte par table, avec trois questions différentes pour lancer la conversation.</p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {tables.map((t, i) => (

@@ -2,7 +2,7 @@
  * Étape 11 — tarification en deux parts.
  * - Part organisation : le prix de l'expérience (`price`), payé en ligne. Seule cette part reçoit le prix membre,
  *   l'abonnement, les codes promo et les frais de service.
- * - Part partenaire : réglée sur place, directement au partenaire (jamais encaissée par The Host Club) :
+ * - Part partenaire : réglée sur place, directement au partenaire (jamais encaissée par Wenzy) :
  *   prix fixe connu, ou consommation libre (montant inconnu → null, jamais 0).
  * - « Tout en ligne » : aucune part sur place (toutes les expériences antérieures à l'étape 11).
  * Montants en centimes, comme le reste du site.

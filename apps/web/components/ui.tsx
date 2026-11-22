@@ -15,7 +15,7 @@ export function SectionHeading({
     <div className="flex items-end justify-between gap-4">
       <Tag className="section-title">{title}</Tag>
       {action && (
-        <Link href={action.href} className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-plum-900 sm:flex">
+        <Link href={action.href} className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-brand-900 sm:flex">
           {action.label}
           <ArrowRight className="size-4 transition group-hover:translate-x-0.5 rtl:-scale-x-100" aria-hidden />
         </Link>
@@ -42,7 +42,7 @@ export function Stars({ value, className = "" }: { value: number; className?: st
       {[1, 2, 3, 4, 5].map((i) => (
         <Star
           key={i}
-          className={`size-4 ${i <= Math.round(value) ? "fill-plum-700 text-plum-700" : "text-plum-200"}`}
+          className={`size-4 ${i <= Math.round(value) ? "fill-brand-700 text-brand-700" : "text-brand-200"}`}
           aria-hidden
         />
       ))}

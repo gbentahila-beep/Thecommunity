@@ -66,14 +66,14 @@ async function RetiredExperience({ title, categoryId, cityId }: { title: string;
   return (
     <PageShell className="py-14">
       <div className="mx-auto max-w-2xl text-center">
-        <p className="text-sm font-semibold tracking-[0.18em] text-plum-700 uppercase">{t("retiredEyebrow")}</p>
+        <p className="text-sm font-semibold tracking-[0.18em] text-brand-700 uppercase">{t("retiredEyebrow")}</p>
         <h1 className="page-title mt-3">{title}</h1>
         <p className="mt-4 text-lg text-ink/75">{t("retiredText")}</p>
         <PrimaryLink href="/experiences" className="mt-7">{t("retiredCta")}</PrimaryLink>
       </div>
       {similar.length > 0 && (
         <section aria-labelledby="similar" className="mt-14">
-          <h2 id="similar" className="font-display text-2xl font-medium text-plum-900">{t("retiredSimilar")}</h2>
+          <h2 id="similar" className="font-display text-2xl font-medium text-brand-900">{t("retiredSimilar")}</h2>
           <ul className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {similar.map((s) => (
               <li key={s.id}>
@@ -154,7 +154,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         availability: seatsAvailable(s) > 0 ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
         url: `${SITE_URL}/experiences/${exp.slug}`,
       },
-      organizer: { "@type": "Organization", name: "The Host Club", url: SITE_URL },
+      organizer: { "@type": "Organization", name: "Wenzy", url: SITE_URL },
     })),
   };
 
@@ -163,15 +163,15 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <PageShell className="pt-4 pb-32 lg:pt-8 lg:pb-12">
         <nav aria-label="Fil d'Ariane" className="mb-4 text-sm text-muted">
-          <Link href="/" className="hover:text-plum-900">{t("breadcrumbHome")}</Link>
+          <Link href="/" className="hover:text-brand-900">{t("breadcrumbHome")}</Link>
           <span className="mx-2">/</span>
-          <Link href={`/${exp.cityId}/${exp.categoryId}`} className="hover:text-plum-900">
+          <Link href={`/${exp.cityId}/${exp.categoryId}`} className="hover:text-brand-900">
             {category ? tr(category.name, locale) : ""}
           </Link>
           {subcategory && (
             <>
               <span className="mx-2">/</span>
-              <Link href={`/${exp.cityId}/${subcategory.id}`} className="hover:text-plum-900">{tr(subcategory.name, locale)}</Link>
+              <Link href={`/${exp.cityId}/${subcategory.id}`} className="hover:text-brand-900">{tr(subcategory.name, locale)}</Link>
             </>
           )}
         </nav>
@@ -183,7 +183,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-10">
             <header>
-              <span className="inline-block rounded-full bg-badge px-3 py-1 text-xs font-medium text-plum-900">
+              <span className="inline-block rounded-full bg-badge px-3 py-1 text-xs font-medium text-brand-900">
                 {category ? tr(category.shortName, locale) : ""}
                 {subcategory ? ` · ${tr(subcategory.shortName, locale)}` : ""}
               </span>
@@ -246,7 +246,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <ul className="grid gap-2 sm:grid-cols-2">
                 {exp.included.map((item) => (
                   <li key={item.fr} className="flex items-start gap-2.5 text-ink/85">
-                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-plum-700" aria-hidden />
+                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-brand-700" aria-hidden />
                     {tr(item, locale)}
                   </li>
                 ))}
@@ -258,7 +258,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 <ul className="grid gap-2 sm:grid-cols-2" data-testid="not-included">
                   {exp.notIncluded!.map((item) => (
                     <li key={item.fr} className="flex items-start gap-2.5 text-ink/85">
-                      <span className="mt-2 size-1.5 shrink-0 rounded-full border border-plum-700" aria-hidden />
+                      <span className="mt-2 size-1.5 shrink-0 rounded-full border border-brand-700" aria-hidden />
                       {tr(item, locale)}
                     </li>
                   ))}
@@ -270,7 +270,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <p className="font-medium text-ink">{exp.venue.name}</p>
               <p className="text-muted">{exp.venue.address}</p>
               {exp.venue.revealPolicy === "on_group_reveal" && (
-                <p className="mt-3 rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("venueRevealed")}</p>
+                <p className="mt-3 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-900">{t("venueRevealed")}</p>
               )}
               {exp.venue.revealPolicy === "immediate" && exp.venue.geo && <VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} />}
             </Section>
@@ -278,7 +278,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
             {organizer && (
               <Section title={t("organizedBy")}>
                 <div className="flex items-center gap-4 rounded-[var(--radius-card)] bg-white p-4 shadow-card" data-testid="organizer-block">
-                  <div className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-plum-50 font-display text-2xl text-plum-900">
+                  <div className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-brand-50 font-display text-2xl text-brand-900">
                     {publicLogo(organizer.logoPath) ? <Image src={publicLogo(organizer.logoPath)!} alt="" fill sizes="64px" className="object-cover" /> : organizer.name.slice(0, 1)}
                   </div>
                   <div className="min-w-0">
@@ -288,7 +288,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                         <Stars value={organizer.ratingAvg} /> {organizer.ratingAvg.toFixed(1)} · {t("reviewsCount", { count: organizer.ratingCount })}
                       </p>
                     )}
-                    <Link href={`/organisateurs/${organizer.slug}`} className="text-sm font-semibold text-plum-900 underline underline-offset-4">{t("organizerPage")}</Link>
+                    <Link href={`/organisateurs/${organizer.slug}`} className="text-sm font-semibold text-brand-900 underline underline-offset-4">{t("organizerPage")}</Link>
                   </div>
                 </div>
               </Section>
@@ -303,7 +303,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                   {exp.outdoor && <Detail icon={CloudSun} label={t("outdoorTitle")} text={t("outdoorText")} />}
                   {exp.physicalActivity && <Detail icon={HeartPulse} label={t("physicalTitle")} text={richText(t.raw("physicalText") as string, "")} />}
                 </ul>
-                {(exp.questionnaire?.length ?? 0) > 0 && <p className="mt-4 rounded-xl bg-plum-50 px-4 py-3 text-sm text-plum-900">{t("questionnaireNote", { count: exp.questionnaire!.length })}</p>}
+                {(exp.questionnaire?.length ?? 0) > 0 && <p className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-900">{t("questionnaireNote", { count: exp.questionnaire!.length })}</p>}
               </Section>
             )}
 
@@ -342,7 +342,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" pricing={twoPart} t2={t2} budget={budget} />
                 <span className="text-sm text-muted">{t("perPerson")}</span>
               </p>
-              {exp.membersOnly && <p className="mt-2 rounded-xl bg-plum-900 px-3 py-2 text-sm font-medium text-white">{t("membersOnlyNote")}</p>}
+              {exp.membersOnly && <p className="mt-2 rounded-xl bg-brand-900 px-3 py-2 text-sm font-medium text-white">{t("membersOnlyNote")}</p>}
               {twoPart.partner && (
                 <div className="mt-3 rounded-xl bg-cream px-3 py-2.5 text-sm text-ink" data-testid="two-part">
                   <p className="font-semibold">{t2("sectionTitle")}</p>
@@ -355,11 +355,11 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               )}
               {/* Étape 28 : l'abonnement n'est proposé ici que si l'expérience est réservée aux membres (sinon : après la 1re expérience). */}
               {plan && exp.membersOnly && (
-                <Link href="/abonnement" className="mt-2 inline-block text-sm font-semibold text-plum-900 underline underline-offset-4">
+                <Link href="/abonnement" className="mt-2 inline-block text-sm font-semibold text-brand-900 underline underline-offset-4">
                   {t("becomeMember")}
                 </Link>
               )}
-              {exp.admission === "on_request" && <p className="mt-3 rounded-xl bg-plum-50 px-3 py-2 text-sm text-plum-900">{t("onRequestNote")}</p>}
+              {exp.admission === "on_request" && <p className="mt-3 rounded-xl bg-brand-50 px-3 py-2 text-sm text-brand-900">{t("onRequestNote")}</p>}
               <h2 id="alerte" className="mt-5 scroll-mt-28 text-sm font-semibold uppercase tracking-wide text-muted">{t("nextDates")}</h2>
               {sessions.length === 0 ? (
                 <>
@@ -376,7 +376,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                         <Link
                           href={`/reserver/${s.id}`}
                           className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition ${
-                            full ? "border-line bg-cream/60" : "border-line hover:border-plum-700 hover:bg-plum-50"
+                            full ? "border-line bg-cream/60" : "border-line hover:border-brand-700 hover:bg-brand-50"
                           }`}
                         >
                           <span>
@@ -385,7 +385,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                           </span>
                           <span
                             className={`shrink-0 text-end text-xs font-semibold ${
-                              full ? "text-muted" : left <= LOW_SEATS_THRESHOLD ? "text-plum-700" : "text-cat-move"
+                              full ? "text-muted" : left <= LOW_SEATS_THRESHOLD ? "text-brand-700" : "text-cat-move"
                             }`}
                           >
                             {full ? tCard("waitlist") : t("seatsLeft", { count: left })}
@@ -446,7 +446,7 @@ function formatLabel(exp: Experience, t: (key: string, values?: Record<string, s
 function Fact({ icon: Icon, label, value }: { icon: typeof Clock; label: string; value: string }) {
   return (
     <li className="flex items-start gap-3">
-      <Icon className="mt-0.5 size-5 shrink-0 text-plum-700" strokeWidth={1.6} aria-hidden />
+      <Icon className="mt-0.5 size-5 shrink-0 text-brand-700" strokeWidth={1.6} aria-hidden />
       <span>
         <span className="block font-medium text-ink">{label}</span>
         {value && <span className="text-sm text-muted">{value}</span>}
@@ -458,7 +458,7 @@ function Fact({ icon: Icon, label, value }: { icon: typeof Clock; label: string;
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="mb-3 font-display text-2xl font-medium text-plum-900">{title}</h2>
+      <h2 className="mb-3 font-display text-2xl font-medium text-brand-900">{title}</h2>
       {children}
     </section>
   );
@@ -467,7 +467,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Detail({ icon: Icon, label, text }: { icon: typeof Backpack; label: string; text: React.ReactNode }) {
   return (
     <li className="flex items-start gap-3">
-      <Icon className="mt-0.5 size-5 shrink-0 text-plum-700" aria-hidden />
+      <Icon className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
       <span>
         <span className="block font-medium text-ink">{label}</span>
         <span className="text-ink/80">{text}</span>

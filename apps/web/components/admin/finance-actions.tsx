@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { firebase } from "@/lib/firebase/client";
 
-const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100 disabled:bg-cream";
+const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100 disabled:bg-cream";
 const ERRORS: Record<string, string> = {
   missing_bank_details: "L'organisateur n'a pas encore indiqué son RIB (Finances de son espace).",
   nothing_to_pay: "Rien à reverser pour l'instant (activités pas encore passées ou solde nul).",
@@ -65,7 +65,7 @@ export function CommissionRuleForm({ targets, live, canEdit }: { targets: Record
       <label className="text-sm"><span className="mb-1 block font-medium">À partir du</span><input id="rule-from" type="date" className={input} value={v.effectiveFrom} disabled={!canEdit} onChange={(e) => set("effectiveFrom", e.target.value)} /></label>
       <label className="text-sm sm:col-span-3"><span className="mb-1 block font-medium">Note (facultatif)</span><input id="rule-note" className={input} value={v.note} disabled={!canEdit} onChange={(e) => set("note", e.target.value)} placeholder="Ex. taux négocié, contrat du 1er décembre" /></label>
       <div className="flex flex-wrap items-center gap-3 sm:col-span-3">
-        {canEdit && <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{state === "busy" ? "Enregistrement…" : "Ajouter la règle"}</button>}
+        {canEdit && <button type="submit" disabled={state === "busy"} className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{state === "busy" ? "Enregistrement…" : "Ajouter la règle"}</button>}
         {msg && <p role={state === "error" ? "alert" : "status"} className={`text-sm ${state === "error" ? "text-red-800" : "text-emerald-800"}`}>{msg}</p>}
       </div>
     </form>
@@ -98,7 +98,7 @@ export function CreatePayoutButton({ organizerId, live, disabled }: { organizerI
         setBusy(true); setMsg("");
         try { await call("adminCreatePayout", { organizerId }); router.refresh(); } catch (e) { setMsg(reasonOf(e)); }
         setBusy(false);
-      }} className="rounded-full bg-plum-900 px-4 py-1.5 text-xs font-semibold text-white disabled:opacity-50">Préparer le reversement</button>
+      }} className="rounded-full bg-brand-900 px-4 py-1.5 text-xs font-semibold text-white disabled:opacity-50">Préparer le reversement</button>
       {msg && <span role="status" className="text-xs text-muted">{msg}</span>}
     </span>
   );

@@ -11,7 +11,7 @@ function layout(l: L, o: { heading: string; paragraphs: string[]; list?: { label
   const html = `<!doctype html><html lang="${l}" dir="${dir}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
 <body style="margin:0;background:#f8efe9;font-family:Helvetica,Arial,sans-serif;color:#221c1e">
 <div style="max-width:560px;margin:0 auto;padding:24px 16px">
-<div style="background:#561a29;border-radius:16px 16px 0 0;padding:22px 24px"><img src="${SITE_URL}/images/brand/email-logo.png" width="200" height="35" alt="The Host Club." style="display:block;border:0;color:#f8efe8;font-family:Georgia,serif;font-size:22px"></div>
+<div style="background:#561a29;border-radius:16px 16px 0 0;padding:22px 24px"><img src="${SITE_URL}/images/brand/email-logo.png" width="200" height="35" alt="Wenzy." style="display:block;border:0;color:#f8efe8;font-family:Georgia,serif;font-size:22px"></div>
 <div style="height:16px;background:#561a29 url('${SITE_URL}/images/brand/email-band.png') 0 0/280px 16px repeat-x"></div>
 <div style="background:#fff;border-radius:0 0 16px 16px;padding:24px">
 <h1 style="font-family:Georgia,serif;font-size:22px;color:#561a29;margin:0 0 12px">${esc(o.heading)}</h1>
@@ -26,9 +26,9 @@ ${o.cta ? `<p style="margin:20px 0 4px"><a href="${esc(o.cta.href)}" style="disp
 }
 
 const FOOTER: Record<L, string> = {
-  fr: "Vous recevez cet e-mail car vous avez effectué un achat sur The Host Club. Votre document est joint en PDF et disponible dans votre espace, rubrique « Mes factures ».",
-  en: "You're receiving this email because you made a purchase on The Host Club. Your document is attached as a PDF and available in your account under “My invoices”.",
-  ar: "تتوصل بهذه الرسالة لأنك قمت بعملية شراء على The Host Club. وثيقتك مرفقة بصيغة PDF ومتاحة في حسابك ضمن « فواتيري ».",
+  fr: "Vous recevez cet e-mail car vous avez effectué un achat sur Wenzy. Votre document est joint en PDF et disponible dans votre espace, rubrique « Mes factures ».",
+  en: "You're receiving this email because you made a purchase on Wenzy. Your document is attached as a PDF and available in your account under “My invoices”.",
+  ar: "تتوصل بهذه الرسالة لأنك قمت بعملية شراء على Wenzy. وثيقتك مرفقة بصيغة PDF ومتاحة في حسابك ضمن « فواتيري ».",
 };
 const TEST_NOTE: Record<L, string> = {
   fr: "Paiement de TEST : aucune somme n'a été débitée.",
@@ -82,9 +82,9 @@ export function groupRevealedMail(o: { locale: string; firstName: string; title:
 
 /** Pied des e-mails de service (sans facture jointe). */
 const NOTICE_FOOTER: Record<L, string> = {
-  fr: "Vous recevez cet e-mail car vous avez une réservation sur The Host Club.",
-  en: "You're receiving this email because you have a booking on The Host Club.",
-  ar: "تتوصل بهذه الرسالة لأن لديك حجزًا على The Host Club.",
+  fr: "Vous recevez cet e-mail car vous avez une réservation sur Wenzy.",
+  en: "You're receiving this email because you have a booking on Wenzy.",
+  ar: "تتوصل بهذه الرسالة لأن لديك حجزًا على Wenzy.",
 };
 
 export function reminderMail(o: { locale: string; kind: "d1" | "h3"; firstName: string; title: string; when: string; where: string; reservationId: string }) {
@@ -208,7 +208,7 @@ export function organizerMail(o: { heading: string; paragraphs: string[]; ctaLab
       heading: o.heading,
       paragraphs: o.paragraphs,
       cta: { label: o.ctaLabel, href: `${SITE_URL}${o.path}` },
-      footer: "Vous recevez cet e-mail car vous avez un compte organisateur sur The Host Club.",
+      footer: "Vous recevez cet e-mail car vous avez un compte organisateur sur Wenzy.",
     }),
   };
 }
@@ -221,7 +221,7 @@ export function noticeMail(o: { heading: string; paragraphs: string[]; ctaLabel:
       heading: o.heading,
       paragraphs: o.paragraphs,
       cta: { label: o.ctaLabel, href: `${SITE_URL}${o.path}` },
-      footer: "Vous recevez cet e-mail au sujet d'une réservation faite sur The Host Club.",
+      footer: "Vous recevez cet e-mail au sujet d'une réservation faite sur Wenzy.",
     }),
   };
 }
@@ -231,9 +231,9 @@ export function alertConfirmMail(o: { locale: string; token: string }) {
   const l = lang(o.locale);
   const href = `${SITE_URL}${prefix(l)}/alertes?confirmer=${encodeURIComponent(o.token)}`;
   const t = {
-    fr: { subject: "Confirmez vos alertes The Host Club", heading: "Une dernière étape", p: ["Vous avez demandé à être prévenu·e des nouvelles tables et activités de The Host Club.", "Confirmez votre adresse : vous recevrez ensuite un e-mail dès qu'une nouvelle expérience est publiée. Vous pourrez arrêter à tout moment, depuis chaque e-mail."], cta: "Confirmer mes alertes", footer: "Vous n'êtes pas à l'origine de cette demande ? Ignorez cet e-mail : sans confirmation, votre adresse est effacée sous 7 jours." },
-    en: { subject: "Confirm your The Host Club alerts", heading: "One last step", p: ["You asked to get alerts for new tables and activities from The Host Club.", "Confirm your address: you'll then get an email as soon as a new experience is published. You can stop at any time, from any email."], cta: "Confirm my alerts", footer: "Didn't ask for this? Just ignore this email: without confirmation, your address is deleted within 7 days." },
-    ar: { subject: "أكّد تنبيهات The Host Club", heading: "خطوة أخيرة", p: ["طلبت أن تصلك تنبيهات بالطاولات والأنشطة الجديدة في The Host Club.", "أكّد عنوانك: ستصلك بعد ذلك رسالة كلما نُشرت تجربة جديدة. ويمكنك التوقف في أي وقت، من كل رسالة."], cta: "تأكيد التنبيهات", footer: "لست صاحب هذا الطلب؟ تجاهل هذه الرسالة: دون تأكيد، يُحذف عنوانك خلال 7 أيام." },
+    fr: { subject: "Confirmez vos alertes Wenzy", heading: "Une dernière étape", p: ["Vous avez demandé à être prévenu·e des nouvelles tables et activités de Wenzy.", "Confirmez votre adresse : vous recevrez ensuite un e-mail dès qu'une nouvelle expérience est publiée. Vous pourrez arrêter à tout moment, depuis chaque e-mail."], cta: "Confirmer mes alertes", footer: "Vous n'êtes pas à l'origine de cette demande ? Ignorez cet e-mail : sans confirmation, votre adresse est effacée sous 7 jours." },
+    en: { subject: "Confirm your Wenzy alerts", heading: "One last step", p: ["You asked to get alerts for new tables and activities from Wenzy.", "Confirm your address: you'll then get an email as soon as a new experience is published. You can stop at any time, from any email."], cta: "Confirm my alerts", footer: "Didn't ask for this? Just ignore this email: without confirmation, your address is deleted within 7 days." },
+    ar: { subject: "أكّد تنبيهات Wenzy", heading: "خطوة أخيرة", p: ["طلبت أن تصلك تنبيهات بالطاولات والأنشطة الجديدة في Wenzy.", "أكّد عنوانك: ستصلك بعد ذلك رسالة كلما نُشرت تجربة جديدة. ويمكنك التوقف في أي وقت، من كل رسالة."], cta: "تأكيد التنبيهات", footer: "لست صاحب هذا الطلب؟ تجاهل هذه الرسالة: دون تأكيد، يُحذف عنوانك خلال 7 أيام." },
   }[l];
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: t.footer }) };
 }

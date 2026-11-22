@@ -33,12 +33,12 @@ export function ProNav({ approved, pendingRequests = 0, onNavigate }: { approved
                 href={href}
                 aria-current={active ? "page" : undefined}
                 onClick={onNavigate}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2 text-[15px] font-medium transition ${active ? "bg-plum-900 text-white" : "text-ink hover:bg-white"}`}
+                className={`flex items-center gap-3 rounded-xl px-3 py-2 text-[15px] font-medium transition ${active ? "bg-brand-900 text-white" : "text-ink hover:bg-white"}`}
               >
                 <Icon className="size-[18px] shrink-0" aria-hidden />
                 <span className="flex-1">{label}</span>
                 {href === "/pro/demandes" && pendingRequests > 0 && (
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${active ? "bg-white text-plum-900" : "bg-plum-900 text-white"}`} aria-label={`${pendingRequests} en attente`}>{pendingRequests}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${active ? "bg-white text-brand-900" : "bg-brand-900 text-white"}`} aria-label={`${pendingRequests} en attente`}>{pendingRequests}</span>
                 )}
               </Link>
             </li>
@@ -59,7 +59,7 @@ export function MobileProMenu({ approved, pendingRequests = 0 }: { approved: boo
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-controls="pro-mobile-nav"
-        className="grid size-10 place-items-center rounded-full bg-white text-plum-900 shadow-card"
+        className="grid size-10 place-items-center rounded-full bg-white text-brand-900 shadow-card"
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
       >
         {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}

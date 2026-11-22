@@ -50,8 +50,8 @@ async function alertSuperadmins(issues: HealthIssue[]) {
   for (const a of admins.docs) {
     const to = a.data().email as string | undefined;
     if (!to) continue;
-    const text = ["Bilan de santé du site The Host Club :", "", ...lines.map((l) => `- ${l}`), "", `Tableau de bord : ${SITE_URL}/admin`].join("\n");
-    const html = `<p>Bilan de santé du site The Host Club :</p><ul>${lines.map((l) => `<li>${l.replace(/[<>&]/g, "")}</li>`).join("")}</ul><p><a href="${SITE_URL}/admin">Ouvrir le tableau de bord</a></p>`;
+    const text = ["Bilan de santé du site Wenzy :", "", ...lines.map((l) => `- ${l}`), "", `Tableau de bord : ${SITE_URL}/admin`].join("\n");
+    const html = `<p>Bilan de santé du site Wenzy :</p><ul>${lines.map((l) => `<li>${l.replace(/[<>&]/g, "")}</li>`).join("")}</ul><p><a href="${SITE_URL}/admin">Ouvrir le tableau de bord</a></p>`;
     await sendMail({ to, locale: "fr", subject: `Santé du site : ${issues.length} point(s) à vérifier`, html, text, kind: "health_alert", refs: {} }).catch((e) => logger.error("Alerte santé non envoyée", { error: String(e) }));
   }
 }

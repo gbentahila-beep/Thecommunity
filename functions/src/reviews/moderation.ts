@@ -50,7 +50,7 @@ export const replyToReview = onCall({ region: REGION }, async (req) => {
   const who = await requireTeamOrOrganizerOf(req, (exp.organizerId as string | undefined) ?? null);
   if (r.status !== "published") refuse("not_published", "On ne répond qu'à un avis publié.");
   const team = who.role !== "organizer";
-  const authorName = team ? "L'équipe The Host Club" : String((await db.doc(`organizers/${exp.organizerId}`).get()).get("name") ?? "L'organisateur");
+  const authorName = team ? "L'équipe Wenzy" : String((await db.doc(`organizers/${exp.organizerId}`).get()).get("name") ?? "L'organisateur");
   if (!text) {
     await ref.update({ reply: FieldValue.delete() });
     await addHistory(reviewId, "reply_removed", team ? "team" : "organizer", authorName);

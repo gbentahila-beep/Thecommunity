@@ -41,7 +41,7 @@ export function LoginForm() {
       <Field label={t("email")} type="email" name="email" autoComplete="email" required />
       <Field label={t("password")} type="password" name="password" autoComplete="current-password" required />
       <p className="text-end text-sm">
-        <Link href="/mot-de-passe-oublie" className="text-plum-900 underline underline-offset-4">{t("forgot")}</Link>
+        <Link href="/mot-de-passe-oublie" className="text-brand-900 underline underline-offset-4">{t("forgot")}</Link>
       </p>
       {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">{t(`errors.${error}` as "errors.generic")}</p>}
       <button type="submit" disabled={busy} className="btn btn-primary w-full">

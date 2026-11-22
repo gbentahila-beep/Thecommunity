@@ -26,16 +26,16 @@ export default async function BecomePartnerPage({ params }: PageProps<"/[locale]
       <ul className="grid gap-4 sm:grid-cols-3">
         {why.map(({ icon: Icon, title, text }) => (
           <li key={title} className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-            <Icon className="size-6 text-plum-900" aria-hidden />
+            <Icon className="size-6 text-brand-900" aria-hidden />
             <p className="mt-3 font-semibold text-ink">{title}</p>
             <p className="mt-1 text-sm text-ink/75">{text}</p>
           </li>
         ))}
       </ul>
-      {FIREBASE_ENABLED ? <PartnerApplicationForm /> : <p className="rounded-2xl bg-plum-50 p-4 text-sm text-plum-900">{t("demo")}</p>}
+      {FIREBASE_ENABLED ? <PartnerApplicationForm /> : <p className="rounded-2xl bg-brand-50 p-4 text-sm text-brand-900">{t("demo")}</p>}
       <p className="flex flex-col gap-2">
-        <Link href="/aide/partenaires" className="font-medium text-plum-900 underline underline-offset-4">{t("helpLink")}</Link>
-        <Link href="/devenir-organisateur" className="font-medium text-plum-900 underline underline-offset-4">{t("organizersLink")}</Link>
+        <Link href="/aide/partenaires" className="font-medium text-brand-900 underline underline-offset-4">{t("helpLink")}</Link>
+        <Link href="/devenir-organisateur" className="font-medium text-brand-900 underline underline-offset-4">{t("organizersLink")}</Link>
       </p>
     </StaticPage>
   );

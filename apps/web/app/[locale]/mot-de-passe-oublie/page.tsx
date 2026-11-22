@@ -16,7 +16,7 @@ export default async function ForgotPasswordPage({ params }: PageProps<"/[locale
       title={t("forgotTitle")}
       subtitle={t("forgotSubtitle")}
       notice={FIREBASE_ENABLED ? undefined : t("demoNotice")}
-      footer={<Link href="/connexion" className="font-semibold text-plum-900 underline underline-offset-4">{t("backToLogin")}</Link>}
+      footer={<Link href="/connexion" className="font-semibold text-brand-900 underline underline-offset-4">{t("backToLogin")}</Link>}
     >
       {FIREBASE_ENABLED ? <ForgotForm /> : null}
     </AuthCard>

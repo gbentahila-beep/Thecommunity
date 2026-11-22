@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 /** Installation sur l'écran d'accueil du téléphone : nom, couleurs et icône « h. » (identité 10f). */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "The Host Club",
-    short_name: "The Host Club",
+    name: "Wenzy",
+    short_name: "Wenzy",
     description: "Des expériences en petit groupe pour rencontrer de nouvelles personnes à Casablanca.",
     start_url: "/",
     display: "standalone",

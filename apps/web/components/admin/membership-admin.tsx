@@ -28,7 +28,7 @@ export function MembershipPlanForm({ plan, live }: { plan: MembershipPlan | null
   );
   const [highlight, setHighlight] = useState<number>(stored.find((o) => o.highlight)?.months ?? 6);
   const [v, setV] = useState({
-    nameFr: plan?.name.fr ?? "The Host Club Membre",
+    nameFr: plan?.name.fr ?? "Wenzy Membre",
     nameAr: plan?.name.ar ?? "",
     priceDh: plan ? String(plan.price.amount / 100) : "990",
     discountPercent: String(plan?.discountPercent ?? 15),
@@ -83,8 +83,8 @@ export function MembershipPlanForm({ plan, live }: { plan: MembershipPlan | null
                   <tr key={r.months} className="border-t border-line">
                     <td className="py-2 font-medium">{r.months === 1 ? "1 mois" : `${r.months} mois`}</td>
                     <td><input aria-label={`Prix ${r.months} mois (DH)`} className={`${input} max-w-28`} inputMode="decimal" value={r.priceDh} onChange={(e) => setRows((xs) => xs.map((x, j) => (j === i ? { ...x, priceDh: e.target.value } : x)))} /></td>
-                    <td><input aria-label={`Proposer ${r.months} mois`} type="checkbox" className="size-4 accent-plum-900" checked={r.isActive} onChange={(e) => setRows((xs) => xs.map((x, j) => (j === i ? { ...x, isActive: e.target.checked } : x)))} /></td>
-                    <td><input aria-label={`Mettre en avant ${r.months} mois`} type="radio" name="highlight" className="size-4 accent-plum-900" checked={highlight === r.months} onChange={() => setHighlight(r.months)} /></td>
+                    <td><input aria-label={`Proposer ${r.months} mois`} type="checkbox" className="size-4 accent-brand-900" checked={r.isActive} onChange={(e) => setRows((xs) => xs.map((x, j) => (j === i ? { ...x, isActive: e.target.checked } : x)))} /></td>
+                    <td><input aria-label={`Mettre en avant ${r.months} mois`} type="radio" name="highlight" className="size-4 accent-brand-900" checked={highlight === r.months} onChange={() => setHighlight(r.months)} /></td>
                     <td className="text-muted">{eco ? `${(eco.perMonth / 100).toFixed(0)} DH/mois${eco.savingPercent > 0 ? ` · −${eco.savingPercent} %` : ""}` : "—"}</td>
                   </tr>
                 );
@@ -96,17 +96,17 @@ export function MembershipPlanForm({ plan, live }: { plan: MembershipPlan | null
       <label className="text-sm font-medium">Réduction sur les expériences (%)<span className="block text-xs font-normal text-muted">Un prix membre précis peut aussi être réglé sur chaque expérience.</span><input className={input} inputMode="numeric" value={v.discountPercent} onChange={(e) => set("discountPercent", e.target.value)} /></label>
       <label className="text-sm font-medium">Accès anticipé aux nouvelles dates (heures)<span className="block text-xs font-normal text-muted">0 = pas d&apos;accès anticipé.</span><input className={input} inputMode="numeric" value={v.earlyAccessHours} onChange={(e) => set("earlyAccessHours", e.target.value)} /></label>
       <label className="flex items-center gap-2 self-end pb-2 text-sm font-medium">
-        <input type="checkbox" checked={v.waiveServiceFee} onChange={(e) => set("waiveServiceFee", e.target.checked)} className="size-4 accent-plum-900" />
+        <input type="checkbox" checked={v.waiveServiceFee} onChange={(e) => set("waiveServiceFee", e.target.checked)} className="size-4 accent-brand-900" />
         Frais de service offerts aux membres
       </label>
       <label className="flex items-center gap-2 self-end pb-2 text-sm font-medium sm:col-span-2">
-        <input type="checkbox" checked={v.isActive} onChange={(e) => set("isActive", e.target.checked)} className="size-4 accent-plum-900" />
+        <input type="checkbox" checked={v.isActive} onChange={(e) => set("isActive", e.target.checked)} className="size-4 accent-brand-900" />
         Proposer l&apos;abonnement (prix barrés visibles sur le site)
       </label>
       <label className="text-sm font-medium sm:col-span-2">Avantages affichés (FR, un par ligne)<textarea className={input} rows={4} value={v.benefitsFr} onChange={(e) => set("benefitsFr", e.target.value)} /></label>
       <label className="text-sm font-medium sm:col-span-2">Avantages (AR, même ordre, facultatif)<textarea className={input} dir="rtl" rows={3} value={v.benefitsAr} onChange={(e) => set("benefitsAr", e.target.value)} /></label>
       <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
-        <button type="submit" disabled={busy} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{busy ? "…" : "Enregistrer la formule"}</button>
+        <button type="submit" disabled={busy} className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{busy ? "…" : "Enregistrer la formule"}</button>
         {msg && <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-emerald-800" : "text-red-800"}`}>{msg.text}</p>}
       </div>
     </form>
@@ -147,7 +147,7 @@ export function GrantMembershipForm({ users }: { users: { uid: string; email: st
       <datalist id="member-emails">{users.slice(0, 500).map((u) => <option key={u.uid} value={u.email}>{u.name}</option>)}</datalist>
       <label className="text-sm font-medium">Durée (mois)<input className={input} inputMode="numeric" value={months} onChange={(e) => setMonths(e.target.value)} /></label>
       <label className="text-sm font-medium">Motif (journalisé)<input className={input} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Ex. partenaire, geste commercial" /></label>
-      <button type="submit" disabled={busy} className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{busy ? "…" : "Offrir"}</button>
+      <button type="submit" disabled={busy} className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{busy ? "…" : "Offrir"}</button>
       {msg && <p role={msg.ok ? "status" : "alert"} className={`text-sm sm:col-span-4 ${msg.ok ? "text-emerald-800" : "text-red-800"}`}>{msg.text}</p>}
     </form>
   );

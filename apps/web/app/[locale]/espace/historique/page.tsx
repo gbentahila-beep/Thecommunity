@@ -52,7 +52,7 @@ export default async function HistoryPage({ params }: PageProps<"/[locale]/espac
                     {tr(r.sessionSnapshot.title, locale)}
                   </Link>
                   <p className="truncate text-sm text-muted">{formatLongDate(r.sessionSnapshot.startAt, locale)} · {r.sessionSnapshot.district}</p>
-                  <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${r.reviewId ? "bg-emerald-50 text-emerald-800" : "bg-plum-50 text-plum-800"}`}>
+                  <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${r.reviewId ? "bg-emerald-50 text-emerald-800" : "bg-brand-50 text-brand-800"}`}>
                     {r.reviewId ? t("reviewed") : t("notReviewed")}
                   </span>
                 </div>

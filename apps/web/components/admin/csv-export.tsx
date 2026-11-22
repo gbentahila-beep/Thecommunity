@@ -48,7 +48,7 @@ export function CsvExportButton({
         a.click();
         URL.revokeObjectURL(url);
       }}
-      className="inline-flex items-center gap-2 rounded-full border border-plum-900 bg-white px-4 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-900 hover:text-white"
+      className="inline-flex items-center gap-2 rounded-full border border-brand-900 bg-white px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-900 hover:text-white"
     >
       <Download className="size-4" aria-hidden />
       {label}

@@ -12,8 +12,8 @@ export const DEMO_ORGANIZER: Organizer = {
   name: "Club Padel Anfa",
   slug: "club-padel-anfa",
   description: {
-    fr: "Quatre terrains couverts au cœur d'Anfa, des coachs diplômés et des matchs en double pour tous les niveaux. Le club accueille les sessions « Padel entre inconnus » de The Host Club.",
-    en: "Four covered courts in the heart of Anfa, qualified coaches and doubles matches for every level. The club hosts The Host Club's “Padel with strangers” sessions.",
+    fr: "Quatre terrains couverts au cœur d'Anfa, des coachs diplômés et des matchs en double pour tous les niveaux. Le club accueille les sessions « Padel entre inconnus » de Wenzy.",
+    en: "Four covered courts in the heart of Anfa, qualified coaches and doubles matches for every level. The club hosts Wenzy's “Padel with strangers” sessions.",
     ar: "أربعة ملاعب مغطاة في قلب أنفا، مدربون معتمدون ومباريات زوجية لجميع المستويات.",
   },
   cityId: "casablanca",

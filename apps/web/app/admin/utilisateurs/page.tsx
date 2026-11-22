@@ -7,7 +7,7 @@ import { getAdminData } from "@/lib/data/admin";
 
 export const metadata = { title: "Utilisateurs" };
 
-const ROLE = { user: ["Membre", "gray"], organizer: ["Organisateur", "amber"], admin: ["Admin", "plum"], superadmin: ["Super-admin", "plum"] } as const;
+const ROLE = { user: ["Membre", "gray"], organizer: ["Organisateur", "amber"], admin: ["Admin", "brand"], superadmin: ["Super-admin", "brand"] } as const;
 
 export default async function UsersAdminPage({ searchParams }: PageProps<"/admin/utilisateurs">) {
   const sp = await searchParams;
@@ -21,14 +21,14 @@ export default async function UsersAdminPage({ searchParams }: PageProps<"/admin
       <form className="mb-4 flex flex-wrap gap-2" role="search">
         <label className="sr-only" htmlFor="q">Rechercher</label>
         <input id="q" name="q" defaultValue={q} placeholder="Nom ou e-mail…" className="min-w-64 flex-1 rounded-full border border-line bg-white px-4 py-2.5 text-sm" />
-        <button className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">Rechercher</button>
+        <button className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white">Rechercher</button>
         {q && <Link href="/admin/utilisateurs" className="self-center text-sm text-muted underline">Effacer</Link>}
       </form>
       <Card>
         <Table head={["Membre", "Âge", "Centres d'intérêt", "Réservations", "Inscrit le", "Rôle", "Statut", ...(d.isDemo ? [] : ["Actions"])]} caption="Utilisateurs">
           {users.map((u) => (
             <tr key={u.uid}>
-              <td><span className="block font-medium text-ink">{u.firstName} {u.lastName}{u.trustedHost && <span className="ms-2 rounded-full bg-plum-50 px-2 py-0.5 text-[11px] font-semibold text-plum-900">Membre de confiance</span>}</span><span className="text-xs text-muted">{u.email} · {u.phone}</span></td>
+              <td><span className="block font-medium text-ink">{u.firstName} {u.lastName}{u.trustedHost && <span className="ms-2 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-900">Membre de confiance</span>}</span><span className="text-xs text-muted">{u.email} · {u.phone}</span></td>
               <td className="tabular-nums">{u.birthDate ? ageOn(u.birthDate) : "—"}</td>
               <td className="text-xs text-muted">{u.interests.map((i) => INTEREST_LABELS[i]).join(", ")}</td>
               <td className="tabular-nums">{count(u.uid)}</td>

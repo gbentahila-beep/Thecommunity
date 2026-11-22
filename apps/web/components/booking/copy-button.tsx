@@ -18,7 +18,7 @@ export function CopyButton({ value, label, copiedLabel }: { value: string; label
           setDone(false);
         }
       }}
-      className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-xs font-semibold text-plum-900 hover:bg-plum-50"
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-xs font-semibold text-brand-900 hover:bg-brand-50"
     >
       {done ? <Check className="size-3.5" aria-hidden /> : <Copy className="size-3.5" aria-hidden />}
       <span aria-live="polite">{done ? copiedLabel : label}</span>

@@ -23,7 +23,7 @@ export default async function ProFinancesPage() {
       <PageHeader title="Finances" subtitle={`Reversement par virement au plus tard ${PAYOUT_DEADLINE_DAYS} jours après chaque activité, commission déduite (contrat organisateur, art. 5 et 6).`} />
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4" data-testid="pro-finance-kpis">
         <StatTile label="Payé en ligne par vos participants" value={dh(t.gross)} hint={t.refunds ? `${dh(t.refunds)} remboursés` : undefined} />
-        <StatTile label="Commission The Host Club" value={dh(t.commission)} />
+        <StatTile label="Commission Wenzy" value={dh(t.commission)} />
         <StatTile label="À recevoir" value={dh(t.due + t.inPayout)} hint={`dont ${dh(t.available)} pour des activités passées`} />
         <StatTile label="Déjà reçu" value={dh(t.paid)} />
       </div>
@@ -67,7 +67,7 @@ export default async function ProFinancesPage() {
                 <td className="tabular-nums">{dh(l.gross)}</td>
                 <td className="tabular-nums">{dh(l.commission)}</td>
                 <td className="tabular-nums font-medium">{dh(l.payable)}</td>
-                <td><Badge tone={l.status === "paid" ? "green" : l.status === "in_payout" ? "plum" : "gray"}>{l.status === "paid" ? "Reversé" : l.status === "in_payout" ? "En virement" : "À recevoir"}</Badge></td>
+                <td><Badge tone={l.status === "paid" ? "green" : l.status === "in_payout" ? "brand" : "gray"}>{l.status === "paid" ? "Reversé" : l.status === "in_payout" ? "En virement" : "À recevoir"}</Badge></td>
               </tr>
             ))}
           </Table>

@@ -15,7 +15,7 @@ export async function InvoiceList({ invoices }: { invoices: MemberInvoice[] }) {
         const amount = formatMoney({ amount: i.kind === "credit_note" ? -i.total : i.total, currency: i.currency as "MAD" }, lang);
         return (
           <li key={i.id} className="flex items-start gap-3 p-4 sm:items-center sm:gap-4 sm:p-5" data-testid="invoice-row">
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-plum-50 text-plum-900">
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-900">
               <FileText className="size-5" aria-hidden />
             </span>
             <div className="min-w-0 flex-1">

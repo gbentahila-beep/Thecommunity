@@ -30,10 +30,10 @@ export function AlertsLanding({ action, token }: { action: "confirm" | "stop" | 
 
   return (
     <div className="space-y-6">
-      <p role="status" aria-live="polite" data-testid="alerts-status" className="rounded-2xl bg-white p-5 text-plum-900 shadow-card">{message}</p>
+      <p role="status" aria-live="polite" data-testid="alerts-status" className="rounded-2xl bg-white p-5 text-brand-900 shadow-card">{message}</p>
       <div className="flex flex-wrap gap-3">
         <Link href="/experiences" className="btn btn-primary btn-sm">{t("seeExperiences")}</Link>
-        <Link href="/" className="rounded-full border border-line px-6 py-3 text-sm font-semibold text-plum-900">{t("backHome")}</Link>
+        <Link href="/" className="rounded-full border border-line px-6 py-3 text-sm font-semibold text-brand-900">{t("backHome")}</Link>
       </div>
     </div>
   );

@@ -42,12 +42,12 @@ export function ToolsCarousel({ tools, prevLabel, nextLabel, title, text, eyebro
     const card = el.querySelector("li")?.getBoundingClientRect().width ?? el.clientWidth * 0.8;
     el.scrollBy({ left: dir * (rtl ? -1 : 1) * (card + 16), behavior: "smooth" });
   };
-  const arrow = "grid size-11 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-plum-700 disabled:cursor-default disabled:opacity-35 disabled:hover:border-line";
+  const arrow = "grid size-11 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-brand-700 disabled:cursor-default disabled:opacity-35 disabled:hover:border-line";
   return (
     <section aria-labelledby="tools-title" className="py-16">
       <div className="flex items-end justify-between gap-6">
         <div>
-          <span className="inline-flex rounded-full bg-plum-100 px-4 py-1.5 text-sm font-semibold text-plum-900">{eyebrow}</span>
+          <span className="inline-flex rounded-full bg-brand-100 px-4 py-1.5 text-sm font-semibold text-brand-900">{eyebrow}</span>
           <h2 id="tools-title" className="section-title mt-4">{title}</h2>
           <p className="mt-3 max-w-2xl text-lg text-ink/75">{text}</p>
         </div>
@@ -64,7 +64,7 @@ export function ToolsCarousel({ tools, prevLabel, nextLabel, title, text, eyebro
         {tools.map((tool, i) => (
           <li key={tool.title} className="w-[82%] shrink-0 snap-start rounded-[var(--radius-card)] border border-line bg-cream p-6 sm:w-[46%] sm:p-7 lg:w-[31%]">
             <p className="flex items-baseline gap-3">
-              <span aria-hidden className="font-display text-4xl text-plum-500">{String(i + 1).padStart(2, "0")}</span>
+              <span aria-hidden className="font-display text-4xl text-brand-500">{String(i + 1).padStart(2, "0")}</span>
               <span className="text-lg font-semibold text-ink">{tool.title}</span>
             </p>
             <p className="mt-4 leading-relaxed text-ink/75">{tool.text}</p>

@@ -46,7 +46,7 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
             <li className="text-muted" aria-current="page">{c.title[lang]}</li>
           </ol>
         </nav>
-        <h1 className="mt-6 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-plum-900 sm:text-6xl">{c.title[lang]}</h1>
+        <h1 className="mt-6 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-brand-900 sm:text-6xl">{c.title[lang]}</h1>
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink/75">{c.description[lang]}</p>
         <p className="mt-4 text-[15px] text-muted">
           {t("count", { count: articles.length })} · {t("updatedOn", { date: formatCalendarDate(lastUpdate(articles), locale) })}
@@ -65,7 +65,7 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
                 <details key={f.q.fr} className="group p-5">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink [&::-webkit-details-marker]:hidden">
                     {f.q[lang]}
-                    <ChevronDown className="size-5 shrink-0 text-plum-700 transition group-open:rotate-180" aria-hidden />
+                    <ChevronDown className="size-5 shrink-0 text-brand-700 transition group-open:rotate-180" aria-hidden />
                   </summary>
                   <p className="mt-3 leading-relaxed text-ink/80">{richText(f.a[lang], "")}</p>
                 </details>

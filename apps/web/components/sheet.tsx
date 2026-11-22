@@ -73,7 +73,7 @@ export function Sheet({
         className="relative max-h-[92dvh] w-full overflow-y-auto overscroll-contain rounded-t-3xl bg-white px-6 pt-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-float motion-safe:animate-[menu-in_180ms_ease-out] sm:max-w-md sm:rounded-3xl sm:pb-6"
       >
         <div className="flex items-start justify-between gap-4">
-          <h2 id={titleId} className="font-display text-[1.45rem] leading-tight font-medium text-plum-900">{title}</h2>
+          <h2 id={titleId} className="font-display text-[1.45rem] leading-tight font-medium text-brand-900">{title}</h2>
           <button type="button" onClick={onClose} aria-label={closeLabel} className="-me-2 -mt-1 grid size-10 shrink-0 place-items-center rounded-full text-ink transition hover:bg-cream-deep">
             <X className="size-5" aria-hidden />
           </button>

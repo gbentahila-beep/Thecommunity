@@ -59,7 +59,7 @@ export function TicketActions({
       )}
       {onSite && onSite.fixed && (status === "confirmed" || status === "attended") && (
         onSite.status === "due_on_site" ? (
-          <button type="button" disabled={busy} onClick={() => run("adminSetPartnerPayment", { reservationId, paid: true })} className={`${big} bg-plum-900 text-white hover:bg-plum-800`}>
+          <button type="button" disabled={busy} onClick={() => run("adminSetPartnerPayment", { reservationId, paid: true })} className={`${big} bg-brand-900 text-white hover:bg-brand-800`}>
             Part partenaire réglée
           </button>
         ) : (

@@ -25,8 +25,8 @@ export async function CategoryChips({
               aria-current={isActive ? "page" : undefined}
               className={`flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium transition ${
                 isActive
-                  ? "border-plum-900 bg-plum-900 text-white"
-                  : "border-line bg-white/60 text-plum-900 hover:border-plum-200 hover:bg-white"
+                  ? "border-brand-900 bg-brand-900 text-white"
+                  : "border-line bg-white/60 text-brand-900 hover:border-brand-200 hover:bg-white"
               }`}
             >
               {item.id && <CategoryIcon category={item.id} icon={item.icon} className="size-[18px]" />}

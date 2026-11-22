@@ -19,11 +19,11 @@ export default async function SignupPage({ params }: PageProps<"/[locale]/inscri
       footer={
         <>
           {t("hasAccount")}{" "}
-          <Link href="/connexion" className="font-semibold text-plum-900 underline underline-offset-4">
+          <Link href="/connexion" className="font-semibold text-brand-900 underline underline-offset-4">
             {t("goLogin")}
           </Link>
           {!FIREBASE_ENABLED && (
-            <Link href="/bienvenue" className="mt-3 block font-medium text-plum-900 underline underline-offset-4">
+            <Link href="/bienvenue" className="mt-3 block font-medium text-brand-900 underline underline-offset-4">
               {t("demoOnboarding")}
             </Link>
           )}
@@ -35,10 +35,10 @@ export default async function SignupPage({ params }: PageProps<"/[locale]/inscri
         <Field label={t("email")} type="email" name="email" autoComplete="email" required />
         <Field label={t("password")} type="password" name="password" autoComplete="new-password" minLength={8} required />
         <label className="flex items-start gap-3 text-sm text-ink/80">
-          <input type="checkbox" name="consent" required className="mt-0.5 size-5 accent-plum-900" />
+          <input type="checkbox" name="consent" required className="mt-0.5 size-5 accent-brand-900" />
           <span>
             {t("consent")}
-            <span className="mt-1 flex flex-wrap gap-x-3 text-plum-900">
+            <span className="mt-1 flex flex-wrap gap-x-3 text-brand-900">
               <Link href="/cgu" className="underline underline-offset-2">{tf("terms")}</Link>
               <Link href="/confidentialite" className="underline underline-offset-2">{tf("privacy")}</Link>
               <Link href="/charte" className="underline underline-offset-2">{tf("charter")}</Link>

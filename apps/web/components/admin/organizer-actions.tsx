@@ -63,7 +63,7 @@ export function OrganizerDecision({ organizerId, status, live }: { organizerId: 
           <label htmlFor="org-decision-message" className="block text-sm font-medium">Message à l&apos;organisateur ({LABELS[decision].toLowerCase()})</label>
           <textarea id="org-decision-message" rows={3} maxLength={800} value={message} onChange={(e) => setMessage(e.target.value)} className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm" placeholder={decision === "request_info" ? "Ex. Merci d'ajouter l'attestation d'assurance responsabilité civile." : ""} />
           <div className="flex gap-2">
-            <button type="button" disabled={busy} onClick={() => run(decision)} className="rounded-full bg-plum-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">Confirmer</button>
+            <button type="button" disabled={busy} onClick={() => run(decision)} className="rounded-full bg-brand-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">Confirmer</button>
             <button type="button" onClick={() => setDecision(null)} className="rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold">Annuler</button>
           </div>
         </div>
@@ -78,10 +78,10 @@ export function OrganizerDocument({ path, name, live }: { path: string; name: st
   const [error, setError] = useState("");
   return (
     <span className="inline-flex items-center gap-2">
-      <FileText className="size-4 text-plum-900" aria-hidden />
+      <FileText className="size-4 text-brand-900" aria-hidden />
       <button
         type="button"
-        className="text-sm font-medium text-plum-900 underline"
+        className="text-sm font-medium text-brand-900 underline"
         onClick={async () => {
           if (!live) return setError("Démonstration : pas de fichier.");
           try {
@@ -133,7 +133,7 @@ export function ExperienceReview({ experienceId, status, reviewFlag, live }: { e
         </div>
       )}
       {status === "published" && reviewFlag && (
-        <button type="button" disabled={busy} onClick={() => run("reviewed")} className="rounded-full border border-plum-900 px-4 py-2 text-sm font-semibold text-plum-900">Modifications relues ✓</button>
+        <button type="button" disabled={busy} onClick={() => run("reviewed")} className="rounded-full border border-brand-900 px-4 py-2 text-sm font-semibold text-brand-900">Modifications relues ✓</button>
       )}
       {rejecting && (
         <div className="max-w-xl space-y-2 rounded-xl border border-line bg-cream p-3">

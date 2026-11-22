@@ -32,7 +32,7 @@ export default async function ReservationsAdminPage({ searchParams }: PageProps<
           <option value="">Tous les statuts</option>
           {Object.entries(RESERVATION_STATUS).map(([k, [label]]) => <option key={k} value={k}>{label}</option>)}
         </select>
-        <button className="rounded-full bg-plum-900 px-5 py-2.5 text-sm font-semibold text-white">Filtrer</button>
+        <button className="rounded-full bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white">Filtrer</button>
         {(q || statut) && <Link href="/admin/reservations" className="self-center text-sm text-muted underline">Effacer</Link>}
       </form>
       <Card>
@@ -42,11 +42,11 @@ export default async function ReservationsAdminPage({ searchParams }: PageProps<
               <td className="font-mono text-xs">{r.id}</td>
               <td className="whitespace-nowrap text-muted">{adminDate(r.createdAt, false)}</td>
               <td><span className="block font-medium text-ink">{u.firstName} {u.lastName}</span><span className="text-xs text-muted">{u.email}</span></td>
-              <td><Link href={`/admin/sessions/${s.id}`} className="hover:text-plum-900">{e.title.fr}</Link><span className="block text-xs text-muted">{adminDate(s.startAt)}</span></td>
+              <td><Link href={`/admin/sessions/${s.id}`} className="hover:text-brand-900">{e.title.fr}</Link><span className="block text-xs text-muted">{adminDate(s.startAt)}</span></td>
               <td className="tabular-nums">{r.seats}</td>
               <td className="tabular-nums">{dh(r.total)}{r.promoCode && <span className="block text-xs text-muted">{r.promoCode}</span>}</td>
               <td><Badge tone={RESERVATION_STATUS[r.status][1]}>{RESERVATION_STATUS[r.status][0]}</Badge></td>
-              <td><Link href={`/admin/sessions/${s.id}`} className="text-sm font-medium text-plum-900">Gérer</Link></td>
+              <td><Link href={`/admin/sessions/${s.id}`} className="text-sm font-medium text-brand-900">Gérer</Link></td>
             </tr>
           ))}
         </Table>

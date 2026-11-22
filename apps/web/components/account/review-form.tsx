@@ -71,9 +71,9 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
               }}
               aria-pressed={rating === n}
               aria-label={t("stars", { count: n })}
-              className="rounded-lg p-1 text-plum-700 focus-visible:outline-2 focus-visible:outline-plum-700"
+              className="rounded-lg p-1 text-brand-700 focus-visible:outline-2 focus-visible:outline-brand-700"
             >
-              <Star className={`size-8 ${n <= rating ? "fill-current" : "text-plum-200"}`} aria-hidden />
+              <Star className={`size-8 ${n <= rating ? "fill-current" : "text-brand-200"}`} aria-hidden />
             </button>
           ))}
         </div>
@@ -86,8 +86,8 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
               <span className="text-sm text-ink/85">{t(`detail_${k}`)}</span>
               <div className="flex" role="group" aria-label={t(`detail_${k}`)}>
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <button key={n} type="button" aria-pressed={details[k] === n} aria-label={`${t(`detail_${k}`)} : ${t("stars", { count: n })}`} onClick={() => setDetails((d) => ({ ...d, [k]: d[k] === n ? undefined : n }))} className="p-0.5 text-plum-700">
-                    <Star className={`size-6 ${n <= (details[k] ?? 0) ? "fill-current" : "text-plum-200"}`} aria-hidden />
+                  <button key={n} type="button" aria-pressed={details[k] === n} aria-label={`${t(`detail_${k}`)} : ${t("stars", { count: n })}`} onClick={() => setDetails((d) => ({ ...d, [k]: d[k] === n ? undefined : n }))} className="p-0.5 text-brand-700">
+                    <Star className={`size-6 ${n <= (details[k] ?? 0) ? "fill-current" : "text-brand-200"}`} aria-hidden />
                   </button>
                 ))}
               </div>
@@ -97,7 +97,7 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
             <span className="text-sm text-ink/85">{t("comeAgain")}</span>
             <div className="flex gap-2">
               {[true, false].map((v) => (
-                <button key={String(v)} type="button" aria-pressed={comeAgain === v} onClick={() => setComeAgain((c) => (c === v ? null : v))} className={`rounded-full px-4 py-1.5 text-sm font-semibold ring-1 ${comeAgain === v ? "bg-plum-900 text-white ring-plum-900" : "bg-white text-ink ring-line"}`}>
+                <button key={String(v)} type="button" aria-pressed={comeAgain === v} onClick={() => setComeAgain((c) => (c === v ? null : v))} className={`rounded-full px-4 py-1.5 text-sm font-semibold ring-1 ${comeAgain === v ? "bg-brand-900 text-white ring-brand-900" : "bg-white text-ink ring-line"}`}>
                   {v ? t("yes") : t("no")}
                 </button>
               ))}
@@ -116,12 +116,12 @@ export function ReviewForm({ reservationId }: { reservationId: string }) {
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder={t("commentPlaceholder")}
-          className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-plum-700 focus:outline-none"
+          className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-brand-700 focus:outline-none"
         />
         <p className="mt-1 text-xs text-muted">{t("publicNote")}</p>
       </div>
       <div>
-        <label htmlFor={`review-photo-${reservationId}`} className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-plum-900">
+        <label htmlFor={`review-photo-${reservationId}`} className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-brand-900">
           <ImagePlus className="size-4" aria-hidden />
           {photo ? t("photoChange") : t("photoAdd")}
         </label>

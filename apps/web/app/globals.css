@@ -1,37 +1,41 @@
 @import "tailwindcss";
 
 /*
- * Charte The Host Club — issue de la maquette de référence (docs/assets/maquette-reference.png).
- * Univers crème / prune, serif éditorial pour les titres, sans-serif pour le texte.
+ * Charte Wenzy, direction « Coucher de soleil » (docs/marque/wenzy/brand-book.html).
+ * Crème et encre, une seule couleur forte : le dégradé corail → violet. Titres en Instrument Serif, texte en Inter.
+ * L'échelle « brand » : 900 = encre (texte fort, fonds sombres), 700 = violet profond lisible sur crème (liens, accents),
+ * 500 = violet de la marque (décor), 50 à 200 = lilas clairs (surfaces, survols).
  */
 @theme {
-  --color-cream: #f8efe8;
-  --color-cream-deep: #f3e6dc;
-  --color-sand: #eedfd3;
-  --color-line: #e6d4c8;
-  --color-plum-50: #f7ebed;
-  --color-plum-100: #f0dade;
-  --color-plum-200: #e0b9c0;
-  --color-plum-500: #8e3a4c;
-  --color-plum-700: #722637;
-  --color-plum-800: #63202f;
-  --color-plum-900: #561a29;
-  --color-ink: #2a1d1f;
-  --color-muted: #75625e;
-  --color-badge: #f6dfcf;
+  --color-cream: #f6f1ea;
+  --color-cream-deep: #ede4d8;
+  --color-sand: #e9decf;
+  --color-line: #e3d9cb;
+  --color-brand-50: #f8f0fc;
+  --color-brand-100: #f0def9;
+  --color-brand-200: #e2c3f2;
+  --color-brand-500: #c25be8;
+  --color-brand-700: #8a35b5;
+  --color-brand-800: #2b2b2b;
+  --color-brand-900: #141414;
+  --color-coral: #ff6a4d;
+  --color-violet: #c25be8;
+  --color-ink: #141414;
+  --color-muted: #66625c;
+  --color-badge: #ffe1d8;
 
-  --color-cat-eat: #b5563a;
-  --color-cat-move: #5f7f5e;
-  --color-cat-play: #b07a1f;
-  --color-cat-create: #a8616c;
-  --color-cat-discover: #2f3e5c;
+  --color-cat-eat: #e2553a;
+  --color-cat-move: #2f8a5a;
+  --color-cat-play: #c07a14;
+  --color-cat-create: #b04a9a;
+  --color-cat-discover: #4650c8;
 
   --font-sans: var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), var(--font-arabic), ui-serif, Georgia, serif;
+  --font-display: var(--font-instrument), var(--font-arabic-display), ui-serif, Georgia, serif;
 
   --radius-card: 1.5rem;
-  --shadow-card: 0 1px 2px rgb(86 26 41 / 0.04), 0 8px 24px -12px rgb(86 26 41 / 0.18);
-  --shadow-float: 0 12px 40px -12px rgb(86 26 41 / 0.35);
+  --shadow-card: 0 1px 2px rgb(20 20 20 / 0.04), 0 8px 24px -12px rgb(20 20 20 / 0.16);
+  --shadow-float: 0 12px 40px -12px rgb(20 20 20 / 0.32);
 
   --animate-fade-up: fade-up 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   @keyframes menu-in {
@@ -68,15 +72,19 @@
   }
   /* En arabe, la serif latine n'a pas de glyphes : on bascule toute la typo sur la police arabe. */
   :lang(ar) {
-    --font-display: var(--font-arabic), ui-serif, serif;
+    --font-display: var(--font-arabic-display), var(--font-arabic), ui-serif, serif;
     --font-sans: var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
   }
   :focus-visible {
-    outline: 2px solid var(--color-plum-700);
+    outline: 2px solid var(--color-brand-700);
     outline-offset: 2px;
   }
+  /* Instrument Serif n'existe qu'en une graisse : jamais de gras artificiel sur les titres. */
+  .font-display {
+    font-synthesis-weight: none;
+  }
   ::selection {
-    background: var(--color-plum-100);
+    background: var(--color-brand-100);
   }
 }
 
@@ -116,10 +124,10 @@
  */
 @layer components {
   .page-title {
-    @apply font-display text-[2rem] leading-[1.1] font-medium text-balance text-plum-900 sm:text-[2.6rem];
+    @apply font-display text-[2.35rem] leading-[1.05] font-normal text-balance text-brand-900 sm:text-[3.1rem];
   }
   .section-title {
-    @apply font-display text-[1.6rem] leading-tight font-medium text-balance text-plum-900 sm:text-[2rem];
+    @apply font-display text-[1.9rem] leading-[1.08] font-normal text-balance text-brand-900 sm:text-[2.45rem];
   }
   .eyebrow {
     @apply text-xs font-semibold tracking-[0.16em] text-muted uppercase;
@@ -133,14 +141,18 @@
   .btn-sm {
     @apply px-4 py-2 text-sm;
   }
+  /* Action principale : le dégradé de la marque, texte en encre (lisible de bout en bout, règle d'or n° 3). */
   .btn-primary {
-    @apply bg-plum-900 text-white hover:bg-plum-800;
+    @apply bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] text-ink shadow-[0_8px_20px_-10px_rgb(194_91_232/0.6)] hover:brightness-105;
+  }
+  .btn-dark {
+    @apply bg-brand-900 text-white hover:bg-brand-800;
   }
   .btn-secondary {
-    @apply bg-white text-plum-900 ring-1 ring-line hover:ring-plum-200;
+    @apply bg-white text-brand-900 ring-1 ring-line hover:ring-brand-200;
   }
   .btn-ghost {
-    @apply text-plum-900 hover:bg-plum-50;
+    @apply text-brand-900 hover:bg-brand-50;
   }
   .card {
     @apply rounded-3xl bg-white shadow-card;
@@ -149,9 +161,23 @@
     @apply rounded-3xl bg-cream-deep px-6 py-8 text-center sm:px-10;
   }
   .chip {
-    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium text-ink ring-1 ring-line transition hover:ring-plum-200;
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium text-ink ring-1 ring-line transition hover:ring-brand-200;
+  }
+  /* Un mot mis en valeur dans un titre (au-dessus de 28 px seulement). */
+  .text-gradient {
+    @apply bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] bg-clip-text pe-[0.06em] text-transparent;
+  }
+  .bg-gradient-brand {
+    @apply bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))];
+  }
+  /* « Le ciel de 19 h » : le fond flou de la marque, assombri pour garder le texte crème lisible. */
+  .bg-ciel {
+    background-color: var(--color-brand-900);
+    background-image: linear-gradient(rgb(20 20 20 / 0.5), rgb(20 20 20 / 0.5)), url(/images/brand/ciel-encre.svg);
+    background-size: cover;
+    background-position: center;
   }
   .chip-on {
-    @apply bg-plum-900 text-white ring-plum-900 hover:ring-plum-900;
+    @apply bg-brand-900 text-white ring-brand-900 hover:ring-brand-900;
   }
 }

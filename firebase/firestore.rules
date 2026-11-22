@@ -1,7 +1,7 @@
 rules_version = '2';
 
 // =====================================================================
-// The Host Club — règles de sécurité Firestore
+// Wenzy — règles de sécurité Firestore
 // Principe : tout est refusé par défaut. Le navigateur lit ce qui lui est
 // destiné et n'écrit presque rien de sensible : places, prix, paiements,
 // rôles et groupes passent par les Cloud Functions (Admin SDK).
@@ -21,7 +21,7 @@ service cloud.firestore {
     function onlyChanges(keys) { return changedKeys().hasOnly(keys); }
     function isShortString(v, max) { return v is string && v.size() <= max; }
     // Étape 19 : organisateur (rôle « organizer » + claim orgId, posés par le serveur à la validation du compte).
-    // Un organisateur ne voit que ce qui porte SON identifiant ; jamais les données de The Host Club ni d'un autre.
+    // Un organisateur ne voit que ce qui porte SON identifiant ; jamais les données de Wenzy ni d'un autre.
     function isOrganizerOf(id) {
       return role() == 'organizer' && id is string && id.size() > 0 && request.auth.token.get('orgId', '') == id;
     }

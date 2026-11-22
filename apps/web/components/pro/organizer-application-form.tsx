@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { firebase } from "@/lib/firebase/client";
 
-const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100";
+const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100";
 const MESSAGES: Record<string, string> = {
   required: "Champ obligatoire.",
   tooShort: "Trop court (30 caractères minimum).",
@@ -162,8 +162,8 @@ export function OrganizerApplicationForm({
             {categories.map((c) => {
               const on = v.categoryIds.includes(c.id);
               return (
-                <label key={c.id} className={`flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-sm ${on ? "border-plum-900 bg-plum-50" : "border-line bg-white"}`}>
-                  <input type="checkbox" className="size-4 accent-plum-900" checked={on} onChange={(e) => set("categoryIds", e.target.checked ? [...v.categoryIds, c.id] : v.categoryIds.filter((x) => x !== c.id))} />
+                <label key={c.id} className={`flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-sm ${on ? "border-brand-900 bg-brand-50" : "border-line bg-white"}`}>
+                  <input type="checkbox" className="size-4 accent-brand-900" checked={on} onChange={(e) => set("categoryIds", e.target.checked ? [...v.categoryIds, c.id] : v.categoryIds.filter((x) => x !== c.id))} />
                   {c.label}
                 </label>
               );
@@ -186,7 +186,7 @@ export function OrganizerApplicationForm({
         <ul className="space-y-2" data-testid="documents">
           {v.documents.map((d) => (
             <li key={d.path} className="flex items-center gap-2 rounded-xl bg-cream px-3 py-2 text-sm">
-              <FileText className="size-4 shrink-0 text-plum-900" aria-hidden />
+              <FileText className="size-4 shrink-0 text-brand-900" aria-hidden />
               <span className="flex-1 truncate">{d.name}</span>
               <button type="button" aria-label={`Retirer ${d.name}`} onClick={() => set("documents", v.documents.filter((x) => x.path !== d.path))} className="grid size-7 place-items-center rounded-full hover:bg-white"><X className="size-4" aria-hidden /></button>
             </li>
@@ -204,11 +204,11 @@ export function OrganizerApplicationForm({
 
       <div className="space-y-3 rounded-2xl bg-white p-5 shadow-card">
         <label className="flex items-start gap-3 text-sm">
-          <input id="o-acceptTerms" type="checkbox" className="mt-0.5 size-4 accent-plum-900" checked={accept} onChange={(e) => { setAccept(e.target.checked); setErrors((x) => ({ ...x, acceptTerms: "" })); }} aria-invalid={Boolean(errors.acceptTerms) || undefined} />
-          <span>J&apos;ai lu et j&apos;accepte le <Link href="/contrat-organisateur" target="_blank" className="font-semibold text-plum-900 underline">contrat organisateur</Link> (commission, encaissement et reversements, annulations, responsabilités, données personnelles des participants).</span>
+          <input id="o-acceptTerms" type="checkbox" className="mt-0.5 size-4 accent-brand-900" checked={accept} onChange={(e) => { setAccept(e.target.checked); setErrors((x) => ({ ...x, acceptTerms: "" })); }} aria-invalid={Boolean(errors.acceptTerms) || undefined} />
+          <span>J&apos;ai lu et j&apos;accepte le <Link href="/contrat-organisateur" target="_blank" className="font-semibold text-brand-900 underline">contrat organisateur</Link> (commission, encaissement et reversements, annulations, responsabilités, données personnelles des participants).</span>
         </label>
         {errors.acceptTerms && <p className="text-xs text-red-700">Vous devez accepter le contrat organisateur.</p>}
-        <button type="submit" disabled={busy || uploading || (live && !emailVerified)} className="rounded-full bg-plum-900 px-6 py-3 font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+        <button type="submit" disabled={busy || uploading || (live && !emailVerified)} className="rounded-full bg-brand-900 px-6 py-3 font-semibold text-white hover:bg-brand-800 disabled:opacity-60">
           {busy ? "Envoi…" : resubmit ? "Renvoyer ma demande" : "Envoyer ma demande"}
         </button>
         {!live && <p className="text-xs text-muted">Démonstration : le formulaire est vérifié mais rien n&apos;est enregistré.</p>}

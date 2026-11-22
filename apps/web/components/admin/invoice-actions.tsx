@@ -30,7 +30,7 @@ export function InvoiceActions({ paymentId, hasInvoice }: { paymentId: string; h
         type="button"
         disabled={busy}
         onClick={() => run(hasInvoice ? "resend" : "issue")}
-        className="rounded-full border border-plum-900 px-3 py-1.5 text-xs font-semibold text-plum-900 hover:bg-plum-50 disabled:opacity-50"
+        className="rounded-full border border-brand-900 px-3 py-1.5 text-xs font-semibold text-brand-900 hover:bg-brand-50 disabled:opacity-50"
       >
         {busy ? "…" : hasInvoice ? "Renvoyer par e-mail" : "Émettre le document"}
       </button>

@@ -95,10 +95,10 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await d.waitForURL('**/blog');
   assert(await d.getByRole('heading', { level: 1, name: 'Inconnus aujourd\'hui, amis demain' }).isVisible(), 'titre du blog');
   const tabs = d.getByRole('navigation', { name: 'Thèmes du blog' });
-  for (const l of ['Tous les articles', 'City guide', 'Conversation', 'Amitié', 'Comment fonctionne The Host Club']) assert(await tabs.getByRole('link', { name: l }).isVisible(), `onglet ${l}`);
+  for (const l of ['Tous les articles', 'City guide', 'Conversation', 'Amitié', 'Comment fonctionne Wenzy']) assert(await tabs.getByRole('link', { name: l }).isVisible(), `onglet ${l}`);
   assert(await tabs.getByRole('link', { name: 'Tous les articles' }).getAttribute('aria-current') === 'page', 'onglet Tous actif');
-  const featured = d.getByRole('link', { name: "The Host Club, le guide complet" }).first();
-  assert(await featured.getAttribute('href') === '/blog/the-host-club-guide-complet', 'article « Commencer ici » mis en avant : le guide complet (toutes les activités)');
+  const featured = d.getByRole('link', { name: "Wenzy, le guide complet" }).first();
+  assert(await featured.getAttribute('href') === '/blog/wenzy-guide-complet', 'article « Commencer ici » mis en avant : le guide complet (toutes les activités)');
   assert(await d.getByText('Commencer ici').first().isVisible(), 'mention « Commencer ici »');
   const mostRead = d.locator('section[aria-labelledby="most-read"]');
   assert(await mostRead.getByRole('heading', { name: 'Les plus lus' }).isVisible() && await mostRead.getByRole('link').count() === 6, '« Les plus lus » : 6 articles en liste compacte');
@@ -129,9 +129,9 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await d.getByText(/français, la darija/).isVisible(), 'FAQ City guide dépliable');
   const useful = d.locator('section[aria-labelledby="useful-also"]');
   assert(await useful.getByRole('heading', { name: 'Utile aussi' }).isVisible() && await useful.getByRole('link').count() === 3, '« Utile aussi » : 3 articles');
-  await d.getByRole('navigation', { name: 'Thèmes du blog' }).getByRole('link', { name: 'Comment fonctionne The Host Club' }).click();
-  await d.waitForURL('**/blog/theme/the-host-club');
-  assert(await d.getByText(/10 articles/).isVisible(), 'The Host Club : 10 articles');
+  await d.getByRole('navigation', { name: 'Thèmes du blog' }).getByRole('link', { name: 'Comment fonctionne Wenzy' }).click();
+  await d.waitForURL('**/blog/theme/wenzy');
+  assert(await d.getByText(/10 articles/).isVisible(), 'Wenzy : 10 articles');
   await d.getByRole('link', { name: /Réserver sa première expérience, étape par étape/ }).first().click();
   await d.waitForURL('**/blog/reserver-sa-premiere-experience');
   assert(await d.getByRole('heading', { level: 1, name: 'Réserver sa première expérience, étape par étape' }).isVisible(), 'page article');
@@ -252,8 +252,8 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await visible(dialog), 'menu burger ouvert');
   assert(await m.evaluate(() => document.body.style.overflow) === 'hidden', 'page bloquée derrière le menu');
   for (const l of ['À propos', 'Comment ça marche', 'Blog', 'Se connecter', "S'inscrire"]) assert(await dialog.getByRole('link', { name: l, exact: true }).isVisible(), `menu burger : ${l}`);
-  // Rubriques en cartes (Découvrir, The Host Club, Aide, Villes) ; « Mon espace » seulement une fois connecté.
-  for (const h of ['Découvrir', 'The Host Club', 'Aide', 'Villes']) assert(await dialog.getByRole('heading', { name: h, exact: true }).count() === 1, `menu burger : rubrique « ${h} »`);
+  // Rubriques en cartes (Découvrir, Wenzy, Aide, Villes) ; « Mon espace » seulement une fois connecté.
+  for (const h of ['Découvrir', 'Wenzy', 'Aide', 'Villes']) assert(await dialog.getByRole('heading', { name: h, exact: true }).count() === 1, `menu burger : rubrique « ${h} »`);
   assert(!(await dialog.getByRole('heading', { name: 'Mon espace' }).count()), 'menu burger : pas de « Mon espace » sans connexion');
   assert(await dialog.getByRole('link', { name: 'Jeux' }).count() === 1 && !(await dialog.locator('input[role=combobox]').count()), 'Découvrir : univers listés, plus de barre de recherche');
   assert(await dialog.getByText('Bientôt').count() >= 1, 'Villes : villes « bientôt »');

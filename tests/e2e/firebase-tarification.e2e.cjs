@@ -109,7 +109,7 @@ async function login(page, email, password, suite) {
 
   // 4. Facture : mention « hors facture », jamais encaissée
   const inv = await until(async () => (await fsWhere('invoices', 'reservationId', rid))[0]);
-  assert(inv && (inv.fields.onSiteNote?.stringValue ?? '').includes('non encaissé par The Host Club'), 'facture : mention de la part sur place, non encaissée');
+  assert(inv && (inv.fields.onSiteNote?.stringValue ?? '').includes('non encaissé par Wenzy'), 'facture : mention de la part sur place, non encaissée');
   assert(int(inv.fields.totals.mapValue.fields.ttc) === int(res.fields.pricing.mapValue.fields.total), 'facture : total = montant payé en ligne');
 
   // 5. Équipe : billet retrouvé par son code, part partenaire réglée

@@ -1,5 +1,5 @@
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-export const CONTACT_EMAIL = "contact@thehostclub.ma"; // hypothèse : domaine à confirmer
+export const CONTACT_EMAIL = "contact@wenzy.ma"; // hypothèse : domaine à confirmer
 export const DEFAULT_CITY = "casablanca";
 
 import type { CSSProperties } from "react";

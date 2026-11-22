@@ -41,7 +41,7 @@ export async function ExperienceCard({
   const cover = experience.images[0];
   // Étape 23 : un badge au plus (coup de cœur de l'équipe > nouveau > populaire), jamais sur une date complète.
   const badge = full ? null : experienceBadge(experience, session, new Date(), home.featuredExperienceIds);
-  const badgeTone = { featured: "bg-plum-900 text-white", new: "bg-white/90 text-plum-900", popular: "bg-badge text-plum-900" } as const;
+  const badgeTone = { featured: "bg-brand-900 text-white", new: "bg-white/90 text-brand-900", popular: "bg-badge text-brand-900" } as const;
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-float">
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -55,7 +55,7 @@ export async function ExperienceCard({
             className="object-cover transition duration-500 group-hover:scale-[1.03]"
           />
         )}
-        <span className="absolute bottom-3 start-3 rounded-full bg-badge px-3 py-1 text-xs font-medium text-plum-900">
+        <span className="absolute bottom-3 start-3 rounded-full bg-badge px-3 py-1 text-xs font-medium text-brand-900">
           {category ? tr(category.shortName, locale) : ""}
         </span>
         <div className="absolute top-3 start-3 flex flex-col items-start gap-1.5">
@@ -64,7 +64,7 @@ export async function ExperienceCard({
               {t("full")}
             </span>
           ) : session && left <= LOW_SEATS_THRESHOLD ? (
-            <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-plum-800">
+            <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-brand-800">
               {t("lastSeats", { count: left })}
             </span>
           ) : null}
@@ -86,9 +86,9 @@ export async function ExperienceCard({
           </Link>
         </h3>
         <p className="flex items-center gap-1.5 text-sm text-muted">
-          <MapPin className="size-4 shrink-0 text-plum-700" aria-hidden />
+          <MapPin className="size-4 shrink-0 text-brand-700" aria-hidden />
           {experience.district} · {session ? formatShortSlot(session.startAt, locale) : t("datesSoon")}
-          {experience.audience === "women" && <span className="ms-1 rounded-full bg-plum-100 px-2 py-0.5 text-[11px] font-semibold text-plum-900" data-testid="card-women">{t("women")}</span>}
+          {experience.audience === "women" && <span className="ms-1 rounded-full bg-brand-100 px-2 py-0.5 text-[11px] font-semibold text-brand-900" data-testid="card-women">{t("women")}</span>}
         </p>
         <div className="mt-auto flex items-end justify-between pt-3">
           <p>
@@ -101,7 +101,7 @@ export async function ExperienceCard({
             </p>
           ) : experience.ratingCount > 0 ? (
             <p className="flex items-center gap-1 text-sm font-medium text-ink/80">
-              <Star className="size-4 fill-current text-plum-700" aria-hidden />
+              <Star className="size-4 fill-current text-brand-700" aria-hidden />
               {experience.ratingAvg.toFixed(1)} <span className="text-muted">({experience.ratingCount})</span>
             </p>
           ) : null}

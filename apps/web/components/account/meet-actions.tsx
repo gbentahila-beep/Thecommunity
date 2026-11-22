@@ -54,7 +54,7 @@ export function MeetActions({ groupId, otherUid, firstName, wished, avoided, mat
               setW(next);
             })
           }
-          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold disabled:opacity-50 ${w ? "bg-plum-900 text-white" : "border border-plum-900 text-plum-900"}`}
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold disabled:opacity-50 ${w ? "bg-brand-900 text-white" : "border border-brand-900 text-brand-900"}`}
         >
           <Heart className={`size-3.5 ${w ? "fill-current" : ""}`} aria-hidden />
           {w ? t("wished", { name: firstName }) : t("wish", { name: firstName })}

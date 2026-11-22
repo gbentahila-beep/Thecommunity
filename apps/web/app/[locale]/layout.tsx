@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
       type: "website",
       siteName: t("siteName"),
       locale: locale === "ar" ? "ar_MA" : locale === "en" ? "en_GB" : "fr_MA",
-      images: [{ url: "/images/brand/og.jpg", width: 1200, height: 630, alt: "The Host Club — Your people are out there." }],
+      images: [{ url: "/images/brand/og.jpg", width: 1200, height: 630, alt: "Wenzy — Your people are out there." }],
     },
     twitter: { card: "summary_large_image", images: ["/images/brand/og.jpg"] },
     icons: {

@@ -56,7 +56,7 @@ export function NotificationsList({ initial, nowIso, uid }: { initial: AppNotifi
           type="button"
           onClick={() => markRead()}
           disabled={unread === 0}
-          className="rounded-full px-4 py-2 text-sm font-medium text-plum-900 hover:bg-white disabled:cursor-default disabled:text-muted disabled:hover:bg-transparent"
+          className="rounded-full px-4 py-2 text-sm font-medium text-brand-900 hover:bg-white disabled:cursor-default disabled:text-muted disabled:hover:bg-transparent"
         >
           {t("markAll")}
         </button>
@@ -66,13 +66,13 @@ export function NotificationsList({ initial, nowIso, uid }: { initial: AppNotifi
           const Icon = ICONS[n.type] ?? Bell;
           const content = (
             <>
-              <span className={`grid size-10 shrink-0 place-items-center rounded-full ${n.readAt ? "bg-cream text-muted" : "bg-plum-50 text-plum-900"}`}>
+              <span className={`grid size-10 shrink-0 place-items-center rounded-full ${n.readAt ? "bg-cream text-muted" : "bg-brand-50 text-brand-900"}`}>
                 <Icon className="size-5" strokeWidth={1.8} aria-hidden />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2">
                   <span className={`font-semibold ${n.readAt ? "text-ink/80" : "text-ink"}`}>{tr(n.title, locale)}</span>
-                  {!n.readAt && <span className="size-2 rounded-full bg-plum-700" aria-label={t("unread")} />}
+                  {!n.readAt && <span className="size-2 rounded-full bg-brand-700" aria-label={t("unread")} />}
                 </span>
                 <span className="mt-0.5 block text-sm text-muted">{tr(n.body, locale)}</span>
                 <span className="mt-1 block text-xs text-muted/80">{ago(n.createdAt)}</span>

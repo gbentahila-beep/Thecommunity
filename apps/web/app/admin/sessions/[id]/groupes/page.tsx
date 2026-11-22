@@ -49,12 +49,12 @@ export default async function GroupsPage({ params }: PageProps<"/admin/sessions/
   const seats = confirmed.reduce((a, r) => a + r.seats, 0);
   return (
     <>
-      <p className="mb-2 text-sm"><Link href={`/admin/sessions/${s.id}`} className="text-plum-900">← Participants</Link></p>
+      <p className="mb-2 text-sm"><Link href={`/admin/sessions/${s.id}`} className="text-brand-900">← Participants</Link></p>
       <PageHeader
         title={`Groupes · ${e.title.fr}`}
         subtitle={`${adminDate(s.startAt)} · ${d.isDemo ? Object.keys(members).length : seats} participants confirmés · cible ${e.groupConfig.targetSize} (min ${e.groupConfig.minSize}, max ${e.groupConfig.maxSize})`}
         actions={
-          <Link href={`/admin/sessions/${s.id}/supports`} className="rounded-full border border-plum-900 px-4 py-2.5 text-sm font-semibold text-plum-900 hover:bg-plum-50">
+          <Link href={`/admin/sessions/${s.id}/supports`} className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">
             Supports imprimés (marque-places)
           </Link>
         }
@@ -65,7 +65,7 @@ export default async function GroupsPage({ params }: PageProps<"/admin/sessions/
         </p>
       )}
       {questions.length > 0 && (
-        <p className="mb-4 rounded-2xl bg-plum-50 px-4 py-3 text-sm text-plum-900" data-testid="questionnaire-summary">
+        <p className="mb-4 rounded-2xl bg-brand-50 px-4 py-3 text-sm text-brand-900" data-testid="questionnaire-summary">
           Questionnaire : {confirmed.filter((r) => r.answers).length} réponse(s) sur {confirmed.length} participant(s). La proposition de l&apos;algorithme en tient compte
           ({questions.filter((q) => q.match === "same").length} question(s) « réunir », {questions.filter((q) => q.match === "mix").length} « mélanger »).
         </p>

@@ -300,7 +300,7 @@ describe("organisateurs : cloisonnement (19)", () => {
     await assertSucceeds(getDoc(doc(orgA(), "experiences/expA")));
     await assertFails(getDoc(doc(orgA(), "experiences/expB")));
     await assertFails(getDoc(doc(orgB(), "experiences/expA")));
-    await assertFails(getDoc(doc(orgA(), "experiences/draft"))); // brouillon de The Host Club
+    await assertFails(getDoc(doc(orgA(), "experiences/draft"))); // brouillon de Wenzy
     await assertFails(getDoc(doc(orgA(), "experiences/expA/private/economics")));
     await assertSucceeds(getDoc(doc(orgA(), "sessions/sA")));
     await assertFails(getDoc(doc(orgA(), "sessions/sB")));
@@ -308,10 +308,10 @@ describe("organisateurs : cloisonnement (19)", () => {
     await assertFails(updateDoc(doc(orgA(), "experiences/expA"), { status: "published" }));
     await assertFails(updateDoc(doc(orgA(), "sessions/sA"), { capacity: 99 }));
   });
-  it("réservations et demandes : seulement celles de ses activités, jamais celles des autres ni de The Host Club", async () => {
+  it("réservations et demandes : seulement celles de ses activités, jamais celles des autres ni de Wenzy", async () => {
     await assertSucceeds(getDoc(doc(orgA(), "reservations/rA")));
     await assertFails(getDoc(doc(orgA(), "reservations/rB")));
-    await assertFails(getDoc(doc(orgA(), "reservations/r1"))); // réservation The Host Club (pas d'organisateur)
+    await assertFails(getDoc(doc(orgA(), "reservations/r1"))); // réservation Wenzy (pas d'organisateur)
     await assertFails(getDoc(doc(orgA(), "reservations/rA/private/payment")));
     await assertSucceeds(getDocs(query(collection(orgA(), "reservations"), where("organizerId", "==", "orgA"))));
     await assertFails(getDocs(query(collection(orgA(), "reservations"), where("organizerId", "==", "orgB"))));

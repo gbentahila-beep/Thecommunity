@@ -53,9 +53,9 @@ export default async function AccountHubPage({ params }: PageProps<"/[locale]/es
     <div className="space-y-6" data-testid="account-hub">
       <h1 className="page-title">{tn("myProfile")}</h1>
       <Link href="/espace/profil" className="card flex items-center gap-4 p-5 transition hover:shadow-float">
-        <span className="grid size-16 shrink-0 place-items-center rounded-full bg-plum-100 font-display text-2xl text-plum-900">{initials}</span>
+        <span className="grid size-16 shrink-0 place-items-center rounded-full bg-brand-100 font-display text-2xl text-brand-900">{initials}</span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate font-display text-2xl font-medium text-plum-900">{p.firstName}</span>
+          <span className="block truncate font-display text-2xl font-medium text-brand-900">{p.firstName}</span>
           {city && <span className="block text-sm text-ink/80">{tr(city.name, locale)}</span>}
           {since && <span className="block text-sm text-muted">{t("memberSince", { date: since })}</span>}
         </span>

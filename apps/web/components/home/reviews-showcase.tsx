@@ -47,10 +47,10 @@ export function ReviewsShowcase({ reviews, title, subtitle, photoAlt, prevLabel,
           ))}
         </ul>
         <div className="mt-4 flex justify-end gap-2 px-4 lg:hidden">
-          <button type="button" onClick={() => scroll(-1)} aria-label={prevLabel} className="grid size-10 place-items-center rounded-full border border-line bg-white text-plum-900">
+          <button type="button" onClick={() => scroll(-1)} aria-label={prevLabel} className="grid size-10 place-items-center rounded-full border border-line bg-white text-brand-900">
             <ChevronLeft className="size-5 rtl:-scale-x-100" aria-hidden />
           </button>
-          <button type="button" onClick={() => scroll(1)} aria-label={nextLabel} className="grid size-10 place-items-center rounded-full border border-line bg-white text-plum-900">
+          <button type="button" onClick={() => scroll(1)} aria-label={nextLabel} className="grid size-10 place-items-center rounded-full border border-line bg-white text-brand-900">
             <ChevronRight className="size-5 rtl:-scale-x-100" aria-hidden />
           </button>
         </div>

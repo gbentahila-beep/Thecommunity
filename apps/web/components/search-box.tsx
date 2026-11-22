@@ -112,7 +112,7 @@ export function SearchBox({ variant = "header", defaultValue = "" }: { variant?:
               setActive(-1);
             }
           }}
-          className={`w-full rounded-full border border-line bg-white text-ink placeholder:text-ink/45 focus:border-plum-700 focus:outline-none focus:ring-2 focus:ring-plum-200 ${
+          className={`w-full rounded-full border border-line bg-white text-ink placeholder:text-ink/45 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-200 ${
             variant === "page" ? "py-3.5 ps-11 pe-4 text-base shadow-card" : "py-2 ps-9 pe-3 text-sm"
           }`}
         />
@@ -130,7 +130,7 @@ export function SearchBox({ variant = "header", defaultValue = "" }: { variant?:
                 href={s.href}
                 onClick={() => setOpen(false)}
                 onMouseEnter={() => setActive(i)}
-                className={`flex items-baseline justify-between gap-3 rounded-xl px-3 py-2 text-sm ${i === active ? "bg-plum-50" : ""}`}
+                className={`flex items-baseline justify-between gap-3 rounded-xl px-3 py-2 text-sm ${i === active ? "bg-brand-50" : ""}`}
                 tabIndex={-1}
               >
                 <span className="min-w-0">
@@ -148,7 +148,7 @@ export function SearchBox({ variant = "header", defaultValue = "" }: { variant?:
               onClick={() => setOpen(false)}
               onMouseEnter={() => setActive(shown.length)}
               tabIndex={-1}
-              className={`block rounded-xl px-3 py-2 text-sm font-semibold text-plum-900 ${active === shown.length ? "bg-plum-50" : ""}`}
+              className={`block rounded-xl px-3 py-2 text-sm font-semibold text-brand-900 ${active === shown.length ? "bg-brand-50" : ""}`}
             >
               {t("seeAll", { q: query })}
             </Link>

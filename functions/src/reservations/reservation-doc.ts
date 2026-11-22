@@ -43,7 +43,7 @@ export function reservationDoc(o: {
     userId: uid,
     sessionId,
     experienceId: s.experienceId,
-    // Étape 19 : organisateur de l'activité (null = The Host Club), pour son espace et les règles d'accès.
+    // Étape 19 : organisateur de l'activité (null = Wenzy), pour son espace et les règles d'accès.
     organizerId: (e.organizerId as string | undefined) ?? (s.organizerId as string | undefined) ?? null,
     // Étape 22 : politique d'annulation figée au moment de la réservation.
     ...(o.policies ? { cancellationPolicy: (() => { const p = o.policies.find((x) => x.id === e.cancellationPolicyId) ?? o.policies[0]; return p ? { id: p.id, label: p.label, rules: p.rules } : null; })() } : {}),

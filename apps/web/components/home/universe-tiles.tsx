@@ -28,9 +28,9 @@ export async function UniverseTiles({ categories, cityId = DEFAULT_CITY }: { cat
               </span>
               <span className="flex min-w-0 flex-1 flex-col p-4">
                 <span className="font-semibold text-ink">{tr(c.name, locale)}</span>
-                {rich && <span className="mt-1 self-start rounded-full bg-plum-50 px-2.5 py-0.5 text-[12px] font-semibold text-plum-900">{t(`universe.${rich}.group`)}</span>}
+                {rich && <span className="mt-1 self-start rounded-full bg-brand-50 px-2.5 py-0.5 text-[12px] font-semibold text-brand-900">{t(`universe.${rich}.group`)}</span>}
                 <span className="mt-1.5 line-clamp-2 text-sm text-muted">{rich ? t(`universe.${rich}.tagline`) : tr(c.description, locale)}</span>
-                <span className="mt-auto flex items-center gap-0.5 pt-2 text-sm font-semibold text-plum-800">
+                <span className="mt-auto flex items-center gap-0.5 pt-2 text-sm font-semibold text-brand-800">
                   {count > 0 ? t("tileThisWeek", { count }) : t("tileSeeDates")}
                   <ChevronRight className="size-4 rtl:-scale-x-100" aria-hidden />
                 </span>

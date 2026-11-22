@@ -16,7 +16,7 @@ export async function proFormOptions() {
   };
 }
 
-export const EXPERIENCE_STATUS_PRO: Record<string, { label: string; tone: "green" | "gray" | "amber" | "red" | "plum" }> = {
+export const EXPERIENCE_STATUS_PRO: Record<string, { label: string; tone: "green" | "gray" | "amber" | "red" | "brand" }> = {
   draft: { label: "Brouillon", tone: "gray" },
   pending_review: { label: "En relecture", tone: "amber" },
   published: { label: "En ligne", tone: "green" },

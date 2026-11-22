@@ -24,7 +24,7 @@ export function BlogBrowser({ popular, recent }: { popular: BrowseEntry[]; recen
       type="button"
       aria-pressed={sort === key}
       onClick={() => setSort(key)}
-      className={`border-b-2 pb-1.5 text-[16px] font-semibold transition ${sort === key ? "border-plum-900 text-ink" : "border-transparent text-muted hover:text-ink"}`}
+      className={`border-b-2 pb-1.5 text-[16px] font-semibold transition ${sort === key ? "border-brand-900 text-ink" : "border-transparent text-muted hover:text-ink"}`}
     >
       {label}
     </button>
@@ -45,7 +45,7 @@ export function BlogBrowser({ popular, recent }: { popular: BrowseEntry[]; recen
           onChange={(e) => setQ(e.target.value)}
           placeholder={t("searchPlaceholder")}
           autoComplete="off"
-          className="w-full rounded-full border border-line bg-white py-4 ps-13 pe-12 text-[16px] shadow-card outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100"
+          className="w-full rounded-full border border-line bg-white py-4 ps-13 pe-12 text-[16px] shadow-card outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100"
         />
         {q && (
           <button type="button" onClick={() => setQ("")} aria-label={t("clearSearch")} className="absolute end-3 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full text-muted hover:bg-cream-deep">
@@ -60,7 +60,7 @@ export function BlogBrowser({ popular, recent }: { popular: BrowseEntry[]; recen
             <li key={e.slug}>
               <Link href={`/blog/${e.slug}`} className="group flex items-center justify-between gap-4 py-5">
                 <span className="min-w-0">
-                  <span className="block text-[17px] leading-snug font-semibold text-ink group-hover:text-plum-900 sm:text-xl">{e.title}</span>
+                  <span className="block text-[17px] leading-snug font-semibold text-ink group-hover:text-brand-900 sm:text-xl">{e.title}</span>
                   <span className="mt-1 block text-sm text-muted">{e.theme} · {t("readTime", { minutes: e.minutes })}</span>
                 </span>
                 <ChevronRight className="size-5 shrink-0 text-ink/70 transition group-hover:translate-x-0.5 rtl:rotate-180" aria-hidden />

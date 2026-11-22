@@ -59,11 +59,11 @@ export function FiltersPanel({
         onClick={() => setOpen(true)}
         aria-expanded={open}
         aria-label={count > 0 ? `${labels.open} (${count})` : labels.open}
-        className="relative grid size-10 place-items-center rounded-full text-plum-900 transition hover:bg-white"
+        className="relative grid size-10 place-items-center rounded-full text-brand-900 transition hover:bg-white"
         data-testid="filters-open"
       >
         <SlidersHorizontal className="size-5" aria-hidden />
-        {count > 0 && <span className="absolute -end-0.5 -top-0.5 grid size-[18px] place-items-center rounded-full bg-plum-900 text-[10px] font-semibold text-white">{count}</span>}
+        {count > 0 && <span className="absolute -end-0.5 -top-0.5 grid size-[18px] place-items-center rounded-full bg-brand-900 text-[10px] font-semibold text-white">{count}</span>}
       </button>
       {/* Le panneau reste dans le formulaire (pas de portail) : « Voir les résultats » l'envoie. */}
       <div className={open ? "fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-6" : "hidden"}>
@@ -77,14 +77,14 @@ export function FiltersPanel({
           data-testid="filters-panel"
         >
           <div className="flex items-center justify-between px-6 pt-5 pb-3">
-            <p className="font-display text-[1.45rem] font-medium text-plum-900">{labels.title}</p>
+            <p className="font-display text-[1.45rem] font-medium text-brand-900">{labels.title}</p>
             <button type="button" onClick={() => setOpen(false)} aria-label={labels.close} className="-me-2 grid size-10 place-items-center rounded-full hover:bg-cream-deep">
               <X className="size-5" aria-hidden />
             </button>
           </div>
           <div className="flex-1 overflow-y-auto px-6 pb-5">{children}</div>
           <div className="flex items-center justify-between gap-3 border-t border-line px-6 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pb-4">
-            <Link href={clearHref} className="text-sm font-semibold text-plum-900 underline underline-offset-4">{labels.clear}</Link>
+            <Link href={clearHref} className="text-sm font-semibold text-brand-900 underline underline-offset-4">{labels.clear}</Link>
             <button type="submit" className="btn btn-primary">{labels.apply}</button>
           </div>
         </div>

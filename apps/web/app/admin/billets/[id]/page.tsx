@@ -32,7 +32,7 @@ export default async function TicketPage({ params }: PageProps<"/admin/billets/[
 
   return (
     <div className="max-w-xl">
-      <p className="mb-2 text-sm"><Link href="/admin/billets" className="text-plum-900">← Billets</Link></p>
+      <p className="mb-2 text-sm"><Link href="/admin/billets" className="text-brand-900">← Billets</Link></p>
       <PageHeader title={u ? `${u.firstName} ${u.lastName}` : "Compte supprimé"} subtitle={`Billet ${ticketCode(r.id)} · ${r.seats} place${r.seats > 1 ? "s" : ""}`} />
       <div role="status" className={`mb-4 flex items-center gap-3 rounded-2xl border px-4 py-4 text-lg font-semibold ${state.tone}`}>
         <state.Icon className="size-7 shrink-0" aria-hidden />
@@ -63,7 +63,7 @@ export default async function TicketPage({ params }: PageProps<"/admin/billets/[
       ) : (
         <TicketActions reservationId={r.id} status={r.status} canCheckIn={canCheckIn} onSite={r.onSite ? { status: r.onSite.status, fixed: r.onSite.amount != null } : null} />
       )}
-      {s && <p className="mt-5 text-sm"><Link href={`/admin/sessions/${s.id}`} className="font-medium text-plum-900 underline">Voir tous les participants de cette date</Link></p>}
+      {s && <p className="mt-5 text-sm"><Link href={`/admin/sessions/${s.id}`} className="font-medium text-brand-900 underline">Voir tous les participants de cette date</Link></p>}
     </div>
   );
 }

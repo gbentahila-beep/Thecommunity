@@ -28,7 +28,7 @@ export function ForYou() {
   return (
     <section aria-labelledby="for-you-title" className="space-y-4" data-testid="for-you">
       <div>
-        <h2 id="for-you-title" className="font-display text-2xl font-medium text-plum-900">{t("title")}</h2>
+        <h2 id="for-you-title" className="font-display text-2xl font-medium text-brand-900">{t("title")}</h2>
         <p className="text-sm text-muted">{t("subtitle")}</p>
       </div>
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

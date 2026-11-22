@@ -3,7 +3,7 @@
  * - Chaque paiement reçoit une référence unique (« THC-7K4PQ2 ») à indiquer en motif du virement.
  * - La place est bloquée jusqu'à l'échéance : 48 h après la demande, et au plus tard 24 h avant l'expérience.
  * - L'équipe valide « Virement reçu » dans le back-office → réservation confirmée, billet, facture.
- * - The Host Club ne conserve aucune coordonnée bancaire de client (un remboursement se fait hors site).
+ * - Wenzy ne conserve aucune coordonnée bancaire de client (un remboursement se fait hors site).
  */
 import { z } from "zod";
 
@@ -47,7 +47,7 @@ export function transferDeadline(now: Date, startAt: Date, o: { deadlineHours?: 
 
 const digits = (s: string) => s.replace(/[\s.-]/g, "");
 
-/** Coordonnées bancaires de The Host Club (saisies par un super-admin, affichées au client qui paie par virement). */
+/** Coordonnées bancaires de Wenzy (saisies par un super-admin, affichées au client qui paie par virement). */
 export const bankDetailsSchema = z.object({
   holder: z.string().trim().min(2, "tooShort").max(120, "tooLong"),
   bank: z.string().trim().min(2, "tooShort").max(80, "tooLong"),

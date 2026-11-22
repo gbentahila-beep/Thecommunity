@@ -76,7 +76,7 @@ export function ExperienceActions({ id, status, canDelete, live }: { id: string;
               type="button"
               disabled={busy}
               onClick={() => run(confirm)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 ${confirm === "delete" ? "bg-red-700" : "bg-plum-900"}`}
+              className={`rounded-full px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 ${confirm === "delete" ? "bg-red-700" : "bg-brand-900"}`}
             >
               {confirm === "archive" ? "Oui, archiver" : "Oui, supprimer"}
             </button>

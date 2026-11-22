@@ -10,7 +10,7 @@ import { mediaUrl } from "@/components/media";
 import { firebase } from "@/lib/firebase/client";
 import { CATEGORY_STYLES } from "@/lib/site";
 
-const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-plum-700 focus:ring-2 focus:ring-plum-100 disabled:bg-cream";
+const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100 disabled:bg-cream";
 const MODE_LABELS: Record<string, string> = {
   individual: "Individuel — chacun réserve sa place",
   group: "Groupe — équipes formées par la plateforme",
@@ -110,7 +110,7 @@ function Footer({ canEdit, state, label }: { canEdit: boolean; state: string; la
   if (!canEdit) return null;
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <button type="submit" disabled={state === "busy"} className="rounded-full bg-plum-900 px-4 py-2 text-sm font-semibold text-white hover:bg-plum-800 disabled:opacity-60">
+      <button type="submit" disabled={state === "busy"} className="rounded-full bg-brand-900 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-60">
         {state === "busy" ? "Enregistrement…" : label}
       </button>
       {state === "saved" && <p role="status" className="text-sm text-emerald-800">Enregistré.</p>}
@@ -299,7 +299,7 @@ export function CategoryForm({
         <Field id={`${p}-color`} label="Couleur" hint={historic ? "Vide : couleur d'origine de l'univers." : "Vide : prune du site."}>
           <div className="flex items-center gap-3">
             <input id={`${p}-color`} type="color" className="h-10 w-14 cursor-pointer rounded-lg border border-line bg-white" value={v.color || "#722637"} disabled={!canEdit} onChange={(e) => update({ color: e.target.value })} aria-invalid={invalid.includes("color") || undefined} />
-            {v.color && canEdit && <button type="button" onClick={() => update({ color: "" })} className="text-xs font-semibold text-plum-900 underline">Couleur par défaut</button>}
+            {v.color && canEdit && <button type="button" onClick={() => update({ color: "" })} className="text-xs font-semibold text-brand-900 underline">Couleur par défaut</button>}
           </div>
         </Field>
         <Field id={`${p}-image`} label="Image (facultatif)" hint="Affichée sur l'accueil et « Comment ça marche ».">
