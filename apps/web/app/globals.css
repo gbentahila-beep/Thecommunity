@@ -177,3 +177,29 @@
     @apply bg-brand-900 text-white ring-brand-900 hover:ring-brand-900;
   }
 }
+
+/* Babs (docs/22-babs.md) : lignée animée avec une place libre. Immobile si l'appareil demande moins d'animations. */
+@keyframes bab-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes bab-hop {
+  0%, 76%, 100% { transform: translateY(0); }
+  83% { transform: translateY(-14px); }
+  89% { transform: translateY(0); }
+  93% { transform: translateY(-4px); }
+}
+@keyframes bab-march {
+  to { stroke-dashoffset: -32; }
+}
+@keyframes bab-chip {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.bab-bob { animation: bab-bob 3.4s ease-in-out infinite; }
+.bab-hop { animation: bab-hop 5.5s ease-in-out infinite; }
+.bab-march { animation: bab-march 1.4s linear infinite; }
+.bab-chip { animation: bab-chip 2.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .bab-bob, .bab-hop, .bab-march, .bab-chip { animation: none; }
+}

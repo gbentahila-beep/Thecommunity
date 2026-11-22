@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/presse">
 const h2 = "font-display text-3xl font-medium text-brand-900";
 const card = "rounded-[var(--radius-card)] bg-white p-5 shadow-card";
 
-/** Kit presse : présentation (3 longueurs), faits clés, équipe, logos, couleurs, typographies, photos, contact. */
+/** Kit presse : présentation (3 longueurs), faits clés, équipe, logos, Babs, couleurs, typographies, photos, contact. */
 export default async function PressPage({ params }: PageProps<"/[locale]/presse">) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -96,6 +96,29 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
                   <p className="flex gap-2 text-xs font-semibold">
                     <a href={`/presse/${g.file}.svg`} download className="rounded-full border border-line px-3 py-1.5 text-brand-900 hover:bg-brand-50">SVG</a>
                     <a href={`/presse/${g.file}.png`} download className="rounded-full border border-line px-3 py-1.5 text-brand-900 hover:bg-brand-50">PNG</a>
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section id="babs" aria-labelledby="babs-title" className="scroll-mt-24">
+          <h2 id="babs-title" className={h2}>{P.babsTitle[l]}</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">{P.babsRules[l]}</p>
+          <ul className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+            {P.babs.map((b) => (
+              <li key={b.file} className="overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card">
+                <div className="grid place-items-center bg-cream px-4 pt-4 pb-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- aperçu vectoriel du fichier téléchargeable */}
+                  <img src={`/presse/babs/wenzy-bab-${b.file}.svg`} alt={b.name} width={136} height={156} className="h-24 w-auto" />
+                </div>
+                <div className="p-3 text-center">
+                  <p className="font-display text-xl leading-tight text-ink">{b.name}</p>
+                  <p className="text-xs text-muted">{b.label[l]}</p>
+                  <p className="mt-2 flex justify-center gap-1.5 text-[11px] font-semibold">
+                    <a href={`/presse/babs/wenzy-bab-${b.file}.svg`} download className="rounded-full border border-line px-2.5 py-1 text-brand-900 hover:bg-brand-50">SVG</a>
+                    <a href={`/presse/babs/wenzy-bab-${b.file}.png`} download className="rounded-full border border-line px-2.5 py-1 text-brand-900 hover:bg-brand-50">PNG</a>
                   </p>
                 </div>
               </li>

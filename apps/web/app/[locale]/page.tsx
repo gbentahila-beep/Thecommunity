@@ -12,6 +12,7 @@ import { Universes } from "@/components/home/universes";
 import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { Bab } from "@/components/brand/bab";
+import { BabLineup } from "@/components/brand/bab-lineup";
 import { experienceBadge, NEW_EXPERIENCE_DAYS, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
 import { getCategories, getCities, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences, getReviews } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
@@ -22,8 +23,9 @@ export const revalidate = 3600;
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, city, categories, reviews, cities, home, upcomingAll, undated, published, weekend] = await Promise.all([
+  const [t, tb, city, categories, reviews, cities, home, upcomingAll, undated, published, weekend] = await Promise.all([
     getTranslations("home"),
+    getTranslations("babs"),
     getCity(DEFAULT_CITY),
     getCategories(),
     getReviews(),
@@ -200,6 +202,11 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           </ul>
         </PageShell>
       )}
+
+      {/* Lignée de Babs avec une place libre : sépare l'accroche de « Cette semaine ». */}
+      <PageShell className="mt-16 sm:mt-20">
+        <BabLineup seatLabel={tb("seat")} caption={tb("caption")} />
+      </PageShell>
 
       {/* « Cette semaine » vient toujours juste après l'accroche ; les autres sections suivent l'ordre du back-office. */}
       {home.sections.some((x) => x.id === "thisWeek" && x.enabled) && sectionsById.thisWeek}
