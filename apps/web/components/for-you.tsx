@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { MediaImage as Image } from "@/components/media";
@@ -31,17 +32,19 @@ export function ForYou() {
         <h2 id="for-you-title" className="font-display text-2xl font-medium text-brand-900">{t("title")}</h2>
         <p className="text-sm text-muted">{t("subtitle")}</p>
       </div>
-      <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {/* Étape Y : même liste que « Cette semaine » et Découvrir (une carte blanche, lignes séparées). */}
+      <ul className="card divide-y divide-line/70 overflow-hidden">
         {items.map((it) => (
           <li key={it.href}>
-            <Link href={it.href} className="flex items-center gap-3 rounded-2xl bg-white p-3 shadow-card transition hover:shadow-float">
+            <Link href={it.href} className="flex items-center gap-3.5 px-4 py-3.5 transition hover:bg-cream/50">
               <span className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-cream">
                 {it.image && <Image src={it.image} alt="" fill sizes="64px" className="object-cover" />}
               </span>
-              <span className="min-w-0">
-                <span className="block truncate font-semibold text-ink">{it.title}</span>
-                <span className="block truncate text-sm text-muted">{it.detail}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[15px] font-semibold text-ink">{it.title}</span>
+                <span className="block truncate text-[13px] text-muted">{it.detail}</span>
               </span>
+              <ChevronRight className="size-5 shrink-0 text-brand-700 rtl:-scale-x-100" aria-hidden />
             </Link>
           </li>
         ))}

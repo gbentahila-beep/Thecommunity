@@ -1,4 +1,4 @@
-import { cleanQuestion, DEFAULT_CANCELLATION_POLICY, insuranceState, nextWeekdayDate, pricingOf, type EventTemplate, type Experience, type OutingProposal, type TemplateValues, type VenueTier } from "@thecommunity/shared";
+import { cleanQuestion, DEFAULT_CANCELLATION_POLICY, insuranceState, nextWeekdayDate, pricingOf, scheduleFor, type EventTemplate, type Experience, type OutingProposal, type TemplateValues, type VenueTier } from "@thecommunity/shared";
 import { toDraft } from "@/lib/questionnaire-draft";
 import type { ExperienceFormValues } from "@/components/admin/experience-form";
 import type { AdminData } from "@/lib/data/admin";
@@ -135,7 +135,8 @@ export function templateToValues(t: EventTemplate, tier: VenueTier | null, now: 
     membersOnly: x.membersOnly, earlyAccessDays: String(x.earlyAccessDays),
     questionnaire: x.questionnaire.map(toDraft),
     status: "draft",
-    sessions: { firstDate: nextWeekdayDate(x.weekday, now), time: x.time, weeks: "1", capacity: String(x.capacity) },
+    // Étape Y : jour et heure selon la gamme pour les Tables (jamais trois « Déjeuner » le même jour).
+    sessions: { firstDate: nextWeekdayDate(scheduleFor(t, tier).weekday, now), time: scheduleFor(t, tier).time, weeks: "1", capacity: String(x.capacity) },
   };
 }
 

@@ -296,6 +296,22 @@ export function mergeTemplates(saved: EventTemplate[], defaults: EventTemplate[]
   return [...byId.values()].sort((a, b) => TEMPLATE_UNIVERSES.indexOf(a.values.categoryId as never) - TEMPLATE_UNIVERSES.indexOf(b.values.categoryId as never) || a.order - b.order || a.name.localeCompare(b.name, "fr"));
 }
 
+/**
+ * Étape Y : pour un même format des Tables, chaque gamme a son jour (et son heure) : on ne voit jamais trois
+ * « Déjeuner » à la suite. Jours : 0 dimanche … 6 samedi. Les autres modèles gardent leur jour conseillé.
+ */
+export const TIER_SCHEDULE: Record<string, Partial<Record<VenueTier, { weekday: number; time: string }>>> = {
+  cafe: { casual: { weekday: 3, time: "16:30" }, premium: { weekday: 6, time: "16:30" }, exclusive: { weekday: 0, time: "10:30" } },
+  brunch: { casual: { weekday: 0, time: "11:30" }, premium: { weekday: 6, time: "11:30" }, exclusive: { weekday: 5, time: "11:30" } },
+  dejeuner: { casual: { weekday: 2, time: "12:30" }, premium: { weekday: 4, time: "12:30" }, exclusive: { weekday: 5, time: "13:00" } },
+  diner: { casual: { weekday: 2, time: "20:00" }, premium: { weekday: 3, time: "20:00" }, exclusive: { weekday: 4, time: "20:30" } },
+};
+
+/** Jour et heure d'un modèle, selon la gamme pour les Tables. */
+export function scheduleFor(t: EventTemplate, tier: VenueTier | null | undefined): { weekday: number; time: string } {
+  return (tier && TIER_SCHEDULE[t.id]?.[tier]) || { weekday: t.values.weekday, time: t.values.time };
+}
+
 /** Prochaine date (AAAA-MM-JJ) qui tombe le jour conseillé, au plus tôt demain. */
 export function nextWeekdayDate(weekday: number, now: Date = new Date()): string {
   const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
@@ -382,7 +398,7 @@ export function templateExperienceInput(t: EventTemplate, o: { tier?: VenueTier 
     maxSeatsPerBooking: x.maxSeatsPerBooking, admission: "direct" as const, requestMessageRequired: false,
     durationMinutes: x.durationMinutes, languages: x.languages, alcoholServed: x.alcoholServed,
     cancellationPolicyId: x.cancellationPolicyId, status: "published" as const,
-    sessions: { firstDate: o.firstDate, time: x.time, weeks: o.weeks, capacity: x.capacity },
+    sessions: { firstDate: o.firstDate, time: scheduleFor(t, o.tier).time, weeks: o.weeks, capacity: x.capacity },
     pricingModel: x.pricingModel,
     ...(x.partnerPriceDh !== undefined ? { partnerPriceDh: x.partnerPriceDh } : {}),
     ...(x.budgetMinDh !== undefined ? { budgetMinDh: x.budgetMinDh } : {}),

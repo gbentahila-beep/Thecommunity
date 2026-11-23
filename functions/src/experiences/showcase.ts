@@ -1,4 +1,4 @@
-import { mergeTemplates, nextWeekdayDate, templateExperienceInput, VENUE_TIERS, type EventTemplate, type VenueTier } from "@thecommunity/shared";
+import { mergeTemplates, nextWeekdayDate, scheduleFor, TIER_SCHEDULE, templateExperienceInput, VENUE_TIERS, type EventTemplate, type VenueTier } from "@thecommunity/shared";
 import { getStorage } from "firebase-admin/storage";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -117,7 +117,7 @@ async function createFromTemplates(input: z.infer<typeof showcaseInputSchema>, a
     // Étape O : quelques badges pour varier les cartes (l'équipe les change dans la fiche) : coup de cœur sur
     // l'Exclusive, « Nouveau » sur un événement sur trois, le reste en automatique (Populaire, Bientôt complet).
     const highlight = job.tier === "exclusive" ? "featured" : r.created.length % 3 === 0 ? "new" : "auto";
-    const data = { ...templateExperienceInput(t, { tier: job.tier, firstDate: nextWeekdayDate(t.values.weekday, base), weeks: input.weeks, cityId: input.cityId, venue }), highlight };
+    const data = { ...templateExperienceInput(t, { tier: job.tier, firstDate: nextWeekdayDate(scheduleFor(t, job.tier).weekday, base), weeks: input.weeks, cityId: input.cityId, venue }), highlight };
     try {
       const res = await saveExperience({ data, addSessions: true, images: [{ path: t.image, alt: t.name }] }, { uid: actor.uid, role: actor.role, organizer: null });
       r.created.push({ templateId: t.id, tier: job.tier, experienceId: res.experienceId, sessions: res.sessionsCreated });
@@ -138,6 +138,31 @@ export async function resetShowcaseCore(raw: unknown, actor: { uid: string; role
   await createFromTemplates(input, actor, now, r);
   await audit({ actorUid: actor.uid, actorRole: actor.role, action: "showcase.reset", targetType: "experience", targetId: "*", after: { ...r, created: r.created.length, skipped: r.skipped } });
   return r;
+}
+
+/**
+ * Site d'essai (étape Y), une seule fois : les Tables issues des modèles sont recréées à leur nouveau jour (une gamme
+ * par jour). Seules celles qui n'ont jamais eu de réservation sont recréées ; les autres restent telles quelles.
+ */
+export async function rescheduleTablesOnce(actor: { uid: string; role: string }, now = Date.now(), cityId = "casablanca"): Promise<{ recreated: number; kept: number } | null> {
+  const flag = db.doc("settings/showcase");
+  if ((await flag.get()).get("tiersY")) return null;
+  const tablesIds = new Set(Object.keys(TIER_SCHEDULE));
+  const exps = (await db.collection("experiences").where("status", "==", "published").get()).docs.filter((d) => tablesIds.has(String(d.get("templateId"))) && d.get("venueTier"));
+  const redo = new Set<string>();
+  const jobs: { templateId: string; tier: VenueTier }[] = [];
+  let kept = 0;
+  for (const d of exps) {
+    const any = await db.collection("reservations").where("experienceId", "==", d.id).limit(1).get();
+    if (!any.empty) { kept++; continue; }
+    redo.add(d.id);
+    jobs.push({ templateId: String(d.get("templateId")), tier: d.get("venueTier") as VenueTier });
+  }
+  const r: ShowcaseResult = { cancelledSessions: 0, refunded: 0, deletedSessions: 0, archived: 0, deleted: 0, created: [], skipped: [] };
+  if (redo.size) await clearEvents(actor, now, r, (_e, id) => redo.has(id));
+  if (jobs.length) await createFromTemplates({ confirm: "SUPPRIMER", tables: jobs, activities: [], weeks: 4, cityId }, actor, now, r);
+  await flag.set({ tiersY: FieldValue.serverTimestamp() }, { merge: true });
+  return { recreated: r.created.length, kept };
 }
 
 /**
@@ -205,7 +230,8 @@ export async function replaceDemoEventsOnce(actor: { uid: string; role: string }
   const r: ShowcaseResult = { cancelledSessions: 0, refunded: 0, deletedSessions: 0, archived: 0, deleted: 0, created: [], skipped: [] };
   await clearEvents(actor, now, r, (e) => e.isDemo === true);
   await createFromTemplates({ confirm: "SUPPRIMER", tables, activities, weeks: 4, cityId }, actor, now, r);
-  await flag.set({ demoReplacedAt: FieldValue.serverTimestamp(), created: r.created.length }, { merge: true });
+  // Créées directement à leur jour par gamme (étape Y) : pas besoin de les recréer ensuite.
+  await flag.set({ demoReplacedAt: FieldValue.serverTimestamp(), created: r.created.length, tiersY: FieldValue.serverTimestamp() }, { merge: true });
   await audit({ actorUid: actor.uid, actorRole: actor.role, action: "showcase.replaceDemo", targetType: "experience", targetId: "*", after: { ...r, created: r.created.length, skipped: r.skipped } });
   return r;
 }

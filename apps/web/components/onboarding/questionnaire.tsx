@@ -204,9 +204,9 @@ export function Questionnaire({
     kind: "fact",
     id,
     body: (
-      <div className="rounded-3xl bg-brand-900 p-6 text-white shadow-float sm:p-8">
+      <div className="rounded-3xl bg-brand-50 p-6 text-ink ring-1 ring-brand-100 sm:p-8">
         {/* Le titre « Le saviez-vous ? » est lu une fois (titre masqué de l'écran) : le surtitre visible est décoratif. */}
-        <p aria-hidden className="text-xs font-semibold tracking-[0.16em] text-brand-100 uppercase">{t("facts.eyebrow")}</p>
+        <p aria-hidden className="text-xs font-semibold tracking-[0.16em] text-brand-700 uppercase">{t("facts.eyebrow")}</p>
         {children}
       </div>
     ),
@@ -286,8 +286,8 @@ export function Questionnaire({
       "fact-hours",
       <>
         <p className="mt-3 font-display leading-none"><span className="text-6xl">{t("facts.hours.big")}</span> <span className="text-2xl">{t("facts.hours.unit")}</span></p>
-        <p className="mt-4 text-[15px] leading-relaxed text-white/90">{t("facts.hours.text")}</p>
-        <p className="mt-3 text-xs text-brand-100">{t("facts.hours.source")}</p>
+        <p className="mt-4 text-[15px] leading-relaxed text-ink/85">{t("facts.hours.text")}</p>
+        <p className="mt-3 text-xs text-muted">{t("facts.hours.source")}</p>
       </>,
     ),
     {
@@ -309,8 +309,8 @@ export function Questionnaire({
       "fact-liking",
       <>
         <p className="mt-3 font-display text-[1.7rem] leading-tight">{t("facts.liking.title")}</p>
-        <p className="mt-3 text-[15px] leading-relaxed text-white/90">{t("facts.liking.text")}</p>
-        <p className="mt-3 text-xs text-brand-100">{t("facts.liking.source")}</p>
+        <p className="mt-3 text-[15px] leading-relaxed text-ink/85">{t("facts.liking.text")}</p>
+        <p className="mt-3 text-xs text-muted">{t("facts.liking.source")}</p>
       </>,
     ),
     {
@@ -355,10 +355,10 @@ export function Questionnaire({
       "fact-meals",
       <>
         <p className="mt-3 font-display text-[1.7rem] leading-tight">{t("facts.meals.title")}</p>
-        <p className="mt-1 text-white/90">{t("facts.meals.subtitle")}</p>
-        <hr className="my-4 border-white/20" />
-        <p className="text-[15px] leading-relaxed text-white/90">{t("facts.meals.text")}</p>
-        <p className="mt-3 text-xs text-brand-100">{t("facts.meals.source")}</p>
+        <p className="mt-1 text-ink/85">{t("facts.meals.subtitle")}</p>
+        <hr className="my-4 border-brand-100" />
+        <p className="text-[15px] leading-relaxed text-ink/85">{t("facts.meals.text")}</p>
+        <p className="mt-3 text-xs text-muted">{t("facts.meals.source")}</p>
       </>,
     ),
     {
@@ -600,23 +600,23 @@ export function Questionnaire({
   if (done) {
     return (
       <div className="mx-auto max-w-lg" data-testid="onboarding-done">
-        <div className="rounded-3xl bg-brand-900 p-6 text-white shadow-float sm:p-8">
-          <span className="grid size-12 place-items-center rounded-full ring-2 ring-white/70">
+        <div className="rounded-3xl bg-brand-50 p-6 text-ink ring-1 ring-brand-100 sm:p-8">
+          <span className="grid size-12 place-items-center rounded-full bg-brand-900 text-white">
             <Check className="size-6" aria-hidden />
           </span>
           <h2 ref={headingRef} tabIndex={-1} className="mt-5 font-display text-[2rem] leading-tight outline-none">
-            <span className="text-brand-100">{t("doneTitle1")}</span>
+            <span className="text-brand-700">{t("doneTitle1")}</span>
             <br />
             {t("doneTitle2")}
           </h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-white/90">{t("doneText")}</p>
-          <hr className="my-5 border-white/20" />
-          <p className="text-xs font-semibold tracking-[0.16em] text-brand-100 uppercase">{t("facts.eyebrow")}</p>
-          <p className="mt-2 text-[15px] leading-relaxed text-white/90">{t("facts.commute.text")}</p>
-          <p className="mt-2 text-xs text-brand-100">{t("facts.commute.source")}</p>
+          <p className="mt-3 text-[15px] leading-relaxed text-ink/85">{t("doneText")}</p>
+          <hr className="my-5 border-brand-100" />
+          <p className="text-xs font-semibold tracking-[0.16em] text-brand-700 uppercase">{t("facts.eyebrow")}</p>
+          <p className="mt-2 text-[15px] leading-relaxed text-ink/85">{t("facts.commute.text")}</p>
+          <p className="mt-2 text-xs text-muted">{t("facts.commute.source")}</p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <Link href="/experiences" className="btn bg-white text-brand-900 hover:bg-cream">{t("doneCta")}</Link>
-            <Link href="/espace" className="btn text-white ring-1 ring-white/40 hover:bg-white/10">{t("doneHome")}</Link>
+            <Link href="/experiences" className="btn btn-primary">{t("doneCta")}</Link>
+            <Link href="/espace" className="btn btn-secondary">{t("doneHome")}</Link>
           </div>
         </div>
       </div>

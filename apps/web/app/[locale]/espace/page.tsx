@@ -2,7 +2,7 @@ import { ArrowRight, Star, Users } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { ThisWeek } from "@/components/home/this-week";
-import { UniverseTiles } from "@/components/home/universe-tiles";
+import { UniverseGrid } from "@/components/home/universes";
 import { ReservationCard } from "@/components/account/reservation-card";
 import { Link } from "@/i18n/navigation";
 import { isMemberActive, recommendFor } from "@thecommunity/shared";
@@ -96,12 +96,12 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
       )}
 
       {suggestMembership && (
-        <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-brand-900 p-5 text-white sm:flex-row sm:items-center" data-testid="membership-suggestion">
+        <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-brand-50 p-5 text-ink ring-1 ring-brand-100 sm:flex-row sm:items-center" data-testid="membership-suggestion">
           <p className="flex-1">
             <span className="block font-display text-xl">{t("memberSuggestTitle")}</span>
-            <span className="text-sm text-brand-100">{t("memberSuggestText")}</span>
+            <span className="text-sm text-muted">{t("memberSuggestText")}</span>
           </p>
-          <Link href="/abonnement" className="btn btn-secondary btn-sm shrink-0 ring-0">{t("memberSuggestCta")}</Link>
+          <Link href="/abonnement" className="btn btn-primary btn-sm shrink-0">{t("memberSuggestCta")}</Link>
         </section>
       )}
 
@@ -112,7 +112,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
           <h2 id="universes-title" className="section-title">{t("universesHeading")}</h2>
           <p className="text-sm text-muted">{t("universesText")}</p>
         </div>
-        <UniverseTiles categories={categories} cityId={cityId} />
+        <UniverseGrid categories={categories} cityId={cityId} />
       </section>
 
       {recommended.length > 0 && (

@@ -714,6 +714,14 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 | Bouton « Réserver et payer 35 DH » ; « Votre place est bloquée 15 minutes le temps du paiement. » | Bouton « Réserver » ; phrase retirée (gardée seulement pour le virement, qui a un délai à connaître) |
 | « Participation sur demande : pour garder des groupes harmonieux… » | « L'équipe valide votre demande, puis vous avez 24 h pour payer. » |
 
+### Étape Y livrée (23 novembre) — listes homogènes, gammes à des jours différents
+
+- Une seule présentation pour les listes d'événements : carte blanche, lignes séparées, vignette 64 px, titre 15 px, ligne « format · gamme · prix », bouton « Réserver » à droite. Utilisée par « Cette semaine », Découvrir (listes par jour et sans date) et « Pour vous ».
+- « Explorer par univers » (espace membre) reprend les 4 tuiles de l'accueil (`UniverseGrid`) ; l'ancien carrousel de cartes est supprimé.
+- Tables : chaque gamme a son jour (`TIER_SCHEDULE`). Déjeuner : Accessible mardi, Premium jeudi, Exclusive vendredi ; Dîner : mardi, mercredi, jeudi ; Brunch : dimanche, samedi, vendredi ; Café : mercredi, samedi, dimanche. Le formulaire du back-office propose le bon jour quand on choisit un modèle et une gamme.
+- Site d'essai : les Tables sans réservation sont recréées une fois au bon jour (`rescheduleTablesOnce`, repère `tiersY`) ; le Four Seasons accueille aussi le vendredi.
+- Plus de blocs noirs côté public : suggestion d'abonnement de l'espace, appel du blog, contact presse, en-tête du centre d'aide, cartes « Le saviez-vous ? » et carte finale du questionnaire passent sur fond clair. Reste l'encadré « Votre sécurité » (étape AB).
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes

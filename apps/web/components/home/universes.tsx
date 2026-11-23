@@ -23,12 +23,21 @@ export const RICH = ["eat", "move", "create", "discover"] as const;
  * Utilisé sur l'accueil et sur « Comment ça marche ».
  */
 export async function Universes({ categories, title }: { categories: Category[]; title?: string }) {
-  const [t, locale, week] = await Promise.all([getTranslations("home"), getLocale(), getNextSessionPerExperience({ cityId: DEFAULT_CITY, when: "week" })]);
+  const t = await getTranslations("home");
   return (
     <section aria-labelledby="universes-title" className="py-12">
       <p className="eyebrow text-center">{t("universesEyebrow")}</p>
       <h2 id="universes-title" className="section-title mt-2 text-center">{title ?? t("universesTitle")}</h2>
-      <ul className="mx-auto mt-8 grid max-w-5xl grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4" data-testid="universes-grid">
+      <UniverseGrid categories={categories} className="mt-8" />
+    </section>
+  );
+}
+
+/** Étape Y : la grille des 4 univers, la même sur l'accueil, « Comment ça marche » et l'espace membre. */
+export async function UniverseGrid({ categories, cityId = DEFAULT_CITY, className = "" }: { categories: Category[]; cityId?: string; className?: string }) {
+  const [t, locale, week] = await Promise.all([getTranslations("home"), getLocale(), getNextSessionPerExperience({ cityId, when: "week" })]);
+  return (
+    <ul className={`mx-auto grid max-w-5xl grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 ${className}`} data-testid="universes-grid">
         {categories.map((c) => {
           const name = tr(c.name, locale);
           const rich = (RICH as readonly string[]).includes(c.id) ? c.id : null;
@@ -36,7 +45,7 @@ export async function Universes({ categories, title }: { categories: Category[];
           const count = week.filter((s) => s.experience.categoryId === c.id || s.experience.subcategoryId === c.id).length;
           return (
             <li key={c.id} data-testid="universe-card">
-              <Link href={`/${DEFAULT_CITY}/${c.id}`} className="card group flex h-full flex-col overflow-hidden transition hover:shadow-float">
+              <Link href={`/${cityId}/${c.id}`} className="card group flex h-full flex-col overflow-hidden transition hover:shadow-float">
                 <span className="relative block aspect-[4/3] overflow-hidden bg-cream-deep">
                   {photo && <MediaImage src={photo} alt={t("universePhotoAlt", { name })} fill sizes="(min-width: 1024px) 15rem, 45vw" className="object-cover transition duration-500 group-hover:scale-[1.04]" />}
                 </span>
@@ -53,6 +62,5 @@ export async function Universes({ categories, title }: { categories: Category[];
           );
         })}
       </ul>
-    </section>
   );
 }

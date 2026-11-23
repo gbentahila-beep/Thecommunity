@@ -234,6 +234,15 @@ async function main() {
   const { replaceDemoEventsOnce } = await import("../functions/src/experiences/showcase");
   const replaced = await replaceDemoEventsOnce({ uid: "seed-content", role: "superadmin" });
   if (replaced) console.log(`✅ Anciens événements remplacés par ceux des modèles : ${replaced.created.length} créés, ${replaced.deleted} supprimés, ${replaced.archived} archivés, ${replaced.cancelledSessions} date(s) annulée(s) ; ignorés : ${replaced.skipped.map((x) => x.templateId).join(", ") || "aucun"}.`);
+  // Étape Y : le Four Seasons accueille aussi le vendredi (brunch Exclusive), puis les Tables passent à un jour par gamme.
+  const fs = await db.doc("partners/v-four-seasons").get();
+  if (fs.exists && !fs.get("updatedBy") && !(fs.get("slots") ?? []).some((x: { weekday: number }) => x.weekday === 5)) {
+    const four = CASABLANCA_VENUES.find((v) => v.id === "v-four-seasons");
+    if (four?.slots) await fs.ref.update({ slots: four.slots });
+  }
+  const { rescheduleTablesOnce } = await import("../functions/src/experiences/showcase");
+  const moved = await rescheduleTablesOnce({ uid: "seed-content", role: "superadmin" });
+  if (moved) console.log(`✅ Tables : une gamme par jour (${moved.recreated} recréée(s), ${moved.kept} gardée(s) car déjà réservée(s)).`);
   const { tidyTemplateEventsOnce } = await import("../functions/src/experiences/showcase");
   const tidy = await tidyTemplateEventsOnce({ uid: "seed-content", role: "superadmin" });
   if (tidy) console.log(`✅ Événements des modèles rangés : ${tidy.renamed} titre(s) sans la gamme, ${tidy.removed} doublon(s) retiré(s).`);

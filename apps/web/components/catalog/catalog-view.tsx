@@ -275,7 +275,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                     <span className="font-display text-2xl font-medium text-ink sm:text-[1.75rem]">{h.weekday}</span>
                     <span className="text-[15px] text-muted">{h.date}</span>
                   </h2>
-                  <div className="divide-y divide-line">
+                  <div className="card mt-3 divide-y divide-line/70 overflow-hidden px-4">
                     {d.items.map((x, i) => (
                       <ExperienceRow key={x.session!.id} session={x.session!} experience={x.experience} priority={di === 0 && i < 3} />
                     ))}
@@ -284,7 +284,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
               );
             })
           ) : (
-            <div className="divide-y divide-line">
+            <div className="card mt-3 divide-y divide-line/70 overflow-hidden px-4">
               {results.dated.map((x, i) => (
                 <ExperienceRow key={x.session!.id} session={x.session!} experience={x.experience} showDay priority={i < 3} />
               ))}
@@ -310,7 +310,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
             <h2 id="undated-title" className="section-title">{tc("undatedTitle")}</h2>
             <p className="mt-1 text-sm text-muted">{tc("undatedText")}</p>
           </div>
-          <div className="divide-y divide-line" data-testid="undated-list">
+          <div className="card divide-y divide-line/70 overflow-hidden px-4" data-testid="undated-list">
             {results.undated.map((x) => (
               <ExperienceRow key={x.experience.id} experience={x.experience} />
             ))}

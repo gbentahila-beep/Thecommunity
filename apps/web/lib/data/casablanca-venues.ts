@@ -40,5 +40,5 @@ export const CASABLANCA_VENUES: Partner[] = [
   { ...base, ...fake(11, "sky-28"), id: "v-sky-28", name: "Sky 28 (Kenzi Tower)", type: "venue", district: "Maârif", address: "Kenzi Tower Hotel, Twin Center, boulevard Zerktouni, Casablanca", link: "",
     tiers: ["exclusive"], formats: ["afterwork"], unitMin: 4, unitMax: 8, cuisine: "Bar panoramique", avgBudget: 300, slots: evenings(2, [1, 2, 3, 4], "19:00", "21:00"), notes: `${NOTE} Bar au 28e étage, vue sur toute la ville.` },
   { ...base, ...fake(12, "four-seasons"), id: "v-four-seasons", name: "Four Seasons Casablanca (Bleu)", type: "restaurant", district: "Aïn Diab", address: "Anfa Place, boulevard de la Corniche, Casablanca", link: "",
-    tiers: ["exclusive"], formats: ["brunch", "cafe"], unitMin: 4, unitMax: 6, cuisine: "Petit-déjeuner et brunch d'hôtel", avgBudget: 450, slots: evenings(2, [0, 6], "10:00", "12:00"), notes: `${NOTE} Hôtel face à l'océan ; brunch du dimanche réputé.` },
+    tiers: ["exclusive"], formats: ["brunch", "cafe"], unitMin: 4, unitMax: 6, cuisine: "Petit-déjeuner et brunch d'hôtel", avgBudget: 450, slots: evenings(2, [5, 6, 0], "10:00", "12:00"), notes: `${NOTE} Hôtel face à l'océan ; brunch du dimanche réputé.` },
 ];
