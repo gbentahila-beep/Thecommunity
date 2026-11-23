@@ -58,9 +58,9 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     const dated = items.filter((x): x is { experience: Experience; session: Session } => Boolean(x.session));
     return (
       dated.length > 0 && (
-        <PageShell key={id} className="max-w-3xl space-y-5 py-8" data-testid={`home-${id}`}>
+        <PageShell key={id} className="max-w-3xl space-y-5 py-8 lg:max-w-6xl" data-testid={`home-${id}`}>
           <SectionHeading title={title} action={{ href: "/experiences", label: t("seeAll") }} />
-          <ul className="card divide-y divide-line/70 overflow-hidden">
+          <ul className="event-list">
             {dated.map((x) => (
               <li key={x.experience.id}>
                 <CompactRow experience={x.experience} session={x.session} />
@@ -79,7 +79,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     new: cards("new", t("newTitle"), fresh),
     popular: cards("popular", t("popularTitle"), popular),
     thisWeek: (
-      <PageShell key="thisWeek" className="max-w-3xl space-y-10 py-8">
+      <PageShell key="thisWeek" className="max-w-3xl space-y-10 py-8 lg:max-w-6xl">
         <ThisWeek limit={6} />
       </PageShell>
     ),

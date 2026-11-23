@@ -792,6 +792,13 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 - Les photos de profil ne sont pas publiques dans Storage : affichées directement, elles apparaissaient comme une image cassée. Elles passent maintenant par `/api/avatar`, qui ne les sert qu'à la personne elle-même, aux membres d'un de ses groupes et à l'équipe (sinon « introuvable », 401 sans connexion).
 - L'avatar dessine toujours la tête de Bab, recouverte par la photo ; si la photo ne se charge pas, le Bab reste visible (plus jamais d'image cassée). Vérifié sur les émulateurs : photo affichée sur « Mon profil », refusée sans connexion.
 
+### Listes en grille sur ordinateur, badges, Avis (23 novembre)
+
+- Listes d'événements (classe `.event-list`) : sur téléphone, lignes compactes dans une carte blanche ; sur ordinateur (≥ 1024 px), grille de cartes photo comme Kitchi ou Airbnb (photo en haut avec le badge, titre, date et lieu, gamme, bouton « Réserver » pleine largeur), autant de colonnes que la largeur le permet (3 à 4). Accueil, Pour vous, Découvrir, espace membre, page organisateur, « Dans le même univers ». Accueil et Découvrir passent à 1 152 px de large sur ordinateur.
+- Badge sur une vignette : centré sur le bord bas de la photo, il ne touche plus le titre ; sur les cartes d'ordinateur, au coin haut gauche de la photo.
+- « Cette semaine » : filtres centrés sur ordinateur.
+- Avis : résumé de la note centré quand il n'y a pas de photos (sinon centré verticalement à côté des photos) ; une seule barre de filtres (univers s'il y en a plusieurs, note, tri en petit menu à droite) ; les cartes d'avis ne s'étirent plus à la hauteur de leur voisine.
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes

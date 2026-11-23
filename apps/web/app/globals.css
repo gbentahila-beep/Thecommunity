@@ -162,6 +162,27 @@
   .card {
     @apply rounded-3xl bg-white shadow-card;
   }
+  /*
+   * Listes d'événements (docs/22) : sur téléphone, une carte blanche avec une ligne par événement ; sur ordinateur
+   * (≥ 1024 px), une grille de cartes photo, comme Kitchi ou Airbnb (autant de colonnes que la largeur le permet).
+   */
+  .event-list {
+    @apply overflow-hidden rounded-3xl bg-white shadow-card divide-y divide-line/70;
+  }
+  @media (width >= 64rem) {
+    .event-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+      gap: 1.25rem;
+      overflow: visible;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    .event-list > * {
+      border-top-width: 0 !important;
+    }
+  }
   .info-box {
     @apply rounded-3xl bg-cream-deep px-6 py-8 text-center sm:px-10;
   }

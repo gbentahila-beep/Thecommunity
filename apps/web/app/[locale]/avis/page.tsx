@@ -1,5 +1,5 @@
 import { REVIEW_DETAIL_KEYS, type Review } from "@thecommunity/shared";
-import { Star } from "lucide-react";
+import { ChevronDown, Star } from "lucide-react";
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { MediaImage as Image } from "@/components/media";
@@ -67,7 +67,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
   const usedCats = categories.filter((c) => all.some((r) => catOf(r) === c.id));
 
   return (
-    <PageShell className="max-w-5xl space-y-10 py-10">
+    <PageShell className="max-w-5xl space-y-10 py-10 lg:max-w-6xl">
       <header className="text-center">
         <p className="eyebrow text-brand-700">{t("eyebrow")}</p>
         <h1 className="page-title mt-2">
@@ -80,8 +80,8 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
         <EmptyState bab="toast" prop="stars" titleAs="h2" title={te("reviewsTitle")} text={t("empty")} />
       ) : (
         <>
-          <section aria-labelledby="overall-title" className="grid gap-4 md:grid-cols-[1.1fr_1fr]">
-            <div className="card p-6 sm:p-8" data-testid="reviews-overall">
+          <section aria-labelledby="overall-title" className={photos.length > 0 ? "grid gap-4 md:grid-cols-[1.1fr_1fr]" : "mx-auto w-full max-w-xl"}>
+            <div className="card flex flex-col justify-center p-6 sm:p-8" data-testid="reviews-overall">
               <h2 id="overall-title" className="sr-only">{t("overallTitle")}</h2>
               <div className="flex items-end gap-4">
                 <span className="font-display text-7xl leading-none font-medium text-ink">{overall.toFixed(1)}</span>
@@ -117,31 +117,43 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
 
           <section aria-labelledby="all-title" className="space-y-5">
             <h2 id="all-title" className="section-title">{t("allTitle")}</h2>
-            <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label={t("filterUniverse")}>
-              <Link href={href({ univers: undefined, tout: undefined })} className={chip(!category)} aria-current={!category ? "true" : undefined}>{t("all")} <span className="opacity-70">{total}</span></Link>
-              {usedCats.map((c) => (
-                <Link key={c.id} href={href({ univers: c.id, tout: undefined })} className={chip(category === c.id)} aria-current={category === c.id ? "true" : undefined}>{tr(c.shortName, loc)}</Link>
-              ))}
-            </div>
+            {/* Une seule barre de filtres : univers (s'il y en a plusieurs), note, puis tri à droite. */}
             <div className="flex flex-wrap items-center gap-2">
+              {usedCats.length > 1 && (
+                <span className="flex flex-wrap items-center gap-2 border-line pe-2 sm:border-e" role="group" aria-label={t("filterUniverse")}>
+                  <Link href={href({ univers: undefined, tout: undefined })} className={`${chip(!category)} px-3 py-1.5`} aria-current={!category ? "true" : undefined}>{t("all")} <span className="opacity-70">{total}</span></Link>
+                  {usedCats.map((c) => (
+                    <Link key={c.id} href={href({ univers: c.id, tout: undefined })} className={`${chip(category === c.id)} px-3 py-1.5`} aria-current={category === c.id ? "true" : undefined}>{tr(c.shortName, loc)}</Link>
+                  ))}
+                </span>
+              )}
               <span className="text-sm text-muted">{t("filterRating")}</span>
               {[undefined, 5, 4, 3, 2, 1].map((n) => (
                 <Link key={n ?? "all"} href={href({ note: n ? String(n) : undefined, tout: undefined })} className={`${chip(note === n)} px-3 py-1.5`} aria-current={note === n ? "true" : undefined}>
                   {n ? <>{n}<Star className="size-3.5 fill-current" aria-hidden /></> : t("anyRating")}
                 </Link>
               ))}
-              <span className="ms-auto flex items-center gap-1 text-sm">
-                <span className="text-muted">{t("sortLabel")}</span>
-                {SORTS.map((s) => (
-                  <Link key={s} href={href({ tri: s === "recent" ? undefined : s, tout: undefined })} className={`rounded-full px-3 py-1.5 ${sort === s ? "bg-brand-100 font-semibold text-brand-900" : "text-ink/75 hover:bg-cream-deep"}`} aria-current={sort === s ? "true" : undefined}>{t(`sort_${s}`)}</Link>
-                ))}
-              </span>
+              {/* Tri en petit menu (« Trier : Récents ▾ ») : toute la barre de filtres tient sur une ligne. */}
+              <details className="group relative ms-auto text-sm" data-testid="reviews-sort">
+                <summary className="flex cursor-pointer list-none items-center gap-1.5 rounded-full px-3 py-1.5 ring-1 ring-line hover:ring-brand-200 [&::-webkit-details-marker]:hidden">
+                  <span className="text-muted">{t("sortLabel")}</span>
+                  <span className="font-semibold text-ink">{t(`sort_${sort}`)}</span>
+                  <ChevronDown className="size-4 transition group-open:rotate-180" aria-hidden />
+                </summary>
+                <ul className="absolute end-0 z-30 mt-2 w-48 rounded-2xl border border-line bg-white p-1.5 shadow-float">
+                  {SORTS.map((s) => (
+                    <li key={s}>
+                      <Link href={href({ tri: s === "recent" ? undefined : s, tout: undefined })} className={`block rounded-xl px-3 py-2 ${sort === s ? "bg-brand-50 font-semibold text-brand-900" : "text-ink hover:bg-cream"}`} aria-current={sort === s ? "true" : undefined}>{t(`sort_${s}`)}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </details>
             </div>
 
             {filtered.length === 0 ? (
               <EmptyState variant="compact" bab="memo" mood="surprised" text={t("noMatch")} />
             ) : (
-              <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="reviews-list">
+              <ul className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="reviews-list">
                 {shown.map((r, i) => {
                   const exp = expById.get(r.experienceId);
                   const cat = exp ? catById.get(exp.categoryId) : undefined;

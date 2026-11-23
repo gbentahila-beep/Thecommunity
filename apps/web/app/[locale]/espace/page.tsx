@@ -121,7 +121,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
             <h2 id="reco-title" className="section-title">{t("recommended")}</h2>
             <p className="text-sm text-muted">{t("recommendedText")}</p>
           </div>
-          <ul className="card divide-y divide-line/70 overflow-hidden">
+          <ul className="event-list">
             {recommended.map((s) => (
               <li key={s.id}>
                 <CompactRow experience={s.experience} session={s} />

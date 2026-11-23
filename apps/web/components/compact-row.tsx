@@ -74,26 +74,27 @@ export async function CompactRow({
         : tr2("book");
   return (
     <article
-      className="group relative flex gap-3.5 px-4 py-3.5"
+      className="group relative flex gap-3.5 px-4 py-3.5 lg:h-full lg:flex-col lg:gap-0 lg:rounded-3xl lg:bg-white lg:p-0 lg:shadow-card lg:transition lg:hover:shadow-float"
       data-testid="compact-row"
     >
-      <div className="relative shrink-0">
-        <div className="relative size-16 overflow-hidden rounded-xl bg-cream-deep">
+      {/* Téléphone : vignette de 64 px ; ordinateur : photo en haut de la carte. */}
+      <div className="relative shrink-0 lg:w-full">
+        <div className="relative size-16 overflow-hidden rounded-xl bg-cream-deep lg:aspect-[4/3] lg:size-auto lg:w-full lg:rounded-none lg:rounded-t-3xl">
           {cover && (
             <Image
               src={cover.path}
               alt=""
               fill
               priority={priority}
-              sizes="64px"
-              className="object-cover"
+              sizes="(min-width: 1024px) 320px, 64px"
+              className="object-cover transition duration-500 lg:group-hover:scale-[1.04]"
             />
           )}
         </div>
         {badge && <CornerRibbon badge={badge} label={t(`badge_${badge}`)} />}
       </div>
       {/* Étape X : texte à gauche, bouton « Réserver » à droite (le prix est sur la dernière ligne). */}
-      <div className="flex min-w-0 flex-1 items-start gap-3">
+      <div className="flex min-w-0 flex-1 items-start gap-3 lg:flex-col lg:items-stretch lg:p-4">
         <div className="min-w-0 flex-1">
           <h3 className="min-w-0 text-[15px] leading-snug font-semibold text-ink">
             <Link
@@ -145,7 +146,7 @@ export async function CompactRow({
         </div>
         <Link
           href={session ? `/reserver/${session.id}` : `/experiences/${experience.slug}#alerte`}
-          className="relative z-10 inline-flex shrink-0 self-center rounded-full bg-white px-3.5 py-2 text-[13px] font-semibold text-ink shadow-card ring-1 ring-line transition hover:bg-brand-700 hover:text-white hover:ring-brand-700 max-[359px]:hidden"
+          className="relative z-10 inline-flex shrink-0 self-center rounded-full bg-white px-3.5 py-2 text-[13px] font-semibold text-ink shadow-card ring-1 ring-line transition hover:bg-brand-700 hover:text-white hover:ring-brand-700 max-[359px]:hidden lg:mt-auto lg:self-stretch lg:justify-center lg:py-2.5"
           aria-label={`${action} : ${tr(experience.title, locale)}`}
         >
           {action}

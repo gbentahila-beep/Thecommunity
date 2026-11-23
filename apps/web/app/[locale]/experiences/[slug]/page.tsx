@@ -81,7 +81,7 @@ async function RetiredExperience({ title, categoryId, cityId }: { title: string;
         <section aria-labelledby="similar" className="mt-14">
           <h2 id="similar" className="section-title">{t("retiredSimilar")}</h2>
           {/* Même liste que partout (Découvrir, Cette semaine) : lignes compactes dans une carte blanche. */}
-          <div className="card mx-auto mt-5 max-w-3xl divide-y divide-line/70 overflow-hidden px-4" data-testid="similar-list">
+          <div className="event-list mx-auto mt-5 max-w-3xl lg:max-w-none" data-testid="similar-list">
             {similar.map((s) => (
               <ExperienceRow key={s.id} session={s} experience={s.experience} showDay />
             ))}

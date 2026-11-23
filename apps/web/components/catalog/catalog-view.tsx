@@ -175,7 +175,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
         </div>
       </form>
 
-      <nav aria-label={tc("tabsLabel")} className="-mx-4 border-b border-line sm:mx-auto sm:max-w-4xl" data-testid="catalog-tabs">
+      <nav aria-label={tc("tabsLabel")} className="-mx-4 border-b border-line sm:mx-auto sm:max-w-4xl lg:max-w-6xl" data-testid="catalog-tabs">
         <ActiveTabScroller className="flex gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:justify-center sm:px-0">
           {[{ id: undefined as string | undefined, label: t("all"), icon: undefined as string | undefined }, ...categories.map((c) => ({ id: c.id, label: tr(c.shortName, locale), icon: c.icon }))].map((it) => {
             const on = it.id === category;
@@ -196,7 +196,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
       </nav>
 
       {subcategories.length > 0 && (
-        <nav aria-label={tcity("subcategories")} className="mx-auto max-w-4xl">
+        <nav aria-label={tcity("subcategories")} className="mx-auto max-w-4xl lg:max-w-6xl">
           <ul className="flex flex-wrap justify-center gap-2">
             {[{ id: undefined as string | undefined, label: t("all") }, ...subcategories.map((c) => ({ id: c.id as string | undefined, label: tr(c.shortName, locale) }))].map((it) => (
               <li key={it.id ?? "all"}>
@@ -231,7 +231,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
       )}
 
       {total > 0 && (
-        <nav aria-label={tc("calendarLabel")} className="sticky top-[4.5rem] z-20 -mx-4 bg-cream/95 px-4 py-2 backdrop-blur-sm sm:mx-auto sm:max-w-4xl sm:rounded-2xl sm:px-0 lg:top-20" data-testid="catalog-calendar">
+        <nav aria-label={tc("calendarLabel")} className="sticky top-[4.5rem] z-20 -mx-4 bg-cream/95 px-4 py-2 backdrop-blur-sm sm:mx-auto sm:max-w-4xl sm:rounded-2xl sm:px-0 lg:top-20 lg:max-w-6xl" data-testid="catalog-calendar">
           <ul className="flex gap-1 overflow-x-auto [scrollbar-width:none] md:justify-center">
             {calendar.map((d) => {
               const cell = formatDayCell(`${d.key}T12:00:00Z`, locale);
@@ -265,7 +265,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
       )}
 
       {total > 0 ? (
-        <div className="mx-auto max-w-4xl space-y-8" data-testid="catalog-results">
+        <div className="mx-auto max-w-4xl space-y-8 lg:max-w-6xl" data-testid="catalog-results">
           {agenda ? (
             days.map((d, di) => {
               const h = formatDayHeading(d.items[0]!.session!.startAt, locale);
@@ -275,7 +275,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                     <span className="card-title sm:text-[1.75rem]">{h.weekday}</span>
                     <span className="text-[15px] text-muted">{h.date}</span>
                   </h2>
-                  <div className="card mt-3 divide-y divide-line/70 overflow-hidden px-4">
+                  <div className="event-list mt-3">
                     {d.items.map((x, i) => (
                       <ExperienceRow key={x.session!.id} session={x.session!} experience={x.experience} priority={di === 0 && i < 3} />
                     ))}
@@ -284,7 +284,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
               );
             })
           ) : (
-            <div className="card mt-3 divide-y divide-line/70 overflow-hidden px-4">
+            <div className="event-list mt-3">
               {results.dated.map((x, i) => (
                 <ExperienceRow key={x.session!.id} session={x.session!} experience={x.experience} showDay priority={i < 3} />
               ))}
@@ -305,12 +305,12 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
       ) : null}
       {!filters.q && n === 0 && !category && <ForYou />}
       {results.undated.length > 0 && (
-        <section aria-labelledby="undated-title" className="mx-auto max-w-4xl space-y-4 pt-6">
+        <section aria-labelledby="undated-title" className="mx-auto max-w-4xl space-y-4 pt-6 lg:max-w-6xl">
           <div className="text-center">
             <h2 id="undated-title" className="section-title">{tc("undatedTitle")}</h2>
             <p className="mt-1 text-sm text-muted">{tc("undatedText")}</p>
           </div>
-          <div className="card divide-y divide-line/70 overflow-hidden px-4" data-testid="undated-list">
+          <div className="event-list" data-testid="undated-list">
             {results.undated.map((x) => (
               <ExperienceRow key={x.experience.id} experience={x.experience} />
             ))}

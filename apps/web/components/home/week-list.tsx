@@ -25,7 +25,7 @@ export function WeekList({ chips, items, limit, seeAll, empty }: { chips: WeekCh
         ))}
       </div>
       {shown.length > 0 ? (
-        <ul className="card divide-y divide-line/70 overflow-hidden" data-testid="week-list">
+        <ul className="event-list" data-testid="week-list">
           {shown.map((i) => (
             <li key={i.id}>{i.node}</li>
           ))}
