@@ -108,7 +108,7 @@ async function member(tag, firstName) {
     // 4. Page organisateur et recherche depuis Firestore
     await v.goto(base + '/organisateurs/club-padel-anfa', { waitUntil: 'load' });
     assert(await v.getByRole('heading', { level: 1, name: 'Club Padel Anfa' }).isVisible(), 'page organisateur (Firestore)');
-    assert(await v.getByTestId('organizer-activities').getByRole('link', { name: 'Padel entre inconnus' }).isVisible(), 'page organisateur : ses activités');
+    assert(await v.getByTestId('organizer-activities').getByRole('link', { name: 'Padel entre inconnus', exact: true }).isVisible(), 'page organisateur : ses activités');
     const api = await (await fetch(`${base}/api/recherche?q=stret%20art&locale=fr`)).json();
     assert(api.suggestions[0]?.label === 'Balade street art au centre-ville', 'recherche (Firestore) : « stret art » → balade street art');
   } finally {

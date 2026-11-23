@@ -106,7 +106,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await d.waitForURL('**/organisateurs/club-padel-anfa', { timeout: 15000 });
   assert(await d.getByRole('heading', { level: 1, name: 'Club Padel Anfa' }).isVisible(), 'page organisateur : nom');
   assert(/4\.8 sur 5 · 19 avis/.test(await d.getByTestId('organizer-rating').textContent()), 'page organisateur : note de ses activités');
-  assert(await d.getByTestId('organizer-activities').getByRole('link', { name: 'Padel entre inconnus' }).isVisible(), 'page organisateur : ses activités');
+  assert(await d.getByTestId('organizer-activities').getByRole('link', { name: 'Padel entre inconnus', exact: true }).isVisible(), 'page organisateur : ses activités');
   assert(await d.evaluate(() => [...document.querySelectorAll('script[type="application/ld+json"]')].some((s) => s.textContent.includes('"Organization"'))), 'page organisateur : données structurées');
   assert((await fetch(`${base}/organisateurs/inconnu`)).status === 404, 'organisateur inconnu : 404');
 

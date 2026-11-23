@@ -3,7 +3,7 @@ import { AtSign, BadgeCheck, Globe, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ExperienceCard } from "@/components/experience-card";
+import { ExperienceRow } from "@/components/experience-row";
 import { MediaImage as Image } from "@/components/media";
 import { ReviewItem } from "@/components/reviews/review-item";
 import { PageShell, Stars } from "@/components/ui";
@@ -89,7 +89,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
               )}
             </p>
             {cats.length > 0 && (
-              <ul className="flex flex-wrap gap-2" aria-label={t("categories")}>
+              <ul className="flex flex-wrap justify-center gap-2" aria-label={t("categories")}>
                 {cats.map((c) => (
                   <li key={c.id}>
                     <Link href={`/${o.cityId}/${c.id}`} className="rounded-full bg-badge px-3 py-1 text-xs font-medium text-brand-900">{tr(c.shortName, locale)}</Link>
@@ -121,8 +121,8 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
         <section aria-labelledby="org-upcoming" className="space-y-4">
           <h2 id="org-upcoming" className="section-title">{t("upcoming")}</h2>
           {next.length ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="organizer-activities">
-              {next.map((s) => <ExperienceCard key={s.id} session={s} experience={s.experience} />)}
+            <div className="card mx-auto max-w-3xl divide-y divide-line/70 overflow-hidden px-4" data-testid="organizer-activities">
+              {next.map((s) => <ExperienceRow key={s.id} session={s} experience={s.experience} showDay />)}
             </div>
           ) : (
             <EmptyState variant="compact" bab="doodle" mood="wait" text={t("none")} />
@@ -132,8 +132,8 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
         {undated.length > 0 && (
           <section aria-labelledby="org-undated" className="space-y-4">
             <h2 id="org-undated" className="section-title">{t("undated")}</h2>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {undated.map((e) => <ExperienceCard key={e.id} experience={e} />)}
+            <div className="card mx-auto max-w-3xl divide-y divide-line/70 overflow-hidden px-4">
+              {undated.map((e) => <ExperienceRow key={e.id} experience={e} />)}
             </div>
           </section>
         )}

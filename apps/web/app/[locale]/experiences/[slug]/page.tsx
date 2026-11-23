@@ -21,7 +21,7 @@ import { EventEssentials, type EssentialItem } from "@/components/meeting-sectio
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoriteButton } from "@/components/favorite-button";
-import { ExperienceCard } from "@/components/experience-card";
+import { ExperienceRow } from "@/components/experience-row";
 import { PageShell, PrimaryLink, Stars } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -80,13 +80,12 @@ async function RetiredExperience({ title, categoryId, cityId }: { title: string;
       {similar.length > 0 && (
         <section aria-labelledby="similar" className="mt-14">
           <h2 id="similar" className="section-title">{t("retiredSimilar")}</h2>
-          <ul className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Même liste que partout (Découvrir, Cette semaine) : lignes compactes dans une carte blanche. */}
+          <div className="card mx-auto mt-5 max-w-3xl divide-y divide-line/70 overflow-hidden px-4" data-testid="similar-list">
             {similar.map((s) => (
-              <li key={s.id}>
-                <ExperienceCard session={s} experience={s.experience} />
-              </li>
+              <ExperienceRow key={s.id} session={s} experience={s.experience} showDay />
             ))}
-          </ul>
+          </div>
         </section>
       )}
     </PageShell>
