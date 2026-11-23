@@ -10,7 +10,7 @@ import { DEFAULT_CITY } from "@/lib/site";
  * sont pas encore ouvertes sont marquées « bientôt ».
  * - « pill » : pastille de l'en-tête (épingle + chevron) ;
  * - « title » : dans un titre (« Cette semaine à Casablanca ▾ »), même police que le titre ; la liste s'ouvre sous
- *   le titre entier (le titre doit être « relative »), pour ne jamais sortir de l'écran ;
+ *   le titre entier, centrée comme lui (le titre doit être « relative »), pour ne jamais sortir de l'écran ;
  * - « label » : épingle + nom + chevron (en-tête du catalogue).
  */
 export async function CityMenu({ currentCityId = DEFAULT_CITY, variant = "pill", align = "end" }: { currentCityId?: string; variant?: "pill" | "title" | "label"; align?: "start" | "end" }) {
@@ -38,7 +38,7 @@ export async function CityMenu({ currentCityId = DEFAULT_CITY, variant = "pill",
           <ChevronDown className={`${variant === "title" ? "size-6" : "size-4"} shrink-0 transition group-open:rotate-180`} aria-hidden />
         </summary>
       )}
-      <ul className={`absolute z-40 mt-2 w-60 overflow-hidden rounded-2xl border border-line bg-white p-1.5 font-sans text-base font-normal shadow-float ${variant === "pill" ? "start-1/2 -translate-x-1/2 rtl:translate-x-1/2 sm:start-auto sm:end-0 sm:translate-x-0 rtl:sm:translate-x-0" : variant === "title" ? "start-0 top-full max-w-[calc(100vw-2rem)]" : align === "start" ? "start-0" : "end-0"}`}>
+      <ul className={`absolute z-40 mt-2 w-60 overflow-hidden rounded-2xl border border-line bg-white p-1.5 font-sans text-base font-normal shadow-float ${variant === "pill" ? "start-1/2 -translate-x-1/2 rtl:translate-x-1/2 sm:start-auto sm:end-0 sm:translate-x-0 rtl:sm:translate-x-0" : variant === "title" ? "start-1/2 top-full max-w-[calc(100vw-2rem)] -translate-x-1/2 rtl:translate-x-1/2" : align === "start" ? "start-0" : "end-0"}`}>
         {cities.map((city) => (
           <li key={city.id}>
             {city.isActive ? (

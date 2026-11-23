@@ -16,7 +16,7 @@ export function WeekList({ chips, items, limit, seeAll, empty }: { chips: WeekCh
   const shown = items.filter((i) => !active || i.categories.includes(active)).slice(0, limit);
   return (
     <div className="space-y-5">
-      <div role="toolbar" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0" data-testid="week-chips">
+      <div role="toolbar" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:px-0" data-testid="week-chips">
         {chips.map((c) => (
           <button key={c.id ?? "all"} type="button" aria-pressed={active === c.id} onClick={() => setActive(c.id)} className={`chip ${active === c.id ? "chip-on" : ""}`}>
             {c.icon}
