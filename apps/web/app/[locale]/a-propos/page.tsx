@@ -84,8 +84,8 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
         <h2 id="values" className="section-title">{ta("valuesTitle")}</h2>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {values.map(({ icon: Icon, title, text }) => (
-            <li key={title} className="rounded-[var(--radius-card)] bg-white p-6 shadow-card">
-              <span className="grid size-11 place-items-center rounded-full bg-brand-50 text-brand-900">
+            <li key={title} className="rounded-[var(--radius-card)] bg-white p-6 text-center shadow-card">
+              <span className="mx-auto grid size-11 place-items-center rounded-full bg-brand-50 text-brand-900">
                 <Icon className="size-5" aria-hidden />
               </span>
               <p className="mt-4 text-lg font-semibold text-ink">{title}</p>

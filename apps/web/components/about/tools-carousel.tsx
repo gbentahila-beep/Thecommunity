@@ -62,8 +62,8 @@ export function ToolsCarousel({ tools, prevLabel, nextLabel, title, text, eyebro
       </div>
       <ul ref={list} className="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:px-0">
         {tools.map((tool, i) => (
-          <li key={tool.title} className="w-[82%] shrink-0 snap-start rounded-[var(--radius-card)] border border-line bg-cream p-6 sm:w-[46%] sm:p-7 lg:w-[31%]">
-            <p className="flex items-baseline gap-3">
+          <li key={tool.title} className="w-[82%] shrink-0 snap-start rounded-[var(--radius-card)] border border-line bg-cream p-6 sm:w-[46%] sm:p-7 lg:w-[31%] text-center">
+            <p className="flex flex-col items-center gap-1">
               <span aria-hidden className="font-display text-4xl text-brand-500">{String(i + 1).padStart(2, "0")}</span>
               <span className="text-lg font-semibold text-ink">{tool.title}</span>
             </p>
@@ -71,7 +71,7 @@ export function ToolsCarousel({ tools, prevLabel, nextLabel, title, text, eyebro
           </li>
         ))}
       </ul>
-      <div className="mt-4 flex justify-end gap-2 sm:hidden">
+      <div className="mt-4 flex justify-center gap-2 sm:hidden">
         <button type="button" onClick={() => scroll(-1)} disabled={edges.start} aria-label={prevLabel} className={arrow}>
           <ChevronLeft className="size-5 rtl:-scale-x-100" aria-hidden />
         </button>

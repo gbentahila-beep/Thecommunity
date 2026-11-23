@@ -781,6 +781,12 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 - Les 14 modèles livrés sont traduits (dont l'ambiance de chaque gamme des Tables) ; un modèle enregistré reprend une traduction livrée seulement si son français n'a pas changé.
 - Site d'essai : une fois (repère `extraI18nAD`), les événements issus des modèles et les 12 restaurants reçoivent ces traductions, seulement quand le français est resté celui du modèle ou du lieu.
 
+### Règle d'alignement précisée (23 novembre)
+
+- Titres de page et de section : toujours centrés.
+- Cartes : l'alignement suit la forme de la carte. Carte courte empilée (numéro ou icône en haut, titre, une ou deux lignes) : centrée — les 3 cartes de « Comment ça marche », les offres Carnet et Pass, « Ce qui compte pour nous », les outils d'À propos, « Travaillons ensemble ». Liste ou ligne avec une icône ou une coche à gauche (étapes numérotées, avantages du Pass, sécurité, événements, réglages, formulaires, articles) : à gauche, pour que l'œil suive les icônes.
+- Carnet et Pass : « Choisir » devient un titre de section centré ; offres et « Autres durées » centrés.
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes

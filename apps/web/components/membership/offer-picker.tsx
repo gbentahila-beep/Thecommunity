@@ -39,7 +39,7 @@ export function OfferPicker({ offers, initialId, mode, cta }: { offers: OfferVie
               role="radio"
               aria-checked={on}
               onClick={() => setSelected(o.id)}
-              className={`relative flex flex-col items-start rounded-3xl bg-white p-5 text-start shadow-card transition ${on ? "ring-[3px] ring-brand-800" : "ring-1 ring-line hover:ring-brand-200"}`}
+              className={`relative flex flex-col items-center rounded-3xl bg-white p-5 pb-12 text-center shadow-card transition ${on ? "ring-[3px] ring-brand-800" : "ring-1 ring-line hover:ring-brand-200"}`}
               data-testid="membership-offer"
             >
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${o.highlight ? "bg-brand-900 text-white" : "bg-cream-deep text-ink"}`}>
@@ -49,7 +49,7 @@ export function OfferPicker({ offers, initialId, mode, cta }: { offers: OfferVie
               <span className="mt-2 text-[2rem] leading-none font-bold text-ink">{o.price}</span>
               {o.perMonth && <span className="mt-1 text-sm text-muted">{t("perMonth", { price: o.perMonth })}</span>}
               {o.note && <span className="mt-2 text-sm font-semibold text-brand-800">{o.note}</span>}
-              <span className={`absolute end-4 bottom-4 grid size-7 place-items-center rounded-full ${on ? "bg-brand-800 text-white" : "border-2 border-ink/20 bg-white"}`} aria-hidden>
+              <span className={`absolute start-1/2 bottom-4 grid size-7 -translate-x-1/2 place-items-center rounded-full rtl:translate-x-1/2 ${on ? "bg-brand-800 text-white" : "border-2 border-ink/20 bg-white"}`} aria-hidden>
                 {on && <Check className="size-4" strokeWidth={3} />}
               </span>
             </button>
@@ -57,7 +57,7 @@ export function OfferPicker({ offers, initialId, mode, cta }: { offers: OfferVie
         })}
       </div>
       {offers.some((o) => !o.main) && (
-        <button type="button" onClick={() => setMore((m) => !m)} className="mt-3 text-sm font-semibold text-brand-900 underline underline-offset-4" data-testid="more-offers">
+        <button type="button" onClick={() => setMore((m) => !m)} className="mx-auto mt-3 block text-sm font-semibold text-brand-900 underline underline-offset-4" data-testid="more-offers">
           {more ? t("lessDurations") : t("moreDurations")}
         </button>
       )}

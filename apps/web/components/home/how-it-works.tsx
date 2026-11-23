@@ -14,7 +14,7 @@ import { Bab } from "@/components/brand/bab";
  */
 export async function HowItWorks({ categories, showTitle = true }: { categories: Category[]; showTitle?: boolean }) {
   const [t, locale] = await Promise.all([getTranslations("home"), getLocale()]);
-  const card = "relative rounded-3xl p-6 shadow-float transition duration-300 hover:rotate-0 sm:p-7";
+  const card = "relative rounded-3xl p-6 text-center shadow-float transition duration-300 hover:rotate-0 sm:p-7";
   return (
     <section aria-labelledby={showTitle ? "how-title" : undefined} aria-label={showTitle ? undefined : t("howTitle")} className={showTitle ? "py-16" : "pb-16"}>
       <h2 id="how-title" hidden={!showTitle} className="section-title text-center">
@@ -27,7 +27,7 @@ export async function HowItWorks({ categories, showTitle = true }: { categories:
           <h3 className="mt-1 text-xl font-semibold text-ink">{t("how1Title")}</h3>
           <p className="mt-2 text-[15px] text-muted">{t("how1Text")}</p>
           {/* Aperçu du choix : trois univers en lignes (comme dans l'application), puis « + N autres ». */}
-          <ul className="mt-5 space-y-2" aria-hidden>
+          <ul className="mt-5 space-y-2 text-start" aria-hidden>
             {categories.slice(0, 3).map((c, i) => {
               const style = categoryTone(c);
               return (

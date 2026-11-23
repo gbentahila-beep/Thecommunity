@@ -141,7 +141,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
 
       {!me?.transfer && (
         <section aria-labelledby="offers-title">
-          <h2 id="offers-title" className="mb-3 card-title">{t("choose")}</h2>
+          <h2 id="offers-title" className="section-title mb-5">{t("choose")}</h2>
           <OfferPicker
             offers={views}
             initialId={initial}
