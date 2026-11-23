@@ -1,0 +1,194 @@
+/**
+ * Étape 11 — tarification en deux parts.
+ * - Part organisation : le prix de l'expérience (`price`), payé en ligne. Seule cette part reçoit le prix membre,
+ *   l'abonnement, les codes promo et les frais de service.
+ * - Part partenaire : réglée sur place, directement au partenaire (jamais encaissée par Wenzy) :
+ *   prix fixe connu, ou consommation libre (montant inconnu → null, jamais 0).
+ * - « Tout en ligne » : aucune part sur place (toutes les expériences antérieures à l'étape 11).
+ * Montants en centimes, comme le reste du site.
+ */
+import type { CurrencyCode } from "./types";
+
+export const PRICING_MODELS = ["online_only", "fixed_partner", "variable_consumption"] as const;
+export type PricingModel = (typeof PRICING_MODELS)[number];
+
+export type PartnerPart = {
+  name: string;
+  paymentMode: "on_site";
+  pricingType: "fixed" | "consumption";
+  /** Prix fixe par place (centimes), ou null pour une consommation libre. */
+  price: { amount: number; currency: CurrencyCode } | null;
+  description: string;
+};
+
+export type ExperiencePricing = { model: PricingModel; currency: CurrencyCode; partner: PartnerPart | null };
+
+export type PartnerPaymentStatus = "not_applicable" | "due_on_site" | "paid_on_site";
+
+/** Copie figée de la part partenaire, enregistrée dans chaque réservation. */
+export type PartnerSnapshot = PartnerPart & { model: PricingModel };
+
+/** Lecture rétrocompatible : une expérience sans `pricing` est « tout en ligne ». */
+export function pricingOf(e: { pricing?: ExperiencePricing | null; price?: { currency: CurrencyCode } }): ExperiencePricing {
+  const p = e.pricing;
+  if (p && PRICING_MODELS.includes(p.model)) {
+    if (p.model === "online_only" || !p.partner) return { model: "online_only", currency: p.currency ?? "MAD", partner: null };
+    return p;
+  }
+  return { model: "online_only", currency: e.price?.currency ?? "MAD", partner: null };
+}
+
+/** Ce que voit le client pour une place : part en ligne, part sur place (ou null), total connu (ou null). */
+export function priceSplit(onlineUnit: number, p: ExperiencePricing) {
+  const onSiteUnit = p.model === "fixed_partner" ? (p.partner?.price?.amount ?? null) : null;
+  const totalUnit = p.model === "variable_consumption" ? null : onlineUnit + (onSiteUnit ?? 0);
+  return {
+    model: p.model,
+    onlineUnit,
+    onSiteUnit,
+    totalUnit,
+    variable: p.model === "variable_consumption",
+    partnerName: p.partner?.name ?? null,
+    description: p.partner?.description ?? "",
+  };
+}
+
+/** Montant attendu sur place pour une réservation (prix fixe × places), ou null (consommation libre / sans objet). */
+export function onSiteAmount(p: ExperiencePricing, seats: number): number | null {
+  if (p.model !== "fixed_partner" || !p.partner?.price) return null;
+  return p.partner.price.amount * seats;
+}
+
+export function initialPartnerStatus(p: ExperiencePricing): PartnerPaymentStatus {
+  return p.model === "online_only" ? "not_applicable" : "due_on_site";
+}
+
+export function partnerSnapshotOf(p: ExperiencePricing): PartnerSnapshot | null {
+  return p.model === "online_only" || !p.partner ? null : { ...p.partner, model: p.model };
+}
+
+/** Ligne de suivi (11e) : une réservation, vue du tableau de bord en ligne / sur place. */
+export type TwoPartLedgerRow = {
+  status: string;
+  seats: number;
+  /** Encaissé en ligne (centimes, paiements réussis, avant remboursement). */
+  paidOnline: number;
+  /** Remboursé (centimes). */
+  refunded: number;
+  /** Part sur place attendue (prix fixe × places) ; null = consommation libre ou sans objet. */
+  onSiteAmount: number | null;
+  partnerStatus: "due_on_site" | "paid_on_site" | null;
+};
+
+/**
+ * Totaux du tableau de bord. La part sur place attendue ne compte que les prix fixes des réservations
+ * valables (confirmées ou présentes) : jamais de montant inventé pour une consommation libre.
+ */
+export function summarizeLedger(rows: TwoPartLedgerRow[]) {
+  const valid = rows.filter((r) => r.status === "confirmed" || r.status === "attended");
+  const fixed = valid.filter((r) => r.onSiteAmount != null);
+  return {
+    reservations: valid.length,
+    seats: valid.reduce((a, r) => a + r.seats, 0),
+    present: rows.filter((r) => r.status === "attended").reduce((a, r) => a + r.seats, 0),
+    noShow: rows.filter((r) => r.status === "no_show").reduce((a, r) => a + r.seats, 0),
+    cancelled: rows.filter((r) => r.status === "cancelled" || r.status === "refunded").length,
+    paidOnline: rows.reduce((a, r) => a + r.paidOnline, 0),
+    refunded: rows.reduce((a, r) => a + r.refunded, 0),
+    netOnline: rows.reduce((a, r) => a + r.paidOnline - r.refunded, 0),
+    onSiteExpected: fixed.reduce((a, r) => a + (r.onSiteAmount ?? 0), 0),
+    onSitePaid: fixed.filter((r) => r.partnerStatus === "paid_on_site").reduce((a, r) => a + (r.onSiteAmount ?? 0), 0),
+    consumptionBookings: valid.filter((r) => r.partnerStatus && r.onSiteAmount == null).length,
+  };
+}
+
+/**
+ * 11g — ce que rapporte une place, sans jamais compter la part réglée sur place comme un coût :
+ * - nous encaissons la part en ligne (prix public, avant remises) ;
+ * - « own » : nos coûts (ou ce que nous reversons au partenaire) sont déduits ; « commission » : nous gardons le pourcentage ;
+ * - une commission sur la part sur place se facture au partenaire, hors site (chiffrée seulement pour un prix fixe).
+ */
+export function seatEconomics(o: {
+  onlineUnit: number;
+  model: PricingModel;
+  onSiteUnit: number | null;
+  economicsModel: "own" | "commission";
+  costPerSeat?: number;
+  commissionPercent?: number;
+  onSiteCommissionPercent?: number;
+}) {
+  const onSite = o.model === "fixed_partner" ? o.onSiteUnit : null;
+  const margin = o.economicsModel === "commission" ? Math.round((o.onlineUnit * (o.commissionPercent ?? 0)) / 100) : o.onlineUnit - (o.costPerSeat ?? 0);
+  const pct = o.model === "online_only" ? 0 : (o.onSiteCommissionPercent ?? 0);
+  return {
+    /** Total payé par le client pour une place (null : consommation libre, inconnue). */
+    clientPays: o.model === "variable_consumption" ? null : o.onlineUnit + (onSite ?? 0),
+    onSiteUnit: onSite,
+    weCollect: o.onlineUnit,
+    /** Nos coûts, ou ce qui est reversé au partenaire. */
+    paidOut: o.onlineUnit - margin,
+    margin,
+    /** Commission à facturer au partenaire sur la part sur place (prix fixe), ou null. */
+    onSiteCommission: onSite != null && pct > 0 ? Math.round((onSite * pct) / 100) : null,
+    onSiteCommissionOnConsumption: o.model === "variable_consumption" && pct > 0,
+  };
+}
+
+/**
+ * Gamme du restaurant (positionnement affiché) et budget restaurant (docs/16, 21 novembre).
+ * Les fourchettes par défaut sont des repères de positionnement, pas des tarifs vérifiés : l'équipe saisit le budget
+ * réel estimé de chaque expérience quand elle le connaît.
+ */
+export const VENUE_TIERS = ["casual", "premium", "exclusive"] as const;
+export type VenueTier = (typeof VENUE_TIERS)[number];
+/** Budget par personne en dirhams (repères par défaut : ceux du Dîner, docs/22 § 6). */
+export const VENUE_TIER_RANGES: Record<VenueTier, { min: number; max: number }> = {
+  casual: { min: 150, max: 250 },
+  premium: { min: 250, max: 400 },
+  exclusive: { min: 400, max: 600 },
+};
+
+/** Formats des Tables (sous-catégories de l'univers « Tables », identifiant `eat`). */
+export const TABLE_FORMATS = ["cafe", "brunch", "dejeuner", "diner"] as const;
+export type TableFormat = (typeof TABLE_FORMATS)[number];
+
+/** Budget sur place par personne, en dirhams, selon le format et la gamme (validé le 22 novembre, docs/22 § 6). */
+export const TIER_BUDGETS: Record<TableFormat, Record<VenueTier, { min: number; max: number }>> = {
+  cafe: { casual: { min: 30, max: 60 }, premium: { min: 60, max: 100 }, exclusive: { min: 100, max: 150 } },
+  brunch: { casual: { min: 100, max: 150 }, premium: { min: 150, max: 250 }, exclusive: { min: 250, max: 400 } },
+  dejeuner: { casual: { min: 80, max: 150 }, premium: { min: 150, max: 250 }, exclusive: { min: 250, max: 400 } },
+  diner: VENUE_TIER_RANGES,
+};
+
+/** Fourchette de budget d'une gamme pour un format (repère du Dîner si le format n'est pas un format de Tables). */
+export function tierRange(tier: VenueTier, format?: string | null): { min: number; max: number } {
+  return (TIER_BUDGETS as Record<string, Record<VenueTier, { min: number; max: number }>>)[format ?? ""]?.[tier] ?? VENUE_TIER_RANGES[tier];
+}
+
+export type RestaurantBudget =
+  | { kind: "fixed"; amount: number; currency: CurrencyCode }
+  | { kind: "range"; min: number; max: number; currency: CurrencyCode; estimated: true };
+
+/**
+ * Ce que le client dépensera au restaurant, par personne : montant exact quand un menu est négocié (prix fixe chez le
+ * partenaire), fourchette estimée quand chacun paie sa consommation (budget saisi, sinon repère de la gamme).
+ * null : tout est payé en ligne (le prix affiché suffit).
+ */
+export function restaurantBudget(e: {
+  pricing?: ExperiencePricing | null;
+  price?: { currency: CurrencyCode };
+  venueTier?: VenueTier | null;
+  budgetRange?: { min: number; max: number; currency: CurrencyCode } | null;
+  /** Format de Tables (Café, Brunch…) : il fixe la fourchette de chaque gamme. */
+  subcategoryId?: string | null;
+}): RestaurantBudget | null {
+  const p = pricingOf(e);
+  if (p.model === "fixed_partner" && p.partner?.price) return { kind: "fixed", amount: p.partner.price.amount, currency: p.partner.price.currency };
+  if (p.model !== "variable_consumption") return null;
+  if (e.budgetRange && e.budgetRange.max > 0) return { kind: "range", min: e.budgetRange.min, max: e.budgetRange.max, currency: e.budgetRange.currency, estimated: true };
+  if (e.venueTier) {
+    const r = tierRange(e.venueTier, e.subcategoryId);
+    return { kind: "range", min: r.min * 100, max: r.max * 100, currency: p.currency, estimated: true };
+  }
+  return null;
+}

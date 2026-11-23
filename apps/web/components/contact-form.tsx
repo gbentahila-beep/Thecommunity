@@ -1,0 +1,43 @@
+"use client";
+
+import { httpsCallable } from "firebase/functions";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { firebase } from "@/lib/firebase/client";
+import { Honeypot } from "./honeypot";
+
+/** Formulaire de contact : envoyé au serveur (submitContactMessage : format, limite d'envois, piège à robots). */
+export function ContactForm() {
+  const t = useTranslations("pages");
+  const [state, setState] = useState<"idle" | "busy" | "sent" | "error">("idle");
+  if (state === "sent") return <p role="status" className="rounded-2xl bg-emerald-50 p-4 text-emerald-900">{t("contactSent")}</p>;
+  const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[16px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100";
+  return (
+    <form
+      className="relative space-y-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const f = new FormData(e.currentTarget);
+        setState("busy");
+        try {
+          await httpsCallable(firebase().functions, "submitContactMessage")({
+            name: String(f.get("name")).trim(),
+            email: String(f.get("email")).trim(),
+            message: String(f.get("message")).trim(),
+            website: String(f.get("website") ?? ""),
+          });
+          setState("sent");
+        } catch {
+          setState("error");
+        }
+      }}
+    >
+      <label className="block"><span className="mb-1.5 block text-sm font-medium">{t("contactName")}</span><input name="name" required maxLength={80} autoComplete="given-name" className={input} /></label>
+      <label className="block"><span className="mb-1.5 block text-sm font-medium">{t("contactEmail")}</span><input name="email" type="email" required maxLength={120} autoComplete="email" className={input} /></label>
+      <label className="block"><span className="mb-1.5 block text-sm font-medium">{t("contactMessage")}</span><textarea name="message" required minLength={10} maxLength={3000} rows={5} className={input} /></label>
+      <Honeypot />
+      {state === "error" && <p role="alert" className="text-sm text-red-700">{t("contactError")}</p>}
+      <button type="submit" disabled={state === "busy"} className="btn btn-primary">{t("contactSend")}</button>
+    </form>
+  );
+}

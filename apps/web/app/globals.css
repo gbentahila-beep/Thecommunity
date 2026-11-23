@@ -1,0 +1,296 @@
+@import "tailwindcss";
+
+/*
+ * Charte Wenzy, direction « Coucher de soleil » (docs/marque/wenzy/brand-book.html).
+ * Crème et encre, une seule couleur forte : le dégradé corail → violet. Titres en Newsreader (gras pour les grands titres), texte en Inter.
+ * L'échelle « brand » : 900 = encre (texte fort, fonds sombres), 700 = violet profond lisible sur crème (liens, accents),
+ * 500 = violet de la marque (décor), 50 à 200 = lilas clairs (surfaces, survols).
+ */
+@theme {
+  --color-cream: #f6f1ea;
+  --color-cream-deep: #ede4d8;
+  --color-sand: #e9decf;
+  --color-line: #e3d9cb;
+  --color-brand-50: #f8f0fc;
+  --color-brand-100: #f0def9;
+  --color-brand-200: #e2c3f2;
+  --color-brand-500: #c25be8;
+  --color-brand-700: #8a35b5;
+  --color-brand-800: #2b2b2b;
+  --color-brand-900: #141414;
+  --color-coral: #ff6a4d;
+  --color-violet: #c25be8;
+  --color-ink: #141414;
+  --color-muted: #66625c;
+  --color-badge: #ffe1d8;
+
+  --color-cat-eat: #e2553a;
+  --color-cat-move: #2f8a5a;
+  --color-cat-play: #c07a14;
+  --color-cat-create: #b04a9a;
+  --color-cat-discover: #4650c8;
+
+  --font-sans: var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-serif), var(--font-arabic-display), ui-serif, Georgia, serif;
+
+  --radius-card: 1.5rem;
+  --shadow-card: 0 1px 2px rgb(20 20 20 / 0.04), 0 8px 24px -12px rgb(20 20 20 / 0.16);
+  --shadow-float: 0 12px 40px -12px rgb(20 20 20 / 0.32);
+
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* En arabe, la serif latine n'a pas de glyphes : on bascule toute la typo sur la police arabe. */
+  :lang(ar) {
+    --font-display: var(--font-arabic-display), var(--font-arabic), ui-serif, serif;
+    --font-sans: var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-700);
+    outline-offset: 2px;
+  }
+  .font-display {
+    font-optical-sizing: auto;
+  }
+  ::selection {
+    background: var(--color-brand-100);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Fiche expérience sur mobile : la barre de réservation s'ajoute au menu du bas,
+   le pied de page garde assez de marge pour ne pas passer dessous. */
+@media (max-width: 1023px) {
+  body:has([data-testid="mobile-book-bar"]) footer {
+    padding-bottom: calc(15rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Accueil, « Des univers pour sortir de sa routine » : cartes empilées teintées par la couleur de l'univers (--cat). */
+.universe-card {
+  background:
+    radial-gradient(120% 80% at 100% 0%, color-mix(in oklab, var(--cat) 22%, transparent) 0%, transparent 60%),
+    linear-gradient(160deg, color-mix(in oklab, var(--cat) 14%, #fff) 0%, color-mix(in oklab, var(--cat) 8%, var(--color-cream)) 100%);
+}
+.universe-accent {
+  color: color-mix(in oklab, var(--cat) 78%, #000);
+}
+.universe-badge {
+  color: var(--cat);
+}
+
+/*
+ * Briques communes (docs/16, phase 1) : une seule façon d'écrire un titre, un bouton, une carte, un encadré.
+ * Toute nouvelle page les utilise ; pas de tailles, rayons ou couleurs de bouton « à la main ».
+ */
+@layer components {
+  .page-title {
+    /* Règle unique (docs/22) : en-têtes de page et de section centrés partout ; dans une carte, text-start. */
+    @apply text-center font-display text-[2.1rem] leading-[1.05] font-semibold tracking-[-0.02em] text-balance text-brand-900 sm:text-[2.8rem];
+  }
+  .section-title {
+    /* Titres de section centrés partout (connecté ou non) ; un titre dans une carte d'article reprend text-start. */
+    @apply text-center font-display text-[1.75rem] leading-[1.08] font-semibold tracking-[-0.02em] text-balance text-brand-900 sm:text-[2.2rem];
+  }
+  /* Titre d'une carte ou d'un encadré (Reçu, Votre table, Préférences…) : aligné avec son contenu, à gauche. */
+  .card-title {
+    @apply font-display text-[1.45rem] leading-tight font-semibold tracking-[-0.01em] text-brand-900;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.16em] text-muted uppercase;
+  }
+  .lead {
+    @apply text-[16px] leading-relaxed text-muted sm:text-[17px];
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-[15px] font-semibold transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+  /* Action principale : le dégradé de la marque, texte en encre (lisible de bout en bout, règle d'or n° 3). */
+  .btn-primary {
+    @apply bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] text-ink shadow-[0_8px_20px_-10px_rgb(194_91_232/0.6)] hover:brightness-105;
+  }
+  .btn-dark {
+    @apply bg-brand-900 text-white hover:bg-brand-800;
+  }
+  .btn-secondary {
+    @apply bg-white text-brand-900 ring-1 ring-line hover:ring-brand-200;
+  }
+  .btn-ghost {
+    @apply text-brand-900 hover:bg-brand-50;
+  }
+  .card {
+    @apply rounded-3xl bg-white shadow-card;
+  }
+  /*
+   * Listes d'événements (docs/22) : sur téléphone, une carte blanche avec une ligne par événement. Sur ordinateur
+   * (≥ 1024 px), une grille de cartes photo comme Kitchi ou Airbnb, dès 3 événements ; avec 1 ou 2 (« is-few »),
+   * les lignes restent, dans une colonne centrée (une carte seule au milieu d'un grand vide ne ressemble à rien).
+   * Les lignes portent ev-row, ev-thumb-wrap, ev-thumb, ev-img, ev-body, ev-text, ev-cta, ev-ribbon, ev-chevron.
+   */
+  .event-list {
+    @apply overflow-hidden rounded-3xl bg-white shadow-card divide-y divide-line/70;
+  }
+  /* Grille d'ordinateur : voir la fin du fichier (hors couche, pour passer devant les classes utilitaires). */
+  .info-box {
+    @apply rounded-3xl bg-cream-deep px-6 py-8 text-center sm:px-10;
+  }
+  .chip {
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium text-ink ring-1 ring-line transition hover:ring-brand-200;
+  }
+  /* Un mot mis en valeur dans un titre (au-dessus de 28 px seulement). */
+  .text-gradient {
+    @apply bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] bg-clip-text pe-[0.06em] text-transparent;
+  }
+  .bg-gradient-brand {
+    @apply bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))];
+  }
+  /* Section sombre : fond encre uni, filet en dégradé en haut (brand book : « crème sur encre »). */
+  .bg-night {
+    background: linear-gradient(100deg, var(--color-coral), var(--color-violet)) top / 100% 5px no-repeat, var(--color-brand-900);
+  }
+  .chip-on {
+    @apply bg-brand-900 text-white ring-brand-900 hover:ring-brand-900;
+  }
+}
+
+/* Babs (docs/22-babs.md) : lignée animée avec une place libre. Immobile si l'appareil demande moins d'animations. */
+@keyframes bab-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes bab-hop {
+  0%, 76%, 100% { transform: translateY(0); }
+  83% { transform: translateY(-14px); }
+  89% { transform: translateY(0); }
+  93% { transform: translateY(-4px); }
+}
+@keyframes bab-march {
+  to { stroke-dashoffset: -32; }
+}
+@keyframes bab-chip {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.bab-bob { animation: bab-bob 3.4s ease-in-out infinite; }
+.bab-hop { animation: bab-hop 5.5s ease-in-out infinite; }
+.bab-march { animation: bab-march 1.4s linear infinite; }
+.bab-chip { animation: bab-chip 2.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .bab-bob, .bab-hop, .bab-march, .bab-chip { animation: none; }
+}
+
+/*
+ * Listes d'événements sur ordinateur (grille de cartes dès 3 événements) : règles hors couche, prioritaires sur les
+ * classes utilitaires des lignes (size-16, flex…), qui décrivent la version téléphone.
+ */
+@media (width >= 64rem) {
+  .event-list.is-few {
+    @apply mx-auto max-w-3xl;
+  }
+  .event-list:not(.is-few) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1.25rem;
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .event-list:not(.is-few) > * {
+    border-top-width: 0 !important;
+  }
+  .event-list:not(.is-few) .ev-row {
+    @apply h-full flex-col items-stretch gap-0 rounded-3xl bg-white p-0 shadow-card transition;
+  }
+  .event-list:not(.is-few) .ev-row:hover {
+    @apply bg-white shadow-float;
+  }
+  .event-list:not(.is-few) .ev-thumb-wrap {
+    @apply w-full;
+  }
+  .event-list:not(.is-few) .ev-thumb {
+    @apply aspect-[4/3] size-auto w-full rounded-none rounded-t-3xl;
+  }
+  .event-list:not(.is-few) .ev-row:hover .ev-img {
+    transform: scale(1.04);
+  }
+  .event-list:not(.is-few) .ev-body {
+    @apply flex-1 flex-col items-stretch p-4;
+  }
+  .event-list:not(.is-few) .ev-text {
+    @apply flex-1 px-4 pt-4;
+  }
+  .event-list:not(.is-few) .ev-cta {
+    @apply m-4 mt-3 justify-center self-stretch py-2.5;
+  }
+  .event-list:not(.is-few) .ev-body .ev-cta {
+    @apply m-0 mt-auto;
+  }
+  .event-list:not(.is-few) .ev-ribbon {
+    @apply start-3 top-3 bottom-auto translate-x-0 -rotate-6 px-2.5 py-1.5 text-[11px] tracking-[0.05em];
+  }
+  .event-list:not(.is-few) .ev-chevron {
+    @apply hidden;
+  }
+  /* Découvrir : les jours fondus en une seule grille (titres des jours masqués, le jour écrit sur chaque carte). */
+  .event-agenda:not(.is-few) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1.25rem;
+  }
+  .event-agenda:not(.is-few) > * {
+    margin-top: 0 !important;
+  }
+  .event-agenda:not(.is-few) .ev-day,
+  .event-agenda:not(.is-few) .ev-day-list {
+    display: contents;
+  }
+  .event-agenda:not(.is-few) .ev-day-title,
+  .event-agenda:not(.is-few) .ev-when-short {
+    display: none;
+  }
+  .event-agenda:not(.is-few) .ev-when-long {
+    display: inline;
+  }
+}
