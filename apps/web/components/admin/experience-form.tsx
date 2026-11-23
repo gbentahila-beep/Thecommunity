@@ -381,7 +381,7 @@ export function ExperienceForm({
               <option value="premium">Premium</option>
               <option value="exclusive">Exclusive</option>
             </select>{err("venueTier")}</div>
-          <div><Label k="ambiance" hint="Affichée sur la fiche.">Ambiance</Label><input {...field("ambiance")} maxLength={60} value={v.ambiance ?? ""} onChange={(e) => set("ambiance", e.target.value)} />{err("ambiance")}</div>
+          <div><Label k="ambiance" hint="Affichée sur la fiche, sous la gamme (ex. « Chic et décontractée »).">Ambiance</Label><input {...field("ambiance")} maxLength={60} value={v.ambiance ?? ""} onChange={(e) => set("ambiance", e.target.value)} />{err("ambiance")}</div>
           <div className="sm:col-span-2"><Label k="cuisine" hint={secret ? "Affichée seulement avec le lieu, 5 h avant." : "Affichée sur la fiche."}>Cuisine</Label><input {...field("cuisine")} maxLength={60} value={v.cuisine ?? ""} onChange={(e) => set("cuisine", e.target.value)} />{err("cuisine")}</div>
         </>)}
       </Section>
@@ -629,7 +629,7 @@ export function ExperienceForm({
       </Section>
 
       <fieldset className="rounded-2xl bg-white p-4 shadow-card sm:p-5">
-        <legend className="float-left mb-3 w-full text-base font-semibold text-ink">6. Photos</legend>
+        <legend className="float-left mb-3 w-full text-base font-semibold text-ink">7. Photos</legend>
         <div className="clear-both">
           {existingImages.length === 0 && images.length === 0 && template && (
             <div className="mb-3 flex flex-wrap items-center gap-3" data-testid="template-photo">

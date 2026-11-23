@@ -76,13 +76,18 @@ export async function getPeriodStats(d: AdminData, period: StatsPeriod) {
     m.gross += r.finance.gross;
     byMonth.set(k, m);
   }
-  const byCategory = d.categories.map((c) => {
-    const rs = active.filter((r) => d.experiences.get(r.experienceId)?.categoryId === c.id);
-    const ss = sessions.filter((s) => s.categoryId === c.id);
+  // Étape R : les 4 univers, puis chaque format sous son univers (compté par sous-catégorie) ; plus d'anciens univers.
+  const mains = d.categories.filter((c) => !c.parentId && !(c as { retiredAt?: unknown }).retiredAt && c.isActive !== false);
+  const ordered = mains.flatMap((m) => [m, ...d.categories.filter((c) => c.parentId === m.id && c.isActive !== false)]);
+  const byCategory = ordered.map((c) => {
+    const sub = Boolean(c.parentId);
+    const ofExp = (id: string) => (sub ? d.experiences.get(id)?.subcategoryId : d.experiences.get(id)?.categoryId) === c.id;
+    const rs = active.filter((r) => ofExp(r.experienceId));
+    const ss = sessions.filter((s) => ofExp(s.experienceId));
     const cap = sum(ss.map((s) => s.capacity));
     return {
       id: c.id,
-      name: c.name.fr,
+      name: sub ? `↳ ${c.name.fr}` : c.name.fr,
       gross: sum(rs.map((r) => r.finance.gross)),
       margin: sum(rs.map((r) => r.finance.margin)),
       bookings: rs.length,

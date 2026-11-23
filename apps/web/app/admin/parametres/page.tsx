@@ -1,7 +1,6 @@
 import { describePolicy } from "@thecommunity/shared";
-import { PaymentModelsForm, PolicyForm } from "@/components/admin/policy-forms";
+import { PolicyForm } from "@/components/admin/policy-forms";
 import { getCancellationPolicies } from "@/lib/data/policies";
-import { organizerPaymentModels } from "@/lib/pro-forms";
 import { Badge, Card, PageHeader } from "@/components/admin/ui";
 import { CompanyForm } from "@/components/admin/company-form";
 import { CategoryForm, CityForm } from "@/components/admin/place-forms";
@@ -17,15 +16,17 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 export const metadata = { title: "Paramètres" };
 
 export default async function SettingsAdminPage() {
-  const [{ cities, categories }, company, me, wenzyPrice, payment] = await Promise.all([
+  const [{ cities, categories: allCategories }, company, me, wenzyPrice, payment] = await Promise.all([
     getAdminData(),
     getCompanySettings(),
     FIREBASE_ENABLED ? requireAdmin() : Promise.resolve(null),
     getWenzyPrice(),
     getPaymentSettings(),
   ]);
-  const [policies, models, alloc] = await Promise.all([getCancellationPolicies(), organizerPaymentModels(), getAllocationSettings()]);
+  const [policies, alloc] = await Promise.all([getCancellationPolicies(), getAllocationSettings()]);
   const byOrder = (a: { order?: number }, b: { order?: number }) => (a.order ?? 0) - (b.order ?? 0);
+  // Étape R : les anciens univers retirés (Jeux, Rencontres, Culture) ne sont plus listés.
+  const categories = allCategories.filter((c) => !(c as { retiredAt?: unknown }).retiredAt);
   const mains = categories.filter((c) => !c.parentId).sort(byOrder);
   const orderedCategories = mains.flatMap((m) => [m, ...categories.filter((c) => c.parentId === m.id).sort(byOrder)]);
   // Sous-catégories dont la parente a disparu : listées à la fin pour rester modifiables.
@@ -103,7 +104,7 @@ export default async function SettingsAdminPage() {
               <div className="mt-3"><CategoryForm canEdit parents={parents} nextOrder={categories.length + 1} /></div>
             </details>
           )}
-          <p className="mt-3 text-xs text-muted">Les cinq univers d&apos;origine gardent leurs adresses (/casablanca/eat…). Une nouvelle catégorie apparaît dans le menu, sur l&apos;accueil et dans le formulaire des expériences dès qu&apos;elle est visible ; une sous-catégorie a sa propre page (/casablanca/padel) et se choisit sur la fiche de l&apos;expérience. {!company && "Démonstration : les modifications se font sur le site en ligne (super-admin)."}</p>
+          <p className="mt-3 text-xs text-muted">Les 4 univers (Tables, Bouger, Sortir, Découvrir) gardent leurs adresses (/casablanca/eat…). Une nouvelle catégorie apparaît dans le menu, sur l&apos;accueil et dans le formulaire des expériences dès qu&apos;elle est visible ; une sous-catégorie a sa propre page (/casablanca/padel) et se choisit sur la fiche de l&apos;expérience. {!company && "Démonstration : les modifications se font sur le site en ligne (super-admin)."}</p>
         </Card>
         <Card title="Politiques d'annulation" className="xl:col-span-2">
           {/* Étape 22 : politiques à paliers, choisies sur chaque activité et copiées sur chaque réservation. */}
@@ -119,10 +120,6 @@ export default async function SettingsAdminPage() {
             <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Nouvelle politique</summary>
             <div className="mt-3"><PolicyForm live={Boolean(company)} canEdit={!company || me?.role === "superadmin"} /></div>
           </details>
-        </Card>
-        <Card title="Modes de paiement des organisateurs" className="xl:col-span-2">
-          <p className="mb-3 text-sm text-muted">À n&apos;ouvrir en réel qu&apos;avec un contrat de paiement qui autorise l&apos;encaissement pour le compte des organisateurs (docs/16). En mode test, les trois sont proposés.</p>
-          <PaymentModelsForm initial={models} live={Boolean(company)} canEdit={!company || me?.role === "superadmin"} />
         </Card>
         <Card title="Prix Wenzy et réservations">
           <dl className="mb-4 grid grid-cols-2 gap-3 text-sm">

@@ -39,7 +39,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await p.goto(base + '/experiences/diner-entre-inconnus-casablanca', { waitUntil: 'load' });
   const meet = p.getByTestId('meeting');
   const mt = await meet.textContent();
-  assert(mt.includes('Tables de 6') && mt.includes('Composées par notre équipe') && mt.includes('25 à 40 ans') && mt.includes('Lieu secret'), 'P : l\'essentiel en un encadré (format, âge visé, lieu secret)');
+  assert(/Tables de \d/.test(mt) && mt.includes('Composées par notre équipe') && mt.includes('25 à 40 ans') && mt.includes('Lieu secret'), 'P : l\'essentiel en un encadré (format, âge visé, lieu secret)');
   assert(!mt.includes('Vous pouvez venir seul') && !mt.includes('Le principe') && !mt.includes('Petits groupes') && !mt.includes('Groupe mixte'), 'P : plus de phrases répétées');
   assert(await p.getByText('Le lieu et l\'adresse arrivent', { exact: false }).count() === 1, 'P : révélation du lieu dite une seule fois');
   const crowd = await p.getByTestId('meeting-crowd').textContent().catch(() => '');

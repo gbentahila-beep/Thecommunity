@@ -48,7 +48,7 @@ export default async function AdminDashboard() {
       {health && <SiteHealthCard health={health} />}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="Chiffre d'affaires brut" value={dh(s.gross)} hint={`${s.bookings} réservations confirmées`} />
-        <StatTile label="Marge estimée" value={dh(s.margin)} hint={`${pct(s.gross ? s.margin / s.gross : 0)} du CA`} />
+        <StatTile label="Participants" value={String(s.people)} hint={`${pct(s.returningRate)} reviennent`} />
         <StatTile label="Taux de remplissage" value={pct(s.fill)} hint={`${s.seatsSold} places vendues`} />
         <StatTile label="Sessions cette semaine" value={String(thisWeek.length)} hint={`${s.soldOut} complètes au total`} />
       </div>

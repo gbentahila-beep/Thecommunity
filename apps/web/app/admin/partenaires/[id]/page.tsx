@@ -31,7 +31,7 @@ export default async function PartnerPage({ params, searchParams }: { params: Pr
         <div className="space-y-6">
           <Card title="Expériences rattachées">
             {exps.length === 0 ? (
-              <p className="text-sm text-muted">Aucune. Le partenaire se choisit dans la fiche d&apos;une expérience (section « Partenaire et économie »).</p>
+              <p className="text-sm text-muted">Aucune. Le partenaire se choisit dans la fiche d&apos;une expérience (section « Ce que paie le participant », champ « Lieu partenaire »).</p>
             ) : (
               <ul className="space-y-1 text-sm">
                 {exps.map((e) => <li key={e.id}><Link href={`/admin/experiences/${e.id}`} className="text-brand-900 underline">{e.title.fr}</Link></li>)}

@@ -76,7 +76,7 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
 
   return (
     <>
-      <p className="mb-2 text-sm"><Link href="/admin/sessions" className="text-brand-900">← Sessions</Link></p>
+      <p className="mb-2 text-sm"><Link href="/admin/sessions" className="text-brand-900">← Dates et tables</Link></p>
       <PageHeader
         title={e.title.fr}
         subtitle={[adminDate(s.startAt), e.district, MODE_LABELS[e.bookingMode]].filter(Boolean).join(" · ")}

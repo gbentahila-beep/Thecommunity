@@ -83,6 +83,18 @@ async function main() {
   for (const c of DEMO_CATEGORIES) counts[await upsertUntouched(`categories/${c.id}`, { ...c })]++;
   console.log(`✅ Référentiels : ${counts.created} créés, ${counts.updated} mis à jour, ${counts.kept} modifiés par l'équipe (inchangés).`);
   await retireOldUniverses();
+  // Étape R : une fois, les 4 univers et leurs formats reprennent les noms, textes et ordre de la refonte, même s'ils
+  // avaient été modifiés dans le back-office (les anciens noms restaient affichés). La photo choisie est gardée.
+  const resetRef = db.doc("settings/showcase");
+  if (!(await resetRef.get()).get("universesResetAt")) {
+    for (const c of DEMO_CATEGORIES) {
+      const { imagePath: _img, ...rest } = c as typeof c & { imagePath?: string };
+      void _img;
+      await db.doc(`categories/${c.id}`).set({ ...rest, parentId: c.parentId ?? null, isActive: true }, { merge: true });
+    }
+    await resetRef.set({ universesResetAt: Timestamp.now() }, { merge: true });
+    console.log(`✅ Univers remis à jour : ${DEMO_CATEGORIES.length} catégories (Tables, Bouger, Sortir, Découvrir et formats).`);
+  }
 
   // Formule d'abonnement proposée, NON active : l'équipe règle le prix et l'active dans le back-office.
   const plan = await db.doc("membershipPlans/annual").create({
@@ -210,6 +222,26 @@ async function main() {
   const { replaceDemoEventsOnce } = await import("../functions/src/experiences/showcase");
   const replaced = await replaceDemoEventsOnce({ uid: "seed-content", role: "superadmin" });
   if (replaced) console.log(`✅ Anciens événements remplacés par ceux des modèles : ${replaced.created.length} créés, ${replaced.deleted} supprimés, ${replaced.archived} archivés, ${replaced.cancelledSessions} date(s) annulée(s) ; ignorés : ${replaced.skipped.map((x) => x.templateId).join(", ") || "aucun"}.`);
+  // Étape R : une fois, les événements créés depuis les modèles (et jamais modifiés par l'équipe) reprennent les textes
+  // allégés des modèles : description et « Inclus » sans répéter ce que dit l'encadré de la fiche.
+  const textsRef = db.doc("settings/showcase");
+  if (!(await textsRef.get()).get("templateTextsR")) {
+    const { DEFAULT_EVENT_TEMPLATES } = await import("@thecommunity/shared");
+    const byId = new Map(DEFAULT_EVENT_TEMPLATES.map((t) => [t.id, t]));
+    const mine = await db.collection("experiences").where("updatedBy", "==", "seed-content").get();
+    let refreshed = 0;
+    for (const e of mine.docs) {
+      const t = byId.get(String(e.get("templateId") ?? ""));
+      if (!t) continue;
+      await e.ref.update({
+        "description.fr": t.values.descriptionFr,
+        included: t.values.included.split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
+      });
+      refreshed++;
+    }
+    await textsRef.set({ templateTextsR: Timestamp.now() }, { merge: true });
+    if (refreshed) console.log(`✅ Textes des événements issus des modèles mis à jour : ${refreshed}.`);
+  }
   console.log(toAdd.length ? `✅ Démonstration : ${toAdd.length} expériences ajoutées (${toAdd.map((e) => e.id).join(", ")}), ${dates} dates (isDemo).` : "ℹ️  Démonstration : rien à ajouter.");
 }
 

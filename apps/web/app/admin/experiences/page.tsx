@@ -1,10 +1,11 @@
+import type { Experience } from "@thecommunity/shared";
 import { MediaImage as Image } from "@/components/media";
 import Link from "next/link";
 import { MODE_LABELS } from "@/components/admin/labels";
 import { Badge, Card, dh, PageHeader, Table } from "@/components/admin/ui";
 import { getAdminData } from "@/lib/data/admin";
 
-export const metadata = { title: "Expériences" };
+export const metadata = { title: "Événements" };
 
 const FILTERS = [
   { key: "current", label: "En cours" },
@@ -19,6 +20,13 @@ const STATUS: Record<string, { label: string; tone: "green" | "gray" | "amber" }
   pending_review: { label: "À valider", tone: "amber" },
   rejected: { label: "Refusée", tone: "gray" },
 };
+
+/** Étape R : ce que le participant paie sur place (plus de coût ni de commission : prix Wenzy unique en ligne). */
+function onSite(e: Experience) {
+  if (e.pricing?.model === "fixed_partner" && e.pricing.partner?.price) return dh(e.pricing.partner.price.amount);
+  if (e.pricing?.model === "variable_consumption") return e.budgetRange ? `Conso ${dh(e.budgetRange.min)}–${dh(e.budgetRange.max)}` : "Conso";
+  return "Rien";
+}
 
 export default async function ExperiencesAdminPage({ searchParams }: PageProps<"/admin/experiences">) {
   const sp = await searchParams;
@@ -35,9 +43,9 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
   return (
     <>
       <PageHeader
-        title="Expériences"
+        title="Événements"
         subtitle={`${all.length - archivedCount} expérience${all.length - archivedCount > 1 ? "s" : ""} · ${archivedCount} archivée${archivedCount > 1 ? "s" : ""}`}
-        actions={<Link href="/admin/experiences/nouvelle" className="rounded-full bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">+ Nouvelle expérience</Link>}
+        actions={<Link href="/admin/experiences/nouvelle" className="rounded-full bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">+ Nouvel événement</Link>}
       />
       {sp.supprime === "1" && <p role="status" className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900">Expérience supprimée.</p>}
       <nav aria-label="Filtrer les expériences" className="mb-4 flex gap-2">
@@ -56,7 +64,7 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
         <Card><p className="text-sm text-muted">{filter === "archived" ? "Aucune expérience archivée." : filter === "review" ? "Rien à valider." : "Aucune expérience : créez la première."}</p></Card>
       ) : (
       <Card>
-        <Table head={["Expérience", "Univers", "Mode", "Prix", "Modèle", "Prochaines dates", "Statut", ""]} caption="Expériences">
+        <Table head={["Événement", "Univers", "Mode", "En ligne", "Sur place", "Prochaines dates", "Statut", ""]} caption="Événements">
           {list.map((e) => {
             const eco = d.economics[e.id];
             const partner = d.partners.find((p) => p.id === eco?.partnerId);
@@ -72,7 +80,7 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
                 <td>{catName.get(e.categoryId) ?? e.categoryId}{e.subcategoryId ? ` · ${catName.get(e.subcategoryId) ?? e.subcategoryId}` : ""}</td>
                 <td className="text-muted">{MODE_LABELS[e.bookingMode]}</td>
                 <td className="tabular-nums">{dh(e.price.amount)}</td>
-                <td className="text-muted">{e.organizerId ? "Organisateur" : eco?.model === "commission" ? `Commission ${eco.commissionPercent} %` : `Coût ${dh(eco?.costPerSeat ?? 0)}`}</td>
+                <td className="text-muted">{onSite(e)}</td>
                 <td className="tabular-nums">
                   {count > 0 ? count : (
                     <Link href={`/admin/experiences/${e.id}#dates`} className="text-xs font-semibold text-amber-800 underline">

@@ -17,8 +17,8 @@ export default async function StatsAdminPage({ searchParams }: { searchParams: P
   const label = PERIODS.find((p) => p.key === period)!.label;
   const csv = [
     ["Période", label],
-    ["Univers", "CA brut (DH)", "Marge (DH)", "Réservations", "Remplissage"],
-    ...s.byCategory.map((c) => [c.name, (c.gross / 100).toFixed(2), (c.margin / 100).toFixed(2), c.bookings, pct(c.fill)]),
+    ["Univers", "CA brut (DH)", "Réservations", "Remplissage"],
+    ...s.byCategory.map((c) => [c.name, (c.gross / 100).toFixed(2), c.bookings, pct(c.fill)]),
     [],
     ["Mois", "Réservations", "CA brut (DH)"],
     ...s.byMonth.map((m) => [monthLabel(m.month), m.bookings, (m.gross / 100).toFixed(2)]),
@@ -41,7 +41,6 @@ export default async function StatsAdminPage({ searchParams }: { searchParams: P
       {d.isDemo && <div className="mb-4"><DemoNote>Calculées à partir des données fictives de démonstration.</DemoNote></div>}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-6">
         <StatTile label="CA brut" value={dh(s.gross)} hint={s.refunds ? `remboursé : ${dh(s.refunds)}` : undefined} />
-        <StatTile label="Marge estimée" value={dh(s.margin)} hint={pct(s.gross ? s.margin / s.gross : 0)} />
         <StatTile label="Réservations" value={String(s.bookings)} hint={`${s.seatsSold} places · ${s.people} personnes`} />
         <StatTile label="Remplissage" value={pct(s.fill)} hint={`${s.sessions} dates`} />
         <StatTile label="Membres fidèles" value={pct(s.returningRate)} hint="2 réservations ou plus" />
@@ -64,9 +63,9 @@ export default async function StatsAdminPage({ searchParams }: { searchParams: P
         )}
       </Card>
       <Card title="Détail par univers" className="mt-6">
-        <Table head={["Univers", "CA brut", "Marge", "Réservations", "Remplissage"]} caption="Détail par univers">
+        <Table head={["Univers", "CA brut", "Réservations", "Remplissage"]} caption="Détail par univers">
           {s.byCategory.map((c) => (
-            <tr key={c.id}><td className="font-medium">{c.name}</td><td className="tabular-nums">{dh(c.gross)}</td><td className="tabular-nums">{dh(c.margin)}</td><td className="tabular-nums">{c.bookings}</td><td className="tabular-nums">{pct(c.fill)}</td></tr>
+            <tr key={c.id}><td className="font-medium">{c.name}</td><td className="tabular-nums">{dh(c.gross)}</td><td className="tabular-nums">{c.bookings}</td><td className="tabular-nums">{pct(c.fill)}</td></tr>
           ))}
         </Table>
       </Card>

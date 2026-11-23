@@ -224,7 +224,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   assert(/7 jours avant ou plus : 100 % · 48 h avant ou plus : 50 % · moins de 48 h : 0 %/.test(await page.getByText(/^Aperçu :/).textContent()), 'nouvelle politique : aperçu des paliers');
   await page.getByRole('button', { name: 'Enregistrer la politique' }).click();
   assert(await page.getByRole('status').filter({ hasText: 'Démonstration' }).isVisible(), 'politique valide (démonstration)');
-  assert(await page.getByRole('checkbox', { name: /Acompte en ligne/ }).isChecked(), 'modes de paiement : acompte proposé');
+  assert(await page.getByText('Modes de paiement des organisateurs').count() === 0, 'R : plus de modes de paiement des organisateurs');
   await page.goto(`${base}/admin/remboursements`);
   assert(await page.getByTestId('refund-request-admin').count() === 1, 'remboursements : une demande d\'exemple');
   await page.getByRole('button', { name: 'Rembourser en partie' }).click();

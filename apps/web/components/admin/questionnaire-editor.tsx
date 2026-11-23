@@ -47,7 +47,7 @@ export function QuestionnaireEditor({ value, onChange, error }: { value: Questio
       <div className="rounded-xl bg-brand-50 p-3 text-sm text-brand-900">
         <p className="font-semibold">Questionnaire (facultatif, {QUESTIONNAIRE_MAX} questions au plus)</p>
         <p className="mt-1 text-brand-900/85">
-          Chaque participant le remplit après sa réservation. Les réponses servent à composer les tables et les équipes (ex. 4 joueurs de même niveau par terrain de padel),
+          Chaque participant le remplit avant de payer. Les réponses servent à composer les tables et les équipes (ex. 4 joueurs de même niveau par terrain de padel),
           puis sont effacées 30 jours après l&apos;expérience. Uniquement des choix, jamais de texte libre.
         </p>
       </div>

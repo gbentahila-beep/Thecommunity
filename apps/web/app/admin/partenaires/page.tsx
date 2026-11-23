@@ -85,7 +85,6 @@ export default async function PartnersAdminPage({ searchParams }: { searchParams
           {shown.map((p) => {
             const exps = Object.entries(d.economics).filter(([, eco]) => eco.partnerId === p.id).flatMap(([id]) => (d.experiences.has(id) ? [d.experiences.get(id)!] : []));
             const revenue = d.reservations.filter((r) => r.status === "confirmed" && exps.some((e) => e.id === r.experienceId)).reduce((a, r) => a + r.total, 0);
-            const commission = p.model ? p.model === "commission" : p.defaultCommissionPercent > 0;
             return (
               <Link key={p.id} href={`/admin/partenaires/${p.id}`} className="block rounded-2xl bg-white p-4 shadow-card transition hover:shadow-float sm:p-5">
                 <div className="flex items-start justify-between gap-2">
@@ -97,7 +96,7 @@ export default async function PartnersAdminPage({ searchParams }: { searchParams
                 </div>
                 <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
                   <div><dt className="text-xs text-muted">Contact</dt><dd>{p.contactName || "—"}<span className="block truncate text-xs text-muted">{p.contactEmail}</span></dd></div>
-                  <div><dt className="text-xs text-muted">Modèle</dt><dd className="tabular-nums">{commission ? `Commission ${p.defaultCommissionPercent} %` : "Achat de prestation"}</dd></div>
+                  <div><dt className="text-xs text-muted">Accueille</dt><dd>{(p.formats ?? []).length ? `${(p.formats ?? []).join(", ")}${(p.tiers ?? []).length ? ` · ${(p.tiers ?? []).map((x) => x[0].toUpperCase() + x.slice(1)).join(", ")}` : ""}` : "Fiche à compléter"}</dd></div>
                   <div><dt className="text-xs text-muted">Expériences</dt><dd>{exps.map((e) => e.title.fr).join(", ") || "—"}</dd></div>
                   <div><dt className="text-xs text-muted">Ventes confirmées</dt><dd className="tabular-nums">{dh(revenue)}</dd></div>
                   <div className="col-span-2"><dt className="text-xs text-muted">Assurance (activités physiques)</dt><dd>{INSURANCE_LABEL[insuranceState(p.insurance, d.now)]}{p.insurance?.expiresOn ? ` · jusqu'au ${p.insurance.expiresOn.split("-").reverse().join("/")}` : ""}</dd></div>

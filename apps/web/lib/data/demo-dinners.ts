@@ -51,7 +51,7 @@ export const DEMO_DINNER_EXPERIENCES: Experience[] = [
       en: "You book your place, we put together a table of six and pick a restaurant you may not know yet. Its name is revealed the day before with your group. On site, everyone orders à la carte and pays the restaurant directly: allow 200 to 300 DH per person.",
     },
     district: "Gauthier",
-    venue: { name: "Restaurant surprise (révélé la veille)", address: "Quartier Gauthier, Casablanca", revealPolicy: "on_group_reveal" },
+    venue: { name: "Restaurant surprise (révélé 5 h avant)", address: "Quartier Gauthier, Casablanca", revealPolicy: "on_group_reveal" },
     images: [{ path: "/demo/restaurant-lanternes.webp", alt: { fr: "Salle de restaurant chaleureuse aux lanternes" } }],
     price: mad(35), // docs/22 : prix Wenzy unique
     pricing: { model: "variable_consumption", currency: "MAD", partner: partner("Restaurant partenaire Gauthier", "consumption", null) },
@@ -155,7 +155,7 @@ export const DEMO_DINNER_EXPERIENCES: Experience[] = [
       en: "For special occasions: a high-end restaurant, revealed the day before with your group. You book your place online (79 DH); on site, tasting menu or à la carte, paid directly to the restaurant. Allow 450 to 600 DH per person.",
     },
     district: "Anfa",
-    venue: { name: "Restaurant gastronomique (révélé la veille)", address: "Anfa, Casablanca", revealPolicy: "on_group_reveal" },
+    venue: { name: "Restaurant gastronomique (révélé 5 h avant)", address: "Anfa, Casablanca", revealPolicy: "on_group_reveal" },
     images: [{ path: "/demo/rooftop-medina.webp", alt: { fr: "Table élégante avec vue sur la ville" } }],
     price: mad(35), // docs/22 : prix Wenzy unique
     pricing: { model: "variable_consumption", currency: "MAD", partner: partner("Restaurant gastronomique Anfa", "consumption", null) },

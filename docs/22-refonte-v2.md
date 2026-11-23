@@ -672,3 +672,24 @@ Le contenu de départ crée ces fiches, et remplace la première version (« pro
 | **Titres des Tables** | Une Table par gamme : la gamme est dans le titre (« Dîner Premium », « Brunch Casual ») ; plus de trois cartes « Dîner » identiques. |
 | **Fiche identique** | Toujours **6 cases, dans le même ordre** : date et heure ; lieu ; format ; gamme (Tables) ou niveau (activités, « Tous niveaux » par défaut) ; langues ; public (« Ouvert à tous, dès 18 ans », âge visé ou « Réservé aux femmes »). Puis L'expérience et Inclus, Bon à savoir, (Organisé par), Avis toujours présents (« Pas encore d'avis » sinon). L'heure de fin dit la durée ; l'âge minimum est dans la case Public. |
 | **Anciens événements (site d'essai)** | Au prochain déploiement, une seule fois : les anciens événements de démonstration sont supprimés (ou archivés s'ils ont des avis ou des réservations, dates à venir annulées et remboursées) et remplacés par ceux des modèles : 12 Tables (café, brunch, déjeuner, dîner × 3 gammes) et 8 activités (padel, yoga, escape game, soirée jeux, quiz, afterwork, échange de langues, céramique), 4 semaines de dates. Les événements créés par l'équipe ne sont pas touchés. Running et visite guidée n'ont pas de lieu partenaire : non créés. |
+
+### Étape R livrée (23 novembre) — tour du back-office, phrases inutiles, modèles allégés
+**Univers (site d'essai)** : les univers modifiés dans le back-office gardaient leurs anciens noms (le déploiement ne les réécrivait jamais). Une fois, au prochain déploiement, les 4 univers et leurs formats reprennent noms, textes et ordre de la refonte (la photo choisie est gardée). Les anciens univers retirés ne sont plus listés dans Paramètres.
+
+**Tour du back-office** — corrigé :
+| Page | Avant | Après |
+|---|---|---|
+| Tableau de bord | « Marge estimée » ; univers + formats à 0 DH | « Participants » (et part de ceux qui reviennent) ; les 4 univers puis leurs formats, comptés correctement |
+| Statistiques | Tuile et colonne « Marge » | Retirées ; même liste d'univers et de formats |
+| Événements | Titre « Expériences », colonne « Modèle » (Coût 95 DH, Commission 15 %) | Titre « Événements », « + Nouvel événement », colonnes « En ligne » et « Sur place » (Rien, 120 DH, Conso 150–250 DH) |
+| Lieux partenaires | « Modèle : Commission 15 % / Achat de prestation » | « Accueille : diner, dejeuner · Premium » (ou « Fiche à compléter ») |
+| Fiche d'un lieu | Bloc « Modèle économique par défaut » ; renvoi à une section « Partenaire et économie » qui n'existe plus | Bloc retiré ; renvoi à « Ce que paie le participant › Lieu partenaire » |
+| Paramètres | Carte « Modes de paiement des organisateurs » (tout en ligne, acompte, commission) | Retirée (étape J : l'organisateur est payé sur place) |
+| Formulaire d'événement | Questionnaire « rempli après la réservation » ; « Ambiance : affichée sur la fiche » (elle ne l'était plus) ; deux sections numérotées 6 | « Rempli avant de payer » ; l'ambiance s'affiche sous la gamme dans l'encadré ; « 7. Photos » |
+| Page d'une date | « ← Sessions » | « ← Dates et tables » |
+
+Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réservations, Demandes de participation, Billets, Membres, Carnet et Pass, Avis, Signalements, Organisateurs, Paiements, Remboursements, Virements, Codes promo, Accueil du site, Centre d'aide, Boîte d'envoi, Demandes 09-08, Vitrine, Modèles.
+
+**Fiche** : retirées les phrases d'explication « Après votre réservation, un court questionnaire… » ; raccourcies « Activité physique » (« Signalez tout souci de santé. Conditions acceptées en réservant. »), « En plein air » (« Reportée ou remboursée si la météo ne le permet pas. ») et « Sur demande ». Format des Tables : « Tables de 4 à 6 » (la vraie fourchette).
+
+**Modèles** : refaits là où ils répétaient l'encadré. Descriptions sans « table de quatre à six personnes composée pour vous » (Café, Brunch, Déjeuner, Dîner, Running, Padel, Escape game, Soirée jeux, Quiz, Échange de langues) ; « Inclus » limité au concret (« La réservation du restaurant », « Le terrain réservé », « La salle réservée », « L'animation du quiz »…) sans « Votre place à une table composée pour vous » ni « Des équipes composées pour vous ». Yoga, Afterwork, Céramique, Visite guidée : inchangés. Sur le site d'essai, les événements créés depuis les modèles (et non modifiés) reprennent ces textes une fois au déploiement. Un modèle déjà modifié dans l'appli (Paramètres → Modèles) garde sa version.

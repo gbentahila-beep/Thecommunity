@@ -164,14 +164,14 @@ const DEMO_EXPERIENCE_LIST: Experience[] = [
       ar: "تعرّف على أشخاص جدد حول عشاء لذيذ.",
     },
     description: {
-      fr: "Chaque jeudi, nous réunissons des personnes qui ne se connaissent pas autour de tables de six, dans un restaurant sélectionné de Gauthier. Vous réservez seul, nous composons les tables pour que la conversation prenne naturellement. Le nom du restaurant et votre table vous sont révélés la veille.",
+      fr: "Chaque jeudi, nous réunissons des personnes qui ne se connaissent pas autour de tables de six, dans un restaurant sélectionné de Gauthier. Vous réservez seul, nous composons les tables pour que la conversation prenne naturellement. Le nom du restaurant et votre table vous sont révélés 5 h avant.",
     },
     categoryId: "eat",
     subcategoryId: "diner",
     cityId: "casablanca",
     district: "Gauthier",
     tags: ["diners-entre-inconnus", "afterwork"],
-    venue: { name: "Restaurant partenaire (révélé la veille)", address: "Quartier Gauthier, Casablanca", revealPolicy: "on_group_reveal" },
+    venue: { name: "Restaurant partenaire (révélé 5 h avant)", address: "Quartier Gauthier, Casablanca", revealPolicy: "on_group_reveal" },
     images: [
       { path: "/demo/diner-inconnus.webp", alt: { fr: "Tablée conviviale dans un restaurant aux lanternes" } },
       { path: "/demo/restaurant-lanternes.webp", alt: { fr: "Salle de restaurant chaleureuse" } },
@@ -339,7 +339,7 @@ const DEMO_EXPERIENCE_LIST: Experience[] = [
     cityId: "casablanca",
     district: "Racine",
     tags: ["diners-entre-inconnus", "brunch", "week-end"],
-    venue: { name: "Café partenaire (révélé la veille)", address: "Racine, Casablanca", revealPolicy: "on_group_reveal" },
+    venue: { name: "Café partenaire (révélé 5 h avant)", address: "Racine, Casablanca", revealPolicy: "on_group_reveal" },
     images: [{ path: "/demo/restaurant-lanternes.webp", alt: { fr: "Café chaleureux aux lanternes tressées" } }],
     durationMinutes: 120,
     price: mad(35), // docs/22 : prix Wenzy unique
@@ -447,7 +447,7 @@ const DEMO_EXPERIENCE_LIST: Experience[] = [
     title: { fr: "Padel entre inconnus", ar: "بادل مع غرباء", en: "Padel with strangers" },
     summary: { fr: "Des doubles composés par niveau, puis un verre au club.", ar: "مباريات زوجية حسب المستوى، ثم مشروب في النادي.", en: "Doubles matched by level, then a drink at the club." },
     description: {
-      fr: "Réservez seul : après votre réservation, un court questionnaire nous donne votre niveau, et nous formons des terrains de quatre joueurs de même niveau. Une heure trente de matchs en tournant les équipes, puis un verre ensemble au club.",
+      fr: "Réservez seul : nous formons des terrains de quatre joueurs de même niveau. Une heure trente de matchs en tournant les équipes, puis un verre ensemble au club.",
       ar: "احجز وحدك: بعد الحجز، يخبرنا استبيان قصير بمستواك، ونكوّن ملاعب من أربعة لاعبين من المستوى نفسه. ساعة ونصف من المباريات مع تبديل الفرق، ثم مشروب معاً في النادي.",
       en: "Book alone: after booking, a short questionnaire tells us your level, and we put four players of the same level on each court. Ninety minutes of matches with rotating teams, then a drink together at the club.",
     },

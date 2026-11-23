@@ -85,12 +85,17 @@ export function computeStats(d: AdminData) {
   const refunds = sum(d.payments.filter((p) => p.type === "refund").map((p) => p.amount));
   const capacity = sum(d.sessions.map((s) => s.capacity));
   const taken = sum(d.sessions.map((s) => s.seatsConfirmed));
-  const byCategory = d.categories.map((c) => {
-    const rs = confirmed.filter((r) => d.experiences.get(r.experienceId)?.categoryId === c.id);
-    const ss = d.sessions.filter((s) => s.categoryId === c.id);
+  // Étape R : les 4 univers puis leurs formats (comptés par sous-catégorie) ; plus d'anciens univers.
+  const mains = d.categories.filter((c) => !c.parentId && !(c as { retiredAt?: unknown }).retiredAt && c.isActive !== false);
+  const ordered = mains.flatMap((m) => [m, ...d.categories.filter((c) => c.parentId === m.id && c.isActive !== false)]);
+  const byCategory = ordered.map((c) => {
+    const sub = Boolean(c.parentId);
+    const ofExp = (id: string) => (sub ? d.experiences.get(id)?.subcategoryId : d.experiences.get(id)?.categoryId) === c.id;
+    const rs = confirmed.filter((r) => ofExp(r.experienceId));
+    const ss = d.sessions.filter((s) => ofExp(s.experienceId));
     return {
       id: c.id as CategoryKey,
-      name: c.name.fr,
+      name: sub ? `↳ ${c.name.fr}` : c.name.fr,
       gross: sum(rs.map((r) => r.finance.gross)),
       margin: sum(rs.map((r) => r.finance.margin)),
       bookings: rs.length,
@@ -108,9 +113,14 @@ export function computeStats(d: AdminData) {
       .map((s) => ({ kind: "low_fill" as const, sessionId: s.id })),
     ...d.payments.filter((p) => p.status === "initiated").map((p) => ({ kind: "pending_payment" as const, reservationId: p.reservationId })),
   ];
+  const people = new Set(confirmed.map((r) => r.userId));
+  const perUser = new Map<string, number>();
+  for (const r of confirmed) perUser.set(r.userId, (perUser.get(r.userId) ?? 0) + 1);
   return {
     gross,
     margin,
+    people: people.size,
+    returningRate: people.size ? [...perUser.values()].filter((n) => n >= 2).length / people.size : 0,
     cost,
     commission,
     refunds,

@@ -106,20 +106,7 @@ export function PartnerForm({ id, initial, cities, live }: { id?: string; initia
         {field("contactEmail", "E-mail", { type: "email", autoComplete: "off" })}
         {field("contactPhone", "Téléphone", { type: "tel", autoComplete: "off" })}
       </fieldset>
-      <fieldset className="grid gap-4 sm:grid-cols-2">
-        <legend className="mb-2 text-base font-semibold text-ink">Modèle économique par défaut</legend>
-        <div className="space-y-2 sm:col-span-2">
-          <label className="flex items-start gap-2 text-sm">
-            <input type="radio" name="pf-model" disabled={!live} checked={v.model === "purchase"} onChange={() => set("model", "purchase")} className="mt-1" />
-            <span><strong>Achat de prestation</strong> — nous payons un prix fixe par participant (le coût se saisit sur chaque expérience).</span>
-          </label>
-          <label className="flex items-start gap-2 text-sm">
-            <input type="radio" name="pf-model" disabled={!live} checked={v.model === "commission"} onChange={() => set("model", "commission")} className="mt-1" />
-            <span><strong>Commission</strong> — le partenaire fixe son tarif, nous gardons un pourcentage de chaque place vendue.</span>
-          </label>
-        </div>
-        {v.model === "commission" && field("defaultCommissionPercent", "Commission (%)", { type: "number", min: "0", max: "80", inputMode: "decimal" })}
-      </fieldset>
+      {/* Étape R : plus de modèle économique (achat ou commission) : le participant paie le lieu sur place. */}
       <fieldset className="grid gap-4 rounded-xl border border-line p-4 sm:grid-cols-2" data-testid="partner-insurance">
         <legend className="px-1 text-base font-semibold text-ink">Assurance du lieu (activités physiques)</legend>
         <p className="text-xs text-muted sm:col-span-2">

@@ -10,7 +10,7 @@ import {
   type Experience,
   restaurantBudget,
 } from "@thecommunity/shared";
-import { Backpack, CalendarDays, ClipboardList, Gem, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, UsersRound, Sparkles } from "lucide-react";
+import { Backpack, CalendarDays, Gem, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, UsersRound, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
@@ -136,7 +136,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
   const composed = exp.bookingMode === "social_dinner" || exp.bookingMode === "group";
   const groupText =
     exp.bookingMode === "social_dinner"
-      ? t("tablesOf", { size: g?.targetSize ?? g?.maxSize ?? 6 })
+      ? g && g.minSize < g.maxSize ? t("tablesRange", { min: g.minSize, max: g.maxSize }) : t("tablesOf", { size: g?.targetSize ?? g?.maxSize ?? 6 })
       : exp.bookingMode === "group"
         ? (g?.minSize ?? 4) === (g?.maxSize ?? 6) ? t("teamsOf", { count: g?.maxSize ?? 4 }) : t("teamsRange", { min: g?.minSize ?? 4, max: g?.maxSize ?? 6 })
         : formatLabel(exp, t, next?.capacity ?? 0);
@@ -152,7 +152,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
       : { icon: MapPin, label: exp.venue.name || exp.district || cityName, value: [exp.venue.name ? exp.district : "", cityName].filter(Boolean).join(", ") },
     { icon: Users, label: groupText, value: composed ? t("composedByTeam") : t("bookAlone") },
     exp.categoryId === "eat"
-      ? { icon: Gem, label: exp.venueTier ? t2(`tier_${exp.venueTier}`) : t("tierAny"), value: t("tierLabel") }
+      ? { icon: Gem, label: exp.venueTier ? t2(`tier_${exp.venueTier}`) : t("tierAny"), value: exp.ambiance || t("tierLabel") }
       : { icon: Gauge, label: t(`level_${exp.level || "all"}`), value: t("levelLabel") },
     { icon: Languages, label: meeting.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ") || "Français", value: t("languages") },
     meeting.audience === "women"
@@ -265,7 +265,6 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 {exp.physicalActivity && <Detail icon={HeartPulse} label={t("physicalTitle")} text={richText(t.raw("physicalText") as string, "")} />}
                 {exp.alcoholServed === false && <Detail icon={Leaf} label={t("alcoholFree")} text="" />}
                 {tr(exp.practicalInfo, locale) && <Detail icon={Sparkles} label={t("practical")} text={tr(exp.practicalInfo, locale)} />}
-                {(exp.questionnaire?.length ?? 0) > 0 && <Detail icon={ClipboardList} label={t("questionnaireLabel")} text={t("questionnaireNote", { count: exp.questionnaire!.length })} />}
                 <Detail icon={CalendarDays} label={t("cancellation")} text={`${tr(policy.label, locale)}.`} />
               </ul>
             </Section>
