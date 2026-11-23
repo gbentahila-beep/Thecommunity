@@ -24,7 +24,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await p.goto(base + '/experiences/padel-entre-inconnus-anfa', { waitUntil: 'load' });
   assert(await p.locator('aside').getByText('150 DH').first().isVisible() && await p.locator('aside').getByTestId('member-price').count() === 0, 'docs/22 : un seul prix affiché, plus de prix membre');
   assert(!(await p.locator('s').count()) && !(await p.getByRole('link', { name: 'Devenir membre' }).count()), '28 : ni prix barré ni « Devenir membre » sur une expérience ouverte à tous');
-  assert(await p.getByRole('link', { name: 'Rejoindre cette expérience' }).first().isVisible(), '28 : bouton « Rejoindre cette expérience »');
+  assert(await p.getByRole('link', { name: 'Réserver', exact: true }).first().isVisible(), '28 : bouton « Réserver »');
   await p.goto(base + '/a-propos', { waitUntil: 'load' });
   assert(!(await p.getByText('bientôt par carte').count()), '28 : plus de « bientôt par carte » dans À propos');
   await p.goto(base + '/aide/payer-ma-reservation', { waitUntil: 'load' });
