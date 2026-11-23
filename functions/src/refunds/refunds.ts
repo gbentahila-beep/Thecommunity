@@ -9,6 +9,7 @@ import { noticeMail } from "../mail/templates";
 import { sendMail } from "../mail/mailer";
 import { issueRefund, refundedSoFar } from "../payments/refund";
 import { refuse } from "../reservations/refuse";
+import { cancelReservationCore } from "../reservations/cancel-reservation";
 
 /**
  * Étape 22 — demandes de remboursement. Le participant explique ce qui s'est passé (jusqu'à 7 jours après
@@ -83,7 +84,15 @@ export const adminDecideRefund = onCall({ region: REGION }, async (req) => {
       if (amount <= 0) refuse("nothing_to_refund", "Il ne reste rien à rembourser sur cette réservation.");
       const result = await issueRefund(String(r.paymentId), amount, `refund_request_${q.reason}`);
       const refunded = Number(r.refundedAmount ?? 0) + amount;
-      await resRef.update({ refundedAmount: refunded, ...(refunded >= Number(r.pricing?.total ?? 0) && result.status === "succeeded" ? { status: "refunded" } : {}), updatedAt: FieldValue.serverTimestamp() });
+      const fully = refunded >= Number(r.pricing?.total ?? 0);
+      await resRef.update({ refundedAmount: refunded, updatedAt: FieldValue.serverTimestamp() });
+      // Audit 23/11 : remboursée en totalité AVANT l'expérience → la place est libérée et proposée à la liste d'attente
+      // (annulation sans nouveau remboursement : tout est déjà rendu), la personne quitte sa table.
+      const startMs = (r.sessionSnapshot?.startAt as Timestamp | undefined)?.toMillis() ?? 0;
+      if (fully && startMs > Date.now() && ["confirmed", "pending_payment"].includes(String(r.status))) {
+        await cancelReservationCore({ reservationId: q.reservationId, by: "admin", actorUid: actor.uid, refundMode: "none", reason: "refund_request" });
+      }
+      if (fully && result.status === "succeeded") await resRef.update({ status: "refunded", updatedAt: FieldValue.serverTimestamp() });
       await recordRefundEntry(q.reservationId, amount);
       await ref.update({ status: refunded >= Number(r.pricing?.total ?? 0) ? "refunded" : "partially_refunded", amount, message: message || null, refundStatus: result.status, decidedAt: FieldValue.serverTimestamp(), decidedBy: actor.uid });
     }

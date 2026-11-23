@@ -151,3 +151,27 @@ export const grantInputSchema = z.object({
   credits: z.number().int().min(0).max(20).default(0),
   reason: z.string().trim().min(2).max(200),
 }).refine((v) => v.days > 0 || v.credits > 0, { message: "required", path: ["days"] });
+
+/** Audit 23/11 : annuler soi-même une place incluse dans le pass à moins de 24 h du début compte comme une absence. */
+export const PASS_LATE_CANCEL_HOURS = 24;
+export function isLatePassCancel(passSeats: number, startAt: Date, now: Date = new Date()): boolean {
+  return passSeats > 0 && startAt.getTime() - now.getTime() < PASS_LATE_CANCEL_HOURS * 3_600_000;
+}
+
+/**
+ * Audit 23/11 — droit de rétractation (CGV § 6) : un carnet ou un pass se rembourse intégralement dans les 7 jours
+ * suivant l'achat s'il n'a pas été utilisé (pass : aucune place couverte depuis l'achat ; carnet : tous ses crédits
+ * encore disponibles). Le serveur refait toujours ce calcul.
+ */
+export const MEMBERSHIP_WITHDRAWAL_DAYS = 7;
+export type WithdrawalRefusal = "too_late" | "already_used" | "already_withdrawn" | "not_withdrawable";
+export function withdrawalRefusal(o: {
+  status: string; kind: OfferKind; purchasedAt: Date; withdrawnAt?: Date | null;
+  passSeatsUsedSince: number; creditsBought: number; creditsLeft: number;
+}, now: Date = new Date()): WithdrawalRefusal | null {
+  if (o.withdrawnAt) return "already_withdrawn";
+  if (!["succeeded"].includes(o.status)) return "not_withdrawable";
+  if (now.getTime() > o.purchasedAt.getTime() + MEMBERSHIP_WITHDRAWAL_DAYS * 86_400_000) return "too_late";
+  if (o.kind === "pass" ? o.passSeatsUsedSince > 0 : o.creditsLeft < o.creditsBought) return "already_used";
+  return null;
+}

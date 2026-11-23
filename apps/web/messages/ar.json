@@ -427,7 +427,8 @@
     "onSiteConsumption": "ما تستهلكه",
     "onSiteNothing": "لا شيء",
     "secretVenueShort": "يُكشف المكان قبل {hours} ساعات",
-    "bookShort": "احجز"
+    "bookShort": "احجز",
+    "passOutsidePeriod": "هذا الموعد بعد انتهاء الباس: مكانك غير مشمول. مدّد الباس ليصبح مشمولًا."
   },
   "auth": {
     "loginTitle": "مرحباً بعودتك",
@@ -858,7 +859,13 @@
     "reviewPhoto_pending": "ستُنشر صورتك بعد تحقق الفريق منها.",
     "reviewPhoto_approved": "صورتك منشورة مع رأيك.",
     "reviewPhoto_rejected": "لم تُنشر صورتك (راجع إشعاراتك).",
-    "reviewReplyFrom": "ردّ {name}"
+    "reviewReplyFrom": "ردّ {name}",
+    "cancelCovered": "مكانك مغطى بالباس أو الدفتر: لم يُقتطع منك أي مبلغ عبر الإنترنت.",
+    "cancelCreditsBack": "إذا ألغيت الآن، {count, plural, one {يُعاد إليك رصيدك} other {يُعاد إليك # رصيد}}.",
+    "cancelCreditsLost": "إذا ألغيت الآن، {count, plural, one {لا يُعاد رصيدك} other {لا يُعاد # رصيد}} (شروط إلغاء الحدث).",
+    "cancelPassLate": "مكانك مشمول بالباس: الإلغاء قبل أقل من 24 ساعة من البداية يُحتسب غيابًا (تنبيه، ثم تعليق الباس أسبوعين عند الثاني).",
+    "cancelDoneLate": "تم إلغاء الحجز. إلغاء مكان مشمول بالباس قبل أقل من 24 ساعة يُحتسب غيابًا.",
+    "cancelDonePending": "تم إلغاء الحجز: سيتم استرجاع {amount}، الاسترداد قيد المعالجة."
   },
   "profilePage": {
     "title": "ملفي",
@@ -2069,7 +2076,15 @@
     "terms3": "الدفتر: يعود الرصيد إذا ألغيت في آجال الاسترداد الخاصة بالفعالية.",
     "terms4": "باس جديد يمدّد الباس الحالي؛ ودفتر جديد يضيف أرصدته ويمدّد صلاحيتها إلى 3 أشهر.",
     "termsLink": "الشروط العامة للبيع",
-    "breakEvenMonth": "مربح ابتداءً من {count} خرجات في الشهر"
+    "breakEvenMonth": "مربح ابتداءً من {count} خرجات في الشهر",
+    "withdrawTitle": "حق التراجع",
+    "withdrawText": "{label} ({amount}): يمكنك التراجع حتى {until}، ما دام لم يُستعمل. استرداد كامل.",
+    "withdrawCta": "التراجع",
+    "withdrawConfirm": "إلغاء {label} واسترجاع {amount}؟",
+    "withdrawYes": "نعم، أتراجع",
+    "withdrawKeep": "الاحتفاظ بمشترياتي",
+    "withdrawBusy": "لحظة…",
+    "withdrawError": "لم يعد التراجع ممكنًا (انتهت المهلة أو تم الاستعمال). راسلنا إن احتجت."
   },
   "report": {
     "open": "الإبلاغ عن {name}",

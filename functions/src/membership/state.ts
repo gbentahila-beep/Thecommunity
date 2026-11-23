@@ -15,6 +15,16 @@ export function memberFromDoc(d: DocumentData | undefined, now = new Date()): bo
   return isMemberActive({ status: d.status, startAt: toDate(d.startAt) ?? new Date(0), endAt: toDate(d.endAt) ?? new Date(0), suspendedUntil: toDate(d.suspendedUntil) }, now);
 }
 
+/**
+ * Audit 23/11 : le pass ne couvre que les événements qui ont lieu PENDANT sa période (un pass semaine ne paie pas
+ * une soirée dans deux mois). Pass utilisable maintenant ET événement avant la fin du pass.
+ */
+export function passCoversEvent(d: DocumentData | undefined, eventStartMs: number, now = new Date()): boolean {
+  if (!memberFromDoc(d, now)) return false;
+  const end = toDate(d!.endAt);
+  return Boolean(end && eventStartMs < end.getTime());
+}
+
 /** Crédits utilisables du carnet (carnets/{uid}). */
 export function creditsFromDoc(d: DocumentData | undefined, now = new Date()): number {
   return carnetCredits(d ? { credits: d.credits, expiresAt: toDate(d.expiresAt) ?? undefined } : null, now);
@@ -44,7 +54,7 @@ export function membershipTerms(o: {
   wenzyPrice?: number;
   /** Acceptation d'une demande par l'équipe : pas de contrôle d'accès anticipé. */
   byTeam?: boolean;
-}): { member: boolean; credits: number; coverage?: { passSeats: number; carnetSeats: number; cap: number }; passLimitReached: boolean } {
+}): { member: boolean; passForEvent: boolean; credits: number; coverage?: { passSeats: number; carnetSeats: number; cap: number }; passLimitReached: boolean } {
   const member = memberFromDoc(o.membership, new Date(o.now));
   if (o.e.membersOnly === true && !member) refuse("members_only", "Expérience réservée aux abonnés.");
   // docs/22, décision 9 : l'accès anticipé se règle par événement (X jours) ; à défaut (anciennes fiches), réglage de la formule.
@@ -54,8 +64,10 @@ export function membershipTerms(o: {
     refuse("members_early_access", "Nouvelle date en accès anticipé pour les abonnés.");
   }
   const credits = creditsFromDoc(o.carnet, new Date(o.now));
-  const cov = coverageFor({ seats: o.seats ?? 1, pass: member, passUpcoming: o.passUpcoming ?? 0, credits, useCarnet: o.useCarnet === true });
+  const eventStart = o.s.startAt instanceof Timestamp ? o.s.startAt.toMillis() : new Date(String(o.s.startAt)).getTime();
+  const passForEvent = passCoversEvent(o.membership, eventStart, new Date(o.now));
+  const cov = coverageFor({ seats: o.seats ?? 1, pass: passForEvent, passUpcoming: o.passUpcoming ?? 0, credits, useCarnet: o.useCarnet === true });
   // Le pass et le carnet couvrent les frais Wenzy (décision 7), jamais plus que le prix Wenzy par place.
   const cap = Math.min(Number(o.s.price?.amount ?? 0), o.wenzyPrice ?? Number(o.s.price?.amount ?? 0));
-  return { member, credits, passLimitReached: cov.passLimitReached, ...(cov.passSeats + cov.carnetSeats > 0 && cap > 0 ? { coverage: { passSeats: cov.passSeats, carnetSeats: cov.carnetSeats, cap } } : {}) };
+  return { member, passForEvent, credits, passLimitReached: cov.passLimitReached, ...(cov.passSeats + cov.carnetSeats > 0 && cap > 0 ? { coverage: { passSeats: cov.passSeats, carnetSeats: cov.carnetSeats, cap } } : {}) };
 }

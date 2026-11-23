@@ -9,6 +9,9 @@ import { deleteApp as deleteClient, initializeApp, type FirebaseApp } from "fire
 import { connectAuthEmulator, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/functions";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+// Importés AVANT la création de l'application d'administration nommée : le SDK des fonctions crée l'application par défaut.
+import { expireDueHolds } from "../../functions/src/reservations/expire-holds";
+import { retryPendingRefunds } from "../../functions/src/refunds/retry";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -277,5 +280,114 @@ describe("lot 1 — liste d'attente : mêmes contrôles qu'à la réservation", 
     const entry = (await db().doc(`sessions/${sid}/waitlist/${w.uid}`).get()).data()!;
     expect(entry.status).toBe("offered");
     expect((await reservation(entry.reservationId)).physicalTerms).toMatchObject({ version: expect.any(String) });
+  });
+});
+
+describe("lot 2 — carnet, pass et remboursements", () => {
+  const D = 86_400_000;
+  const setPass = (uid: string, endInDays: number) => db().doc(`memberships/${uid}`).set({ uid, planId: "annual", status: "active", source: "gift", startAt: Timestamp.fromMillis(Date.now() - D), endAt: Timestamp.fromMillis(Date.now() + endInDays * D) });
+  const setCarnet = (uid: string, credits: number) => db().doc(`carnets/${uid}`).set({ uid, credits, expiresAt: Timestamp.fromMillis(Date.now() + 60 * D) });
+
+  it("le pass ne couvre que les événements pendant sa période", async () => {
+    const u = await member();
+    await setPass(u.uid, 5);
+    const later = await makeExperience({ startInHours: 10 * 24, price: 3500 });
+    const soon = await makeExperience({ startInHours: 3 * 24, price: 3500 });
+    expect(await u.call("createReservation", { sessionId: later.sid, seats: 1 })).toMatchObject({ status: "pending_payment", total: 3500 });
+    const r = await u.call("createReservation", { sessionId: soon.sid, seats: 1 });
+    expect(r).toMatchObject({ status: "confirmed", total: 0 });
+    expect((await reservation(r.reservationId as string)).pricing.coverage).toMatchObject({ passSeats: 1 });
+    expect(await u.call("previewPricing", { sessionId: later.sid, seats: 1 })).toMatchObject({ pass: true, passOutsidePeriod: true });
+  });
+
+  it("place du pass annulée à moins de 24 h : absence (avertissement) ; à plus de 24 h : rien", async () => {
+    const u = await member();
+    await setPass(u.uid, 30);
+    const close = await makeExperience({ startInHours: 20, price: 3500 });
+    const far = await makeExperience({ startInHours: 60, price: 3500 });
+    const a = await u.call("createReservation", { sessionId: far.sid, seats: 1 });
+    expect(await u.call("cancelReservation", { reservationId: a.reservationId })).not.toHaveProperty("lateCancel");
+    expect((await db().doc(`memberships/${u.uid}`).get()).data()!.absences ?? []).toHaveLength(0);
+    const b = await u.call("createReservation", { sessionId: close.sid, seats: 1 });
+    expect(await u.call("cancelReservation", { reservationId: b.reservationId })).toMatchObject({ lateCancel: true });
+    const m = (await db().doc(`memberships/${u.uid}`).get()).data()!;
+    expect(m.absences).toHaveLength(1);
+    expect(m.absences[0]).toMatchObject({ reservationId: b.reservationId, cause: "late_cancel" });
+    expect((await db().collection(`users/${u.uid}/notifications`).where("type", "==", "absence_warning").get()).size).toBe(1);
+  });
+
+  it("paiement tardif d'une place réglée en partie avec le carnet : les crédits rendus sont repris", async () => {
+    const u = await member();
+    await setCarnet(u.uid, 3);
+    const { sid } = await makeExperience({ startInHours: 80, price: 10000 });
+    const { reservationId, total } = await u.call("createReservation", { sessionId: sid, seats: 2, useCarnet: true });
+    expect(total).toBe(2 * 10000 - 2 * 3500);
+    expect((await db().doc(`carnets/${u.uid}`).get()).data()!.credits).toBe(1);
+    const { paymentId } = await u.call("startCheckout", { reservationId });
+    await db().doc(`reservations/${reservationId}`).update({ holdExpiresAt: Timestamp.fromMillis(Date.now() - 1000) });
+    await expireDueHolds();
+    expect((await db().doc(`carnets/${u.uid}`).get()).data()!.credits).toBe(3);
+    await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
+    expect(await reservation(reservationId as string)).toMatchObject({ status: "confirmed", latePayment: true });
+    expect((await db().doc(`carnets/${u.uid}`).get()).data()!.credits).toBe(1);
+  });
+
+  it("remboursement resté en attente : relancé par la tâche horaire", async () => {
+    const { sid } = await makeExperience({ startInHours: 80 });
+    const u = await member();
+    const rid = await paid(u, sid);
+    // Simule l'échec du prestataire au moment de l'annulation : annulée, aucun remboursement enregistré.
+    await db().doc(`reservations/${rid}`).update({ status: "cancelled", cancellation: { at: Timestamp.now(), by: "user", reason: "member", refundAmount: 30000, refundStatus: "pending", refundAttempts: 1 } });
+    const out = await retryPendingRefunds();
+    expect(out.succeeded).toBeGreaterThanOrEqual(1);
+    expect(await reservation(rid)).toMatchObject({ status: "refunded", cancellation: { refundStatus: "succeeded", refundAttempts: 2 } });
+    // Rien de plus au passage suivant (pas de double remboursement).
+    await retryPendingRefunds();
+    const refunds = await db().collection("payments").where("reservationId", "==", rid).where("type", "==", "refund").get();
+    expect(refunds.size).toBe(1);
+  });
+
+  it("remboursement total accordé avant l'expérience : la place est libérée et proposée à la liste d'attente", async () => {
+    const team = await member({ role: "admin" });
+    const { sid } = await makeExperience({ capacity: 1, startInHours: 80 });
+    const u = await member();
+    const w = await member();
+    const rid = await paid(u, sid);
+    await w.call("joinWaitlist", { sessionId: sid, seats: 1 });
+    await u.call("requestRefund", { reservationId: rid, reason: "other", message: "Je ne pourrai finalement pas venir, merci." });
+    await team.call("adminDecideRefund", { requestId: rid, decision: "full" });
+    expect(await reservation(rid)).toMatchObject({ status: "refunded", refundedAmount: 30000 });
+    expect((await db().doc(`sessions/${sid}/seatLocks/${u.uid}`).get()).exists).toBe(false);
+    expect((await db().doc(`sessions/${sid}/waitlist/${w.uid}`).get()).data()!.status).toBe("offered");
+    expect(await session(sid)).toMatchObject({ seatsConfirmed: 0, seatsHeld: 1 });
+  });
+
+  it("« Me rétracter » : 7 jours, rien d'utilisé, une seule fois", async () => {
+    const team = await member({ role: "admin" });
+    await team.call("adminSaveMembershipPlan", { nameFr: "Carnet et Pass", isActive: true, offers: [{ id: "carnet3", priceDh: 70, isActive: true }, { id: "pass30", priceDh: 99, isActive: true }], highlightId: "pass30" });
+    const buy = async (u: Client, offerId: string) => {
+      const { paymentId } = await u.call("startMembershipCheckout", { offerId });
+      await u.call("sandboxCompletePayment", { paymentId, outcome: "succeeded" });
+      return paymentId as string;
+    };
+    // Pass jamais utilisé : remboursé, pass retiré.
+    const u = await member();
+    const pid = await buy(u, "pass30");
+    expect(await u.call("withdrawMembership", { paymentId: pid })).toMatchObject({ ok: true, refundStatus: "succeeded" });
+    expect((await db().doc(`memberships/${u.uid}`).get()).data()!.status).toBe("revoked");
+    expect((await db().doc(`payments/${pid}`).get()).data()!.withdrawnAt).toBeTruthy();
+    expect(await refusal(u.call("withdrawMembership", { paymentId: pid }))).toBe("failed-precondition:already_withdrawn");
+    // Pass déjà utilisé : refusé.
+    const v = await member();
+    const pid2 = await buy(v, "pass30");
+    const { sid } = await makeExperience({ startInHours: 60, price: 3500 });
+    await v.call("createReservation", { sessionId: sid, seats: 1 });
+    expect(await refusal(v.call("withdrawMembership", { paymentId: pid2 }))).toBe("failed-precondition:already_used");
+    // Carnet intact : crédits retirés et remboursé.
+    const c = await member();
+    const pid3 = await buy(c, "carnet3");
+    expect(await c.call("withdrawMembership", { paymentId: pid3 })).toMatchObject({ ok: true });
+    expect((await db().doc(`carnets/${c.uid}`).get()).data()!.credits).toBe(0);
+    await db().doc("membershipPlans/annual").set({ isActive: false }, { merge: true });
   });
 });

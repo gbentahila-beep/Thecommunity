@@ -63,7 +63,8 @@ export const previewPricing = onCall({ region: REGION }, async (req) => {
     serviceFee: readServiceFee(booking.data()?.serviceFee),
   });
   // docs/22 § 17.I : l'écran de réservation affiche le pass, les crédits du carnet et le garde-fou.
-  return { pricing, pass: terms.member, passLimitReached: terms.passLimitReached, credits: terms.credits };
+  // Audit 23/11 : pass actif mais événement après sa fin → place non incluse (message dédié dans la page de réservation).
+  return { pricing, pass: terms.member, passOutsidePeriod: terms.member && !terms.passForEvent, passLimitReached: terms.passLimitReached, credits: terms.credits };
 });
 
 /** Le membre modifie son régime, ses allergies ou ses langues de table jusqu'au début de l'expérience. */

@@ -55,10 +55,15 @@ export const adminCompleteManualRefund = onCall({ region: REGION }, async (req) 
     if (r.status !== "initiated") refuse("already_processed", "Ce remboursement est déjà marqué effectué.");
     const parentRef = db.doc(`payments/${r.parentPaymentId}`);
     const parent = (await tx.get(parentRef)).data();
+    const res = r.reservationId ? (await tx.get(db.doc(`reservations/${r.reservationId}`))).data() : undefined;
     const before = (await tx.get(db.collection("payments").where("parentPaymentId", "==", r.parentPaymentId).where("status", "==", "succeeded"))).docs
       .reduce((a, d) => a + (d.data().amount as number), 0);
     tx.update(refRef, { status: "succeeded", completedBy: actor.uid, completedAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
     if (parent) tx.update(parentRef, { status: before + r.amount >= parent.amount ? "refunded" : "partially_refunded", updatedAt: FieldValue.serverTimestamp() });
+    // Audit 23/11 : la réservation annulée dont le remboursement attendait ce virement passe « remboursée ».
+    if (r.reservationId && res?.status === "cancelled" && res.cancellation?.refundStatus === "pending") {
+      tx.update(db.doc(`reservations/${r.reservationId}`), { status: "refunded", "cancellation.refundStatus": "succeeded", updatedAt: FieldValue.serverTimestamp() });
+    }
     return { amount: r.amount as number, parentPaymentId: r.parentPaymentId as string };
   });
   await afterPaymentSettled({ refundId });

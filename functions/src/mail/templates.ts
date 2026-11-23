@@ -315,10 +315,25 @@ export function proposalMail(o: { locale: string; firstName: string; title: stri
 }
 
 /** Garde-fous du pass (décision 8) : avertissement après une absence, suspension après la deuxième. */
-export function absenceMail(o: { locale: string; firstName: string; title: string; suspendedUntil: string | null }) {
+export function absenceMail(o: { locale: string; firstName: string; title: string; suspendedUntil: string | null; lateCancel?: boolean }) {
   const l = lang(o.locale);
   const href = `${SITE_URL}${prefix(l)}/abonnement`;
   const s = o.suspendedUntil;
+  // Audit 23/11 : annulation à moins de 24 h d'une place incluse dans le pass = absence.
+  if (o.lateCancel) {
+    const lc = {
+      fr: s
+        ? { subject: "Votre pass est suspendu 2 semaines", heading: "Pass suspendu", p: [`Annulation à moins de 24 h (« ${o.title} ») : c'est votre deuxième absence en 90 jours. Votre pass est suspendu jusqu'au ${s} : vous pouvez réserver, mais vos places ne sont plus incluses d'ici là.`] }
+        : { subject: "Annulation tardive notée", heading: "Annulation à moins de 24 h", p: [`Votre place de « ${o.title} » était incluse dans votre pass : une annulation à moins de 24 h compte comme une absence.`, "C'est un avertissement : à la prochaine absence, votre pass sera suspendu 2 semaines. Pensez à annuler plus tôt : la place profite alors à quelqu'un d'autre."] },
+      en: s
+        ? { subject: "Your pass is suspended for 2 weeks", heading: "Pass suspended", p: [`Cancellation within 24 hours (“${o.title}”): this is your second no-show in 90 days. Your pass is suspended until ${s}: you can still book, but your seats aren't included until then.`] }
+        : { subject: "Late cancellation noted", heading: "Cancelled within 24 hours", p: [`Your seat for “${o.title}” was included in your pass: cancelling within 24 hours counts as a no-show.`, "This is a warning: next time, your pass will be suspended for 2 weeks. Cancel earlier so someone else can take the seat."] },
+      ar: s
+        ? { subject: "تم تعليق الباس لمدة أسبوعين", heading: "الباس معلّق", p: [`إلغاء قبل أقل من 24 ساعة (« ${o.title} »): إنه غيابك الثاني خلال 90 يومًا. الباس معلّق حتى ${s}: يمكنك الحجز، لكن أماكنك لم تعد مشمولة حتى ذلك الحين.`] }
+        : { subject: "تم تسجيل إلغاء متأخر", heading: "إلغاء قبل أقل من 24 ساعة", p: [`كان مكانك في « ${o.title} » مشمولًا بالباس: الإلغاء قبل أقل من 24 ساعة يُحتسب غيابًا.`, "هذا تنبيه: في الغياب القادم، سيُعلّق الباس أسبوعين. ألغِ مبكرًا ليستفيد غيرك من المكان."] },
+    }[l];
+    return { subject: lc.subject, ...layout(l, { heading: lc.heading, paragraphs: lc.p, cta: { label: l === "fr" ? "Mon pass" : l === "en" ? "My pass" : "الباس", href }, footer: NOTICE_FOOTER[l] }) };
+  }
   const t = {
     fr: s
       ? { subject: "Votre pass est suspendu 2 semaines", heading: "Pass suspendu", p: [`Deuxième absence sans check-in (« ${o.title} »). Votre pass est suspendu jusqu'au ${s} : vous pouvez réserver, mais vos places ne sont plus incluses d'ici là.`, "Un empêchement ? Annulez depuis votre réservation : la place revient à quelqu'un d'autre."] }

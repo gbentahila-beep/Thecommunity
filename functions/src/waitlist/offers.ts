@@ -1,10 +1,10 @@
-import { bookingClosesAt, readServiceFee, WAITLIST_OFFER_HOURS, wenzyPriceOf, type ServiceFee } from "@thecommunity/shared";
+import { bookingClosesAt, PASS_MAX_UPCOMING, readServiceFee, WAITLIST_OFFER_HOURS, wenzyPriceOf, type ServiceFee } from "@thecommunity/shared";
 import { Timestamp, type DocumentData, type DocumentReference, type QueryDocumentSnapshot, type Transaction } from "firebase-admin/firestore";
 import { db, FieldValue } from "../lib/admin";
-import { memberFromDoc, membershipRef, planRef } from "../membership/state";
+import { memberFromDoc, membershipRef, passCoversEvent, passUpcoming, planRef } from "../membership/state";
 import { reservationDoc } from "../reservations/reservation-doc";
 
-export type WaitlistCandidates = { entries: QueryDocumentSnapshot[]; locked: Set<string>; plan: DocumentData | undefined; memberships: Map<string, DocumentData | undefined>; serviceFee: ServiceFee; wenzyPrice: number };
+export type WaitlistCandidates = { entries: QueryDocumentSnapshot[]; locked: Set<string>; plan: DocumentData | undefined; memberships: Map<string, DocumentData | undefined>; passUpcoming: Map<string, number>; serviceFee: ServiceFee; wenzyPrice: number };
 
 /**
  * LECTURES (à faire avant toute écriture de la transaction) : les premières personnes en attente
@@ -19,6 +19,10 @@ export async function readWaitlist(tx: Transaction, sessRef: DocumentReference):
     tx.get(db.doc("settings/booking")),
   ]);
   const memberships = new Map(mems.map((m) => [m.id, m.data()]));
+  // Audit 23/11 : la limite de 2 réservations à venir couvertes par le pass vaut aussi pour les places proposées.
+  const now = Date.now();
+  const upcoming = new Map<string, number>();
+  for (const m of mems) if (memberFromDoc(m.data())) upcoming.set(m.id, await passUpcoming(m.id, now, tx));
   // docs/22 § 17.I : priorité aux personnes qui ont un pass, puis ordre d'inscription.
   const entries = [...q.docs].sort((a, b) => Number(memberFromDoc(memberships.get(b.id))) - Number(memberFromDoc(memberships.get(a.id))));
   return {
@@ -26,6 +30,7 @@ export async function readWaitlist(tx: Transaction, sessRef: DocumentReference):
     locked: new Set(locks.filter((l) => l.exists).map((l) => l.id)),
     plan: plan.data(),
     memberships,
+    passUpcoming: upcoming,
     serviceFee: readServiceFee(booking.data()?.serviceFee),
     wenzyPrice: wenzyPriceOf(booking.data()),
   };
@@ -71,7 +76,9 @@ export function writeOffers(
     // Activité physique : conditions acceptées à l'inscription sur la liste (anciennes inscriptions sans accord : sautées).
     if (o.e.physicalActivity === true && !w.physicalTerms) continue;
     const cap = Math.min(Number(o.s.price?.amount ?? 0), o.candidates.wenzyPrice);
-    const coverage = member && cap > 0 ? { passSeats: 1, carnetSeats: 0, cap } : undefined;
+    // Audit 23/11 : pass valable à la date de l'événement et limite de 2 réservations à venir respectée.
+    const passOk = passCoversEvent(o.candidates.memberships.get(entry.id), (o.s.startAt as Timestamp).toMillis(), new Date(o.now)) && (o.candidates.passUpcoming.get(entry.id) ?? 0) < PASS_MAX_UPCOMING;
+    const coverage = passOk && cap > 0 ? { passSeats: 1, carnetSeats: 0, cap } : undefined;
     const resRef = db.collection("reservations").doc();
     const { doc, free } = reservationDoc({
       s: o.s,

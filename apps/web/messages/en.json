@@ -427,7 +427,8 @@
     "onSiteConsumption": "What you order",
     "onSiteNothing": "Nothing",
     "secretVenueShort": "Venue revealed {hours} h before",
-    "bookShort": "Book"
+    "bookShort": "Book",
+    "passOutsidePeriod": "This date is after your pass ends: your seat isn't included. Extend your pass to include it."
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -858,7 +859,13 @@
     "reviewPhoto_pending": "Your photo will be published once the team has checked it.",
     "reviewPhoto_approved": "Your photo is published with your review.",
     "reviewPhoto_rejected": "Your photo was not published (see your notifications).",
-    "reviewReplyFrom": "Reply from {name}"
+    "reviewReplyFrom": "Reply from {name}",
+    "cancelCovered": "Your seat is covered by your pass or pack: nothing was charged online.",
+    "cancelCreditsBack": "If you cancel now, {count, plural, one {your credit is returned} other {your # credits are returned}}.",
+    "cancelCreditsLost": "If you cancel now, {count, plural, one {your credit is not returned} other {your # credits are not returned}} (event cancellation terms).",
+    "cancelPassLate": "Your seat is included in your pass: cancelling within 24 hours of the start counts as a no-show (a warning, then a 2-week pass suspension at the second).",
+    "cancelDoneLate": "Booking cancelled. Cancelling a pass seat within 24 hours counts as a no-show.",
+    "cancelDonePending": "Booking cancelled: {amount} will be refunded, the refund is in progress."
   },
   "profilePage": {
     "title": "My profile",
@@ -2069,7 +2076,15 @@
     "terms3": "Pack: a credit comes back if you cancel within the event's refundable period.",
     "terms4": "A new pass extends the current one; a new pack adds its credits and extends their validity to 3 months.",
     "termsLink": "Terms of sale",
-    "breakEvenMonth": "Worth it from {count} outings a month"
+    "breakEvenMonth": "Worth it from {count} outings a month",
+    "withdrawTitle": "Right of withdrawal",
+    "withdrawText": "{label} ({amount}): you can withdraw until {until}, as long as it hasn't been used. Full refund.",
+    "withdrawCta": "Withdraw",
+    "withdrawConfirm": "Cancel {label} and get {amount} back?",
+    "withdrawYes": "Yes, withdraw",
+    "withdrawKeep": "Keep my purchase",
+    "withdrawBusy": "One moment…",
+    "withdrawError": "Withdrawal is no longer possible (deadline passed or already used). Write to us if needed."
   },
   "report": {
     "open": "Report {name}",

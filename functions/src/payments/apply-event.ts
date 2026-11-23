@@ -25,7 +25,8 @@ export type ApplyOutcome = "confirmed" | "failed" | "duplicate" | "ignored" | "r
 /** Lieu communiqué dès la confirmation, sauf pour les expériences où il est révélé avec le groupe. */
 function venueFor(exp: DocumentSnapshot) {
   const v = exp.data()?.venue;
-  return v && v.revealPolicy === "immediate" ? { name: v.name ?? "", address: v.address ?? "" } : null;
+  // Audit 23/11 : coordonnées GPS copiées aussi pour les places payées (itinéraire exact).
+  return v && v.revealPolicy === "immediate" ? { name: v.name ?? "", address: v.address ?? "", ...(v.geo ? { geo: v.geo } : {}) } : null;
 }
 
 function confirmFields(exp: DocumentSnapshot, paymentId: string) {
@@ -64,11 +65,15 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
     const sessRef = db.doc(`sessions/${r.sessionId}`);
     const lockRef = sessRef.collection("seatLocks").doc(r.userId);
     const promoCode = r.pricing?.promoCode as string | undefined;
-    const [sess, lock, exp, redemption] = await Promise.all([
+    // Audit 23/11 : crédits du carnet de cette place, rendus à l'expiration : à reprendre si la place est reprise.
+    const usedCredits = Number(r.pricing?.coverage?.carnetSeats ?? 0);
+    const carnetDocRef = db.doc(`carnets/${r.userId}`);
+    const [sess, lock, exp, redemption, carnet] = await Promise.all([
       tx.get(sessRef),
       tx.get(lockRef),
       tx.get(db.doc(`experiences/${r.experienceId}`)),
       promoCode ? tx.get(db.doc(`promoCodes/${promoCode}/redemptions/${r.userId}`)) : Promise.resolve(null),
+      r.status === "expired" && usedCredits > 0 ? tx.get(carnetDocRef) : Promise.resolve(null),
     ]);
     // Code promo : compté une seule fois par personne, au moment où la place est confirmée.
     const countPromo = () => {
@@ -130,7 +135,20 @@ export async function applyPaymentEvent(ev: PaymentEvent): Promise<{ outcome: Ap
           updatedAt: FieldValue.serverTimestamp(),
         });
         tx.set(lockRef, { reservationId: res.id, createdAt: FieldValue.serverTimestamp() });
-        tx.update(resRef, { ...confirmFields(exp, pay.id), latePayment: true, ...commissionField });
+        // Crédits rendus à l'expiration : repris (sinon la place serait payée avec un crédit gardé). S'il n'en reste
+        // plus assez (utilisés entre-temps), la place reste confirmée et l'écart est signalé à l'équipe.
+        let carnetShortfall = 0;
+        if (usedCredits > 0) {
+          const available = Math.max(0, Number(carnet?.data()?.credits ?? 0));
+          const take = Math.min(available, usedCredits);
+          carnetShortfall = usedCredits - take;
+          if (take > 0) {
+            tx.update(carnetDocRef, { credits: FieldValue.increment(-take), updatedAt: FieldValue.serverTimestamp() });
+            tx.set(carnetDocRef.collection("movements").doc(), { delta: -take, reason: "late_payment", reservationId: res.id, at: FieldValue.serverTimestamp() });
+          }
+        }
+        tx.update(resRef, { ...confirmFields(exp, pay.id), latePayment: true, ...commissionField, ...(carnetShortfall > 0 ? { carnetShortfall } : {}) });
+        if (carnetShortfall > 0) logger.error("Paiement tardif : crédits du carnet insuffisants", { reservationId: res.id, carnetShortfall });
         countPromo();
         settle();
         return { outcome: "confirmed", reservationId: res.id };
@@ -176,7 +194,7 @@ async function applyMembershipPayment(
     tx.update(payRef, { ...base, status: "failed", failureReason: ev.failureReason ?? "declined" });
     return { outcome: "failed", purpose: "membership" };
   }
-  tx.update(payRef, { ...base, status: "succeeded", providerRef: ev.providerRef ?? p.providerRef ?? null, paidAmount: ev.amount });
+  tx.update(payRef, { ...base, status: "succeeded", succeededAt: FieldValue.serverTimestamp(), providerRef: ev.providerRef ?? p.providerRef ?? null, paidAmount: ev.amount });
   if (!ok) return { outcome: "refunded", purpose: "membership", refund: { amount: ev.amount, reason: "amount_mismatch" } };
   tx.set(db.collection(`users/${p.userId}/notifications`).doc(), {
     type: "membership_active",

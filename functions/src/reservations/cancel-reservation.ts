@@ -1,4 +1,4 @@
-import { DEFAULT_CANCELLATION_POLICY, refundAmountFor, refundBasisDate, type CancellationPolicy } from "@thecommunity/shared";
+import { DEFAULT_CANCELLATION_POLICY, isLatePassCancel, refundAmountFor, refundBasisDate, type CancellationPolicy } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -9,6 +9,7 @@ import { invalidArgument, requireAuth } from "../lib/guards";
 import { issueRefund } from "../payments/refund";
 import { readWaitlist, writeOffers } from "../waitlist/offers";
 import { removeFromGroup } from "../groups/membership";
+import { recordAbsence } from "../membership/absences";
 import { refuse } from "./create-reservation";
 
 export const idSchema = z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/);
@@ -102,19 +103,30 @@ export async function cancelReservationCore(o: {
       ...(["validated", "revealed"].includes(s.groupsStatus) ? { groupsNeedReview: true } : {}),
       updatedAt: FieldValue.serverTimestamp(),
     });
-    return { refundAmount, paymentId: paid ? (r.paymentId as string) : null, userId: r.userId as string, slug: r.sessionSnapshot?.slug as string | undefined };
+    // Audit 23/11 : place incluse dans le pass, annulée par la personne à moins de 24 h → absence (après la transaction).
+    const lateCancel = o.by === "user" && r.status === "confirmed" && isLatePassCancel(Number(r.pricing?.coverage?.passSeats ?? 0), basis, new Date(now));
+    return { refundAmount, paymentId: paid ? (r.paymentId as string) : null, userId: r.userId as string, slug: r.sessionSnapshot?.slug as string | undefined, lateCancel, title: String(r.sessionSnapshot?.title?.fr ?? "") };
   });
+  if (result.lateCancel) await recordAbsence(result.userId, o.reservationId, result.title, Date.now(), "late_cancel").catch((e) => logger.error("Absence (annulation tardive)", e));
 
   let refundStatus: "none" | "succeeded" | "pending" = "none";
   // Étape 21 : la part remboursée n'est pas reversée à l'organisateur ; commission rendue au prorata.
   if (result.refundAmount > 0 && result.paymentId) await recordRefundEntry(o.reservationId, result.refundAmount).catch((e) => logger.error("Registre des commissions", e));
   if (result.refundAmount > 0 && result.paymentId) {
-    refundStatus = (await issueRefund(result.paymentId, result.refundAmount, o.by === "user" ? "member_cancellation" : `admin_${o.reason}`)).status;
+    // Audit 23/11 : un échec du prestataire ne fait pas croire à la personne que l'annulation a échoué : la réservation
+    // est annulée, le remboursement reste « en attente » et la tâche horaire le relance (refunds/retry.ts).
+    try {
+      refundStatus = (await issueRefund(result.paymentId, result.refundAmount, o.by === "user" ? "member_cancellation" : `admin_${o.reason}`)).status;
+    } catch (e) {
+      logger.error("Remboursement à relancer", { reservationId: o.reservationId, error: String(e) });
+      refundStatus = "pending";
+      await resRef.update({ "cancellation.refundAttempts": 1, "cancellation.lastRefundError": String(e).slice(0, 300), "cancellation.lastRefundAttemptAt": FieldValue.serverTimestamp() }).catch(() => undefined);
+    }
     if (refundStatus === "succeeded") {
       await resRef.update({ status: "refunded", "cancellation.refundStatus": "succeeded", updatedAt: FieldValue.serverTimestamp() });
     }
   }
-  return { refundAmount: result.refundAmount, refundStatus, userId: result.userId };
+  return { refundAmount: result.refundAmount, refundStatus, userId: result.userId, lateCancel: result.lateCancel };
 }
 
 /** Annulation par le membre : politique de l'expérience (100 % jusqu'à 48 h avant, 0 % ensuite). */
@@ -125,5 +137,5 @@ export const cancelReservation = onCall({ region: REGION }, async (req) => {
   const pre = (await db.doc(`reservations/${parsed.data.reservationId}`).get()).data();
   if (!pre || pre.userId !== uid) throw new HttpsError("not-found", "Réservation introuvable.", { reason: "not_found" });
   const res = await cancelReservationCore({ reservationId: parsed.data.reservationId, by: "user", actorUid: uid, refundMode: "policy", reason: "member" });
-  return { ok: true, refundAmount: res.refundAmount, refundStatus: res.refundStatus };
+  return { ok: true, refundAmount: res.refundAmount, refundStatus: res.refundStatus, ...(res.lateCancel ? { lateCancel: true } : {}) };
 });

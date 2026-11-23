@@ -56,7 +56,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, transfe
   const request = useRef(0);
   // docs/22 § 17.I : pass (place incluse, garde-fou) et carnet (crédits), d'après le serveur.
   const [useCarnet, setUseCarnet] = useState(true);
-  const [sub, setSub] = useState<{ pass: boolean; passLimitReached: boolean; credits: number }>({ pass: false, passLimitReached: false, credits: 0 });
+  const [sub, setSub] = useState<{ pass: boolean; passOutsidePeriod: boolean; passLimitReached: boolean; credits: number }>({ pass: false, passOutsidePeriod: false, passLimitReached: false, credits: 0 });
   const money = (amount: number) => formatMoney({ amount, currency }, lang);
 
   /** Demande le prix au serveur ; seule la dernière réponse compte. Un code refusé est retiré. */
@@ -67,7 +67,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, transfe
       const res = await previewBooking(sessionId, n, code, carnet);
       const p = res.pricing;
       if (id !== request.current) return;
-      setSub({ pass: Boolean(res.pass), passLimitReached: Boolean(res.passLimitReached), credits: Number(res.credits ?? 0) });
+      setSub({ pass: Boolean(res.pass), passOutsidePeriod: Boolean(res.passOutsidePeriod), passLimitReached: Boolean(res.passLimitReached), credits: Number(res.credits ?? 0) });
       setPricing(p);
       setPromo(code);
       setPromoError(null);
@@ -193,7 +193,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, transfe
 
       {(sub.pass || sub.credits > 0) && (
         <section className="space-y-2 rounded-[var(--radius-card)] bg-white p-4 text-sm shadow-card" data-testid="booking-subscription">
-          {sub.pass && <p className={sub.passLimitReached ? "text-amber-900" : "font-semibold text-emerald-800"}>{sub.passLimitReached ? t("passLimit") : t("passCovers")}</p>}
+          {sub.pass && <p className={sub.passLimitReached || sub.passOutsidePeriod ? "text-amber-900" : "font-semibold text-emerald-800"}>{sub.passOutsidePeriod ? t("passOutsidePeriod") : sub.passLimitReached ? t("passLimit") : t("passCovers")}</p>}
           {sub.credits > 0 && (
             <label className="flex items-center gap-2 font-medium text-ink">
               <input type="checkbox" checked={useCarnet} disabled={busy} onChange={(e) => { setUseCarnet(e.target.checked); void quote(seats, promo, e.target.checked); }} />

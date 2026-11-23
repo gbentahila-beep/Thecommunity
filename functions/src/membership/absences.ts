@@ -16,28 +16,28 @@ const toMs = (v: unknown) => (v instanceof Timestamp ? v.toMillis() : v ? new Da
  * Absence sur une réservation couverte par le pass (décision 8) : 1re → avertissement, 2e (sur 90 jours, depuis la
  * dernière suspension) → pass suspendu 14 jours. Notification et e-mail. Renvoie l'état après coup.
  */
-export async function recordAbsence(uid: string, reservationId: string, title: string, now = Date.now()): Promise<"warning" | "suspended" | "none"> {
+export async function recordAbsence(uid: string, reservationId: string, title: string, now = Date.now(), cause: "no_show" | "late_cancel" = "no_show"): Promise<"warning" | "suspended" | "none"> {
   const ref = db.doc(`memberships/${uid}`);
   const outcome = await db.runTransaction(async (tx) => {
     const m = (await tx.get(ref)).data();
     if (!m) return { kind: "none" as const };
     const absences = ((m.absences ?? []) as { at: Timestamp; reservationId: string }[]).filter((a) => a.reservationId !== reservationId);
-    absences.push({ at: Timestamp.fromMillis(now), reservationId });
+    absences.push({ at: Timestamp.fromMillis(now), reservationId, ...(cause === "late_cancel" ? { cause } : {}) } as { at: Timestamp; reservationId: string });
     const since = Math.max(toMs(m.lastSuspensionAt), toMs(m.lastSuspensionLiftedAt));
     const count = countedAbsences(absences.map((a) => ({ at: a.at.toDate() })), new Date(now), since ? new Date(since) : null);
     const suspend = count >= ABSENCES_BEFORE_SUSPENSION;
     const until = new Date(now + SUSPENSION_DAYS * 86_400_000);
     tx.update(ref, { absences, ...(suspend ? { suspendedUntil: Timestamp.fromDate(until), lastSuspensionAt: Timestamp.fromMillis(now) } : {}), updatedAt: FieldValue.serverTimestamp() });
     tx.set(db.collection(`users/${uid}/notifications`).doc(), suspend
-      ? { type: "membership_suspended", title: { fr: "Pass suspendu 2 semaines", ar: "تعليق الباس أسبوعين", en: "Pass suspended for 2 weeks" }, body: { fr: `Deuxième absence sans check-in. Vos places ne sont plus incluses jusqu'au ${dateFr(until)}.`, ar: "غياب ثانٍ دون تسجيل الوصول.", en: "Second no-show without check-in." }, link: "/abonnement", createdAt: FieldValue.serverTimestamp() }
-      : { type: "absence_warning", title: { fr: "Absence notée", ar: "تم تسجيل غياب", en: "No-show noted" }, body: { fr: "Pas de check-in : c'est un avertissement. À la prochaine absence, votre pass sera suspendu 2 semaines.", ar: "لا تسجيل وصول: هذا تنبيه.", en: "No check-in: this is a warning." }, link: `/espace/reservations/${reservationId}`, createdAt: FieldValue.serverTimestamp() });
+      ? { type: "membership_suspended", title: { fr: "Pass suspendu 2 semaines", ar: "تعليق الباس أسبوعين", en: "Pass suspended for 2 weeks" }, body: { fr: `${cause === "late_cancel" ? "Annulation à moins de 24 h : deuxième absence" : "Deuxième absence sans check-in"}. Vos places ne sont plus incluses jusqu'au ${dateFr(until)}.`, ar: cause === "late_cancel" ? "إلغاء متأخر: غياب ثانٍ." : "غياب ثانٍ دون تسجيل الوصول.", en: cause === "late_cancel" ? "Late cancellation: second no-show." : "Second no-show without check-in." }, link: "/abonnement", createdAt: FieldValue.serverTimestamp() }
+      : { type: "absence_warning", title: cause === "late_cancel" ? { fr: "Annulation tardive notée", ar: "تم تسجيل إلغاء متأخر", en: "Late cancellation noted" } : { fr: "Absence notée", ar: "تم تسجيل غياب", en: "No-show noted" }, body: cause === "late_cancel" ? { fr: "Place incluse dans le pass annulée à moins de 24 h : c'est un avertissement. À la prochaine absence, votre pass sera suspendu 2 semaines.", ar: "إلغاء قبل أقل من 24 ساعة: هذا تنبيه.", en: "Pass seat cancelled within 24 hours: this is a warning." } : { fr: "Pas de check-in : c'est un avertissement. À la prochaine absence, votre pass sera suspendu 2 semaines.", ar: "لا تسجيل وصول: هذا تنبيه.", en: "No check-in: this is a warning." }, link: `/espace/reservations/${reservationId}`, createdAt: FieldValue.serverTimestamp() });
     return { kind: suspend ? ("suspended" as const) : ("warning" as const), until };
   });
   if (outcome.kind === "none") return "none";
   const u = (await db.doc(`users/${uid}`).get()).data();
   if (u?.email) {
     const locale = String(u.locale ?? "fr");
-    await sendMail({ to: u.email, locale, ...absenceMail({ locale, firstName: String(u.firstName ?? ""), title, suspendedUntil: outcome.kind === "suspended" ? dateFr(outcome.until!) : null }), kind: outcome.kind === "suspended" ? "pass_suspended" : "absence_warning", refs: { reservationId } }).catch(() => undefined);
+    await sendMail({ to: u.email, locale, ...absenceMail({ locale, firstName: String(u.firstName ?? ""), title, suspendedUntil: outcome.kind === "suspended" ? dateFr(outcome.until!) : null, lateCancel: cause === "late_cancel" }), kind: outcome.kind === "suspended" ? "pass_suspended" : cause === "late_cancel" ? "late_cancel_warning" : "absence_warning", refs: { reservationId } }).catch(() => undefined);
   }
   return outcome.kind;
 }

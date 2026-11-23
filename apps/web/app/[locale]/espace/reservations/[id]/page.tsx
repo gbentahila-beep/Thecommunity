@@ -2,7 +2,7 @@ import { DayOfCard } from "@/components/account/day-of-card";
 import { VenueCard } from "@/components/account/venue-card";
 import { MemberAvatar } from "@/components/member-avatar";
 import { mapsLinks } from "@/lib/maps";
-import { VENUE_REVEAL_HOURS, bookingClosesAt, isTablesFlow, revealAtFor, seatsAvailable, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds, canSignalLate, reportWindowOpen, refundBasisDate, tablesTimeline } from "@thecommunity/shared";
+import { VENUE_REVEAL_HOURS, bookingClosesAt, isTablesFlow, revealAtFor, seatsAvailable, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds, canSignalLate, reportWindowOpen, refundBasisDate, isLatePassCancel, tablesTimeline } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, MessageCircle, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -68,7 +68,17 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const isActive = r.status === "confirmed";
   const checkIn = selfCheckInState(s.startAt, now);
   // Audit 23/11 : après un changement de date fait par le membre, le remboursement suit la date d'origine.
-  const refund = refundAmountFor(policy, r.pricing.total, refundBasisDate(new Date(s.startAt), r.refundBasisAt ? new Date(r.refundBasisAt) : null), now);
+  const refundBasis = refundBasisDate(new Date(s.startAt), r.refundBasisAt ? new Date(r.refundBasisAt) : null);
+  const refund = refundAmountFor(policy, r.pricing.total, refundBasis, now);
+  // Audit 23/11 : ce que coûte une annulation quand la place est couverte (crédits rendus ou perdus, absence du pass).
+  const coveredCredits = r.pricing.coverage?.carnetSeats ?? 0;
+  const creditsBack = refundAmountFor(policy, 100, refundBasis, now) > 0;
+  const passLate = isLatePassCancel(r.pricing.coverage?.passSeats ?? 0, refundBasis, now);
+  const coverageNotes = [
+    ...(coveredCredits > 0 ? [creditsBack ? t("cancelCreditsBack", { count: coveredCredits }) : t("cancelCreditsLost", { count: coveredCredits })] : []),
+    ...(passLate ? [t("cancelPassLate")] : []),
+  ];
+  const covered = Boolean(r.pricing.coverage && (r.pricing.coverage.passSeats > 0 || r.pricing.coverage.carnetSeats > 0));
   const refundable = Boolean(r.paymentId) && canRequestRefund({ status: r.status, sessionStartAt: s.startAt, paidAmount: r.pricing.total, refundedAmount: r.refundedAmount }, now);
   const review = data.review;
   const city = await getCity(experience?.cityId ?? "casablanca");
@@ -137,8 +147,10 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         <p role="status" className="flex items-center gap-2 rounded-xl bg-stone-100 px-4 py-3 text-sm font-medium text-ink">
           <CheckCircle2 className="size-5 shrink-0" aria-hidden />
           {r.cancellation && r.cancellation.refundAmount > 0
-            ? t("cancelDoneRefund", { amount: formatMoney({ amount: r.cancellation.refundAmount, currency: r.pricing.currency }, lang) })
-            : t("cancelDone")}
+            ? r.status === "refunded"
+              ? t("cancelDoneRefund", { amount: formatMoney({ amount: r.cancellation.refundAmount, currency: r.pricing.currency }, lang) })
+              : t("cancelDonePending", { amount: formatMoney({ amount: r.cancellation.refundAmount, currency: r.pricing.currency }, lang) })
+            : sp.tardive === "1" ? t("cancelDoneLate") : t("cancelDone")}
         </p>
       )}
 
@@ -466,17 +478,18 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           <h2 className="font-semibold text-ink">{t("cancelTitle")}</h2>
           <p className="mt-1 text-sm text-muted">
             {r.pricing.total === 0
-              ? t("cancelFree")
+              ? covered ? t("cancelCovered") : t("cancelFree")
               : refund > 0
                 ? t("cancelRefund", { amount: formatMoney({ amount: refund, currency: r.pricing.currency }, lang) })
                 : t("cancelNoRefund")}
           </p>
+          {coverageNotes.map((n) => <p key={n} className={`mt-1 text-sm ${passLate || !creditsBack ? "font-medium text-amber-900" : "text-muted"}`} data-testid="cancel-coverage-note">{n}</p>)}
           {FIREBASE_ENABLED ? (
             <div className="mt-4">
               <CancelReservationButton
                 reservationId={r.id}
                 label={t("cancelCta")}
-                confirmText={r.pricing.total === 0 ? t("cancelConfirmFree") : refund > 0 ? t("cancelConfirmRefund", { amount: formatMoney({ amount: refund, currency: r.pricing.currency }, lang) }) : t("cancelConfirmNoRefund")}
+                confirmText={[r.pricing.total === 0 ? t("cancelConfirmFree") : refund > 0 ? t("cancelConfirmRefund", { amount: formatMoney({ amount: refund, currency: r.pricing.currency }, lang) }) : t("cancelConfirmNoRefund"), ...coverageNotes].join(" ")}
               />
             </div>
           ) : (

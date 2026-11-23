@@ -1,10 +1,11 @@
-import { carnetCredits, countedAbsences, DEFAULT_WENZY_PRICE, formatMoney, isMemberActive, isSuspended, offerEconomics, offerLabel, PASS_MAX_UPCOMING, planOffers, SUSPENSION_DAYS } from "@thecommunity/shared";
+import { carnetCredits, countedAbsences, DEFAULT_WENZY_PRICE, formatMoney, isMemberActive, isSuspended, MEMBERSHIP_WITHDRAWAL_DAYS, offerEconomics, offerLabel, PASS_MAX_UPCOMING, planOffers, SUSPENSION_DAYS, withdrawalRefusal } from "@thecommunity/shared";
 import { BadgeCheck, Check, ChevronLeft, Sparkles, Ticket } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { VerifyEmailBanner } from "@/components/auth/verify-email-banner";
 import { OfferPicker, type OfferView } from "@/components/membership/offer-picker";
+import { WithdrawButton } from "@/components/membership/withdraw-button";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAccountState, getSessionUser } from "@/lib/auth/session";
@@ -42,7 +43,20 @@ async function mySituation() {
   const pass = m ? { status: String(m.status), startAt: iso(m.startAt) ?? "", endAt: iso(m.endAt) ?? "", suspendedUntil: iso(m.suspendedUntil), absences: ((m.absences ?? []) as { at: unknown }[]).map((a) => ({ at: iso(a.at) ?? "" })), since: iso(m.lastSuspensionAt) } : null;
   const c = car.data();
   const carnet = c ? { credits: Number(c.credits ?? 0), expiresAt: iso(c.expiresAt) ?? "" } : null;
-  return { pass, carnet, emailVerified: record.emailVerified, onboarded: account.onboardingCompleted, transfer, wenzyPrice: Number(wenzy.data()?.wenzyPrice ?? DEFAULT_WENZY_PRICE) };
+  // Audit 23/11 : achats des 7 derniers jours encore rétractables (même règle que le serveur, qui la refait).
+  const recent = await db.collection("payments").where("userId", "==", user.uid).where("purpose", "==", "membership").where("status", "==", "succeeded").get();
+  const toMs = (v: unknown) => (v && typeof v === "object" && "toMillis" in v ? (v as { toMillis: () => number }).toMillis() : 0);
+  const withdrawable: { id: string; label: string; amount: number; until: string }[] = [];
+  for (const d of recent.docs) {
+    const p = d.data();
+    const purchasedAt = new Date(toMs(p.succeededAt) || toMs(p.updatedAt) || toMs(p.createdAt));
+    if (p.withdrawnAt || Date.now() > purchasedAt.getTime() + MEMBERSHIP_WITHDRAWAL_DAYS * 86_400_000) continue;
+    const used = p.kind === "carnet" ? 0 : (await db.collection("reservations").where("userId", "==", user.uid).where("createdAt", ">=", purchasedAt).get()).docs.filter((x) => Number(x.get("pricing.coverage.passSeats") ?? 0) > 0 && ["pending_payment", "confirmed", "attended", "no_show"].includes(String(x.get("status")))).length;
+    const creditsLeft = c && toMs(c.expiresAt) > Date.now() ? Number(c.credits ?? 0) : 0;
+    if (withdrawalRefusal({ status: "succeeded", kind: p.kind === "carnet" ? "carnet" : "pass", purchasedAt, passSeatsUsedSince: used, creditsBought: Number(p.credits ?? 0), creditsLeft })) continue;
+    withdrawable.push({ id: d.id, label: String(p.label ?? ""), amount: Number(p.amount ?? 0), until: new Date(purchasedAt.getTime() + MEMBERSHIP_WITHDRAWAL_DAYS * 86_400_000).toISOString() });
+  }
+  return { pass, carnet, withdrawable, emailVerified: record.emailVerified, onboarded: account.onboardingCompleted, transfer, wenzyPrice: Number(wenzy.data()?.wenzyPrice ?? DEFAULT_WENZY_PRICE) };
 }
 
 /** Carnet et Pass (docs/22 § 9) : offres, avantages, achat, et la situation de la personne. */
@@ -136,6 +150,11 @@ export default async function MembershipPage({ params, searchParams }: PageProps
           <p className="mt-1 text-sm">{tv("pendingMembership", { reference: me.transfer.reference, amount: money(me.transfer.amount), when: me.transfer.deadline ? date(me.transfer.deadline) : "" })}</p>
           <Link href={`/paiement/virement/${me.transfer.id}`} className="btn btn-primary btn-sm mt-4">{tv("seeInstructions")}</Link>
         </div>
+      )}
+      {me && me.withdrawable.length > 0 && (
+        <section className="space-y-2" aria-label={t("withdrawTitle")}>
+          {me.withdrawable.map((w) => <WithdrawButton key={w.id} paymentId={w.id} label={w.label} amount={money(w.amount)} until={formatLongDate(w.until, locale)} />)}
+        </section>
       )}
       {me && !me.emailVerified && <VerifyEmailBanner />}
 

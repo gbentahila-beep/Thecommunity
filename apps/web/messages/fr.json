@@ -427,7 +427,8 @@
     "onSiteConsumption": "Votre consommation",
     "onSiteNothing": "Rien",
     "secretVenueShort": "Lieu révélé {hours} h avant",
-    "bookShort": "Réserver"
+    "bookShort": "Réserver",
+    "passOutsidePeriod": "Cette date a lieu après la fin de votre pass : votre place n'est pas incluse. Prolongez votre pass pour qu'elle le soit."
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -858,7 +859,13 @@
     "reviewPhoto_pending": "Votre photo sera publiée après vérification par l'équipe.",
     "reviewPhoto_approved": "Votre photo est publiée avec votre avis.",
     "reviewPhoto_rejected": "Votre photo n'a pas été publiée (voir vos notifications).",
-    "reviewReplyFrom": "Réponse de {name}"
+    "reviewReplyFrom": "Réponse de {name}",
+    "cancelCovered": "Votre place est réglée avec votre pass ou votre carnet : rien ne vous a été débité en ligne.",
+    "cancelCreditsBack": "Si vous annulez maintenant, {count, plural, one {votre crédit vous est rendu} other {vos # crédits vous sont rendus}}.",
+    "cancelCreditsLost": "Si vous annulez maintenant, {count, plural, one {votre crédit n'est pas rendu} other {vos # crédits ne sont pas rendus}} (conditions d'annulation de l'événement).",
+    "cancelPassLate": "Votre place est incluse dans votre pass : annuler à moins de 24 h du début compte comme une absence (un avertissement, puis le pass est suspendu 2 semaines à la deuxième).",
+    "cancelDoneLate": "Réservation annulée. Annulation à moins de 24 h d'une place incluse dans votre pass : elle compte comme une absence.",
+    "cancelDonePending": "Réservation annulée : {amount} vous seront remboursés, le remboursement est en cours."
   },
   "profilePage": {
     "title": "Mon profil",
@@ -2069,7 +2076,15 @@
     "terms3": "Carnet : un crédit revient si vous annulez dans les délais remboursés de l'événement.",
     "terms4": "Un nouveau pass prolonge le pass en cours ; un nouveau carnet ajoute ses crédits et repousse leur validité à 3 mois.",
     "termsLink": "Conditions générales de vente",
-    "breakEvenMonth": "Rentable dès {count} sorties par mois"
+    "breakEvenMonth": "Rentable dès {count} sorties par mois",
+    "withdrawTitle": "Droit de rétractation",
+    "withdrawText": "{label} ({amount}) : vous pouvez vous rétracter jusqu'au {until}, tant qu'il n'a pas servi. Remboursement intégral.",
+    "withdrawCta": "Me rétracter",
+    "withdrawConfirm": "Annuler {label} et être remboursé·e de {amount} ?",
+    "withdrawYes": "Oui, me rétracter",
+    "withdrawKeep": "Garder mon achat",
+    "withdrawBusy": "Un instant…",
+    "withdrawError": "La rétractation n'est plus possible (délai dépassé ou achat déjà utilisé). Écrivez-nous si besoin."
   },
   "report": {
     "open": "Signaler {name}",

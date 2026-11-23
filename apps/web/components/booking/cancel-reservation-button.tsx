@@ -24,8 +24,9 @@ export function CancelReservationButton({ reservationId, label, confirmText, var
     setError(null);
     try {
       await authReady();
-      await httpsCallable(firebase().functions, "cancelReservation")({ reservationId });
-      router.replace(`/espace/reservations/${reservationId}?annulation=ok`);
+      const res = (await httpsCallable(firebase().functions, "cancelReservation")({ reservationId })).data as { lateCancel?: boolean };
+      // Audit 23/11 : annulation tardive d'une place du pass → message dédié.
+      router.replace(`/espace/reservations/${reservationId}?annulation=ok${res?.lateCancel ? "&tardive=1" : ""}`);
       router.refresh();
     } catch (err) {
       const reason = (err as { details?: { reason?: string } }).details?.reason;

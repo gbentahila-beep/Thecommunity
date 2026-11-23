@@ -75,7 +75,7 @@ export async function previewPricing(sessionId: string, seats: number, promoCode
 export async function previewBooking(sessionId: string, seats: number, promoCode?: string, useCarnet?: boolean) {
   await freshUser();
   const res = await httpsCallable(firebase().functions, "previewPricing")({ sessionId, seats, ...(promoCode ? { promoCode } : {}), ...(useCarnet ? { useCarnet: true } : {}) });
-  return res.data as { pricing: Pricing; pass?: boolean; passLimitReached?: boolean; credits?: number };
+  return res.data as { pricing: Pricing; pass?: boolean; passOutsidePeriod?: boolean; passLimitReached?: boolean; credits?: number };
 }
 
 /** Raison d'un refus de code promo (ou null si ce n'en est pas un). */
