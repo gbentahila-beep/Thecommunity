@@ -30,7 +30,7 @@ export async function CompactRow({
   session?: Session;
   priority?: boolean;
 }) {
-  const [locale, t, category, home, tp, subcategory] = await Promise.all([
+  const [locale, t, category, home, tp, subcategory, tr2] = await Promise.all([
     getLocale(),
     getTranslations("card"),
     getCategory(experience.categoryId),
@@ -39,6 +39,7 @@ export async function CompactRow({
     experience.subcategoryId
       ? getCategory(experience.subcategoryId)
       : Promise.resolve(null),
+    getTranslations("catalogRow"),
   ]);
   const full = session
     ? session.status === "full" || seatsAvailable(session) === 0
@@ -65,6 +66,14 @@ export async function CompactRow({
       ? ""
       : formatFull;
   const price = session?.price ?? experience.price;
+  // Étape X : un bouton d'action à droite (comme dans Découvrir) ; le prix passe sur la ligne de la gamme.
+  const action = !session
+    ? tr2("alert")
+    : full
+      ? tr2("waitlist")
+      : experience.admission === "on_request"
+        ? tr2("request")
+        : tr2("book");
   return (
     <article
       className="group relative flex gap-3.5 px-4 py-3.5"
@@ -85,7 +94,7 @@ export async function CompactRow({
         </div>
         {badge && <CornerRibbon badge={badge} label={t(`badge_${badge}`)} />}
       </div>
-      {/* Étape W : le prix est dans sa propre colonne, à droite ; il ne repousse plus la date sous le titre. */}
+      {/* Étape X : texte à gauche, bouton « Réserver » à droite (le prix est sur la dernière ligne). */}
       <div className="flex min-w-0 flex-1 items-start gap-3">
         <div className="min-w-0 flex-1">
           <h3 className="min-w-0 text-[15px] leading-snug font-semibold text-ink">
@@ -130,19 +139,25 @@ export async function CompactRow({
                 </span>
               </>
             )}
+            {formatName || experience.venueTier || experience.audience === "women" ? " · " : ""}
+            <span className="font-medium text-ink/75">
+              {formatMoney(price, locale as "fr" | "ar" | "en")}
+            </span>
+            {experience.pricing && experience.pricing.model !== "online_only" && (
+              <span> {tp("plusOnSite")}</span>
+            )}
             {full && (
               <span className="font-semibold text-ink"> · {t("full")}</span>
             )}
           </p>
         </div>
-        <span className="shrink-0 text-end text-[14px] font-semibold text-ink">
-          {formatMoney(price, locale as "fr" | "ar" | "en")}
-          {experience.pricing && experience.pricing.model !== "online_only" && (
-            <span className="block text-[11px] font-medium text-muted">
-              {tp("plusOnSite")}
-            </span>
-          )}
-        </span>
+        <Link
+          href={session ? `/reserver/${session.id}` : `/experiences/${experience.slug}#alerte`}
+          className="relative z-10 inline-flex shrink-0 self-center rounded-full bg-white px-3.5 py-2 text-[13px] font-semibold text-ink shadow-card ring-1 ring-line transition hover:bg-brand-700 hover:text-white hover:ring-brand-700 max-[359px]:hidden"
+          aria-label={`${action} : ${tr(experience.title, locale)}`}
+        >
+          {action}
+        </Link>
       </div>
     </article>
   );
