@@ -13,7 +13,7 @@ import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { BabLineup } from "@/components/brand/bab-lineup";
 import { experienceBadge, NEW_EXPERIENCE_DAYS, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
-import { getCategories, getCities, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences, getReviews } from "@/lib/data";
+import { getCategories, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences, getReviews } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
 import { DEFAULT_CITY } from "@/lib/site";
 
@@ -22,13 +22,12 @@ export const revalidate = 3600;
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, tb, city, categories, reviews, cities, home, upcomingAll, undated, published, weekend] = await Promise.all([
+  const [t, tb, city, categories, reviews, home, upcomingAll, undated, published, weekend] = await Promise.all([
     getTranslations("home"),
     getTranslations("babs"),
     getCity(DEFAULT_CITY),
     getCategories(),
     getReviews(),
-    getCities(),
     getHomeSettings(),
     getNextSessionPerExperience({ cityId: DEFAULT_CITY }),
     getExperiencesWithoutUpcoming({ cityId: DEFAULT_CITY }),
@@ -108,17 +107,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           />
         </PageShell>
       ),
-    // Étape V : une ligne discrète au lieu d'un grand bloc.
-    cities: (() => {
-      const soon = cities.filter((c) => !c.isActive).map((c) => tr(c.name, locale));
-      if (!soon.length) return null;
-      const list = new Intl.ListFormat(locale, { style: "long", type: "conjunction" }).format(soon);
-      return (
-        <PageShell key="cities" className="pb-4">
-          <p id="villes" className="scroll-mt-24 text-center text-sm text-muted" data-testid="cities-line">{t("citiesLine", { list })}</p>
-        </PageShell>
-      );
-    })(),
+    // Étape W : plus de section villes sur l'accueil (le choix de la ville reste dans « Cette semaine »).
+    cities: null,
     faq: (
       <PageShell key="faq">
         <HomeFaq />

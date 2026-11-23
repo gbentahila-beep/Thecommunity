@@ -31,12 +31,12 @@ export function ReviewsShowcase({ reviews, title, subtitle, photoAlt, prevLabel,
       <h2 id="reviews-title" className="section-title text-center">{title}</h2>
       <p className="mx-auto mt-2 max-w-xl text-center text-ink/75">{subtitle}</p>
       <div className="relative mt-8">
-        <div className="relative hidden overflow-hidden rounded-3xl shadow-card sm:block sm:aspect-[16/9] lg:aspect-[21/9]">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-card sm:aspect-[16/9] lg:aspect-[21/9]">
           <Image src="/images/photos/pourquoi-venir.webp" alt={photoAlt} fill sizes="100vw" className="object-cover object-[50%_30%]" />
         </div>
         <ul
           ref={list}
-          className="flex snap-x sm:-mt-16 snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] lg:-mt-28 lg:grid lg:grid-cols-3 lg:overflow-visible lg:px-8"
+          className="-mt-16 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] lg:-mt-28 lg:grid lg:grid-cols-3 lg:overflow-visible lg:px-8"
         >
           {reviews.map((r) => (
             <li key={r.id} className="relative w-[85%] shrink-0 snap-center rounded-[var(--radius-card)] bg-white p-6 shadow-float sm:w-[60%] lg:w-auto">
