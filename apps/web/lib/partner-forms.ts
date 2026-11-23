@@ -6,7 +6,7 @@ export const emptyPartnerValues = (): PartnerFormValues => ({
   contactPhone: "", link: "", model: "purchase", defaultCommissionPercent: "", notes: "",
   insurance: { verified: false, insurer: "", policyNumber: "", expiresOn: "" },
   whatsapp: "", memberPerk: "",
-  tiers: [], formats: [], unit: "table", unitMin: 4, unitMax: 6, slots: [], exceptions: [], cuisine: "", avgBudget: 0, level: "occasional",
+  tiers: [], formats: [], unit: "table", unitMin: 4, unitMax: 6, slots: [], exceptions: [], cuisine: "", cuisineAr: "", cuisineEn: "", avgBudget: 0, level: "occasional",
 });
 
 /** Anciens partenaires (avant 5d) : modèle déduit de la commission par défaut. */
@@ -19,6 +19,6 @@ export function partnerToValues(p: Partner): PartnerFormValues {
     insurance: { verified: p.insurance?.verified === true, insurer: p.insurance?.insurer ?? "", policyNumber: p.insurance?.policyNumber ?? "", expiresOn: p.insurance?.expiresOn ?? "" },
     whatsapp: p.whatsapp ?? "", memberPerk: p.memberPerk ?? "",
     tiers: p.tiers ?? [], formats: p.formats ?? [], unit: p.unit ?? "table", unitMin: p.unitMin ?? 4, unitMax: p.unitMax ?? 6, slots: p.slots ?? [], exceptions: p.exceptions ?? [],
-    cuisine: p.cuisine ?? "", avgBudget: p.avgBudget ?? 0, level: p.level ?? "occasional",
+    cuisine: p.cuisine ?? "", cuisineAr: p.cuisineI18n?.ar ?? "", cuisineEn: p.cuisineI18n?.en ?? "", avgBudget: p.avgBudget ?? 0, level: p.level ?? "occasional",
   };
 }

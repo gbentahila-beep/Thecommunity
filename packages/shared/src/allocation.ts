@@ -35,6 +35,8 @@ export const partnerHostingSchema = z.object({
   slots: z.array(partnerSlotSchema).max(40, "tooMany").default([]),
   exceptions: z.array(partnerExceptionSchema).max(60, "tooMany").default([]),
   cuisine: z.string().trim().max(60, "tooLong").default(""),
+  cuisineAr: z.string().trim().max(60, "tooLong").default(""),
+  cuisineEn: z.string().trim().max(60, "tooLong").default(""),
   avgBudget: z.coerce.number().int().min(0, "min0").max(10_000, "tooMany").default(0),
   level: z.enum(PARTNER_LEVELS).default("occasional"),
 });

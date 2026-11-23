@@ -1,3 +1,4 @@
+import type { ExtraI18n } from "./extra-i18n";
 import { z } from "zod";
 import { parseCoords } from "./experience-input";
 /**
@@ -24,6 +25,7 @@ export type PrivateVenue = {
   partnerName: string;
   /** Cuisine du restaurant, révélée avec le lieu (docs/22, décision 14). */
   cuisine?: string;
+  cuisineI18n?: { ar?: string; en?: string } | null;
 };
 
 type PublicFields = {
@@ -32,7 +34,10 @@ type PublicFields = {
   partnerSnapshot?: { name: string } | null;
   pricing?: { partner?: { name: string } | null } | null;
   cuisine?: string | null;
+  textI18n?: ExtraI18n | null;
 };
+
+const stripCuisine = (t: ExtraI18n): ExtraI18n => Object.fromEntries(Object.entries(t).map(([l, m]) => [l, { ...m, cuisine: undefined }]));
 
 /**
  * Version publique d'une expérience : quand le lieu est secret, nom, adresse, coordonnées, quartier et nom du
@@ -46,6 +51,7 @@ export function publicExperience<T extends PublicFields>(e: T): T {
     district: "",
     venue: { ...e.venue, name: "", address: "", geo: null },
     ...(e.cuisine ? { cuisine: null } : {}),
+    ...(e.textI18n ? { textI18n: stripCuisine(e.textI18n) } : {}),
     ...(e.partnerSnapshot ? { partnerSnapshot: null } : {}),
     ...(e.pricing?.partner ? { pricing: { ...e.pricing, partner: { ...e.pricing.partner, name: "" } } } : {}),
   };
@@ -67,6 +73,7 @@ export type SessionVenue = {
   tables?: number | null;
   /** Cuisine du restaurant (fiche du lieu, docs/22 décision 41), révélée avec le lieu. */
   cuisine?: string | null;
+  cuisineI18n?: { ar?: string; en?: string } | null;
   /** Après la date : l'équipe note le lieu (« bien » ou « à revoir »). */
   rating?: "good" | "bad" | null;
 };

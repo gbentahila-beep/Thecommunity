@@ -1,4 +1,4 @@
-import { cleanQuestion, experienceInputSchema, MOROCCO_TIMEZONE, parseCoords, PAYMENT_MODELS, planSessionDates, resolveCommission, splitForModel, wenzyPriceOf } from "@thecommunity/shared";
+import { cleanQuestion, experienceInputSchema, extraI18nFrom, linesI18n, MOROCCO_TIMEZONE, parseCoords, PAYMENT_MODELS, planSessionDates, resolveCommission, splitForModel, wenzyPriceOf } from "@thecommunity/shared";
 import { commissionRules, moroccoToday } from "../commissions/ledger";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -236,9 +236,11 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     // docs/22 : lieu secret → la cuisine est révélée avec le lieu (rangée dans le document privé).
     cuisine: secret ? null : v.cuisine || null,
     ambiance: v.ambiance || null,
-    included: (v.included ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
-    notIncluded: (v.notIncluded ?? "").split("\n").map((l) => l.trim()).filter(Boolean).map((fr) => ({ fr })),
-    practicalInfo: { fr: v.practicalInfo ?? "" },
+    // Arabe et anglais des textes secondaires (docs/22) ; la cuisine d'un lieu secret reste dans le document privé.
+    textI18n: extraI18nFrom(v, secret ? ["ambiance", "equipmentProvided", "whatToBring", "dressCode"] : ["ambiance", "cuisine", "equipmentProvided", "whatToBring", "dressCode"]),
+    included: linesI18n(v.included, v.includedAr, v.includedEn),
+    notIncluded: linesI18n(v.notIncluded, v.notIncludedAr, v.notIncludedEn),
+    practicalInfo: { fr: v.practicalInfo ?? "", ...(v.practicalInfoAr ? { ar: v.practicalInfoAr } : {}), ...(v.practicalInfoEn ? { en: v.practicalInfoEn } : {}) },
     cancellationPolicyId: v.cancellationPolicyId,
     // 18b / 18c : précisions pour les activités (facultatives).
     level: v.level ?? null,
@@ -321,6 +323,7 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     district: v.district,
     partnerName: partner?.exists ? String(partner.data()?.name ?? "") : "",
     cuisine: v.cuisine || "",
+    cuisineI18n: { ...(v.cuisineAr ? { ar: v.cuisineAr } : {}), ...(v.cuisineEn ? { en: v.cuisineEn } : {}) },
     updatedAt: FieldValue.serverTimestamp(),
   });
   if (isCreate) batch.set(ref, { ...experience, organizerId: ownerOrgId, nextSessionAt, ratingAvg: 0, ratingCount: 0, createdAt: FieldValue.serverTimestamp(), createdBy: actor.uid });

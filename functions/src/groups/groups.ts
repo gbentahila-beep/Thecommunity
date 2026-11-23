@@ -309,7 +309,7 @@ export async function revealGroupsCore(sessionId: string, actorUid: string): Pro
   const secret = e.venue?.revealPolicy === "on_group_reveal";
   const found = secret ? await sessionVenues(sessRef.id, s.experienceId, e) : null;
   if (found && (found.venues.length === 0 || found.venues.some((v) => !v.name || !v.address))) refuse("venue_missing", "Renseignez le lieu avant de le révéler.");
-  const venueOf = found ? venueByGroup(groups.docs.map((g) => ({ id: g.id, label: String(g.data().label ?? "") })), found.venues, found.cuisine) : null;
+  const venueOf = found ? venueByGroup(groups.docs.map((g) => ({ id: g.id, label: String(g.data().label ?? "") })), found.venues, found.cuisine, found.cuisineI18n) : null;
   const tablesFlow = isTablesFlow(e);
   const sums = tablesFlow ? summariesOf(participants, groupOf) : null;
   const batch = db.batch();
@@ -347,7 +347,7 @@ export async function revealGroupsCore(sessionId: string, actorUid: string): Pro
       const title = s.experienceSnapshot?.title?.[locale] ?? s.experienceSnapshot?.title?.fr ?? e.title?.fr ?? "";
       const venue = venueOf?.get(groupOf.get(p.uid)!.id);
       if (tablesFlow) {
-        const mail = venueRevealedMail({ locale, firstName: String(p.user.firstName ?? ""), title, when: dateTimeFor(startAt, locale), venue: venue ? `${venue.name}, ${venue.address}` : null, cuisine: venue?.cuisine ?? null, summary: summaryText(sums?.get(p.uid), locale), checkInFrom: hhmm(checkInFrom, locale), reservationId: p.reservationId });
+        const mail = venueRevealedMail({ locale, firstName: String(p.user.firstName ?? ""), title, when: dateTimeFor(startAt, locale), venue: venue ? `${venue.name}, ${venue.address}` : null, cuisine: ((locale === "ar" || locale === "en") && venue?.cuisineI18n?.[locale as "ar" | "en"]) || venue?.cuisine || null, summary: summaryText(sums?.get(p.uid), locale), checkInFrom: hhmm(checkInFrom, locale), reservationId: p.reservationId });
         return sendMail({ to: p.user.email, locale, ...mail, kind: "venue_revealed", refs: { reservationId: p.reservationId, sessionId: sessRef.id } });
       }
       const mail = groupRevealedMail({ locale, firstName: String(p.user.firstName ?? ""), title, when: dateTimeFor(startAt, locale), table: groupOf.get(p.uid)!.label, venue: venue ? `${venue.name}, ${venue.address}` : null, reservationId: p.reservationId });

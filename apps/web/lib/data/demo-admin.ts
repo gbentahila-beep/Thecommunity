@@ -108,6 +108,8 @@ export type Partner = {
   address?: string;
   /** Coordonnées GPS saisies (« lat, lng ») et position lue par le serveur. */
   coords?: string;
+  /** Cuisine en arabe et en anglais (le français est dans « cuisine »). */
+  cuisineI18n?: { ar?: string; en?: string } | null;
   geo?: { lat: number; lng: number } | null;
   contactPhone?: string;
   link?: string;

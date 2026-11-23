@@ -278,7 +278,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
       {showVenue && r.venue && (
         <VenueCard
           kind={venueKind}
-          detail={r.venue.cuisine}
+          detail={(locale === "ar" || locale === "en" ? r.venue.cuisineI18n?.[locale] : undefined) || r.venue.cuisine}
           name={r.venue.name}
           address={r.venue.address}
           geo={r.venue.geo}

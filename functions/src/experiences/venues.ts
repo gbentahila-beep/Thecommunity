@@ -9,31 +9,36 @@ import { refuse } from "../reservations/refuse";
 
 const TEAM = ["admin", "superadmin"] as const;
 
-export type RevealedVenue = { name: string; address: string; cuisine?: string; geo?: { lat: number; lng: number } };
+type I18n = { ar?: string; en?: string };
+export type RevealedVenue = { name: string; address: string; cuisine?: string; cuisineI18n?: I18n; geo?: { lat: number; lng: number } };
 
 /**
  * Lieux d'une date à lieu secret (docs/22, décision 15) : ceux renseignés pour la date, sinon le lieu habituel du
  * rendez-vous (document privé de l'expérience ; anciens documents : la fiche).
  */
-export async function sessionVenues(sessionId: string, experienceId: string, e: DocumentData): Promise<{ venues: SessionVenue[]; cuisine: string }> {
+export async function sessionVenues(sessionId: string, experienceId: string, e: DocumentData): Promise<{ venues: SessionVenue[]; cuisine: string; cuisineI18n?: I18n | null }> {
   const [own, hidden] = await Promise.all([db.doc(`sessions/${sessionId}/private/venues`).get(), db.doc(`experiences/${experienceId}/private/venue`).get()]);
   const h = hidden.data();
   const cuisine = String(h?.cuisine || e.cuisine || "");
+  const cuisineI18n: I18n | null = (h?.cuisineI18n as I18n | undefined) ?? (e.textI18n ? { ar: e.textI18n?.ar?.cuisine, en: e.textI18n?.en?.cuisine } : null);
   const list = (own.data()?.venues ?? []) as SessionVenue[];
-  if (list.length > 0) return { venues: list, cuisine };
+  if (list.length > 0) return { venues: list, cuisine, cuisineI18n };
   const name = String(h?.name || e.venue?.name || "");
   const address = String(h?.address || e.venue?.address || "");
-  return { venues: name || address ? [{ name, address, geo: h?.geo ?? null }] : [], cuisine };
+  return { venues: name || address ? [{ name, address, geo: h?.geo ?? null }] : [], cuisine, cuisineI18n };
 }
 
 /** Lieu de chaque table : les tables (Table 1, Table 2…) remplissent les lieux dans l'ordre (voir assignGroupsToVenues). */
-export function venueByGroup(groups: { id: string; label: string }[], venues: SessionVenue[], cuisine: string): Map<string, RevealedVenue> {
+export function venueByGroup(groups: { id: string; label: string }[], venues: SessionVenue[], cuisine: string, cuisineI18n?: I18n | null): Map<string, RevealedVenue> {
   const sorted = [...groups].sort((a, b) => byTableLabel(a.label, b.label));
   const idx = assignGroupsToVenues(sorted.length, venues);
   return new Map(sorted.map((g, i) => {
     const v = venues[idx[i]!]!;
     const c = v.cuisine || cuisine;
-    return [g.id, { name: v.name, address: v.address, ...(c ? { cuisine: c } : {}), ...(v.geo ? { geo: v.geo } : {}) }];
+    // Traductions : celles du lieu si sa cuisine est la sienne, sinon celles de l'événement.
+    const ci = v.cuisine ? v.cuisineI18n : cuisineI18n;
+    const clean = ci && (ci.ar || ci.en) ? { ...(ci.ar ? { ar: ci.ar } : {}), ...(ci.en ? { en: ci.en } : {}) } : null;
+    return [g.id, { name: v.name, address: v.address, ...(c ? { cuisine: c } : {}), ...(clean ? { cuisineI18n: clean } : {}), ...(v.geo ? { geo: v.geo } : {}) }];
   }));
 }
 
@@ -113,9 +118,9 @@ function defaultVenueDoc(v: SessionVenue, partnerName?: unknown) {
 
 /** Lieux déjà révélés : chaque participant reçoit le lieu de sa table s'il a changé. Renvoie le nombre de personnes prévenues. */
 export async function refreshRevealed(sessionId: string, experienceId: string, e: DocumentData): Promise<number> {
-  const { venues, cuisine } = await sessionVenues(sessionId, experienceId, e);
+  const { venues, cuisine, cuisineI18n } = await sessionVenues(sessionId, experienceId, e);
   const groups = await db.collection("groups").where("sessionId", "==", sessionId).get();
-  const byGroup = venueByGroup(groups.docs.map((g) => ({ id: g.id, label: String(g.data().label ?? "") })), venues, cuisine);
+  const byGroup = venueByGroup(groups.docs.map((g) => ({ id: g.id, label: String(g.data().label ?? "") })), venues, cuisine, cuisineI18n);
   const res = await db.collection("reservations").where("sessionId", "==", sessionId).get();
   let n = 0;
   for (const r of res.docs) {

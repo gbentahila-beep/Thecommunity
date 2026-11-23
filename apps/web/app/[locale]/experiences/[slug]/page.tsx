@@ -9,6 +9,7 @@ import {
   type CategoryKey,
   type Experience,
   restaurantBudget,
+  extraText,
 } from "@thecommunity/shared";
 import { Backpack, CalendarDays, Gem, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, UsersRound, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
@@ -156,7 +157,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
           icon: Gem,
           label: exp.venueTier ? t2(`tier_${exp.venueTier}`) : t("tierAny"),
           // Étape S : le budget sur place du restaurant vit ici, sous la gamme (plus d'encadré « Ce que vous payez »).
-          value: [budget ? t("tierBudget", { amount: budgetText(budget, lang) }) : "", exp.ambiance ?? ""].filter(Boolean).join(" · ") || t("tierLabel"),
+          value: [budget ? t("tierBudget", { amount: budgetText(budget, lang) }) : "", extraText(exp, "ambiance", exp.ambiance, locale)].filter(Boolean).join(" · ") || t("tierLabel"),
           link: { href: "/aide/gammes-des-tables", label: t("tierHelp") },
         }
       : { icon: Gauge, label: t(`level_${exp.level || "all"}`), value: t("levelLabel") },
@@ -270,9 +271,9 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
             {/* Tout le reste en une seule liste : à apporter, tenue, plein air, âge, alcool, infos pratiques, annulation. */}
             <Section title={t("goodToKnow")}>
               <ul className="space-y-3" data-testid="activity-details">
-                {exp.equipmentProvided && !includedText.includes(exp.equipmentProvided.trim().toLowerCase()) && <Detail icon={Backpack} label={t("equipmentProvided")} text={exp.equipmentProvided} />}
-                {exp.whatToBring && <Detail icon={Backpack} label={t("whatToBring")} text={exp.whatToBring} />}
-                {exp.dressCode && <Detail icon={Shirt} label={t("dressCode")} text={exp.dressCode} />}
+                {exp.equipmentProvided && !includedText.includes(exp.equipmentProvided.trim().toLowerCase()) && <Detail icon={Backpack} label={t("equipmentProvided")} text={extraText(exp, "equipmentProvided", exp.equipmentProvided, locale)} />}
+                {exp.whatToBring && <Detail icon={Backpack} label={t("whatToBring")} text={extraText(exp, "whatToBring", exp.whatToBring, locale)} />}
+                {exp.dressCode && <Detail icon={Shirt} label={t("dressCode")} text={extraText(exp, "dressCode", exp.dressCode, locale)} />}
                 {exp.outdoor && <Detail icon={CloudSun} label={t("outdoorTitle")} text={t("outdoorText")} />}
                 {exp.physicalActivity && <Detail icon={HeartPulse} label={t("physicalTitle")} text={richText(t.raw("physicalText") as string, "")} />}
                 {exp.alcoholServed === false && <Detail icon={Leaf} label={t("alcoholFree")} text="" />}

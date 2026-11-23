@@ -26,7 +26,7 @@ export const isAllocated = (e: DocumentData | undefined) => e?.venue?.revealPoli
 const TIER_LABELS: Record<string, string> = { casual: "Casual", premium: "Premium", exclusive: "Exclusive" };
 export const formatName = (e: DocumentData) => DEFAULT_EVENT_TEMPLATES.find((t) => t.id === (e.templateId || e.subcategoryId))?.name ?? String(e.title?.fr ?? "Rendez-vous");
 
-type PartnerDoc = HostPartner & { address?: string; geo?: { lat: number; lng: number } | null; contactEmail?: string; whatsapp?: string; contactPhone?: string; stats?: { requests?: number; accepted?: number } };
+type PartnerDoc = HostPartner & { address?: string; geo?: { lat: number; lng: number } | null; cuisineI18n?: { ar?: string; en?: string } | null; contactEmail?: string; whatsapp?: string; contactPhone?: string; stats?: { requests?: number; accepted?: number } };
 
 export async function activePartners(): Promise<PartnerDoc[]> {
   const snap = await db.collection("partners").where("status", "==", "active").get();
@@ -167,7 +167,7 @@ export async function runAllocation(sessionId: string, actorUid: string): Promis
       const ref = db.collection("venueRequests").doc();
       await ref.set({
         sessionId, experienceId: s.experienceId, partnerId: p.id, partnerName: p.name, partnerEmail: p.contactEmail ?? "", partnerWhatsapp: p.whatsapp || p.contactPhone || "",
-        address: p.address ?? "", geo: p.geo ?? null, cuisine: p.cuisine ?? "", title: String(e.title?.fr ?? ""), format: formatName(e), tier: e.venueTier ?? null, unit: p.unit ?? "table",
+        address: p.address ?? "", geo: p.geo ?? null, cuisine: p.cuisine ?? "", cuisineI18n: p.cuisineI18n ?? null, title: String(e.title?.fr ?? ""), format: formatName(e), tier: e.venueTier ?? null, unit: p.unit ?? "table",
         startAt: s.startAt, tables: line.tables, people: share, reference: `W-${ref.id.slice(0, 6).toUpperCase()}`, token: randomBytes(24).toString("base64url"),
         status: "sent", round, createdAt: FieldValue.serverTimestamp(), sentAt: FieldValue.serverTimestamp(), createdBy: actorUid,
         history: [{ at: Timestamp.now(), event: "created", by: actorUid }],
@@ -203,7 +203,7 @@ export async function checkAllocation(sessionId: string): Promise<boolean> {
   }
   const venues: SessionVenue[] = reqs.docs.map((d) => {
     const r = d.data();
-    return { partnerId: r.partnerId, name: String(r.partnerName ?? ""), address: String(r.address ?? ""), geo: r.geo ?? null, tables: Number(r.tables ?? 0), cuisine: String(r.cuisine ?? "") || null, rating: null };
+    return { partnerId: r.partnerId, name: String(r.partnerName ?? ""), address: String(r.address ?? ""), geo: r.geo ?? null, tables: Number(r.tables ?? 0), cuisine: String(r.cuisine ?? "") || null, cuisineI18n: r.cuisineI18n ?? null, rating: null };
   });
   await db.doc(`sessions/${sessionId}/private/venues`).set({ venues, updatedAt: FieldValue.serverTimestamp(), updatedBy: "allocation" });
   await sessRef.update({ "allocation.status": "confirmed", "allocation.confirmed": confirmed, "allocation.confirmedAt": FieldValue.serverTimestamp() });
@@ -266,7 +266,7 @@ export async function requestFixedVenue(sessionId: string, s: DocumentData, e: D
   const ref = db.collection("venueRequests").doc();
   await ref.set({
     sessionId, experienceId: s.experienceId, partnerId, partnerName: p.name, partnerEmail: p.contactEmail ?? "", partnerWhatsapp: p.whatsapp || p.contactPhone || "",
-    address: p.address ?? "", geo: p.geo ?? null, cuisine: p.cuisine ?? "", title: String(e.title?.fr ?? ""), format: formatName(e), tier: e.venueTier ?? null, unit: p.unit ?? "table",
+    address: p.address ?? "", geo: p.geo ?? null, cuisine: p.cuisine ?? "", cuisineI18n: p.cuisineI18n ?? null, title: String(e.title?.fr ?? ""), format: formatName(e), tier: e.venueTier ?? null, unit: p.unit ?? "table",
     startAt: s.startAt, tables: Math.max(1, needOf(people, e) || 1), people, reference: `W-${ref.id.slice(0, 6).toUpperCase()}`, token: randomBytes(24).toString("base64url"),
     status: "sent", fixed: true, round: 1, createdAt: FieldValue.serverTimestamp(), sentAt: FieldValue.serverTimestamp(), createdBy: "system",
     history: [{ at: Timestamp.now(), event: "created", by: "system" }],

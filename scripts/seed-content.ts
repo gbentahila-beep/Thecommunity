@@ -289,6 +289,57 @@ async function main() {
     await textsRef.set({ templateI18nAC: Timestamp.now() }, { merge: true });
     if (filled) console.log(`✅ Versions arabe et anglaise ajoutées à ${filled} événements issus des modèles.`);
   }
+  // Une fois : arabe et anglais des textes secondaires (Inclus, ambiance de la gamme, infos pratiques, matériel, à
+  // apporter, tenue) pour les événements issus des modèles, et cuisine des lieux du site d'essai. Seulement quand le
+  // français est celui du modèle (ou du lieu) : un texte modifié par l'équipe n'est jamais retraduit au hasard.
+  if (!(await textsRef.get()).get("extraI18nAD")) {
+    const { DEFAULT_EVENT_TEMPLATES } = await import("@thecommunity/shared");
+    const byId = new Map(DEFAULT_EVENT_TEMPLATES.map((t) => [t.id, t]));
+    const all = await db.collection("experiences").get();
+    let done = 0;
+    for (const e of all.docs) {
+      const t = byId.get(String(e.get("templateId") ?? ""));
+      if (!t) continue;
+      const x = t.values;
+      const tier = t.tiers?.[e.get("venueTier") as "casual" | "premium" | "exclusive"];
+      const patch: Record<string, unknown> = {};
+      const lines = (s?: string) => (s ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
+      const frIncluded = ((e.get("included") ?? []) as { fr: string }[]).map((i) => i.fr);
+      if (JSON.stringify(frIncluded) === JSON.stringify(lines(x.included)) && (x.includedAr || x.includedEn)) {
+        const ar = (x.includedAr ?? "").split("\n"), en = (x.includedEn ?? "").split("\n");
+        patch.included = frIncluded.map((fr, i) => ({ fr, ...(ar[i]?.trim() ? { ar: ar[i]!.trim() } : {}), ...(en[i]?.trim() ? { en: en[i]!.trim() } : {}) }));
+      }
+      const pi = tier?.practicalInfo ? { fr: tier.practicalInfo, ar: tier.practicalInfoAr, en: tier.practicalInfoEn } : { fr: x.practicalInfo, ar: x.practicalInfoAr, en: x.practicalInfoEn };
+      if (pi.fr && e.get("practicalInfo.fr") === pi.fr) patch.practicalInfo = { fr: pi.fr, ...(pi.ar ? { ar: pi.ar } : {}), ...(pi.en ? { en: pi.en } : {}) };
+      const i18n: Record<"ar" | "en", Record<string, string>> = { ar: {}, en: {} };
+      const amb = tier ? { fr: tier.ambiance, ar: tier.ambianceAr, en: tier.ambianceEn } : { fr: x.ambiance, ar: x.ambianceAr, en: x.ambianceEn };
+      if (amb.fr && e.get("ambiance") === amb.fr) { if (amb.ar) i18n.ar.ambiance = amb.ar; if (amb.en) i18n.en.ambiance = amb.en; }
+      for (const k of ["equipmentProvided", "whatToBring", "dressCode"] as const) {
+        if (x[k] && e.get(k) === x[k]) {
+          const ar = x[`${k}Ar` as const], en = x[`${k}En` as const];
+          if (ar) i18n.ar[k] = ar;
+          if (en) i18n.en[k] = en;
+        }
+      }
+      const textI18n = Object.fromEntries(Object.entries(i18n).filter(([, m]) => Object.keys(m).length));
+      if (Object.keys(textI18n).length) patch.textI18n = textI18n;
+      if (Object.keys(patch).length) {
+        await e.ref.update(patch);
+        done++;
+      }
+    }
+    let venuesDone = 0;
+    for (const p of CASABLANCA_VENUES) {
+      const ref = db.doc(`partners/${p.id}`);
+      const snap = await ref.get();
+      if (snap.exists && !snap.get("cuisineI18n") && p.cuisineI18n && snap.get("cuisine") === p.cuisine) {
+        await ref.update({ cuisineI18n: p.cuisineI18n });
+        venuesDone++;
+      }
+    }
+    await textsRef.set({ extraI18nAD: Timestamp.now() }, { merge: true });
+    console.log(`✅ Arabe et anglais des textes secondaires : ${done} événements, ${venuesDone} lieux.`);
+  }
   console.log(toAdd.length ? `✅ Démonstration : ${toAdd.length} expériences ajoutées (${toAdd.map((e) => e.id).join(", ")}), ${dates} dates (isDemo).` : "ℹ️  Démonstration : rien à ajouter.");
 }
 

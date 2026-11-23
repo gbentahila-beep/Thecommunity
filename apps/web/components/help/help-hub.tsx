@@ -85,14 +85,14 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
             })}
           </div>
         </HelpSearch>
-        <HelpContactCards audience={audience} />
+        <HelpContactCards />
       </PageShell>
     </>
   );
 }
 
 /** Bas de page commun : écrire à l'équipe, puis les encadrés lieux partenaires et organisateurs. */
-export async function HelpContactCards({ audience }: { audience: HelpAudience }) {
+export async function HelpContactCards() {
   const t = await getTranslations("help");
   return (
     <div className="mt-12 space-y-5" data-testid="help-contact-cards">

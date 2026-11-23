@@ -244,6 +244,8 @@ function HostingFields({ v, set, field, err, live }: {
         {err("exceptions")}
       </div>
       {field("cuisine", "Cuisine (révélée avec le lieu)", { placeholder: "Ex. méditerranéenne" })}
+      {field("cuisineAr", "Cuisine (arabe)", { dir: "rtl", lang: "ar", placeholder: "مثال: متوسطية" })}
+      {field("cuisineEn", "Cuisine (anglais)", { lang: "en", placeholder: "E.g. Mediterranean" })}
       {field("avgBudget", "Budget moyen par personne (DH)", { inputMode: "numeric" })}
       <div>
         <label htmlFor="pf-level" className="mb-1 block text-sm font-medium">Niveau</label>

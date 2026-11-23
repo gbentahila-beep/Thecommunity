@@ -7,6 +7,7 @@ import { ACTIVITY_LEVELS, MIN_AGE_FLOOR, MIN_AGE_MAX } from "./activity";
 import { questionnaireSchema } from "./questionnaire";
 import { zonedDateTimeToUtc } from "./time";
 import type { BookingMode, SpokenLanguage } from "./types";
+import { EXTRA_I18N_SHAPE } from "./extra-i18n";
 
 /**
  * Formulaire admin « Créer une expérience ». Même schéma côté navigateur (phase 2)
@@ -104,6 +105,8 @@ export const experienceInputSchema = z
     equipmentProvided: z.string().trim().max(300, "tooLong").optional().or(z.literal("")),
     whatToBring: z.string().trim().max(300, "tooLong").optional().or(z.literal("")),
     dressCode: z.string().trim().max(200, "tooLong").optional().or(z.literal("")),
+    /** Arabe et anglais des textes secondaires (includedAr, ambianceEn…), voir extra-i18n.ts. */
+    ...EXTRA_I18N_SHAPE,
     /** Âge minimum au-delà de 18 ans (vérifié par le serveur à la réservation). */
     minAge: z.coerce.number().int().min(MIN_AGE_FLOOR, "minAge").max(MIN_AGE_MAX, "tooMany").optional(),
     /** Étape 29 : public (« all » mixte, « women » réservé aux femmes : vérifié par le serveur à la réservation). */

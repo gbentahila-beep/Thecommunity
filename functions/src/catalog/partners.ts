@@ -23,10 +23,12 @@ export const adminSavePartner = onCall({ region: REGION }, async (req) => {
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const v = partnerInputSchema.safeParse(parsed.data.data);
   if (!v.success) invalidArgument(v.error.issues);
-  const { insurance, ...rest } = v.data;
+  const { insurance, cuisineAr, cuisineEn, ...rest } = v.data;
   const data = {
     ...rest,
     geo: parseCoords(rest.coords),
+    // Cuisine en arabe et en anglais (révélée avec le lieu, dans la langue du participant).
+    cuisineI18n: { ...(cuisineAr ? { ar: cuisineAr } : {}), ...(cuisineEn ? { en: cuisineEn } : {}) },
     defaultCommissionPercent: v.data.model === "commission" ? v.data.defaultCommissionPercent : 0,
     // 18c : assurance du lieu (vue par l'équipe), datée et signée par la personne qui l'a vérifiée.
     ...(insurance ? { insurance: { verified: insurance.verified, insurer: insurance.insurer ?? "", policyNumber: insurance.policyNumber ?? "", expiresOn: insurance.expiresOn ?? "", checkedBy: actor.uid } } : {}),

@@ -311,6 +311,30 @@ export function ExperienceForm({
   });
   const err = (k: string) => (errors[k] ? <p id={`e-${k}`} className="mt-1 text-xs text-red-700">{errors[k]}</p> : null);
   const errorCount = Object.keys(errors).length;
+  // Arabe et anglais des textes secondaires (Inclus, infos pratiques, ambiance…) : seuls ceux remplis en français s'affichent.
+  const EXTRA: { key: "included" | "notIncluded" | "practicalInfo" | "ambiance" | "cuisine" | "equipmentProvided" | "whatToBring" | "dressCode"; label: string; multi?: boolean }[] = [
+    { key: "included", label: "Inclus", multi: true },
+    { key: "notIncluded", label: "Pas inclus", multi: true },
+    { key: "practicalInfo", label: "Infos pratiques", multi: true },
+    { key: "ambiance", label: "Ambiance" },
+    { key: "cuisine", label: "Cuisine" },
+    { key: "equipmentProvided", label: "Matériel fourni" },
+    { key: "whatToBring", label: "À apporter" },
+    { key: "dressCode", label: "Tenue" },
+  ];
+  const extraFields = (lang: "ar" | "en") =>
+    EXTRA.filter((f) => String(v[f.key] ?? "").trim()).map((f) => {
+      const k = `${f.key}${lang === "ar" ? "Ar" : "En"}` as keyof ExperienceFormValues;
+      const props = { ...field(k), dir: lang === "ar" ? ("rtl" as const) : undefined, lang, value: String(v[k] ?? ""), onChange: (e: { target: { value: string } }) => set(k, e.target.value as never) };
+      const label = `${f.label} (${lang === "ar" ? "arabe" : "anglais"})`;
+      return (
+        <div key={k}>
+          <Label k={k} hint={f.multi && f.key !== "practicalInfo" ? "Une ligne par élément, dans le même ordre qu'en français." : undefined}>{label}</Label>
+          {f.multi ? <textarea {...props} rows={3} /> : <input {...props} />}
+          {err(k)}
+        </div>
+      );
+    });
 
   return (
     <form onSubmit={submit} noValidate className="space-y-5">
@@ -331,6 +355,7 @@ export function ExperienceForm({
             <div><Label k="titleAr">Titre (arabe)</Label><input {...field("titleAr")} dir="rtl" lang="ar" value={v.titleAr ?? ""} onChange={(e) => set("titleAr", e.target.value)} />{err("titleAr")}</div>
             <div><Label k="summaryAr" hint="Une phrase, affichée sur les cartes.">Accroche (arabe)</Label><input {...field("summaryAr")} dir="rtl" lang="ar" value={v.summaryAr ?? ""} onChange={(e) => set("summaryAr", e.target.value)} />{err("summaryAr")}</div>
             <div><Label k="descriptionAr">Description (arabe)</Label><textarea {...field("descriptionAr")} dir="rtl" lang="ar" rows={4} value={v.descriptionAr ?? ""} onChange={(e) => set("descriptionAr", e.target.value)} />{err("descriptionAr")}</div>
+            {extraFields("ar")}
           </div>
         </details>
         <details className="sm:col-span-2 rounded-xl border border-line p-4" open={Boolean(v.titleEn || v.summaryEn || v.descriptionEn)}>
@@ -340,6 +365,7 @@ export function ExperienceForm({
             <div><Label k="titleEn">Title (English)</Label><input {...field("titleEn")} lang="en" value={v.titleEn ?? ""} onChange={(e) => set("titleEn", e.target.value)} />{err("titleEn")}</div>
             <div><Label k="summaryEn">Summary (English)</Label><input {...field("summaryEn")} lang="en" value={v.summaryEn ?? ""} onChange={(e) => set("summaryEn", e.target.value)} />{err("summaryEn")}</div>
             <div><Label k="descriptionEn">Description (English)</Label><textarea {...field("descriptionEn")} lang="en" rows={4} value={v.descriptionEn ?? ""} onChange={(e) => set("descriptionEn", e.target.value)} />{err("descriptionEn")}</div>
+            {extraFields("en")}
           </div>
         </details>
         <div><Label k="categoryId">Univers</Label>

@@ -143,6 +143,8 @@ export type Experience = {
   budgetRange?: { min: number; max: number; currency: CurrencyCode } | null;
   cuisine?: string | null;
   ambiance?: string | null;
+  /** Textes secondaires en arabe et en anglais (ambiance, cuisine, matériel, à apporter, tenue…), voir extra-i18n.ts. */
+  textI18n?: import("./extra-i18n").ExtraI18n | null;
   included: LocalizedText[];
   /** Étape 23 : ce qui n'est pas compris dans le prix. */
   notIncluded?: LocalizedText[];
@@ -366,7 +368,7 @@ export type Reservation = {
     bookingMode: BookingMode;
   };
   /** Lieu exact : renseigné dès la réservation, ou à la révélation du groupe pour les dîners. */
-  venue?: { name: string; address: string; cuisine?: string; geo?: { lat: number; lng: number } | null };
+  venue?: { name: string; address: string; cuisine?: string; cuisineI18n?: { ar?: string; en?: string } | null; geo?: { lat: number; lng: number } | null };
   /** Régime, allergies, langues de table (5g) ; transmis au lieu seulement avec l'accord de la personne. */
   preferences?: { diet: string; allergies: string; languages: string[]; shareWithVenue: boolean };
   groupId?: string;

@@ -772,6 +772,15 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 
 **Corrigé** : la page Avis débordait sur téléphone (grille des avis).
 
+### Étape AD livrée (23 novembre) — tout en arabe et en anglais sur une fiche
+
+- Formulaire d'un événement : dans « Version arabe » et « Version anglaise », les textes secondaires remplis en français ont leur traduction : Inclus, Pas inclus, Infos pratiques, Ambiance, Cuisine, Matériel fourni, À apporter, Tenue (« Inclus » : une ligne par élément, dans le même ordre).
+- Enregistrement : « Inclus », « Pas inclus » et infos pratiques en trois langues ; les autres dans `textI18n` (`packages/shared/src/extra-i18n.ts`). La cuisine d'un lieu secret reste dans le document privé, avec ses traductions.
+- Fiche d'un lieu partenaire : « Cuisine (arabe) » et « Cuisine (anglais) », transmises jusqu'à la réservation (demandes aux lieux, lieux de la date, révélation) et dans l'e-mail « Votre lieu est révélé ».
+- Affichage : fiche de l'événement (gamme et ambiance, inclus, matériel, à apporter, tenue, infos pratiques) et carte du lieu dans la langue du site ; un champ non traduit affiche le français.
+- Les 14 modèles livrés sont traduits (dont l'ambiance de chaque gamme des Tables) ; un modèle enregistré reprend une traduction livrée seulement si son français n'a pas changé.
+- Site d'essai : une fois (repère `extraI18nAD`), les événements issus des modèles et les 12 restaurants reçoivent ces traductions, seulement quand le français est resté celui du modèle ou du lieu.
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes

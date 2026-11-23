@@ -1,4 +1,4 @@
-import { cleanQuestion, DEFAULT_CANCELLATION_POLICY, insuranceState, nextWeekdayDate, pricingOf, scheduleFor, type EventTemplate, type Experience, type OutingProposal, type TemplateValues, type VenueTier } from "@thecommunity/shared";
+import { cleanQuestion, DEFAULT_CANCELLATION_POLICY, EXTRA_I18N_KEYS, extraI18nValues, insuranceState, templateExtra, nextWeekdayDate, pricingOf, scheduleFor, type EventTemplate, type Experience, type OutingProposal, type TemplateValues, type VenueTier } from "@thecommunity/shared";
 import { toDraft } from "@/lib/questionnaire-draft";
 import type { ExperienceFormValues } from "@/components/admin/experience-form";
 import type { AdminData } from "@/lib/data/admin";
@@ -63,6 +63,11 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     paymentModel: e.paymentModel ?? "full_online", depositPercent: String(e.depositPercent ?? 30),
     status: e.status === "published" ? "published" : "draft",
     level: e.level ?? "", equipmentProvided: e.equipmentProvided ?? "", whatToBring: e.whatToBring ?? "", dressCode: e.dressCode ?? "",
+    // Arabe et anglais des textes secondaires.
+    ...extraI18nValues(e.textI18n),
+    includedAr: (e.included ?? []).map((i) => i.ar ?? "").join("\n").replace(/\s+$/, ""), includedEn: (e.included ?? []).map((i) => i.en ?? "").join("\n").replace(/\s+$/, ""),
+    notIncludedAr: (e.notIncluded ?? []).map((i) => i.ar ?? "").join("\n").replace(/\s+$/, ""), notIncludedEn: (e.notIncluded ?? []).map((i) => i.en ?? "").join("\n").replace(/\s+$/, ""),
+    practicalInfoAr: e.practicalInfo?.ar ?? "", practicalInfoEn: e.practicalInfo?.en ?? "",
     minAge: e.minAge ? String(e.minAge) : "", targetAgeMin: e.targetAgeMin ? String(e.targetAgeMin) : "", targetAgeMax: e.targetAgeMax ? String(e.targetAgeMax) : "", audience: e.audience === "women" ? "women" : "all", highlight: e.highlight ?? "auto", outdoor: Boolean(e.outdoor), physicalActivity: Boolean(e.physicalActivity),
     questionnaire: (e.questionnaire ?? []).map(toDraft),
   };
@@ -129,6 +134,7 @@ export function templateToValues(t: EventTemplate, tier: VenueTier | null, now: 
     pricingModel: x.pricingModel, partnerPriceDh: str(x.partnerPriceDh), budgetMinDh: str(x.budgetMinDh), budgetMaxDh: str(x.budgetMaxDh),
     venueTier: tier ?? "", cuisine: x.cuisine ?? "", ambiance: g?.ambiance ?? x.ambiance ?? "",
     included: x.included, practicalInfo: g?.practicalInfo ?? x.practicalInfo ?? "",
+    ...templateExtra(x, g),
     level: x.level ?? "", equipmentProvided: x.equipmentProvided ?? "", whatToBring: x.whatToBring ?? "", dressCode: x.dressCode ?? "",
     outdoor: x.outdoor, physicalActivity: x.physicalActivity, alcoholServed: x.alcoholServed, foodServed: x.categoryId === "eat",
     languages: x.languages, cancellationPolicyId: x.cancellationPolicyId, audience: x.audience,
@@ -161,6 +167,8 @@ export function valuesToTemplate(v: ExperienceFormValues, weekday: number): Temp
     cuisine: undefined, ambiance: v.categoryId === "eat" ? undefined : opt(v.ambiance),
     included: v.included ?? "", practicalInfo: opt(v.practicalInfo),
     level: v.level || undefined, equipmentProvided: opt(v.equipmentProvided), whatToBring: opt(v.whatToBring), dressCode: opt(v.dressCode),
+    // Arabe et anglais (sans la cuisine, propre au lieu, ni l'ambiance des Tables, propre à la gamme).
+    ...Object.fromEntries(EXTRA_I18N_KEYS.filter((k) => !k.startsWith("cuisine") && !(v.categoryId === "eat" && k.startsWith("ambiance"))).flatMap((k) => (opt(v[k]) ? [[k, opt(v[k])]] : []))),
     outdoor: v.outdoor, physicalActivity: v.physicalActivity, alcoholServed: v.alcoholServed,
     languages: v.languages, cancellationPolicyId: v.cancellationPolicyId, audience: v.audience === "women" ? "women" : "all",
     membersOnly: v.membersOnly, earlyAccessDays: v.membersOnly ? 0 : Number(v.earlyAccessDays) || 0,

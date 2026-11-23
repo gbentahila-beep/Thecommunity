@@ -83,7 +83,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
           </ul>
         </section>
       )}
-      <HelpContactCards audience={cat.audience} />
+      <HelpContactCards />
     </PageShell>
   );
 }

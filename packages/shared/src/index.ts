@@ -31,3 +31,4 @@ export * from "./venue";
 export * from "./event-templates";
 export * from "./tables";
 export * from "./allocation";
+export * from "./extra-i18n";

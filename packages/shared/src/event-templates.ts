@@ -5,6 +5,7 @@ import { SPOKEN_LANGUAGES } from "./profile";
 import { QUESTIONNAIRE_TEMPLATES, questionnaireSchema, type QuestionDef } from "./questionnaire";
 import type { VenueTier } from "./two-part";
 import type { BookingMode, SpokenLanguage } from "./types";
+import { EXTRA_I18N_KEYS, EXTRA_I18N_SHAPE, type ExtraI18nStrings } from "./extra-i18n";
 
 /**
  * Modèles d'événements (docs/22 § 5 et 7, docs/23) : toute création part d'un modèle qui pré-remplit tout, du titre
@@ -14,10 +15,11 @@ import type { BookingMode, SpokenLanguage } from "./types";
  */
 
 /** Ce qui change selon la gamme d'un modèle de Tables. */
-export type TemplateTier = { ambiance: string; practicalInfo?: string };
+export type TemplateTier = { ambiance: string; practicalInfo?: string; ambianceAr?: string; ambianceEn?: string; practicalInfoAr?: string; practicalInfoEn?: string };
 
 /** Réglages pré-remplis (mêmes noms que le formulaire d'expérience). */
-export type TemplateValues = {
+/** Les textes secondaires existent aussi en arabe et en anglais (includedAr, dressCodeEn…, voir extra-i18n.ts). */
+export type TemplateValues = ExtraI18nStrings & {
   titleFr: string;
   summaryFr: string;
   descriptionFr: string;
@@ -111,7 +113,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
   // ——— Tables ———
   {
     id: "cafe", name: "Café", image: "/images/modeles/cafe.webp", order: 1, isActive: true, builtIn: true,
-    tiers: { casual: { ambiance: "Cosy et détendue" }, premium: { ambiance: "Café de spécialité" }, exclusive: { ambiance: "Salon de thé raffiné" } },
+    tiers: { casual: { ambiance: "Cosy et détendue", ambianceAr: "دافئة ومريحة", ambianceEn: "Cosy and relaxed" }, premium: { ambiance: "Café de spécialité", ambianceAr: "قهوة مختصة", ambianceEn: "Specialty coffee" }, exclusive: { ambiance: "Salon de thé raffiné", ambianceAr: "صالون شاي راقٍ", ambianceEn: "Refined tea room" } },
     values: {
       ...TABLE, subcategoryId: "cafe", weekday: 6, time: "10:30",
       titleFr: "Café",
@@ -122,11 +124,12 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       titleEn: "Coffee", summaryEn: "A coffee, a table, and conversations with people you don't know yet.",
       descriptionEn: "A café chosen by our team, with people who have plenty to talk about. Order, chat, get to know each other, and stay as long as you like.",
       included: "La réservation du café",
+      includedAr: "حجز المقهى", includedEn: "The café booking",
     },
   },
   {
     id: "brunch", name: "Brunch", image: "/images/modeles/brunch.webp", order: 2, isActive: true, builtIn: true,
-    tiers: { casual: { ambiance: "Lumineuse et décontractée" }, premium: { ambiance: "Adresse tendance" }, exclusive: { ambiance: "Hôtel ou adresse d'exception" } },
+    tiers: { casual: { ambiance: "Lumineuse et décontractée", ambianceAr: "مشرقة ومريحة", ambianceEn: "Bright and relaxed" }, premium: { ambiance: "Adresse tendance", ambianceAr: "عنوان عصري", ambianceEn: "Trendy spot" }, exclusive: { ambiance: "Hôtel ou adresse d'exception", ambianceAr: "فندق أو عنوان استثنائي", ambianceEn: "Hotel or exceptional venue" } },
     values: {
       ...TABLE, subcategoryId: "brunch", weekday: 6, time: "11:30",
       titleFr: "Brunch",
@@ -137,11 +140,12 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       titleEn: "Brunch", summaryEn: "A shared brunch with people you don't know yet.",
       descriptionEn: "The weekend starts around a brunch, in a restaurant chosen by our team, with plenty of time to get to know each other.",
       included: "La réservation du restaurant",
+      includedAr: "حجز المطعم", includedEn: "The restaurant booking",
     },
   },
   {
     id: "dejeuner", name: "Déjeuner", image: "/images/modeles/dejeuner.webp", order: 3, isActive: true, builtIn: true,
-    tiers: { casual: { ambiance: "Simple et conviviale" }, premium: { ambiance: "Chic et décontractée" }, exclusive: { ambiance: "Haut de gamme" } },
+    tiers: { casual: { ambiance: "Simple et conviviale", ambianceAr: "بسيطة وودية", ambianceEn: "Simple and friendly" }, premium: { ambiance: "Chic et décontractée", ambianceAr: "أنيقة ومريحة", ambianceEn: "Smart casual" }, exclusive: { ambiance: "Haut de gamme", ambianceAr: "راقية", ambianceEn: "Upscale" } },
     values: {
       ...TABLE, subcategoryId: "dejeuner", weekday: 4, time: "12:30",
       titleFr: "Déjeuner",
@@ -152,11 +156,12 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       titleEn: "Lunch", summaryEn: "Your lunch break, at a table of strangers.",
       descriptionEn: "A change of scene mid-week: lunch in a restaurant chosen by our team, to chat and meet new faces.",
       included: "La réservation du restaurant",
+      includedAr: "حجز المطعم", includedEn: "The restaurant booking",
     },
   },
   {
     id: "diner", name: "Dîner", image: "/images/modeles/diner.webp", order: 4, isActive: true, builtIn: true,
-    tiers: { casual: { ambiance: "Conviviale" }, premium: { ambiance: "Chic et décontractée" }, exclusive: { ambiance: "Haut de gamme", practicalInfo: "Tenue soignée." } },
+    tiers: { casual: { ambiance: "Conviviale", ambianceAr: "ودية", ambianceEn: "Friendly" }, premium: { ambiance: "Chic et décontractée", ambianceAr: "أنيقة ومريحة", ambianceEn: "Smart casual" }, exclusive: { ambiance: "Haut de gamme", ambianceAr: "راقية", ambianceEn: "Upscale", practicalInfo: "Tenue soignée.", practicalInfoAr: "لباس أنيق.", practicalInfoEn: "Smart dress." } },
     values: {
       ...TABLE, subcategoryId: "diner", weekday: 3, time: "20:00",
       titleFr: "Dîner",
@@ -167,6 +172,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       titleEn: "Dinner", summaryEn: "A table, strangers, and a new place to discover.",
       descriptionEn: "Our signature format. People who have plenty to talk about, matched on their profiles, in a restaurant chosen by our team. An evening to meet new faces, at your own pace.",
       included: "La réservation du restaurant",
+      includedAr: "حجز المطعم", includedEn: "The restaurant booking",
     },
   },
   // ——— Bouger ———
@@ -183,6 +189,9 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       descriptionEn: "A 5 to 8 km route along the Corniche, in groups of similar pace. Run, chat, and those who want can stay on for a coffee.",
       pricingModel: "online_only",
       included: "Un parcours préparé",
+      includedAr: "مسار مُعدّ مسبقاً", includedEn: "A planned route",
+      whatToBringAr: "حذاء جري، ماء", whatToBringEn: "Running shoes, water",
+      dressCodeAr: "لباس رياضي", dressCodeEn: "Sportswear",
       whatToBring: "Chaussures de course, eau", dressCode: "Tenue de sport", level: "all", outdoor: true, physicalActivity: true,
       questionnaire: q("running"),
     },
@@ -200,6 +209,9 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       descriptionEn: "Games between players of similar level at a partner club. Beginner or experienced, everyone plays at their level, then those who want meet up for a drink.",
       pricingModel: "fixed_partner", partnerPriceDh: 120,
       included: "Le terrain réservé",
+      includedAr: "الملعب المحجوز", includedEn: "The booked court",
+      equipmentProvidedAr: "مضارب وكرات (يُؤكَّد مع النادي)", equipmentProvidedEn: "Rackets and balls (to be confirmed with the club)",
+      dressCodeAr: "لباس رياضي، حذاء رياضي نظيف", dressCodeEn: "Sportswear, clean trainers",
       equipmentProvided: "Raquettes et balles (à confirmer avec le club)", dressCode: "Sport, baskets propres", level: "all", physicalActivity: true,
       questionnaire: q("padel"),
     },
@@ -217,6 +229,10 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       descriptionEn: "A class open to everyone, led by a teacher at a partner venue: studio, garden or rooftop.",
       pricingModel: "fixed_partner", partnerPriceDh: 120,
       included: "Le cours",
+      includedAr: "الحصة", includedEn: "The class",
+      equipmentProvidedAr: "حصيرة", equipmentProvidedEn: "Mat",
+      whatToBringAr: "ماء", whatToBringEn: "Water",
+      dressCodeAr: "لباس مريح", dressCodeEn: "Comfortable clothing",
       equipmentProvided: "Tapis", whatToBring: "Eau", dressCode: "Souple", level: "all", physicalActivity: true,
       questionnaire: q("level"),
     },
@@ -235,6 +251,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       descriptionEn: "An hour of puzzles to solve together in a partner room, mixing regulars and beginners.",
       pricingModel: "fixed_partner", partnerPriceDh: 150,
       included: "La salle réservée",
+      includedAr: "القاعة المحجوزة", includedEn: "The booked room",
       level: "all",
       questionnaire: q("paintball"),
     },
@@ -252,6 +269,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       descriptionEn: "Easy-to-learn games in a partner board-game café. Tables change during the evening so you play with different people.",
       pricingModel: "variable_consumption", budgetMinDh: 40, budgetMaxDh: 80,
       included: "Les jeux\nLes règles expliquées",
+      includedAr: "الألعاب\nشرح القواعد", includedEn: "The games\nRules explained",
       questionnaire: [],
     },
   },
@@ -268,6 +286,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       descriptionEn: "Six rounds of quiz and blind test, hosted in a partner café or bar.",
       pricingModel: "variable_consumption", budgetMinDh: 60, budgetMaxDh: 120,
       included: "L'animation du quiz",
+      includedAr: "تنشيط المسابقة", includedEn: "The quiz host",
       questionnaire: q("paintball"),
     },
   },
@@ -284,6 +303,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       descriptionEn: "A space reserved for the group in a partner bar or rooftop, to meet new people at the end of the day.",
       pricingModel: "variable_consumption", budgetMinDh: 60, budgetMaxDh: 150,
       included: "Un espace réservé pour le groupe",
+      includedAr: "فضاء محجوز للمجموعة", includedEn: "A space reserved for the group",
       questionnaire: [],
     },
   },
@@ -300,6 +320,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       descriptionEn: "Practise the language of your choice with people who speak it, in a partner café. Tables change every 30 minutes.",
       pricingModel: "variable_consumption", budgetMinDh: 30, budgetMaxDh: 60,
       included: "Des tables par langue",
+      includedAr: "طاولات حسب اللغة", includedEn: "Tables by language",
       languages: ["fr", "en", "es", "ar", "darija"],
       questionnaire: q("langues"),
     },
@@ -318,6 +339,10 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       descriptionEn: "A ceramicist guides you to shape your piece (bowl, cup or small vase), in a small group.",
       pricingModel: "fixed_partner", partnerPriceDh: 300,
       included: "L'atelier guidé par un céramiste\nLa terre et la cuisson",
+      includedAr: "ورشة يرشدها خزّاف\nالطين والحرق في الفرن", includedEn: "A workshop led by a ceramicist\nClay and firing",
+      practicalInfoAr: "تُحرق القطعة وتُطلى في الورشة، وتُستلم بعد أسبوعين إلى ثلاثة.", practicalInfoEn: "Your piece is fired and glazed by the studio, ready to collect two to three weeks later.",
+      equipmentProvidedAr: "طين، أدوات، مئزر", equipmentProvidedEn: "Clay, tools, apron",
+      dressCodeAr: "ملابس لا تخشى عليها", dressCodeEn: "Clothes you don't mind getting dirty",
       practicalInfo: "Pièce cuite et émaillée par l'atelier, à récupérer deux à trois semaines plus tard.",
       equipmentProvided: "Terre, outils, tablier", dressCode: "Vêtements qui ne craignent rien", level: "beginner",
       questionnaire: q("workshop"),
@@ -336,6 +361,8 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       descriptionEn: "A walking tour with a local guide, your choice: downtown Art Deco, the Habous or the old medina.",
       pricingModel: "fixed_partner", partnerPriceDh: 120,
       included: "La visite guidée",
+      includedAr: "الجولة المصحوبة بمرشد", includedEn: "The guided tour",
+      whatToBringAr: "حذاء مريح، ماء", whatToBringEn: "Comfortable shoes, water",
       whatToBring: "Chaussures confortables, eau", outdoor: true,
       questionnaire: [],
     },
@@ -348,12 +375,28 @@ export const TEMPLATE_UNIVERSES = ["eat", "move", "discover", "create"] as const
 /** Modèles visibles : ceux de l'appli l'emportent sur ceux livrés avec le site (même identifiant). */
 export function mergeTemplates(saved: EventTemplate[], defaults: EventTemplate[] = DEFAULT_EVENT_TEMPLATES): EventTemplate[] {
   const byId = new Map(defaults.map((t) => [t.id, t]));
-  const LOCALIZED = ["titleAr", "summaryAr", "descriptionAr", "titleEn", "summaryEn", "descriptionEn"] as const;
+  const LOCALIZED = ["titleAr", "summaryAr", "descriptionAr", "titleEn", "summaryEn", "descriptionEn", ...EXTRA_I18N_KEYS] as const;
   for (const t of saved) {
     const d = byId.get(t.id);
     // Étape AC : un modèle enregistré avant les versions arabe et anglaise les reprend du modèle livré (champs vides seulement).
-    const filled = d ? Object.fromEntries(LOCALIZED.map((k) => [k, t.values[k] || d.values[k] || ""])) : {};
-    byId.set(t.id, { ...t, values: { ...t.values, ...filled }, builtIn: d?.builtIn ?? false });
+    // Une traduction livrée n'est reprise que si le texte français correspondant n'a pas été changé.
+    const base = (k: string) => { const b = k.replace(/(Ar|En)$/, ""); return (["title", "summary", "description"].includes(b) ? `${b}Fr` : b) as keyof TemplateValues; };
+    const filled = d ? Object.fromEntries(LOCALIZED.map((k) => [k, t.values[k] || (t.values[base(k)] === d.values[base(k)] ? d.values[k] : "") || ""])) : {};
+    // Gammes : l'arabe et l'anglais de l'ambiance et des infos pratiques sont repris quand le français est le même.
+    const tiers = t.tiers && d?.tiers
+      ? Object.fromEntries(Object.entries(t.tiers).map(([k, g]) => {
+          const dg = d.tiers?.[k as VenueTier];
+          const same = (a?: string, b?: string) => (a ?? "") === (b ?? "");
+          return [k, g && dg ? {
+            ...g,
+            ambianceAr: g.ambianceAr || (same(g.ambiance, dg.ambiance) ? dg.ambianceAr : undefined),
+            ambianceEn: g.ambianceEn || (same(g.ambiance, dg.ambiance) ? dg.ambianceEn : undefined),
+            practicalInfoAr: g.practicalInfoAr || (same(g.practicalInfo, dg.practicalInfo) ? dg.practicalInfoAr : undefined),
+            practicalInfoEn: g.practicalInfoEn || (same(g.practicalInfo, dg.practicalInfo) ? dg.practicalInfoEn : undefined),
+          } : g];
+        }))
+      : t.tiers;
+    byId.set(t.id, { ...t, ...(tiers ? { tiers } : {}), values: { ...t.values, ...filled }, builtIn: d?.builtIn ?? false });
   }
   return [...byId.values()].sort((a, b) => TEMPLATE_UNIVERSES.indexOf(a.values.categoryId as never) - TEMPLATE_UNIVERSES.indexOf(b.values.categoryId as never) || a.order - b.order || a.name.localeCompare(b.name, "fr"));
 }
@@ -381,10 +424,20 @@ export function nextWeekdayDate(weekday: number, now: Date = new Date()): string
   return d.toISOString().slice(0, 10);
 }
 
+/** Arabe et anglais d'un modèle (la gamme peut changer l'ambiance et les infos pratiques). */
+export function templateExtra(x: TemplateValues, g?: TemplateTier): ExtraI18nStrings {
+  const out: ExtraI18nStrings = Object.fromEntries(EXTRA_I18N_KEYS.flatMap((k) => (x[k] ? [[k, x[k]]] : [])));
+  if (g) {
+    if (g.ambiance) { out.ambianceAr = g.ambianceAr ?? ""; out.ambianceEn = g.ambianceEn ?? ""; }
+    if (g.practicalInfo) { out.practicalInfoAr = g.practicalInfoAr ?? ""; out.practicalInfoEn = g.practicalInfoEn ?? ""; }
+  }
+  return out;
+}
+
 /* ——— Enregistrement d'un modèle depuis l'appli ——— */
 
 const text = (max: number) => z.string().trim().max(max, "tooLong").optional().or(z.literal(""));
-const tierSchema = z.object({ ambiance: z.string().trim().max(60, "tooLong"), practicalInfo: text(1000) });
+const tierSchema = z.object({ ambiance: z.string().trim().max(60, "tooLong"), practicalInfo: text(1000), ambianceAr: text(60), ambianceEn: text(60), practicalInfoAr: text(1000), practicalInfoEn: text(1000) });
 
 export const templateValuesSchema = z.object({
   titleFr: z.string().trim().min(2, "tooShort").max(80, "tooLong"),
@@ -411,6 +464,7 @@ export const templateValuesSchema = z.object({
   practicalInfo: text(1000),
   level: z.enum(ACTIVITY_LEVELS).optional(),
   equipmentProvided: text(300), whatToBring: text(300), dressCode: text(200),
+  ...EXTRA_I18N_SHAPE,
   outdoor: z.boolean(),
   physicalActivity: z.boolean(),
   alcoholServed: z.boolean(),
@@ -467,6 +521,7 @@ export function templateExperienceInput(t: EventTemplate, o: { tier?: VenueTier 
     ...(x.budgetMaxDh !== undefined ? { budgetMaxDh: x.budgetMaxDh } : {}),
     venueTier: o.tier ?? "", ambiance: g?.ambiance ?? x.ambiance ?? "", cuisine: x.cuisine ?? "",
     included: x.included, practicalInfo: g?.practicalInfo ?? x.practicalInfo ?? "",
+    ...templateExtra(x, g),
     ...(x.level ? { level: x.level } : {}), equipmentProvided: x.equipmentProvided ?? "", whatToBring: x.whatToBring ?? "", dressCode: x.dressCode ?? "",
     outdoor: x.outdoor, physicalActivity: x.physicalActivity, foodServed: x.categoryId === "eat",
     audience: x.audience, membersOnly: x.membersOnly, earlyAccessDays: x.earlyAccessDays,
