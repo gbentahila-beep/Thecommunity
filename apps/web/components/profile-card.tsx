@@ -3,7 +3,8 @@
 import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { initialsOf, type MemberCard } from "@/lib/use-member";
+import { MemberAvatar } from "@/components/member-avatar";
+import { type MemberCard } from "@/lib/use-member";
 
 /** Carte « Prénom Nom — Votre profil › » (menu burger, page Menu) : ouvre la page Mon profil. */
 export function ProfileCard({ member, onNavigate, className = "" }: { member: MemberCard; onNavigate?: () => void; className?: string }) {
@@ -11,7 +12,7 @@ export function ProfileCard({ member, onNavigate, className = "" }: { member: Me
   const name = [member.firstName, member.lastName].filter(Boolean).join(" ");
   return (
     <Link href="/espace/compte" onClick={onNavigate} className={`flex items-center gap-3.5 rounded-2xl py-2 transition hover:bg-cream ${className}`} data-testid="profile-card">
-      <span className="grid size-12 shrink-0 place-items-center rounded-full bg-brand-100 font-semibold text-brand-900">{initialsOf(member)}</span>
+      <MemberAvatar uid={member.uid} photoPath={member.photoPath} size={48} />
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[16px] font-semibold text-ink">{name || t("account")}</span>
         <span className="block text-sm text-muted">{t("yourProfile")}</span>

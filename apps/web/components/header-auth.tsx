@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { initialsOf, useMember } from "@/lib/use-member";
+import { MemberAvatar } from "@/components/member-avatar";
+import { useMember } from "@/lib/use-member";
 
 /** En-tête (ordinateur) : « Se connecter » et « S'inscrire », ou les initiales (page Mon profil) une fois connecté·e. */
 export function HeaderAuth() {
@@ -14,8 +15,8 @@ export function HeaderAuth() {
       <div className="flex items-center gap-1">
         <Link href="/espace/reservations" className="rounded-full px-3 py-2 text-[15px] font-medium whitespace-nowrap text-ink hover:bg-cream-deep">{t("bookings")}</Link>
         <Link href="/espace/rencontres" className="rounded-full px-3 py-2 text-[15px] font-medium whitespace-nowrap text-ink hover:bg-cream-deep">{t("meet")}</Link>
-        <Link href="/espace/compte" aria-label={t("myProfile")} className="ms-1 grid size-10 place-items-center rounded-full bg-brand-100 text-sm font-semibold text-brand-900 transition hover:bg-brand-200">
-          {initialsOf(member)}
+        <Link href="/espace/compte" aria-label={t("myProfile")} className="ms-1 rounded-full ring-2 ring-transparent transition hover:ring-brand-200">
+          <MemberAvatar uid={member.uid} photoPath={member.photoPath} size={40} />
         </Link>
       </div>
     );

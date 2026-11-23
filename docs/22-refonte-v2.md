@@ -743,6 +743,17 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 - Côté participant, l'itinéraire, « Ouvrir dans Maps » et la carte pointent alors sur les coordonnées exactes ; sans coordonnées, la recherche se fait par nom et adresse comme avant.
 - Les restaurants du site d'essai n'ont pas de coordonnées : à saisir par l'équipe (les fiches modifiées ne sont pas écrasées par la mise à jour du site d'essai).
 
+### Avatar sur le profil (23 novembre)
+
+- La tête de Bab de chaque membre (ou sa photo) remplace les initiales partout où l'on voit son propre profil : page Mon profil, page Profil, carte du menu, bouton de l'en-tête sur ordinateur. C'est la même que celle que voient les autres dans le chat et Mon groupe.
+
+### Étape AC livrée (23 novembre) — modèles en arabe et en anglais
+
+- Les 14 modèles livrés ont maintenant un titre, une accroche et une description en arabe et en anglais (le formulaire d'un nouvel événement est pré-rempli dans les trois langues).
+- Un modèle déjà enregistré par l'équipe sans ces versions les reprend du modèle livré (champs vides seulement).
+- Site d'essai : une fois, les événements issus des modèles reçoivent les versions arabe et anglaise (repère `templateI18nAC`, champs vides seulement).
+- Restent en français seulement : « Inclus », ambiance de la gamme, infos pratiques, équipement (champs uniques du formulaire).
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes

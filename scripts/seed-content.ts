@@ -266,6 +266,29 @@ async function main() {
     await textsRef.set({ templateTextsR: Timestamp.now() }, { merge: true });
     if (refreshed) console.log(`✅ Textes des événements issus des modèles mis à jour : ${refreshed}.`);
   }
+  // Étape AC : une fois, les événements issus des modèles reçoivent les versions arabe et anglaise (champs vides seulement).
+  if (!(await textsRef.get()).get("templateI18nAC")) {
+    const { DEFAULT_EVENT_TEMPLATES } = await import("@thecommunity/shared");
+    const byId = new Map(DEFAULT_EVENT_TEMPLATES.map((t) => [t.id, t]));
+    const all = await db.collection("experiences").get();
+    let filled = 0;
+    for (const e of all.docs) {
+      const t = byId.get(String(e.get("templateId") ?? ""));
+      if (!t) continue;
+      const patch: Record<string, string> = {};
+      const v = t.values;
+      for (const [field, ar, en] of [["title", v.titleAr, v.titleEn], ["summary", v.summaryAr, v.summaryEn], ["description", v.descriptionAr, v.descriptionEn]] as const) {
+        if (ar && !e.get(`${field}.ar`)) patch[`${field}.ar`] = ar;
+        if (en && !e.get(`${field}.en`)) patch[`${field}.en`] = en;
+      }
+      if (Object.keys(patch).length) {
+        await e.ref.update(patch);
+        filled++;
+      }
+    }
+    await textsRef.set({ templateI18nAC: Timestamp.now() }, { merge: true });
+    if (filled) console.log(`✅ Versions arabe et anglaise ajoutées à ${filled} événements issus des modèles.`);
+  }
   console.log(toAdd.length ? `✅ Démonstration : ${toAdd.length} expériences ajoutées (${toAdd.map((e) => e.id).join(", ")}), ${dates} dates (isDemo).` : "ℹ️  Démonstration : rien à ajouter.");
 }
 

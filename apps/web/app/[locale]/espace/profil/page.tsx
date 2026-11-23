@@ -1,4 +1,5 @@
 import { ageOn } from "@thecommunity/shared";
+import { MemberAvatar } from "@/components/member-avatar";
 import { Eye, Pencil } from "lucide-react";
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
@@ -51,9 +52,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-center gap-4">
-        <span className="grid size-20 place-items-center rounded-full bg-brand-100 font-display text-3xl text-brand-900" aria-hidden>
-          {p.firstName.charAt(0)}
-        </span>
+        <MemberAvatar uid={p.uid} photoPath={p.photoPath} size={80} />
         <div className="flex-1">
           <h1 className="page-title">{p.firstName} {p.lastName}</h1>
           <p className="text-sm text-muted">{t("memberSince", { date: formatLongDate(p.createdAt, locale) })}</p>

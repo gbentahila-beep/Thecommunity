@@ -1,4 +1,5 @@
 import { carnetCredits, isMemberActive } from "@thecommunity/shared";
+import { MemberAvatar } from "@/components/member-avatar";
 import { BadgeCheck, Bell, ChevronRight, History, ReceiptText, SlidersHorizontal, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
@@ -48,13 +49,12 @@ export default async function AccountHubPage({ params }: PageProps<"/[locale]/es
   const city = p.cityId ? await getCity(p.cityId) : null;
   const member = isMemberActive(space.membership ?? null, space.now);
   const credits = carnetCredits(space.carnet ?? null, space.now);
-  const initials = `${p.firstName.charAt(0)}${(p.lastName ?? "").charAt(0)}`.toUpperCase();
   const since = p.createdAt ? new Intl.DateTimeFormat(locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR", { month: "long", year: "numeric" }).format(new Date(p.createdAt)) : null;
   return (
     <div className="space-y-6" data-testid="account-hub">
       <h1 className="page-title">{tn("myProfile")}</h1>
       <Link href="/espace/profil" className="card flex items-center gap-4 p-5 transition hover:shadow-float">
-        <span className="grid size-16 shrink-0 place-items-center rounded-full bg-brand-100 font-display text-2xl text-brand-900">{initials}</span>
+        <MemberAvatar uid={p.uid} photoPath={p.photoPath} size={64} />
         <span className="min-w-0 flex-1">
           <span className="block truncate font-display text-2xl font-medium text-brand-900">{p.firstName}</span>
           {city && <span className="block text-sm text-ink/80">{tr(city.name, locale)}</span>}

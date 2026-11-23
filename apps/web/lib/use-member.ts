@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { firebase } from "@/lib/firebase/client";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 
-export type MemberCard = { firstName: string; lastName: string; cityId: string; since: string | null };
+export type MemberCard = { uid: string; firstName: string; lastName: string; cityId: string; since: string | null; photoPath?: string };
 
 /**
  * Personne connectée, côté navigateur : `undefined` tant qu'on ne sait pas, `null` si personne n'est connecté,
@@ -23,6 +23,8 @@ export function useMember(): MemberCard | null | undefined {
       const d = snap?.data() ?? {};
       const created = d.createdAt?.toDate?.() as Date | undefined;
       setMember({
+        uid: u.uid,
+        photoPath: typeof d.photoPath === "string" && d.photoPath ? d.photoPath : undefined,
         firstName: String(d.firstName ?? u.displayName?.split(" ")[0] ?? ""),
         lastName: String(d.lastName ?? ""),
         cityId: String(d.cityId ?? ""),
