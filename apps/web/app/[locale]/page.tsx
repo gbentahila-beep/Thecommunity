@@ -151,13 +151,13 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           <div className="absolute inset-0 hidden bg-gradient-to-r from-ink/80 via-ink/40 to-transparent lg:block rtl:bg-gradient-to-l" />
         </div>
         <div className="relative z-10 mx-3 -mt-24 rounded-[1.75rem] bg-cream p-5 shadow-float sm:mx-6 sm:p-7 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-7xl lg:rounded-none lg:bg-transparent lg:px-8 lg:py-0 lg:shadow-none">
-          <div className="lg:max-w-xl">
+          <div className="text-center lg:max-w-xl lg:text-start">
             <h1 className="animate-fade-up font-display text-[2.3rem] leading-[1] font-semibold tracking-[-0.025em] text-brand-900 sm:text-6xl lg:text-[4.5rem] lg:text-white">
               {t("heroTitle1")}
               <br />
               <span className="text-gradient lg:bg-[linear-gradient(100deg,#ff8a6b,#d98bf0)]">{t("heroTitle2")}</span>
             </h1>
-            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-ink/75 [animation-delay:120ms] animate-fade-up lg:mt-5 lg:text-lg lg:text-white/85">{t("heroSubtitle")}</p>
+            <p className="mx-auto mt-3 max-w-md text-[15px] lg:mx-0 leading-relaxed text-ink/75 [animation-delay:120ms] animate-fade-up lg:mt-5 lg:text-lg lg:text-white/85">{t("heroSubtitle")}</p>
             <div className="mt-5 [animation-delay:220ms] animate-fade-up lg:mt-8">
               <PrimaryLink href="/experiences" className="w-full lg:w-auto">{t("heroCta")}</PrimaryLink>
             </div>

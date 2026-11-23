@@ -33,7 +33,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
   return (
     <div className="space-y-12" data-testid="member-home">
       <header>
-        <h1 className="page-title">{t("hello", { name: space.profile.firstName })}</h1>
+        <h1 className="page-title text-center">{t("hello", { name: space.profile.firstName })}</h1>
 
       </header>
 
@@ -108,7 +108,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
       <BabLineup seatLabel={tb("seat")} caption={tb("caption")} className="pt-4" />
 
       <section aria-labelledby="universes-title" className="space-y-4">
-        <div>
+        <div className="text-center">
           <h2 id="universes-title" className="section-title">{t("universesHeading")}</h2>
           <p className="text-sm text-muted">{t("universesText")}</p>
         </div>
@@ -117,7 +117,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
 
       {recommended.length > 0 && (
         <section aria-labelledby="reco-title" className="space-y-4">
-          <div>
+          <div className="text-center">
             <h2 id="reco-title" className="section-title">{t("recommended")}</h2>
             <p className="text-sm text-muted">{t("recommendedText")}</p>
           </div>

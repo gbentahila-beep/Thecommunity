@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/presse">
   return { title: PRESS.title[l], description: PRESS.intro[l] };
 }
 
-const h2 = "font-display text-3xl font-medium text-brand-900";
+const h2 = "text-center font-display text-3xl font-medium text-brand-900";
 const card = "rounded-[var(--radius-card)] bg-white p-5 shadow-card";
 
 /** Kit presse : présentation (3 longueurs), faits clés, équipe, logos, Babs, couleurs, typographies, photos, contact. */
@@ -170,9 +170,9 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
           <p className="mt-3 text-sm text-muted">{P.photosNote[l]}</p>
         </section>
 
-        <section aria-labelledby="contact-presse" className="overflow-hidden rounded-3xl bg-brand-50 p-6 ring-1 ring-brand-100 sm:p-10">
+        <section aria-labelledby="contact-presse" className="overflow-hidden rounded-3xl bg-brand-50 p-6 text-center ring-1 ring-brand-100 sm:p-10">
           <h2 id="contact-presse" className="section-title">{P.contactTitle[l]}</h2>
-          <p className="mt-3 max-w-2xl leading-relaxed text-muted">{P.contactText[l]}</p>
+          <p className="mx-auto mt-3 max-w-2xl leading-relaxed text-muted">{P.contactText[l]}</p>
           <Link href="/contact" className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-900 px-5 py-3 text-sm font-semibold text-white hover:bg-brand-800">
             <Mail className="size-4" aria-hidden />
             {P.contactCta[l]}

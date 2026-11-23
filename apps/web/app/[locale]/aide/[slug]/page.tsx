@@ -70,7 +70,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
       )}
       {related.length > 0 && (
         <section className="mt-12" aria-labelledby="related">
-          <h2 id="related" className="font-display text-2xl font-medium text-brand-900">{t("related")}</h2>
+          <h2 id="related" className="text-center font-display text-2xl font-medium text-brand-900">{t("related")}</h2>
           <ul className="mt-4 divide-y divide-line rounded-[var(--radius-card)] bg-white shadow-card">
             {related.map((r) => (
               <li key={r.slug}>

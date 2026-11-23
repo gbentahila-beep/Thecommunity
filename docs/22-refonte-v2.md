@@ -731,6 +731,11 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 - Lieu révélé (Tables) : plus de « Changer de date ». Une fois la rencontre commencée : plus de questionnaire ni de formulaire régime/allergies.
 - Démonstration : trois Tables pour voir tout le parcours (brunch de demain lieu révélé, dîner dans 20 min check-in ouvert, dîner commencé après l'arrivée).
 
+### Titres centrés partout (23 novembre)
+
+- Tous les titres de section (`.section-title`) sont centrés, connecté ou non : accueil, espace membre, Découvrir, À propos, Comment ça marche, avis, blog, presse, Mon groupe, pages organisateur et aide. Leurs surtitres et phrases d'introduction sont centrés avec eux. Le titre de l'accueil est centré sur téléphone (sur ordinateur il reste à gauche, posé sur le voile sombre de la photo) ; « Bonjour Salma » est centré. Seuls les titres d'articles dans une carte (blog) restent à gauche.
+- Chat de la table : il ne s'ouvre qu'au check-in de la personne (« Je suis là »), jamais avant ; il reste 14 jours dans Mon groupe.
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes

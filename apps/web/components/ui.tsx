@@ -12,7 +12,7 @@ export function SectionHeading({
   as?: "h1" | "h2";
 }) {
   return (
-    <div className="flex items-end justify-between gap-4">
+    <div className="flex flex-col items-center gap-2 text-center">
       <Tag className="section-title">{title}</Tag>
       {action && (
         <Link href={action.href} className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-brand-900 sm:flex">

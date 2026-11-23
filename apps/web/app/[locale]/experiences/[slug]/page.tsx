@@ -78,7 +78,7 @@ async function RetiredExperience({ title, categoryId, cityId }: { title: string;
       </div>
       {similar.length > 0 && (
         <section aria-labelledby="similar" className="mt-14">
-          <h2 id="similar" className="font-display text-2xl font-medium text-brand-900">{t("retiredSimilar")}</h2>
+          <h2 id="similar" className="text-center font-display text-2xl font-medium text-brand-900">{t("retiredSimilar")}</h2>
           <ul className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {similar.map((s) => (
               <li key={s.id}>

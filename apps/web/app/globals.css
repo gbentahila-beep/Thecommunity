@@ -126,7 +126,8 @@
     @apply font-display text-[2.1rem] leading-[1.05] font-semibold tracking-[-0.02em] text-balance text-brand-900 sm:text-[2.8rem];
   }
   .section-title {
-    @apply font-display text-[1.75rem] leading-[1.08] font-semibold tracking-[-0.02em] text-balance text-brand-900 sm:text-[2.2rem];
+    /* Titres de section centrés partout (connecté ou non) ; un titre dans une carte d'article reprend text-start. */
+    @apply text-center font-display text-[1.75rem] leading-[1.08] font-semibold tracking-[-0.02em] text-balance text-brand-900 sm:text-[2.2rem];
   }
   .eyebrow {
     @apply text-xs font-semibold tracking-[0.16em] text-muted uppercase;

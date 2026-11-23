@@ -306,7 +306,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
       {!filters.q && n === 0 && !category && <ForYou />}
       {results.undated.length > 0 && (
         <section aria-labelledby="undated-title" className="mx-auto max-w-4xl space-y-4 pt-6">
-          <div>
+          <div className="text-center">
             <h2 id="undated-title" className="section-title">{tc("undatedTitle")}</h2>
             <p className="mt-1 text-sm text-muted">{tc("undatedText")}</p>
           </div>

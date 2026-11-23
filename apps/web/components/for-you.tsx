@@ -28,7 +28,7 @@ export function ForYou() {
   if (items.length === 0) return null;
   return (
     <section aria-labelledby="for-you-title" className="space-y-4" data-testid="for-you">
-      <div>
+      <div className="text-center">
         <h2 id="for-you-title" className="font-display text-2xl font-medium text-brand-900">{t("title")}</h2>
         <p className="text-sm text-muted">{t("subtitle")}</p>
       </div>

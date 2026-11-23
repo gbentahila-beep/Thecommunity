@@ -119,7 +119,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
         </section>
 
         <section aria-labelledby="org-upcoming" className="space-y-4">
-          <h2 id="org-upcoming" className="font-display text-2xl font-medium text-brand-900">{t("upcoming")}</h2>
+          <h2 id="org-upcoming" className="text-center font-display text-2xl font-medium text-brand-900">{t("upcoming")}</h2>
           {next.length ? (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="organizer-activities">
               {next.map((s) => <ExperienceCard key={s.id} session={s} experience={s.experience} />)}
@@ -131,7 +131,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
 
         {undated.length > 0 && (
           <section aria-labelledby="org-undated" className="space-y-4">
-            <h2 id="org-undated" className="font-display text-2xl font-medium text-brand-900">{t("undated")}</h2>
+            <h2 id="org-undated" className="text-center font-display text-2xl font-medium text-brand-900">{t("undated")}</h2>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {undated.map((e) => <ExperienceCard key={e.id} experience={e} />)}
             </div>
@@ -140,7 +140,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
 
         {myReviews.length > 0 && (
           <section aria-labelledby="org-reviews" className="space-y-4">
-            <h2 id="org-reviews" className="font-display text-2xl font-medium text-brand-900">{t("reviews")}</h2>
+            <h2 id="org-reviews" className="text-center font-display text-2xl font-medium text-brand-900">{t("reviews")}</h2>
             <ul className="grid gap-4 sm:grid-cols-2">
               {myReviews.map((r) => (
                 <ReviewItem key={r.id} review={r} locale={locale} />

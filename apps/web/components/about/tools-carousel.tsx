@@ -45,11 +45,11 @@ export function ToolsCarousel({ tools, prevLabel, nextLabel, title, text, eyebro
   const arrow = "grid size-11 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-brand-700 disabled:cursor-default disabled:opacity-35 disabled:hover:border-line";
   return (
     <section aria-labelledby="tools-title" className="py-16">
-      <div className="flex items-end justify-between gap-6">
+      <div className="flex flex-col items-center gap-5 text-center">
         <div>
           <span className="inline-flex rounded-full bg-brand-100 px-4 py-1.5 text-sm font-semibold text-brand-900">{eyebrow}</span>
           <h2 id="tools-title" className="section-title mt-4">{title}</h2>
-          <p className="mt-3 max-w-2xl text-lg text-ink/75">{text}</p>
+          <p className="mx-auto mt-3 max-w-2xl text-lg text-ink/75">{text}</p>
         </div>
         <div className="hidden shrink-0 gap-2 sm:flex">
           <button type="button" onClick={() => scroll(-1)} disabled={edges.start} aria-label={prevLabel} className={arrow}>

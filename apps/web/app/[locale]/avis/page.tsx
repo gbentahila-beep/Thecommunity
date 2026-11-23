@@ -203,7 +203,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
 
           <section aria-labelledby="questions-title" className="space-y-4">
             <h2 id="questions-title" className="section-title">{t("questionsTitle")}</h2>
-            <p className="text-muted">{t("questionsIntro")}</p>
+            <p className="text-center text-muted">{t("questionsIntro")}</p>
             <div className="grid gap-4 md:grid-cols-3">
               {[
                 { title: t("qExperience"), rows: [{ label: t("qGroup"), value: detailAvg.group }, { label: t("qOrganisation"), value: detailAvg.organisation }] },

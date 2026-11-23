@@ -63,7 +63,7 @@ export async function FeaturedArticle({ a, locale }: { a: BlogArticle; locale: s
         <p className="text-sm text-muted">
           <span className="font-semibold text-ink">{t("startHere")}</span> · {catTitle(a.category, locale)} · {t("readTime", { minutes: a.minutes })}
         </p>
-        <h2 className="section-title mt-3">
+        <h2 className="section-title mt-3 text-start">
           <Link href={`/blog/${a.slug}`} className="after:absolute after:inset-0">{a.title[lang]}</Link>
         </h2>
         <p className="mt-3 text-[16px] leading-relaxed text-ink/75">{a.excerpt[lang]}</p>
@@ -136,7 +136,7 @@ export async function CityCard() {
       <span className="inline-flex items-center gap-1.5 rounded-full bg-cream-deep px-3 py-1.5 text-sm font-semibold text-ink">
         <MapPin className="size-4" aria-hidden /> Casablanca
       </span>
-      <h2 className="section-title mt-4">{t("cityCardTitle")}</h2>
+      <h2 className="section-title mt-4 text-start">{t("cityCardTitle")}</h2>
       <p className="mt-3 max-w-xl text-[16px] leading-relaxed text-ink/75">{t("cityCardText")}</p>
       <div className="mt-6 grid gap-3 sm:flex">
         <Link href="/experiences" className="btn btn-primary">

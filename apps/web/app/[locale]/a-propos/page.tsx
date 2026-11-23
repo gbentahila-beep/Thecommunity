@@ -68,9 +68,9 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
           <Image src="/images/photos/comment-groupe-2.webp" alt={ta("storyPhotoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
         </div>
         <div>
-          <p className="text-sm font-semibold tracking-[0.2em] text-brand-700 uppercase">{ta("storyEyebrow")}</p>
+          <p className="text-center text-sm font-semibold tracking-[0.2em] text-brand-700 uppercase">{ta("storyEyebrow")}</p>
           <h2 id="story" className="section-title mt-3">{ta("storyTitle")}</h2>
-          <p className="mt-1 text-muted">{ta("storySubtitle")}</p>
+          <p className="mt-1 text-center text-muted">{ta("storySubtitle")}</p>
           <div className="mt-6 space-y-4 text-[17px] leading-relaxed text-ink/85">
             <p>{ta("storyP1")}</p>
             <p>{ta("storyP2")}</p>
