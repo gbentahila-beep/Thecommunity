@@ -163,6 +163,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
             {holdOpen ? (transfer ? tv("pendingTitle") : t("pendingTitle")) : t("pendingExpiredTitle")}
           </h2>
           {paymentFlag === "refuse" && holdOpen && <p role="alert" className="mt-2 text-sm font-medium text-red-800">{t("paymentFailed")}</p>}
+          {paymentFlag === "en-cours" && holdOpen && <p role="status" className="mt-2 text-sm font-medium text-ink">{t("paymentPending")}</p>}
           <p className="mt-1 text-sm" data-testid={transfer ? "transfer-pending" : undefined}>
             {!holdOpen
               ? t("expiredText")

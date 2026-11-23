@@ -8,6 +8,7 @@ import { invalidArgument, requireRole, roleOf } from "../lib/guards";
 import { refuse } from "../reservations/refuse";
 import { applyPaymentEvent } from "./apply-event";
 import { bankTransferProvider } from "./providers/bank-transfer";
+import { cmiCredentials, cmiSecretsOption } from "./providers/cmi";
 
 const idSchema = z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/);
 
@@ -51,7 +52,8 @@ export const adminCompleteManualRefund = onCall({ region: REGION }, async (req) 
   const refRef = db.doc(`payments/${refundId}`);
   const done = await db.runTransaction(async (tx) => {
     const r = (await tx.get(refRef)).data();
-    if (!r || r.type !== "refund" || r.provider !== bankTransferProvider.id) throw new HttpsError("not-found", "Remboursement introuvable.", { reason: "not_found" });
+    // Virement, ou carte CMI tant que l'API de remboursement du CMI n'est pas ouverte (remboursement fait dans l'espace commerçant).
+    if (!r || r.type !== "refund" || ![bankTransferProvider.id, "cmi"].includes(String(r.provider))) throw new HttpsError("not-found", "Remboursement introuvable.", { reason: "not_found" });
     if (r.status !== "initiated") refuse("already_processed", "Ce remboursement est déjà marqué effectué.");
     const parentRef = db.doc(`payments/${r.parentPaymentId}`);
     const parent = (await tx.get(parentRef)).data();
@@ -75,14 +77,17 @@ export const adminCompleteManualRefund = onCall({ region: REGION }, async (req) 
  * Mode de paiement (super-admin) : paiement de TEST ou virement bancaire. Le virement exige des coordonnées
  * complètes (titulaire, banque, RIB de 24 chiffres). Journalisé (avant / après, RIB masqué dans le journal).
  */
-export const adminSavePaymentSettings = onCall({ region: REGION }, async (req) => {
+export const adminSavePaymentSettings = onCall({ region: REGION, ...cmiSecretsOption() }, async (req) => {
   const actor = requireRole(req, ["superadmin"]);
   const parsed = paymentSettingsInputSchema.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const v = parsed.data;
   const before = (await db.doc("settings/payment").get()).data() ?? null;
   const batch = db.batch();
-  if (v.method === "bank_transfer") {
+  if (v.method === "cmi") {
+    if (!cmiCredentials()) refuse("cmi_not_configured", "Identifiants CMI absents : ajoutez CMI_CLIENT_ID et CMI_STORE_KEY en secrets Cloud (docs/24).");
+    batch.set(db.doc("settings/payment"), { provider: "cmi", mode: v.mode, updatedAt: FieldValue.serverTimestamp(), updatedBy: actor.uid });
+  } else if (v.method === "bank_transfer") {
     batch.set(db.doc("settings/bankTransfer"), { ...v.bank, updatedAt: FieldValue.serverTimestamp(), updatedBy: actor.uid });
     batch.set(db.doc("settings/payment"), { provider: bankTransferProvider.id, mode: "live", updatedAt: FieldValue.serverTimestamp(), updatedBy: actor.uid });
   } else {

@@ -866,7 +866,8 @@
     "cancelPassLate": "Votre place est incluse dans votre pass : annuler à moins de 24 h du début compte comme une absence (un avertissement, puis le pass est suspendu 2 semaines à la deuxième).",
     "cancelDoneLate": "Réservation annulée. Annulation à moins de 24 h d'une place incluse dans votre pass : elle compte comme une absence.",
     "cancelDonePending": "Réservation annulée : {amount} vous seront remboursés, le remboursement est en cours.",
-    "reviewPending": "Merci pour votre avis : il est en cours de vérification par l'équipe avant d'être publié."
+    "reviewPending": "Merci pour votre avis : il est en cours de vérification par l'équipe avant d'être publié.",
+    "paymentPending": "Paiement en cours de confirmation par la banque : cette page se mettra à jour dans quelques instants."
   },
   "profilePage": {
     "title": "Mon profil",
@@ -2170,5 +2171,14 @@
     "openMaps": "Ouvrir dans Maps",
     "directions": "Itinéraire",
     "mapLabel": "Carte : {name}"
+  },
+  "cmi": {
+    "title": "Paiement sécurisé",
+    "text": "Vous allez être redirigé·e vers la page de paiement du CMI pour régler {amount} par carte bancaire.",
+    "cta": "Payer par carte",
+    "secure": "Paiement 3D Secure opéré par le CMI (Centre Monétique Interbancaire) : vos données de carte ne passent jamais par Wenzy.",
+    "cancel": "Revenir sans payer",
+    "doneTitle": "Ce paiement est déjà traité.",
+    "back": "Voir ma réservation"
   }
 }

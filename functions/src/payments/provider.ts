@@ -1,6 +1,7 @@
 import { HttpsError } from "firebase-functions/v2/https";
 import { db } from "../lib/admin";
 import { bankDetailsSchema, type BankDetails } from "@thecommunity/shared";
+import { cmiCredentials, cmiProvider } from "./providers/cmi";
 import { bankTransferProvider } from "./providers/bank-transfer";
 import { sandboxProvider } from "./providers/sandbox";
 
@@ -28,7 +29,7 @@ export interface PaymentProvider {
   }>;
 }
 
-const PROVIDERS: Record<string, PaymentProvider> = { [sandboxProvider.id]: sandboxProvider, [bankTransferProvider.id]: bankTransferProvider };
+const PROVIDERS: Record<string, PaymentProvider> = { [sandboxProvider.id]: sandboxProvider, [bankTransferProvider.id]: bankTransferProvider, [cmiProvider.id]: cmiProvider };
 
 export type PaymentSettings = { provider: string; mode: "test" | "live" };
 
@@ -45,6 +46,10 @@ export async function paymentSettings(): Promise<PaymentSettings> {
   }
   // L'adaptateur de test ne peut jamais fonctionner en mode réel.
   if (provider === sandboxProvider.id && mode !== "test") {
+    throw new HttpsError("failed-precondition", "Paiement indisponible.", { reason: "payments_unavailable" });
+  }
+  // Audit 23/11 : carte (CMI) seulement si les identifiants du magasin sont configurés (secrets Cloud).
+  if (provider === cmiProvider.id && !cmiCredentials()) {
     throw new HttpsError("failed-precondition", "Paiement indisponible.", { reason: "payments_unavailable" });
   }
   // Virement : jamais sans coordonnées bancaires complètes (le client doit savoir où virer).

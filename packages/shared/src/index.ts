@@ -33,3 +33,4 @@ export * from "./tables";
 export * from "./allocation";
 export * from "./extra-i18n";
 export * from "./ics";
+export * from "./cmi";

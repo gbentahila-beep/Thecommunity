@@ -974,7 +974,7 @@ describe("factures, avoirs et e-mails (5c)", () => {
     expect(await pdfExists(inv!.pdfPath)).toBe(true);
     const mails = await mailsFor(`inv_${paymentId}`);
     expect(mails).toHaveLength(1);
-    expect(mails[0]).toMatchObject({ status: "outbox", provider: "outbox", kind: "reservation_invoice", locale: "en", to: `facture.${run}@example.com`, attachments: [{ filename: `${inv!.number}.pdf` }] });
+    expect(mails[0]).toMatchObject({ status: "outbox", provider: "outbox", kind: "reservation_invoice", locale: "en", to: `facture.${run}@example.com`, attachments: [{ filename: `${inv!.number}.pdf` }, { filename: "wenzy.ics", contentType: "text/calendar" }] });
     expect(mails[0]!.subject).toBe("You're booked: Atelier test");
     expect(mails[0]!.text).toContain("TEST payment");
   });

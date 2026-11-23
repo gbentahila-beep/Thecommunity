@@ -86,7 +86,8 @@ export async function getServiceFee(): Promise<ServiceFee | null> {
 
 /** Mode de paiement (5h) : test ou virement, et coordonnées bancaires de Wenzy (équipe seulement). */
 export type PaymentSettingsView = {
-  method: "sandbox" | "bank_transfer" | "none";
+  method: "sandbox" | "bank_transfer" | "cmi" | "none";
+  mode?: "test" | "live";
   bank: { holder: string; bank: string; rib: string; iban: string; swift: string; deadlineHours: number; cutoffHours: number } | null;
 };
 
@@ -97,7 +98,8 @@ export async function getPaymentSettings(): Promise<PaymentSettingsView | null> 
   const p = pay.data();
   const b = bank.data();
   return {
-    method: p?.provider === "bank_transfer" ? "bank_transfer" : p?.provider === "sandbox" ? "sandbox" : "none",
+    method: p?.provider === "bank_transfer" ? "bank_transfer" : p?.provider === "sandbox" ? "sandbox" : p?.provider === "cmi" ? "cmi" : "none",
+    mode: p?.mode === "live" ? "live" : "test",
     bank: b
       ? { holder: String(b.holder ?? ""), bank: String(b.bank ?? ""), rib: String(b.rib ?? ""), iban: String(b.iban ?? ""), swift: String(b.swift ?? ""), deadlineHours: Number(b.deadlineHours ?? 48), cutoffHours: Number(b.cutoffHours ?? 24) }
       : null,

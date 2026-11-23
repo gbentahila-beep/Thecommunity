@@ -83,3 +83,18 @@ describe("audit 23/11 — invitation agenda", () => {
     expect(a.split("\r\n").every((l) => new TextEncoder().encode(l).length <= 75)).toBe(true);
   });
 });
+
+import { cmiAmount, cmiApproved, cmiCents, cmiHashInput } from "./index";
+
+describe("audit 23/11 — CMI", () => {
+  it("texte signé : clés triées sans casse, sans hash ni encoding, valeurs échappées, clé du magasin à la fin", () => {
+    const input = cmiHashInput({ oid: "A|1", amount: "35.00", clientid: "600", HASH: "x", encoding: "UTF-8", BillToName: "a\\b" }, "KEY|1");
+    expect(input).toBe("35.00|a\\\\b|600|A\\|1|KEY\\|1");
+  });
+  it("montants et réponse", () => {
+    expect(cmiAmount(3500)).toBe("35.00");
+    expect(cmiCents("35,00")).toBe(3500);
+    expect(cmiApproved({ ProcReturnCode: "00", Response: "Approved" })).toBe(true);
+    expect(cmiApproved({ ProcReturnCode: "05", Response: "Declined" })).toBe(false);
+  });
+});

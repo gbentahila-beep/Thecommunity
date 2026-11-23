@@ -14,6 +14,8 @@ import { expireDueHolds } from "../../functions/src/reservations/expire-holds";
 import { retryPendingRefunds } from "../../functions/src/refunds/retry";
 import { sendArrivalChecks } from "../../functions/src/notify/arrival";
 import { sendDueReminders } from "../../functions/src/notify/reminders";
+import { processCmiCallback } from "../../functions/src/payments/cmi-callback";
+import { cmiFormFor, cmiHash } from "../../functions/src/payments/providers/cmi";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -519,5 +521,55 @@ describe("lot 5 — e-mails prêts pour Brevo", () => {
     await team.call("adminCancelReservation", { reservationId: rid, refund: "full", reason: "Lieu fermé" });
     const [m] = await mails(rid, "reservation_cancelled_by_team");
     expect(Buffer.from(m!.attachments[0].content, "base64").toString("utf8")).toContain("STATUS:CANCELLED");
+  });
+});
+
+describe("lot 6 — CMI (préparé, testé sans le CMI)", () => {
+  const KEY = "cle-magasin-de-test";
+  /** Réservation en attente de paiement avec un paiement CMI « initié » (comme après startCheckout). */
+  async function pendingCmi() {
+    const { sid } = await makeExperience({ startInHours: 80, price: 3500 });
+    const u = await member();
+    const { reservationId } = await u.call("createReservation", { sessionId: sid, seats: 1 });
+    const payRef = db().collection("payments").doc();
+    await payRef.set({ reservationId, userId: u.uid, type: "payment", provider: "cmi", mode: "test", amount: 3500, currency: "MAD", status: "initiated", processedEventIds: [], createdAt: Timestamp.now() });
+    await db().doc(`reservations/${reservationId}`).update({ paymentId: payRef.id });
+    return { reservationId: reservationId as string, paymentId: payRef.id };
+  }
+  const signed = (fields: Record<string, string>) => ({ ...fields, HASH: cmiHash(fields, KEY) });
+
+  it("formulaire envoyé au CMI : champs attendus et signature vérifiable", async () => {
+    process.env.CMI_CLIENT_ID = "600000000";
+    process.env.CMI_STORE_KEY = KEY;
+    const form = await cmiFormFor({ paymentId: "pay123", amount: 3500, description: "Atelier — 1 place(s)", mode: "test", locale: "fr" });
+    expect(form.action).toBe("https://testpayment.cmi.co.ma/fim/est3Dgate");
+    expect(form.fields).toMatchObject({ clientid: "600000000", amount: "35.00", currency: "504", oid: "pay123", storetype: "3D_PAY_HOSTING", hashAlgorithm: "ver3" });
+    const { HASH, ...rest } = form.fields;
+    expect(cmiHash(rest, KEY)).toBe(HASH);
+    delete process.env.CMI_CLIENT_ID;
+    delete process.env.CMI_STORE_KEY;
+  });
+
+  it("notification signée et acceptée : place confirmée, une seule fois ; signature fausse : refusée", async () => {
+    const { reservationId, paymentId } = await pendingCmi();
+    expect(await processCmiCallback({ oid: paymentId, amount: "35.00", ProcReturnCode: "00", Response: "Approved", TransId: "T1", HASH: "faux" }, KEY)).toMatchObject({ reply: "FAILURE" });
+    expect((await reservation(reservationId)).status).toBe("pending_payment");
+    const body = signed({ oid: paymentId, amount: "35.00", ProcReturnCode: "00", Response: "Approved", TransId: "T1", clientid: "600000000" });
+    expect(await processCmiCallback(body, KEY)).toEqual({ reply: "ACTION=POSTAUTH", outcome: "confirmed" });
+    expect((await reservation(reservationId)).status).toBe("confirmed");
+    expect(await processCmiCallback(body, KEY)).toEqual({ reply: "ACTION=POSTAUTH", outcome: "duplicate" });
+  });
+
+  it("paiement refusé par la banque : réservation toujours en attente (la personne peut réessayer)", async () => {
+    const { reservationId, paymentId } = await pendingCmi();
+    expect(await processCmiCallback(signed({ oid: paymentId, amount: "35.00", ProcReturnCode: "05", Response: "Declined", TransId: "T2" }), KEY)).toEqual({ reply: "FAILURE", outcome: "failed" });
+    expect((await reservation(reservationId)).status).toBe("pending_payment");
+    expect((await db().doc(`payments/${paymentId}`).get()).data()!.status).toBe("failed");
+  });
+
+  it("montant différent de celui calculé par le serveur : remboursé, place non confirmée", async () => {
+    const { reservationId, paymentId } = await pendingCmi();
+    expect(await processCmiCallback(signed({ oid: paymentId, amount: "1.00", ProcReturnCode: "00", Response: "Approved", TransId: "T3" }), KEY)).toMatchObject({ outcome: "refunded" });
+    expect((await reservation(reservationId)).status).toBe("pending_payment");
   });
 });

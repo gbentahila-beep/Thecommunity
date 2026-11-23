@@ -74,6 +74,8 @@ export type BankDetails = z.infer<typeof bankDetailsSchema>;
 export const paymentSettingsInputSchema = z.discriminatedUnion("method", [
   z.object({ method: z.literal("sandbox") }),
   z.object({ method: z.literal("bank_transfer"), bank: bankDetailsSchema }),
+  /** Audit 23/11 (lot 6) : carte bancaire par le CMI, environnement de test du CMI ou réel. */
+  z.object({ method: z.literal("cmi"), mode: z.enum(["test", "live"]) }),
 ]);
 export type PaymentSettingsInput = z.infer<typeof paymentSettingsInputSchema>;
 

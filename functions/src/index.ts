@@ -25,6 +25,7 @@ export { createReservation } from "./reservations/create-reservation";
 export { expireHolds } from "./reservations/expire-holds";
 export { startCheckout } from "./payments/start-checkout";
 export { sandboxCompletePayment } from "./payments/sandbox-complete";
+export { cmiCallback } from "./payments/cmi-callback";
 export { purgePreferences } from "./maintenance/purge-preferences";
 export { transferReminders } from "./payments/transfer-reminders";
 export { submitContactMessage, submitPartnerApplication } from "./public/forms";

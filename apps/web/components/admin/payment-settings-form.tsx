@@ -20,7 +20,8 @@ const MESSAGES: Record<string, string> = {
 export function PaymentSettingsForm({ initial, canEdit }: { initial: PaymentSettingsView; canEdit: boolean }) {
   const router = useRouter();
   const b = initial.bank;
-  const [method, setMethod] = useState<"sandbox" | "bank_transfer">(initial.method === "bank_transfer" ? "bank_transfer" : "sandbox");
+  const [method, setMethod] = useState<"sandbox" | "bank_transfer" | "cmi">(initial.method === "bank_transfer" || initial.method === "cmi" ? initial.method : "sandbox");
+  const [cmiMode, setCmiMode] = useState<"test" | "live">(initial.mode === "live" && initial.method === "cmi" ? "live" : "test");
   const [v, setV] = useState({
     holder: b?.holder ?? "", bank: b?.bank ?? "", rib: b?.rib ?? "", iban: b?.iban ?? "", swift: b?.swift ?? "",
     deadlineHours: String(b?.deadlineHours ?? TRANSFER_DEADLINE_HOURS), cutoffHours: String(b?.cutoffHours ?? TRANSFER_CUTOFF_HOURS),
@@ -42,7 +43,7 @@ export function PaymentSettingsForm({ initial, canEdit }: { initial: PaymentSett
       className="space-y-4"
       onSubmit={async (e) => {
         e.preventDefault();
-        const data = method === "sandbox" ? { method } : { method, bank: v };
+        const data = method === "sandbox" ? { method } : method === "cmi" ? { method, mode: cmiMode } : { method, bank: v };
         const parsed = paymentSettingsInputSchema.safeParse(data);
         if (!parsed.success) {
           const next: Record<string, string> = {};
@@ -58,7 +59,8 @@ export function PaymentSettingsForm({ initial, canEdit }: { initial: PaymentSett
           await fetch("/api/admin/revalidate", { method: "POST" }).catch(() => undefined); // textes de paiement du site (étape 28)
           setState("saved");
           router.refresh();
-        } catch {
+        } catch (err) {
+          if ((err as { details?: { reason?: string } }).details?.reason === "cmi_not_configured") setErrors({ cmi: "Identifiants CMI absents côté serveur : ajoutez les secrets CMI_CLIENT_ID et CMI_STORE_KEY (docs/24), puis réessayez." });
           setState("error");
         }
       }}
@@ -67,7 +69,17 @@ export function PaymentSettingsForm({ initial, canEdit }: { initial: PaymentSett
         <legend className="sr-only">Mode de paiement</legend>
         <label className="flex items-start gap-2"><input type="radio" name="pay-method" className="mt-1" checked={method === "sandbox"} onChange={() => { setMethod("sandbox"); setState("idle"); }} /><span><strong>Paiement de test</strong> — aucun argent, documents « TEST » (pour essayer le site).</span></label>
         <label className="flex items-start gap-2"><input type="radio" name="pay-method" className="mt-1" checked={method === "bank_transfer"} onChange={() => { setMethod("bank_transfer"); setState("idle"); }} /><span><strong>Virement bancaire</strong> — référence unique, place bloquée jusqu&apos;à l&apos;échéance, validation dans « Virements ».</span></label>
+        <label className="flex items-start gap-2"><input type="radio" name="pay-method" className="mt-1" checked={method === "cmi"} onChange={() => { setMethod("cmi"); setState("idle"); }} /><span><strong>Carte bancaire (CMI)</strong> — paiement 3D Secure sur la page du CMI, place confirmée à la notification du CMI. Remboursements à faire depuis l&apos;espace commerçant CMI, puis à marquer effectués dans « Remboursements ».</span></label>
       </fieldset>
+      {method === "cmi" && (
+        <fieldset className="space-y-2 rounded-xl border border-line p-4 text-sm" disabled={!canEdit}>
+          <legend className="px-1 font-semibold text-ink">Environnement CMI</legend>
+          <label className="flex items-start gap-2"><input type="radio" name="cmi-mode" className="mt-1" checked={cmiMode === "test"} onChange={() => setCmiMode("test")} /><span><strong>Test CMI</strong> — cartes de test fournies par le CMI, aucun argent réel.</span></label>
+          <label className="flex items-start gap-2"><input type="radio" name="cmi-mode" className="mt-1" checked={cmiMode === "live"} onChange={() => setCmiMode("live")} /><span><strong>Réel</strong> — seulement après la validation des essais par le CMI.</span></label>
+          <p className="text-xs text-muted">Les identifiants du magasin (CMI_CLIENT_ID, CMI_STORE_KEY) sont des secrets Cloud, jamais saisis ici. Adresse de retour serveur à donner au CMI : fonction « cmiCallback » (docs/24).</p>
+          {errors.cmi && <p role="alert" className="text-xs text-red-700">{errors.cmi}</p>}
+        </fieldset>
+      )}
       {method === "bank_transfer" && (
         <fieldset className="grid gap-3 rounded-xl border border-line p-4 sm:grid-cols-2" disabled={!canEdit}>
           <legend className="px-1 text-sm font-semibold text-ink">Coordonnées bancaires de la société</legend>

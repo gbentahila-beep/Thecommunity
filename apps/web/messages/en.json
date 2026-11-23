@@ -866,7 +866,8 @@
     "cancelPassLate": "Your seat is included in your pass: cancelling within 24 hours of the start counts as a no-show (a warning, then a 2-week pass suspension at the second).",
     "cancelDoneLate": "Booking cancelled. Cancelling a pass seat within 24 hours counts as a no-show.",
     "cancelDonePending": "Booking cancelled: {amount} will be refunded, the refund is in progress.",
-    "reviewPending": "Thank you for your review: the team is checking it before it's published."
+    "reviewPending": "Thank you for your review: the team is checking it before it's published.",
+    "paymentPending": "Payment being confirmed by the bank: this page will update in a moment."
   },
   "profilePage": {
     "title": "My profile",
@@ -2170,5 +2171,14 @@
     "openMaps": "Open in Maps",
     "directions": "Directions",
     "mapLabel": "Map: {name}"
+  },
+  "cmi": {
+    "title": "Secure payment",
+    "text": "You're being redirected to the CMI payment page to pay {amount} by card.",
+    "cta": "Pay by card",
+    "secure": "3D Secure payment handled by CMI (Centre Monétique Interbancaire): your card details never go through Wenzy.",
+    "cancel": "Go back without paying",
+    "doneTitle": "This payment has already been processed.",
+    "back": "View my booking"
   }
 }
