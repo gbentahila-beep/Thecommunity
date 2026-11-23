@@ -72,7 +72,7 @@ async function payOnTestPage(page) {
   const page = await open();
   globalThis.__page = page;
   await login(page, yasmine, `/reserver/${sid}`);
-  await page.getByRole('button', { name: /Réserver et payer/ }).click();
+  await page.getByRole('button', { name: /^Réserver$/ }).click();
   assert(await payOnTestPage(page), 'réservation payée (paiement de test)');
   const rid = page.url().split('/espace/reservations/')[1].split('?')[0];
   const invoices = async () => (await fsList('invoices')).filter((d) => d.fields.userId.stringValue === yasmine.uid);

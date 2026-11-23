@@ -39,7 +39,7 @@ async function login(page, who, suite) {
 }
 async function bookAndPay(page, sid) {
   await page.goto(`${base}/reserver/${sid}`);
-  await page.getByRole('button', { name: /Réserver et payer/ }).click();
+  await page.getByRole('button', { name: /^Réserver$/ }).click();
   await page.waitForURL('**/paiement-test/**', { timeout: 20000 });
   await page.getByRole('button', { name: 'Simuler un paiement accepté' }).click();
   await page.waitForURL('**/espace/reservations/**', { timeout: 20000 });

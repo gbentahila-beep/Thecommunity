@@ -70,7 +70,7 @@ async function login(page, who, suite) {
   // 2. Demande
   await login(member, nadia, `/reserver/${sid}`);
   assert(await visible(member.getByRole('heading', { name: 'Participation sur demande' })), 'tunnel : explication (paiement seulement après acceptation)');
-  assert(await member.getByRole('button', { name: /Réserver et payer/ }).count() === 0, 'pas de paiement immédiat');
+  assert(await member.getByRole('button', { name: /^Réserver$/ }).count() === 0, 'pas de paiement immédiat');
   await member.getByLabel('Pourquoi souhaitez-vous participer ?').fill('Nouvelle à Casablanca, j’adore les tables où l’on refait le monde.');
   // 11h : l'équipe coche « Compte Instagram obligatoire » dans le back-office
   const boss = await open({ viewport: { width: 1366, height: 900 } });

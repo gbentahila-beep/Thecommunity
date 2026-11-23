@@ -412,7 +412,15 @@
     "passLimit": "Votre pass couvre déjà 2 réservations à venir : celle-ci se paie (ou avec votre carnet).",
     "useCarnet": "{count, plural, one {Utiliser mon carnet (# crédit restant)} other {Utiliser mon carnet (# crédits restants)}}",
     "weekPassHint": "Plusieurs sorties cette semaine ?",
-    "weekPassCta": "Pass 1 semaine, 49 DH"
+    "weekPassCta": "Pass 1 semaine, 49 DH",
+    "onlineLine": "En ligne",
+    "onSiteLine": "Sur place",
+    "onSitePerPerson": "{amount} par personne",
+    "onSiteBudget": "Votre consommation (≈ {amount})",
+    "onSiteConsumption": "Votre consommation",
+    "onSiteNothing": "Rien",
+    "secretVenueShort": "Lieu révélé {hours} h avant",
+    "bookShort": "Réserver"
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -1113,7 +1121,7 @@
   },
   "request": {
     "noteTitle": "Participation sur demande",
-    "noteText": "Pour garder des groupes harmonieux, l'équipe valide chaque inscription. Vous ne payez qu'une fois votre demande acceptée, et vous aurez alors 24 h pour le faire.",
+    "noteText": "L'équipe valide votre demande, puis vous avez 24 h pour payer.",
     "messageLabel": "Pourquoi souhaitez-vous participer ?",
     "messagePlaceholder": "Quelques mots sur vous et ce qui vous attire dans cette expérience…",
     "messageRequired": "Un petit message est demandé pour cette expérience.",

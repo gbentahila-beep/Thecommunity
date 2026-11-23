@@ -78,7 +78,7 @@ async function bookable(exp) {
   await page.waitForURL(`**/reserver/${sid}`, { timeout: 25000 });
   const terms = page.getByTestId('physical-terms');
   if (await terms.count()) await terms.getByRole('checkbox').check();
-  await page.getByRole('button', { name: /Réserver et payer/ }).click();
+  await page.getByRole('button', { name: /^Réserver$/ }).click();
   await page.waitForURL('**/paiement-test/**', { timeout: 25000 });
   await page.getByRole('button', { name: 'Simuler un paiement accepté' }).click();
   await page.waitForURL('**/espace/reservations/**', { timeout: 30000 });

@@ -103,7 +103,7 @@ async function payOnTestPage(page) {
   assert(await visible(page.getByText(new RegExp(`Code ${code} appliqué`))), 'code appliqué');
   const discount = Math.round(price * 0.2 / 100) * 100;
   const total = price - discount + 1000;
-  const cta = page.getByRole('button', { name: /Réserver et payer/ });
+  const cta = page.getByRole('button', { name: /^Réserver$/ });
   const ctaText = (await cta.textContent()).replace(/\s/g, '');
   assert(ctaText.includes(String(total / 100)), `montant du bouton = prix − 20 % + 10 DH (${total / 100} DH)`);
   await page.getByText('Pour votre accueil (facultatif)').click();

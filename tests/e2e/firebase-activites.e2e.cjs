@@ -65,7 +65,7 @@ async function bookable(exp, seats) {
 /** Réserve par le tunnel, avec la case des conditions d'activité physique, puis paiement de TEST accepté. */
 async function bookWithTerms(page, sid, uid) {
   await page.waitForURL(`**/reserver/${sid}`, { timeout: 20000 });
-  const cta = page.getByRole('button', { name: /Réserver et payer|Réserver gratuitement|Recevoir les coordonnées/ });
+  const cta = page.getByRole('button', { name: /^Réserver$|Réserver gratuitement|Recevoir les coordonnées/ });
   await cta.click();
   assert(await visible(page.getByText('Cochez la case pour accepter les conditions de participation aux activités physiques.')), 'tunnel : la case des conditions est obligatoire');
   await page.getByTestId('physical-terms').getByRole('checkbox').check();
@@ -125,7 +125,7 @@ async function bookWithTerms(page, sid, uid) {
   await login(pc, young.email, young.password, `/reserver/${sidPb}`);
   await pc.waitForURL(`**/reserver/${sidPb}`, { timeout: 20000 });
   await pc.getByTestId('physical-terms').getByRole('checkbox').check();
-  await pc.getByRole('button', { name: /Réserver et payer|Recevoir les coordonnées/ }).click();
+  await pc.getByRole('button', { name: /^Réserver$|Recevoir les coordonnées/ }).click();
   assert(await visible(pc.getByText('Cette expérience demande un âge minimum plus élevé que le vôtre.')), 'paintball : âge minimum vérifié par le serveur (19 ans refusé)');
 
   // 4. Équipe : réponses visibles dans les groupes, proposition de l'algorithme

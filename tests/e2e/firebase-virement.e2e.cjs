@@ -91,8 +91,8 @@ async function login(page, email, password, suite) {
   await page.waitForURL(`**/reserver/${sid}`, { timeout: 20000 });
   assert(await visible(page.getByText(/Paiement par virement bancaire : après la réservation/)), 'tunnel : paiement par virement annoncé');
   assert(!(await page.getByText('Paiement en mode test').isVisible()), 'tunnel : plus de mention « mode test »');
-  const cta = page.getByRole('button', { name: /par virement/ });
-  assert(await visible(cta), 'tunnel : bouton « Réserver et payer … par virement »');
+  const cta = page.getByRole('button', { name: /^Réserver$/ });
+  assert(await visible(cta), 'tunnel : bouton « Réserver »');
   assert(await page.getByText(/bloquée jusqu'à réception du virement : 48 h maximum/).isVisible(), 'tunnel : place bloquée 48 h maximum');
   await cta.click();
   await page.waitForURL('**/paiement/virement/**', { timeout: 25000 });

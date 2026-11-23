@@ -83,7 +83,7 @@ async function login(page, email, password, suite) {
   assert(await visible(onSite), 'tunnel : bloc « À régler sur place »');
   const onSiteText = await onSite.innerText();
   assert(onSiteText.includes('80 DH') && onSiteText.includes('au lieu partenaire'), 'tunnel : 80 DH sur place, lieu non dévoilé avant la veille');
-  const cta = page.getByRole('button', { name: /Réserver et payer/ });
+  const cta = page.getByRole('button', { name: /^Réserver$/ });
   const ctaText = (await cta.textContent()).replace(/\s/g, '');
   assert(!ctaText.includes('139'), `bouton de paiement : la part sur place n'est pas facturée en ligne (${ctaText})`);
 

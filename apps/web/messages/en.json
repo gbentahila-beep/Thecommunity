@@ -412,7 +412,15 @@
     "passLimit": "Your pass already covers 2 upcoming bookings: this one is paid (or with your pack).",
     "useCarnet": "{count, plural, one {Use my pack (# credit left)} other {Use my pack (# credits left)}}",
     "weekPassHint": "Several outings this week?",
-    "weekPassCta": "1-week pass, 49 DH"
+    "weekPassCta": "1-week pass, 49 DH",
+    "onlineLine": "Online",
+    "onSiteLine": "On site",
+    "onSitePerPerson": "{amount} per person",
+    "onSiteBudget": "What you order (≈ {amount})",
+    "onSiteConsumption": "What you order",
+    "onSiteNothing": "Nothing",
+    "secretVenueShort": "Venue revealed {hours} h before",
+    "bookShort": "Book"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -1113,7 +1121,7 @@
   },
   "request": {
     "noteTitle": "On request",
-    "noteText": "To keep groups well balanced, the team approves every participant. You only pay once your request is accepted, and you then have 24 hours to do so.",
+    "noteText": "The team approves your request, then you have 24 h to pay.",
     "messageLabel": "Why would you like to join?",
     "messagePlaceholder": "A few words about you and what draws you to this experience…",
     "messageRequired": "A short message is required for this experience.",

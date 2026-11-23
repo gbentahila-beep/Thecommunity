@@ -704,3 +704,12 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 | **Doublons (site d'essai)** | Une fois, au déploiement : titres des événements des modèles sans la gamme, et doublons retirés (même modèle et même gamme, créés par la Vitrine puis par le déploiement). On garde celui qui a des réservations ; sinon celui du déploiement (textes à jour). |
 
 **Fiche reproductible** : la structure ne dépend pas des modèles. Elle est fixée par le site pour tous les événements, ceux des modèles comme ceux créés à la main : 6 cases dans le même ordre, puis L'expérience et Inclus, Bon à savoir, Avis. Les modèles ne fournissent que le contenu (textes, format, gamme, budget) ; ils ont été allégés à l'étape R pour ne rien répéter de l'encadré.
+
+### Étape T livrée (23 novembre) — page de réservation allégée
+| Avant | Après |
+|---|---|
+| Carte « billet » des Tables (date, langues, tables de 4 à 6, fermeture, révélation, « Comment on compose les tables » en 4 étapes) au-dessus du récapitulatif | Retirée : tout est déjà sur la fiche ; le récapitulatif dit « Lieu révélé 5 h avant » |
+| « Prix unitaire 35 DH + sur place », « Places restantes 24 », carte « Conditions d'annulation », carte « À régler sur place : selon votre consommation, réglé directement au lieu partenaire » | Une seule carte : En ligne 35 DH ; Sur place Rien / 120 DH par personne / Votre consommation (≈ 150–250 DH) ; puis la politique d'annulation en petit (et « Plus que 3 places » seulement s'il en reste peu) |
+| Bandeau jaune « Paiement en mode test… » | Une petite ligne près du bouton |
+| Bouton « Réserver et payer 35 DH » ; « Votre place est bloquée 15 minutes le temps du paiement. » | Bouton « Réserver » ; phrase retirée (gardée seulement pour le virement, qui a un délai à connaître) |
+| « Participation sur demande : pour garder des groupes harmonieux… » | « L'équipe valide votre demande, puis vous avez 24 h pour payer. » |

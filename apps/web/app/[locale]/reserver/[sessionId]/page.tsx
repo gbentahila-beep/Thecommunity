@@ -1,4 +1,4 @@
-import { bookingClosesAt, isTablesFlow, revealAtFor, bookingRefusal, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
+import { bookingRefusal, formatMoney, LOW_SEATS_THRESHOLD, VENUE_REVEAL_HOURS, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -9,7 +9,7 @@ import { VerifyEmailBanner } from "@/components/auth/verify-email-banner";
 import { BookingForm } from "@/components/booking/booking-form";
 import { CancelRequestButton, RequestForm } from "@/components/booking/request-form";
 import { WaitlistBox } from "@/components/booking/waitlist-box";
-import { memberAmountFor, PriceTag } from "@/components/price-tag";
+import { budgetText, memberAmountFor } from "@/components/price-tag";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAccountState, getSessionUser } from "@/lib/auth/session";
@@ -105,7 +105,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   const personal = visitor?.state === "ready" && Boolean((onRequest && visitor.request && visitor.request.status !== "cancelled") || visitor.booked);
   const here = `/reserver/${sessionId}`;
   const maxSeats = Math.min(maxSeatsFor(exp), Math.max(1, seatsAvailable(session)));
-  const [plan, tCard, tm, t2] = await Promise.all([getMembershipPlan(), getTranslations("card"), getTranslations("membership"), getTranslations("twoPart")]);
+  const [plan, tCard, tm] = await Promise.all([getMembershipPlan(), getTranslations("card"), getTranslations("membership")]);
   const twoPart = pricingOf(exp);
   const memberAmount = memberAmountFor(plan, session.price, exp);
   const isMember = Boolean(visitor?.member);
@@ -115,6 +115,13 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   const earlyLocked = Boolean(earlyUntil && !isMember && isAfterNow(earlyUntil));
   const membersLocked = Boolean(exp.membersOnly && !isMember);
 
+  const budget = restaurantBudget(exp);
+  const onSiteValue =
+    twoPart?.model === "fixed_partner" && twoPart.partner?.price
+      ? t("onSitePerPerson", { amount: formatMoney(twoPart.partner.price, lang) })
+      : twoPart?.model === "variable_consumption"
+        ? budget ? t("onSiteBudget", { amount: budgetText(budget, lang) }) : t("onSiteConsumption")
+        : t("onSiteNothing");
   return (
     <PageShell className="max-w-3xl py-8">
       <Link href={`/experiences/${exp.slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-brand-900">
@@ -122,8 +129,6 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         {t("back")}
       </Link>
       <h1 className="page-title mt-4">{onRequest ? tr2("pageTitle") : t("title")}</h1>
-
-      {isTablesFlow(exp) && <TablesTicket exp={exp} startAt={session.startAt} locale={locale} />}
 
       <section className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card">
         <div className="flex gap-4 p-4">
@@ -140,31 +145,27 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             </p>
             <p className="flex items-center gap-2 text-sm text-muted">
               <MapPin className="size-4 shrink-0 text-brand-700" aria-hidden />
-              {placeLabel(exp.district, city ? tr(city.name, locale) : "Casablanca")}
+              {exp.venue.revealPolicy === "on_group_reveal" ? t("secretVenueShort", { hours: VENUE_REVEAL_HOURS }) : placeLabel(exp.district, city ? tr(city.name, locale) : "Casablanca")}
             </p>
           </div>
         </div>
+        {/* Étape T : l'essentiel du prix en deux lignes (en ligne, sur place), puis l'annulation en petit. */}
         <dl className="divide-y divide-line border-t border-line px-4 text-[15px]">
-          <div className="flex justify-between py-3">
-            <dt className="text-muted">{t("unitPrice")}</dt>
-            <dd className="text-end">
-              <PriceTag price={session.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} budget={restaurantBudget(exp)} />
-              {/* docs/22 : un seul prix affiché ; les avantages abonnés (pass, carnet) arrivent à l'étape I. */}
-            </dd>
+          <div className="flex justify-between gap-3 py-3">
+            <dt className="text-muted">{t("onlineLine")}</dt>
+            <dd className="font-semibold tabular-nums">{formatMoney(session.price, lang)}</dd>
           </div>
-          {refusal === null && (
-            <div className="flex justify-between py-3">
-              <dt className="text-muted">{t("seatsLeft")}</dt>
-              <dd>{seatsAvailable(session)}</dd>
-            </div>
-          )}
+          <div className="flex justify-between gap-3 py-3" data-testid="on-site">
+            <dt className="text-muted">{t("onSiteLine")}</dt>
+            <dd className="text-end">{onSiteValue}</dd>
+          </div>
         </dl>
+        <p className="border-t border-line px-4 py-3 text-sm text-muted">
+          {tr(policyOf(await getCancellationPolicies(), session.experience.cancellationPolicyId).label, locale)}.
+          {refusal === null && seatsAvailable(session) <= LOW_SEATS_THRESHOLD && <span className="font-semibold text-brand-700"> {tCard("lastSeats", { count: seatsAvailable(session) })}</span>}
+        </p>
       </section>
 
-      <section className="mt-6 rounded-[var(--radius-card)] border border-line bg-white/60 p-4">
-        <h2 className="font-semibold text-ink">{t("policy")}</h2>
-        <p className="mt-1 text-sm text-muted">{tr(policyOf(await getCancellationPolicies(), session.experience.cancellationPolicyId).label, locale)}.</p>
-      </section>
 
       {onRequest && refusal === null && (
         <section role="note" className="mt-6 rounded-[var(--radius-card)] bg-brand-50 p-4 text-brand-900">
@@ -178,7 +179,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
       )}
 
       {visitor?.testPayments && refusal === null && !onRequest && (
-        <p role="note" className="mt-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">{t("testModeNote")}</p>
+        <p role="note" className="mt-4 text-center text-xs text-amber-900">{t("testModeNote")}</p>
       )}
 
       {!visitor ? (
@@ -332,43 +333,4 @@ function Notice({ title, text }: { title: string; text: string }) {
 /** Langues du profil reconnues comme langues de table. */
 function profileLanguages(l: string[] | undefined) {
   return (l ?? []).filter((x): x is SpokenLanguage => (SPOKEN_LANGUAGES as readonly string[]).includes(x)).slice(0, 5);
-}
-
-/**
- * Carte « billet » des Tables (docs/22 § 8) : date en grand, Début · Langues · Tables de 4 à 6, fermeture des
- * réservations, heure de révélation du lieu, et « Comment on compose les tables » d'après les réglages du rendez-vous.
- */
-async function TablesTicket({ exp, startAt, locale }: { exp: { bookingMode: "social_dinner" | "group" | "individual" | "open" | string; groupConfig?: { minSize: number; maxSize: number } | null; languages?: string[] }; startAt: string; locale: string }) {
-  const [t, tl] = await Promise.all([getTranslations("ticketCard"), getTranslations("labels.languages")]);
-  const closes = bookingClosesAt(new Date(startAt), "social_dinner").toISOString();
-  const reveal = revealAtFor(startAt).toISOString();
-  const at = (iso: string) => (locale === "fr" ? `${formatLongDate(iso, locale).toLowerCase()} à ${formatTime(iso, locale)}` : `${formatLongDate(iso, locale)} ${formatTime(iso, locale)}`);
-  const langs = (exp.languages ?? []).map((l) => tl(l as never)).join(", ");
-  const min = exp.groupConfig?.minSize ?? 4;
-  const max = exp.groupConfig?.maxSize ?? 6;
-  const steps = [t("how1"), t("how2", { min, max }), t("how3", { when: at(reveal) }), t("how4")];
-  return (
-    <section className="mt-6 overflow-hidden rounded-[var(--radius-card)] bg-brand-900 text-white shadow-card" data-testid="tables-ticket">
-      <div className="border-b border-dashed border-white/30 p-5">
-        <p className="text-sm uppercase tracking-wide text-white/70">{t("label")}</p>
-        <p className="font-display text-3xl font-medium capitalize">{formatLongDate(startAt, locale)}</p>
-        <p className="mt-2 text-sm text-white/90">{t("start", { time: formatTime(startAt, locale) })}{langs ? ` · ${langs}` : ""} · {t("tables", { min, max })}</p>
-      </div>
-      <div className="space-y-1 p-5 text-sm text-white/90">
-        <p>{t("closes", { when: at(closes) })}</p>
-        <p>{t("reveal", { when: at(reveal) })}</p>
-      </div>
-      <div className="bg-white/10 p-5">
-        <h2 className="text-sm font-semibold">{t("howTitle")}</h2>
-        <ol className="mt-3 flex snap-x gap-3 overflow-x-auto pb-1">
-          {steps.map((x, i) => (
-            <li key={i} className="min-w-[70%] snap-start rounded-2xl bg-white/10 p-3 text-sm sm:min-w-[45%]">
-              <span className="block text-xs font-semibold text-white/70">{i + 1}</span>
-              {x}
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
 }

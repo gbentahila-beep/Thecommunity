@@ -71,7 +71,7 @@ async function payOnTestPage(page) {
   const pa = await open();
   globalThis.__page = pa;
   await login(pa, amina, `/reserver/${sid}`);
-  await pa.getByRole('button', { name: /Réserver et payer/ }).click();
+  await pa.getByRole('button', { name: /^Réserver$/ }).click();
   assert(await payOnTestPage(pa), 'Amina : dernière place réservée et payée');
   const aminaRes = pa.url().split('/espace/reservations/')[1].split('?')[0];
   assert((await fsGet(`sessions/${sid}`)).fields.status.stringValue === 'full', 'date complète');

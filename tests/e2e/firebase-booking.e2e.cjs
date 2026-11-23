@@ -74,7 +74,7 @@ const int = (f) => Number(f?.integerValue ?? f?.doubleValue ?? 0);
     method: 'POST', headers: { ...OWNER, 'content-type': 'application/json' }, body: JSON.stringify({ localId: uid, emailVerified: true }),
   });
   await page.getByRole('button', { name: "J'ai confirmé" }).click();
-  const cta = page.getByRole('button', { name: /Réserver et payer/ });
+  const cta = page.getByRole('button', { name: /^Réserver$/ });
   assert(await visible(cta), 'e-mail confirmé : bouton de réservation affiché');
   if (multi) {
     await page.getByRole('button', { name: 'Une place de plus' }).click();
@@ -118,7 +118,7 @@ const int = (f) => Number(f?.integerValue ?? f?.doubleValue ?? 0);
   assert(await visible(page.getByRole('link', { name: new RegExp(target.exp.fields.title.mapValue.fields.fr.stringValue) })), 'réservation visible dans « Mes réservations »');
   await page.goto(`${base}/reserver/${sid}`);
   assert(await visible(page.getByRole('heading', { name: 'Vous avez déjà une place pour cette date.' })), 'déjà réservé : annoncé sur la page de réservation');
-  assert(await page.getByRole('button', { name: /Réserver et payer/ }).count() === 0 && await page.getByRole('link', { name: 'Voir ma réservation' }).isVisible(), 'pas de second achat possible, lien vers la réservation');
+  assert(await page.getByRole('button', { name: /^Réserver$/ }).count() === 0 && await page.getByRole('link', { name: 'Voir ma réservation' }).isVisible(), 'pas de second achat possible, lien vers la réservation');
 
   // 7. Version arabe
   await page.goto(`${base}/ar/reserver/${sid}`);

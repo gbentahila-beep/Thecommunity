@@ -162,7 +162,7 @@ async function member(tag, firstName) {
   await c.waitForURL(`**/reserver/${sid}`, { timeout: 25000 });
   const terms = c.getByTestId('physical-terms');
   if (await terms.count()) await terms.getByRole('checkbox').check();
-  await c.getByRole('button', { name: /Réserver et payer/ }).click();
+  await c.getByRole('button', { name: /^Réserver$/ }).click();
   await c.waitForURL('**/paiement-test/**', { timeout: 25000 });
   await c.getByRole('button', { name: 'Simuler un paiement accepté' }).click();
   const resv = await until(async () => (await fsWhere('reservations', 'organizerId', orgId)).find((r) => r.fields.status.stringValue === 'confirmed'));

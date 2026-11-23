@@ -91,7 +91,7 @@ async function login(page, who, suite) {
   // 3. Réservation au prix membre
   await m.goto(`${base}/reserver/${sid}`);
   assert(await visible(m.getByText('Votre prix membre est appliqué.')), 'tunnel : prix membre appliqué');
-  const cta = m.getByRole('button', { name: /Réserver et payer/ });
+  const cta = m.getByRole('button', { name: /^Réserver$/ });
   assert(norm(await cta.textContent()).includes(dh(memberPrice)), `bouton au prix membre (${dh(memberPrice)})`);
   await cta.click();
   await m.waitForURL('**/paiement-test/**', { timeout: 20000 });
@@ -135,7 +135,7 @@ async function login(page, who, suite) {
   const q = await open({ ...devices['iPhone 13'] });
   await login(q, nobody, `/reserver/${sid}`);
   assert(await visible(q.getByRole('heading', { name: 'Réservé aux membres' })), 'non-membre : expérience réservée aux membres');
-  assert(await q.getByRole('button', { name: /Réserver et payer/ }).count() === 0, 'non-membre : pas de bouton de réservation');
+  assert(await q.getByRole('button', { name: /^Réserver$/ }).count() === 0, 'non-membre : pas de bouton de réservation');
 
   assert(errs.length === 0, 'aucune erreur JavaScript' + (errs.length ? ' : ' + errs.join(' | ') : ''));
   await b.close();

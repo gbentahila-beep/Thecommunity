@@ -33,9 +33,8 @@ type Props = {
  * Choix du nombre de places, code promo, préférences pour l'accueil, puis réservation.
  * Le prix affiché vient du serveur (prix membre, code, frais) ; la réservation le recalcule.
  */
-export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite = null, transfer = null, defaultLanguages = [], physical = false, questions = [], needs = { food: true, languages: true } }: Props & { needs?: WelcomeNeeds }) {
+export function BookingForm({ sessionId, unitAmount, currency, maxSeats, transfer = null, defaultLanguages = [], physical = false, questions = [], needs = { food: true, languages: true } }: Props & { needs?: WelcomeNeeds }) {
   const t = useTranslations("booking");
-  const t2 = useTranslations("twoPart");
   const tp = useTranslations("prefs");
   const tq = useTranslations("questionnaire");
   const lang = useLocale() as "fr" | "ar" | "en";
@@ -187,23 +186,10 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
           ) : null}
           {pricing.discount ? <div className="flex justify-between text-emerald-800"><dt>{t("promoLine", { code: pricing.promoCode ?? "" })}</dt><dd className="tabular-nums">−{money(pricing.discount)}</dd></div> : null}
           {pricing.fees ? <div className="flex justify-between"><dt>{t("feesLine")}</dt><dd className="tabular-nums">{money(pricing.fees)}</dd></div> : null}
-          <div className="flex justify-between border-t border-line pt-1.5 font-semibold"><dt>{onSite ? t2("payNowLine") : t("totalLine")}</dt><dd className="tabular-nums">{money(pricing.total)}</dd></div>
+          <div className="flex justify-between border-t border-line pt-1.5 font-semibold"><dt>{t("totalLine")}</dt><dd className="tabular-nums">{money(pricing.total)}</dd></div>
         </dl>
       ) : null}
 
-      {onSite && (
-        <section aria-label={t2("onSiteTitle")} className="rounded-[var(--radius-card)] bg-white p-4 text-sm shadow-card" data-testid="on-site">
-          <div className="flex justify-between gap-3 font-semibold text-ink">
-            <span>{t2("onSiteTitle")}</span>
-            <span className="tabular-nums">{onSite.unit != null ? money(onSite.unit * seats) : t2("onSiteVariable")}</span>
-          </div>
-          {onSite.unit != null && seats > 1 && <p className="text-end text-xs text-muted tabular-nums">{money(onSite.unit)} × {seats}</p>}
-          <p className="mt-1 text-xs text-muted">
-            {onSite.partner ? t2("onSiteTo", { partner: onSite.partner }) : t2("onSiteToVenue")}
-            {onSite.description ? ` ${t2("whatOnSite", { description: onSite.description })}` : ""}
-          </p>
-        </section>
-      )}
 
       {(sub.pass || sub.credits > 0) && (
         <section className="space-y-2 rounded-[var(--radius-card)] bg-white p-4 text-sm shadow-card" data-testid="booking-subscription">
@@ -311,11 +297,11 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, onSite 
             <span className="text-muted">{t("seatsCount", { count: seats })}</span>
           </p>
           <button type="button" onClick={submit} disabled={busy} className="btn btn-primary flex-1 sm:w-full">
-            {busy ? t("working") : free ? t("freeCta") : transfer ? t("payCtaTransfer", { amount: money(total) }) : t("payCtaAmount", { amount: money(total) })}
+            {busy ? t("working") : t("bookShort")}
           </button>
         </div>
       </div>
-      {!free && <p className="text-center text-xs text-muted">{transfer ? t("holdNoteTransfer", { hours: transfer.hours, cutoff: transfer.cutoff }) : t("holdNote")}</p>}
+      {!free && transfer && <p className="text-center text-xs text-muted">{t("holdNoteTransfer", { hours: transfer.hours, cutoff: transfer.cutoff })}</p>}
     </div>
   );
 }

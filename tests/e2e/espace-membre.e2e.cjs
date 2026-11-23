@@ -129,8 +129,8 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
 
   // Étape H : billet des Tables, heure de révélation, déplacer sa réservation, table et messages après la rencontre, page du lieu
   await page.goto(base + '/reserver/ses-diner-inconnus-1', { waitUntil: 'load' });
-  assert(/Réservations jusqu'au/.test(await page.getByTestId('tables-ticket').innerText()), 'réservation Tables : carte billet avec la fermeture');
-  assert(/Comment on compose les tables/.test(await page.getByTestId('tables-ticket').innerText()), 'réservation Tables : comment on compose les tables');
+  assert(await page.getByTestId('tables-ticket').count() === 0 && await page.getByText(/Lieu révélé 5 h avant/).isVisible(), 'T : réservation Tables sans carte billet, lieu révélé 5 h avant');
+  assert(/Sur place/.test(await page.getByTestId('on-site').innerText()), 'T : « Sur place » dit une seule fois');
   await page.goto(base + '/espace/reservations/res-demo-diner', { waitUntil: 'load' });
   assert(/Le lieu arrive le/.test(await page.getByTestId('venue-arrives').innerText()), 'réservation : heure exacte de révélation du lieu');
   await page.getByTestId('move-reservation').getByRole('button', { name: 'Déplacer sur une autre date' }).click();

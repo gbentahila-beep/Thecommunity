@@ -78,7 +78,7 @@ async function bookable(exp) {
   assert(sid, 'une date de la soirée gnaoua est réservable');
   await login(page, m.email, m.password, `/reserver/${sid}`);
   await page.waitForURL(`**/reserver/${sid}`, { timeout: 25000 });
-  await page.getByRole('button', { name: /Réserver et payer/ }).click();
+  await page.getByRole('button', { name: /^Réserver$/ }).click();
   await page.waitForURL('**/paiement-test/**', { timeout: 25000 });
   await page.getByRole('button', { name: 'Simuler un paiement accepté' }).click();
   await page.waitForURL('**/espace/reservations/**', { timeout: 30000 });

@@ -104,7 +104,7 @@ async function login(page, who, suite) {
   // Date toute neuve : hors du sujet de ce test, on sort de l'accès anticipé réservé aux membres.
   await patch(`sessions/${sid}`, { createdAt: { timestampValue: new Date(Date.now() - 4 * 86400000).toISOString() } });
   await m.goto(`${base}/reserver/${sid}`);
-  await m.getByRole('button', { name: /Réserver et payer/ }).click();
+  await m.getByRole('button', { name: /^Réserver$/ }).click();
   await m.waitForURL('**/paiement-test/**', { timeout: 20000 });
   await m.getByRole('button', { name: 'Simuler un paiement accepté' }).click();
   await m.waitForURL('**/espace/reservations/**', { timeout: 20000 });
