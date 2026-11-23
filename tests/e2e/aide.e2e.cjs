@@ -17,10 +17,10 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   // Accueil du centre d'aide
   await page.goto(`${base}/aide`);
   assert(await page.getByRole('heading', { level: 1, name: 'Comment pouvons-nous vous aider ?' }).isVisible(), 'titre du centre d\'aide');
-  for (const c of ['Bien démarrer', 'Expériences et réservations', 'Carnet et Pass', 'Mon compte', 'Sécurité']) {
+  for (const c of ['Bien démarrer', 'Réserver et payer', 'Le jour J et après', 'Carnet et Pass', 'Mon compte', 'Sécurité']) {
     assert(await page.getByRole('heading', { level: 2, name: c, exact: true }).isVisible(), `catégorie « ${c} »`);
   }
-  assert(await page.getByRole('link', { name: 'Membres' }).getAttribute('aria-current') === 'page', 'onglet Membres actif');
+  assert(await page.getByRole('link', { name: 'Participants', exact: true }).getAttribute('aria-current') === 'page', 'onglet Participants actif');
   await noOverflow('/aide');
   await shot(page, 'aide-1-accueil');
 
@@ -45,14 +45,15 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   assert(await page.getByRole('button', { name: 'Oui' }).count() === 0, 'démo : pas de bouton « utile ? » factice');
   await noOverflow('article');
   await shot(page, 'aide-2-article');
-  await page.getByRole('navigation', { name: 'Fil d\'Ariane' }).getByRole('link', { name: 'Expériences et réservations' }).click();
+  await page.getByRole('navigation', { name: 'Fil d\'Ariane' }).getByRole('link', { name: 'Réserver et payer' }).click();
   await page.waitForURL('**/aide#bookings');
 
   // Onglet partenaires
   await page.goto(`${base}/aide/partenaires`);
-  assert(await page.getByRole('heading', { level: 2, name: 'Devenir partenaire', exact: true }).isVisible() && await page.getByRole('heading', { level: 2, name: 'Accueillir un groupe' }).isVisible(), 'catégories partenaires');
-  assert(await page.getByRole('link', { name: 'Partenaires' }).first().getAttribute('aria-current') === 'page', 'onglet Partenaires actif');
-  await page.getByRole('link', { name: /Comment êtes-vous rémunéré/ }).click();
+  assert(await page.getByRole('heading', { level: 2, name: 'Devenir lieu partenaire', exact: true }).isVisible() && await page.getByRole('heading', { level: 2, name: 'Accueillir un groupe' }).isVisible(), 'catégories partenaires');
+  assert(await page.getByRole('link', { name: 'Lieux partenaires' }).first().getAttribute('aria-current') === 'page', 'onglet Lieux partenaires actif');
+  assert(await page.getByRole('navigation', { name: 'Vous êtes' }).getByRole('link', { name: 'Organisateurs', exact: true }).isVisible(), 'AB : onglet Organisateurs séparé');
+  await page.getByRole('link', { name: /Comment êtes-vous payé/ }).click();
   await page.waitForURL('**/aide/remuneration-partenaire');
   assert(await visible(page.getByText(/ni commission ni reversement/)), 'L : article partenaire — paiement sur place, sans commission');
   await page.locator('main a[href="/devenir-partenaire"]').first().click();
@@ -60,6 +61,13 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   assert(await visible(page.getByText('Démonstration : le formulaire de candidature fonctionne sur le site en ligne.')), 'page partenaire (démo : formulaire désactivé, annoncé)');
   await noOverflow('/devenir-partenaire');
   await shot(page, 'aide-3-partenaire');
+
+  // AB : centre d'aide des organisateurs (séparé des lieux partenaires)
+  await page.goto(`${base}/aide/organisateurs`);
+  assert(await page.getByRole('heading', { level: 2, name: 'Devenir organisateur', exact: true }).isVisible() && await page.getByRole('heading', { level: 2, name: 'Gérer vos activités' }).isVisible(), 'AB : rubriques organisateurs');
+  assert(await page.getByRole('navigation', { name: 'Vous êtes' }).getByRole('link', { name: 'Organisateurs', exact: true }).getAttribute('aria-current') === 'page', 'AB : onglet Organisateurs actif');
+  await page.goto(`${base}/aide/chat-du-groupe`);
+  assert(await visible(page.getByText(/Ouvert dès votre check-in/)), 'AB : article chat du groupe');
 
   // Anglais et arabe
   await page.goto(`${base}/en/aide`);

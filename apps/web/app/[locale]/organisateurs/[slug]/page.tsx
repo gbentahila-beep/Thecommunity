@@ -74,14 +74,14 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <PageShell className="space-y-10 py-10">
-        <header className="flex flex-col gap-6 rounded-[var(--radius-card)] bg-white p-6 shadow-card sm:flex-row sm:items-center sm:p-8" data-testid="organizer-header">
+        <header className="flex flex-col items-center gap-5 rounded-[var(--radius-card)] bg-white p-6 text-center shadow-card sm:p-8" data-testid="organizer-header">
           <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-full bg-brand-50 font-display text-4xl text-brand-900">
             {logo ? <Image src={logo} alt="" fill sizes="96px" className="object-cover" /> : o.name.slice(0, 1)}
           </div>
           <div className="min-w-0 space-y-2">
             <p className="text-sm font-semibold tracking-[0.18em] text-brand-700 uppercase">{t("eyebrow")}</p>
             <h1 className="page-title">{o.name}</h1>
-            <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
+            <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-muted">
               <span className="inline-flex items-center gap-1.5"><MapPin className="size-4 text-brand-700" aria-hidden />{city ? tr(city.name, locale) : "Casablanca"}</span>
               <span className="inline-flex items-center gap-1.5"><BadgeCheck className="size-4 text-brand-700" aria-hidden />{t("verified")}</span>
               {count > 0 && (
@@ -119,7 +119,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
         </section>
 
         <section aria-labelledby="org-upcoming" className="space-y-4">
-          <h2 id="org-upcoming" className="text-center font-display text-2xl font-medium text-brand-900">{t("upcoming")}</h2>
+          <h2 id="org-upcoming" className="section-title">{t("upcoming")}</h2>
           {next.length ? (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="organizer-activities">
               {next.map((s) => <ExperienceCard key={s.id} session={s} experience={s.experience} />)}
@@ -131,7 +131,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
 
         {undated.length > 0 && (
           <section aria-labelledby="org-undated" className="space-y-4">
-            <h2 id="org-undated" className="text-center font-display text-2xl font-medium text-brand-900">{t("undated")}</h2>
+            <h2 id="org-undated" className="section-title">{t("undated")}</h2>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {undated.map((e) => <ExperienceCard key={e.id} experience={e} />)}
             </div>
@@ -140,7 +140,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
 
         {myReviews.length > 0 && (
           <section aria-labelledby="org-reviews" className="space-y-4">
-            <h2 id="org-reviews" className="text-center font-display text-2xl font-medium text-brand-900">{t("reviews")}</h2>
+            <h2 id="org-reviews" className="section-title">{t("reviews")}</h2>
             <ul className="grid gap-4 sm:grid-cols-2">
               {myReviews.map((r) => (
                 <ReviewItem key={r.id} review={r} locale={locale} />

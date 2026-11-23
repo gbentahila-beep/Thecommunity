@@ -46,7 +46,7 @@ export function PartnerApplicationForm() {
         }
       }}
     >
-      <h2 className="font-display text-2xl font-medium text-brand-900">{t("formTitle")}</h2>
+      <h2 className="card-title">{t("formTitle")}</h2>
       <Honeypot />
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block"><span className={label}>{t("contactName")}</span><input name="contactName" required maxLength={80} autoComplete="name" className={input} /></label>

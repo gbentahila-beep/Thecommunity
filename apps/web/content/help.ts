@@ -4,10 +4,12 @@
  * Liens internes : syntaxe [texte](/chemin). Jetons {{…}} : informations légales (lib/legal-info.ts) ou « à compléter ».
  */
 import { ACCEPTED_HOLD_HOURS, HOLD_MINUTES, REVIEW_WINDOW_DAYS, WAITLIST_OFFER_HOURS } from "@thecommunity/shared";
-import { HELP_ARTICLES_AR, HELP_CATEGORIES_AR } from "./help-ar";
+import { HELP_ARTICLES_AR } from "./help-ar";
+import { HELP_ARTICLES_Z, HELP_CATEGORIES_Z, HELP_MOVED, HELP_ORDER, HELP_REMOVED } from "./help-z";
 
-export type HelpAudience = "clients" | "partners";
-export type HelpCategoryKey = "start" | "bookings" | "membership" | "account" | "safety" | "partner-join" | "partner-hosting";
+/** Trois publics (étape AB) : participants, lieux partenaires (qui accueillent nos groupes), organisateurs (qui publient leurs activités). */
+export type HelpAudience = "clients" | "partners" | "organizers";
+export type HelpCategoryKey = "start" | "bookings" | "day-of" | "membership" | "account" | "safety" | "partner-join" | "partner-hosting" | "org-start" | "org-run";
 type LRaw = { fr: string; en: string };
 type L = { fr: string; en: string; ar: string };
 export type HelpLang = "fr" | "en" | "ar";
@@ -608,14 +610,20 @@ function arOf<T>(map: Record<string, T>, key: string): T {
   if (!v) throw new Error(`Traduction arabe manquante pour l'aide : ${key}`);
   return v;
 }
-export const HELP_CATEGORIES: HelpCategory[] = HELP_CATEGORIES_RAW.map((c) => {
-  const ar = arOf(HELP_CATEGORIES_AR, c.key);
-  return { ...c, title: { ...c.title, ar: ar.title }, description: { ...c.description, ar: ar.description } };
-});
-export const HELP_ARTICLES: HelpArticle[] = HELP_ARTICLES_RAW.map((a) => {
-  const ar = arOf(HELP_ARTICLES_AR, a.slug);
-  return { ...a, title: { ...a.title, ar: ar.title }, summary: { ...a.summary, ar: ar.summary }, body: { ...a.body, ar: ar.body } };
-});
+// Étape AB : rubriques et articles mis à jour ou ajoutés (content/help-z.ts, trois langues) ; les autres viennent d'ici.
+void HELP_CATEGORIES_RAW;
+export const HELP_CATEGORIES: HelpCategory[] = HELP_CATEGORIES_Z.map((c) => ({ ...c, title: { ...c.title, fr: nbsp(c.title.fr) }, description: { ...c.description, fr: nbsp(c.description.fr) } }));
+const zSlugs = new Set(HELP_ARTICLES_Z.map((a) => a.slug));
+export const HELP_ARTICLES: HelpArticle[] = [
+  ...HELP_ARTICLES_RAW.filter((a) => !HELP_REMOVED.has(a.slug) && !zSlugs.has(a.slug)).map((a) => {
+    const ar = arOf(HELP_ARTICLES_AR, a.slug);
+    return { ...a, category: HELP_MOVED[a.slug] ?? a.category, title: { ...a.title, ar: ar.title }, summary: { ...a.summary, ar: ar.summary }, body: { ...a.body, ar: ar.body } };
+  }),
+  ...HELP_ARTICLES_Z.map((a) => ({ ...a, title: { ...a.title, fr: nbsp(a.title.fr) }, summary: { ...a.summary, fr: nbsp(a.summary.fr) }, body: { ...a.body, fr: a.body.fr.map((b) => (Array.isArray(b) ? b.map(nbsp) : nbsp(b))) } })),
+].sort((a, b) => (HELP_ORDER.indexOf(a.slug) + 1 || 999) - (HELP_ORDER.indexOf(b.slug) + 1 || 999));
+
+/** Page d'accueil de l'aide de chaque public. */
+export const HELP_HUB: Record<HelpAudience, string> = { clients: "/aide", partners: "/aide/partenaires", organizers: "/aide/organisateurs" };
 
 export const helpLang = (locale: string): HelpLang => (locale === "en" || locale === "ar" ? locale : "fr");
 export const articleBySlug = (slug: string) => HELP_ARTICLES.find((a) => a.slug === slug);

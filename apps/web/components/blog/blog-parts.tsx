@@ -12,13 +12,13 @@ export async function BlogHero({ as = "h1" }: { as?: "h1" | "p" }) {
   const t = await getTranslations("blog");
   const Title = as;
   return (
-    <header className="max-w-3xl">
-      <p className="text-sm font-semibold tracking-[0.18em] text-brand-700 uppercase">{t("title")}</p>
-      <Title className="mt-3 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-brand-900 sm:text-6xl lg:text-7xl">
+    <header className="mx-auto max-w-3xl text-center">
+      <p className="eyebrow text-brand-700">{t("title")}</p>
+      <Title className="page-title mt-3">
         {t("heroTitleA")} <span className="text-brand-700 italic rtl:not-italic">{t("heroTitleB")}</span>
       </Title>
-      <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink/80">{t("heroText")}</p>
-      <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{t("intro")}</p>
+      <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink/80">{t("heroText")}</p>
+      <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{t("intro")}</p>
     </header>
   );
 }
@@ -157,7 +157,7 @@ export function ArticleBody({ blocks, summaryLabel }: { blocks: BlogBlock[]; sum
       {blocks.map((b, i) => {
         if (typeof b === "string") return <p key={i}>{richText(b, "")}</p>;
         if (Array.isArray(b)) return <ul key={i} className="list-disc space-y-2 ps-5 marker:text-brand-700">{b.map((li, k) => <li key={k}>{richText(li, "")}</li>)}</ul>;
-        if ("h" in b) return <h2 key={i} className="pt-4 font-display text-2xl font-medium text-brand-900 sm:text-3xl">{b.h}</h2>;
+        if ("h" in b) return <h2 key={i} className="pt-4 card-title sm:text-3xl">{b.h}</h2>;
         if ("ol" in b) return <ol key={i} className="list-decimal space-y-3 ps-6 marker:font-semibold marker:text-brand-700">{b.ol.map((li, k) => <li key={k} className="ps-1">{richText(li, "")}</li>)}</ol>;
         if ("summary" in b) {
           return (

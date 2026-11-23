@@ -77,7 +77,7 @@ export function FiltersPanel({
           data-testid="filters-panel"
         >
           <div className="flex items-center justify-between px-6 pt-5 pb-3">
-            <p className="font-display text-[1.45rem] font-medium text-brand-900">{labels.title}</p>
+            <p className="card-title">{labels.title}</p>
             <button type="button" onClick={() => setOpen(false)} aria-label={labels.close} className="-me-2 grid size-10 place-items-center rounded-full hover:bg-cream-deep">
               <X className="size-5" aria-hidden />
             </button>

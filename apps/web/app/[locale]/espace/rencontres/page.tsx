@@ -22,11 +22,11 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
     <div className="space-y-10">
       <header>
         <h1 className="page-title">{t("title")}</h1>
-        <p className="mt-2 max-w-2xl text-muted">{t("intro")}</p>
+        <p className="mx-auto mt-2 max-w-2xl text-center text-muted">{t("intro")}</p>
       </header>
 
       <section aria-labelledby="contacts-title" className="space-y-3">
-        <h2 id="contacts-title" className="text-center font-display text-2xl font-medium text-brand-900">{t("contacts")}</h2>
+        <h2 id="contacts-title" className="section-title">{t("contacts")}</h2>
         {data.connections.length === 0 ? (
           <EmptyState bab="toast" mood="big" prop="hearts" title={te("meetTitle")} text={t("noContacts")} />
         ) : (
@@ -49,7 +49,7 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
       </section>
 
       <section aria-labelledby="groups-title" className="space-y-3">
-        <h2 id="groups-title" className="text-center font-display text-2xl font-medium text-brand-900">{t("groups")}</h2>
+        <h2 id="groups-title" className="section-title">{t("groups")}</h2>
         <p className="text-center text-sm text-muted">{t("groupsIntro")}</p>
         {data.groups.length === 0 ? (
           <p className="rounded-[var(--radius-card)] border border-dashed border-line bg-white/60 p-5 text-sm text-muted">

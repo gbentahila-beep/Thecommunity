@@ -53,7 +53,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
               </span>
             </div>
             <div className="space-y-3 p-5">
-              <h3 className="font-display text-2xl font-medium text-brand-900">{tr(next.sessionSnapshot.title, loc)}</h3>
+              <h3 className="card-title">{tr(next.sessionSnapshot.title, loc)}</h3>
               <p className="text-muted">
                 {formatLongDate(next.sessionSnapshot.startAt, loc)} · {formatTimeRange(next.sessionSnapshot.startAt, next.sessionSnapshot.endAt, loc)}{next.venue?.name ? ` · ${next.venue.name}` : ""}
               </p>

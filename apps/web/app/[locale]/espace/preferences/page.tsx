@@ -21,15 +21,15 @@ export default async function PreferencesPage({ params }: PageProps<"/[locale]/e
     <div className="space-y-6">
       <h1 className="page-title">{t("title")}</h1>
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-brand-900">{t("notifications")}</h2>
+        <h2 className="card-title">{t("notifications")}</h2>
         <PreferencesForm initial={profile.notificationPrefs} uid={space.session?.uid} />
       </section>
       <section className="flex items-center justify-between gap-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-brand-900">{t("language")}</h2>
+        <h2 className="card-title">{t("language")}</h2>
         <LanguageSwitch className="border border-line" />
       </section>
       <section className="space-y-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-brand-900">{t("myData")}</h2>
+        <h2 className="card-title">{t("myData")}</h2>
         <p className="text-sm text-muted">{t("myDataText")}</p>
         {space.session ? (
           <a href="/api/account/export" download className="btn btn-secondary btn-sm">

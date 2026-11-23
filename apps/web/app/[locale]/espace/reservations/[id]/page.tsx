@@ -203,7 +203,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </div>
         <div className="space-y-4 p-5">
           <StatusBadge status={r.status} />
-          <h1 className="page-title">{title}</h1>
+          <h1 className="page-title text-start">{title}</h1>
           <dl className="space-y-3">
             <div className="flex gap-3">
               <CalendarDays className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
@@ -289,7 +289,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
 
       {summary && (
         <section className="card p-5" data-testid="table-summary">
-          <h2 className="font-display text-[1.45rem] font-medium text-brand-900">{tts("title")}</h2>
+          <h2 className="card-title">{tts("title")}</h2>
           <p className="mt-1 text-[15px] text-ink/80">{tts("others", { count: summary.others })}{summary.ageMin !== null && summary.ageMax !== null ? ` · ${summary.ageMin === summary.ageMax ? tts("age", { age: summary.ageMin }) : tts("ages", { min: summary.ageMin, max: summary.ageMax })}` : ""}</p>
           <dl className="mt-3 space-y-1.5 text-sm">
             {summary.languages.length > 0 && <div><dt className="inline font-medium text-ink">{tts("languages")} : </dt><dd className="inline text-muted">{summary.languages.map((l) => tlang(l as never)).join(", ")}</dd></div>}
@@ -302,7 +302,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
 
       {qr && (
         <section aria-labelledby="ticket-title" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="ticket">
-          <h2 id="ticket-title" className="font-display text-2xl font-medium text-brand-900">{tk("title")}</h2>
+          <h2 id="ticket-title" className="card-title">{tk("title")}</h2>
           <div className="mt-3 flex flex-col items-center gap-3 sm:flex-row sm:items-start sm:gap-5">
             <div role="img" aria-label={tk("title")} className="size-48 shrink-0 rounded-xl ring-1 ring-line [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: qr }} />
             <div className="space-y-2 text-sm text-ink">
@@ -316,7 +316,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
 
       {group && mates && !(dayOf && meArrived) && (
         <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="my-table">
-          <h2 className="font-display text-2xl font-medium text-brand-900">
+          <h2 className="card-title">
             {t("group")} · {group.label}
           </h2>
           <p className="mt-1 text-sm text-muted">{t("groupPrivacy")}</p>
@@ -348,7 +348,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
       )}
 
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-brand-900">{t("receipt")}</h2>
+        <h2 className="card-title">{t("receipt")}</h2>
         <dl className="mt-3 divide-y divide-line text-[15px]">
           {r.seats > 1 && (
             <div className="flex justify-between py-2.5">
@@ -425,7 +425,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
 
       {(isActive || r.status === "pending_payment") && isUpcoming && questions.length > 0 && (
         <section id="questionnaire" aria-labelledby="questionnaire-title" className="scroll-mt-28 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="questionnaire">
-          <h2 id="questionnaire-title" className="font-display text-2xl font-medium text-brand-900">{tq("title")}</h2>
+          <h2 id="questionnaire-title" className="card-title">{tq("title")}</h2>
           <p className="mb-4 mt-1 text-sm text-muted">{r.questionnaire ? tq("introDone") : tq("intro")}</p>
           <QuestionnaireForm reservationId={r.id} questions={questions} initial={r.questionnaire?.answers ?? null} editable={FIREBASE_ENABLED && isUpcoming} />
         </section>
@@ -433,7 +433,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
 
       {(isActive || r.status === "pending_payment") && isUpcoming && (needs.food || needs.languages) && (
         <section aria-labelledby="prefs" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-          <h2 id="prefs" className="font-display text-2xl font-medium text-brand-900">{tp(welcomeTitleKeys(needs).edit)}</h2>
+          <h2 id="prefs" className="card-title">{tp(welcomeTitleKeys(needs).edit)}</h2>
           <p className="mb-4 mt-1 text-sm text-muted">{tp(welcomeTitleKeys(needs).intro)}</p>
           <PreferencesEditor
             needs={needs}
@@ -452,7 +452,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
       {invoices.length > 0 && (
         <section aria-labelledby="documents" className="space-y-3">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 id="documents" className="font-display text-2xl font-medium text-brand-900">{ti("reservationDocs")}</h2>
+            <h2 id="documents" className="card-title">{ti("reservationDocs")}</h2>
             <Link href="/espace/factures" className="text-sm font-medium text-brand-900 underline-offset-4 hover:underline">{ti("seeAll")}</Link>
           </div>
           <InvoiceList invoices={invoices} />
@@ -501,7 +501,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
       )}
       {(review || canReview(r, now)) && (
         <section id="avis" className="scroll-mt-28 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-          <h2 className="font-display text-2xl font-medium text-brand-900">{t("reviewTitle")}</h2>
+          <h2 className="card-title">{t("reviewTitle")}</h2>
           {review ? (
             <div className="mt-3 space-y-2">
               <Stars value={review.rating} />

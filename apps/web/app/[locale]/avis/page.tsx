@@ -68,12 +68,12 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
 
   return (
     <PageShell className="max-w-5xl space-y-10 py-10">
-      <header>
-        <p className="text-xs font-semibold tracking-[0.18em] text-muted uppercase">{t("eyebrow")}</p>
+      <header className="text-center">
+        <p className="eyebrow text-brand-700">{t("eyebrow")}</p>
         <h1 className="page-title mt-2">
           {t("titleA")} <em className="text-brand-700">{t("titleB")}</em>
         </h1>
-        <p className="mt-4 max-w-2xl text-[17px] text-muted">{t("intro")}</p>
+        <p className="mx-auto mt-4 max-w-2xl text-[17px] text-muted">{t("intro")}</p>
       </header>
 
       {total === 0 ? (
@@ -103,7 +103,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
             </div>
             {photos.length > 0 && (
               <div className="rounded-3xl bg-white p-5 shadow-card" data-testid="reviews-photos">
-                <h2 className="font-display text-2xl font-medium text-ink">{t("photosTitle")}</h2>
+                <h2 className="card-title">{t("photosTitle")}</h2>
                 <ul className="mt-4 grid grid-cols-2 gap-2">
                   {photos.slice(0, 4).map((r) => (
                     <li key={r.id} className="relative aspect-square overflow-hidden rounded-2xl">
@@ -141,13 +141,13 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
             {filtered.length === 0 ? (
               <EmptyState variant="compact" bab="memo" mood="surprised" text={t("noMatch")} />
             ) : (
-              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="reviews-list">
+              <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="reviews-list">
                 {shown.map((r, i) => {
                   const exp = expById.get(r.experienceId);
                   const cat = exp ? catById.get(exp.categoryId) : undefined;
                   const long = r.comment.length > 200;
                   return (
-                    <li key={r.id} className="flex flex-col rounded-3xl bg-white p-5 shadow-card ring-1 ring-line/60" data-testid="review-card">
+                    <li key={r.id} className="flex min-w-0 flex-col rounded-3xl bg-white p-5 shadow-card ring-1 ring-line/60" data-testid="review-card">
                       <div className="flex items-start gap-3">
                         <span className={`grid size-11 shrink-0 place-items-center rounded-full text-lg font-semibold ${AVATARS[i % AVATARS.length]}`} aria-hidden>{r.publicName.charAt(0)}</span>
                         <div className="min-w-0 flex-1">
@@ -211,12 +211,12 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
                 { title: t("qOverall"), rows: [{ label: t("qComeAgain"), value: againPct, pct: true }, { label: t("qOverallRating"), value: overall }] },
               ].map((card) => (
                 <div key={card.title} className="card p-6" data-testid="reviews-question-card">
-                  <h3 className="font-display text-2xl font-medium text-ink">{card.title}</h3>
+                  <h3 className="card-title">{card.title}</h3>
                   <dl className="mt-3 divide-y divide-ink/10">
                     {card.rows.map((row) => (
                       <div key={row.label} className="flex items-baseline justify-between gap-3 py-3">
                         <dt className="text-[15px] text-ink/85">{row.label}</dt>
-                        <dd className="font-display text-2xl font-medium text-ink">
+                        <dd className="card-title">
                           {row.value == null ? <span className="text-base text-muted">—</span> : "pct" in row && row.pct ? <>{row.value} %<span className="ms-1 text-sm font-sans text-muted">{t("saidYes")}</span></> : Number(row.value).toFixed(1)}
                         </dd>
                       </div>

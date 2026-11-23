@@ -54,7 +54,7 @@ export default async function TransferPage({ params }: PageProps<"/[locale]/paie
     return (
       <PageShell className="max-w-xl py-8">
         <section role="status" className="rounded-[var(--radius-card)] bg-emerald-50 p-5 text-emerald-950">
-          <h1 className="page-title flex items-center gap-2"><CheckCircle2 className="size-7" aria-hidden />{t("receivedTitle")}</h1>
+          <h1 className="page-title flex items-center justify-center gap-2"><CheckCircle2 className="size-7" aria-hidden />{t("receivedTitle")}</h1>
           <p className="mt-2">{t("receivedText")}</p>
           <Link href={back.href} className="btn btn-primary btn-sm mt-4">{back.label}</Link>
         </section>
@@ -90,7 +90,7 @@ export default async function TransferPage({ params }: PageProps<"/[locale]/paie
 
   return (
     <PageShell className="max-w-xl py-8">
-      <h1 className="page-title flex items-center gap-3">
+      <h1 className="page-title flex items-center justify-center gap-3">
         <Landmark className="size-8 shrink-0" aria-hidden />
         {t("title")}
       </h1>

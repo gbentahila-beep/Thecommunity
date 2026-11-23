@@ -57,7 +57,7 @@ export default async function ProLayout({ children }: { children: ReactNode }) {
             <ProNav approved={approved} pendingRequests={pending} />
             <div className="mt-auto space-y-2 px-3 text-sm">
               <Link href="/contrat-organisateur" className="block text-muted hover:text-brand-900">Contrat organisateur</Link>
-              <Link href="/aide/partenaires" className="block text-muted hover:text-brand-900">Aide</Link>
+              <Link href="/aide/organisateurs" className="block text-muted hover:text-brand-900">Aide</Link>
               <Link href="/" className="block text-muted hover:text-brand-900">← Voir le site public</Link>
             </div>
           </aside>

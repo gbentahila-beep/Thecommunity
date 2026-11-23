@@ -56,7 +56,7 @@ export default async function AccountHubPage({ params }: PageProps<"/[locale]/es
       <Link href="/espace/profil" className="card flex items-center gap-4 p-5 transition hover:shadow-float">
         <MemberAvatar uid={p.uid} photoPath={p.photoPath} size={64} />
         <span className="min-w-0 flex-1">
-          <span className="block truncate font-display text-2xl font-medium text-brand-900">{p.firstName}</span>
+          <span className="block truncate card-title">{p.firstName}</span>
           {city && <span className="block text-sm text-ink/80">{tr(city.name, locale)}</span>}
           {since && <span className="block text-sm text-muted">{t("memberSince", { date: since })}</span>}
         </span>

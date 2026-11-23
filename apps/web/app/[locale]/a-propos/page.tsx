@@ -45,13 +45,13 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
     <PageShell className="py-8 sm:py-12">
       {/* 1. En-tête : accroche à gauche, grande photo à droite */}
       <section className="grid items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
-        <div className="order-2 lg:order-1">
-          <p className="text-sm font-semibold text-ink/80">{ta("heroEyebrow")}</p>
-          <h1 className="mt-4 font-display text-[2.6rem] leading-[1.02] font-medium tracking-tight text-brand-900 sm:text-6xl">
+        <div className="order-2 text-center lg:order-1">
+          <p className="eyebrow text-brand-700">{ta("heroEyebrow")}</p>
+          <h1 className="page-title mt-4">
             {ta("heroLine1")}
             <span className="block text-brand-700 italic rtl:not-italic">{ta("heroLine2")}</span>
           </h1>
-          <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink/80">{t("aboutText")}</p>
+          <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-ink/80">{t("aboutText")}</p>
           <Link href="/experiences" className="btn btn-primary mt-7">
             {th("heroCta")}
             <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />

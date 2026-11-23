@@ -50,7 +50,7 @@ export default async function PartnerRequestPage({ params, searchParams }: PageP
       <p className="text-sm font-semibold uppercase tracking-wide text-muted">Wenzy · espace lieu</p>
       <h1 className="page-title mt-1">{req.partnerName}</h1>
       <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="partner-request">
-        <h2 className="font-display text-2xl font-medium text-brand-900">Demande de réservation</h2>
+        <h2 className="card-title">Demande de réservation</h2>
         <p className="mt-2 text-lg font-semibold text-ink">{when(req.startAt)}</p>
         <div className="mt-4 grid grid-cols-2 gap-3 text-center">
           <div className="rounded-2xl bg-cream p-3"><p className="text-3xl font-semibold text-ink">{req.tables}</p><p className="text-sm text-muted">{unitWord(req.unit, req.tables)} demandée{req.tables > 1 ? "s" : ""}</p></div>
@@ -70,7 +70,7 @@ export default async function PartnerRequestPage({ params, searchParams }: PageP
       </section>
       {req.recap && (
         <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="partner-recap">
-          <h2 className="font-display text-2xl font-medium text-brand-900">Récapitulatif</h2>
+          <h2 className="card-title">Récapitulatif</h2>
           <ul className="mt-3 space-y-2 text-[15px]">{req.recap.tables.map((t) => <li key={t.label}><span className="font-semibold">{t.label}</span> : {t.names.join(", ")}</li>)}</ul>
           <p className="mt-3 text-sm text-ink">{req.recap.notes.length ? `Régimes et allergies : ${req.recap.notes.join(" ; ")}.` : "Aucun régime ni allergie signalé."}</p>
         </section>

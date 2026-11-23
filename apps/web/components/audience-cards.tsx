@@ -29,7 +29,7 @@ export async function AudienceCards({ headingLevel = "h3", withTitle = false }: 
               <Icon className="size-5" aria-hidden />
             </span>
             <p className="eyebrow mt-5">{t(`${key}Eyebrow`)}</p>
-            <H className="mt-1.5 font-display text-[1.45rem] leading-tight font-medium text-brand-900">{t(`${key}Title`)}</H>
+            <H className="mt-1.5 card-title">{t(`${key}Title`)}</H>
             <p className="mt-2 flex-1 text-[15px] leading-relaxed text-ink/80">{t(`${key}Text`)}</p>
             <Link href={href} className="btn btn-primary btn-sm mt-5">
               {t(`${key}Cta`)}

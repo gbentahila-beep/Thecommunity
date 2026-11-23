@@ -31,7 +31,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   const art = (await p.locator('article').textContent());
   assert(!art.includes('[[') && !art.includes('(bientôt)') && art.includes('35 DH') && art.includes('sur place'), 'L : aide « Payer » — 35 DH en ligne, le reste sur place');
   await p.goto(base + '/comment-ca-marche', { waitUntil: 'load' });
-  assert(await p.getByTestId('booking-steps').locator('li').count() === 5, '28 : parcours en 5 étapes');
+  assert(await p.getByTestId('booking-steps').locator('li').count() === 6, '28 : parcours en 6 étapes (jusqu’au jour J)');
   await p.goto(base + '/espace', { waitUntil: 'load' });
   assert(await visible(p.getByTestId('membership-suggestion')), '28 : abonnement proposé après une première expérience (espace membre)');
 

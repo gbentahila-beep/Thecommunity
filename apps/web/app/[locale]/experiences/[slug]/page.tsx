@@ -78,7 +78,7 @@ async function RetiredExperience({ title, categoryId, cityId }: { title: string;
       </div>
       {similar.length > 0 && (
         <section aria-labelledby="similar" className="mt-14">
-          <h2 id="similar" className="text-center font-display text-2xl font-medium text-brand-900">{t("retiredSimilar")}</h2>
+          <h2 id="similar" className="section-title">{t("retiredSimilar")}</h2>
           <ul className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {similar.map((s) => (
               <li key={s.id}>
@@ -229,7 +229,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
 
         <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-10">
-            <header>
+            <header className="text-center">
               <span className="inline-block rounded-full bg-badge px-3 py-1 text-xs font-medium text-brand-900">
                 {category ? tr(category.shortName, locale) : ""}
                 {subcategory ? ` · ${tr(subcategory.shortName, locale)}` : ""}
@@ -237,7 +237,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <h1 className="page-title mt-3">{tr(exp.title, locale)}</h1>
               <p className="mt-3 text-lg text-ink/80">{tr(exp.summary, locale)}</p>
               {exp.ratingCount > 0 && (
-                <p className="mt-3 flex items-center gap-2 text-sm text-muted">
+                <p className="mt-3 flex items-center justify-center gap-2 text-sm text-muted">
                   <Stars value={exp.ratingAvg} />
                   <span className="font-semibold text-ink">{exp.ratingAvg.toFixed(1)}</span>
                   <span>· {t("reviewsCount", { count: exp.ratingCount })}</span>
@@ -417,7 +417,7 @@ function formatLabel(exp: Experience, t: (key: string, values?: Record<string, s
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="mb-3 font-display text-2xl font-medium text-brand-900">{title}</h2>
+      <h2 className="mb-3 card-title">{title}</h2>
       {children}
     </section>
   );

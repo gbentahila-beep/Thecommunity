@@ -60,7 +60,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
     return (
       <PageShell className="max-w-2xl py-12">
         <h1 className="page-title">{t("title")}</h1>
-        <p className="mt-4 text-muted">{t("soon")}</p>
+        <p className="mt-4 text-center text-muted">{t("soon")}</p>
       </PageShell>
     );
   }
@@ -141,7 +141,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
 
       {!me?.transfer && (
         <section aria-labelledby="offers-title">
-          <h2 id="offers-title" className="mb-3 font-display text-2xl font-medium text-ink">{t("choose")}</h2>
+          <h2 id="offers-title" className="mb-3 card-title">{t("choose")}</h2>
           <OfferPicker
             offers={views}
             initialId={initial}
@@ -158,13 +158,13 @@ export default async function MembershipPage({ params, searchParams }: PageProps
 
       <section className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="pass-benefits">
-          <h2 className="font-display text-2xl font-medium text-ink">{t("passTitle")}</h2>
+          <h2 className="card-title">{t("passTitle")}</h2>
           <ul className="mt-4 space-y-2.5">
             {(["pass1", "pass2", "pass3", "pass4"] as const).map((k) => <li key={k} className="flex gap-2.5 text-ink/85"><Check className="mt-0.5 size-5 shrink-0 text-emerald-700" aria-hidden />{t(k, { max: PASS_MAX_UPCOMING })}</li>)}
           </ul>
         </div>
         <div className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-          <h2 className="font-display text-2xl font-medium text-ink">{t("carnetTitle")}</h2>
+          <h2 className="card-title">{t("carnetTitle")}</h2>
           <ul className="mt-4 space-y-2.5">
             {(["carnet1", "carnet2", "carnet3"] as const).map((k) => <li key={k} className="flex gap-2.5 text-ink/85"><Check className="mt-0.5 size-5 shrink-0 text-emerald-700" aria-hidden />{t(k)}</li>)}
           </ul>

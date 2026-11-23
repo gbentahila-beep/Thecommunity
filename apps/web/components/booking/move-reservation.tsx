@@ -18,7 +18,7 @@ export function MoveReservation({ reservationId, options, until }: { reservation
   const [reason, setReason] = useState("");
   return (
     <section className="card p-5" data-testid="move-reservation">
-      <h2 className="flex items-center gap-2 font-display text-[1.45rem] font-medium text-brand-900"><CalendarClock className="size-6 text-brand-800" aria-hidden />{t("title")}</h2>
+      <h2 className="flex items-center gap-2 card-title"><CalendarClock className="size-6 text-brand-800" aria-hidden />{t("title")}</h2>
       <p className="mt-1.5 text-[15px] text-ink/80">{t("text", { until })}</p>
       {!open ? (
         <button type="button" className="mt-4 rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-brand-900 hover:bg-cream" onClick={() => setOpen(true)} disabled={options.length === 0}>

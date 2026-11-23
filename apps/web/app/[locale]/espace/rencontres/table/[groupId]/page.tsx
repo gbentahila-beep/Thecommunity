@@ -48,12 +48,12 @@ export default async function TableChatPage({ params }: PageProps<"/[locale]/esp
   return (
     <div className="space-y-6">
       <Link href="/espace/rencontres" className="inline-flex items-center gap-2 text-sm font-medium text-brand-900"><ArrowLeft className="size-4 rtl:-scale-x-100" aria-hidden />{t("back")}</Link>
-      <header>
+      <header className="text-center">
         <h1 className="page-title">{t("title", { label: group.label })}</h1>
         <p className="mt-1 text-sm text-muted">{tr(r.sessionSnapshot.title, locale)} · {formatLongDate(r.sessionSnapshot.startAt, locale)}</p>
         <p className="mt-1 text-sm text-muted">{t("window", { until: `${formatLongDate(timeline.chatUntil.toISOString(), locale)} ${formatTime(timeline.chatUntil.toISOString(), locale)}` })}</p>
       </header>
-      <ul className="flex gap-3 overflow-x-auto pb-1" aria-label={td("atTable")} data-testid="chat-members">
+      <ul className="flex justify-center gap-3 overflow-x-auto pb-1" aria-label={td("atTable")} data-testid="chat-members">
         {group.members.map((m) => {
           const st = statusOf(m.uid);
           return (

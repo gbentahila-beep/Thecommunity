@@ -754,6 +754,24 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 - Site d'essai : une fois, les événements issus des modèles reçoivent les versions arabe et anglaise (repère `templateI18nAC`, champs vides seulement).
 - Restent en français seulement : « Inclus », ambiance de la gamme, infos pratiques, équipement (champs uniques du formulaire).
 
+### Étapes AA et AB livrées (23 novembre) — une seule règle de mise en page, À propos, Comment ça marche, centre d'aide, écrans de l'accueil
+
+**Règle unique (tout le site, connecté ou non)**
+- En-têtes centrés : surtitre, titre de page (`.page-title`), phrase d'introduction, titres de section (`.section-title`) et leur introduction. Pages concernées : accueil, espace membre, Découvrir, fiche d'un événement, Mon groupe, chat, profil, factures, À propos, Comment ça marche, Avis, Blog (accueil, thèmes, articles), Presse, Centre d'aide (accueil et articles), Abonnement, Connexion.
+- À gauche : ce qui se lit ou se remplit (paragraphes longs, listes, formulaires, contenu des cartes, titres de carte `.card-title`, jours d'une liste, pied de page, fil d'Ariane, lien « retour »). Le back-office reste aligné à gauche (outil interne).
+- Une seule police de titre (Fraunces semi-gras) en trois tailles : page, section, carte. Les titres « faits main » (À propos, Blog, thèmes du blog) reprennent `.page-title` ; les titres de carte de l'espace et de l'aide reprennent `.card-title`.
+- Découvrir : titre centré, ville et filtres en dessous.
+
+**À propos** : en-tête centré ; plus de « Les expériences sur demande » (remplacé par « Le jour J » : lieu et itinéraire, « Je suis là », table et chat 14 jours) ; « Se sentir attendu » sans accueil par une hôtesse ; rappels et lieu « révélé quelques heures avant » ; « Une rencontre à la fois ».
+
+**Comment ça marche** : la sortie en 6 étapes (ajout de « Recevez le lieu » et « Le jour J »), pastilles de numéros claires, « Votre sécurité » en 4 cartes blanches (lieux vérifiés, règles, le minimum partagé, signaler) à la place du bloc noir ; texte « hôtesse » retiré.
+
+**Centre d'aide** : trois publics au lieu de « Membres / Partenaires » — Participants, Lieux partenaires, Organisateurs (nouvelle page /aide/organisateurs). Participants : nouvelle rubrique « Le jour J et après » (le lieu, « Je suis là », « Je serai en retard », le chat du groupe, revoir quelqu'un, laisser un avis) ; « Réserver et payer » ; article « Ma photo de profil et ma tête de Bab ». Lieux partenaires : articles réécrits pour les lieux seulement (paiement sur place sans commission, récapitulatif 1 h avant, coordonnées GPS). Organisateurs : 5 articles (créer son compte, être payé sur place sans commission, publier une activité, participants et pointage, annuler une date). Retiré : « Puis-je proposer ma propre sortie ? » (membres de confiance supprimés). Articles rangés dans l'ordre du parcours ; trois langues.
+
+**Accueil (AA)** : trois nouveaux écrans de téléphone (Découvrir avec des activités variées, accueil membre, écran du jour J) ; texte « Réservez une sortie, retrouvez votre groupe, découvrez ce qui se passe cette semaine. »
+
+**Corrigé** : la page Avis débordait sur téléphone (grille des avis).
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes

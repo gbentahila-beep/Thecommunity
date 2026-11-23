@@ -5,7 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HelpFeedback } from "@/components/help/help-feedback";
 import { HelpContactCards } from "@/components/help/help-hub";
 import { PageShell } from "@/components/ui";
-import { articleBySlug, categoryOf, forPaymentMethod, HELP_ARTICLES, helpLang } from "@/content/help";
+import { articleBySlug, categoryOf, forPaymentMethod, HELP_ARTICLES, helpLang, HELP_HUB } from "@/content/help";
 import { getPaymentMethod } from "@/lib/data";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -35,7 +35,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
   const t = await getTranslations("help");
   const lang = helpLang(locale);
   const cat = categoryOf(a.category);
-  const hub = cat.audience === "partners" ? "/aide/partenaires" : "/aide";
+  const hub = HELP_HUB[cat.audience];
   const missing = t("missing");
   const relatedSlugs = a.related?.length ? a.related : HELP_ARTICLES.filter((x) => x.category === a.category && x.slug !== a.slug).map((x) => x.slug);
   const related = relatedSlugs.flatMap((s) => (articleBySlug(s) ? [articleBySlug(s)!] : []));
@@ -50,7 +50,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
       </nav>
       <article className="mt-6">
         <h1 className="page-title">{a.title[lang]}</h1>
-        <p className="mt-4 text-lg leading-relaxed text-ink/80">{a.summary[lang]}</p>
+        <p className="mx-auto mt-4 max-w-2xl text-center text-lg leading-relaxed text-ink/80">{a.summary[lang]}</p>
         <div className="mt-8 space-y-5">
           {forPaymentMethod(a.body[lang], await getPaymentMethod()).map((b, i) =>
             Array.isArray(b) ? (
@@ -70,7 +70,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
       )}
       {related.length > 0 && (
         <section className="mt-12" aria-labelledby="related">
-          <h2 id="related" className="text-center font-display text-2xl font-medium text-brand-900">{t("related")}</h2>
+          <h2 id="related" className="section-title">{t("related")}</h2>
           <ul className="mt-4 divide-y divide-line rounded-[var(--radius-card)] bg-white shadow-card">
             {related.map((r) => (
               <li key={r.slug}>

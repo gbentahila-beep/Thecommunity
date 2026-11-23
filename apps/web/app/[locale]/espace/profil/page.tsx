@@ -51,9 +51,9 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
   const e = tm("edit");
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-center gap-4">
+      <header className="flex flex-col items-center gap-3 text-center">
         <MemberAvatar uid={p.uid} photoPath={p.photoPath} size={80} />
-        <div className="flex-1">
+        <div>
           <h1 className="page-title">{p.firstName} {p.lastName}</h1>
           <p className="text-sm text-muted">{t("memberSince", { date: formatLongDate(p.createdAt, locale) })}</p>
         </div>
@@ -69,7 +69,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
       </p>
 
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-brand-900">{t("identity")}</h2>
+        <h2 className="card-title">{t("identity")}</h2>
         <dl className="mt-2 divide-y divide-line">
           <Row label={t("email")}><span dir="ltr">{p.email}</span></Row>
           <Row step="phone" editLabel={e} label={t("phone")}><span dir="ltr">{p.phone}</span></Row>
@@ -80,7 +80,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
       </section>
 
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-brand-900">{t("interests")}</h2>
+        <h2 className="card-title">{t("interests")}</h2>
         <dl className="mt-2 divide-y divide-line">
           <Row step="languages" editLabel={e} label={t("languages")}><Chips items={p.languages.map((l) => tl(`languages.${l}`))} /></Row>
           <Row step="interests" editLabel={e} label={t("interests")}><Chips items={p.interests.map((i) => tl(`interests.${i}`))} /></Row>
@@ -93,7 +93,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
       </section>
 
       <section className="card p-5" data-testid="profile-more">
-        <h2 className="font-display text-2xl font-medium text-brand-900">{tm("title")}</h2>
+        <h2 className="card-title">{tm("title")}</h2>
         <dl className="mt-2 divide-y divide-line">
           <Row step="vibe" editLabel={e} label={tm("vibe")}>{p.groupVibe ? tl(`vibe.${p.groupVibe}`) : ""}</Row>
           <Row step="conversation" editLabel={e} label={tm("conversation")}>{p.conversationStyle ? tl(`conversation.${p.conversationStyle}`) : ""}</Row>
@@ -110,7 +110,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
       </section>
 
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-        <h2 className="font-display text-2xl font-medium text-brand-900">{t("about")}</h2>
+        <h2 className="card-title">{t("about")}</h2>
         <dl className="mt-2 divide-y divide-line">
           <Row label={t("profession")}>{p.profession}</Row>
           <Row step="photo" editLabel={e} label={t("bio")}>{p.bio}</Row>

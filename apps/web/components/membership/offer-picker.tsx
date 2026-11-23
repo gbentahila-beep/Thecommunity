@@ -45,7 +45,7 @@ export function OfferPicker({ offers, initialId, mode, cta }: { offers: OfferVie
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${o.highlight ? "bg-brand-900 text-white" : "bg-cream-deep text-ink"}`}>
                 {o.highlight ? t("badgeRecommended") : o.kind === "carnet" ? t("badgeCarnet") : t("badgePass")}
               </span>
-              <span className="mt-4 font-display text-2xl font-medium text-brand-900">{o.title}</span>
+              <span className="mt-4 card-title">{o.title}</span>
               <span className="mt-2 text-[2rem] leading-none font-bold text-ink">{o.price}</span>
               {o.perMonth && <span className="mt-1 text-sm text-muted">{t("perMonth", { price: o.perMonth })}</span>}
               {o.note && <span className="mt-2 text-sm font-semibold text-brand-800">{o.note}</span>}

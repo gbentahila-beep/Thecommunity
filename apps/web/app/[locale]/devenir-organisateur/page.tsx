@@ -53,14 +53,14 @@ export default async function BecomeOrganizerPage({ params }: PageProps<"/[local
         <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
       </NextLink>
       <section aria-labelledby="org-roles" className="info-box text-start">
-        <h2 id="org-roles" className="font-display text-[1.45rem] font-medium text-brand-900">{t("roles")}</h2>
+        <h2 id="org-roles" className="card-title">{t("roles")}</h2>
         <ul className="mt-3 space-y-2 text-[15px] text-ink/85">
           <li>{t("roleVenue")}</li>
           <li>{t("roleOrganizer")}</li>
         </ul>
       </section>
       <p className="flex flex-col gap-2">
-        <Link href="/aide/partenaires" className="font-medium text-brand-900 underline underline-offset-4">{t("help")}</Link>
+        <Link href="/aide/organisateurs" className="font-medium text-brand-900 underline underline-offset-4">{t("help")}</Link>
         <Link href="/devenir-partenaire" className="font-medium text-brand-900 underline underline-offset-4">{t("venueLink")}</Link>
       </p>
     </StaticPage>

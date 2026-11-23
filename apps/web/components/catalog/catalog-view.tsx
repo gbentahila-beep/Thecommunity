@@ -111,7 +111,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
 
   return (
     <PageShell className="space-y-5 py-6 sm:py-10">
-      <form action={`${prefix}${pathOf(state)}`} method="get" className="flex items-center justify-between gap-3" data-testid="catalog-form">
+      <form action={`${prefix}${pathOf(state)}`} method="get" className="flex flex-col items-center gap-2" data-testid="catalog-form">
         <SectionHeading as="h1" title={filters.q ? tf("resultsFor", { q: filters.q }) : shownCategory ? tr(shownCategory.name, locale) : tc("discover")} />
         {when !== "all" && <input type="hidden" name="quand" value={when} />}
         {filters.q && <input type="hidden" name="q" value={filters.q} />}
@@ -272,7 +272,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
               return (
                 <section key={d.key} id={`jour-${d.key}`} aria-labelledby={`jour-${d.key}-title`} className="scroll-mt-44">
                   <h2 id={`jour-${d.key}-title`} className="flex items-baseline gap-2.5">
-                    <span className="font-display text-2xl font-medium text-ink sm:text-[1.75rem]">{h.weekday}</span>
+                    <span className="card-title sm:text-[1.75rem]">{h.weekday}</span>
                     <span className="text-[15px] text-muted">{h.date}</span>
                   </h2>
                   <div className="card mt-3 divide-y divide-line/70 overflow-hidden px-4">

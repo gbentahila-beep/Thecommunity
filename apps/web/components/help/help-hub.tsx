@@ -1,7 +1,7 @@
-import { ArrowRight, BadgeCheck, CalendarCheck, Compass, Handshake, MessageCircle, ShieldCheck, UserRound, Utensils } from "lucide-react";
+import { ArrowRight, BadgeCheck, CalendarCheck, CalendarCog, Compass, Handshake, MapPinCheck, MessageCircle, ShieldCheck, Store, UserRound, Utensils } from "lucide-react";
 import { AudienceCards } from "@/components/audience-cards";
 import { getTranslations } from "next-intl/server";
-import { HELP_ARTICLES, HELP_CATEGORIES, helpLang, type HelpAudience, type HelpCategoryKey } from "@/content/help";
+import { HELP_ARTICLES, HELP_CATEGORIES, HELP_HUB, helpLang, type HelpAudience, type HelpCategoryKey } from "@/content/help";
 import { Link } from "@/i18n/navigation";
 import { plainText } from "@/lib/rich-text";
 import { PageShell } from "../ui";
@@ -15,9 +15,12 @@ const ICONS: Record<HelpCategoryKey, typeof Compass> = {
   safety: ShieldCheck,
   "partner-join": Handshake,
   "partner-hosting": Utensils,
+  "day-of": MapPinCheck,
+  "org-start": Store,
+  "org-run": CalendarCog,
 };
 
-/** Accueil du centre d'aide : recherche, onglets Membres / Partenaires, catégories et leurs articles. */
+/** Accueil du centre d'aide : recherche, trois publics (Participants, Lieux partenaires, Organisateurs), rubriques et articles. */
 export async function HelpHub({ audience, locale }: { audience: HelpAudience; locale: string }) {
   const t = await getTranslations("help");
   const lang = helpLang(locale);
@@ -31,7 +34,7 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
   }));
   const categories = HELP_CATEGORIES.filter((c) => c.audience === audience);
   const tab = (active: boolean) =>
-    `rounded-full px-5 py-2.5 text-sm font-semibold transition ${active ? "bg-brand-900 text-white" : "text-brand-900 hover:bg-white"}`;
+    `rounded-full px-3 py-2 text-[13px] font-semibold transition sm:px-5 sm:py-2.5 sm:text-sm ${active ? "bg-brand-900 text-white" : "text-brand-900 hover:bg-white"}`;
   return (
     <>
       <section className="bg-brand-50 pb-16 pt-12">
@@ -44,9 +47,12 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
       <PageShell className="max-w-5xl">
         <HelpSearch index={index}>
           <nav aria-label={t("tabs")} className="mt-10 flex justify-center">
-            <div className="inline-flex gap-1 rounded-full bg-cream-deep p-1">
-              <Link href="/aide" aria-current={audience === "clients" ? "page" : undefined} className={tab(audience === "clients")}>{t("tabClients")}</Link>
-              <Link href="/aide/partenaires" aria-current={audience === "partners" ? "page" : undefined} className={tab(audience === "partners")}>{t("tabPartners")}</Link>
+            <div className="inline-flex max-w-full gap-1 overflow-x-auto rounded-full bg-cream-deep p-1 [scrollbar-width:none]">
+              {(["clients", "partners", "organizers"] as const).map((a) => (
+                <Link key={a} href={HELP_HUB[a]} aria-current={audience === a ? "page" : undefined} className={`${tab(audience === a)} whitespace-nowrap`}>
+                  {t(a === "clients" ? "tabClients" : a === "partners" ? "tabPartners" : "tabOrganizers")}
+                </Link>
+              ))}
             </div>
           </nav>
           <div className="mt-10 grid gap-5 md:grid-cols-2">
@@ -60,7 +66,7 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
                       <Icon className="size-5" aria-hidden />
                     </span>
                     <div>
-                      <h2 id={`cat-${c.key}`} className="font-display text-2xl font-medium text-brand-900">{c.title[lang]}</h2>
+                      <h2 id={`cat-${c.key}`} className="card-title">{c.title[lang]}</h2>
                       <p className="mt-1 text-sm text-muted">{c.description[lang]} · {t("articles", { count: articles.length })}</p>
                     </div>
                   </div>
@@ -92,12 +98,12 @@ export async function HelpContactCards({ audience }: { audience: HelpAudience })
     <div className="mt-12 space-y-5" data-testid="help-contact-cards">
       <div className="info-box flex flex-col items-center">
         <MessageCircle className="size-7 text-brand-900" aria-hidden />
-        <h2 className="mt-3 font-display text-[1.45rem] leading-tight font-medium text-brand-900">{t("contactTitle")}</h2>
+        <h2 className="mt-3 card-title">{t("contactTitle")}</h2>
         <p className="mt-2 text-ink/80">{t("contactText")}</p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
           <Link href="/contact" className="btn btn-primary btn-sm">{t("contactCta")}</Link>
           <Link href="/faq" className="btn btn-secondary btn-sm">{t("faqCta")}</Link>
-          {audience === "clients" && <Link href="/aide/partenaires" className="btn btn-secondary btn-sm">{t("tabPartners")}</Link>}
+
         </div>
       </div>
       <AudienceCards headingLevel="h2" />

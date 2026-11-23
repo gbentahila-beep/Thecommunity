@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/presse">
   return { title: PRESS.title[l], description: PRESS.intro[l] };
 }
 
-const h2 = "text-center font-display text-3xl font-medium text-brand-900";
+const h2 = "section-title";
 const card = "rounded-[var(--radius-card)] bg-white p-5 shadow-card";
 
 /** Kit presse : présentation (3 longueurs), faits clés, équipe, logos, Babs, couleurs, typographies, photos, contact. */

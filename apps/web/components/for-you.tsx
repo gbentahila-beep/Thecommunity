@@ -29,7 +29,7 @@ export function ForYou() {
   return (
     <section aria-labelledby="for-you-title" className="space-y-4" data-testid="for-you">
       <div className="text-center">
-        <h2 id="for-you-title" className="font-display text-2xl font-medium text-brand-900">{t("title")}</h2>
+        <h2 id="for-you-title" className="card-title">{t("title")}</h2>
         <p className="text-sm text-muted">{t("subtitle")}</p>
       </div>
       {/* Étape Y : même liste que « Cette semaine » et Découvrir (une carte blanche, lignes séparées). */}

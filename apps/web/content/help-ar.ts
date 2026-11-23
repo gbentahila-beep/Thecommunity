@@ -5,7 +5,7 @@
 import { ACCEPTED_HOLD_HOURS, HOLD_MINUTES, REVIEW_WINDOW_DAYS, WAITLIST_OFFER_HOURS } from "@thecommunity/shared";
 import type { HelpBlock, HelpCategoryKey } from "./help";
 
-export const HELP_CATEGORIES_AR: Record<HelpCategoryKey, { title: string; description: string }> = {
+export const HELP_CATEGORIES_AR: Partial<Record<HelpCategoryKey, { title: string; description: string }>> = {
   start: { title: "البداية", description: "المبدأ، حسابك، تجربتك الأولى." },
   bookings: { title: "التجارب والحجوزات", description: "الحجز، الدفع، الإلغاء، قائمة الانتظار، الآراء." },
   membership: { title: "الدفتر والباس", description: "الدفتر والباس، الغياب." },
