@@ -1,4 +1,4 @@
-import { experienceBadge, formatMoney, LOW_SEATS_THRESHOLD, seatsAvailable, type Experience, type Session, restaurantBudget } from "@thecommunity/shared";
+import { experienceBadge, LOW_SEATS_THRESHOLD, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
 import { getLocale, getTranslations } from "next-intl/server";
 import { MediaImage as Image } from "@/components/media";
 import { Link } from "@/i18n/navigation";
@@ -24,8 +24,6 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
     getTranslations("twoPart"),
     experience.subcategoryId ? getCategory(experience.subcategoryId) : Promise.resolve(null),
   ]);
-  const budget = restaurantBudget(experience);
-  const lang = locale as "fr" | "ar" | "en";
   // Sans date (« Déjà vécues ») : même ligne, « Prochaines dates bientôt » et un bouton « M'alerter » vers la fiche.
   const left = session ? seatsAvailable(session) : Infinity;
   const full = session ? session.status === "full" || left === 0 : false;
@@ -33,7 +31,6 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
   const cover = experience.images[0];
   const formatFull = subcategory ? tr(subcategory.shortName, locale) : category ? tr(category.shortName, locale) : "";
   const formatName = formatFull && tr(experience.title, locale).toLowerCase().startsWith(formatFull.toLowerCase()) ? "" : formatFull;
-  const price = session?.price ?? experience.price;
   const action = !session ? tr2("alert") : full ? tr2("waitlist") : experience.admission === "on_request" ? tr2("request") : tr2("book");
   return (
     <article className="group relative flex items-center gap-3.5 py-3.5" data-testid="catalog-row">
@@ -76,9 +73,7 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
               </span>
             </>
           )}
-          {/* Étape S : sur la ligne, format, gamme et prix ; les langues sont sur la fiche. */}
-          {formatName || experience.venueTier ? " · " : ""}<span className="font-medium text-ink/75">{formatMoney(price, lang)}</span>
-          {budget && <span className="text-muted"> {tp("plusOnSite")}</span>}
+          {/* Format et gamme ; le prix et les langues sont sur la fiche. */}
         </p>
       </div>
       <Link

@@ -1,6 +1,5 @@
 import {
   experienceBadge,
-  formatMoney,
   seatsAvailable,
   type Experience,
   type Session,
@@ -65,7 +64,6 @@ export async function CompactRow({
       .startsWith(formatFull.toLowerCase())
       ? ""
       : formatFull;
-  const price = session?.price ?? experience.price;
   // Étape X : un bouton d'action à droite (comme dans Découvrir) ; le prix passe sur la ligne de la gamme.
   const action = !session
     ? tr2("alert")
@@ -139,15 +137,9 @@ export async function CompactRow({
                 </span>
               </>
             )}
-            {formatName || experience.venueTier || experience.audience === "women" ? " · " : ""}
-            <span className="font-medium text-ink/75">
-              {formatMoney(price, locale as "fr" | "ar" | "en")}
-            </span>
-            {experience.pricing && experience.pricing.model !== "online_only" && (
-              <span> {tp("plusOnSite")}</span>
-            )}
+            {/* Le prix n'est pas sur la ligne : il est sur la fiche et à la réservation. */}
             {full && (
-              <span className="font-semibold text-ink"> · {t("full")}</span>
+              <span className="font-semibold text-ink">{formatName || experience.venueTier ? " · " : ""}{t("full")}</span>
             )}
           </p>
         </div>
