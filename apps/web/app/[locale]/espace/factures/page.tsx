@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { InvoiceList } from "@/components/account/invoice-list";
+import { EmptyState } from "@/components/empty-state";
 import { getMyInvoices } from "@/lib/data/invoices";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/espace/factures">): Promise<Metadata> {
@@ -12,7 +13,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/espace/f
 export default async function InvoicesPage({ params }: PageProps<"/[locale]/espace/factures">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, { invoices, isDemo }] = await Promise.all([getTranslations("invoices"), getMyInvoices()]);
+  const [t, te, { invoices, isDemo }] = await Promise.all([getTranslations("invoices"), getTranslations("emptyStates"), getMyInvoices()]);
   return (
     <div className="space-y-6">
       <div>
@@ -22,7 +23,7 @@ export default async function InvoicesPage({ params }: PageProps<"/[locale]/espa
       {isDemo ? (
         <p className="rounded-2xl bg-brand-50 p-4 text-sm text-brand-900">{t("demo")}</p>
       ) : invoices.length === 0 ? (
-        <p className="rounded-[var(--radius-card)] bg-white p-5 text-ink/80 shadow-card">{t("empty")}</p>
+        <EmptyState bab="pixel" mood="wink" prop="receipt" titleAs="h2" title={te("invoicesTitle")} text={t("empty")} action={{ href: "/experiences", label: te("browse") }} />
       ) : (
         <>
           {invoices.some((i) => i.test) && <p className="text-sm text-muted">{t("testNote")}</p>}

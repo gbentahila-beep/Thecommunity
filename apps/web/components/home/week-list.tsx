@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
+import { EmptyState } from "@/components/empty-state";
 
 export type WeekItem = { id: string; categories: string[]; node: ReactNode };
 export type WeekChip = { id: string | null; label: string; icon?: ReactNode };
@@ -30,7 +31,7 @@ export function WeekList({ chips, items, limit, seeAll, empty }: { chips: WeekCh
           ))}
         </ul>
       ) : (
-        <p className="card px-5 py-8 text-center text-sm text-muted">{empty}</p>
+        <EmptyState variant="compact" bab="pixel" mood="sleep" text={empty} />
       )}
       <div className="text-center">
         <Link href={seeAll.href} className="btn btn-secondary">

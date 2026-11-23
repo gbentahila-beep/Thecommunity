@@ -166,16 +166,15 @@
     "appScreenDiscover": "Écran Découvrir : le calendrier des sorties de la semaine",
     "typewriterLabel": "Avec Wenzy, vous pouvez :",
     "typewriter": [
-      "Trouver des gens pour bruncher le dimanche",
-      "Dîner à 6 avec des inconnus",
-      "Trouver des partenaires pour courir sur la Corniche",
-      "Se faire de nouvelles amies autour d'un atelier",
-      "Monter une équipe de padel",
-      "Découvrir un restaurant secret",
-      "Jouer à des jeux de société entre inconnus",
-      "Rencontrer du monde en arrivant à Casablanca",
-      "Pratiquer son anglais autour d'un café",
-      "Partir en randonnée le week-end"
+      "Se faire des amis en ville",
+      "Trouver un partenaire de padel",
+      "Trouver des gens pour bruncher",
+      "Courir à plusieurs sur la Corniche",
+      "Dîner avec de nouvelles têtes",
+      "Trouver des partenaires de jeu",
+      "Rencontrer sa future bande",
+      "Trouver des copains de rando",
+      "Ne plus jamais sortir seul·e"
     ]
   },
   "card": {
@@ -2064,5 +2063,23 @@
     "full": "Complet",
     "free": "Gratuit",
     "seeAll": "Voir toutes les dates"
+  },
+  "emptyStates": {
+    "upcomingTitle": "Votre agenda est tout calme",
+    "upcomingText": "Aucune sortie prévue pour l'instant. De nouvelles dates sont publiées chaque semaine.",
+    "browse": "Voir les expériences",
+    "pastTitle": "Rien ici pour l'instant",
+    "firstOuting": "Choisir ma première sortie",
+    "notificationsTitle": "Rien de neuf, tout va bien",
+    "notificationsText": "Vous trouverez ici les nouvelles de vos réservations : confirmation, groupe révélé, place libérée sur une liste d'attente.",
+    "invoicesTitle": "Vos factures arriveront ici",
+    "meetTitle": "Envie de revoir quelqu'un ?",
+    "catalogTitle": "Aucune sortie trouvée",
+    "reviewsTitle": "Les premiers avis arrivent",
+    "notFoundTitle": "Cette page s'est perdue en route"
+  },
+  "babs": {
+    "seat": "Votre place",
+    "caption": "Il ne manque plus que vous."
   }
 }

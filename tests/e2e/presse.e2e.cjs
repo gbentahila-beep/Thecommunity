@@ -13,11 +13,11 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.locator('footer').getByRole('link', { name: 'Presse' }).click();
   await page.waitForURL('**/presse');
   assert(await page.getByRole('heading', { level: 1, name: 'Kit presse' }).isVisible(), 'lien « Presse » du pied de page → kit presse');
-  for (const h of ['En bref', 'Faits clés', "L'équipe", 'Logos', 'Couleurs', 'Typographies', 'Photos', 'Contact presse']) {
+  for (const h of ['En bref', 'Faits clés', "L'équipe", 'Logos', 'Les Babs', 'Couleurs', 'Typographies', 'Photos', 'Contact presse']) {
     assert(await page.getByRole('heading', { level: 2, name: h }).isVisible(), `section « ${h} »`);
   }
   const links = await page.locator('a[download]').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
-  assert(links.length === 10, `10 fichiers téléchargeables (4 logos × SVG/PNG + 2 photos) — ${links.length}`);
+  assert(links.length === 24, `24 fichiers téléchargeables (4 logos et 7 Babs × SVG/PNG + 2 photos) — ${links.length}`);
   for (const href of links) {
     const r = await fetch(base + href);
     assert(r.ok && Number(r.headers.get('content-length') ?? 1) > 0, `fichier disponible : ${href}`);

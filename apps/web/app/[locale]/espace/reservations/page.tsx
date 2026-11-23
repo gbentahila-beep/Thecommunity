@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { EmptyState } from "@/components/empty-state";
 import { CancelRequestButton } from "@/components/booking/request-form";
 import { LeaveWaitlistButton } from "@/components/booking/waitlist-box";
 import { formatLongDate } from "@/lib/format";
@@ -25,7 +26,7 @@ export default async function ReservationsPage({ params, searchParams }: PagePro
   setRequestLocale(locale);
   const sp = await searchParams;
   const current = TABS.find((tab) => tab.param === sp.onglet)?.key ?? "upcoming";
-  const [t, tq, tw, space] = await Promise.all([getTranslations("account"), getTranslations("request"), getTranslations("waitlist"), getMemberSpace()]);
+  const [t, te, tq, tw, space] = await Promise.all([getTranslations("account"), getTranslations("emptyStates"), getTranslations("request"), getTranslations("waitlist"), getMemberSpace()]);
   const labels: Record<ReservationBucket, string> = { upcoming: t("tabUpcoming"), past: t("tabPast"), cancelled: t("tabCancelled") };
   const list = space[current];
 
@@ -77,7 +78,7 @@ export default async function ReservationsPage({ params, searchParams }: PagePro
       </div>
       <div role="tabpanel" className="space-y-3">
         {list.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-line p-8 text-center text-muted">{t("emptyTab")}</p>
+          <EmptyState bab="sprint" mood="wait" prop="ticket" text={t("emptyTab")} action={{ href: "/experiences", label: te("browse") }} />
         ) : (
           list.map((r) => <ReservationCard key={r.id} reservation={r} />)
         )}

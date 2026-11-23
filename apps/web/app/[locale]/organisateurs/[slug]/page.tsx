@@ -11,6 +11,7 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { getAllCategories, getCity, getExperiencesWithoutUpcoming, getPublicOrganizerBySlug, getPublicOrganizers, getPublishedExperiences, getReviews, getUpcomingSessions, publicLogo } from "@/lib/data";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
+import { EmptyState } from "@/components/empty-state";
 import { tr } from "@/lib/i18n-text";
 import { SITE_URL } from "@/lib/site";
 
@@ -124,7 +125,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
               {next.map((s) => <ExperienceCard key={s.id} session={s} experience={s.experience} />)}
             </div>
           ) : (
-            <p className="text-muted">{t("none")}</p>
+            <EmptyState variant="compact" bab="doodle" mood="wait" text={t("none")} />
           )}
         </section>
 

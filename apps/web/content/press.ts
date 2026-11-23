@@ -81,6 +81,22 @@ export const PRESS = {
     { file: "wenzy-icone", label: { fr: "Icône de l'application", en: "App icon", ar: "أيقونة التطبيق" } as T, dark: false },
   ],
 
+  babsTitle: { fr: "Les Babs", en: "The Babs", ar: "شخصيات Babs" } as T,
+  babsRules: {
+    fr: "Sept petits personnages, un par univers de Wenzy, avec Wen comme mascotte principale. Vous pouvez les utiliser pour illustrer un article ou une publication sur Wenzy. Merci de ne pas les déformer, les recolorer, leur ajouter du texte ou des bras, ni les associer à une autre marque.",
+    en: "Seven small characters, one for each Wenzy universe, with Wen as the main mascot. You may use them to illustrate an article or a post about Wenzy. Please don't stretch or recolour them, add text or arms, or pair them with another brand.",
+    ar: "سبع شخصيات صغيرة، واحدة لكل عالم من عوالم Wenzy، و Wen هي التميمة الرئيسية. يمكنك استعمالها لتوضيح مقال أو منشور عن Wenzy. نرجو عدم تشويهها أو تغيير ألوانها أو إضافة نص أو أذرع إليها، أو ربطها بعلامة تجارية أخرى.",
+  } as T,
+  babs: [
+    { file: "wen", name: "Wen", label: { fr: "Rencontres · mascotte", en: "Meetups · mascot", ar: "اللقاءات · التميمة" } as T },
+    { file: "toast", name: "Toast", label: { fr: "Dîners", en: "Dinners", ar: "العشاء" } as T },
+    { file: "sprint", name: "Sprint", label: { fr: "Sport & bien-être", en: "Sport & wellbeing", ar: "الرياضة والعافية" } as T },
+    { file: "pixel", name: "Pixel", label: { fr: "Jeux", en: "Games", ar: "الألعاب" } as T },
+    { file: "doodle", name: "Doodle", label: { fr: "Ateliers", en: "Workshops", ar: "الورشات" } as T },
+    { file: "scout", name: "Scout", label: { fr: "Sorties", en: "Outings", ar: "الخرجات" } as T },
+    { file: "memo", name: "Memo", label: { fr: "Culture", en: "Culture", ar: "الثقافة" } as T },
+  ],
+
   colorsTitle: { fr: "Couleurs", en: "Colours", ar: "الألوان" } as T,
   colors: [
     { hex: "#F6F1EA", name: { fr: "Crème", en: "Cream", ar: "كريمي" } as T, light: true },

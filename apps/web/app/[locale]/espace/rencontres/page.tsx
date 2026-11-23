@@ -1,6 +1,7 @@
 import { otherOf } from "@thecommunity/shared";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { InviteForm, MeetActions } from "@/components/account/meet-actions";
+import { EmptyState } from "@/components/empty-state";
 import { Link } from "@/i18n/navigation";
 import { getNextSessionPerExperience } from "@/lib/data";
 import { getMeetData, getMemberSpace } from "@/lib/data/member";
@@ -11,7 +12,7 @@ import { tr } from "@/lib/i18n-text";
 export default async function MeetPage({ params }: PageProps<"/[locale]/espace/rencontres">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, tInt, data, space] = await Promise.all([getTranslations("meet"), getTranslations("labels.interests"), getMeetData(), getMemberSpace()]);
+  const [t, te, tInt, data, space] = await Promise.all([getTranslations("meet"), getTranslations("emptyStates"), getTranslations("labels.interests"), getMeetData(), getMemberSpace()]);
   const me = space.profile.uid;
   const upcoming = (await getNextSessionPerExperience({ cityId: space.profile.cityId })).filter((s) => s.status !== "full").slice(0, 30);
   const sessions = upcoming.map((s) => ({ id: s.id, label: `${tr(s.experience.title, locale)} · ${formatShortSlot(s.startAt, locale)}` }));
@@ -25,7 +26,7 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
       <section aria-labelledby="contacts-title" className="space-y-3">
         <h2 id="contacts-title" className="font-display text-2xl font-medium text-brand-900">{t("contacts")}</h2>
         {data.connections.length === 0 ? (
-          <p className="rounded-[var(--radius-card)] border border-dashed border-line bg-white/60 p-5 text-sm text-muted">{t("noContacts")}</p>
+          <EmptyState bab="toast" mood="big" prop="hearts" title={te("meetTitle")} text={t("noContacts")} />
         ) : (
           <ul className="space-y-3">
             {data.connections.map((c) => {
