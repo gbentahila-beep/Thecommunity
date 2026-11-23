@@ -1,4 +1,4 @@
-import { Bell, BookOpen, CalendarHeart, Lightbulb, Star, CalendarRange, ChevronRight, CircleHelp, HandHeart, Info, Mail, MessageCircle, Newspaper, Award, Settings2, ShieldCheck, Sparkles, UserRound, type LucideIcon } from "lucide-react";
+import { Bell, BookOpen, CalendarHeart, Star, CalendarRange, ChevronRight, CircleHelp, HandHeart, Info, Mail, MessageCircle, Newspaper, Award, Settings2, ShieldCheck, Sparkles, UserRound, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
@@ -82,7 +82,6 @@ export default async function MenuPage({ params }: PageProps<"/[locale]/menu">) 
         rows={[
           { href: "/devenir-partenaire", label: t("partnersLink"), icon: ico(HandHeart) },
           { href: "/devenir-organisateur", label: t("organizersLink"), icon: ico(CalendarHeart) },
-          { href: "/aide/proposer-une-sortie", label: t("trustedLink"), icon: ico(Lightbulb) },
         ]}
       />
       <Group

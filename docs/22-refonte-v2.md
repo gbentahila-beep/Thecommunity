@@ -412,7 +412,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | **I — Carnet et Pass** ✅ | Offres, crédits, accès abonnés, garde-fous, migration des abonnés. Détail § 17.I | Faite (journal § 19) |
 | **J — Organisateurs et rôles** ✅ | Encaissement sur place, formulaire court, pointage, Statistiques ; suppression des reversements, commissions, propositions et membres de confiance ; signalement d'un participant | Faite (journal § 19) |
 | **K — Découvrir et agenda** ✅ | Agenda de l'accueil, filtres, moment de la journée | Faite (journal § 19) |
-| **L — Textes** | Tous les textes FR / EN / AR (§ 15), juridique compris, à faire relire | Relecture |
+| **L — Textes** ✅ (à faire relire) | Tous les textes FR / EN / AR (§ 15), juridique compris, à faire relire | Faite (journal § 19) ; relecture juridique à faire |
 | **M — Vitrine** | **Suppression de tous les événements existants** (avec ta confirmation), puis **création des nouveaux** à partir des modèles validés, avec leurs images | Rendu final |
 
 **Mise en ligne** : A est prête ; E à L sortent ensemble, une fois les textes juridiques validés ; M ensuite.
@@ -596,4 +596,17 @@ Aucune pour l'instant. Les questions Q1 à Q7 du 22 novembre sont tranchées (d�
 | **Filtres de Découvrir (décision 33)** | Retirés : prix par place, quartier, tri par prix (un seul prix). Ajouté : **moment de la journée** (matin avant 11 h, midi 11 h–14 h, après-midi 14 h–18 h, soir à partir de 18 h). Gardés : univers, format, gamme, jour, seul·e ou à plusieurs, débutants, places disponibles, réservé aux femmes. Les anciennes adresses avec « prix » ou « quartier » sont simplement ignorées. |
 
 **Tests** : unitaires (lecture des filtres et moment) ; suites de bout en bout catalogue et accueil mises à jour.
+
+### Étape L livrée (23 novembre, nuit) — à faire relire
+| Texte | Ce qui change (FR, EN, AR) |
+|---|---|
+| **Interface** | Accueil (« Comment ça marche » : 35 DH ou pass, lieu révélé 5 h avant, table au check-in) ; page Comment ça marche (5 étapes) ; FAQ (venir seul, composition, annulation et changement de date, « Combien vais-je payer ? », Pass et Carnet) ; partenaires (« Des tables pleines en semaine », sans commission) ; organisateurs (paiement sur place, sans commission) ; À propos ; e-mails et notifications déjà revus aux étapes H et I. |
+| **Travaillons ensemble** | Deux portes au lieu de trois (lieux partenaires, organisateurs) ; « Proposer une sortie » retiré des menus. |
+| **CGV** | Réécrites : prix unique en ligne et reste sur place, réservation (questionnaire avant paiement, fermeture des réservations, liste d'attente prioritaire pour le Pass), annulation et changement de date, minimum non atteint et lieu choisi puis révélé, Carnet et Pass (avec rétractation 7 jours si non utilisé), check-in et absences, facturation. |
+| **CGU, confidentialité, règles** | Plus de membres de confiance ni de propositions de sorties ; confidentialité : check-in, résumé de table sans les noms, messages de table, signalements, données transmises au lieu 1 h avant (avec durées de conservation). |
+| **Contrat organisateur et conditions de vente des organisateurs** | Prix de l'activité payé sur place à l'organisateur ; Wenzy rémunérée par ses seuls frais payés par le participant ; plus de commission, de mandat d'encaissement ni de reversement ; pointage. Nouvelle version du contrat (2026-11-23) : les organisateurs l'acceptent de nouveau. |
+| **Centre d'aide** | Réécrits : Comment fonctionne Wenzy, Payer, Annuler ou déplacer, Pass et Carnet, Comment êtes-vous rémunéré, Combien vais-je payer. Nouveaux : Le lieu secret des Tables, Le check-in et ma table, Pas assez de participants, Absences et suspension du pass, Les gammes des Tables. Catégorie « Carnet et Pass ». |
+| **Blog** | Univers à jour (Tables, Bouger, Sortir, Découvrir) ; article « Proposer votre propre sortie » retiré. |
+
+**À faire** : faire relire les CGV, CGU, la confidentialité et le contrat organisateur par un juriste avant la mise en ligne. Les autres articles du blog et de l'aide restent valables ; ils peuvent être enrichis au fil de l'eau.
 

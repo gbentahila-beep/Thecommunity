@@ -64,7 +64,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(!(await sheet.count()), 'Échap ferme la fenêtre');
   const cardsBox = d.getByTestId('audience-cards');
   assert(await cardsBox.getByRole('heading', { name: 'Travaillons ensemble' }).isVisible(), '« Travaillons ensemble »');
-  assert((await cardsBox.getByRole('link', { name: /Devenir lieu partenaire/ }).getAttribute('href')) === '/devenir-partenaire' && (await cardsBox.getByRole('link', { name: /Devenir organisateur/ }).getAttribute('href')) === '/devenir-organisateur' && (await cardsBox.getByRole('link', { name: /Proposer une sortie/ }).getAttribute('href')) === '/aide/proposer-une-sortie', 'trois encadrés : lieux partenaires, organisateurs, membres de confiance');
+  assert((await cardsBox.getByRole('link', { name: /Devenir lieu partenaire/ }).getAttribute('href')) === '/devenir-partenaire' && (await cardsBox.getByRole('link', { name: /Devenir organisateur/ }).getAttribute('href')) === '/devenir-organisateur' && !(await cardsBox.getByRole('link', { name: /Proposer une sortie/ }).count()), 'deux encadrés : lieux partenaires, organisateurs (plus de membres de confiance)');
   await d.goto(`${base}/devenir-organisateur`);
   assert(await d.getByRole('heading', { level: 1, name: 'Devenir organisateur' }).isVisible() && (await d.getByTestId('organizer-cta').getAttribute('href')) === '/pro/inscription' && await d.getByRole('heading', { name: 'Qui fait quoi ?' }).isVisible(), 'page « Devenir organisateur » : étapes, qui fait quoi, lien vers l\'espace organisateur');
   await d.goto(`${base}/`);
@@ -103,7 +103,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await mostRead.getByRole('heading', { name: 'Les plus lus' }).isVisible() && await mostRead.getByRole('link').count() === 6, '« Les plus lus » : 6 articles en liste compacte');
   assert(await mostRead.locator('img').count() === 6, 'liste compacte avec vignettes');
   const browse = d.locator('section[aria-labelledby="browse"]');
-  assert(await browse.getByRole('link').count() === 23, '« Parcourir les articles » : 23 articles');
+  assert(await browse.getByRole('link').count() === 22, '« Parcourir les articles » : 22 articles (article des propositions de sorties retiré)');
   const popular = browse.getByRole('button', { name: 'Plus lus' });
   const recent = browse.getByRole('button', { name: 'Récents' });
   assert(await popular.getAttribute('aria-pressed') === 'true', 'tri « Plus lus » par défaut');
@@ -115,7 +115,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await browse.getByRole('searchbox').fill('zzzz introuvable');
   assert(await browse.getByText('Aucun article ne correspond à votre recherche.').isVisible(), 'recherche sans résultat annoncée');
   await browse.getByRole('button', { name: 'Effacer la recherche' }).click();
-  assert(await browse.getByRole('link').count() === 23, 'recherche effacée');
+  assert(await browse.getByRole('link').count() === 22, 'recherche effacée');
   await tabs.getByRole('link', { name: 'City guide' }).click();
   await d.waitForURL('**/blog/theme/city-guide');
   assert(await d.getByRole('heading', { level: 1, name: 'City guide' }).isVisible(), 'page de thème : titre');
@@ -130,7 +130,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await useful.getByRole('heading', { name: 'Utile aussi' }).isVisible() && await useful.getByRole('link').count() === 3, '« Utile aussi » : 3 articles');
   await d.getByRole('navigation', { name: 'Thèmes du blog' }).getByRole('link', { name: 'Comment fonctionne Wenzy' }).click();
   await d.waitForURL('**/blog/theme/wenzy');
-  assert(await d.getByText(/10 articles/).isVisible(), 'Wenzy : 10 articles');
+  assert(await d.getByText(/9 articles/).isVisible(), 'Wenzy : 9 articles (propositions de sorties retiré)');
   await d.getByRole('link', { name: /Réserver sa première expérience, étape par étape/ }).first().click();
   await d.waitForURL('**/blog/reserver-sa-premiere-experience');
   assert(await d.getByRole('heading', { level: 1, name: 'Réserver sa première expérience, étape par étape' }).isVisible(), 'page article');

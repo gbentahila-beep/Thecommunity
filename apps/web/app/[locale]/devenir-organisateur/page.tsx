@@ -57,7 +57,6 @@ export default async function BecomeOrganizerPage({ params }: PageProps<"/[local
         <ul className="mt-3 space-y-2 text-[15px] text-ink/85">
           <li>{t("roleVenue")}</li>
           <li>{t("roleOrganizer")}</li>
-          <li>{t("roleTrusted")}</li>
         </ul>
       </section>
       <p className="flex flex-col gap-2">

@@ -17,7 +17,7 @@ export type LegalBlock = string | string[] | LegalTable;
 export type LegalSection = { title: string; body: LegalBlock[] };
 export type LegalDoc = { title: string; updated: string; intro: string; sections: LegalSection[] };
 
-const UPDATED_FR = "Dernière mise à jour : 19 novembre 2026 · en vigueur à la même date";
+const UPDATED_FR = "Dernière mise à jour : 23 novembre 2026 · en vigueur à la même date";
 
 const fr: Record<BaseLegalKey, LegalDoc> = {
   physical: {
@@ -317,7 +317,6 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
             "Réglez votre part : si une consommation hors prix est partagée sur place, partir sans payer revient à la faire payer aux autres.",
             "Rien qui mette les autres en danger : ni promotion de la violence ou de l'extrémisme, ni exploitation de qui que ce soit.",
             "Fair-play : au sport comme au jeu, respectez les règles, les consignes de sécurité et le niveau des autres. On vient pour partager un bon moment, jamais pour humilier ou blesser qui que ce soit.",
-            "Membres de confiance : si l'équipe vous permet de proposer des sorties, décrivez-les honnêtement (lieu, niveau, prix envisagé). Le jour J, participez dans le respect de ces règles et ne demandez jamais d'argent directement aux participants.",
           ],
         ],
       },
@@ -433,7 +432,6 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         body: [
           "Une expérience se réserve directement ou, si elle est « sur demande », après validation de votre demande par l'équipe. Quand une date est complète, vous pouvez rejoindre la liste d'attente. Le fonctionnement détaillé (prix, délais de paiement, annulation, remboursement) figure dans les [conditions générales de vente](/cgv).",
           "Pour les activités physiques (sport, paintball, randonnée…), réserver ou demander à participer implique d'accepter les [conditions de participation aux activités physiques](/conditions-activites-physiques).",
-          "Membres de confiance : l'équipe peut permettre à des membres habitués de proposer leurs propres idées de sorties. Une proposition n'engage à rien : l'équipe la vérifie (lieu, sécurité, prix) avant toute publication et reste l'organisatrice de l'expérience publiée, vendue par Wenzy aux mêmes conditions que les autres. Le membre qui l'a proposée n'est ni salarié ni prestataire de Wenzy et n'est pas rémunéré à ce titre, sauf accord écrit distinct.",
         ],
       },
       {
@@ -513,76 +511,87 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
       },
     ],
   },
-
   sales: {
-    title: "Conditions générales de vente",
-    updated: UPDATED_FR,
-    intro: "Ces conditions s'appliquent à toute réservation d'expérience et à l'abonnement achetés sur Wenzy. Les prix, ce qui est inclus et les conditions d'annulation sont toujours affichés avant le paiement.",
-    sections: [
-      { title: "1. Vendeur", body: ["{{publisher}}, {{address}} — ICE {{ice}}. Contact : {{supportEmail}}."] },
+    "title": "Conditions générales de vente",
+    "updated": UPDATED_FR,
+    "intro": "Ces conditions s'appliquent à toute réservation et à l'achat d'un Carnet ou d'un Pass sur Wenzy. Le prix, ce qui se règle sur place et les conditions d'annulation sont toujours affichés avant le paiement.",
+    "sections": [
       {
-        title: "2. Prix",
-        body: [
-          "Les prix sont indiqués en dirhams marocains (DH), toutes taxes comprises, par place. Ce qui est inclus (repas, boissons, matériel, cours…) est précisé sur la fiche de chaque expérience ; toute consommation supplémentaire se règle directement auprès du lieu. Les membres abonnés bénéficient du prix membre affiché à côté du prix public.",
-          "Un code promo s'applique après le prix membre, sur les réservations directes, une fois par personne, dans les conditions indiquées avec le code. D'éventuels frais de service peuvent s'ajouter : ils sont toujours affichés avant le paiement, ne s'appliquent jamais à une place gratuite et sont remboursés avec la place.",
-          "Certaines expériences se règlent en deux parts, toujours indiquées sur la fiche : la part organisation, payée en ligne à la réservation, et une part réglée sur place directement au partenaire (un prix fixe annoncé à l'avance, ou votre consommation). La part sur place n'est jamais encaissée par Wenzy : elle ne figure pas sur notre facture et n'est pas due si votre réservation est annulée. Le prix membre, l'abonnement, les codes promo et les frais de service ne portent que sur la part payée en ligne.",
-        ],
+        "title": "1. Vendeur",
+        "body": [
+          "{{publisher}}, {{address}} — ICE {{ice}}. Contact : {{supportEmail}}."
+        ]
       },
       {
-        title: "3. Réservation et paiement",
-        body: [
+        "title": "2. Prix : 35 DH en ligne, le reste sur place",
+        "body": [
+          "Sur Wenzy, vous ne payez en ligne que les frais Wenzy : un prix unique par place (35 DH à ce jour, affiché avant le paiement), toutes taxes comprises. Il rémunère l'organisation : la composition des groupes, le lieu, l'accueil et le suivi.",
+          "Tout le reste se règle sur place, directement au lieu ou à l'organisateur, et n'est jamais encaissé par Wenzy : votre consommation au restaurant (la gamme Casual, Premium ou Exclusive indique un budget), ou le prix de l'activité affiché sur la fiche (padel, cours, atelier…). Ce montant ne figure pas sur notre facture et n'est pas dû si votre réservation est annulée.",
+          "Un code promo porte sur les frais Wenzy, une fois par personne, dans les conditions indiquées avec le code."
+        ]
+      },
+      {
+        "title": "3. Réservation et paiement",
+        "body": [
           [
-            "Réservation directe : la place est bloquée le temps du paiement (15 minutes pour un paiement par carte ; jusqu'à l'échéance indiquée pour un virement), puis remise en vente si le paiement n'a pas abouti.",
-            "Expérience sur demande : aucun paiement à la demande ; si elle est acceptée, la place est réservée 24 heures pour payer.",
-            "Liste d'attente : si une place se libère, elle est proposée à la première personne inscrite et réservée 4 heures pour payer.",
-            "Paiement par virement bancaire : après la réservation, une référence unique et les coordonnées bancaires de Wenzy sont communiquées (à l'écran et par e-mail). La place est bloquée jusqu'à l'échéance indiquée : 48 heures au plus, et au plus tard 24 heures avant l'expérience. La réservation est confirmée, avec le billet et la facture, dès que l'équipe constate la réception du virement du montant exact portant la référence.",
-            "Virement non reçu à l'échéance : la place est libérée et vous en êtes informé. Un virement arrivé ensuite donne droit à une place s'il en reste, sinon il est intégralement remboursé. Les remboursements d'un virement se font par virement : les coordonnées nécessaires vous sont demandées à ce moment-là et ne sont pas enregistrées sur le site.",
-            "Lorsque le paiement par carte est proposé, il s'effectue auprès d'un prestataire de paiement sécurisé ; Wenzy ne reçoit ni ne conserve aucune donnée de carte. La réservation est confirmée à réception de la confirmation du paiement.",
-            "Âge minimum : certaines expériences sont réservées à partir d'un âge supérieur à 18 ans, indiqué sur leur fiche ; la réservation est refusée si votre date de naissance ne le permet pas.",
-            "Activités physiques : la réservation (ou la demande de participation) implique l'acceptation des [conditions de participation aux activités physiques](/conditions-activites-physiques) ; la version acceptée et sa date sont conservées avec la réservation.",
-            "Questionnaire : pour certaines expériences, un court questionnaire (uniquement à choix) est à remplir pendant la réservation, avant le paiement, pour composer les groupes. Y répondre est nécessaire pour réserver ; vos réponses restent modifiables jusqu'au début de l'expérience.",
-          ],
-        ],
+            "La place est bloquée le temps du paiement (15 minutes par carte ; jusqu'à l'échéance indiquée pour un virement), puis remise en vente si le paiement n'a pas abouti.",
+            "Le questionnaire de l'activité, s'il y en a un, se remplit avant le paiement.",
+            "Événement sur demande : aucun paiement à la demande ; si elle est acceptée, la place est réservée 24 heures pour payer.",
+            "Liste d'attente : une place libérée est proposée en priorité aux personnes qui ont un Pass, puis dans l'ordre d'inscription, et réservée 4 heures pour payer.",
+            "Virement bancaire : une référence unique et les coordonnées de Wenzy vous sont communiquées ; la réservation est confirmée dès réception du virement du montant exact. Non reçu à l'échéance, la place est libérée ; un virement arrivé ensuite donne droit à une place s'il en reste, sinon il est remboursé.",
+            "Paiement par carte : auprès d'un prestataire sécurisé ; Wenzy ne reçoit ni ne conserve aucune donnée de carte.",
+            "Les réservations des Tables ferment 12 heures avant le début (au plus tard la veille à 18 h pour un début avant 14 h) ; celles des autres activités, 2 heures avant."
+          ]
+        ]
       },
       {
-        title: "4. Annulation par le membre",
-        body: [
+        "title": "4. Annulation et changement de date par le participant",
+        "body": [
+          "Vous pouvez toujours annuler depuis votre réservation. Les frais Wenzy sont remboursés selon les conditions d'annulation de l'événement, affichées avant la réservation (la plus courante : remboursement intégral jusqu'à 48 heures avant, aucun remboursement ensuite). Le montant remboursé est indiqué avant que vous confirmiez.",
+          "Jusqu'à la fermeture des réservations, vous pouvez déplacer votre réservation sur une autre date du même rendez-vous, sans repayer, s'il reste de la place.",
+          "Le remboursement se fait sur le moyen de paiement d'origine (par virement pour un paiement par virement)."
+        ]
+      },
+      {
+        "title": "5. Annulation, minimum non atteint ou changement par Wenzy",
+        "body": [
+          "Si Wenzy annule un événement, les frais Wenzy sont intégralement remboursés.",
+          "S'il n'y a pas assez d'inscrits pour former une table ou un groupe, Wenzy peut maintenir l'événement, vous proposer une autre date ou un événement équivalent (même format, même gamme). Vous acceptez la proposition, sans repayer, ou vous êtes intégralement remboursé·e ; vous n'êtes jamais déplacé·e sans votre accord, et sans réponse à l'heure indiquée, vous êtes remboursé·e.",
+          "Le lieu des Tables est choisi après la fermeture des réservations, parmi nos lieux partenaires, puis révélé 5 heures avant le début (la veille à 21 h pour un début le matin ou le midi). Plusieurs lieux peuvent accueillir les tables d'une même date. Si un lieu change après la révélation, les personnes concernées sont prévenues aussitôt."
+        ]
+      },
+      {
+        "title": "6. Carnet et Pass",
+        "body": [
           [
-            "Jusqu'à 48 heures avant le début : remboursement intégral.",
-            "Moins de 48 heures avant le début : pas de remboursement (la place peut être proposée à la liste d'attente).",
-            "Une expérience peut prévoir des conditions particulières, indiquées sur sa fiche avant la réservation.",
-          ],
-          "L'annulation se fait depuis l'espace membre (Mes réservations). Le remboursement est effectué sur le moyen de paiement utilisé ; son délai d'apparition dépend de votre banque.",
-        ],
+            "Carnet : 3 crédits valables 3 mois à compter de l'achat ; 1 crédit par place, invité compris. Un crédit revient si vous annulez dans les délais remboursés de l'événement, ou si la place n'est pas payée à temps. Un nouveau carnet ajoute ses crédits et repousse leur validité à 3 mois.",
+            "Pass (1 semaine, 1 mois, 3 mois, 6 mois ou 1 an) : votre place est incluse à chaque réservation (la place d'un invité se paie ou se règle avec un crédit du carnet), avec l'accès en avant-première aux nouvelles dates, les événements réservés aux abonnés et la priorité sur la liste d'attente. Le pass couvre 2 réservations à venir au maximum à la fois.",
+            "Le Carnet et le Pass couvrent les frais Wenzy, y compris pour les activités des organisateurs ; ils ne couvrent jamais ce qui se règle sur place.",
+            "Paiement en une fois, sans renouvellement automatique. Un nouveau pass prolonge le pass en cours. Le pass semaine ne se paie que par carte.",
+            "Droit de rétractation : vous pouvez demander le remboursement d'un Carnet ou d'un Pass dans les 7 jours suivant l'achat s'il n'a pas encore été utilisé."
+          ]
+        ]
       },
       {
-        title: "5. Annulation ou modification par Wenzy",
-        body: [
-          "Si nous annulons une expérience (météo, indisponibilité du partenaire, nombre insuffisant de participants…), vous êtes prévenu et remboursé intégralement. Nous pouvons proposer de déplacer votre réservation vers une autre date de la même expérience ; vous restez libre d'annuler avec remboursement intégral si la nouvelle date ne vous convient pas.",
-          "Expérience en plein air : si la météo ne permet pas l'activité, nous vous prévenons au plus tôt. Elle est soit reportée (vous gardez votre place à la nouvelle date, ou êtes intégralement remboursé si elle ne vous convient pas), soit annulée et intégralement remboursée.",
-          "Expérience qui n'a pas eu lieu ou très différente de sa description : dans les 7 jours qui suivent, faites une demande depuis votre réservation (Mes réservations) ou écrivez à {{supportEmail}}. Nous étudions chaque demande et pouvons vous rembourser tout ou partie de ce que vous avez payé en ligne ; la réponse vous est envoyée par notification et par e-mail.",
-        ],
+        "title": "7. Check-in et absences",
+        "body": [
+          "Le jour J, vous indiquez votre arrivée depuis votre réservation (« check-in »), de 30 minutes avant à 1 heure après le début ; avec une hôtesse ou un organisateur, c'est son pointage qui fait foi.",
+          "Sans check-in, la place est notée comme une absence et n'est pas remboursée. Pour une place incluse dans un Pass : une première absence donne un avertissement ; une deuxième dans les 90 jours suspend le pass pendant 14 jours (vous pouvez toujours réserver, mais vos places ne sont plus incluses). Si vous étiez bien présent·e, écrivez-nous : l'absence est annulée."
+        ]
       },
       {
-        title: "6. Abonnement",
-        body: [
-          [
-            "L'abonnement donne accès, pendant la durée choisie (1, 3, 6 ou 12 mois selon les formules proposées), aux avantages décrits sur la page Abonnement (prix membre et, selon la formule, accès anticipé aux nouvelles dates et expériences réservées aux membres).",
-            "Il est payé en une fois et n'est pas renouvelé automatiquement : vous pouvez le renouveler à partir de 30 jours avant l'échéance, la nouvelle période commençant à l'échéance.",
-            "Vous pouvez y renoncer dans les 7 jours suivant le paiement en écrivant à {{supportEmail}} : vous êtes alors remboursé, déduction faite des avantages déjà utilisés (différence entre le prix public et le prix membre des places réservées).",
-          ],
-        ],
+        "title": "8. Facturation",
+        "body": [
+          "Une facture est émise pour chaque paiement en ligne (frais Wenzy, Carnet ou Pass) et disponible dans votre espace, rubrique « Mes factures ». Un avoir est émis pour chaque remboursement. Ce qui se règle sur place est facturé, le cas échéant, par le lieu ou l'organisateur."
+        ]
       },
       {
-        title: "7. Absences",
-        body: ["Une absence sans annulation (no-show) n'ouvre pas droit à remboursement. Des absences ou annulations tardives répétées peuvent limiter l'accès aux expériences sur demande ou entraîner une suspension temporaire ([conditions générales d'utilisation](/cgu), article 9)."],
-      },
-      { title: "8. Facturation", body: ["Un document (facture ou reçu) est émis pour chaque paiement et un avoir pour chaque remboursement. Ils sont envoyés par e-mail et disponibles dans l'espace membre, rubrique « Mes factures »."] },
-      {
-        title: "9. Réclamations et droit applicable",
-        body: ["Toute réclamation peut être adressée à {{supportEmail}} ; nous recherchons d'abord une solution amiable. Ces conditions sont soumises au droit marocain, notamment la loi n° 31-08 édictant des mesures de protection du consommateur ; à défaut d'accord, les tribunaux de Casablanca sont compétents."],
-      },
-    ],
+        "title": "9. Réclamations et droit applicable",
+        "body": [
+          "Pour toute réclamation : {{supportEmail}}. Nous répondons sous 72 heures ouvrées. Ces conditions sont soumises au droit marocain, notamment à la loi n° 31-08 édictant des mesures de protection du consommateur ; à défaut d'accord amiable, les tribunaux compétents sont ceux de Casablanca."
+        ]
+      }
+    ]
   },
 
   privacy: {
@@ -623,7 +632,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
             "Préférences d'accueil : régime alimentaire, allergies et langue(s) souhaitée(s), si vous les indiquez, avec la date de votre accord pour leur transmission au lieu.",
             "Questionnaire d'une expérience : vos réponses (uniquement des choix : niveau, allure, envies…), si l'expérience en comporte un.",
             "Activités physiques : la version des conditions de participation que vous avez acceptée et sa date.",
-            "Propositions de sorties (membres de confiance) : le contenu de vos propositions et la réponse de l'équipe.",
+            "Tables : votre check-in (heure d'arrivée), un résumé de votre table sans les noms (âges, langues, secteurs, centres d'intérêt des autres convives), les messages échangés avec votre table après la rencontre, et les signalements que vous faites ou qui vous concernent (lus par l'équipe seulement). Une heure avant, le lieu reçoit le prénom de chaque convive et, si vous l'avez accepté, votre régime et vos allergies.",
             "Paiements et factures : montant, date, statut, référence du prestataire, documents émis. Les données de carte bancaire sont saisies et traitées uniquement par le prestataire de paiement : nous ne les recevons jamais.",
             "Sécurité et assistance : signalements, messages envoyés à l'équipe, décisions de modération et recours.",
             "Données techniques : adresse IP, journaux de connexion et de sécurité, cookies strictement nécessaires.",
@@ -654,7 +663,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
                 ["Transmettre régime, allergies et langues souhaitées au lieu", "Votre consentement explicite (le régime et les allergies peuvent révéler une donnée de santé)", "Le temps de l'expérience et de son suivi, puis effacement au plus tard 30 jours après l'expérience. Vous pouvez retirer votre accord jusqu'au début de l'expérience."],
                 ["Composer les groupes à partir du questionnaire d'une expérience (niveau, allure, envies…)", "Exécution du contrat", "Jusqu'à l'expérience, puis effacement automatique 30 jours après l'expérience."],
                 ["Conserver la preuve de l'acceptation des conditions de participation aux activités physiques", "Intérêt légitime (preuve en cas de litige)", "Avec la réservation, 5 ans au plus après l'expérience."],
-                ["Étudier les sorties proposées par les membres de confiance et y répondre", "Exécution du contrat ; intérêt légitime", "3 ans après la dernière proposition."],
+                ["Composer les tables, révéler le lieu, transmettre au lieu les prénoms et allergies partagées, traiter les signalements", "Exécution du contrat ; intérêt légitime (sécurité)", "Messages de table : 14 jours après leur ouverture ; signalements : 3 ans."],
                 ["Protéger la communauté : vérification de l'âge, prévention des faux comptes et de la fraude, signalements, modération, recours", "Intérêt légitime ; obligations légales", "Le temps nécessaire à la sécurité de la communauté, 3 ans au plus après la décision."],
                 ["Répondre à vos messages et demandes d'assistance", "Intérêt légitime", "3 ans après le dernier échange."],
                 ["Vous envoyer nos nouveautés par e-mail", "Votre consentement, retirable à tout moment dans vos préférences", "Jusqu'au retrait de votre accord, ou 3 ans après votre dernier contact avec nous."],
@@ -740,7 +749,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
   },
 };
 
-const UPDATED_EN = "Last updated: 19 November 2026 · effective the same day";
+const UPDATED_EN = "Last updated: 23 November 2026 · effective the same day";
 
 const en: Record<BaseLegalKey, LegalDoc> = {
   physical: {
@@ -1038,7 +1047,6 @@ const en: Record<BaseLegalKey, LegalDoc> = {
             "No gaming the system: multiple accounts and abuse of promo codes, the waitlist or reviews are prohibited.",
             "Pay your share: if something outside the price is shared on site, leaving without paying means the others pay for you.",
             "Fair play: in sport as in games, respect the rules, safety instructions and other people's level. You come to share a good time, never to humiliate or hurt anyone.",
-            "Trusted members: if the team lets you propose outings, describe them honestly (venue, level, intended price). On the day, take part in line with these rules and never ask participants for money directly.",
             "Nothing that endangers others: no promotion of violence or extremism, no exploitation of anyone.",
           ],
         ],
@@ -1142,7 +1150,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
           "If you no longer meet these conditions, your access may end.",
         ],
       },
-      { title: "6. Bookings, requests and waitlists", body: ["An experience is booked directly or, if it is “on request”, once the team approves your request. When a date is full, you can join the waitlist. Prices, payment deadlines, cancellation and refunds are described in the [terms of sale](/cgv).", "For physical activities (sport, paintball, hiking…), booking or requesting to take part means accepting the [terms for physical activities](/conditions-activites-physiques).", "Trusted members: the team may let regular members propose their own outing ideas. A proposal commits no one: the team checks it (venue, safety, price) before anything is published and remains the organiser of the published experience, sold by Wenzy on the same terms as the others. The member who proposed it is neither an employee nor a contractor of Wenzy and is not paid for it, unless agreed separately in writing."] },
+      { title: "6. Bookings, requests and waitlists", body: ["An experience is booked directly or, if it is “on request”, once the team approves your request. When a date is full, you can join the waitlist. Prices, payment deadlines, cancellation and refunds are described in the [terms of sale](/cgv).", "For physical activities (sport, paintball, hiking…), booking or requesting to take part means accepting the [terms for physical activities](/conditions-activites-physiques).",] },
       { title: "7. How groups are put together", body: ["Groups are based on your city, languages, age, interests and questionnaire answers, avoiding seating the same people together again, so that everyone can join the conversation. A person on our team reviews each line-up. This is neither a psychological assessment nor a judgement about you.", "Some experiences also include a short questionnaire (10 questions at most, multiple choice only: level, pace, preferences…) to fill in while booking, before payment. Depending on the experience, answers are used to group similar levels (e.g. padel) or to mix profiles; they are never shown to other participants and are deleted 30 days after the experience."] },
       {
         title: "8. Code of conduct",
@@ -1191,21 +1199,88 @@ const en: Record<BaseLegalKey, LegalDoc> = {
     ],
   },
   sales: {
-    title: "Terms of sale",
-    updated: UPDATED_EN,
-    intro: "These terms apply to every experience booking and to the membership purchased on Wenzy. Prices, what is included and cancellation terms are always shown before payment. The French version prevails.",
-    sections: [
-      { title: "1. Seller", body: ["{{publisher}}, {{address}} — ICE {{ice}}. Contact: {{supportEmail}}."] },
-      { title: "2. Prices", body: ["Prices are shown in Moroccan dirhams (MAD), all taxes included, per spot. What is included (meal, drinks, equipment, classes…) is stated on each experience page; anything extra is paid directly to the venue. Members pay the member price shown next to the public price.", "A promo code applies after the member price, on direct bookings, once per person, under the conditions stated with the code. A service fee may be added: it is always shown before payment, never applies to a free spot and is refunded with the spot.", "Some experiences are paid in two parts, always shown on the experience page: the organisation part, paid online when you book, and a part paid on site directly to the partner (a fixed price announced in advance, or whatever you order). The on-site part is never collected by Wenzy: it is not on our invoice and is not owed if your booking is cancelled. Member prices, membership, promo codes and service fees only apply to the part paid online."] },
-      { title: "3. Booking and payment", body: [["Direct booking: your spot is held while you pay (15 minutes for a card payment; until the stated deadline for a bank transfer), then released if payment fails.", "On-request experiences: nothing to pay when you apply; once accepted, your spot is held for 24 hours.", "Waitlist: if a spot opens up, it is offered to the first person on the list and held for 4 hours.", "Payment by bank transfer: after booking, you receive a unique reference and Wenzy's bank details (on screen and by email). Your spot is held until the stated deadline: 48 hours at most, and no later than 24 hours before the experience. Your booking is confirmed, with your ticket and invoice, as soon as the team sees the transfer of the exact amount with the reference.", "Transfer not received by the deadline: the spot is released and you are told. A transfer that arrives later gets you a spot if one is left; otherwise it is refunded in full. Refunds of a transfer are made by transfer: we ask for the details needed at that time and do not store them on the site.", "When card payment is offered, it is handled by a secure payment provider; Wenzy never receives or stores card details. Your booking is confirmed once payment is confirmed.", "Minimum age: some experiences are open only above an age higher than 18, shown on their page; the booking is refused if your date of birth doesn't allow it.", "Physical activities: booking (or requesting to take part) means accepting the [terms for physical activities](/conditions-activites-physiques); the accepted version and its date are kept with the booking.", "Questionnaire: for some experiences, a short multiple-choice questionnaire must be filled in while booking, before payment, to put the groups together. Answering it is required to book; you can change your answers until the experience starts."]] },
-      { title: "4. Cancellation by the member", body: [["Up to 48 hours before the start: full refund.", "Less than 48 hours before the start: no refund (the spot may be offered to the waitlist).", "An experience may have specific conditions, shown on its page before booking."], "Cancel from your member area (My bookings). Refunds go back to the original payment method; how long they take to appear depends on your bank."] },
-      { title: "5. Cancellation or change by Wenzy", body: ["If we cancel an experience (weather, partner unavailable, not enough participants…), you are informed and fully refunded. We may offer to move your booking to another date of the same experience; you remain free to cancel with a full refund if the new date doesn't suit you.", "Outdoor experience: if the weather doesn't allow the activity, we let you know as early as possible. It is either postponed (you keep your spot on the new date, or get a full refund if it doesn't suit you) or cancelled with a full refund.", "Experience that did not take place or was very different from its description: within 7 days, send a request from your booking (My bookings) or write to {{supportEmail}}. We review every request and may refund all or part of what you paid online; our answer is sent by notification and email."] },
-      { title: "6. Membership", body: [["Membership gives access, for the length you choose (1, 3, 6 or 12 months depending on the plans offered), to the benefits described on the Membership page (member price and, depending on the plan, early access to new dates and members-only experiences).", "It is paid once and is not renewed automatically: you can renew from 30 days before it ends, the new period starting at the end date.", "You may withdraw within 7 days of payment by writing to {{supportEmail}}: you are refunded minus any benefits already used (the difference between the public price and the member price of the spots you booked)."]] },
-      { title: "7. No-shows", body: ["Not attending without cancelling does not entitle you to a refund. Repeated no-shows or late cancellations may limit access to on-request experiences or lead to a temporary suspension ([Terms of use](/cgu), section 9)."] },
-      { title: "8. Invoices", body: ["A document (invoice or receipt) is issued for each payment and a credit note for each refund. They are emailed to you and available in your member area under “My invoices”."] },
-      { title: "9. Complaints and governing law", body: ["Complaints can be sent to {{supportEmail}}; we always look for an amicable solution first. These terms are governed by Moroccan law, including Law 31-08 on consumer protection; failing agreement, the courts of Casablanca have jurisdiction."] },
-    ],
+    "title": "Terms of sale",
+    "updated": UPDATED_EN,
+    "intro": "These terms apply to every booking and to buying a Pack or a Pass on Wenzy. The price, what is paid on site and the cancellation terms are always shown before payment.",
+    "sections": [
+      {
+        "title": "1. Seller",
+        "body": [
+          "{{publisher}}, {{address}} — ICE {{ice}}. Contact: {{supportEmail}}."
+        ]
+      },
+      {
+        "title": "2. Price: 35 DH online, the rest on site",
+        "body": [
+          "On Wenzy, you only pay the Wenzy fee online: a single price per seat (35 DH at present, shown before payment), all taxes included. It pays for the organisation: putting groups together, the venue, the welcome and the follow-up.",
+          "Everything else is paid on site, directly to the venue or the organizer, and is never collected by Wenzy: what you eat and drink at the restaurant (the Casual, Premium or Exclusive tier shows a budget), or the activity price shown on the page (padel, class, workshop…). This amount is not on our invoice and is not due if your booking is cancelled.",
+          "A promo code applies to the Wenzy fee, once per person, under the conditions stated with the code."
+        ]
+      },
+      {
+        "title": "3. Booking and payment",
+        "body": [
+          [
+            "The seat is held while you pay (15 minutes by card; until the stated deadline for a bank transfer), then released if payment didn't go through.",
+            "The activity questionnaire, if there is one, is filled in before payment.",
+            "On-request event: no payment when you ask; if accepted, the seat is held for 24 hours for you to pay.",
+            "Waiting list: a freed seat is offered first to people with a Pass, then in sign-up order, and held for 4 hours for payment.",
+            "Bank transfer: you receive a unique reference and Wenzy's bank details; the booking is confirmed once the exact amount is received. If not received by the deadline, the seat is released; a later transfer gets a seat if one is left, otherwise it is refunded.",
+            "Card payment: through a secure provider; Wenzy never receives or stores card data.",
+            "Bookings for Tables close 12 hours before the start (at the latest 6 pm the day before for a start before 2 pm); for other activities, 2 hours before."
+          ]
+        ]
+      },
+      {
+        "title": "4. Cancellation and date change by the participant",
+        "body": [
+          "You can always cancel from your booking. The Wenzy fee is refunded according to the event's cancellation terms, shown before you book (the most common: full refund up to 48 hours before, no refund after). The refund amount is shown before you confirm.",
+          "Until bookings close, you can move your booking to another date of the same event, at no extra cost, if seats are left.",
+          "Refunds go back to the original payment method (by bank transfer for a transfer payment)."
+        ]
+      },
+      {
+        "title": "5. Cancellation, minimum not reached or changes by Wenzy",
+        "body": [
+          "If Wenzy cancels an event, the Wenzy fee is refunded in full.",
+          "If there aren't enough people to form a table or group, Wenzy may keep the event, or offer you another date or an equivalent event (same format, same tier). You accept the offer at no extra cost, or you're refunded in full; you're never moved without your consent, and without an answer by the stated time, you're refunded.",
+          "The venue for Tables is chosen after bookings close, among our partner venues, then revealed 5 hours before the start (9 pm the day before for a morning or lunchtime start). Several venues may host the tables of one date. If a venue changes after the reveal, the people concerned are told straight away."
+        ]
+      },
+      {
+        "title": "6. Pack and Pass",
+        "body": [
+          [
+            "Pack: 3 credits valid for 3 months from purchase; 1 credit per seat, guest included. A credit comes back if you cancel within the event's refundable period, or if the seat isn't paid in time. A new pack adds its credits and extends their validity to 3 months.",
+            "Pass (1 week, 1 month, 3 months, 6 months or 1 year): your seat is included in every booking (a guest's seat is paid or covered with a pack credit), with early access to new dates, members-only events and priority on the waiting list. The pass covers up to 2 upcoming bookings at a time.",
+            "The Pack and the Pass cover the Wenzy fee, including for organizers' activities; they never cover what is paid on site.",
+            "One-off payment, no automatic renewal. A new pass extends the current one. The weekly pass can only be paid by card.",
+            "Right of withdrawal: you can ask for a refund of a Pack or Pass within 7 days of purchase if it hasn't been used yet."
+          ]
+        ]
+      },
+      {
+        "title": "7. Check-in and no-shows",
+        "body": [
+          "On the day, you check in from your booking, from 30 minutes before to 1 hour after the start; with a host or an organizer, their check-in counts.",
+          "Without check-in, the seat counts as a no-show and isn't refunded. For a seat included in a Pass: a first no-show is a warning; a second within 90 days suspends the pass for 14 days (you can still book, but your seats aren't included). If you were actually there, write to us: the no-show is cancelled."
+        ]
+      },
+      {
+        "title": "8. Invoicing",
+        "body": [
+          "An invoice is issued for every online payment (Wenzy fee, Pack or Pass) and is available in your account under “My invoices”. A credit note is issued for every refund. What is paid on site is invoiced, where applicable, by the venue or organizer."
+        ]
+      },
+      {
+        "title": "9. Complaints and governing law",
+        "body": [
+          "For any complaint: {{supportEmail}}. We reply within 72 working hours. These terms are governed by Moroccan law, in particular Law No. 31-08 on consumer protection; failing an amicable agreement, the courts of Casablanca have jurisdiction."
+        ]
+      }
+    ]
   },
+
   privacy: {
     title: "Privacy policy",
     updated: UPDATED_EN,
@@ -1213,7 +1288,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
     sections: [
       { title: "1. Key points", body: [["We only collect what is useful to organise small-group experiences safely.", "We never sell your data and use no advertising cookies or GPS location.", "Within a group, only your first name, your profile photo (if you added one) and your interests are shared.", "Your diet and allergies are only passed on to the venue with your explicit consent.", "No photo in which you can be recognised is published without your agreement.", "You can view, correct or download your data and delete your account at any time."]] },
       { title: "2. Data controller", body: ["{{publisher}}, {{address}} (ICE {{ice}}), is responsible for the data processed on the site. For any question about your data: {{privacyEmail}}.", "Declaration to the CNDP: {{cndpDeclaration}}. Authorisation to transfer data outside Morocco: {{cndpTransfer}}.", "It is up to you to give us accurate information and keep it up to date from your member area."] },
-      { title: "3. Data we collect", body: [["Account: first name, last name, email address, phone (optional). Your password is handled by our authentication provider and never stored in plain text.", "Profile and questionnaire: date of birth (to check you are an adult), city, languages, interests, goals; gender (optional; needed to book a women-only activity), profession, bio, photo, neighbourhood, favourite universes, sports level and group age preference, preferred group vibe, how you are in a group, humour, what matters to you, how often you exercise, the kind of places you like, diet, work sector, how you heard about us, WhatsApp use and Instagram account (optional; used to put groups together and for “For you” suggestions, never shown to other participants). We never ask about relationship status, children or religion. The questionnaire is neither a medical nor a psychological assessment.", "Approximate location: your city and, if you provide it, your neighbourhood. No GPS tracking.", "Experiences: bookings, participation requests (message, optional Instagram account), waitlists, tables or teams, attendance on the day, no-shows, reviews (and an attached photo, published only after the team checks it), “My group” (people you'd like to see again — never shown to them unless it's mutual — and people you don't want to be grouped with again), membership, promo codes used.", "Welcome preferences: diet, allergies and preferred language(s), if you provide them, with the date of your consent to share them with the venue.", "Payments and invoices: amount, date, status, provider reference, documents issued. Card details are entered and processed only by the payment provider: we never receive them.", "Safety and support: reports, messages sent to the team, moderation decisions and appeals.", "Technical data: IP address, connection and security logs, strictly necessary cookies.", "Experience questionnaire: your answers (multiple choice only: level, pace, preferences…), if the experience has one.", "Physical activities: the version of the participation terms you accepted and its date.", "Outing proposals (trusted members): the content of your proposals and the team's reply."]] },
+      { title: "3. Data we collect", body: [["Account: first name, last name, email address, phone (optional). Your password is handled by our authentication provider and never stored in plain text.", "Profile and questionnaire: date of birth (to check you are an adult), city, languages, interests, goals; gender (optional; needed to book a women-only activity), profession, bio, photo, neighbourhood, favourite universes, sports level and group age preference, preferred group vibe, how you are in a group, humour, what matters to you, how often you exercise, the kind of places you like, diet, work sector, how you heard about us, WhatsApp use and Instagram account (optional; used to put groups together and for “For you” suggestions, never shown to other participants). We never ask about relationship status, children or religion. The questionnaire is neither a medical nor a psychological assessment.", "Approximate location: your city and, if you provide it, your neighbourhood. No GPS tracking.", "Experiences: bookings, participation requests (message, optional Instagram account), waitlists, tables or teams, attendance on the day, no-shows, reviews (and an attached photo, published only after the team checks it), “My group” (people you'd like to see again — never shown to them unless it's mutual — and people you don't want to be grouped with again), membership, promo codes used.", "Welcome preferences: diet, allergies and preferred language(s), if you provide them, with the date of your consent to share them with the venue.", "Payments and invoices: amount, date, status, provider reference, documents issued. Card details are entered and processed only by the payment provider: we never receive them.", "Safety and support: reports, messages sent to the team, moderation decisions and appeals.", "Technical data: IP address, connection and security logs, strictly necessary cookies.", "Experience questionnaire: your answers (multiple choice only: level, pace, preferences…), if the experience has one.", "Physical activities: the version of the participation terms you accepted and its date.", "Tables: your check-in (arrival time), a summary of your table without names (other guests' ages, languages, fields and interests), the messages exchanged with your table after the event, and the reports you make or that concern you (read by the team only). One hour before, the venue receives each guest's first name and, if you agreed, your diet and allergies."]] },
       { title: "4. How we collect it", body: [["Directly from you: account creation, questionnaire, booking, participation request, contact or partner application form, report, review.", "Automatically: technical logs and strictly necessary cookies when you use the site.", "From our providers: the payment provider confirms the status and reference of each payment.", "From our team: attendance on the day, group line-ups, moderation decisions."]] },
       {
         title: "5. Why, on what basis, and for how long",
@@ -1228,7 +1303,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
                 ["Passing diet, allergies and preferred languages on to the venue", "Your explicit consent (diet and allergies may reveal health data)", "For the experience and its follow-up, then deleted no later than 30 days after the experience. You can withdraw your consent until the experience starts."],
                 ["Putting groups together from an experience questionnaire (level, pace, preferences…)", "Performance of the contract", "Until the experience, then deleted automatically 30 days after it."],
                 ["Keeping proof that the terms for physical activities were accepted", "Legitimate interest (evidence in case of dispute)", "With the booking, at most 5 years after the experience."],
-                ["Reviewing and answering outings proposed by trusted members", "Performance of the contract; legitimate interest", "3 years after the last proposal."],
+                ["Putting tables together, revealing the venue, sending the venue first names and shared allergies, handling reports", "Performance of the contract; legitimate interest (safety)", "Table messages: 14 days after they open; reports: 3 years."],
                 ["Protecting the community: age checks, preventing fake accounts and fraud, reports, moderation, appeals", "Legitimate interest; legal obligations", "As long as needed for the community's safety, at most 3 years after the decision."],
                 ["Answering your messages and support requests", "Legitimate interest", "3 years after the last exchange."],
                 ["Sending you our news by email", "Your consent, which you can withdraw at any time in your preferences", "Until you withdraw consent, or 3 years after your last contact with us."],

@@ -17,7 +17,7 @@ export const ORGANIZER_STATUSES = ["pending", "info_requested", "approved", "rej
 export type OrganizerStatus = (typeof ORGANIZER_STATUSES)[number];
 
 /** Version du contrat organisateur acceptée à l'inscription (changer le texte = changer la version). */
-export const ORGANIZER_TERMS_VERSION = "2026-11-20";
+export const ORGANIZER_TERMS_VERSION = "2026-11-23";
 
 export const ORGANIZER_DOCUMENTS_MAX = 5;
 export const ORGANIZER_DOCUMENT_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"] as const;

@@ -17,7 +17,7 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   // Accueil du centre d'aide
   await page.goto(`${base}/aide`);
   assert(await page.getByRole('heading', { level: 1, name: 'Comment pouvons-nous vous aider ?' }).isVisible(), 'titre du centre d\'aide');
-  for (const c of ['Bien démarrer', 'Expériences et réservations', 'Abonnement', 'Mon compte', 'Sécurité']) {
+  for (const c of ['Bien démarrer', 'Expériences et réservations', 'Carnet et Pass', 'Mon compte', 'Sécurité']) {
     assert(await page.getByRole('heading', { level: 2, name: c, exact: true }).isVisible(), `catégorie « ${c} »`);
   }
   assert(await page.getByRole('link', { name: 'Membres' }).getAttribute('aria-current') === 'page', 'onglet Membres actif');
@@ -33,14 +33,14 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   await search.fill('zzzz introuvable');
   assert(await page.getByText('Aucun résultat').isVisible(), 'recherche sans résultat annoncée');
   await page.getByRole('button', { name: 'Effacer la recherche' }).click();
-  assert(await page.getByRole('heading', { level: 2, name: 'Abonnement', exact: true }).isVisible(), 'recherche effacée → catégories');
+  assert(await page.getByRole('heading', { level: 2, name: 'Carnet et Pass', exact: true }).isVisible(), 'recherche effacée → catégories');
 
   // Article
-  await page.getByRole('link', { name: /Annuler une réservation et être remboursé/ }).click();
+  await page.getByRole('link', { name: /Annuler ou déplacer une réservation/ }).click();
   await page.waitForURL('**/aide/annuler-une-reservation');
-  assert(await visible(page.getByRole('heading', { level: 1, name: 'Annuler une réservation et être remboursé' })), 'article ouvert');
-  assert(await page.getByText(/Plus de 48 heures avant le début/).isVisible(), 'règle des 48 h');
-  assert(await page.getByRole('link', { name: 'Mes réservations' }).first().isVisible(), 'lien interne vers Mes réservations');
+  assert(await visible(page.getByRole('heading', { level: 1, name: 'Annuler ou déplacer une réservation' })), 'article ouvert');
+  assert(await page.getByText(/jusqu'à 48 h avant/).first().isVisible(), 'règle des 48 h');
+  assert(await page.getByText(/Déplacer sur une autre date/).first().isVisible(), 'L : déplacer sa réservation');
   assert(await page.getByRole('heading', { name: 'Articles liés' }).isVisible(), 'articles liés');
   assert(await page.getByRole('button', { name: 'Oui' }).count() === 0, 'démo : pas de bouton « utile ? » factice');
   await noOverflow('article');
@@ -54,7 +54,7 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   assert(await page.getByRole('link', { name: 'Partenaires' }).first().getAttribute('aria-current') === 'page', 'onglet Partenaires actif');
   await page.getByRole('link', { name: /Comment êtes-vous rémunéré/ }).click();
   await page.waitForURL('**/aide/remuneration-partenaire');
-  assert(await visible(page.getByText(/Achat de prestation/)), 'article partenaire : modèles de rémunération');
+  assert(await visible(page.getByText(/ni commission ni reversement/)), 'L : article partenaire — paiement sur place, sans commission');
   await page.locator('main a[href="/devenir-partenaire"]').first().click();
   await page.waitForURL('**/devenir-partenaire');
   assert(await visible(page.getByText('Démonstration : le formulaire de candidature fonctionne sur le site en ligne.')), 'page partenaire (démo : formulaire désactivé, annoncé)');

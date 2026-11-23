@@ -169,7 +169,6 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
               <Group title={t("workWithUs")}>
                 <Row href="/devenir-partenaire" onClick={close} current={pathname === "/devenir-partenaire"}>{t("partnersLink")}</Row>
                 <Row href="/devenir-organisateur" onClick={close} current={pathname === "/devenir-organisateur"}>{t("organizersLink")}</Row>
-                <Row href="/aide/proposer-une-sortie" onClick={close} current={pathname === "/aide/proposer-une-sortie"}>{t("trustedLink")}</Row>
               </Group>
               <Group title={t("helpGroup")}>
                 {links.filter((l) => l.href === "/faq").map((l) => (

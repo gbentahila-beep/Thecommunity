@@ -20,7 +20,7 @@ export type HelpCategory = { key: HelpCategoryKey; audience: HelpAudience; title
 const HELP_CATEGORIES_RAW: HelpCategoryRaw[] = [
   { key: "start", audience: "clients", title: { fr: "Bien démarrer", en: "Getting started" }, description: { fr: "Le principe, votre compte, votre première expérience.", en: "How it works, your account, your first experience." } },
   { key: "bookings", audience: "clients", title: { fr: "Expériences et réservations", en: "Experiences and bookings" }, description: { fr: "Réserver, payer, annuler, liste d'attente, avis.", en: "Booking, paying, cancelling, waiting list, reviews." } },
-  { key: "membership", audience: "clients", title: { fr: "Abonnement", en: "Membership" }, description: { fr: "Prix membre, accès anticipé, renouvellement.", en: "Member price, early access, renewal." } },
+  { key: "membership", audience: "clients", title: { fr: "Carnet et Pass", en: "Pack and Pass" }, description: { fr: "Carnet et Pass, absences.", en: "Pack and Pass, no-shows." } },
   { key: "account", audience: "clients", title: { fr: "Mon compte", en: "My account" }, description: { fr: "Connexion, notifications, langue, données personnelles.", en: "Signing in, notifications, language, personal data." } },
   { key: "safety", audience: "clients", title: { fr: "Sécurité", en: "Safety" }, description: { fr: "Se sentir bien pendant une expérience, signaler un problème.", en: "Feeling at ease during an experience, reporting a problem." } },
   { key: "partner-join", audience: "partners", title: { fr: "Devenir partenaire", en: "Becoming a partner" }, description: { fr: "Qui peut nous rejoindre, nos critères, comment ça se passe.", en: "Who can join, our criteria, how it works." } },
@@ -28,26 +28,13 @@ const HELP_CATEGORIES_RAW: HelpCategoryRaw[] = [
 ];
 
 const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
+  { slug: "le-lieu-secret", category: "bookings", title: {"fr": "Le lieu secret des Tables", "en": "The secret venue for Tables"}, summary: {"fr": "Le restaurant vous est révélé 5 h avant, avec l'adresse et la cuisine.", "en": "The restaurant is revealed 5 hours before, with the address and cuisine."}, body: {"fr": ["Pour les Tables, le lieu est choisi après la fermeture des réservations, parmi nos restaurants partenaires de la gamme choisie.", ["Il vous est révélé 5 h avant le début (la veille à 21 h pour un café, un brunch ou un déjeuner), par notification et e-mail, avec l'adresse, la carte et la cuisine.", "Plusieurs restaurants peuvent accueillir les tables d'une même date.", "S'il change, vous êtes prévenu·e aussitôt."]], "en": ["For Tables, the venue is chosen after bookings close, among our partner restaurants in the chosen tier.", ["It's revealed 5 hours before the start (9 pm the day before for coffee, brunch or lunch), by notification and email, with the address, map and cuisine.", "Several restaurants may host the tables of one date.", "If it changes, you're told straight away."]]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
+  { slug: "check-in-et-ma-table", category: "bookings", title: {"fr": "Le check-in et ma table", "en": "Check-in and my table"}, summary: {"fr": "Une fois sur place, faites votre check-in : vous découvrez votre table et les prénoms.", "en": "Once there, check in: you'll meet your table and see first names."}, body: {"fr": ["À la révélation, vous recevez un résumé de votre table sans les noms (âges, langues, secteurs, centres d'intérêt).", ["Le jour J, de 30 minutes avant à 1 h après le début, appuyez sur « Je suis arrivé·e » dans votre réservation.", "Vous voyez alors votre table, les prénoms et qui est déjà arrivé.", "Après la rencontre, vous pouvez écrire à votre table pendant 14 jours, sans que votre numéro soit affiché."]], "en": ["When the venue is revealed, you get a summary of your table without names (ages, languages, fields, interests).", ["On the day, from 30 minutes before to 1 hour after the start, tap “I'm here” in your booking.", "You then see your table, first names and who has already arrived.", "After the event, you can message your table for 14 days, without your number being shown."]]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
+  { slug: "pas-assez-de-participants", category: "bookings", title: {"fr": "Pas assez de participants", "en": "Not enough participants"}, summary: {"fr": "Vous acceptez une autre date proposée, ou vous êtes remboursé·e intégralement.", "en": "You accept another suggested date, or you're refunded in full."}, body: {"fr": ["S'il n'y a pas assez d'inscrits pour former une table, l'équipe peut maintenir la date, ou vous proposer une autre date ou un événement équivalent.", ["Vous acceptez sans repayer, ou vous choisissez le remboursement intégral.", "Vous n'êtes jamais déplacé·e sans votre accord ; sans réponse à l'heure indiquée, vous êtes remboursé·e."]], "en": ["If there aren't enough people to form a table, the team may keep the date, or offer you another date or an equivalent event.", ["You accept at no extra cost, or choose a full refund.", "You're never moved without your consent; without an answer by the stated time, you're refunded."]]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
+  { slug: "absences", category: "membership", title: {"fr": "Absences et suspension du pass", "en": "No-shows and pass suspension"}, summary: {"fr": "Pas de check-in = absence ; à la deuxième, le pass est suspendu 2 semaines.", "en": "No check-in = no-show; after the second, the pass is suspended for 2 weeks."}, body: {"fr": ["Une place réservée et non utilisée prive quelqu'un d'autre d'une table. Si vous ne pouvez pas venir, annulez depuis votre réservation.", ["Sans check-in, la place est notée comme une absence.", "Avec le Pass : une première absence donne un avertissement ; une deuxième dans les 90 jours suspend le pass 14 jours.", "Vous étiez bien là ? Écrivez-nous : l'absence est annulée."]], "en": ["A booked seat that isn't used keeps someone else from a table. If you can't come, cancel from your booking.", ["Without check-in, the seat counts as a no-show.", "With the Pass: a first no-show is a warning; a second within 90 days suspends the pass for 14 days.", "You were there? Write to us: the no-show is cancelled."]]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
+  { slug: "gammes-des-tables", category: "bookings", title: {"fr": "Les gammes des Tables", "en": "Table tiers"}, summary: {"fr": "Casual, Premium ou Exclusive : la gamme fixe le budget sur place.", "en": "Casual, Premium or Exclusive: the tier sets the on-site budget."}, body: {"fr": ["Chaque format (café, brunch, déjeuner, dîner) existe en trois gammes, pour réunir des personnes prêtes à dépenser le même budget.", ["Casual : convivial et accessible.", "Premium : plus soigné.", "Exclusive : les plus belles adresses."], "Le budget habituel par personne est affiché sur chaque fiche."], "en": ["Each format (coffee, brunch, lunch, dinner) comes in three tiers, to bring together people happy to spend the same budget.", ["Casual: friendly and affordable.", "Premium: more refined.", "Exclusive: the finest places."], "The usual budget per person is shown on each page."]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
   // ——— Bien démarrer ———
-  {
-    slug: "comment-fonctionne-wenzy",
-    category: "start",
-    title: { fr: "Comment fonctionne Wenzy ?", en: "How does Wenzy work?" },
-    summary: { fr: "Des expériences en petit groupe pour rencontrer de nouvelles personnes, sans rien organiser.", en: "Small-group experiences to meet new people, with nothing to organise." },
-    body: {
-      fr: [
-        "Wenzy organise à Casablanca des expériences en petit groupe : dîners, ateliers, sport, jeux, sorties. Vous choisissez une date, nous nous occupons du lieu, du groupe et de l'accueil.",
-        ["Choisissez une expérience dans le [catalogue](/experiences).", "Réservez votre place (venir seul·e, c'est très bien).", "Le jour J, retrouvez votre groupe dans un lieu public ou chez un partenaire sélectionné."],
-        "Ce n'est pas une application de rencontre amoureuse : l'idée est d'élargir son cercle et de découvrir sa ville autrement.",
-      ],
-      en: [
-        "Wenzy organises small-group experiences in Casablanca: dinners, workshops, sport, games, outings. You pick a date; we take care of the venue, the group and the welcome.",
-        ["Choose an experience in the [catalogue](/experiences).", "Book your seat (coming alone is perfectly fine).", "On the day, meet your group in a public place or at a selected partner venue."],
-        "This is not a dating app: the idea is to widen your circle and discover your city differently.",
-      ],
-    },
-    related: ["creer-mon-compte", "venir-seul", "reserver-une-place"],
-  },
+  { slug: "comment-fonctionne-wenzy", category: "start", title: {"fr": "Comment fonctionne Wenzy ?", "en": "How does Wenzy work?"}, summary: {"fr": "Des rendez-vous en petit groupe pour rencontrer de nouvelles personnes : 35 DH en ligne, le reste sur place.", "en": "Small-group events to meet new people: 35 DH online, the rest on site."}, body: {"fr": ["Wenzy organise à Casablanca des rendez-vous en petit groupe, dans quatre univers : Tables (café, brunch, déjeuner, dîner), Bouger, Sortir et Découvrir.", ["Choisissez une date dans l'[agenda](/experiences) et réservez : 35 DH en ligne, ou rien avec le Pass.", "Pour les Tables, le logiciel compose des tables de 4 à 6 d'après votre profil ; le lieu vous est révélé 5 h avant.", "Sur place, faites votre check-in : vous découvrez votre table et les prénoms. Votre repas ou l'activité se règle sur place."], "Ce n'est pas une application de rencontre amoureuse : l'idée est d'élargir son cercle."], "en": ["Wenzy organises small-group events in Casablanca, in four universes: Tables (coffee, brunch, lunch, dinner), Move, Go out and Discover.", ["Pick a date in the [calendar](/experiences) and book: 35 DH online, or nothing with the Pass.", "For Tables, we put together tables of 4 to 6 based on your profile; the venue is revealed 5 hours before.", "On site, check in: you meet your table and see first names. Your meal or the activity is paid on site."], "This is not a dating app: the idea is to widen your circle."]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
   {
     slug: "creer-mon-compte",
     category: "start",
@@ -125,56 +112,8 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     },
     related: ["reserver-une-place", "payer-ma-reservation"],
   },
-  {
-    slug: "payer-ma-reservation",
-    category: "bookings",
-    title: { fr: "Payer ma réservation", en: "Paying for my booking" },
-    summary: { fr: "Uniquement sur le site, avec le moyen de paiement indiqué au moment de réserver.", en: "Only on the website, with the payment method shown when you book." },
-    body: {
-      fr: [
-        "[[bank_transfer]]Par virement bancaire : après « Réserver », vous recevez une référence (THC-…) et nos coordonnées bancaires, à l'écran et par e-mail. Faites le virement du montant exact en indiquant la référence dans le motif. Votre place est bloquée jusqu'à l'échéance (48 h au plus, au plus tard 24 h avant l'expérience) ; dès réception, nous confirmons et vous recevez votre billet et votre facture.",
-        "[[card]]Par carte : sur une page de paiement sécurisée. Nous ne voyons ni ne conservons jamais votre numéro de carte.",
-        "[[none]]Le paiement en ligne n'est pas encore ouvert sur ce site : le moyen de paiement est indiqué au moment de réserver dès qu'il l'est.",
-        `[[card]]Si le paiement est refusé, votre place reste bloquée jusqu'à la fin du délai de ${HOLD_MINUTES} minutes : vous pouvez réessayer depuis la page de votre réservation.`,
-        "Tant que le paiement en ligne n'est pas ouvert, le site l'indique clairement (« mode test ») et aucune somme n'est débitée.",
-        "Membre ? Le prix membre (indiqué à côté du prix public) est appliqué automatiquement au moment de réserver.",
-        "Un code promo ? Saisissez-le avant de payer (« Vous avez un code promo ? ») : chaque code s'utilise une fois par personne. Les éventuels frais de service sont toujours affichés avant le paiement.",
-      ],
-      en: [
-        "[[bank_transfer]]By bank transfer: after “Book”, you get a reference (THC-…) and our bank details, on screen and by email. Transfer the exact amount and write the reference in the description. Your seat is held until the deadline (48 hours at most, no later than 24 hours before the experience); once it arrives, we confirm and send your ticket and invoice.",
-        "[[card]]By card: on a secure payment page. We never see or store your card number.",
-        "[[none]]Online payment isn't open on this site yet: the payment method is shown when you book as soon as it is.",
-        `[[card]]If a payment is declined, your seat stays held until the end of the ${HOLD_MINUTES}-minute window: you can try again from your booking page.`,
-        "Until online payment is open, the site says so clearly (“test mode”) and nothing is charged.",
-        "A member? The member price (shown next to the public price) is applied automatically when you book.",
-        "Got a promo code? Enter it before paying (“Got a promo code?”): each code can be used once per person. Any service fee is always shown before payment.",
-      ],
-    },
-    related: ["annuler-une-reservation", "comment-fonctionne-l-abonnement"],
-  },
-  {
-    slug: "annuler-une-reservation",
-    category: "bookings",
-    title: { fr: "Annuler une réservation et être remboursé", en: "Cancelling a booking and getting a refund" },
-    summary: { fr: "Le plus souvent gratuit jusqu'à 48 h avant (chaque fiche indique ses conditions) ; intégralement remboursé si l'activité est annulée.", en: "Usually free up to 48 hours before (each page shows its own terms); fully refunded if the activity is cancelled." },
-    body: {
-      fr: [
-        "Ouvrez la réservation dans [Mes réservations](/espace/reservations) puis « Annuler ma réservation ». Le montant remboursé est affiché avant que vous confirmiez.",
-        "Chaque activité affiche sa politique d'annulation sur sa fiche, avant la réservation ; c'est celle du jour de votre réservation qui s'applique. La plus courante :",
-        ["Plus de 48 heures avant le début : annulation gratuite, remboursement intégral sur votre moyen de paiement.", "Moins de 48 heures avant : l'annulation reste possible (la place est proposée à la liste d'attente) mais elle n'est pas remboursée.", "Si une date est annulée, vous êtes prévenu et intégralement remboursé. Si elle est déplacée et que la nouvelle date ne vous convient pas, écrivez-nous : nous annulons votre place avec remboursement intégral."],
-        "L'activité n'a pas eu lieu, ou était très différente de sa description ? Dans les 7 jours qui suivent, ouvrez la réservation et utilisez « Un problème avec cette activité ? ». L'équipe étudie chaque demande et peut vous rembourser tout ou partie ; vous recevez la réponse par notification et par e-mail.",
-        "Le délai d'apparition du remboursement sur votre compte dépend de votre banque. Le détail figure dans les [conditions générales de vente](/cgv).",
-      ],
-      en: [
-        "Open the booking in [My bookings](/espace/reservations) then “Cancel my booking”. The refund amount is shown before you confirm.",
-        "Each activity shows its cancellation policy on its page, before you book; the one in force on the day you booked applies. The most common:",
-        ["More than 48 hours before the start: free cancellation, full refund to your payment method.", "Less than 48 hours before: you can still cancel (the seat goes to the waiting list) but it isn't refunded.", "If a date is cancelled, you're informed and fully refunded. If it's moved and the new date doesn't suit you, write to us: we cancel your seat with a full refund."],
-        "The activity didn't take place, or was very different from its description? Within 7 days, open the booking and use “A problem with this activity?”. The team reviews every request and may refund all or part of it; you get the answer by notification and email.",
-        "How long the refund takes to appear depends on your bank. Full details are in the [terms of sale](/cgv).",
-      ],
-    },
-    related: ["liste-d-attente", "payer-ma-reservation"],
-  },
+  { slug: "payer-ma-reservation", category: "bookings", title: {"fr": "Payer ma réservation", "en": "Paying for my booking"}, summary: {"fr": "En ligne, vous ne payez que Wenzy : 35 DH la place, ou votre pass, ou un crédit du carnet.", "en": "Online, you only pay Wenzy: 35 DH per seat, or your pass, or a pack credit."}, body: {"fr": ["Le seul montant payé en ligne est le prix Wenzy : 35 DH par place. Avec le Pass, votre place est incluse ; avec le Carnet, vous utilisez un crédit par place.", ["Votre repas, votre consommation ou le prix de l'activité se règlent sur place, directement au lieu ou à l'organisateur.", "La place est bloquée 15 minutes le temps du paiement (jusqu'à l'échéance indiquée pour un virement).", "Une facture des frais Wenzy est disponible dans « Mes factures »."]], "en": ["The only amount paid online is the Wenzy price: 35 DH per seat. With the Pass, your seat is included; with the Pack, you use one credit per seat.", ["Your meal, drinks or the activity price are paid on site, directly to the venue or organizer.", "The seat is held for 15 minutes while you pay (until the stated deadline for a bank transfer).", "An invoice for the Wenzy fee is available under “My invoices”."]]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
+  { slug: "annuler-une-reservation", category: "bookings", title: {"fr": "Annuler ou déplacer une réservation", "en": "Cancelling or moving a booking"}, summary: {"fr": "Les frais Wenzy sont remboursés selon les conditions de l'événement ; vous pouvez aussi changer de date.", "en": "The Wenzy fee is refunded under the event's terms; you can also change date."}, body: {"fr": ["Depuis votre réservation, « Annuler » vous indique d'abord le montant remboursé, selon les conditions affichées sur l'événement (le plus souvent : remboursement intégral jusqu'à 48 h avant).", ["« Déplacer sur une autre date » : jusqu'à la fermeture des réservations, sans repayer, s'il reste de la place.", "Avec le Carnet, le crédit revient si l'annulation est dans les délais remboursés.", "Si nous annulons, vous êtes intégralement remboursé·e."]], "en": ["From your booking, “Cancel” first shows the refund amount, under the terms shown on the event (most often: full refund up to 48 hours before).", ["“Move to another date”: until bookings close, at no extra cost, if seats are left.", "With the Pack, the credit comes back if you cancel within the refundable period.", "If we cancel, you're refunded in full."]]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
   {
     slug: "liste-d-attente",
     category: "bookings",
@@ -233,25 +172,7 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     related: ["signaler-un-comportement"],
   },
   // ——— Abonnement ———
-  {
-    slug: "comment-fonctionne-l-abonnement",
-    category: "membership",
-    title: { fr: "Comment fonctionne l'abonnement ?", en: "How does membership work?" },
-    summary: { fr: "Plusieurs durées au choix : prix membre, accès anticipé, expériences réservées aux membres.", en: "Several lengths to choose from: member price, early access, members-only experiences." },
-    body: {
-      fr: [
-        "L'abonnement se prend pour la durée de votre choix (selon les formules proposées : 1, 3, 6 ou 12 mois), à partir du paiement. Ses avantages et ses prix sont détaillés sur la page [Abonnement](/abonnement).",
-        ["Un prix membre sur les expériences : il est indiqué à côté du prix public et appliqué automatiquement.", "Un accès anticipé aux nouvelles dates, avant leur ouverture à tous.", "L'accès aux expériences réservées aux membres."],
-        "Il n'y a pas de renouvellement automatique : rien n'est prélevé sans votre action.",
-      ],
-      en: [
-        "Membership is taken for the length you choose (depending on the plans offered: 1, 3, 6 or 12 months), from payment. Its benefits and prices are on the [Membership](/abonnement) page.",
-        ["A member price on experiences: it's shown next to the public price and applied automatically.", "Early access to new dates, before they open to everyone.", "Access to members-only experiences."],
-        "There's no automatic renewal: nothing is charged without you taking action.",
-      ],
-    },
-    related: ["renouveler-mon-abonnement", "payer-ma-reservation"],
-  },
+  { slug: "comment-fonctionne-l-abonnement", category: "membership", title: {"fr": "Le Pass et le Carnet", "en": "The Pass and the Pack"}, summary: {"fr": "Le Pass inclut votre place ; le Carnet offre une sortie sur trois.", "en": "The Pass includes your seat; the Pack gives one outing free in three."}, body: {"fr": ["Deux façons de sortir plus souvent, sur la page [Carnet et Pass](/abonnement) :", ["Pass (1 semaine à 1 an) : votre place est incluse à chaque réservation, accès en avant-première, événements réservés aux abonnés, priorité sur la liste d'attente. 2 réservations à venir au maximum.", "Carnet (70 DH) : 3 sorties dont 1 offerte, valables 3 mois, 1 crédit par place (invité compris).", "Paiement en une fois, sans renouvellement automatique. Le repas ou l'activité se règle toujours sur place."]], "en": ["Two ways to go out more often, on the [Pack and Pass](/abonnement) page:", ["Pass (1 week to 1 year): your seat is included in every booking, early access, members-only events, priority on the waiting list. Up to 2 upcoming bookings.", "Pack (70 DH): 3 outings including 1 free, valid for 3 months, 1 credit per seat (guest included).", "One-off payment, no automatic renewal. The meal or activity is always paid on site."]]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
   {
     slug: "renouveler-mon-abonnement",
     category: "membership",
@@ -401,25 +322,7 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
     },
     related: ["devenir-partenaire"],
   },
-  {
-    slug: "remuneration-partenaire",
-    category: "partner-join",
-    title: { fr: "Comment êtes-vous rémunéré ?", en: "How do you get paid?" },
-    summary: { fr: "Deux modèles possibles, fixés par écrit avant la première date.", en: "Two possible models, agreed in writing before the first date." },
-    body: {
-      fr: [
-        "Nous convenons ensemble, par écrit et avant la première date, de l'un de ces deux modèles :",
-        ["Achat de prestation : nous vous achetons un prix fixe par participant (par exemple un menu), quel que soit le prix de vente.", "Commission : vous fixez votre tarif et nous conservons un pourcentage convenu sur chaque place vendue."],
-        "Les montants, le calendrier de paiement et les conditions d'annulation figurent dans l'accord de partenariat.",
-      ],
-      en: [
-        "Before the first date, we agree in writing on one of these two models:",
-        ["Service purchase: we pay you a fixed price per participant (for example a set menu), whatever the selling price.", "Commission: you set your rate and we keep an agreed percentage of each seat sold."],
-        "Amounts, payment schedule and cancellation terms are set out in the partnership agreement.",
-      ],
-    },
-    related: ["devenir-partenaire", "annulations-cote-partenaire"],
-  },
+  { slug: "remuneration-partenaire", category: "partner-join", title: {"fr": "Comment êtes-vous rémunéré ?", "en": "How are you paid?"}, summary: {"fr": "Vos clients vous paient sur place ; Wenzy ne prend aucune commission.", "en": "Your guests pay you on site; Wenzy takes no commission."}, body: {"fr": ["Deux façons de travailler avec nous :", ["Lieu partenaire (restaurant, café, club…) : nous vous amenons des groupes ; chacun règle sa consommation chez vous. Nous vous envoyons une demande, vous acceptez ou refusez, puis le récapitulatif (prénoms, allergies) 1 h avant.", "Organisateur : vous publiez vos activités ; le participant vous règle le prix sur place. Wenzy ne perçoit que ses frais de réservation, payés par le participant."], "Il n'y a ni commission ni reversement."], "en": ["Two ways to work with us:", ["Partner venue (restaurant, café, club…): we bring you groups; everyone pays for what they order with you. We send you a request, you accept or decline, then the recap (first names, allergies) 1 hour before.", "Organizer: you publish your activities; the participant pays you the price on site. Wenzy only receives its booking fee, paid by the participant."], "There is no commission and no payout."]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
   {
     slug: "espace-organisateur",
     category: "partner-join",
@@ -649,40 +552,7 @@ const HELP_ARTICLES_RAW: HelpArticleRaw[] = [
       "comment-fonctionne-wenzy"
     ]
   },
-  {
-    slug: "payer-un-diner",
-    category: "bookings",
-    title: { fr: "Combien vais-je payer pour un dîner ?", en: "How much will I pay for a dinner?" },
-    summary: {
-      fr: "Menu tout compris, menu réglé au restaurant ou budget estimé : la fiche le dit toujours avant de réserver.",
-      en: "All-inclusive menu, menu paid at the restaurant or estimated budget: the page always says so before you book.",
-    },
-    body: {
-      fr: [
-        "Chaque fiche indique clairement ce que vous paierez, en ligne et sur place. Trois cas existent :",
-        [
-          "Menu négocié, tout compris : un seul prix, payé en ligne. Rien à régler sur place. Exemple : [Dîner du chef](/experiences/diner-du-chef-maarif).",
-          "Menu à prix fixe réglé au restaurant : votre place en ligne, puis un menu au prix annoncé, réglé au restaurant. Exemple : [Tajine & conversations](/experiences/tajine-et-conversations-habous) (49 DH en ligne + 150 DH sur place).",
-          "Chacun paie sa consommation : votre place en ligne, puis vous commandez à la carte et réglez au restaurant. La fiche affiche un budget estimé par personne. Exemple : [Pizza entre inconnus](/experiences/pizza-entre-inconnus-racine) (39 DH + resto 100–150 DH).",
-        ],
-        "La gamme du restaurant vous donne un repère : Casual (environ 100 à 200 DH par personne), Premium (200 à 400 DH), Exclusive (400 à 600 DH). Ce sont des ordres de grandeur ; le budget indiqué sur la fiche fait foi.",
-        "Lieu surprise : le nom du restaurant est dévoilé la veille avec votre groupe, mais la fiche affiche dès la réservation le quartier, la gamme, la cuisine, l'ambiance et le budget. Exemples : [Secret Dinner](/experiences/secret-dinner-gauthier), [Dîner gastronomique secret](/experiences/diner-gastronomique-secret-anfa).",
-        "Ce qui est payé sur place l'est directement au restaurant : Wenzy ne l'encaisse jamais. En cas d'annulation, seul le montant payé en ligne est concerné par les [conditions d'annulation](/aide/annuler-une-reservation).",
-      ],
-      en: [
-        "Every page states clearly what you'll pay, online and on site. There are three cases:",
-        [
-          "Agreed menu, all included: one price, paid online. Nothing to pay on site. Example: [Chef's dinner](/experiences/diner-du-chef-maarif).",
-          "Fixed-price menu paid at the restaurant: your place online, then a menu at the announced price, paid at the restaurant. Example: [Tagine & conversation](/experiences/tajine-et-conversations-habous) (49 DH online + 150 DH on site).",
-          "Everyone pays for what they order: your place online, then you order à la carte and pay the restaurant. The page shows an estimated budget per person. Example: [Pizza with strangers](/experiences/pizza-entre-inconnus-racine) (39 DH + restaurant 100–150 DH).",
-        ],
-        "The restaurant's range gives you a benchmark: Casual (about 100 to 200 DH per person), Premium (200 to 400 DH), Exclusive (400 to 600 DH). These are orders of magnitude; the budget shown on the page prevails.",
-        "Surprise venue: the restaurant's name is revealed the day before with your group, but the page shows the neighbourhood, range, cuisine, atmosphere and budget from the moment you book. Examples: [Secret Dinner](/experiences/secret-dinner-gauthier), [Secret fine-dining dinner](/experiences/diner-gastronomique-secret-anfa).",
-        "What you pay on site goes directly to the restaurant: Wenzy never collects it. If you cancel, only the amount paid online is covered by the [cancellation terms](/aide/annuler-une-reservation).",
-      ],
-    },
-    related: ["comment-fonctionne-wenzy"],
-  },
+  { slug: "payer-un-diner", category: "bookings", title: {"fr": "Combien vais-je payer ?", "en": "How much will I pay?"}, summary: {"fr": "35 DH en ligne, puis votre consommation ou le prix de l'activité sur place.", "en": "35 DH online, then your order or the activity price on site."}, body: {"fr": ["En ligne : 35 DH par place (ou votre pass, ou un crédit du carnet).", ["Tables : vous réglez votre consommation au restaurant. La gamme donne le budget habituel : par exemple pour un dîner, Casual 150 à 250 DH, Premium 250 à 400 DH, Exclusive 400 à 600 DH.", "Activités : le prix sur place (padel, cours, atelier…) est affiché sur la fiche."]], "en": ["Online: 35 DH per seat (or your pass, or a pack credit).", ["Tables: you pay for what you order at the restaurant. The tier gives the usual budget: for a dinner, Casual 150–250 DH, Premium 250–400 DH, Exclusive 400–600 DH.", "Activities: the on-site price (padel, class, workshop…) is shown on the page."]]}, related: ["comment-fonctionne-wenzy", "payer-ma-reservation", "annuler-une-reservation"] },
   {
     "slug": "assurance-et-activites-physiques",
     "category": "partner-hosting",

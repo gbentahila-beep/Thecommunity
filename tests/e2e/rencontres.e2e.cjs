@@ -29,7 +29,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   assert(!(await p.getByText('bientôt par carte').count()), '28 : plus de « bientôt par carte » dans À propos');
   await p.goto(base + '/aide/payer-ma-reservation', { waitUntil: 'load' });
   const art = (await p.locator('article').textContent());
-  assert(!art.includes('[[') && !art.includes('(bientôt)') && art.includes("n'est pas encore ouvert"), '28 : aide « Payer » selon le moyen ouvert (démo : aucun)');
+  assert(!art.includes('[[') && !art.includes('(bientôt)') && art.includes('35 DH') && art.includes('sur place'), 'L : aide « Payer » — 35 DH en ligne, le reste sur place');
   await p.goto(base + '/comment-ca-marche', { waitUntil: 'load' });
   assert(await p.getByTestId('booking-steps').locator('li').count() === 5, '28 : parcours en 5 étapes');
   await p.goto(base + '/espace', { waitUntil: 'load' });

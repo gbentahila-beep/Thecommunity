@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarHeart, Coffee, Lightbulb } from "lucide-react";
+import { ArrowRight, CalendarHeart, Coffee } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
@@ -13,7 +13,6 @@ export async function AudienceCards({ headingLevel = "h3", withTitle = false }: 
   const cards = [
     { key: "partners", icon: Coffee, href: "/devenir-partenaire" },
     { key: "organizers", icon: CalendarHeart, href: "/devenir-organisateur" },
-    { key: "trusted", icon: Lightbulb, href: "/aide/proposer-une-sortie" },
   ] as const;
   return (
     <section aria-labelledby={withTitle ? "work-title" : undefined} className="space-y-5" data-testid="audience-cards">
