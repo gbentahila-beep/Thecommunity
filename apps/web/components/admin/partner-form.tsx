@@ -24,6 +24,7 @@ const MESSAGES: Record<string, string> = {
   timeOrder: "L'heure de fin doit suivre l'heure de début.",
   time: "Heure invalide.",
   date: "Date invalide.",
+  coords: "Coordonnées invalides (ex. 33.5951, -7.6187).",
 };
 const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-[15px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100 disabled:bg-cream";
 
@@ -98,6 +99,10 @@ export function PartnerForm({ id, initial, cities, live }: { id?: string; initia
         </div>
         {field("district", "Quartier")}
         <div className="sm:col-span-2">{field("address", "Adresse")}</div>
+        <div className="sm:col-span-2">
+          {field("coords", "Coordonnées GPS", { placeholder: "33.5951, -7.6187", inputMode: "decimal", autoComplete: "off" })}
+          <p className="mt-1 text-xs text-muted">Dans Google Maps, appui long sur l&apos;entrée du lieu, puis copiez les deux nombres. L&apos;itinéraire mène alors exactement au bon endroit, dès que le lieu est communiqué au participant.</p>
+        </div>
         <div className="sm:col-span-2">{field("link", "Site web ou Instagram")}</div>
       </fieldset>
       <fieldset className="grid gap-4 sm:grid-cols-2">

@@ -18,6 +18,12 @@ describe("back-office : partenaires, villes", () => {
     expect(partnerInputSchema.safeParse({ ...partner, contactPhone: "06<script>" }).success).toBe(false);
     expect(partnerInputSchema.safeParse({ ...partner, cityId: "Casa Blanca" }).success).toBe(false);
   });
+  it("coordonnées GPS du lieu : facultatives, contrôlées", () => {
+    expect(partnerInputSchema.safeParse({ ...partner, coords: "33.5893, -7.6305" }).success).toBe(true);
+    expect(partnerInputSchema.safeParse({ ...partner, coords: "" }).success).toBe(true);
+    expect(partnerInputSchema.safeParse({ ...partner, coords: "Gauthier" }).success).toBe(false);
+    expect(partnerInputSchema.safeParse({ ...partner, coords: "133.5, -7.6" }).success).toBe(false);
+  });
   it("quartiers : un par ligne ou séparés par des virgules, sans doublon", () => {
     expect(parseDistricts("Anfa, Maarif\nGauthier\n\nAnfa")).toEqual(["Anfa", "Maarif", "Gauthier"]);
     expect(cityInputSchema.safeParse({ id: "rabat", nameFr: "Rabat", nameAr: "الرباط", nameEn: "", isActive: false, isComingSoon: true, order: 2, districts: ["Agdal"] }).success).toBe(true);

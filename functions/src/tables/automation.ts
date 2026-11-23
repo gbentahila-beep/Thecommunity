@@ -171,11 +171,11 @@ async function stepSession(id: string, s: DocumentData, e: DocumentData, now: nu
 }
 
 /** Activité à lieu attribué sans tables composées : le lieu est révélé à chacun. */
-async function revealVenueOnly(id: string, v: { name: string; address: string; cuisine?: string | null }, s: DocumentData) {
+async function revealVenueOnly(id: string, v: { name: string; address: string; cuisine?: string | null; geo?: { lat: number; lng: number } | null }, s: DocumentData) {
   const res = await db.collection("reservations").where("sessionId", "==", id).where("status", "==", "confirmed").get();
   const batch = db.batch();
   for (const r of res.docs) {
-    batch.update(r.ref, { venue: { name: v.name, address: v.address, ...(v.cuisine ? { cuisine: v.cuisine } : {}) }, updatedAt: FieldValue.serverTimestamp() });
+    batch.update(r.ref, { venue: { name: v.name, address: v.address, ...(v.cuisine ? { cuisine: v.cuisine } : {}), ...(v.geo ? { geo: v.geo } : {}) }, updatedAt: FieldValue.serverTimestamp() });
     batch.set(db.collection(`users/${r.get("userId")}/notifications`).doc(), { type: "venue_revealed", title: { fr: "Votre lieu est révélé", ar: "تم الكشف عن مكانك", en: "Your venue is revealed" }, body: { fr: `${v.name}, ${v.address}.`, ar: `${v.name}، ${v.address}.`, en: `${v.name}, ${v.address}.` }, link: `/espace/reservations/${r.id}`, createdAt: FieldValue.serverTimestamp() });
   }
   batch.update(db.doc(`sessions/${id}`), { groupsStatus: "revealed", groupsRevealedAt: FieldValue.serverTimestamp() });

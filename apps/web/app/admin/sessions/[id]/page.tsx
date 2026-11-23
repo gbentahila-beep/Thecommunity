@@ -131,7 +131,7 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
             sessionId={s.id}
             initial={venues}
             defaultVenue={e.venue.name ? { name: e.venue.name, address: e.venue.address } : null}
-            partners={d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, name: p.name, address: p.address ?? "", tables: Math.max(0, ...(p.slots ?? []).map((x) => Number(x.units) || 0)) }))}
+            partners={d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, name: p.name, address: p.address ?? "", coords: p.coords ?? (p.geo ? `${p.geo.lat}, ${p.geo.lng}` : ""), tables: Math.max(0, ...(p.slots ?? []).map((x) => Number(x.units) || 0)) }))}
             live={!d.isDemo}
             past={d.now.getTime() > start.getTime()}
           />

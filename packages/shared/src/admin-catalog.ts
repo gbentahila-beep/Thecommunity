@@ -2,6 +2,7 @@ import { partnerHostingSchema } from "./allocation";
 import { z } from "zod";
 import { BOOKING_MODES, CATEGORY_ICONS, CATEGORY_ID_PATTERN } from "./constants";
 import { partnerInsuranceSchema } from "./activity";
+import { parseCoords } from "./experience-input";
 
 /**
  * Back-office (5d, 5e) : partenaires, villes et univers. Mêmes schémas dans le navigateur (messages d'erreur)
@@ -26,6 +27,8 @@ export const partnerInputSchema = z
     cityId: slug,
     district: z.string().trim().max(60, "tooLong"),
     address: z.string().trim().max(200, "tooLong"),
+    /** Coordonnées GPS (« 33.5951, -7.6187 ») : l'itinéraire mène au bon endroit une fois le lieu connu. */
+    coords: z.string().trim().max(60, "tooLong").refine((s) => !s || parseCoords(s) !== null, "coords").default(""),
     contactName: z.string().trim().max(80, "tooLong"),
     contactEmail: optionalEmail,
     contactPhone: z.string().trim().max(30, "tooLong").regex(/^[0-9 +().-]*$/, "phone"),

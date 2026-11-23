@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { firebase } from "@/lib/firebase/client";
 
-type PartnerOption = { id: string; name: string; address: string; tables: number };
+type PartnerOption = { id: string; name: string; address: string; coords?: string; tables: number };
 type Row = { partnerId: string; name: string; address: string; coords: string; tables: string };
 
 const input = "w-full rounded-xl border border-line bg-white px-3 py-2 text-[15px] outline-none focus:border-brand-700 disabled:bg-cream";
@@ -28,7 +28,7 @@ export function SessionVenuesForm({ sessionId, initial, defaultVenue, partners, 
   const update = (i: number, patch: Partial<Row>) => { setRows((r) => r.map((x, k) => (k === i ? { ...x, ...patch } : x))); setState("idle"); };
   const pick = (i: number, id: string) => {
     const p = partners.find((x) => x.id === id);
-    update(i, p ? { partnerId: id, name: p.name, address: p.address, tables: p.tables ? String(p.tables) : "" } : { partnerId: "" });
+    update(i, p ? { partnerId: id, name: p.name, address: p.address, coords: p.coords ?? "", tables: p.tables ? String(p.tables) : "" } : { partnerId: "" });
   };
   const call = async (name: string, data: unknown, done: string) => {
     setState("busy");

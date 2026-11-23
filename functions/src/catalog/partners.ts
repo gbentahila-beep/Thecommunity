@@ -1,4 +1,4 @@
-import { partnerInputSchema } from "@thecommunity/shared";
+import { parseCoords, partnerInputSchema } from "@thecommunity/shared";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
 import { audit } from "../lib/audit";
@@ -26,6 +26,7 @@ export const adminSavePartner = onCall({ region: REGION }, async (req) => {
   const { insurance, ...rest } = v.data;
   const data = {
     ...rest,
+    geo: parseCoords(rest.coords),
     defaultCommissionPercent: v.data.model === "commission" ? v.data.defaultCommissionPercent : 0,
     // 18c : assurance du lieu (vue par l'équipe), datée et signée par la personne qui l'a vérifiée.
     ...(insurance ? { insurance: { verified: insurance.verified, insurer: insurance.insurer ?? "", policyNumber: insurance.policyNumber ?? "", expiresOn: insurance.expiresOn ?? "", checkedBy: actor.uid } } : {}),

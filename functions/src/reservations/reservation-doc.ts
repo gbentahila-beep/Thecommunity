@@ -42,7 +42,7 @@ export function reservationDoc(o: {
   // Lieu secret (docs/22) : le nom du partenaire (souvent le restaurant) n'est pas copié avant la révélation.
   const twoPart = pricingOf(publicExperience(e as never) as never);
   const snap = s.experienceSnapshot ?? {};
-  const venue = e.venue?.revealPolicy === "immediate" ? { name: e.venue.name ?? "", address: e.venue.address ?? "" } : null;
+  const venue = e.venue?.revealPolicy === "immediate" ? { name: e.venue.name ?? "", address: e.venue.address ?? "", ...(e.venue.geo ? { geo: e.venue.geo } : {}) } : null;
   const doc = {
     userId: uid,
     sessionId,

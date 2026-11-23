@@ -106,6 +106,9 @@ export type Partner = {
   /** Champs ajoutés en 5d (absents des anciens partenaires). */
   cityId?: string;
   address?: string;
+  /** Coordonnées GPS saisies (« lat, lng ») et position lue par le serveur. */
+  coords?: string;
+  geo?: { lat: number; lng: number } | null;
   contactPhone?: string;
   link?: string;
   model?: "purchase" | "commission";

@@ -736,6 +736,13 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 - Tous les titres de section (`.section-title`) sont centrés, connecté ou non : accueil, espace membre, Découvrir, À propos, Comment ça marche, avis, blog, presse, Mon groupe, pages organisateur et aide. Leurs surtitres et phrases d'introduction sont centrés avec eux. Le titre de l'accueil est centré sur téléphone (sur ordinateur il reste à gauche, posé sur le voile sombre de la photo) ; « Bonjour Salma » est centré. Seuls les titres d'articles dans une carte (blog) restent à gauche.
 - Chat de la table : il ne s'ouvre qu'au check-in de la personne (« Je suis là »), jamais avant ; il reste 14 jours dans Mon groupe.
 
+### Coordonnées GPS des lieux (23 novembre)
+
+- Fiche d'un lieu partenaire : champ « Coordonnées GPS » (« 33.5951, -7.6187 », copiées depuis Google Maps), contrôlé à l'enregistrement.
+- Elles suivent le lieu jusqu'à la réservation : demandes aux lieux (attribution), lieux confirmés de la date, révélation des Tables, lieu affiché d'emblée (lieu fixe). Choisir un lieu partenaire dans un événement ou une date recopie son nom, son adresse et ses coordonnées.
+- Côté participant, l'itinéraire, « Ouvrir dans Maps » et la carte pointent alors sur les coordonnées exactes ; sans coordonnées, la recherche se fait par nom et adresse comme avant.
+- Les restaurants du site d'essai n'ont pas de coordonnées : à saisir par l'équipe (les fiches modifiées ne sont pas écrasées par la mise à jour du site d'essai).
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes

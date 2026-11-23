@@ -269,7 +269,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           arrived={meArrived}
           lateMinutes={r.lateMinutes}
           canLate={canSignalLate(s.startAt, now)}
-          directionsUrl={r.venue && !showVenue ? mapsLinks(r.venue.name, r.venue.address).directions : undefined}
+          directionsUrl={r.venue && !showVenue ? mapsLinks(r.venue.name, r.venue.address, r.venue.geo).directions : undefined}
           table={mates ? { label: group!.label, mates } : null}
           chatHref={chatHref}
         />
@@ -281,6 +281,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           detail={r.venue.cuisine}
           name={r.venue.name}
           address={r.venue.address}
+          geo={r.venue.geo}
           table={tablesFlow && group && !namesHidden ? group.label : null}
           tableAfter={tablesFlow && isActive && namesHidden}
         />

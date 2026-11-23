@@ -10,7 +10,7 @@ export function formOptions(d: Pick<AdminData, "categories" | "cities" | "partne
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       .map((c) => ({ id: c.id, label: c.isActive === false ? `${c.name.fr} (masquée)` : c.name.fr, parentId: c.parentId ?? undefined })),
     cities: d.cities.map((c) => ({ id: c.id, label: c.isActive ? c.name.fr : `${c.name.fr} (bientôt)`, disabled: !c.isActive })),
-    partners: d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, label: p.name, insurance: insuranceState(p.insurance, new Date()) })),
+    partners: d.partners.filter((p) => p.status !== "archived").map((p) => ({ id: p.id, label: p.name, insurance: insuranceState(p.insurance, new Date()), venue: { name: p.name, address: p.address ?? "", district: p.district ?? "", coords: p.coords ?? (p.geo ? `${p.geo.lat}, ${p.geo.lng}` : "") } })),
     // Étape 22 : politiques d'annulation définies dans Paramètres.
     policies: policies.map((p) => ({ id: p.id, label: p.label.fr })),
   };

@@ -366,7 +366,7 @@ export type Reservation = {
     bookingMode: BookingMode;
   };
   /** Lieu exact : renseigné dès la réservation, ou à la révélation du groupe pour les dîners. */
-  venue?: { name: string; address: string; cuisine?: string };
+  venue?: { name: string; address: string; cuisine?: string; geo?: { lat: number; lng: number } | null };
   /** Régime, allergies, langues de table (5g) ; transmis au lieu seulement avec l'accord de la personne. */
   preferences?: { diet: string; allergies: string; languages: string[]; shareWithVenue: boolean };
   groupId?: string;

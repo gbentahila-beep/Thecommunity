@@ -9,10 +9,10 @@ import { mapsLinks } from "@/lib/maps";
  * Le lieu, une fois connu (docs/22, étape Z, inspiré de Timeleft) : type, nom, adresse exacte, table, carte (chargée
  * seulement quand on la demande) et itinéraire. Sert aux lieux fixes dès la réservation et aux Tables à la révélation.
  */
-export function VenueCard({ kind, detail, name, address, table, tableAfter }: { kind: "restaurant" | "venue"; detail?: string; name: string; address: string; table?: string | null; tableAfter?: boolean }) {
+export function VenueCard({ kind, detail, name, address, geo, table, tableAfter }: { kind: "restaurant" | "venue"; detail?: string; name: string; address: string; geo?: { lat: number; lng: number } | null; table?: string | null; tableAfter?: boolean }) {
   const t = useTranslations("venueCard");
   const [map, setMap] = useState(false);
-  const links = mapsLinks(name, address);
+  const links = mapsLinks(name, address, geo);
   const Icon = kind === "restaurant" ? Utensils : MapPin;
   return (
     <section aria-labelledby="venue-title" className="card overflow-hidden" data-testid="venue-card">

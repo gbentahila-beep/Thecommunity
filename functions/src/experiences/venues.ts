@@ -9,7 +9,7 @@ import { refuse } from "../reservations/refuse";
 
 const TEAM = ["admin", "superadmin"] as const;
 
-export type RevealedVenue = { name: string; address: string; cuisine?: string };
+export type RevealedVenue = { name: string; address: string; cuisine?: string; geo?: { lat: number; lng: number } };
 
 /**
  * Lieux d'une date à lieu secret (docs/22, décision 15) : ceux renseignés pour la date, sinon le lieu habituel du
@@ -33,7 +33,7 @@ export function venueByGroup(groups: { id: string; label: string }[], venues: Se
   return new Map(sorted.map((g, i) => {
     const v = venues[idx[i]!]!;
     const c = v.cuisine || cuisine;
-    return [g.id, { name: v.name, address: v.address, ...(c ? { cuisine: c } : {}) }];
+    return [g.id, { name: v.name, address: v.address, ...(c ? { cuisine: c } : {}), ...(v.geo ? { geo: v.geo } : {}) }];
   }));
 }
 

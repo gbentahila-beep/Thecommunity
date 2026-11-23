@@ -27,7 +27,7 @@ import type { QuestionDraft } from "@/lib/questionnaire-draft";
 import { valuesToTemplate } from "@/lib/admin-forms";
 import { firebase } from "@/lib/firebase/client";
 
-type Option = { id: string; label: string; disabled?: boolean; /** 18c : état de l'assurance du lieu partenaire. */ insurance?: "valid" | "expiring" | "expired" | "missing"; /** Étape 19 : sous-catégorie de… */ parentId?: string };
+type Option = { id: string; label: string; disabled?: boolean; /** 18c : état de l'assurance du lieu partenaire. */ insurance?: "valid" | "expiring" | "expired" | "missing"; /** Étape 19 : sous-catégorie de… */ parentId?: string; /** Lieu partenaire : nom, adresse, quartier et GPS recopiés quand on le choisit (champs vides seulement). */ venue?: { name: string; address: string; district: string; coords: string } };
 export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin" | "groupTarget" | "groupMax" | "costPerSeatDh" | "commissionPercent" | "priceDh" | "durationMinutes" | "maxSeatsPerBooking" | "memberPriceDh" | "partnerPriceDh" | "budgetMinDh" | "budgetMaxDh" | "onSiteCommissionPercent" | "minAge" | "targetAgeMin" | "targetAgeMax" | "level" | "questionnaire" | "proposalId" | "depositPercent" | "earlyAccessDays" | "templateId"> & {
   /** docs/22 : abonnés d'abord pendant X jours (« 0 » = ouvert à tous). */
   earlyAccessDays: string;
@@ -293,7 +293,15 @@ export function ExperienceForm({
     return null;
   }, [v.pricingModel, v.partnerPriceDh, v.budgetMinDh, v.budgetMaxDh, v.venueTier, v.subcategoryId]);
   const choosePricing = (id: ExperienceFormValues["pricingModel"]) => set("pricingModel", id);
-  const choosePartner = (id: string) => set("partnerId", id);
+  const choosePartner = (id: string) => {
+    set("partnerId", id);
+    const pv = partners.find((p) => p.id === id)?.venue;
+    if (!pv) return;
+    if (!v.venueName) set("venueName", pv.name);
+    if (!v.address && pv.address) set("address", pv.address);
+    if (!v.district && pv.district) set("district", pv.district);
+    if (!v.venueCoords && pv.coords) set("venueCoords", pv.coords);
+  };
 
   const field = (key: string) => ({
     id: `f-${key}`,
