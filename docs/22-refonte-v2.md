@@ -713,3 +713,32 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 | Bandeau jaune « Paiement en mode test… » | Une petite ligne près du bouton |
 | Bouton « Réserver et payer 35 DH » ; « Votre place est bloquée 15 minutes le temps du paiement. » | Bouton « Réserver » ; phrase retirée (gardée seulement pour le virement, qui a un délai à connaître) |
 | « Participation sur demande : pour garder des groupes harmonieux… » | « L'équipe valide votre demande, puis vous avez 24 h pour payer. » |
+
+## 20. Plan de la suite (demandes du 23 novembre, à valider)
+
+### Étape Y — Listes d'événements homogènes
+| Point | Proposition |
+|---|---|
+| **Un seul style de liste** | Partout où des événements sont listés (Cette semaine sur l'accueil, Découvrir, Pour vous, Mes réservations), la même ligne : vignette avec l'étiquette du badge, titre, date et heure, quartier et groupe, format · gamme · prix, bouton « Réserver ». Les lignes sont regroupées dans **une carte blanche** (séparateurs fins) : par jour dans Découvrir, une seule carte pour Cette semaine et Pour vous. Plus de cartes blanches séparées ni de lignes posées sur le fond beige. |
+| **Explorer par univers** (espace membre) | Les mêmes 4 tuiles que sur l'accueil (photo, nom, formats, « N cette semaine »). |
+| **Gammes à des jours différents** | Pour un même format, chaque gamme a son jour (ex. Déjeuner : Casual mardi, Premium jeudi, Exclusive vendredi) : plus de 3 « Déjeuner » à la suite. Appliqué à la Vitrine et, une fois, aux dates sans réservation du site d'essai. |
+
+### Étape Z — Après la réservation (parcours inspiré de Timeleft)
+| Point | Proposition |
+|---|---|
+| **Carte du lieu** | Dès que le lieu est connu (activité : dès la réservation ; Table : à la révélation, 5 h avant) : type (Restaurant, Café, Club…), nom, adresse, puis la table après le check-in, le plan (affiché au toucher) et « Itinéraire ». |
+| **Écran du jour J** | Dès la révélation : compte à rebours, lieu, bouton « Je suis là » (check-in), « Je serai en retard » (prévient la table), « Itinéraire », bloc « À la table » avec les avatars (arrivé, en retard, pas encore), accès au chat. Fond clair, au style du site. |
+| **Chat de la table** | Ouvert au check-in pour se dire où on est, puis gardé 14 jours dans Mon groupe. *Question : l'ouvrir aussi avant le check-in ?* |
+| **Avatars Babs** | Sans photo, chaque membre reçoit un Bab (couleur et accessoire) tiré de son identifiant, toujours le même : table, Mon groupe, chat, avis. |
+| **Captures du parcours** | Réservations d'exemple couvrant chaque étape (confirmée, lieu dévoilé, jour J, check-in fait, après la rencontre), puis captures de tout le parcours pour relecture. |
+
+### Étape AA — Accueil : téléphones et textes
+| Point | Proposition |
+|---|---|
+| **Écrans du téléphone** | Refaits après Y et Z : Découvrir avec des événements variés (Dîner, Padel, Escape game, Brunch…), l'écran du jour J, la carte du lieu. |
+| **Texte** | « Réservez une table… » devient « Réservez une sortie, retrouvez votre groupe, découvrez ce qui se passe cette semaine. » |
+
+### Étape AB — Pages À propos et Comment ça marche
+Refonte des deux pages au style actuel (fond clair, cartes blanches, plus de bloc noir « Votre sécurité ») et contenu à jour : 4 univers, 35 DH en ligne + sur place, Pass et Carnet, lieu secret révélé 5 h avant, check-in, sécurité. Retirés : « expériences sur demande », hôtesse et autres éléments périmés. Aperçu envoyé avant mise en ligne.
+
+**Ordre** : Y, puis Z, puis AA, puis AB.
