@@ -624,9 +624,11 @@ Aucune pour l'instant. Les questions Q1 à Q7 du 22 novembre sont tranchées (d�
 
 **Tests** : unitaire (chaque modèle donne un événement valide, dans chaque gamme pour les Tables) ; émulateur (refus sans le mot ou sans le rôle super-admin ; annulation et remboursement, archivage, suppression ; création des Tables et de l'activité avec son lieu ; activité sans lieu ignorée) ; back-office de bout en bout.
 
-### Lieux à démarcher à Casablanca (23 novembre)
-Onze fiches préparées dans *Partenaires*, avec les adresses publiques vérifiées : Rick's Café, Le Cabestan, Iloli, Le Rouget de l'Isle, Al Mounia, La Sqala, Bondi Coffee Kitchen, Paul (villa Zevaco), La Bodega de Casablanca, Le Petit Rocher, Sky 28. Chacune a des gammes, des formats (café, brunch, déjeuner, dîner, afterwork, quiz, échange de langues), une cuisine, un budget moyen et des créneaux de départ.
+### Lieux du site d'essai à Casablanca (23 novembre)
+Douze restaurants connus, **actifs sur le site d'essai** pour tester tout le parcours (adresses publiques vérifiées) : Rick's Café, Le Cabestan, Iloli, Le Rouget de l'Isle, Al Mounia, La Sqala, Bondi Coffee Kitchen, Paul (villa Zevaco), La Bodega de Casablanca, Le Petit Rocher, Sky 28, Four Seasons (Bleu). Gammes, formats, cuisine, budget moyen, créneaux calés sur les jours et heures des modèles.
 
-**Statut « prospect »** : aucun de ces lieux n'a encore accepté. Tant que la fiche n'est pas passée en « actif », le lieu n'est ni proposé par l'attribution, ni affiché sur le site, ni contacté automatiquement (pas d'e-mail ni de WhatsApp enregistrés, seulement le téléphone public pour le démarcher). Quand un lieu accepte : vérifier ses créneaux et capacités, ajouter son contact, son e-mail et son WhatsApp, puis le passer en « actif ». Il est alors pris en compte par l'attribution et par la Vitrine.
+**Téléphone, WhatsApp et e-mail fictifs** (série +212 600 000 1xx, e-mails en example.com jamais délivrés) : aucun de ces lieux n'a encore accepté, aucun message ne doit leur parvenir. Pour voir arriver une demande sur WhatsApp, mettre son propre numéro sur une fiche. Seulement sur le site d'essai, jamais en production.
 
-Créées sur le site d'essai par le contenu de départ, une seule fois (jamais réécrites ensuite).
+**Couverture** : chaque format des Tables a au moins un lieu dans chaque gamme ; afterwork, quiz, échange de langues et soirée jeux ont un lieu. Les lieux de démonstration (studio, escape room, atelier céramique, padel) reçoivent aussi leur fiche : yoga, escape game, céramique et padel peuvent être créés par la Vitrine. Running et visite guidée n'ont pas de lieu partenaire (en plein air) : la Vitrine les signale et ne les crée pas.
+
+Le contenu de départ crée ces fiches, et remplace la première version (« prospect ») tant que l'équipe ne l'a pas modifiée ; une fiche modifiée dans le back-office n'est plus jamais touchée.

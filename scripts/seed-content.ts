@@ -120,10 +120,25 @@ async function main() {
   if (completed) console.log(`✅ Démonstration : ${completed} expérience(s) complétée(s) (champs des étapes 23 et 29 manquants).`);
   const demo = db.batch();
   // Lieux partenaires et organisateur de démonstration utilisés par ces expériences (créés s'ils manquent).
-  for (const p of DEMO_PARTNERS) if (!(await db.doc(`partners/${p.id}`).get()).exists) demo.set(db.doc(`partners/${p.id}`), { ...p, isDemo: true });
-  // Lieux à démarcher à Casablanca : fiches « prospect », créées une seule fois (jamais réécrites ensuite).
+  for (const p of DEMO_PARTNERS) {
+    const snap = await db.doc(`partners/${p.id}`).get();
+    if (!snap.exists) demo.set(db.doc(`partners/${p.id}`), { ...p, isDemo: true });
+    // Fiche du lieu (docs/22, décision 41) ajoutée aux lieux de démonstration déjà créés, tant que l'équipe ne les a pas modifiés.
+    else if (snap.get("isDemo") && !snap.get("updatedBy") && (!snap.get("formats")?.length || !snap.get("address") || !snap.get("cityId")) && p.formats?.length) {
+      const { tiers, formats, unit, unitMin, unitMax, slots, cuisine, avgBudget, level, address, whatsapp, memberPerk } = p;
+      demo.set(snap.ref, Object.fromEntries(Object.entries({ tiers, formats, unit, unitMin, unitMax, slots, cuisine, avgBudget, level, address, whatsapp, memberPerk, cityId: p.cityId ?? "casablanca" }).filter(([, v]) => v !== undefined)), { merge: true });
+    }
+  }
+  // Lieux du site d'essai (restaurants connus de Casablanca, coordonnées fictives) : créés s'ils manquent ;
+  // les fiches de la première version (« prospect ») sont remplacées tant que l'équipe ne les a pas modifiées.
   let venues = 0;
-  for (const p of CASABLANCA_VENUES) if (!(await db.doc(`partners/${p.id}`).get()).exists) { demo.set(db.doc(`partners/${p.id}`), { ...p, source: "prospection", createdAt: FieldValue.serverTimestamp() }); venues++; }
+  for (const p of CASABLANCA_VENUES) {
+    const snap = await db.doc(`partners/${p.id}`).get();
+    const firstVersion = snap.exists && snap.get("source") === "prospection" && !snap.get("updatedBy");
+    if (snap.exists && !firstVersion) continue;
+    demo.set(db.doc(`partners/${p.id}`), { ...p, source: "essai", isDemo: true, createdAt: snap.get("createdAt") ?? FieldValue.serverTimestamp() });
+    venues++;
+  }
   if (toAdd.some((e) => e.organizerId === DEMO_ORGANIZER.id) && !(await db.doc(`organizers/${DEMO_ORGANIZER.id}`).get()).exists) {
     const { id, ...pub } = DEMO_ORGANIZER;
     demo.set(db.doc(`organizers/${id}`), { ...pub, createdAt: ts(DEMO_ORGANIZER.createdAt), isDemo: true });
@@ -162,7 +177,7 @@ async function main() {
   }
   demo.set(registryRef, { experienceIds: [...registry], updatedAt: Timestamp.now() }, { merge: true });
   await demo.commit();
-  if (venues) console.log(`✅ Lieux à démarcher à Casablanca : ${venues} fiche(s) créée(s) (statut prospect).`);
+  if (venues) console.log(`✅ Lieux du site d'essai à Casablanca : ${venues} fiche(s) créée(s) ou mise(s) à jour (actives, coordonnées fictives).`);
   console.log(toAdd.length ? `✅ Démonstration : ${toAdd.length} expériences ajoutées (${toAdd.map((e) => e.id).join(", ")}), ${dates} dates (isDemo).` : "ℹ️  Démonstration : rien à ajouter.");
 }
 
