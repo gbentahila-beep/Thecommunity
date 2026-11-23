@@ -7,6 +7,7 @@ import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireRole, roleOf } from "../lib/guards";
 import { dateTimeFor } from "../invoices/format";
 import { sendMail } from "../mail/mailer";
+import { icsAttachment } from "../notify/ics";
 import { groupRevealedMail, venueRevealedMail } from "../mail/templates";
 import { refuse } from "../reservations/refuse";
 import { refreshRevealed, sessionVenues, venueByGroup } from "../experiences/venues";
@@ -341,17 +342,20 @@ export async function revealGroupsCore(sessionId: string, actorUid: string): Pro
   const startAt = (s.startAt as Timestamp).toDate();
   const checkInFrom = tablesTimeline(startAt).checkInFrom;
   await Promise.all(
-    participants.map((p) => {
+    participants.map(async (p) => {
       if (!p.user.email) return null;
       const locale = String(p.user.locale ?? "fr");
+      // Audit 23/11 : invitation agenda à jour (lieu révélé), même identifiant que celle déjà téléchargée.
+      const rDoc = (await db.doc(`reservations/${p.reservationId}`).get()).data();
+      const attachments = rDoc ? [await icsAttachment(p.reservationId, rDoc, locale)] : [];
       const title = s.experienceSnapshot?.title?.[locale] ?? s.experienceSnapshot?.title?.fr ?? e.title?.fr ?? "";
       const venue = venueOf?.get(groupOf.get(p.uid)!.id);
       if (tablesFlow) {
         const mail = venueRevealedMail({ locale, firstName: String(p.user.firstName ?? ""), title, when: dateTimeFor(startAt, locale), venue: venue ? `${venue.name}, ${venue.address}` : null, cuisine: ((locale === "ar" || locale === "en") && venue?.cuisineI18n?.[locale as "ar" | "en"]) || venue?.cuisine || null, summary: summaryText(sums?.get(p.uid), locale), checkInFrom: hhmm(checkInFrom, locale), reservationId: p.reservationId });
-        return sendMail({ to: p.user.email, locale, ...mail, kind: "venue_revealed", refs: { reservationId: p.reservationId, sessionId: sessRef.id } });
+        return sendMail({ to: p.user.email, locale, ...mail, attachments, kind: "venue_revealed", refs: { reservationId: p.reservationId, sessionId: sessRef.id } });
       }
       const mail = groupRevealedMail({ locale, firstName: String(p.user.firstName ?? ""), title, when: dateTimeFor(startAt, locale), table: groupOf.get(p.uid)!.label, venue: venue ? `${venue.name}, ${venue.address}` : null, reservationId: p.reservationId });
-      return sendMail({ to: p.user.email, locale, ...mail, kind: "group_revealed", refs: { reservationId: p.reservationId, sessionId: sessRef.id } });
+      return sendMail({ to: p.user.email, locale, ...mail, attachments, kind: "group_revealed", refs: { reservationId: p.reservationId, sessionId: sessRef.id } });
     }),
   );
   void actorUid;

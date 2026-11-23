@@ -481,3 +481,43 @@ describe("lot 4 — avis", () => {
     expect(await refusal(v.call("submitReview", { reservationId: before.rid, rating: 4, comment: "" }))).toBe("failed-precondition:not_reviewable");
   });
 });
+
+describe("lot 5 — e-mails prêts pour Brevo", () => {
+  const mails = async (rid: string, kind: string) => (await db().collection("mail").where("refs.reservationId", "==", rid).where("kind", "==", kind).get()).docs.map((d) => d.data());
+
+  it("place proposée depuis la liste d'attente : e-mail (et WhatsApp préparé si accepté)", async () => {
+    const { sid } = await makeExperience({ capacity: 1, startInHours: 80 });
+    const first = await member();
+    const w = await member({ extra: { phone: "0612345678", whatsapp: true } });
+    const rid = await paid(first, sid);
+    await w.call("joinWaitlist", { sessionId: sid, seats: 1 });
+    await first.call("cancelReservation", { reservationId: rid });
+    const offer = (await db().doc(`sessions/${sid}/waitlist/${w.uid}`).get()).data()!;
+    expect(await mails(offer.reservationId, "waitlist_offer")).toHaveLength(1);
+    const wa = await db().collection("whatsapp").where("refs.reservationId", "==", offer.reservationId).get();
+    expect(wa.docs.map((d) => d.data())).toMatchObject([{ kind: "waitlist_offer", to: "212612345678", status: "outbox" }]);
+  });
+
+  it("changement de date par le membre : e-mail de confirmation avec l'invitation agenda", async () => {
+    const { sid, others } = await makeExperience({ startInHours: 100, more: [200] });
+    const u = await member();
+    const rid = await paid(u, sid);
+    await u.call("moveMyReservation", { reservationId: rid, targetSessionId: others[0] });
+    const [m] = await mails(rid, "change_date_self");
+    expect(m).toBeTruthy();
+    expect(m!.attachments).toMatchObject([{ filename: "wenzy.ics", contentType: "text/calendar" }]);
+    const ics = Buffer.from(m!.attachments[0].content, "base64").toString("utf8");
+    expect(ics).toContain(`UID:${rid}@wenzy`);
+    expect(ics).toContain("LOCATION:Studio Audit");
+  });
+
+  it("annulation par l'équipe : l'invitation jointe retire l'événement de l'agenda", async () => {
+    const team = await member({ role: "admin" });
+    const { sid } = await makeExperience({ startInHours: 80 });
+    const u = await member();
+    const rid = await paid(u, sid);
+    await team.call("adminCancelReservation", { reservationId: rid, refund: "full", reason: "Lieu fermé" });
+    const [m] = await mails(rid, "reservation_cancelled_by_team");
+    expect(Buffer.from(m!.attachments[0].content, "base64").toString("utf8")).toContain("STATUS:CANCELLED");
+  });
+});

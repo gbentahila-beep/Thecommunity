@@ -3,6 +3,7 @@ import { db, FieldValue } from "../lib/admin";
 import { dateTimeFor } from "../invoices/format";
 import { sendMail } from "../mail/mailer";
 import { cancelledByTeamMail } from "../mail/member-templates";
+import { icsAttachment } from "./ics";
 import { personOf } from "./reminders";
 
 const dh = (centimes: number) => `${(centimes / 100).toLocaleString("fr-FR", { maximumFractionDigits: 2 })} DH`;
@@ -40,6 +41,7 @@ export async function notifyCancelledByTeam(reservationId: string, refundAmount:
     to: p.email,
     locale: p.locale,
     ...cancelledByTeamMail({ locale: p.locale, firstName: p.firstName, title, when: dateTimeFor(startAt, p.locale), refund: refundAmount > 0 ? dh(refundAmount) : null, refundPending, sessionReason: o.sessionReason ?? null, reservationId }),
+    attachments: [await icsAttachment(reservationId, r, p.locale, { cancelled: true })],
     kind: session ? "session_cancelled" : "reservation_cancelled_by_team",
     refs: { reservationId },
   });

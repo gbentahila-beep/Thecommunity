@@ -17,7 +17,8 @@ import { getStorage } from "firebase-admin/storage";
 import { logger } from "firebase-functions/v2";
 import { db, FieldValue } from "../lib/admin";
 import { membershipMail, refundMail, reservationConfirmedMail } from "../mail/templates";
-import { sendMail } from "../mail/mailer";
+import { sendMail, type MailAttachment } from "../mail/mailer";
+import { icsAttachment } from "../notify/ics";
 import { dateFr, dateTimeFor, dateTimeFr, money } from "./format";
 import { renderInvoicePdf } from "./pdf";
 import type { InvoiceDoc } from "./types";
@@ -230,6 +231,7 @@ export async function emailInvoice(invoiceId: string): Promise<{ id: string; sta
   const firstName = (user.firstName as string | undefined) ?? "";
   const total = money(inv.totals.ttc, inv.currency);
   let mail: { subject: string; html: string; text: string };
+  let icsFor: MailAttachment | null = null;
   if (inv.kind === "credit_note") {
     mail = refundMail({ locale, firstName, what: String(inv.lines[0]?.label ?? "").replace(/^Remboursement — /, ""), amount: total, number: inv.number, relatedNumber: inv.relatedInvoiceNumber ?? "", test: inv.test });
   } else if (inv.purpose === "membership") {
@@ -247,13 +249,15 @@ export async function emailInvoice(invoiceId: string): Promise<{ id: string; sta
     const exp = r?.experienceId ? (await db.doc(`experiences/${r.experienceId}`).get()).data() : undefined;
     const ticket = needsTicket(exp as { onSiteHost?: boolean; organizerId?: string | null } | undefined, r as { organizerId?: string | null } | undefined);
     mail = reservationConfirmedMail({ locale, firstName, title, when, seats: r?.seats ?? 1, total, number: inv.number, reservationId: inv.reservationId, test: inv.test, onSite: onSiteText(r, locale), ticket });
+    // Audit 23/11 : invitation agenda jointe à la confirmation (mise à jour plus tard si le lieu ou la date change).
+    if (r && inv.kind !== "credit_note") icsFor = await icsAttachment(inv.reservationId, r, locale).catch(() => null);
   }
   const sent = await sendMail({
     to,
     toName: [user.firstName, user.lastName].filter(Boolean).join(" ") || undefined,
     locale,
     ...mail,
-    attachments: [{ filename: `${inv.number}.pdf`, storagePath: inv.pdfPath }],
+    attachments: [{ filename: `${inv.number}.pdf`, storagePath: inv.pdfPath }, ...(icsFor ? [icsFor] : [])],
     kind: inv.kind === "credit_note" ? "refund" : inv.purpose === "membership" ? "membership_invoice" : "reservation_invoice",
     refs: { invoiceId, paymentId: inv.paymentId, ...(inv.reservationId ? { reservationId: inv.reservationId } : {}) },
   });

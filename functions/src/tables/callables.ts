@@ -81,7 +81,7 @@ const whatsappSettingsSchema = z.object({
   provider: z.enum(["outbox", "meta"]),
   phoneNumberId: z.string().trim().max(40).regex(/^\d*$/, "digits"),
   language: z.string().trim().min(2).max(10).default("fr"),
-  templates: z.object({ request: z.string().trim().min(1).max(60), reminder: z.string().trim().min(1).max(60), recap: z.string().trim().min(1).max(60) }),
+  templates: z.object({ request: z.string().trim().min(1).max(60), reminder: z.string().trim().min(1).max(60), recap: z.string().trim().min(1).max(60), waitlist_offer: z.string().trim().min(1).max(60).default("wenzy_place_liberee") }),
 }).refine((v) => v.provider === "outbox" || v.phoneNumberId.length > 0, { path: ["phoneNumberId"], message: "required" });
 
 /** Paramètres (super-admin) : envoi WhatsApp automatique (le jeton reste un secret Cloud, jamais dans la base). */

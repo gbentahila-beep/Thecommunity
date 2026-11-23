@@ -65,3 +65,21 @@ describe("audit 23/11 — avis", () => {
     expect(canReview({ status: "refunded", sessionSnapshot: snap }, new Date("2026-12-01T20:00:00Z"))).toBe(false);
   });
 });
+
+import { buildIcs } from "./index";
+
+describe("audit 23/11 — invitation agenda", () => {
+  it("même identifiant pour une réservation, version croissante, lieu et annulation", () => {
+    const base = { uid: "res123", title: "Dîner, à table", startAt: "2026-12-01T19:00:00Z", endAt: "2026-12-01T22:00:00Z", location: "Casablanca", url: "https://wenzy.ma/espace/reservations/res123" };
+    const a = buildIcs({ ...base, now: new Date("2026-11-20T10:00:00Z") });
+    const b = buildIcs({ ...base, location: "Dar Lyakout, 12 rue X", geo: { lat: 33.5, lng: -7.6 }, now: new Date("2026-11-30T10:00:00Z") });
+    const uid = (s: string) => s.match(/UID:(.*)/)![1];
+    const seq = (s: string) => Number(s.match(/SEQUENCE:(\d+)/)![1]);
+    expect(uid(a)).toBe(uid(b));
+    expect(seq(b)).toBeGreaterThan(seq(a));
+    expect(b).toContain("GEO:33.5;-7.6");
+    expect(a).toContain("SUMMARY:Dîner\\, à table");
+    expect(buildIcs({ ...base, cancelled: true })).toContain("STATUS:CANCELLED");
+    expect(a.split("\r\n").every((l) => new TextEncoder().encode(l).length <= 75)).toBe(true);
+  });
+});

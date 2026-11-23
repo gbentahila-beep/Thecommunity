@@ -48,7 +48,7 @@ export function AllocationSettingsForm({ initial, live }: { initial: AllocationS
   );
 }
 
-export type WhatsAppSettings = { provider: "outbox" | "meta"; phoneNumberId: string; language: string; templates: { request: string; reminder: string; recap: string } };
+export type WhatsAppSettings = { provider: "outbox" | "meta"; phoneNumberId: string; language: string; templates: { request: string; reminder: string; recap: string; waitlist_offer: string } };
 
 /** Envoi WhatsApp automatique (super-admin, décision 44) : désactivé tant que le compte WhatsApp Business API n'existe pas. */
 export function WhatsAppSettingsForm({ initial, canEdit }: { initial: WhatsAppSettings; canEdit: boolean }) {
@@ -82,8 +82,8 @@ export function WhatsAppSettingsForm({ initial, canEdit }: { initial: WhatsAppSe
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1 font-medium">Identifiant du numéro (Phone number ID)<input className={small} disabled={!canEdit} value={v.phoneNumberId} onChange={(e) => setV({ ...v, phoneNumberId: e.target.value.trim() })} /></label>
           <label className="flex flex-col gap-1 font-medium">Langue des modèles<input className={small} disabled={!canEdit} value={v.language} onChange={(e) => setV({ ...v, language: e.target.value })} /></label>
-          {(["request", "reminder", "recap"] as const).map((k) => (
-            <label key={k} className="flex flex-col gap-1 font-medium">Modèle « {k === "request" ? "demande" : k === "reminder" ? "relance" : "récapitulatif"} »<input className={small} disabled={!canEdit} value={v.templates[k]} onChange={(e) => setV({ ...v, templates: { ...v.templates, [k]: e.target.value } })} /></label>
+          {(["request", "reminder", "recap", "waitlist_offer"] as const).map((k) => (
+            <label key={k} className="flex flex-col gap-1 font-medium">Modèle « {k === "request" ? "demande" : k === "reminder" ? "relance" : k === "recap" ? "récapitulatif" : "place libérée (membre)"} »<input className={small} disabled={!canEdit} value={v.templates[k]} onChange={(e) => setV({ ...v, templates: { ...v.templates, [k]: e.target.value } })} /></label>
           ))}
         </div>
       )}

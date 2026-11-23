@@ -86,7 +86,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const cityName = city ? tr(city.name, locale) : "Casablanca";
   // Lieu pas encore communiqué (lieu secret) : la ville seulement, jamais le quartier (docs/22).
   const venueText = r.venue ? `${r.venue.name}, ${r.venue.address}` : cityName;
-  const ics = buildIcs({ uid: r.id, title, startAt: s.startAt, endAt: s.endAt, location: venueText, url: `${SITE_URL}/espace/reservations/${r.id}` });
+  const ics = buildIcs({ uid: r.id, title, startAt: s.startAt, endAt: s.endAt, location: venueText, geo: r.venue?.geo ?? null, url: `${SITE_URL}/espace/reservations/${r.id}` });
   const dateFmt = (iso: string) => formatLongDate(iso, locale);
   const holdOpen = r.status === "pending_payment" && r.holdExpiresAt !== undefined && new Date(r.holdExpiresAt).getTime() > now.getTime();
   const transfer = r.paymentMethod === "bank_transfer";

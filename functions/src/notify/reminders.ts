@@ -5,6 +5,7 @@ import { db, FieldValue, REGION } from "../lib/admin";
 import { dateTimeFor } from "../invoices/format";
 import { sendMail } from "../mail/mailer";
 import { changeMail, reminderMail } from "../mail/templates";
+import { icsAttachment } from "./ics";
 
 const HOUR = 3_600_000;
 
@@ -78,7 +79,7 @@ export const sendReminders = onSchedule({ schedule: "every 15 minutes", region: 
 });
 
 /** Changement de date ou de lieu : notification + e-mail (toujours envoyé : information essentielle). */
-export async function notifyReservationChange(reservationId: string, kind: "date" | "venue") {
+export async function notifyReservationChange(reservationId: string, kind: "date" | "venue", o: { self?: boolean } = {}) {
   const r = (await db.doc(`reservations/${reservationId}`).get()).data();
   if (!r) return;
   const p = await personOf(r.userId);
@@ -94,6 +95,7 @@ export async function notifyReservationChange(reservationId: string, kind: "date
     });
   }
   if (p.email) {
-    await sendMail({ to: p.email, locale: p.locale, ...changeMail({ locale: p.locale, kind, firstName: p.firstName, title, when, where: await whereOf(r, p.locale), reservationId }), kind: `change_${kind}`, refs: { reservationId } });
+    // Audit 23/11 : invitation agenda mise à jour jointe ; variante « changement fait par vous ».
+    await sendMail({ to: p.email, locale: p.locale, ...changeMail({ locale: p.locale, kind, firstName: p.firstName, title, when, where: await whereOf(r, p.locale), reservationId, self: o.self }), attachments: [await icsAttachment(reservationId, r, p.locale)], kind: o.self ? "change_date_self" : `change_${kind}`, refs: { reservationId } });
   }
 }

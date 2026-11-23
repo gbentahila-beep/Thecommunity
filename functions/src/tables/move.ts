@@ -6,8 +6,10 @@ import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth } from "../lib/guards";
 import { refuse } from "../reservations/refuse";
 import { readWaitlist, writeOffers } from "../waitlist/offers";
+import { notifyWaitlistOffers } from "../waitlist/notify-offers";
 import { capacityBefore } from "../reservations/create-reservation";
 import { removeFromGroup } from "../groups/membership";
+import { notifyReservationChange } from "../notify/reminders";
 
 /**
  * Déplacer une réservation sur une autre date du même rendez-vous, dans UNE transaction : places, verrous, liste
@@ -103,7 +105,7 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
       updatedAt: FieldValue.serverTimestamp(),
     });
     const fromAvailable = f.capacity - (f.seatsConfirmed - (held ? 0 : n)) - (f.seatsHeld - (held ? n : 0));
-    const offers = exp.exists ? writeOffers(tx, { sessRef: fromRef, s: f, e, candidates, available: fromAvailable, now }) : { heldDelta: 0, confirmedDelta: 0, waitingDelta: 0 };
+    const offers = exp.exists ? writeOffers(tx, { sessRef: fromRef, s: f, e, candidates, available: fromAvailable, now }) : { heldDelta: 0, confirmedDelta: 0, waitingDelta: 0, offeredReservations: [] as string[] };
     const left = fromAvailable - offers.heldDelta - offers.confirmedDelta;
     tx.update(fromRef, {
       seatsConfirmed: FieldValue.increment((held ? 0 : -n) + offers.confirmedDelta),
@@ -113,7 +115,10 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
       ...(["proposed", "validated", "revealed"].includes(f.groupsStatus) ? { groupsNeedReview: true } : {}),
       updatedAt: FieldValue.serverTimestamp(),
     });
-    return { userId: r.userId as string, from: r.sessionId as string, startAt: (t.startAt as Timestamp).toDate() };
+    return { userId: r.userId as string, from: r.sessionId as string, startAt: (t.startAt as Timestamp).toDate(), offered: offers.offeredReservations };
+  }).then(async (out) => {
+    await notifyWaitlistOffers(out.offered);
+    return out;
   });
 }
 
@@ -123,6 +128,8 @@ export const moveMyReservation = onCall({ region: REGION }, async (req) => {
   const v = moveReservationSchema.safeParse(req.data);
   if (!v.success) invalidArgument(v.error.issues);
   const moved = await moveReservationCore({ ...v.data, actorUid: uid, by: "user" });
+  // Audit 23/11 : confirmation par e-mail avec la nouvelle invitation agenda.
+  await notifyReservationChange(v.data.reservationId, "date", { self: true }).catch(() => undefined);
   await audit({ actorUid: uid, actorRole: "user", action: "reservation.move.self", targetType: "reservation", targetId: v.data.reservationId, before: { sessionId: moved.from }, after: { sessionId: v.data.targetSessionId } });
   return { ok: true };
 });

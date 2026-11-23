@@ -10,6 +10,7 @@ import { issueRefund } from "../payments/refund";
 import { readWaitlist, writeOffers } from "../waitlist/offers";
 import { removeFromGroup } from "../groups/membership";
 import { recordAbsence } from "../membership/absences";
+import { notifyWaitlistOffers } from "../waitlist/notify-offers";
 import { refuse } from "./create-reservation";
 
 export const idSchema = z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/);
@@ -92,7 +93,7 @@ export async function cancelReservationCore(o: {
     const n = r.seats as number;
     const wasHeld = r.status === "pending_payment";
     const available = s.capacity - (s.seatsConfirmed - (wasHeld ? 0 : n)) - (s.seatsHeld - (wasHeld ? n : 0));
-    const offers = exp.exists ? writeOffers(tx, { sessRef, s, e: exp.data()!, candidates, available, now }) : { heldDelta: 0, confirmedDelta: 0, waitingDelta: 0 };
+    const offers = exp.exists ? writeOffers(tx, { sessRef, s, e: exp.data()!, candidates, available, now }) : { heldDelta: 0, confirmedDelta: 0, waitingDelta: 0, offeredReservations: [] as string[] };
     const left = available - offers.heldDelta - offers.confirmedDelta;
     tx.update(sessRef, {
       seatsConfirmed: FieldValue.increment((wasHeld ? 0 : -n) + offers.confirmedDelta),
@@ -105,8 +106,9 @@ export async function cancelReservationCore(o: {
     });
     // Audit 23/11 : place incluse dans le pass, annulée par la personne à moins de 24 h → absence (après la transaction).
     const lateCancel = o.by === "user" && r.status === "confirmed" && isLatePassCancel(Number(r.pricing?.coverage?.passSeats ?? 0), basis, new Date(now));
-    return { refundAmount, paymentId: paid ? (r.paymentId as string) : null, userId: r.userId as string, slug: r.sessionSnapshot?.slug as string | undefined, lateCancel, title: String(r.sessionSnapshot?.title?.fr ?? "") };
+    return { refundAmount, paymentId: paid ? (r.paymentId as string) : null, userId: r.userId as string, slug: r.sessionSnapshot?.slug as string | undefined, lateCancel, title: String(r.sessionSnapshot?.title?.fr ?? ""), offered: offers.offeredReservations };
   });
+  await notifyWaitlistOffers(result.offered);
   if (result.lateCancel) await recordAbsence(result.userId, o.reservationId, result.title, Date.now(), "late_cancel").catch((e) => logger.error("Absence (annulation tardive)", e));
 
   let refundStatus: "none" | "succeeded" | "pending" = "none";

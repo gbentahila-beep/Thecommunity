@@ -132,6 +132,6 @@ export async function getAllocationSettings() {
   const x = w.data() ?? {};
   return {
     allocation: allocationSettingsOf(a.data()),
-    whatsapp: { provider: x.provider === "meta" ? "meta" : "outbox", phoneNumberId: String(x.phoneNumberId ?? ""), language: String(x.language ?? "fr"), templates: { request: String(x.templates?.request ?? "wenzy_demande_lieu"), reminder: String(x.templates?.reminder ?? "wenzy_relance_lieu"), recap: String(x.templates?.recap ?? "wenzy_recap_lieu") } } as const,
+    whatsapp: { provider: x.provider === "meta" ? "meta" : "outbox", phoneNumberId: String(x.phoneNumberId ?? ""), language: String(x.language ?? "fr"), templates: { request: String(x.templates?.request ?? "wenzy_demande_lieu"), reminder: String(x.templates?.reminder ?? "wenzy_relance_lieu"), recap: String(x.templates?.recap ?? "wenzy_recap_lieu"), waitlist_offer: String(x.templates?.waitlist_offer ?? "wenzy_place_liberee") } } as const,
   };
 }

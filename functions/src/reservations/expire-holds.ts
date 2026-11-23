@@ -4,6 +4,7 @@ import { onSchedule } from "firebase-functions/v2/scheduler";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { sendTransferExpired } from "../payments/transfer-mail";
 import { readWaitlist, writeOffers } from "../waitlist/offers";
+import { notifyWaitlistOffers } from "../waitlist/notify-offers";
 
 /**
  * Libère une réservation dont le blocage de 15 minutes est dépassé sans paiement :
@@ -12,7 +13,8 @@ import { readWaitlist, writeOffers } from "../waitlist/offers";
  * Sans effet si la réservation a été payée ou modifiée entre-temps (relecture dans la transaction).
  */
 export async function expireReservation(reservationId: string, now = Date.now()): Promise<boolean> {
-  return db.runTransaction(async (tx) => {
+  let offered: string[] = [];
+  const done = await db.runTransaction(async (tx) => {
     const resRef = db.doc(`reservations/${reservationId}`);
     const res = await tx.get(resRef);
     const r = res.data();
@@ -37,7 +39,7 @@ export async function expireReservation(reservationId: string, now = Date.now())
     }
     if (lock.data()?.reservationId === reservationId) tx.delete(lockRef);
     const available = s.capacity - s.seatsConfirmed - (s.seatsHeld - r.seats);
-    const offers = exp.exists ? writeOffers(tx, { sessRef, s, e: exp.data()!, candidates, available, now }) : { heldDelta: 0, confirmedDelta: 0, waitingDelta: 0 };
+    const offers = exp.exists ? writeOffers(tx, { sessRef, s, e: exp.data()!, candidates, available, now }) : { heldDelta: 0, confirmedDelta: 0, waitingDelta: 0, offeredReservations: [] as string[] };
     const left = available - offers.heldDelta - offers.confirmedDelta;
     tx.update(sessRef, {
       seatsHeld: FieldValue.increment(-r.seats + offers.heldDelta),
@@ -46,8 +48,12 @@ export async function expireReservation(reservationId: string, now = Date.now())
       ...(["published", "full"].includes(s.status) ? { status: left > 0 ? "published" : "full" } : {}),
       updatedAt: FieldValue.serverTimestamp(),
     });
+    offered = offers.offeredReservations;
     return true;
   });
+  // Audit 23/11 : places proposées à la liste d'attente annoncées aussi par e-mail (et WhatsApp si accepté).
+  if (offered.length) await notifyWaitlistOffers(offered);
+  return done;
 }
 
 /** Expire toutes les réservations en attente dont le blocage est dépassé. */

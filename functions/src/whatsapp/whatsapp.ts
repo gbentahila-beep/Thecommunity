@@ -9,7 +9,7 @@ import { db, FieldValue } from "../lib/admin";
  * templates } + jeton WHATSAPP_TOKEN (secret Cloud). WhatsApp n'accepte, pour un premier message, que des
  * **messages modèles validés par Meta** : leur texte est dans docs/22 § 17.H.
  */
-export type WhatsAppKind = "request" | "reminder" | "recap";
+export type WhatsAppKind = "request" | "reminder" | "recap" | "waitlist_offer";
 export type WhatsAppMessage = { to: string; kind: WhatsAppKind; text: string; params: string[]; refs?: Record<string, string> };
 
 type Settings = { provider: "outbox" | "meta"; phoneNumberId: string; language: string; templates: Record<WhatsAppKind, string> };
@@ -20,7 +20,7 @@ async function settings(): Promise<Settings> {
     provider: s.provider === "meta" && s.phoneNumberId ? "meta" : "outbox",
     phoneNumberId: String(s.phoneNumberId ?? ""),
     language: String(s.language ?? "fr"),
-    templates: { request: String(s.templates?.request ?? "wenzy_demande_lieu"), reminder: String(s.templates?.reminder ?? "wenzy_relance_lieu"), recap: String(s.templates?.recap ?? "wenzy_recap_lieu") },
+    templates: { request: String(s.templates?.request ?? "wenzy_demande_lieu"), reminder: String(s.templates?.reminder ?? "wenzy_relance_lieu"), recap: String(s.templates?.recap ?? "wenzy_recap_lieu"), waitlist_offer: String(s.templates?.waitlist_offer ?? "wenzy_place_liberee") },
   };
 }
 
