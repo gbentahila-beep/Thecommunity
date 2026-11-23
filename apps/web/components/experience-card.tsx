@@ -1,6 +1,7 @@
 import { experienceBadge, LOW_SEATS_THRESHOLD, pricingOf, seatsAvailable, type Experience, type Session, restaurantBudget } from "@thecommunity/shared";
 import { Gem, MapPin, Star, Users } from "lucide-react";
-import { BADGE_TONE, TIER_TONE, WOMEN_TONE } from "./card-pills";
+import { TIER_TONE } from "./card-pills";
+import { CornerRibbon } from "./corner-ribbon";
 import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -68,10 +69,7 @@ export async function ExperienceCard({
             </span>
           )}
         </div>
-        <div className="absolute top-3 start-3 flex flex-col items-start gap-1.5">
-          {experience.audience === "women" && (
-            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${WOMEN_TONE}`} data-testid="card-women">{t("women")}</span>
-          )}
+        <div className="absolute top-14 end-3 flex flex-col items-end gap-1.5">
           {full ? (
             <span className="rounded-full bg-ink/80 px-3 py-1 text-xs font-medium text-white">
               {t("full")}
@@ -81,12 +79,8 @@ export async function ExperienceCard({
               {t("lastSeats", { count: left })}
             </span>
           ) : null}
-          {badge && (
-            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${BADGE_TONE[badge]}`} data-testid="card-badge">
-              {t(`badge_${badge}`)}
-            </span>
-          )}
         </div>
+        {badge && <CornerRibbon badge={badge} label={t(`badge_${badge}`)} size="md" />}
         <FavoriteButton experienceId={experience.id} className="absolute end-3 top-3 z-10" />
         {experience.membersOnly && (
           <span className="btn btn-primary btn-sm absolute bottom-3 end-3">{t("membersOnly")}</span>
@@ -101,6 +95,7 @@ export async function ExperienceCard({
         <p className="flex items-center gap-1.5 text-sm text-muted">
           <MapPin className="size-4 shrink-0 text-brand-700" aria-hidden />
           {[experience.district, session ? formatShortSlot(session.startAt, locale) : t("datesSoon")].filter(Boolean).join(" · ")}
+          {experience.audience === "women" && <span className="ms-1 font-semibold text-rose-700" data-testid="card-women">· {t("women")}</span>}
         </p>
         <div className="mt-auto flex items-end justify-between pt-3">
           <p>

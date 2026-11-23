@@ -287,7 +287,14 @@
     "composedByTeam": "Composées par notre équipe",
     "targetAge": "{min} à {max} ans",
     "targetAgeNote": "Âge visé, indicatif",
-    "questionnaireLabel": "Questionnaire"
+    "questionnaireLabel": "Questionnaire",
+    "datesSoonLabel": "Prochaines dates bientôt",
+    "datesSoonValue": "Activez l'alerte pour être prévenu·e",
+    "bookAlone": "Réservation individuelle",
+    "tierAny": "Selon le lieu",
+    "fromAge": "Dès {age} ans",
+    "openToAll": "Ouvert à tous",
+    "noReviewsYet": "Pas encore d'avis : les premiers arrivent après la première date."
   },
   "booking": {
     "title": "Réserver ma place",

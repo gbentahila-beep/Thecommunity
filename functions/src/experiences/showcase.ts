@@ -33,9 +33,10 @@ export type ShowcaseResult = {
 const hasPeople = (s: FirebaseFirestore.DocumentData) => (s.seatsConfirmed ?? 0) + (s.seatsHeld ?? 0) + (s.waitlistCount ?? 0) > 0;
 
 /** Étape 1 : chaque événement existant est supprimé (sans historique) ou archivé ; les dates à venir sont annulées et remboursées. */
-async function clearEvents(actor: { uid: string; role: string }, now: number, r: ShowcaseResult) {
+async function clearEvents(actor: { uid: string; role: string }, now: number, r: ShowcaseResult, only?: (e: FirebaseFirestore.DocumentData) => boolean) {
   const experiences = await db.collection("experiences").get();
   for (const e of experiences.docs) {
+    if (only && !only(e.data())) continue;
     const id = e.id;
     const sessions = await db.collection("sessions").where("experienceId", "==", id).get();
     for (const s of sessions.docs) {
@@ -71,7 +72,12 @@ async function clearEvents(actor: { uid: string; role: string }, now: number, r:
       const alerts = await db.collection("experienceAlerts").where("experienceId", "==", id).get();
       for (const a of alerts.docs) await a.ref.delete();
       await db.recursiveDelete(e.ref);
-      await getStorage().bucket().deleteFiles({ prefix: `experiences/${id}/` }).catch(() => undefined);
+      // Sans bucket configuré (script du site d'essai), getStorage().bucket() lève une erreur : on l'ignore.
+      try {
+        await getStorage().bucket().deleteFiles({ prefix: `experiences/${id}/` });
+      } catch {
+        /* pas de photos à supprimer */
+      }
       r.deleted += 1;
     } else if (e.data().status !== "archived") {
       await e.ref.update({ status: "archived", archivedAt: FieldValue.serverTimestamp(), archivedBy: actor.uid, nextSessionAt: null, updatedAt: FieldValue.serverTimestamp(), updatedBy: actor.uid });
@@ -131,6 +137,34 @@ export async function resetShowcaseCore(raw: unknown, actor: { uid: string; role
   await clearEvents(actor, now, r);
   await createFromTemplates(input, actor, now, r);
   await audit({ actorUid: actor.uid, actorRole: actor.role, action: "showcase.reset", targetType: "experience", targetId: "*", after: { ...r, created: r.created.length, skipped: r.skipped } });
+  return r;
+}
+
+/**
+ * Site d'essai (étape Q) : remplace les ANCIENS événements de démonstration (isDemo) par ceux des modèles, une seule
+ * fois (réglage settings/showcase). Les événements créés par l'équipe ne sont pas touchés. Toutes les Tables qui ont un
+ * lieu compatible dans leur gamme et toutes les activités qui ont un lieu partenaire sont créées. Appelé par le contenu
+ * de départ du site d'essai (jamais en production).
+ */
+export async function replaceDemoEventsOnce(actor: { uid: string; role: string }, now = Date.now(), cityId = "casablanca"): Promise<ShowcaseResult | null> {
+  const flag = db.doc("settings/showcase");
+  if ((await flag.get()).get("demoReplacedAt")) return null;
+  const partners = (await db.collection("partners").where("status", "==", "active").get()).docs.map((d) => d.data() as { cityId?: string; formats?: string[]; tiers?: string[] });
+  const saved = (await db.collection("eventTemplates").get()).docs.map((d) => ({ ...(d.data() as Omit<EventTemplate, "id">), id: d.id }) as EventTemplate);
+  const templates = mergeTemplates(saved).filter((t) => t.isActive);
+  const tables: { templateId: string; tier: VenueTier }[] = [];
+  const activities: string[] = [];
+  for (const t of templates) {
+    const hosts = partners.filter((p) => p.cityId === cityId && (p.formats ?? []).includes(t.id));
+    if (t.values.revealPolicy === "on_group_reveal") {
+      for (const tier of VENUE_TIERS) if (hosts.some((p) => (p.tiers ?? []).includes(tier))) tables.push({ templateId: t.id, tier });
+    } else if (hosts.length) activities.push(t.id);
+  }
+  const r: ShowcaseResult = { cancelledSessions: 0, refunded: 0, deletedSessions: 0, archived: 0, deleted: 0, created: [], skipped: [] };
+  await clearEvents(actor, now, r, (e) => e.isDemo === true);
+  await createFromTemplates({ confirm: "SUPPRIMER", tables, activities, weeks: 4, cityId }, actor, now, r);
+  await flag.set({ demoReplacedAt: FieldValue.serverTimestamp(), created: r.created.length }, { merge: true });
+  await audit({ actorUid: actor.uid, actorRole: actor.role, action: "showcase.replaceDemo", targetType: "experience", targetId: "*", after: { ...r, created: r.created.length, skipped: r.skipped } });
   return r;
 }
 

@@ -19,3 +19,10 @@ export const TIER_TONE: Record<VenueTier, string> = {
 };
 
 export const WOMEN_TONE = "bg-rose-100 text-rose-900 ring-1 ring-rose-200";
+
+/** Gamme en texte coloré (lignes de liste) : discrète mais reconnaissable. */
+export const TIER_TEXT: Record<VenueTier, string> = {
+  casual: "text-ink/70",
+  premium: "text-amber-700",
+  exclusive: "text-ink",
+};

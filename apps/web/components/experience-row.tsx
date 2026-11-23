@@ -6,7 +6,9 @@ import { getCategory, getHomeSettings } from "@/lib/data";
 import { formatShortSlot, formatTime } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { groupLabel } from "./experience-card";
-import { BADGE_TONE, TIER_TONE, WOMEN_TONE } from "./card-pills";
+import { Gem } from "lucide-react";
+import { CornerRibbon } from "./corner-ribbon";
+import { TIER_TEXT } from "./card-pills";
 
 /**
  * Ligne du catalogue en vue « agenda » : vignette, titre (+ badges), heure · quartier · groupe, univers · langues · prix,
@@ -30,14 +32,18 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
   const full = session ? session.status === "full" || left === 0 : false;
   const badge = full ? null : experienceBadge(experience, session, new Date(), home.featuredExperienceIds);
   const cover = experience.images[0];
+  const formatFull = subcategory ? tr(subcategory.shortName, locale) : category ? tr(category.shortName, locale) : "";
+  const formatName = formatFull && tr(experience.title, locale).toLowerCase().startsWith(formatFull.toLowerCase()) ? "" : formatFull;
   const price = session?.price ?? experience.price;
   const languages = experience.languages.slice(0, 2).map((l) => (tl.has(l) ? tl(l) : l)).join(", ");
   const action = !session ? tr2("alert") : full ? tr2("waitlist") : experience.admission === "on_request" ? tr2("request") : tr2("book");
-  const pill = "rounded-full px-2.5 py-0.5 text-[12px] font-semibold";
   return (
     <article className="group relative flex items-center gap-4 py-4" data-testid="catalog-row">
-      <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl bg-cream-deep sm:size-24">
-        {cover && <Image src={cover.path} alt={tr(cover.alt, locale)} fill priority={priority} sizes="96px" className="object-cover transition duration-500 group-hover:scale-[1.05]" />}
+      <div className="relative shrink-0">
+        <div className="relative size-20 overflow-hidden rounded-2xl bg-cream-deep sm:size-24">
+          {cover && <Image src={cover.path} alt={tr(cover.alt, locale)} fill priority={priority} sizes="96px" className="object-cover transition duration-500 group-hover:scale-[1.05]" />}
+        </div>
+        {badge && <CornerRibbon badge={badge} label={t(`badge_${badge}`)} />}
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -46,21 +52,12 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
               {tr(experience.title, locale)}
             </Link>
           </h3>
-          {/* Étape O : gamme et « réservé aux femmes » toujours visibles ; puis un seul état ou badge. */}
-          {experience.venueTier && <span className={`${pill} ${TIER_TONE[experience.venueTier]}`} data-testid="card-tier">{tp(`tier_${experience.venueTier}`)}</span>}
-          {experience.audience === "women" && <span className={`${pill} ${WOMEN_TONE}`} data-testid="card-women">{t("women")}</span>}
-          {full ? (
-            <span className={`${pill} bg-ink/80 text-white`}>{t("full")}</span>
-          ) : left <= LOW_SEATS_THRESHOLD ? (
-            <span className={`${pill} bg-white text-brand-800 ring-1 ring-brand-200`}>{t("lastSeats", { count: left })}</span>
-          ) : badge ? (
-            <span className={`${pill} ${BADGE_TONE[badge]}`} data-testid="card-badge">{t(`badge_${badge}`)}</span>
-          ) : null}
         </div>
         <p className="mt-1 truncate text-[15px] text-ink/80">
           {session ? (
             <>
               {[showDay ? formatShortSlot(session.startAt, locale) : formatTime(session.startAt, locale), experience.district, await groupLabel(experience, session)].filter(Boolean).join(" · ")}
+              {full ? <span className="font-semibold text-muted"> · {t("full")}</span> : left <= LOW_SEATS_THRESHOLD ? <span className="font-semibold text-brand-700"> · {t("lastSeats", { count: left })}</span> : null}
             </>
           ) : (
             <>
@@ -69,8 +66,19 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
           )}
         </p>
         <p className="mt-0.5 truncate text-sm text-muted">
-          {subcategory ? tr(subcategory.shortName, locale) : category ? tr(category.shortName, locale) : ""}
-          {languages && ` · ${languages}`} · <span className="font-medium text-ink/75">{formatMoney(price, lang)}</span>
+          {experience.audience === "women" && <span className="font-semibold text-rose-700" data-testid="card-women">{t("women")} · </span>}
+          {/* Le format n'est pas répété s'il ouvre déjà le titre (« Dîner Premium »). */}
+          {formatName}
+          {experience.venueTier && (
+            <>
+              {formatName ? " · " : ""}
+              <span className={`inline-flex items-center gap-0.5 font-semibold ${TIER_TEXT[experience.venueTier]}`} data-testid="card-tier">
+                {experience.venueTier !== "casual" && <Gem className="size-3" aria-hidden />}
+                {tp(`tier_${experience.venueTier}`)}
+              </span>
+            </>
+          )}
+          {languages && `${formatName || experience.venueTier ? " · " : ""}${languages}`} · <span className="font-medium text-ink/75">{formatMoney(price, lang)}</span>
           {budget && <span className="text-muted"> {tp("plusOnSite")}</span>}
         </p>
       </div>

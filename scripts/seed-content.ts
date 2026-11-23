@@ -149,7 +149,7 @@ async function main() {
   // Lieux partenaires et organisateur de démonstration utilisés par ces expériences (créés s'ils manquent).
   for (const p of DEMO_PARTNERS) {
     const snap = await db.doc(`partners/${p.id}`).get();
-    if (!snap.exists) demo.set(db.doc(`partners/${p.id}`), { ...p, isDemo: true });
+    if (!snap.exists) demo.set(db.doc(`partners/${p.id}`), { cityId: "casablanca", ...p, isDemo: true });
     // Fiche du lieu (docs/22, décision 41) ajoutée aux lieux de démonstration déjà créés, tant que l'équipe ne les a pas modifiés.
     else if (snap.get("isDemo") && !snap.get("updatedBy") && (!snap.get("formats")?.length || !snap.get("address") || !snap.get("cityId")) && p.formats?.length) {
       const { tiers, formats, unit, unitMin, unitMax, slots, cuisine, avgBudget, level, address, whatsapp, memberPerk } = p;
@@ -205,6 +205,11 @@ async function main() {
   demo.set(registryRef, { experienceIds: [...registry], updatedAt: Timestamp.now() }, { merge: true });
   await demo.commit();
   if (venues) console.log(`✅ Lieux du site d'essai à Casablanca : ${venues} fiche(s) créée(s) ou mise(s) à jour (actives, coordonnées fictives).`);
+  // Étape Q : sur le site d'essai, les anciens événements de démonstration sont remplacés UNE fois par ceux des
+  // modèles (mêmes règles que la Vitrine, sans toucher aux événements créés par l'équipe).
+  const { replaceDemoEventsOnce } = await import("../functions/src/experiences/showcase");
+  const replaced = await replaceDemoEventsOnce({ uid: "seed-content", role: "superadmin" });
+  if (replaced) console.log(`✅ Anciens événements remplacés par ceux des modèles : ${replaced.created.length} créés, ${replaced.deleted} supprimés, ${replaced.archived} archivés, ${replaced.cancelledSessions} date(s) annulée(s) ; ignorés : ${replaced.skipped.map((x) => x.templateId).join(", ") || "aucun"}.`);
   console.log(toAdd.length ? `✅ Démonstration : ${toAdd.length} expériences ajoutées (${toAdd.map((e) => e.id).join(", ")}), ${dates} dates (isDemo).` : "ℹ️  Démonstration : rien à ajouter.");
 }
 

@@ -287,7 +287,14 @@
     "composedByTeam": "Put together by our team",
     "targetAge": "{min} to {max} years old",
     "targetAgeNote": "Target age, indicative",
-    "questionnaireLabel": "Questionnaire"
+    "questionnaireLabel": "Questionnaire",
+    "datesSoonLabel": "New dates soon",
+    "datesSoonValue": "Turn on the alert to be notified",
+    "bookAlone": "Individual booking",
+    "tierAny": "Depends on the venue",
+    "fromAge": "From {age}",
+    "openToAll": "Open to everyone",
+    "noReviewsYet": "No reviews yet: the first ones come after the first date."
   },
   "booking": {
     "title": "Book my spot",

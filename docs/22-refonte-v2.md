@@ -663,3 +663,12 @@ Le contenu de départ crée ces fiches, et remplace la première version (« pro
 | Matériel fourni répété dans « Inclus » et « Bon à savoir » | Seulement dans « Inclus » ; le questionnaire rejoint la liste « Bon à savoir ». |
 
 À surveiller dans les textes des événements (description, inclus, infos pratiques) : ne pas répéter ce que l'encadré dit déjà (taille de la table, révélation du lieu, âge minimum).
+
+### Étape Q livrée (23 novembre) — badges en étiquette, fiche identique partout, nouveaux événements sur le site d'essai
+| Point | Ce qui change |
+|---|---|
+| **Badges** | Petite étiquette inclinée, posée à cheval sur le coin haut gauche de la photo (Découvrir, Cette semaine à Casablanca, cartes), une couleur par badge. La ligne de texte ne porte plus de pastilles. |
+| **Lignes de liste** | Titre ; heure, quartier, groupe (et « Plus que 3 places » ou « Complet » en couleur) ; puis gamme (texte coloré avec une pierre pour Premium et Exclusive), « Réservé aux femmes » en rose, langues, prix. Le format n'est pas répété s'il ouvre déjà le titre. |
+| **Titres des Tables** | Une Table par gamme : la gamme est dans le titre (« Dîner Premium », « Brunch Casual ») ; plus de trois cartes « Dîner » identiques. |
+| **Fiche identique** | Toujours **6 cases, dans le même ordre** : date et heure ; lieu ; format ; gamme (Tables) ou niveau (activités, « Tous niveaux » par défaut) ; langues ; public (« Ouvert à tous, dès 18 ans », âge visé ou « Réservé aux femmes »). Puis L'expérience et Inclus, Bon à savoir, (Organisé par), Avis toujours présents (« Pas encore d'avis » sinon). L'heure de fin dit la durée ; l'âge minimum est dans la case Public. |
+| **Anciens événements (site d'essai)** | Au prochain déploiement, une seule fois : les anciens événements de démonstration sont supprimés (ou archivés s'ils ont des avis ou des réservations, dates à venir annulées et remboursées) et remplacés par ceux des modèles : 12 Tables (café, brunch, déjeuner, dîner × 3 gammes) et 8 activités (padel, yoga, escape game, soirée jeux, quiz, afterwork, échange de langues, céramique), 4 semaines de dates. Les événements créés par l'équipe ne sont pas touchés. Running et visite guidée n'ont pas de lieu partenaire : non créés. |

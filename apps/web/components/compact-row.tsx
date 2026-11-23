@@ -6,7 +6,9 @@ import { getCategory, getHomeSettings } from "@/lib/data";
 import { formatDaySlot } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { groupLabel } from "./experience-card";
-import { BADGE_TONE, TIER_TONE, WOMEN_TONE } from "./card-pills";
+import { Gem } from "lucide-react";
+import { CornerRibbon } from "./corner-ribbon";
+import { TIER_TEXT } from "./card-pills";
 
 /**
  * Ligne compacte d'une expérience (accueil, tableau de bord, « Déjà vécues ») : vignette, titre + badge, jour et heure
@@ -14,16 +16,20 @@ import { BADGE_TONE, TIER_TONE, WOMEN_TONE } from "./card-pills";
  * quartier · groupe, univers ; prix à droite. Toute la ligne ouvre la fiche.
  */
 export async function CompactRow({ experience, session, priority = false }: { experience: Experience; session?: Session; priority?: boolean }) {
-  const [locale, t, category, home, tp] = await Promise.all([getLocale(), getTranslations("card"), getCategory(experience.categoryId), getHomeSettings(), getTranslations("twoPart")]);
+  const [locale, t, category, home, tp, subcategory] = await Promise.all([getLocale(), getTranslations("card"), getCategory(experience.categoryId), getHomeSettings(), getTranslations("twoPart"), experience.subcategoryId ? getCategory(experience.subcategoryId) : Promise.resolve(null)]);
   const full = session ? session.status === "full" || seatsAvailable(session) === 0 : false;
   const badge = full ? null : experienceBadge(experience, session, new Date(), home.featuredExperienceIds);
   const cover = experience.images[0];
+  const formatFull = subcategory ? tr(subcategory.shortName, locale) : category ? tr(category.shortName, locale) : "";
+  const formatName = formatFull && tr(experience.title, locale).toLowerCase().startsWith(formatFull.toLowerCase()) ? "" : formatFull;
   const price = session?.price ?? experience.price;
-  const pill = "rounded-full px-2 py-0.5 text-[11px] font-semibold";
   return (
     <article className="group relative flex gap-3.5 px-4 py-3.5" data-testid="compact-row">
-      <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-cream-deep">
-        {cover && <Image src={cover.path} alt="" fill priority={priority} sizes="64px" className="object-cover" />}
+      <div className="relative shrink-0">
+        <div className="relative size-16 overflow-hidden rounded-xl bg-cream-deep">
+          {cover && <Image src={cover.path} alt="" fill priority={priority} sizes="64px" className="object-cover" />}
+        </div>
+        {badge && <CornerRibbon badge={badge} label={t(`badge_${badge}`)} />}
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
@@ -41,14 +47,22 @@ export async function CompactRow({ experience, session, priority = false }: { ex
         <p className="truncate text-[13px] text-muted">
           {[experience.district, session ? await groupLabel(experience, session) : ""].filter(Boolean).join(" · ")}
         </p>
-        <div className="mt-1.5 flex flex-wrap gap-1.5">
-          {category && <span className={`${pill} bg-cream-deep text-ink/80`}>{tr(category.shortName, locale)}</span>}
-          {/* docs/22 : la gamme remplace le budget (dit une seule fois, sur la fiche). */}
-          {experience.venueTier && <span className={`${pill} ${TIER_TONE[experience.venueTier]}`} data-testid="tier-pill">{tp(`tier_${experience.venueTier}`)}</span>}
-          {experience.venue.revealPolicy === "on_group_reveal" && <span className={`${pill} bg-cream-deep text-ink/80`}>{tp("surprisePill")}</span>}
-          {experience.audience === "women" && <span className={`${pill} ${WOMEN_TONE}`}>{t("women")}</span>}
-          {full ? <span className={`${pill} bg-ink/80 text-white`}>{t("full")}</span> : badge && <span className={`${pill} ${BADGE_TONE[badge]}`}>{t(`badge_${badge}`)}</span>}
-        </div>
+        {/* Étape Q : format, gamme et public en une ligne de texte (plus de pastilles) ; le badge est sur la photo. */}
+        <p className="mt-0.5 truncate text-[13px] text-muted">
+          {experience.audience === "women" && <span className="font-semibold text-rose-700">{t("women")} · </span>}
+          {/* Le format n'est pas répété s'il ouvre déjà le titre (« Dîner Premium »). */}
+          {formatName}
+          {experience.venueTier && (
+            <>
+              {formatName ? " · " : ""}
+              <span className={`inline-flex items-center gap-0.5 font-semibold ${TIER_TEXT[experience.venueTier]}`} data-testid="tier-pill">
+                {experience.venueTier !== "casual" && <Gem className="size-3" aria-hidden />}
+                {tp(`tier_${experience.venueTier}`)}
+              </span>
+            </>
+          )}
+          {full && <span className="font-semibold text-ink"> · {t("full")}</span>}
+        </p>
       </div>
     </article>
   );

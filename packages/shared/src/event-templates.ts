@@ -370,10 +370,13 @@ export function templateExperienceInput(t: EventTemplate, o: { tier?: VenueTier 
   const x = t.values;
   const g = o.tier ? t.tiers?.[o.tier] : undefined;
   const grouped = x.bookingMode === "group" || x.bookingMode === "social_dinner";
+  const tierName = o.tier ? { casual: "Casual", premium: "Premium", exclusive: "Exclusive" }[o.tier] : "";
+  const withTier = (title: string) => (tierName ? `${title} ${tierName}`.slice(0, 80) : title);
   return {
-    titleFr: x.titleFr, summaryFr: x.summaryFr, descriptionFr: x.descriptionFr,
-    titleAr: x.titleAr ?? "", summaryAr: x.summaryAr ?? "", descriptionAr: x.descriptionAr ?? "",
-    titleEn: x.titleEn ?? "", summaryEn: x.summaryEn ?? "", descriptionEn: x.descriptionEn ?? "",
+    // Étape Q : une Table par gamme → la gamme dans le titre (« Dîner Premium »), sinon trois cartes « Dîner » identiques.
+    titleFr: withTier(x.titleFr), summaryFr: x.summaryFr, descriptionFr: x.descriptionFr,
+    titleAr: x.titleAr ? withTier(x.titleAr) : "", summaryAr: x.summaryAr ?? "", descriptionAr: x.descriptionAr ?? "",
+    titleEn: x.titleEn ? withTier(x.titleEn) : "", summaryEn: x.summaryEn ?? "", descriptionEn: x.descriptionEn ?? "",
     categoryId: x.categoryId, subcategoryId: x.subcategoryId ?? "", cityId: o.cityId,
     district: o.venue?.district ?? "", venueName: o.venue?.name ?? "", address: o.venue?.address ?? "", partnerId: o.venue?.partnerId ?? "",
     revealPolicy: x.revealPolicy, bookingMode: x.bookingMode,

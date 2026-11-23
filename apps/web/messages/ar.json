@@ -287,7 +287,14 @@
     "composedByTeam": "يكوّنها فريقنا",
     "targetAge": "من {min} إلى {max} سنة",
     "targetAgeNote": "العمر المستهدف، تقريبي",
-    "questionnaireLabel": "استبيان"
+    "questionnaireLabel": "استبيان",
+    "datesSoonLabel": "مواعيد قريبًا",
+    "datesSoonValue": "فعّل التنبيه ليصلك الخبر",
+    "bookAlone": "حجز فردي",
+    "tierAny": "حسب المكان",
+    "fromAge": "ابتداءً من {age} سنة",
+    "openToAll": "مفتوح للجميع",
+    "noReviewsYet": "لا توجد تقييمات بعد: تصل الأولى بعد أول موعد."
   },
   "booking": {
     "title": "احجز مكاني",
