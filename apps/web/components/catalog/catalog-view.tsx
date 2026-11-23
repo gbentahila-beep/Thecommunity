@@ -175,8 +175,8 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
         </div>
       </form>
 
-      <nav aria-label={tc("tabsLabel")} className="-mx-4 border-b border-line sm:mx-0" data-testid="catalog-tabs">
-        <ActiveTabScroller className="flex gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:px-0">
+      <nav aria-label={tc("tabsLabel")} className="-mx-4 border-b border-line sm:mx-auto sm:max-w-4xl" data-testid="catalog-tabs">
+        <ActiveTabScroller className="flex gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:justify-center sm:px-0">
           {[{ id: undefined as string | undefined, label: t("all"), icon: undefined as string | undefined }, ...categories.map((c) => ({ id: c.id, label: tr(c.shortName, locale), icon: c.icon }))].map((it) => {
             const on = it.id === category;
             return (
@@ -196,8 +196,8 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
       </nav>
 
       {subcategories.length > 0 && (
-        <nav aria-label={tcity("subcategories")}>
-          <ul className="flex flex-wrap gap-2">
+        <nav aria-label={tcity("subcategories")} className="mx-auto max-w-4xl">
+          <ul className="flex flex-wrap justify-center gap-2">
             {[{ id: undefined as string | undefined, label: t("all") }, ...subcategories.map((c) => ({ id: c.id as string | undefined, label: tr(c.shortName, locale) }))].map((it) => (
               <li key={it.id ?? "all"}>
                 <Link
@@ -232,7 +232,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
 
       {total > 0 && (
         <nav aria-label={tc("calendarLabel")} className="sticky top-[4.5rem] z-20 -mx-4 bg-cream/95 px-4 py-2 backdrop-blur-sm sm:mx-auto sm:max-w-4xl sm:rounded-2xl sm:px-0 lg:top-20" data-testid="catalog-calendar">
-          <ul className="flex gap-1 overflow-x-auto [scrollbar-width:none]">
+          <ul className="flex gap-1 overflow-x-auto [scrollbar-width:none] md:justify-center">
             {calendar.map((d) => {
               const cell = formatDayCell(`${d.key}T12:00:00Z`, locale);
               const inner = (
