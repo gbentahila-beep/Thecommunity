@@ -1,4 +1,5 @@
 import type { PartnerHosting } from "@thecommunity/shared";
+import { CASABLANCA_VENUES } from "./casablanca-venues";
 /**
  * ⚠️ DONNÉES DE DÉMONSTRATION DU BACK-OFFICE — membres, réservations, paiements,
  * partenaires et codes promo fictifs, générés de façon déterministe.
@@ -364,7 +365,7 @@ export function buildAdminData(now: Date = new Date()) {
     buckets.forEach((memberIds, j) => groups.push({ id: `${s.id}-g${j + 1}`, sessionId: s.id, label: `${prefix} ${j + 1}`, memberIds }));
   }
 
-  return { sessions, reservations, payments, waitlists, groups, users: DEMO_USERS, partners: DEMO_PARTNERS, promos: DEMO_PROMOS };
+  return { sessions, reservations, payments, waitlists, groups, users: DEMO_USERS, partners: [...DEMO_PARTNERS, ...CASABLANCA_VENUES], promos: DEMO_PROMOS };
 }
 
 export function memberSummary(u: AdminUser) {

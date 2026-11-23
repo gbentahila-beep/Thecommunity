@@ -623,3 +623,10 @@ Aucune pour l'instant. Les questions Q1 à Q7 du 22 novembre sont tranchées (d�
 **Avant de lancer** : remplir les fiches des lieux partenaires (gammes, formats, créneaux, capacités, adresse, quartier), sinon aucune activité n'est créée et les Tables n'auront pas de lieu à attribuer.
 
 **Tests** : unitaire (chaque modèle donne un événement valide, dans chaque gamme pour les Tables) ; émulateur (refus sans le mot ou sans le rôle super-admin ; annulation et remboursement, archivage, suppression ; création des Tables et de l'activité avec son lieu ; activité sans lieu ignorée) ; back-office de bout en bout.
+
+### Lieux à démarcher à Casablanca (23 novembre)
+Onze fiches préparées dans *Partenaires*, avec les adresses publiques vérifiées : Rick's Café, Le Cabestan, Iloli, Le Rouget de l'Isle, Al Mounia, La Sqala, Bondi Coffee Kitchen, Paul (villa Zevaco), La Bodega de Casablanca, Le Petit Rocher, Sky 28. Chacune a des gammes, des formats (café, brunch, déjeuner, dîner, afterwork, quiz, échange de langues), une cuisine, un budget moyen et des créneaux de départ.
+
+**Statut « prospect »** : aucun de ces lieux n'a encore accepté. Tant que la fiche n'est pas passée en « actif », le lieu n'est ni proposé par l'attribution, ni affiché sur le site, ni contacté automatiquement (pas d'e-mail ni de WhatsApp enregistrés, seulement le téléphone public pour le démarcher). Quand un lieu accepte : vérifier ses créneaux et capacités, ajouter son contact, son e-mail et son WhatsApp, puis le passer en « actif ». Il est alors pris en compte par l'attribution et par la Vitrine.
+
+Créées sur le site d'essai par le contenu de départ, une seule fois (jamais réécrites ensuite).

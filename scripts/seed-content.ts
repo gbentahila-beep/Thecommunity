@@ -10,10 +10,11 @@
  * Identifiants : GOOGLE_APPLICATION_CREDENTIALS (GitHub Actions) ou émulateurs.
  */
 import { applicationDefault, initializeApp } from "firebase-admin/app";
-import { getFirestore, Timestamp } from "firebase-admin/firestore";
+import { FieldValue, getFirestore, Timestamp } from "firebase-admin/firestore";
 import { DEFAULT_CANCELLATION_POLICY } from "@thecommunity/shared";
 import { buildDemoSessions, DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES, DEMO_REVIEWS } from "../apps/web/lib/data/demo";
 import { DEMO_ECONOMICS, DEMO_PARTNERS } from "../apps/web/lib/data/demo-admin";
+import { CASABLANCA_VENUES } from "../apps/web/lib/data/casablanca-venues";
 import { DEMO_ORGANIZER } from "../apps/web/lib/data/demo-organizer";
 
 const arg = (name: string) => {
@@ -120,6 +121,9 @@ async function main() {
   const demo = db.batch();
   // Lieux partenaires et organisateur de démonstration utilisés par ces expériences (créés s'ils manquent).
   for (const p of DEMO_PARTNERS) if (!(await db.doc(`partners/${p.id}`).get()).exists) demo.set(db.doc(`partners/${p.id}`), { ...p, isDemo: true });
+  // Lieux à démarcher à Casablanca : fiches « prospect », créées une seule fois (jamais réécrites ensuite).
+  let venues = 0;
+  for (const p of CASABLANCA_VENUES) if (!(await db.doc(`partners/${p.id}`).get()).exists) { demo.set(db.doc(`partners/${p.id}`), { ...p, source: "prospection", createdAt: FieldValue.serverTimestamp() }); venues++; }
   if (toAdd.some((e) => e.organizerId === DEMO_ORGANIZER.id) && !(await db.doc(`organizers/${DEMO_ORGANIZER.id}`).get()).exists) {
     const { id, ...pub } = DEMO_ORGANIZER;
     demo.set(db.doc(`organizers/${id}`), { ...pub, createdAt: ts(DEMO_ORGANIZER.createdAt), isDemo: true });
@@ -158,6 +162,7 @@ async function main() {
   }
   demo.set(registryRef, { experienceIds: [...registry], updatedAt: Timestamp.now() }, { merge: true });
   await demo.commit();
+  if (venues) console.log(`✅ Lieux à démarcher à Casablanca : ${venues} fiche(s) créée(s) (statut prospect).`);
   console.log(toAdd.length ? `✅ Démonstration : ${toAdd.length} expériences ajoutées (${toAdd.map((e) => e.id).join(", ")}), ${dates} dates (isDemo).` : "ℹ️  Démonstration : rien à ajouter.");
 }
 
