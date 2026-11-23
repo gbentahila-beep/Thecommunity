@@ -170,7 +170,9 @@
     "badge_featured": "اختيار الفريق",
     "badge_new": "جديد",
     "badge_popular": "رائج",
-    "women": "للنساء فقط"
+    "women": "للنساء فقط",
+    "badge_almostFull": "قارب على الاكتمال",
+    "badge_special": "نسخة خاصة"
   },
   "filters": {
     "all": "الكل",

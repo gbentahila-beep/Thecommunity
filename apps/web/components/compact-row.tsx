@@ -6,6 +6,7 @@ import { getCategory, getHomeSettings } from "@/lib/data";
 import { formatDaySlot } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { groupLabel } from "./experience-card";
+import { BADGE_TONE, TIER_TONE, WOMEN_TONE } from "./card-pills";
 
 /**
  * Ligne compacte d'une expérience (accueil, tableau de bord, « Déjà vécues ») : vignette, titre + badge, jour et heure
@@ -43,10 +44,10 @@ export async function CompactRow({ experience, session, priority = false }: { ex
         <div className="mt-1.5 flex flex-wrap gap-1.5">
           {category && <span className={`${pill} bg-cream-deep text-ink/80`}>{tr(category.shortName, locale)}</span>}
           {/* docs/22 : la gamme remplace le budget (dit une seule fois, sur la fiche). */}
-          {experience.venueTier && <span className={`${pill} bg-cream-deep text-ink/80`} data-testid="tier-pill">{tp(`tier_${experience.venueTier}`)}</span>}
+          {experience.venueTier && <span className={`${pill} ${TIER_TONE[experience.venueTier]}`} data-testid="tier-pill">{tp(`tier_${experience.venueTier}`)}</span>}
           {experience.venue.revealPolicy === "on_group_reveal" && <span className={`${pill} bg-cream-deep text-ink/80`}>{tp("surprisePill")}</span>}
-          {experience.audience === "women" && <span className={`${pill} bg-brand-100 text-brand-900`}>{t("women")}</span>}
-          {full ? <span className={`${pill} bg-ink/80 text-white`}>{t("full")}</span> : badge && <span className={`${pill} ${badge === "featured" ? "bg-brand-900 text-white" : "bg-badge text-brand-900"}`}>{t(`badge_${badge}`)}</span>}
+          {experience.audience === "women" && <span className={`${pill} ${WOMEN_TONE}`}>{t("women")}</span>}
+          {full ? <span className={`${pill} bg-ink/80 text-white`}>{t("full")}</span> : badge && <span className={`${pill} ${BADGE_TONE[badge]}`}>{t(`badge_${badge}`)}</span>}
         </div>
       </div>
     </article>

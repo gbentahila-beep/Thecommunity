@@ -450,6 +450,19 @@ export function ExperienceForm({
           <input type="checkbox" checked={v.audience === "women"} onChange={(e) => set("audience", e.target.checked ? "women" : "all")} className="size-4 accent-brand-900" />
           Réservé aux femmes
         </label>
+        {!pro && (
+          <div><Label k="highlight" hint="Pour varier les cartes et attirer l'attention. Automatique : coup de cœur de l'accueil, puis Populaire (avis), puis Bientôt complet.">Badge sur la carte</Label>
+            <select {...field("highlight")} value={v.highlight} onChange={(e) => set("highlight", e.target.value as ExperienceFormValues["highlight"])}>
+              <option value="auto">Automatique</option>
+              <option value="featured">Coup de cœur</option>
+              <option value="popular">Populaire</option>
+              <option value="new">Nouveau</option>
+              <option value="almostFull">Bientôt complet</option>
+              <option value="special">Édition spéciale</option>
+              <option value="none">Aucun badge</option>
+            </select>
+          </div>
+        )}
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={v.alcoholServed} onChange={(e) => set("alcoholServed", e.target.checked)} className="size-4 accent-brand-900" />
           De l&apos;alcool est servi

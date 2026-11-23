@@ -170,7 +170,9 @@
     "badge_featured": "Coup de cœur",
     "badge_new": "Nouveau",
     "badge_popular": "Populaire",
-    "women": "Entre femmes"
+    "women": "Réservé aux femmes",
+    "badge_almostFull": "Bientôt complet",
+    "badge_special": "Édition spéciale"
   },
   "filters": {
     "all": "Tout",

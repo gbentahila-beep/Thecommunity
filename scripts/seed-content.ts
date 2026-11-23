@@ -134,6 +134,8 @@ async function main() {
     if (e.budgetRange && snap.get("budgetRange") === undefined) patch.budgetRange = e.budgetRange;
     if (e.cuisine && snap.get("cuisine") === undefined) patch.cuisine = e.cuisine;
     if (e.ambiance && snap.get("ambiance") === undefined) patch.ambiance = e.ambiance;
+    // Étape O : badge choisi pour varier les cartes (seulement s'il manque).
+    if (e.highlight && snap.get("highlight") === undefined) patch.highlight = e.highlight;
     // Plus d'hôte (docs/16) : anciens textes de démonstration qui en parlaient, remplacés par les nouveaux.
     if (JSON.stringify(snap.get("included") ?? []).includes("hôte")) patch.included = e.included;
     if (String(snap.get("description.fr") ?? "").includes("nos hôtes")) patch["description.fr"] = e.description.fr;

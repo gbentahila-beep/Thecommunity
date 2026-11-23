@@ -643,3 +643,13 @@ Le contenu de départ crée ces fiches, et remplace la première version (« pro
 | **Pages supprimées** | Commissions, Reversements, Encaissements (→ Paiements) et Sorties proposées (→ Événements) : fonctions retirées à l'étape J, leurs anciennes adresses renvoient ailleurs. |
 
 **Tests** : suites de bout en bout mises à jour (menu de 13 entrées, onglets, accueil sans agenda, fiche simplifiée, renvois des pages retirées) ; contenu de départ vérifié sur émulateur (anciens univers désactivés, événements déplacés, sans effet au second passage).
+
+### Étape O livrée (23 novembre) — repères visibles dès la carte, badges variés
+| Point | Ce qui change |
+|---|---|
+| **Gamme sur les cartes** | Partout où un événement apparaît (Découvrir, accueil, espace membre) : la gamme est affichée tout de suite, avec un style par gamme (Casual en blanc, Premium en doré clair, Exclusive en noir et or, avec une pierre pour Premium et Exclusive). Le format (Dîner, Brunch…) remplace « Tables » sur la ligne. |
+| **Réservé aux femmes** | Toujours affiché sur la carte, en rose, en plus du badge (avant, il prenait la place du badge). |
+| **Badges** | Un badge par carte, chacun avec sa couleur : Coup de cœur (noir), Populaire (jaune), Nouveau (vert), Bientôt complet (rouge), Édition spéciale (violet). **Choisi par l'équipe** dans la fiche de l'événement (« Badge sur la carte ») : Automatique, l'un des cinq, ou Aucun. En automatique : coup de cœur de l'accueil, puis Populaire (bons avis), puis Bientôt complet (75 % des places prises). **Plus de « Nouveau » automatique** : après la vitrine tout aurait été nouveau. Un organisateur ne peut pas changer le badge. |
+| **Vitrine et site d'essai** | La vitrine pose Coup de cœur sur les Tables Exclusive et Nouveau sur un événement sur trois ; les événements de démonstration ont des badges variés. |
+
+**Tests** : unitaires (choix de l'équipe, automatique sans « Nouveau ») ; catalogue de bout en bout (au moins 4 badges différents, « Nouveau » pas partout, gammes visibles) ; vitrine et création d'événement sur émulateur.

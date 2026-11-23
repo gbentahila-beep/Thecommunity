@@ -229,19 +229,32 @@ export const POPULAR_MIN_RATING = 4.6;
 /** Une date remplie aux trois quarts rend l'expérience « Populaire ». */
 export const POPULAR_FILL_RATIO = 0.75;
 
-export type ExperienceBadge = "featured" | "new" | "popular";
+export const EXPERIENCE_BADGES = ["featured", "popular", "new", "almostFull", "special"] as const;
+export type ExperienceBadge = (typeof EXPERIENCE_BADGES)[number];
+/**
+ * Mise en avant d'un événement, choisie par l'équipe (docs/22, étape O) : « auto » laisse le site décider,
+ * « none » n'affiche rien, sinon le badge choisi s'affiche tel quel.
+ */
+export const EXPERIENCE_HIGHLIGHTS = ["auto", "none", ...EXPERIENCE_BADGES] as const;
+export type ExperienceHighlight = (typeof EXPERIENCE_HIGHLIGHTS)[number];
 
-/** Badge principal d'une carte (un seul, le plus fort) : coup de cœur de l'équipe > nouveau > populaire. */
+/**
+ * Badge d'une carte (un seul). Choix de l'équipe d'abord ; en automatique : coup de cœur de l'accueil, puis populaire
+ * (avis), puis bientôt complet (75 % des places prises). Plus de « Nouveau » automatique : après la vitrine, tout serait
+ * nouveau et le badge ne distinguerait plus rien ; l'équipe le pose là où il compte.
+ */
 export function experienceBadge(
-  e: Pick<Experience, "id" | "ratingAvg" | "ratingCount"> & { createdAt?: string },
+  e: Pick<Experience, "id" | "ratingAvg" | "ratingCount"> & { createdAt?: string; highlight?: string | null },
   session: Pick<Session, "isFeatured" | "capacity" | "seatsConfirmed" | "seatsHeld"> | null | undefined,
   now: Date,
   featuredIds: string[] = [],
 ): ExperienceBadge | null {
+  void now;
+  const h = e.highlight ?? "auto";
+  if (h === "none") return null;
+  if ((EXPERIENCE_BADGES as readonly string[]).includes(h)) return h as ExperienceBadge;
   if (featuredIds.includes(e.id) || session?.isFeatured) return "featured";
-  const created = e.createdAt ? Date.parse(e.createdAt) : NaN;
-  if (!Number.isNaN(created) && now.getTime() - created < NEW_EXPERIENCE_DAYS * 86_400_000 && created <= now.getTime()) return "new";
   if (e.ratingCount >= POPULAR_MIN_REVIEWS && e.ratingAvg >= POPULAR_MIN_RATING) return "popular";
-  if (session && session.capacity > 0 && seatsAvailable(session) > 0 && session.seatsConfirmed / session.capacity >= POPULAR_FILL_RATIO) return "popular";
+  if (session && session.capacity > 0 && seatsAvailable(session) > 0 && session.seatsConfirmed / session.capacity >= POPULAR_FILL_RATIO) return "almostFull";
   return null;
 }

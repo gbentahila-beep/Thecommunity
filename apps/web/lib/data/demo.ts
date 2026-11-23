@@ -149,7 +149,7 @@ export const DEMO_CATEGORIES: Category[] = [
 
 const policy = DEFAULT_CANCELLATION_POLICY.id;
 
-export const DEMO_EXPERIENCES: Experience[] = [
+const DEMO_EXPERIENCE_LIST: Experience[] = [
   {
     id: "exp-diner-inconnus",
     venueTier: "premium",
@@ -529,6 +529,23 @@ export const DEMO_EXPERIENCES: Experience[] = [
   // 21 novembre : un dîner pour chaque façon de payer et chaque gamme de restaurant.
   ...DEMO_DINNER_EXPERIENCES,
 ];
+
+/**
+ * Étape O : badges choisis par l'équipe sur les cartes de démonstration, pour varier (les autres restent
+ * en automatique : coup de cœur de l'accueil, Populaire selon les avis, Bientôt complet).
+ */
+export const DEMO_HIGHLIGHTS: Record<string, NonNullable<Experience["highlight"]>> = {
+  "exp-secret-dinner": "special",
+  "exp-diner-gastronomique": "featured",
+  "exp-brunch-inconnus": "new",
+  "exp-cafe-specialite": "new",
+  "exp-padel": "popular",
+  "exp-escape-game": "almostFull",
+  "exp-echange-langues": "new",
+  "exp-gnaoua": "special",
+  "exp-quiz": "popular",
+};
+export const DEMO_EXPERIENCES: Experience[] = DEMO_EXPERIENCE_LIST.map((e) => (DEMO_HIGHLIGHTS[e.id] ? { ...e, highlight: DEMO_HIGHLIGHTS[e.id] } : e));
 
 /** Planning type : jour de semaine (0 = dimanche), heure locale, capacité, places prises par occurrence. */
 const SCHEDULE: Record<string, { weekday: number; hour: number; minute: number; capacity: number; taken: number[]; featured?: boolean }> = {

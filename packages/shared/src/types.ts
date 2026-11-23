@@ -173,6 +173,8 @@ export type Experience = {
   minAge?: number | null;
   /** Étape 29 : public (mixte ou réservé aux femmes) et tranche d'âge visée (indicative). */
   audience?: "all" | "women";
+  /** Étape O : badge de la carte choisi par l'équipe (absent ou « auto » : le site décide). */
+  highlight?: "auto" | "none" | "featured" | "popular" | "new" | "almostFull" | "special" | null;
   targetAgeMin?: number | null;
   targetAgeMax?: number | null;
   outdoor?: boolean;

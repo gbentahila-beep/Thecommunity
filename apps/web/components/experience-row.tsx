@@ -6,13 +6,14 @@ import { getCategory, getHomeSettings } from "@/lib/data";
 import { formatShortSlot, formatTime } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { groupLabel } from "./experience-card";
+import { BADGE_TONE, TIER_TONE, WOMEN_TONE } from "./card-pills";
 
 /**
  * Ligne du catalogue en vue « agenda » : vignette, titre (+ badges), heure · quartier · groupe, univers · langues · prix,
  * et un bouton « Réserver » (ou « Demander » / « Liste d'attente »). Toute la ligne ouvre la fiche.
  */
 export async function ExperienceRow({ experience, session, showDay = false, priority = false }: { experience: Experience; session?: Session; showDay?: boolean; priority?: boolean }) {
-  const [locale, t, tl, tr2, category, home, tp] = await Promise.all([
+  const [locale, t, tl, tr2, category, home, tp, subcategory] = await Promise.all([
     getLocale(),
     getTranslations("card"),
     getTranslations("labels.languages"),
@@ -20,6 +21,7 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
     getCategory(experience.categoryId),
     getHomeSettings(),
     getTranslations("twoPart"),
+    experience.subcategoryId ? getCategory(experience.subcategoryId) : Promise.resolve(null),
   ]);
   const budget = restaurantBudget(experience);
   const lang = locale as "fr" | "ar" | "en";
@@ -44,15 +46,15 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
               {tr(experience.title, locale)}
             </Link>
           </h3>
-          {/* Un seul badge par ligne (le plus utile) : la liste reste compacte. */}
-          {experience.audience === "women" ? (
-            <span className={`${pill} bg-brand-100 text-brand-900`} data-testid="card-women">{t("women")}</span>
-          ) : full ? (
+          {/* Étape O : gamme et « réservé aux femmes » toujours visibles ; puis un seul état ou badge. */}
+          {experience.venueTier && <span className={`${pill} ${TIER_TONE[experience.venueTier]}`} data-testid="card-tier">{tp(`tier_${experience.venueTier}`)}</span>}
+          {experience.audience === "women" && <span className={`${pill} ${WOMEN_TONE}`} data-testid="card-women">{t("women")}</span>}
+          {full ? (
             <span className={`${pill} bg-ink/80 text-white`}>{t("full")}</span>
           ) : left <= LOW_SEATS_THRESHOLD ? (
             <span className={`${pill} bg-white text-brand-800 ring-1 ring-brand-200`}>{t("lastSeats", { count: left })}</span>
           ) : badge ? (
-            <span className={`${pill} ${badge === "featured" ? "bg-brand-900 text-white" : "bg-badge text-brand-900"}`} data-testid="card-badge">{t(`badge_${badge}`)}</span>
+            <span className={`${pill} ${BADGE_TONE[badge]}`} data-testid="card-badge">{t(`badge_${badge}`)}</span>
           ) : null}
         </div>
         <p className="mt-1 truncate text-[15px] text-ink/80">
@@ -67,7 +69,7 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
           )}
         </p>
         <p className="mt-0.5 truncate text-sm text-muted">
-          {category ? tr(category.shortName, locale) : ""}
+          {subcategory ? tr(subcategory.shortName, locale) : category ? tr(category.shortName, locale) : ""}
           {languages && ` · ${languages}`} · <span className="font-medium text-ink/75">{formatMoney(price, lang)}</span>
           {budget && <span className="text-muted"> {tp("plusOnSite")}</span>}
         </p>

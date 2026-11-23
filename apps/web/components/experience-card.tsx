@@ -1,5 +1,6 @@
 import { experienceBadge, LOW_SEATS_THRESHOLD, pricingOf, seatsAvailable, type Experience, type Session, restaurantBudget } from "@thecommunity/shared";
-import { MapPin, Star, Users } from "lucide-react";
+import { Gem, MapPin, Star, Users } from "lucide-react";
+import { BADGE_TONE, TIER_TONE, WOMEN_TONE } from "./card-pills";
 import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -34,14 +35,14 @@ export async function ExperienceCard({
   experience: Experience;
   priority?: boolean;
 }) {
-  const [locale, t, t2, category, plan, home] = await Promise.all([getLocale(), getTranslations("card"), getTranslations("twoPart"), getCategory(experience.categoryId), getMembershipPlan(), getHomeSettings()]);
+  const [locale, t, t2, category, subcategory, plan, home] = await Promise.all([getLocale(), getTranslations("card"), getTranslations("twoPart"), getCategory(experience.categoryId), experience.subcategoryId ? getCategory(experience.subcategoryId) : Promise.resolve(null), getMembershipPlan(), getHomeSettings()]);
   const shownPrice = session?.price ?? experience.price;
   const left = session ? seatsAvailable(session) : 0;
   const full = Boolean(session) && (session!.status === "full" || left === 0);
   const cover = experience.images[0];
-  // Étape 23 : un badge au plus (coup de cœur de l'équipe > nouveau > populaire), jamais sur une date complète.
+  // Un badge au plus (choisi par l'équipe, sinon automatique), jamais sur une date complète.
   const badge = full ? null : experienceBadge(experience, session, new Date(), home.featuredExperienceIds);
-  const badgeTone = { featured: "bg-brand-900 text-white", new: "bg-white/90 text-brand-900", popular: "bg-badge text-brand-900" } as const;
+  const tier = experience.venueTier ?? null;
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] bg-white shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-float">
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -55,10 +56,22 @@ export async function ExperienceCard({
             className="object-cover transition duration-500 group-hover:scale-[1.03]"
           />
         )}
-        <span className="absolute bottom-3 start-3 rounded-full bg-badge px-3 py-1 text-xs font-medium text-brand-900">
-          {category ? tr(category.shortName, locale) : ""}
-        </span>
+        {/* Étape O : ce que c'est, dès la carte : format (ou univers) et gamme. */}
+        <div className="absolute bottom-3 start-3 flex flex-wrap items-center gap-1.5">
+          <span className="rounded-full bg-badge px-3 py-1 text-xs font-medium text-brand-900">
+            {subcategory ? tr(subcategory.shortName, locale) : category ? tr(category.shortName, locale) : ""}
+          </span>
+          {tier && (
+            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${TIER_TONE[tier]}`} data-testid="card-tier">
+              {tier !== "casual" && <Gem className="size-3.5" aria-hidden />}
+              {t2(`tier_${tier}`)}
+            </span>
+          )}
+        </div>
         <div className="absolute top-3 start-3 flex flex-col items-start gap-1.5">
+          {experience.audience === "women" && (
+            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${WOMEN_TONE}`} data-testid="card-women">{t("women")}</span>
+          )}
           {full ? (
             <span className="rounded-full bg-ink/80 px-3 py-1 text-xs font-medium text-white">
               {t("full")}
@@ -69,7 +82,7 @@ export async function ExperienceCard({
             </span>
           ) : null}
           {badge && (
-            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeTone[badge]}`} data-testid="card-badge">
+            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${BADGE_TONE[badge]}`} data-testid="card-badge">
               {t(`badge_${badge}`)}
             </span>
           )}
@@ -88,7 +101,6 @@ export async function ExperienceCard({
         <p className="flex items-center gap-1.5 text-sm text-muted">
           <MapPin className="size-4 shrink-0 text-brand-700" aria-hidden />
           {[experience.district, session ? formatShortSlot(session.startAt, locale) : t("datesSoon")].filter(Boolean).join(" · ")}
-          {experience.audience === "women" && <span className="ms-1 rounded-full bg-brand-100 px-2 py-0.5 text-[11px] font-semibold text-brand-900" data-testid="card-women">{t("women")}</span>}
         </p>
         <div className="mt-auto flex items-end justify-between pt-3">
           <p>

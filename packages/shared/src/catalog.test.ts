@@ -90,13 +90,18 @@ describe("catalogue : paramètres, filtres, tri (23)", () => {
 
 describe("badges (23)", () => {
   const now = new Date("2026-11-20T12:00:00Z");
-  it("coup de cœur > nouveau > populaire", () => {
+  it("auto : coup de cœur > populaire > bientôt complet ; plus de « Nouveau » automatique", () => {
     expect(experienceBadge(exp("a", { createdAt: "2026-11-10T00:00:00Z" }), null, now, ["a"])).toBe("featured");
-    expect(experienceBadge(exp("a", { createdAt: "2026-11-10T00:00:00Z" }), null, now)).toBe("new");
+    expect(experienceBadge(exp("a", { createdAt: "2026-11-10T00:00:00Z" }), null, now)).toBeNull();
     expect(experienceBadge(exp("a", { ratingAvg: 4.8, ratingCount: 12 }), null, now)).toBe("popular");
-    expect(experienceBadge(exp("a"), { isFeatured: false, capacity: 12, seatsConfirmed: 9, seatsHeld: 0 }, now)).toBe("popular");
+    expect(experienceBadge(exp("a"), { isFeatured: false, capacity: 12, seatsConfirmed: 9, seatsHeld: 0 }, now)).toBe("almostFull");
     expect(experienceBadge(exp("a"), { isFeatured: false, capacity: 12, seatsConfirmed: 12, seatsHeld: 0 }, now)).toBeNull();
     expect(experienceBadge(exp("a", { ratingAvg: 4.8, ratingCount: 3 }), null, now)).toBeNull();
+  });
+  it("choix de l'équipe : le badge choisi l'emporte ; « aucun » n'affiche rien", () => {
+    expect(experienceBadge({ ...exp("a", { ratingAvg: 4.8, ratingCount: 12 }), highlight: "new" }, null, now, ["a"])).toBe("new");
+    expect(experienceBadge({ ...exp("a"), highlight: "special" }, null, now)).toBe("special");
+    expect(experienceBadge({ ...exp("a", { ratingAvg: 4.8, ratingCount: 12 }), highlight: "none" }, null, now, ["a"])).toBeNull();
   });
 });
 

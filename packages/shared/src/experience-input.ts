@@ -108,6 +108,8 @@ export const experienceInputSchema = z
     minAge: z.coerce.number().int().min(MIN_AGE_FLOOR, "minAge").max(MIN_AGE_MAX, "tooMany").optional(),
     /** Étape 29 : public (« all » mixte, « women » réservé aux femmes : vérifié par le serveur à la réservation). */
     audience: z.enum(["all", "women"]).default("all"),
+    /** Étape O : badge de la carte choisi par l'équipe (« auto » : le site décide ; « none » : aucun). */
+    highlight: z.enum(["auto", "none", "featured", "popular", "new", "almostFull", "special"]).default("auto"),
     /** Étape 29 : tranche d'âge visée, indicative (affichée sur la fiche, jamais bloquante). */
     targetAgeMin: z.coerce.number().int().min(MIN_AGE_FLOOR, "minAge").max(99, "tooMany").optional(),
     targetAgeMax: z.coerce.number().int().min(MIN_AGE_FLOOR, "minAge").max(99, "tooMany").optional(),

@@ -34,7 +34,7 @@ export function emptyExperienceValues(now: Date): ExperienceFormValues {
     paymentModel: "full_online", depositPercent: "30",
     status: "draft",
     sessions: { firstDate: nextWeekDate(now), time: "19:30", weeks: "1", capacity: "12" },
-    level: "", equipmentProvided: "", whatToBring: "", dressCode: "", minAge: "", targetAgeMin: "", targetAgeMax: "", audience: "all", outdoor: false, physicalActivity: false, questionnaire: [],
+    level: "", equipmentProvided: "", whatToBring: "", dressCode: "", minAge: "", targetAgeMin: "", targetAgeMax: "", audience: "all", highlight: "auto", outdoor: false, physicalActivity: false, questionnaire: [],
   };
 }
 
@@ -63,7 +63,7 @@ export function experienceToValues(e: Experience, eco: AdminData["economics"][st
     paymentModel: e.paymentModel ?? "full_online", depositPercent: String(e.depositPercent ?? 30),
     status: e.status === "published" ? "published" : "draft",
     level: e.level ?? "", equipmentProvided: e.equipmentProvided ?? "", whatToBring: e.whatToBring ?? "", dressCode: e.dressCode ?? "",
-    minAge: e.minAge ? String(e.minAge) : "", targetAgeMin: e.targetAgeMin ? String(e.targetAgeMin) : "", targetAgeMax: e.targetAgeMax ? String(e.targetAgeMax) : "", audience: e.audience === "women" ? "women" : "all", outdoor: Boolean(e.outdoor), physicalActivity: Boolean(e.physicalActivity),
+    minAge: e.minAge ? String(e.minAge) : "", targetAgeMin: e.targetAgeMin ? String(e.targetAgeMin) : "", targetAgeMax: e.targetAgeMax ? String(e.targetAgeMax) : "", audience: e.audience === "women" ? "women" : "all", highlight: e.highlight ?? "auto", outdoor: Boolean(e.outdoor), physicalActivity: Boolean(e.physicalActivity),
     questionnaire: (e.questionnaire ?? []).map(toDraft),
   };
 }

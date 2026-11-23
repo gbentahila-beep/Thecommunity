@@ -74,8 +74,9 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   // 4. Badges
   await d.goto(base + '/experiences', { waitUntil: 'load' });
   const badges = await d.getByTestId('card-badge').allTextContents();
-  assert(badges.includes('Coup de cœur') && badges.includes('Populaire'), `badges : ${[...new Set(badges)].join(', ')}`);
-  if (Date.now() < Date.parse('2026-12-20T00:00:00Z')) assert(badges.includes('Nouveau'), 'badge « Nouveau » (expériences ajoutées le 20 novembre)');
+  assert(new Set(badges).size >= 4 && badges.includes('Coup de cœur') && badges.includes('Populaire') && badges.includes('Édition spéciale'), `badges variés : ${[...new Set(badges)].join(', ')}`);
+  assert(badges.filter((b) => b === 'Nouveau').length <= 3, 'badge « Nouveau » pas partout');
+  assert(await d.getByTestId('card-tier').filter({ hasText: 'Premium' }).count() >= 1 && await d.getByTestId('card-tier').filter({ hasText: 'Exclusive' }).count() >= 1, 'gamme visible sur les cartes (Premium, Exclusive)');
 
   // 5. Fiche : galerie plein écran, « Non inclus », carte sur clic, organisateur
   await d.goto(base + '/experiences/diner-entre-inconnus-casablanca', { waitUntil: 'load' });

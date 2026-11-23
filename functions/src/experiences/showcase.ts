@@ -108,7 +108,10 @@ async function createFromTemplates(input: z.infer<typeof showcaseInputSchema>, a
     if (!job.tier && isTables) { skip("not_activity"); continue; }
     const venue = isTables ? null : await venueFor(t, input.cityId);
     if (!isTables && !venue) { skip("no_partner"); continue; }
-    const data = templateExperienceInput(t, { tier: job.tier, firstDate: nextWeekdayDate(t.values.weekday, base), weeks: input.weeks, cityId: input.cityId, venue });
+    // Étape O : quelques badges pour varier les cartes (l'équipe les change dans la fiche) : coup de cœur sur
+    // l'Exclusive, « Nouveau » sur un événement sur trois, le reste en automatique (Populaire, Bientôt complet).
+    const highlight = job.tier === "exclusive" ? "featured" : r.created.length % 3 === 0 ? "new" : "auto";
+    const data = { ...templateExperienceInput(t, { tier: job.tier, firstDate: nextWeekdayDate(t.values.weekday, base), weeks: input.weeks, cityId: input.cityId, venue }), highlight };
     try {
       const res = await saveExperience({ data, addSessions: true, images: [{ path: t.image, alt: t.name }] }, { uid: actor.uid, role: actor.role, organizer: null });
       r.created.push({ templateId: t.id, tier: job.tier, experienceId: res.experienceId, sessions: res.sessionsCreated });

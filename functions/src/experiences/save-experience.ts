@@ -247,6 +247,8 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     dressCode: v.dressCode ?? "",
     minAge: v.minAge ?? null,
     audience: v.audience,
+    // Étape O : seule l'équipe choisit le badge ; un organisateur qui modifie son activité ne le change pas.
+    highlight: org ? ((existing.data()?.highlight as string | undefined) ?? "auto") : v.highlight,
     targetAgeMin: v.targetAgeMin ?? null,
     targetAgeMax: v.targetAgeMax ?? null,
     outdoor: v.outdoor,
