@@ -8,8 +8,11 @@ import { Link } from "@/i18n/navigation";
 
 export const metadata: Metadata = { robots: { index: false } };
 
-export default async function LoginPage({ params }: PageProps<"/[locale]/connexion">) {
+export default async function LoginPage({ params, searchParams }: PageProps<"/[locale]/connexion">) {
   const { locale } = await params;
+  // Audit 23/11 : l'événement choisi suit la personne entre connexion et inscription.
+  const suite = (await searchParams).suite;
+  const keep = typeof suite === "string" && suite.startsWith("/") && !suite.startsWith("//") ? `?suite=${encodeURIComponent(suite)}` : "";
   setRequestLocale(locale);
   const t = await getTranslations("auth");
   return (
@@ -20,7 +23,7 @@ export default async function LoginPage({ params }: PageProps<"/[locale]/connexi
       footer={
         <>
           {t("noAccount")}{" "}
-          <Link href="/inscription" className="font-semibold text-brand-900 underline underline-offset-4">
+          <Link href={`/inscription${keep}`} className="font-semibold text-brand-900 underline underline-offset-4">
             {t("goSignup")}
           </Link>
           {!FIREBASE_ENABLED && (

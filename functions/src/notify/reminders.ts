@@ -14,7 +14,7 @@ function whereOf(r: DocumentData): string {
   return "Casablanca";
 }
 
-async function personOf(uid: string) {
+export async function personOf(uid: string) {
   const u = (await db.doc(`users/${uid}`).get()).data() ?? {};
   return { email: u.email as string | undefined, locale: String(u.locale ?? "fr"), firstName: String(u.firstName ?? ""), emailOk: u.notificationPrefs?.email !== false };
 }

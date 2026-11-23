@@ -5,15 +5,19 @@ import { httpsCallable } from "firebase/functions";
 import { QuestionnaireFields } from "@/components/account/questionnaire-fields";
 import { Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { PhysicalTermsCheckbox } from "@/components/booking/physical-terms";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { authReady, bookingErrorOf } from "@/lib/booking-client";
 import { firebase } from "@/lib/firebase/client";
 
 /** Date complète : rejoindre ou quitter la liste d'attente. Aucune place ni aucun paiement à ce stade. */
-export function WaitlistBox({ sessionId, maxSeats, position, questions = [] }: { sessionId: string; maxSeats: number; position: number | null; questions?: QuestionDef[] }) {
+export function WaitlistBox({ sessionId, maxSeats, position, questions = [], physical = false }: { sessionId: string; maxSeats: number; position: number | null; questions?: QuestionDef[]; physical?: boolean }) {
   const tq = useTranslations("questionnaire");
   const [answers, setAnswers] = useState<QuestionnaireAnswers>({});
+  // Audit 23/11 : activité physique → conditions acceptées dès l'inscription sur la liste (la place proposée en dépend).
+  const [physicalOk, setPhysicalOk] = useState(false);
+  const [physicalError, setPhysicalError] = useState(false);
   const [missing, setMissing] = useState<string[]>([]);
   const t = useTranslations("waitlist");
   const tb = useTranslations("booking");
@@ -70,6 +74,7 @@ export function WaitlistBox({ sessionId, maxSeats, position, questions = [] }: {
               <QuestionnaireFields idPrefix="wq" questions={questions} answers={answers} missing={missing} disabled={busy} onChange={(next, id) => { setAnswers(next); setMissing((m) => m.filter((x) => x !== id)); }} />
             </div>
           )}
+          {physical && <div className="mt-4"><PhysicalTermsCheckbox checked={physicalOk} onChange={(v) => { setPhysicalOk(v); setPhysicalError(false); }} error={physicalError} disabled={busy} /></div>}
           <button
             type="button"
             disabled={busy}
@@ -77,7 +82,8 @@ export function WaitlistBox({ sessionId, maxSeats, position, questions = [] }: {
               // docs/22 § 17.H (H15) : le questionnaire se remplit en s'inscrivant ; il suit la place proposée.
               const issues = answerIssues(questions, answers);
               if (issues.length) return setMissing(issues.map((i) => i.id));
-              void run("joinWaitlist", { sessionId, seats, ...(questions.length ? { answers } : {}) });
+              if (physical && !physicalOk) return setPhysicalError(true);
+              void run("joinWaitlist", { sessionId, seats, ...(questions.length ? { answers } : {}), ...(physical ? { physicalTermsAccepted: true } : {}) });
             }}
             className="btn btn-primary mt-4 w-full"
           >

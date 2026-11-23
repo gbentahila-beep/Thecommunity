@@ -11,6 +11,7 @@ import { refuse } from "../reservations/create-reservation";
 import { moveReservationCore } from "../tables/move";
 import { cancelRequests } from "../tables/allocation";
 import { recordAbsence } from "../membership/absences";
+import { notifyCancelledByTeam } from "../notify/cancellations";
 
 const reasonSchema = z.string().trim().min(2, "required").max(200, "tooLong");
 
@@ -32,15 +33,8 @@ export const adminCancelReservation = onCall({ region: REGION }, async (req) => 
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { reservationId, refund, reason } = parsed.data;
   const res = await cancelReservationCore({ reservationId, by: "admin", actorUid: actor.uid, refundMode: refund, reason, allowStarted: true });
-  await notify(
-    res.userId,
-    "event_cancelled",
-    { fr: "Votre réservation a été annulée", ar: "تم إلغاء حجزك" },
-    res.refundAmount > 0
-      ? { fr: `L'équipe a annulé votre réservation. ${dh(res.refundAmount)} vous sont remboursés.`, ar: `ألغى الفريق حجزك. سيتم استرجاع ${dh(res.refundAmount)}.` }
-      : { fr: "L'équipe a annulé votre réservation. Contactez-nous pour toute question.", ar: "ألغى الفريق حجزك. تواصل معنا لأي استفسار." },
-    `/espace/reservations/${reservationId}`,
-  );
+  // Audit 23/11 : notification ET e-mail.
+  await notifyCancelledByTeam(reservationId, res.refundAmount);
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "reservation.cancel", targetType: "reservation", targetId: reservationId, after: { refund, refundAmount: res.refundAmount, reason } });
   return { ok: true, refundAmount: res.refundAmount, refundStatus: res.refundStatus };
 });
@@ -79,16 +73,7 @@ export async function cancelSessionCore(sessionId: string, actor: { uid: string;
     try {
       const res = await cancelReservationCore({ reservationId: d.id, by: "admin", actorUid: actor.uid, refundMode: "full", reason: "session_cancelled", allowStarted: true });
       refunded += res.refundAmount;
-      await notify(
-        res.userId,
-        "event_cancelled",
-        { fr: "Expérience annulée", ar: "تم إلغاء التجربة" },
-        {
-          fr: `Nous sommes désolés : cette date est annulée (${reason}).${res.refundAmount > 0 ? ` ${dh(res.refundAmount)} vous sont remboursés intégralement.` : ""}`,
-          ar: `نعتذر: تم إلغاء هذا الموعد (${reason}).${res.refundAmount > 0 ? ` سيتم استرجاع ${dh(res.refundAmount)} بالكامل.` : ""}`,
-        },
-        `/espace/reservations/${d.id}`,
-      );
+      await notifyCancelledByTeam(d.id, res.refundAmount, { sessionReason: reason }).catch(() => undefined);
     } catch {
       failures.push(d.id);
     }

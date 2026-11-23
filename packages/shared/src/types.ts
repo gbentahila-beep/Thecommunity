@@ -386,6 +386,8 @@ export type Reservation = {
   /** Étape 22 : montant déjà remboursé (remboursements partiels possibles) ; politique d'annulation copiée. */
   refundedAmount?: number;
   cancellationPolicy?: CancellationPolicy | null;
+  /** Audit 23/11 : date d'origine après un changement de date fait par le membre (le remboursement se calcule dessus). */
+  refundBasisAt?: string;
   paymentId?: string;
   /** Étape 5h : paiement par virement — référence à indiquer (la place reste bloquée jusqu'à holdExpiresAt). */
   paymentMethod?: "bank_transfer";

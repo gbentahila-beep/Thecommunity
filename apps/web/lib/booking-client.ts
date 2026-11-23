@@ -27,6 +27,8 @@ export const BOOKING_ERRORS = [
   "too_young",
   "physical_terms_required",
   "questionnaire_required",
+  "audience_women_only",
+  "account_under_review",
   "busy",
   "signin",
   "generic",

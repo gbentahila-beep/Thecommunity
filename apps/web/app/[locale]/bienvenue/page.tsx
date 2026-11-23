@@ -17,6 +17,8 @@ export default async function OnboardingPage({ params, searchParams }: PageProps
   const sp = await searchParams;
   const editing = sp.edition === "1";
   const startAt = typeof sp.etape === "string" ? sp.etape : undefined;
+  // Audit 23/11 : retour à l'événement choisi avant l'inscription (chemin interne seulement).
+  const next = typeof sp.suite === "string" && sp.suite.startsWith("/") && !sp.suite.startsWith("//") && !sp.suite.includes("\\") ? sp.suite : undefined;
   const [t, locale, cities, categories] = await Promise.all([getTranslations("onboarding"), getLocale(), getCities(), getCategories()]);
   const pick = (p: Awaited<ReturnType<typeof getMemberSpace>>["profile"]) => ({
     firstName: p.firstName, lastName: p.lastName, phone: p.phone ?? "", birthDate: p.birthDate, cityId: p.cityId, gender: p.gender ?? undefined,
@@ -34,7 +36,9 @@ export default async function OnboardingPage({ params, searchParams }: PageProps
     uid = user.uid;
     const { profile } = await fsMemberData(user.uid);
     const displayName = (await adminAuth().getUser(user.uid)).displayName ?? "";
-    initial = { ...pick(profile), firstName: profile.firstName || displayName };
+    // Compte Google : « Prénom Nom » → prénom et nom pré-remplis séparément.
+    const [first = "", ...rest] = displayName.trim().split(/\s+/);
+    initial = { ...pick(profile), firstName: profile.firstName || first, lastName: profile.lastName || rest.join(" ") };
   } else if (editing) {
     // Mode démonstration : profil du membre fictif.
     initial = pick((await getMemberSpace()).profile);
@@ -46,6 +50,7 @@ export default async function OnboardingPage({ params, searchParams }: PageProps
         key={editing ? `edit-${startAt ?? ""}` : "new"}
         editing={editing}
         startAt={startAt}
+        continueTo={next}
         uid={uid}
         initial={initial}
         cities={cities.map((c) => ({ id: c.id, name: tr(c.name, locale), isActive: c.isActive }))}

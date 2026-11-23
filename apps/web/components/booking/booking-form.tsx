@@ -284,7 +284,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, transfe
             <Link href={`/connexion?suite=${encodeURIComponent(`/reserver/${sessionId}`)}`} className="mt-1 inline-block font-semibold underline">{t("signInCta")}</Link>
           )}
           {error === "profile_incomplete" && (
-            <Link href="/bienvenue" className="mt-1 inline-block font-semibold underline">{t("profileCta")}</Link>
+            <Link href={`/bienvenue?suite=${encodeURIComponent(`/reserver/${sessionId}`)}`} className="mt-1 inline-block font-semibold underline">{t("profileCta")}</Link>
           )}
         </div>
       )}

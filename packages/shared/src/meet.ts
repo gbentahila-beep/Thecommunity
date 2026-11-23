@@ -48,3 +48,16 @@ export const otherOf = (c: Pick<Connection, "uids" | "names">, me: string) => {
   const uid = c.uids.find((u) => u !== me) ?? "";
   return { uid, firstName: c.names[uid] ?? "" };
 };
+
+/**
+ * Signalements (audit du 23/11) : depuis sa réservation, de 1 h avant le début à 30 jours après la fin ;
+ * au-delà de 2 personnes différentes en 90 jours, le compte signalé ne peut plus réserver (gel, levé par l'équipe).
+ */
+export const REPORT_BEFORE_MIN = 60;
+export const REPORT_AFTER_DAYS = 30;
+export const REPORT_ESCALATION_DAYS = 90;
+export const REPORT_ESCALATION_REPORTERS = 2;
+export function reportWindowOpen(startAt: string, endAt: string, now: Date = new Date()): boolean {
+  const t = now.getTime();
+  return t >= new Date(startAt).getTime() - REPORT_BEFORE_MIN * 60_000 && t <= new Date(endAt).getTime() + REPORT_AFTER_DAYS * 86_400_000;
+}

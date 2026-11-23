@@ -366,7 +366,8 @@
       "too_young": "Cette expérience demande un âge minimum plus élevé que le vôtre.",
       "physical_terms_required": "Acceptez les conditions de participation aux activités physiques pour réserver.",
       "audience_women_only": "Cette expérience est réservée aux femmes. Si votre profil est incorrect, vous pouvez le modifier dans « Mon profil ».",
-      "questionnaire_required": "Répondez aux questions ci-dessus pour réserver."
+      "questionnaire_required": "Répondez aux questions ci-dessus pour réserver.",
+      "account_under_review": "Votre compte est en cours d'examen par l'équipe : vous ne pouvez pas réserver pour le moment. Écrivez-nous si besoin."
     },
     "fullTextOnRequest": "Toutes les places sont prises pour cette date. Regardez les autres dates de cette expérience.",
     "seeMyBooking": "Voir ma réservation",
@@ -456,7 +457,8 @@
       "network": "Connexion impossible. Vérifiez votre réseau.",
       "generic": "Une erreur est survenue. Réessayez.",
       "consentRequired": "Merci d'accepter les conditions pour continuer.",
-      "suspended": "Ce compte est suspendu. Contactez-nous si vous pensez qu'il s'agit d'une erreur."
+      "suspended": "Ce compte est suspendu. Contactez-nous si vous pensez qu'il s'agit d'une erreur.",
+      "popupBlocked": "La fenêtre Google a été bloquée par votre navigateur : autorisez les fenêtres pour ce site, puis réessayez."
     },
     "loading": "Un instant…",
     "forgotTitle": "Mot de passe oublié",
@@ -470,7 +472,11 @@
     "iVerified": "J'ai confirmé",
     "logout": "Se déconnecter",
     "passwordHint": "8 caractères minimum.",
-    "marketingOptIn": "Je souhaite recevoir les nouveautés et offres par e-mail (facultatif)."
+    "marketingOptIn": "Je souhaite recevoir les nouveautés et offres par e-mail (facultatif).",
+    "googleCta": "Continuer avec Google",
+    "googleConsent": "En continuant avec Google, vous acceptez les",
+    "googleInApp": "Pour continuer avec Google, ouvrez cette page dans votre navigateur (menu ⋯ en haut, « Ouvrir dans le navigateur »). Vous pouvez aussi utiliser votre e-mail ci-dessous.",
+    "or": "ou"
   },
   "footer": {
     "tagline": "Des expériences à partager, des personnes à découvrir.",
@@ -1119,7 +1125,8 @@
     "doneText": "Merci ! Vos réponses nous aident à composer vos groupes. Vous pouvez les modifier à tout moment dans Mon profil.",
     "doneCta": "Voir les expériences",
     "doneHome": "Mon tableau de bord",
-    "edited": "C'est enregistré."
+    "edited": "C'est enregistré.",
+    "doneContinue": "Continuer ma réservation"
   },
   "testPayment": {
     "bannerTitle": "Paiement de TEST",
@@ -1950,7 +1957,7 @@
   },
   "move": {
     "title": "Changer de date",
-    "text": "Vous pouvez déplacer votre réservation sur une autre date de ce rendez-vous, sans repayer, jusqu'au {until}.",
+    "text": "Vous pouvez déplacer votre réservation sur une autre date de ce rendez-vous, sans repayer, jusqu'au {until}. En cas d'annulation ensuite, le remboursement reste calculé sur votre date d'origine.",
     "cta": "Déplacer sur une autre date",
     "none": "Aucune autre date disponible pour l'instant",
     "pick": "Nouvelle date",
@@ -2078,7 +2085,16 @@
       "harassment": "Harcèlement",
       "safety": "Sécurité",
       "other": "Autre"
-    }
+    },
+    "bookingTitle": "Un souci avec quelqu'un ?",
+    "bookingText": "Si quelqu'un vous a mis mal à l'aise, dites-le-nous. C'est confidentiel.",
+    "bookingTextLive": "Pendant l'expérience aussi : si quelqu'un vous met mal à l'aise, prévenez-nous ici, l'équipe est alertée tout de suite. En cas de danger immédiat, appelez le 19.",
+    "bookingCta": "Signaler un comportement",
+    "who": "Qui ?",
+    "someoneElse": "Quelqu'un d'autre (je le décris)",
+    "detailsDescribe": "Décrivez la personne et ce qui s'est passé",
+    "doneMail": "Merci, l'équipe a reçu votre signalement. Un e-mail de confirmation vous a été envoyé.",
+    "already": "Vous avez déjà signalé cette personne pour cette expérience : l'équipe s'en occupe."
   },
   "emptyStates": {
     "upcomingTitle": "Votre agenda est tout calme",

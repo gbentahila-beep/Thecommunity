@@ -3,10 +3,12 @@
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useRef, useState } from "react";
 import { Field } from "@/components/auth-card";
+import { GoogleButton } from "@/components/auth/google-button";
 import { Link, useRouter } from "@/i18n/navigation";
-import { authErrorKey, startServerSession } from "@/lib/auth/client";
+import { authErrorKey, safeNext, startServerSession } from "@/lib/auth/client";
 import { firebase } from "@/lib/firebase/client";
 
 export function SignupForm() {
@@ -15,9 +17,14 @@ export function SignupForm() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  // Audit 23/11 : l'événement choisi avant l'inscription (?suite=/reserver/…) est gardé jusqu'au bout du questionnaire.
+  const params = useSearchParams();
+  const suite = params.get("suite") ? safeNext(params.get("suite"), "") : "";
+  const formRef = useRef<HTMLFormElement>(null);
 
   return (
     <form
+      ref={formRef}
       className="space-y-4"
       onSubmit={async (e) => {
         e.preventDefault();
@@ -30,9 +37,10 @@ export function SignupForm() {
           const cred = await createUserWithEmailAndPassword(auth, String(form.get("email")).trim(), String(form.get("password")));
           await updateProfile(cred.user, { displayName: String(form.get("firstName")).trim() });
           await httpsCallable(functions, "acceptTerms")({ terms: true, privacy: true, codeOfConduct: true, marketing: form.get("marketing") === "on" });
-          await sendEmailVerification(cred.user).catch(() => undefined); // renvoyable depuis l'espace membre
+          // Le lien de confirmation ramène à l'événement choisi (renvoyable depuis l'espace membre).
+          await sendEmailVerification(cred.user, suite ? { url: `${window.location.origin}${suite}` } : undefined).catch(() => sendEmailVerification(cred.user).catch(() => undefined));
           await startServerSession(cred.user);
-          router.replace("/bienvenue");
+          router.replace(suite ? `/bienvenue?suite=${encodeURIComponent(suite)}` : "/bienvenue");
           router.refresh();
         } catch (err) {
           setError(authErrorKey(err));
@@ -40,6 +48,7 @@ export function SignupForm() {
         }
       }}
     >
+      <GoogleButton next={suite || null} marketing={() => (formRef.current?.elements.namedItem("marketing") as HTMLInputElement | null)?.checked === true} />
       <Field label={t("firstName")} name="firstName" autoComplete="given-name" required maxLength={50} />
       <Field label={t("email")} type="email" name="email" autoComplete="email" required />
       <div>

@@ -1,12 +1,12 @@
 import { SITE_URL } from "../invoices/format";
 
-type L = "fr" | "en" | "ar";
-const lang = (l: string): L => (l === "en" || l === "ar" ? l : "fr");
-const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
-const prefix = (l: L) => (l === "fr" ? "" : `/${l}`);
+export type L = "fr" | "en" | "ar";
+export const lang = (l: string): L => (l === "en" || l === "ar" ? l : "fr");
+export const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+export const prefix = (l: L) => (l === "fr" ? "" : `/${l}`);
 
 /** Gabarit commun Wenzy : en-tête encre avec le logo, bandeau en dégradé corail → violet, lisible sur téléphone. */
-function layout(l: L, o: { heading: string; paragraphs: string[]; list?: { label: string; href: string }[]; cta?: { label: string; href: string }; footer: string }) {
+export function layout(l: L, o: { heading: string; paragraphs: string[]; list?: { label: string; href: string }[]; cta?: { label: string; href: string }; footer: string }) {
   const dir = l === "ar" ? "rtl" : "ltr";
   const html = `<!doctype html><html lang="${l}" dir="${dir}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
 <body style="margin:0;background:#f6f1ea;font-family:Helvetica,Arial,sans-serif;color:#141414">
@@ -84,7 +84,7 @@ export function groupRevealedMail(o: { locale: string; firstName: string; title:
 }
 
 /** Pied des e-mails de service (sans facture jointe). */
-const NOTICE_FOOTER: Record<L, string> = {
+export const NOTICE_FOOTER: Record<L, string> = {
   fr: "Vous recevez cet e-mail car vous avez une réservation sur Wenzy.",
   en: "You're receiving this email because you have a booking on Wenzy.",
   ar: "تتوصل بهذه الرسالة لأن لديك حجزًا على Wenzy.",
@@ -117,14 +117,16 @@ export function reminderMail(o: { locale: string; kind: "d1" | "h3"; firstName: 
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
 }
 
-export function changeMail(o: { locale: string; kind: "date" | "venue"; firstName: string; title: string; when: string; where: string; reservationId: string }) {
+export function changeMail(o: { locale: string; kind: "date" | "venue"; firstName: string; title: string; when: string; where: string; reservationId: string; self?: boolean }) {
   const l = lang(o.locale);
   const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
   const date = o.kind === "date";
+  // Audit 23/11 : changement de date fait par le membre lui-même (confirmation, avec l'invitation calendrier jointe).
+  const self = o.self === true && date;
   const t = {
-    fr: { subject: date ? `Nouvelle date : ${o.title}` : `Nouveau lieu : ${o.title}`, heading: date ? "Votre réservation a changé de date" : "Le lieu a changé", p: [`« ${o.title} » : ${o.when}.`, `Lieu : ${o.where}.`, "La nouvelle date ne vous convient pas ? Écrivez-nous : nous annulons votre place avec remboursement intégral."], cta: "Voir ma réservation" },
-    en: { subject: date ? `New date: ${o.title}` : `New venue: ${o.title}`, heading: date ? "Your booking has a new date" : "The venue has changed", p: [`“${o.title}”: ${o.when}.`, `Venue: ${o.where}.`, "Doesn't suit you? Write to us: we'll cancel your spot with a full refund."], cta: "View my booking" },
-    ar: { subject: date ? `موعد جديد: ${o.title}` : `مكان جديد: ${o.title}`, heading: date ? "تغيّر موعد حجزك" : "تغيّر المكان", p: [`« ${o.title} »: ${o.when}.`, `المكان: ${o.where}.`, "لا يناسبك؟ راسلنا: نلغي مقعدك مع استرداد كامل."], cta: "عرض حجزي" },
+    fr: { subject: date ? `Nouvelle date : ${o.title}` : `Nouveau lieu : ${o.title}`, heading: self ? "Votre changement de date est confirmé" : date ? "Votre réservation a changé de date" : "Le lieu a changé", p: [`« ${o.title} » : ${o.when}.`, `Lieu : ${o.where}.`, self ? "L'invitation jointe met à jour votre agenda. En cas d'annulation, le remboursement reste calculé sur votre date d'origine." : "La nouvelle date ne vous convient pas ? Écrivez-nous : nous annulons votre place avec remboursement intégral."], cta: "Voir ma réservation" },
+    en: { subject: date ? `New date: ${o.title}` : `New venue: ${o.title}`, heading: self ? "Your date change is confirmed" : date ? "Your booking has a new date" : "The venue has changed", p: [`“${o.title}”: ${o.when}.`, `Venue: ${o.where}.`, self ? "The attached invitation updates your calendar. If you cancel, the refund is still based on your original date." : "Doesn't suit you? Write to us: we'll cancel your spot with a full refund."], cta: "View my booking" },
+    ar: { subject: date ? `موعد جديد: ${o.title}` : `مكان جديد: ${o.title}`, heading: self ? "تم تأكيد تغيير الموعد" : date ? "تغيّر موعد حجزك" : "تغيّر المكان", p: [`« ${o.title} »: ${o.when}.`, `المكان: ${o.where}.`, self ? "الدعوة المرفقة تُحدّث مفكرتك. في حال الإلغاء، يُحتسب الاسترداد على موعدك الأصلي." : "لا يناسبك؟ راسلنا: نلغي مقعدك مع استرداد كامل."], cta: "عرض حجزي" },
   }[l];
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
 }

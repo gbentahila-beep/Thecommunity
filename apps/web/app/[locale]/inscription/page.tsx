@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
 import { AuthCard, DisabledSubmit, Field } from "@/components/auth-card";
 import { SignupForm } from "@/components/auth/signup-form";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
@@ -7,8 +8,11 @@ import { Link } from "@/i18n/navigation";
 
 export const metadata: Metadata = { robots: { index: false } };
 
-export default async function SignupPage({ params }: PageProps<"/[locale]/inscription">) {
+export default async function SignupPage({ params, searchParams }: PageProps<"/[locale]/inscription">) {
   const { locale } = await params;
+  // Audit 23/11 : l'événement choisi suit la personne entre connexion et inscription.
+  const suite = (await searchParams).suite;
+  const keep = typeof suite === "string" && suite.startsWith("/") && !suite.startsWith("//") ? `?suite=${encodeURIComponent(suite)}` : "";
   setRequestLocale(locale);
   const [t, tf] = await Promise.all([getTranslations("auth"), getTranslations("footer")]);
   return (
@@ -19,7 +23,7 @@ export default async function SignupPage({ params }: PageProps<"/[locale]/inscri
       footer={
         <>
           {t("hasAccount")}{" "}
-          <Link href="/connexion" className="font-semibold text-brand-900 underline underline-offset-4">
+          <Link href={`/connexion${keep}`} className="font-semibold text-brand-900 underline underline-offset-4">
             {t("goLogin")}
           </Link>
           {!FIREBASE_ENABLED && (
@@ -30,7 +34,7 @@ export default async function SignupPage({ params }: PageProps<"/[locale]/inscri
         </>
       }
     >
-      {FIREBASE_ENABLED ? <SignupForm /> : <form className="space-y-4">
+      {FIREBASE_ENABLED ? <Suspense><SignupForm /></Suspense> : <form className="space-y-4">
         <Field label={t("firstName")} name="firstName" autoComplete="given-name" required />
         <Field label={t("email")} type="email" name="email" autoComplete="email" required />
         <Field label={t("password")} type="password" name="password" autoComplete="new-password" minLength={8} required />

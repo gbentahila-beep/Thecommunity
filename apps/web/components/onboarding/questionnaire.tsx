@@ -116,6 +116,7 @@ export function Questionnaire({
   editing,
   uid,
   startAt,
+  continueTo,
 }: {
   cities: CityOption[];
   categories?: { id: string; name: string }[];
@@ -125,6 +126,8 @@ export function Questionnaire({
   uid?: string;
   /** Mode édition : identifiant de la question à ouvrir. */
   startAt?: string;
+  /** Audit 23/11 : événement choisi avant l'inscription (/reserver/…) : la carte finale y ramène. */
+  continueTo?: string;
 }) {
   const t = useTranslations("onboarding");
   const tl = useTranslations("labels");
@@ -615,7 +618,7 @@ export function Questionnaire({
           <p className="mt-2 text-[15px] leading-relaxed text-ink/85">{t("facts.commute.text")}</p>
           <p className="mt-2 text-xs text-muted">{t("facts.commute.source")}</p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <Link href="/experiences" className="btn btn-primary">{t("doneCta")}</Link>
+            {continueTo ? <Link href={continueTo} className="btn btn-primary" data-testid="onboarding-continue">{t("doneContinue")}</Link> : <Link href="/experiences" className="btn btn-primary">{t("doneCta")}</Link>}
             <Link href="/espace" className="btn btn-secondary">{t("doneHome")}</Link>
           </div>
         </div>

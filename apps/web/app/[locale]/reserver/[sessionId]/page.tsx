@@ -223,7 +223,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
           <h2 className="font-semibold text-ink">{t("profileTitle")}</h2>
           <p className="mt-1 text-sm text-muted">{t("profileText")}</p>
-          <Link href="/bienvenue" className="btn btn-primary btn-sm mt-4">
+          <Link href={`/bienvenue?suite=${encodeURIComponent(here)}`} className="btn btn-primary btn-sm mt-4">
             {t("profileCta")}
           </Link>
         </section>
@@ -274,7 +274,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
       ) : refusal === "full" ? (
         <>
           <Notice title={t("fullTitle")} text={t("fullText")} />
-          <WaitlistBox sessionId={session.id} maxSeats={maxSeatsFor(exp)} position={visitor.waitPosition} questions={exp.questionnaire ?? []} />
+          <WaitlistBox sessionId={session.id} maxSeats={maxSeatsFor(exp)} position={visitor.waitPosition} questions={exp.questionnaire ?? []} physical={exp.physicalActivity === true} />
         </>
       ) : visitor.transfer && transferClosed(new Date(session.startAt), visitor.transfer) && !onRequest ? (
         <Notice title={t("transferTooLateTitle")} text={t("transferTooLateText", { cutoff: visitor.transfer.cutoff })} />

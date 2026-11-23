@@ -6,6 +6,8 @@ import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth } from "../lib/guards";
 import { refuse } from "../reservations/refuse";
 import { readWaitlist, writeOffers } from "../waitlist/offers";
+import { capacityBefore } from "../reservations/create-reservation";
+import { removeFromGroup } from "../groups/membership";
 
 /**
  * Déplacer une réservation sur une autre date du même rendez-vous, dans UNE transaction : places, verrous, liste
@@ -16,6 +18,8 @@ import { readWaitlist, writeOffers } from "../waitlist/offers";
  */
 export async function moveReservationCore(o: { reservationId: string; targetSessionId: string; actorUid: string; by: "user" | "admin"; proposal?: boolean }) {
   const resRef = db.doc(`reservations/${o.reservationId}`);
+  // Audit 23/11 : plafond de la nouvelle date d'après la capacité des lieux compatibles (comme à la réservation), lu hors transaction.
+  const targetCap = await capacityBefore(o.targetSessionId);
   return db.runTransaction(async (tx) => {
     const res = await tx.get(resRef);
     const r = res.data();
@@ -35,6 +39,11 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
     const f = from.data()!;
     const t = to.data();
     const e = exp.data() ?? {};
+    // Groupe de la date quittée (la personne en est retirée) et expérience de la date proposée si elle est différente.
+    const [groupSnap, targetExp] = await Promise.all([
+      r.groupId ? tx.get(db.doc(`groups/${r.groupId}`)) : Promise.resolve(null),
+      t && t.experienceId !== r.experienceId ? tx.get(db.doc(`experiences/${t.experienceId}`)) : Promise.resolve(null),
+    ]);
     const now = Date.now();
     if (!t) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
     // Proposition de l'équipe (décision 46) : la date proposée peut être un autre événement compatible (regroupement).
@@ -50,10 +59,24 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
     if (toLock.exists) refuse("already_booked", "Une place est déjà réservée sur la nouvelle date.");
     const n = r.seats as number;
     const held = r.status === "pending_payment";
-    const toAvailable = t.capacity - t.seatsConfirmed - t.seatsHeld;
+    const toCapacity = targetCap === null ? (t.capacity as number) : Math.min(t.capacity as number, targetCap);
+    const toAvailable = toCapacity - t.seatsConfirmed - t.seatsHeld;
     if (toAvailable < n) refuse("full", "Plus assez de places sur la nouvelle date.");
     const candidates = await readWaitlist(tx, fromRef);
+    // Lieu : celui de l'expérience de la nouvelle date (proposition vers un autre événement), sinon inchangé
+    // (sauf lieu révélé avec le groupe : il sera révélé de nouveau pour la nouvelle date).
+    const te = targetExp?.data();
+    const venueField = te
+      ? te.venue?.revealPolicy === "immediate"
+        ? { venue: { name: te.venue.name ?? "", address: te.venue.address ?? "", ...(te.venue.geo ? { geo: te.venue.geo } : {}) } }
+        : { venue: FieldValue.delete() }
+      : e.venue?.revealPolicy === "on_group_reveal" ? { venue: FieldValue.delete() } : {};
+    // Audit 23/11 : un déplacement choisi par le membre garde la date d'origine pour le calcul du remboursement.
+    const prevBasis = r.refundBasisAt as Timestamp | undefined;
+    const fromStart = r.sessionSnapshot.startAt as Timestamp;
+    const basisField = o.by === "user" && !proposed ? { refundBasisAt: prevBasis && prevBasis.toMillis() < fromStart.toMillis() ? prevBasis : fromStart } : {};
 
+    if (groupSnap?.exists) removeFromGroup(tx, groupSnap, r.userId as string, n);
     tx.update(resRef, {
       sessionId: o.targetSessionId,
       "sessionSnapshot.startAt": t.startAt,
@@ -61,7 +84,8 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
       groupId: FieldValue.delete(),
       tableSummary: FieldValue.delete(),
       reminders: FieldValue.delete(),
-      ...(e.venue?.revealPolicy === "on_group_reveal" ? { venue: FieldValue.delete() } : {}),
+      ...venueField,
+      ...basisField,
       ...(proposed ? { "proposal.status": "accepted", "proposal.answeredAt": Timestamp.fromMillis(now) } : {}),
       ...(t.experienceId !== r.experienceId
         ? { experienceId: t.experienceId, "sessionSnapshot.title": t.experienceSnapshot?.title ?? r.sessionSnapshot?.title, "sessionSnapshot.slug": t.experienceSnapshot?.slug ?? r.sessionSnapshot?.slug, "sessionSnapshot.coverImagePath": t.experienceSnapshot?.coverImagePath ?? "" }

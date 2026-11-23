@@ -1,4 +1,4 @@
-import { answerIssues, audienceRefusal, bookingClosesAt, maxSeatsFor, reservationRequestSchema, seatsAvailable, isSecretVenue, type QuestionDef } from "@thecommunity/shared";
+import { answerIssues, audienceRefusal, bookingClosesAt, maxSeatsFor, PHYSICAL_TERMS_VERSION, reservationRequestSchema, seatsAvailable, isSecretVenue, tooYoung, type QuestionDef } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -17,7 +17,7 @@ export const joinWaitlist = onCall({ region: REGION }, async (req) => {
   if (token.email_verified !== true) refuse("email_not_verified", "Confirmez votre adresse e-mail.");
   const parsed = reservationRequestSchema.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats, answers, preferences } = parsed.data;
+  const { sessionId, seats, answers, preferences, physicalTermsAccepted } = parsed.data;
   await requireMemberReady(uid);
 
   const sessRef = db.doc(`sessions/${sessionId}`);
@@ -31,7 +31,11 @@ export const joinWaitlist = onCall({ region: REGION }, async (req) => {
     if (!e || e.status !== "published" || !["published", "full"].includes(s.status)) refuse("not_open", "Date non ouverte.");
     if (e!.admission === "on_request") refuse("approval_required", "Expérience sur demande.");
     if (e!.membersOnly === true && !memberFromDoc(mem.data())) refuse("members_only", "Expérience réservée aux membres.");
-    if (e!.audience === "women" && audienceRefusal(e!.audience, (await tx.get(db.doc(`users/${uid}`))).get("gender"))) refuse("audience_women_only", "Cette expérience est réservée aux femmes.");
+    // Audit 23/11 : mêmes contrôles qu'à la réservation directe (la place proposée plus tard ne les refait pas).
+    const user = (await tx.get(db.doc(`users/${uid}`))).data();
+    if (audienceRefusal(e!.audience, user?.gender)) refuse("audience_women_only", "Cette expérience est réservée aux femmes.");
+    if (tooYoung(e!.minAge, user?.birthDate, new Date())) refuse("too_young", "Cette expérience est réservée aux personnes plus âgées.");
+    if (e!.physicalActivity === true && physicalTermsAccepted !== true) refuse("physical_terms_required", "Acceptez les conditions de participation aux activités physiques.");
     if (Date.now() >= bookingClosesAt((s.startAt as Timestamp).toDate(), e!.bookingMode).getTime()) refuse("closed", "Inscriptions fermées.");
     if (seats > maxSeatsFor(e!)) refuse("too_many_seats", "Trop de places.");
     if (lock.exists) refuse("already_booked", "Vous avez déjà une place pour cette date.");
@@ -49,6 +53,7 @@ export const joinWaitlist = onCall({ region: REGION }, async (req) => {
       status: "waiting",
       ...(questions.length > 0 && answers ? { answers } : {}),
       ...(preferences ? { preferences } : {}),
+      ...(e!.physicalActivity === true ? { physicalTerms: { version: PHYSICAL_TERMS_VERSION, acceptedAt: Timestamp.now() } } : {}),
       sessionSnapshot: {
         title: snap.title ?? e!.title,
         slug: snap.slug ?? e!.slug,

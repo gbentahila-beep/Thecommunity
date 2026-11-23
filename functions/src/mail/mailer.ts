@@ -2,7 +2,8 @@ import { getStorage } from "firebase-admin/storage";
 import { logger } from "firebase-functions/v2";
 import { db, FieldValue } from "../lib/admin";
 
-export type MailAttachment = { filename: string; storagePath: string };
+/** Pièce jointe : fichier du Storage (factures) ou contenu en base64 (invitation calendrier .ics). */
+export type MailAttachment = { filename: string; storagePath?: string; content?: string; contentType?: string };
 export type MailMessage = {
   to: string;
   toName?: string;
@@ -37,7 +38,7 @@ async function sendWithBrevo(msg: MailMessage, from: { fromEmail: string; fromNa
   if (!key) return { ok: false, error: "missing_api_key" };
   const bucket = getStorage().bucket();
   const attachment = await Promise.all(
-    (msg.attachments ?? []).map(async (a) => ({ name: a.filename, content: (await bucket.file(a.storagePath).download())[0].toString("base64") })),
+    (msg.attachments ?? []).map(async (a) => ({ name: a.filename, content: a.content ?? (await bucket.file(a.storagePath!).download())[0].toString("base64") })),
   );
   const r = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",

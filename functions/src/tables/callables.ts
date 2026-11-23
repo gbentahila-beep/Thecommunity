@@ -183,7 +183,8 @@ export const sendTableMessage = onCall({ region: REGION }, async (req) => {
   const gRef = db.doc(`groups/${v.data.groupId}`);
   const g = (await gRef.get()).data();
   const arrived = (g?.arrivedUids as string[] | undefined) ?? [];
-  if (!g || !arrived.includes(uid)) throw new HttpsError("not-found", "Table introuvable.", { reason: "not_found" });
+  // Audit 23/11 : il faut être encore à la table (une personne annulée ou exclue en est retirée) et y être arrivé·e.
+  if (!g || !arrived.includes(uid) || !((g.memberIds as string[] | undefined) ?? []).includes(uid)) throw new HttpsError("not-found", "Table introuvable.", { reason: "not_found" });
   const s = (await db.doc(`sessions/${g.sessionId}`).get()).data();
   const t = tablesTimeline((s!.startAt as Timestamp).toDate());
   const now = Date.now();

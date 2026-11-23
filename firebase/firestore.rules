@@ -173,7 +173,8 @@ service cloud.firestore {
       // Messages de la table après la rencontre : seulement les personnes qui ont fait leur check-in.
       match /messages/{messageId} {
         allow read: if isAdmin()
-          || (signedIn() && request.auth.uid in get(/databases/$(database)/documents/groups/$(groupId)).data.get('arrivedUids', []));
+          || (signedIn() && request.auth.uid in get(/databases/$(database)/documents/groups/$(groupId)).data.get('arrivedUids', [])
+              && request.auth.uid in get(/databases/$(database)/documents/groups/$(groupId)).data.get('memberIds', []));
         allow write: if false;
       }
     }

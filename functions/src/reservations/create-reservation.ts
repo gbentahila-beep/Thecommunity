@@ -47,6 +47,8 @@ export async function requireMemberReady(uid: string) {
   const user = (await db.doc(`users/${uid}`).get()).data();
   if (user?.status === "suspended") throw new HttpsError("permission-denied", "Compte suspendu.", { reason: "suspended" });
   if (user?.onboardingCompleted !== true) refuse("profile_incomplete", "Complétez votre profil pour réserver.");
+  // Audit 23/11 : compte gelé après plusieurs signalements (ou par l'équipe) : plus de nouvelle réservation.
+  if (user?.bookingHold?.active === true) refuse("account_under_review", "Votre compte est en cours d'examen par l'équipe.");
 }
 
 /**
@@ -76,7 +78,7 @@ export async function runReservation(o: ReservationRun) {
 type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers; useCarnet?: boolean };
 
 /** Plafond de vente d'une date à lieu attribué, avant l'attribution (null = pas de plafond). */
-async function capacityBefore(sessionId: string): Promise<number | null> {
+export async function capacityBefore(sessionId: string): Promise<number | null> {
   const s = (await db.doc(`sessions/${sessionId}`).get()).data();
   if (!s || s.allocation) return null;
   const e = (await db.doc(`experiences/${s.experienceId}`).get()).data();

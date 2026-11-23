@@ -37,7 +37,7 @@ export function UserActions({
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   // Confirmation affichée dans la page (pas de fenêtre système, bloquée par certains navigateurs mobiles).
-  const [pending, setPending] = useState<{ label: string; go: () => Promise<void> } | null>(null);
+  const [pending, setPending] = useState<{ label: string; go: () => Promise<void>; alt?: { label: string; go: () => Promise<void> } } | null>(null);
 
   const run = async (name: string, data: Record<string, unknown>, onOk: () => void) => {
     setBusy(true);
@@ -81,7 +81,8 @@ export function UserActions({
         onClick={() => {
           const next = currentStatus === "active" ? "suspended" : "active";
           if (next === "active") return void run("adminSetUserStatus", { uid, status: next }, () => setStatus(next));
-          setPending({ label: "Suspendre ce compte ? La personne ne pourra plus se connecter.", go: () => run("adminSetUserStatus", { uid, status: next }, () => setStatus(next)) });
+          // Audit 23/11 : la suspension annule les réservations à venir (remboursées) et retire la personne des tables.
+          setPending({ label: "Suspendre ce compte ? La personne ne pourra plus se connecter ; ses réservations à venir sont annulées et remboursées.", go: () => run("adminSetUserStatus", { uid, status: next, refund: "full" }, () => setStatus(next)), alt: { label: "Sans rembourser (faute grave)", go: () => run("adminSetUserStatus", { uid, status: next, refund: "none" }, () => setStatus(next)) } });
         }}
         className={`rounded-full px-3 py-1 text-xs font-semibold ${currentStatus === "active" ? "bg-red-50 text-red-800 hover:bg-red-100" : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100"}`}
       >
@@ -91,6 +92,7 @@ export function UserActions({
         <span role="alertdialog" aria-label={pending.label} className="flex flex-wrap items-center gap-2 rounded-lg bg-amber-50 px-2 py-1 text-xs text-amber-950">
           {pending.label}
           <button type="button" disabled={busy} onClick={() => { const go = pending.go; setPending(null); void go(); }} className="rounded-full bg-brand-900 px-2.5 py-1 font-semibold text-white">Confirmer</button>
+          {pending.alt && <button type="button" disabled={busy} onClick={() => { const go = pending.alt!.go; setPending(null); void go(); }} className="rounded-full border border-red-300 bg-white px-2.5 py-1 font-semibold text-red-800">{pending.alt.label}</button>}
           <button type="button" onClick={() => setPending(null)} className="rounded-full border border-line bg-white px-2.5 py-1 font-semibold">Annuler</button>
         </span>
       )}

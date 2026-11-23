@@ -27,3 +27,25 @@ export function ReportActions({ reportId }: { reportId: string }) {
     </div>
   );
 }
+
+/** Audit 23/11 : compte gelé après plusieurs signalements (plus de nouvelle réservation) — lever le gel ou le poser. */
+export function BookingHoldActions({ uid, active }: { uid: string; active: boolean }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  const toggle = async () => {
+    const note = window.prompt(active ? "Pourquoi lever le gel ? (note interne)" : "Pourquoi geler ce compte ? (note interne)") ?? "";
+    setBusy(true);
+    try {
+      await firebase().auth.authStateReady();
+      await httpsCallable(firebase().functions, "adminSetBookingHold")({ uid, active: !active, note });
+      router.refresh();
+    } catch {
+      setBusy(false);
+    }
+  };
+  return (
+    <button type="button" disabled={busy} onClick={toggle} className={`rounded-full px-3 py-1.5 text-xs font-semibold disabled:opacity-50 ${active ? "bg-emerald-50 text-emerald-800" : "border border-red-300 text-red-800"}`}>
+      {active ? "Lever le gel" : "Geler les réservations"}
+    </button>
+  );
+}

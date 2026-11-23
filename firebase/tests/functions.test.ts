@@ -242,7 +242,7 @@ describe("back-office : expériences et comptes", () => {
     const member = await adminAuth(admin).createUser({ email: memberEmail, password: "MotDePasse!123" });
     const colleague = await adminAuth(admin).createUser({ email: `collegue.${Date.now()}@example.com`, password: "MotDePasse!123" });
     await adminAuth(admin).setCustomUserClaims(colleague.uid, { role: "admin" });
-    expect((await call("adminSetUserStatus")({ uid: member.uid, status: "suspended" })).data).toEqual({ ok: true, status: "suspended" });
+    expect((await call("adminSetUserStatus")({ uid: member.uid, status: "suspended" })).data).toEqual({ ok: true, status: "suspended", cancelled: 0, refunded: 0, failures: [] });
     expect((await adminAuth(admin).getUser(member.uid)).disabled).toBe(true);
     expect(await errorCode(call("adminSetUserStatus")({ uid: colleague.uid, status: "suspended" }))).toBe("functions/permission-denied");
     await signOut(auth());

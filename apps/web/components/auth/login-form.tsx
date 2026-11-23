@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Field } from "@/components/auth-card";
+import { GoogleButton } from "@/components/auth/google-button";
 import { Link, useRouter } from "@/i18n/navigation";
 import { authErrorKey, safeNext, startServerSession } from "@/lib/auth/client";
 import { firebase } from "@/lib/firebase/client";
@@ -38,6 +39,7 @@ export function LoginForm() {
         }
       }}
     >
+      <GoogleButton next={params.get("suite")} />
       <Field label={t("email")} type="email" name="email" autoComplete="email" required />
       <Field label={t("password")} type="password" name="password" autoComplete="current-password" required />
       <p className="text-end text-sm">

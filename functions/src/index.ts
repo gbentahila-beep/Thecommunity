@@ -40,7 +40,7 @@ export { adminCancelReservation, adminCancelSession, adminMoveReservation, admin
 export { submitReview, adminSetReviewStatus, reviewRequests } from "./reviews/reviews";
 export { replyToReview, reportReview, adminResolveReviewReports, adminDecideReviewPhoto } from "./reviews/moderation";
 export { setMeetAgain, setAvoid, inviteToSession } from "./meet/meet";
-export { reportParticipant, adminResolveReport } from "./meet/reports";
+export { reportParticipant, reportFromReservation, adminResolveReport, adminSetBookingHold } from "./meet/reports";
 export { setExperienceAlert } from "./experiences/alerts";
 export { sendNewExperienceAlerts, subscribeNewExperienceAlerts, confirmNewExperienceAlerts, stopNewExperienceAlerts } from "./experiences/new-experience-alerts";
 export { adminSaveMembershipPlan, startMembershipCheckout, adminGrantMembership, adminRevokeMembership, adminLiftSuspension } from "./membership/membership";

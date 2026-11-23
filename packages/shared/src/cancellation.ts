@@ -37,3 +37,12 @@ export function refundAmountFor(
 ): number {
   return Math.floor((paidAmount * refundPercentFor(policy, startAt, now)) / 100);
 }
+
+/**
+ * Date qui fixe le remboursement d'une annulation (audit du 23/11) : la date d'origine si le membre a lui-même
+ * déplacé sa réservation, sinon la date actuelle. Déplacer à J−1 puis annuler 48 h avant la nouvelle date ne
+ * rembourse donc pas davantage qu'une annulation à J−1. Un déplacement décidé par l'équipe ne compte pas.
+ */
+export function refundBasisDate(startAt: Date, refundBasisAt?: Date | null): Date {
+  return refundBasisAt && refundBasisAt.getTime() < startAt.getTime() ? refundBasisAt : startAt;
+}

@@ -1,4 +1,4 @@
-import { DEFAULT_CANCELLATION_POLICY, refundAmountFor, type CancellationPolicy } from "@thecommunity/shared";
+import { DEFAULT_CANCELLATION_POLICY, refundAmountFor, refundBasisDate, type CancellationPolicy } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -8,6 +8,7 @@ import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth } from "../lib/guards";
 import { issueRefund } from "../payments/refund";
 import { readWaitlist, writeOffers } from "../waitlist/offers";
+import { removeFromGroup } from "../groups/membership";
 import { refuse } from "./create-reservation";
 
 export const idSchema = z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/);
@@ -48,11 +49,13 @@ export async function cancelReservationCore(o: {
     const sessRef = db.doc(`sessions/${r.sessionId}`);
     const lockRef = sessRef.collection("seatLocks").doc(r.userId);
     const entryRef = sessRef.collection("waitlist").doc(r.userId);
-    const [sess, lock, entry] = await Promise.all([tx.get(sessRef), tx.get(lockRef), tx.get(entryRef)]);
+    const [sess, lock, entry, group] = await Promise.all([tx.get(sessRef), tx.get(lockRef), tx.get(entryRef), r.groupId ? tx.get(db.doc(`groups/${r.groupId}`)) : Promise.resolve(null)]);
     const s = sess.data()!;
     const now = Date.now();
     const startAt = (s.startAt as Timestamp).toDate();
     if (!o.allowStarted && startAt.getTime() <= now) refuse("already_started", "L'expérience a déjà commencé.");
+    // Audit 23/11 : après un déplacement choisi par le membre, le remboursement se calcule sur la date d'origine.
+    const basis = refundBasisDate(startAt, (r.refundBasisAt as Timestamp | undefined)?.toDate() ?? null);
     const exp = await tx.get(db.doc(`experiences/${s.experienceId}`));
     const candidates = await readWaitlist(tx, sessRef);
 
@@ -60,7 +63,7 @@ export async function cancelReservationCore(o: {
     const total = r.pricing.total as number;
     // Étape 22 : jamais plus que ce qui reste après d'éventuels remboursements partiels déjà faits.
     const remaining = Math.max(0, total - Number(r.refundedAmount ?? 0));
-    const refundAmount = Math.min(remaining, !paid ? 0 : o.refundMode === "full" ? total : o.refundMode === "none" ? 0 : refundAmountFor(policy, total, startAt, new Date(now)));
+    const refundAmount = Math.min(remaining, !paid ? 0 : o.refundMode === "full" ? total : o.refundMode === "none" ? 0 : refundAmountFor(policy, total, basis, new Date(now)));
     tx.update(resRef, {
       status: "cancelled",
       cancellation: {
@@ -75,12 +78,14 @@ export async function cancelReservationCore(o: {
     });
     // docs/22 § 17.I : crédits du carnet rendus si l'annulation est dans les délais remboursés (ou décidée par l'équipe).
     const credits = Number(r.pricing?.coverage?.carnetSeats ?? 0);
-    const giveBack = r.status === "pending_payment" || o.refundMode === "full" || (o.refundMode === "policy" && refundAmountFor(policy, 100, startAt, new Date(now)) > 0);
+    const giveBack = r.status === "pending_payment" || o.refundMode === "full" || (o.refundMode === "policy" && refundAmountFor(policy, 100, basis, new Date(now)) > 0);
     if (credits > 0 && giveBack) {
       tx.set(db.doc(`carnets/${r.userId}`), { credits: FieldValue.increment(credits), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
       tx.set(db.collection(`carnets/${r.userId}/movements`).doc(), { delta: credits, reason: "cancellation", reservationId: res.id, at: FieldValue.serverTimestamp() });
     }
     if (lock.data()?.reservationId === res.id) tx.delete(lockRef);
+    // Audit 23/11 : la personne quitte sa table (plus de groupe ni de chat).
+    if (group?.exists) removeFromGroup(tx, group, r.userId as string, r.seats as number);
     if (entry.exists && entry.data()?.reservationId === res.id) tx.update(entryRef, { status: "left", updatedAt: FieldValue.serverTimestamp() });
 
     const n = r.seats as number;

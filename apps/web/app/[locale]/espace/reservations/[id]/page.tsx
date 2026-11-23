@@ -2,7 +2,7 @@ import { DayOfCard } from "@/components/account/day-of-card";
 import { VenueCard } from "@/components/account/venue-card";
 import { MemberAvatar } from "@/components/member-avatar";
 import { mapsLinks } from "@/lib/maps";
-import { VENUE_REVEAL_HOURS, bookingClosesAt, isTablesFlow, revealAtFor, seatsAvailable, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds, canSignalLate, tablesTimeline } from "@thecommunity/shared";
+import { VENUE_REVEAL_HOURS, bookingClosesAt, isTablesFlow, revealAtFor, seatsAvailable, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds, canSignalLate, reportWindowOpen, refundBasisDate, tablesTimeline } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, MessageCircle, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -18,6 +18,7 @@ import { getReservationInvoices } from "@/lib/data/invoices";
 import { getMemberReservation, getMemberSpace, getRefundRequest } from "@/lib/data/member";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
 import { RefundRequestForm } from "@/components/account/refund-request-form";
+import { ReportFromBooking } from "@/components/account/report-from-booking";
 import { InvoiceList } from "@/components/account/invoice-list";
 import { PreferencesEditor } from "@/components/booking/preferences-editor";
 import { welcomeTitleKeys } from "@/components/booking/welcome-keys";
@@ -66,7 +67,8 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const isUpcoming = new Date(s.startAt).getTime() > now.getTime();
   const isActive = r.status === "confirmed";
   const checkIn = selfCheckInState(s.startAt, now);
-  const refund = refundAmountFor(policy, r.pricing.total, new Date(s.startAt), now);
+  // Audit 23/11 : après un changement de date fait par le membre, le remboursement suit la date d'origine.
+  const refund = refundAmountFor(policy, r.pricing.total, refundBasisDate(new Date(s.startAt), r.refundBasisAt ? new Date(r.refundBasisAt) : null), now);
   const refundable = Boolean(r.paymentId) && canRequestRefund({ status: r.status, sessionStartAt: s.startAt, paidAmount: r.pricing.total, refundedAmount: r.refundedAmount }, now);
   const review = data.review;
   const city = await getCity(experience?.cityId ?? "casablanca");
@@ -498,6 +500,15 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </section>
       ) : (
         refundable && !isUpcoming && <RefundRequestForm reservationId={r.id} live={FIREBASE_ENABLED} />
+      )}
+      {/* Audit 23/11 : signaler quelqu'un pendant l'expérience comme après, depuis sa réservation. */}
+      {["confirmed", "attended", "no_show"].includes(r.status) && reportWindowOpen(s.startAt, s.endAt, now) && (
+        <ReportFromBooking
+          reservationId={r.id}
+          people={(group && !namesHidden ? group.members : []).filter((m) => m.uid !== profile.uid).map((m) => ({ uid: m.uid, firstName: m.firstName }))}
+          live={FIREBASE_ENABLED}
+          during={now.getTime() < new Date(s.endAt).getTime()}
+        />
       )}
       {(review || canReview(r, now)) && (
         <section id="avis" className="scroll-mt-28 rounded-[var(--radius-card)] bg-white p-5 shadow-card">

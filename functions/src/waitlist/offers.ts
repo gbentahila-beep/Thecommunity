@@ -68,6 +68,8 @@ export function writeOffers(
     // Pass : la place de la personne est incluse (l'accès anticipé ne s'applique pas : elle attendait déjà).
     const member = memberFromDoc(o.candidates.memberships.get(entry.id), new Date(o.now));
     if (o.e.membersOnly === true && !member) continue;
+    // Activité physique : conditions acceptées à l'inscription sur la liste (anciennes inscriptions sans accord : sautées).
+    if (o.e.physicalActivity === true && !w.physicalTerms) continue;
     const cap = Math.min(Number(o.s.price?.amount ?? 0), o.candidates.wenzyPrice);
     const coverage = member && cap > 0 ? { passSeats: 1, carnetSeats: 0, cap } : undefined;
     const resRef = db.collection("reservations").doc();
@@ -81,7 +83,7 @@ export function writeOffers(
       coverage,
       serviceFee: o.candidates.serviceFee,
       preferences: w.preferences ?? undefined,
-      extra: { fromWaitlist: true, ...(w.answers ? { questionnaire: { answers: w.answers, answeredAt: Timestamp.fromMillis(o.now) } } : {}) },
+      extra: { fromWaitlist: true, ...(w.answers ? { questionnaire: { answers: w.answers, answeredAt: Timestamp.fromMillis(o.now) } } : {}), ...(w.physicalTerms ? { physicalTerms: w.physicalTerms } : {}) },
     });
     tx.set(resRef, doc);
     tx.set(o.sessRef.collection("seatLocks").doc(entry.id), { reservationId: resRef.id, createdAt: FieldValue.serverTimestamp() });

@@ -366,7 +366,8 @@
       "too_young": "This experience has a higher minimum age than yours.",
       "physical_terms_required": "Accept the terms for physical activities to book.",
       "audience_women_only": "This experience is for women only. If your profile is wrong, you can change it in “My profile”.",
-      "questionnaire_required": "Answer the questions above to book."
+      "questionnaire_required": "Answer the questions above to book.",
+      "account_under_review": "Your account is being reviewed by the team: you can't book for now. Write to us if needed."
     },
     "fullTextOnRequest": "All spots are taken for this date. Have a look at the other dates for this experience.",
     "seeMyBooking": "See my booking",
@@ -456,7 +457,8 @@
       "network": "Unable to connect. Please check your network.",
       "generic": "Something went wrong. Please try again.",
       "consentRequired": "Please accept the terms to continue.",
-      "suspended": "This account is suspended. Contact us if you think this is a mistake."
+      "suspended": "This account is suspended. Contact us if you think this is a mistake.",
+      "popupBlocked": "Your browser blocked the Google window: allow pop-ups for this site, then try again."
     },
     "loading": "One moment…",
     "forgotTitle": "Forgot your password",
@@ -470,7 +472,11 @@
     "iVerified": "I've confirmed",
     "logout": "Sign out",
     "passwordHint": "At least 8 characters.",
-    "marketingOptIn": "I'd like to receive news and offers by email (optional)."
+    "marketingOptIn": "I'd like to receive news and offers by email (optional).",
+    "googleCta": "Continue with Google",
+    "googleConsent": "By continuing with Google, you accept the",
+    "googleInApp": "To continue with Google, open this page in your browser (⋯ menu at the top, “Open in browser”). You can also use your email below.",
+    "or": "or"
   },
   "footer": {
     "tagline": "Experiences to share, people to discover.",
@@ -1119,7 +1125,8 @@
     "doneText": "Thank you! Your answers help us put your groups together. You can change them any time in My profile.",
     "doneCta": "See experiences",
     "doneHome": "My dashboard",
-    "edited": "Saved."
+    "edited": "Saved.",
+    "doneContinue": "Continue my booking"
   },
   "testPayment": {
     "bannerTitle": "TEST payment",
@@ -1950,7 +1957,7 @@
   },
   "move": {
     "title": "Change date",
-    "text": "You can move your booking to another date of this event, at no extra cost, until {until}.",
+    "text": "You can move your booking to another date of this event, at no extra cost, until {until}. If you cancel afterwards, the refund is still based on your original date.",
     "cta": "Move to another date",
     "none": "No other date available yet",
     "pick": "New date",
@@ -2078,7 +2085,16 @@
       "harassment": "Harassment",
       "safety": "Safety",
       "other": "Other"
-    }
+    },
+    "bookingTitle": "A problem with someone?",
+    "bookingText": "If someone made you uncomfortable, tell us. It's confidential.",
+    "bookingTextLive": "During the experience too: if someone makes you uncomfortable, tell us here, the team is alerted straight away. In immediate danger, call 19.",
+    "bookingCta": "Report behaviour",
+    "who": "Who?",
+    "someoneElse": "Someone else (I'll describe them)",
+    "detailsDescribe": "Describe the person and what happened",
+    "doneMail": "Thank you, the team has received your report. A confirmation email has been sent to you.",
+    "already": "You've already reported this person for this experience: the team is on it."
   },
   "emptyStates": {
     "upcomingTitle": "Your calendar is nice and quiet",
