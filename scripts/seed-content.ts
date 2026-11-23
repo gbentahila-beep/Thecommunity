@@ -222,6 +222,9 @@ async function main() {
   const { replaceDemoEventsOnce } = await import("../functions/src/experiences/showcase");
   const replaced = await replaceDemoEventsOnce({ uid: "seed-content", role: "superadmin" });
   if (replaced) console.log(`✅ Anciens événements remplacés par ceux des modèles : ${replaced.created.length} créés, ${replaced.deleted} supprimés, ${replaced.archived} archivés, ${replaced.cancelledSessions} date(s) annulée(s) ; ignorés : ${replaced.skipped.map((x) => x.templateId).join(", ") || "aucun"}.`);
+  const { tidyTemplateEventsOnce } = await import("../functions/src/experiences/showcase");
+  const tidy = await tidyTemplateEventsOnce({ uid: "seed-content", role: "superadmin" });
+  if (tidy) console.log(`✅ Événements des modèles rangés : ${tidy.renamed} titre(s) sans la gamme, ${tidy.removed} doublon(s) retiré(s).`);
   // Étape R : une fois, les événements créés depuis les modèles (et jamais modifiés par l'équipe) reprennent les textes
   // allégés des modèles : description et « Inclus » sans répéter ce que dit l'encadré de la fiche.
   const textsRef = db.doc("settings/showcase");

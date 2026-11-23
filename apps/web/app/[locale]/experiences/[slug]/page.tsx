@@ -26,7 +26,7 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
-import { memberAmountFor, onSiteText, PriceTag } from "@/components/price-tag";
+import { budgetText, memberAmountFor, PriceTag } from "@/components/price-tag";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
 import { getArchivedExperience, getCategory, getCity, getExperienceBySlug, getMembershipPlan, getPublicOrganizer, getPublishedExperiences, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
@@ -152,7 +152,13 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
       : { icon: MapPin, label: exp.venue.name || exp.district || cityName, value: [exp.venue.name ? exp.district : "", cityName].filter(Boolean).join(", ") },
     { icon: Users, label: groupText, value: composed ? t("composedByTeam") : t("bookAlone") },
     exp.categoryId === "eat"
-      ? { icon: Gem, label: exp.venueTier ? t2(`tier_${exp.venueTier}`) : t("tierAny"), value: exp.ambiance || t("tierLabel") }
+      ? {
+          icon: Gem,
+          label: exp.venueTier ? t2(`tier_${exp.venueTier}`) : t("tierAny"),
+          // Étape S : le budget sur place du restaurant vit ici, sous la gamme (plus d'encadré « Ce que vous payez »).
+          value: [budget ? t("tierBudget", { amount: budgetText(budget, lang) }) : "", exp.ambiance ?? ""].filter(Boolean).join(" · ") || t("tierLabel"),
+          link: { href: "/aide/gammes-des-tables", label: t("tierHelp") },
+        }
       : { icon: Gauge, label: t(`level_${exp.level || "all"}`), value: t("levelLabel") },
     { icon: Languages, label: meeting.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ") || "Français", value: t("languages") },
     meeting.audience === "women"
@@ -168,6 +174,12 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         meeting.crowd.topInterests.length ? tm("crowdInterests", { list: meeting.crowd.topInterests.map((i) => tInt(i)).join(", ") }) : "",
       ].filter(Boolean).join(" · ")
     : undefined;
+  const onSiteLine =
+    twoPart?.model === "fixed_partner" && twoPart.partner?.price
+      ? t("onSiteFixed", { amount: formatMoney(twoPart.partner.price, lang) })
+      : twoPart?.model === "variable_consumption"
+        ? t("onSiteConsumption")
+        : t("onSiteNothing");
   const includedText = exp.included.map((i) => i.fr.toLowerCase()).join(" | ");
 
   const jsonLd = {
@@ -306,18 +318,12 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
             <div className="relative rounded-[var(--radius-card)] bg-white p-5 shadow-float">
               <Bab name={babForCategory(exp.categoryId)} tilt={-6} className="pointer-events-none absolute -top-[54px] end-5 w-16" />
               <p className="flex flex-wrap items-baseline gap-2">
-                <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" pricing={twoPart} t2={t2} budget={budget} />
+                <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" pricing={null} t2={t2} budget={null} />
                 <span className="text-sm text-muted">{t("perPerson")}</span>
               </p>
               {exp.membersOnly && <p className="mt-2 rounded-xl bg-brand-900 px-3 py-2 text-sm font-medium text-white">{t("membersOnlyNote")}</p>}
-              {/* docs/22 : « Ce que vous payez », dit une seule fois : en ligne (prix Wenzy), puis sur place. */}
-              <div className="mt-3 rounded-xl bg-cream px-3 py-2.5 text-sm text-ink" data-testid="two-part">
-                <p className="font-semibold">{t2("sectionTitle")}</p>
-                <ul className="mt-1 space-y-0.5">
-                  <li>{t2("sectionOnline", { amount: formatMoney(exp.price, lang) })}</li>
-                  <li>{onSiteText(twoPart, budget, lang, t2) ?? t2("sectionNothing")}</li>
-                </ul>
-              </div>
+              {/* Étape S : une seule ligne sous le prix ; le budget d'un restaurant est dans la case « Gamme ». */}
+              <p className="mt-1 text-sm text-muted" data-testid="on-site-line">{onSiteLine}</p>
               {/* Étape 28 : l'abonnement n'est proposé ici que si l'expérience est réservée aux membres (sinon : après la 1re expérience). */}
               {plan && exp.membersOnly && (
                 <Link href="/abonnement" className="mt-2 inline-block text-sm font-semibold text-brand-900 underline underline-offset-4">

@@ -293,7 +293,12 @@
     "fromAge": "Dès {age} ans",
     "openToAll": "Ouvert à tous",
     "noReviewsYet": "Pas encore d'avis : les premiers arrivent après la première date.",
-    "tablesRange": "Tables de {min} à {max}"
+    "tablesRange": "Tables de {min} à {max}",
+    "tierBudget": "{amount} sur place",
+    "tierHelp": "Comprendre les gammes",
+    "onSiteFixed": "En ligne, puis {amount} sur place.",
+    "onSiteConsumption": "En ligne, puis votre consommation sur place.",
+    "onSiteNothing": "En ligne. Rien à régler sur place."
   },
   "booking": {
     "title": "Réserver ma place",

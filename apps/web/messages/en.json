@@ -293,7 +293,12 @@
     "fromAge": "From {age}",
     "openToAll": "Open to everyone",
     "noReviewsYet": "No reviews yet: the first ones come after the first date.",
-    "tablesRange": "Tables of {min} to {max}"
+    "tablesRange": "Tables of {min} to {max}",
+    "tierBudget": "{amount} on site",
+    "tierHelp": "About tiers",
+    "onSiteFixed": "Online, then {amount} on site.",
+    "onSiteConsumption": "Online, then what you order on site.",
+    "onSiteNothing": "Online. Nothing to pay on site."
   },
   "booking": {
     "title": "Book my spot",

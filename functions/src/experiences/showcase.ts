@@ -33,10 +33,10 @@ export type ShowcaseResult = {
 const hasPeople = (s: FirebaseFirestore.DocumentData) => (s.seatsConfirmed ?? 0) + (s.seatsHeld ?? 0) + (s.waitlistCount ?? 0) > 0;
 
 /** Étape 1 : chaque événement existant est supprimé (sans historique) ou archivé ; les dates à venir sont annulées et remboursées. */
-async function clearEvents(actor: { uid: string; role: string }, now: number, r: ShowcaseResult, only?: (e: FirebaseFirestore.DocumentData) => boolean) {
+async function clearEvents(actor: { uid: string; role: string }, now: number, r: ShowcaseResult, only?: (e: FirebaseFirestore.DocumentData, id: string) => boolean) {
   const experiences = await db.collection("experiences").get();
   for (const e of experiences.docs) {
-    if (only && !only(e.data())) continue;
+    if (only && !only(e.data(), e.id)) continue;
     const id = e.id;
     const sessions = await db.collection("sessions").where("experienceId", "==", id).get();
     for (const s of sessions.docs) {
@@ -138,6 +138,48 @@ export async function resetShowcaseCore(raw: unknown, actor: { uid: string; role
   await createFromTemplates(input, actor, now, r);
   await audit({ actorUid: actor.uid, actorRole: actor.role, action: "showcase.reset", targetType: "experience", targetId: "*", after: { ...r, created: r.created.length, skipped: r.skipped } });
   return r;
+}
+
+/**
+ * Site d'essai (étape S), une seule fois : la gamme sort des titres (« Dîner Premium » → « Dîner ») et les doublons
+ * créés par la Vitrine puis par le déploiement (même modèle, même gamme) sont retirés. On garde ceux qui ont des
+ * réservations ; sinon celui créé au déploiement (textes à jour). Les autres sont supprimés (ou archivés, dates annulées).
+ */
+export async function tidyTemplateEventsOnce(actor: { uid: string; role: string }, now = Date.now()): Promise<{ renamed: number; removed: number } | null> {
+  const flag = db.doc("settings/showcase");
+  if ((await flag.get()).get("tidyS")) return null;
+  const saved = (await db.collection("eventTemplates").get()).docs.map((d) => ({ ...(d.data() as Omit<EventTemplate, "id">), id: d.id }) as EventTemplate);
+  const templates = new Map(mergeTemplates(saved).map((t) => [t.id, t]));
+  const exps = (await db.collection("experiences").where("status", "in", ["published", "draft"]).get()).docs.filter((d) => d.get("templateId"));
+  let renamed = 0;
+  for (const d of exps) {
+    const t = templates.get(String(d.get("templateId")));
+    const title = String(d.get("title.fr") ?? "");
+    if (t && /\s(Casual|Premium|Exclusive)$/.test(title) && title.replace(/\s(Casual|Premium|Exclusive)$/, "") === t.values.titleFr) {
+      await d.ref.update({ "title.fr": t.values.titleFr });
+      renamed++;
+    }
+  }
+  const groups = new Map<string, FirebaseFirestore.QueryDocumentSnapshot[]>();
+  for (const d of exps) {
+    const k = `${d.get("templateId")}|${d.get("venueTier") || "-"}|${d.get("cityId")}`;
+    groups.set(k, [...(groups.get(k) ?? []), d]);
+  }
+  const remove = new Set<string>();
+  for (const list of groups.values()) {
+    if (list.length < 2) continue;
+    const withPeople = new Set<string>();
+    for (const d of list) {
+      const r = await db.collection("reservations").where("experienceId", "==", d.id).where("status", "in", ["confirmed", "pending_payment"]).limit(1).get();
+      if (!r.empty) withPeople.add(d.id);
+    }
+    const keep = withPeople.size ? withPeople : new Set([(list.find((d) => d.get("updatedBy") === "seed-content") ?? list[list.length - 1]).id]);
+    for (const d of list) if (!keep.has(d.id)) remove.add(d.id);
+  }
+  const r: ShowcaseResult = { cancelledSessions: 0, refunded: 0, deletedSessions: 0, archived: 0, deleted: 0, created: [], skipped: [] };
+  if (remove.size) await clearEvents(actor, now, r, (_e, id) => remove.has(id));
+  await flag.set({ tidyS: FieldValue.serverTimestamp() }, { merge: true });
+  return { renamed, removed: remove.size };
 }
 
 /**

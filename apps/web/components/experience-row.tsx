@@ -15,10 +15,9 @@ import { TIER_TEXT } from "./card-pills";
  * et un bouton « Réserver » (ou « Demander » / « Liste d'attente »). Toute la ligne ouvre la fiche.
  */
 export async function ExperienceRow({ experience, session, showDay = false, priority = false }: { experience: Experience; session?: Session; showDay?: boolean; priority?: boolean }) {
-  const [locale, t, tl, tr2, category, home, tp, subcategory] = await Promise.all([
+  const [locale, t, tr2, category, home, tp, subcategory] = await Promise.all([
     getLocale(),
     getTranslations("card"),
-    getTranslations("labels.languages"),
     getTranslations("catalogRow"),
     getCategory(experience.categoryId),
     getHomeSettings(),
@@ -35,7 +34,6 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
   const formatFull = subcategory ? tr(subcategory.shortName, locale) : category ? tr(category.shortName, locale) : "";
   const formatName = formatFull && tr(experience.title, locale).toLowerCase().startsWith(formatFull.toLowerCase()) ? "" : formatFull;
   const price = session?.price ?? experience.price;
-  const languages = experience.languages.slice(0, 2).map((l) => (tl.has(l) ? tl(l) : l)).join(", ");
   const action = !session ? tr2("alert") : full ? tr2("waitlist") : experience.admission === "on_request" ? tr2("request") : tr2("book");
   return (
     <article className="group relative flex items-center gap-4 py-4" data-testid="catalog-row">
@@ -78,7 +76,8 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
               </span>
             </>
           )}
-          {languages && `${formatName || experience.venueTier ? " · " : ""}${languages}`} · <span className="font-medium text-ink/75">{formatMoney(price, lang)}</span>
+          {/* Étape S : sur la ligne, format, gamme et prix ; les langues sont sur la fiche. */}
+          {formatName || experience.venueTier ? " · " : ""}<span className="font-medium text-ink/75">{formatMoney(price, lang)}</span>
           {budget && <span className="text-muted"> {tp("plusOnSite")}</span>}
         </p>
       </div>

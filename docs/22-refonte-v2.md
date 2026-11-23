@@ -693,3 +693,14 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 **Fiche** : retirées les phrases d'explication « Après votre réservation, un court questionnaire… » ; raccourcies « Activité physique » (« Signalez tout souci de santé. Conditions acceptées en réservant. »), « En plein air » (« Reportée ou remboursée si la météo ne le permet pas. ») et « Sur demande ». Format des Tables : « Tables de 4 à 6 » (la vraie fourchette).
 
 **Modèles** : refaits là où ils répétaient l'encadré. Descriptions sans « table de quatre à six personnes composée pour vous » (Café, Brunch, Déjeuner, Dîner, Running, Padel, Escape game, Soirée jeux, Quiz, Échange de langues) ; « Inclus » limité au concret (« La réservation du restaurant », « Le terrain réservé », « La salle réservée », « L'animation du quiz »…) sans « Votre place à une table composée pour vous » ni « Des équipes composées pour vous ». Yoga, Afterwork, Céramique, Visite guidée : inchangés. Sur le site d'essai, les événements créés depuis les modèles (et non modifiés) reprennent ces textes une fois au déploiement. Un modèle déjà modifié dans l'appli (Paramètres → Modèles) garde sa version.
+
+### Étape S livrée (23 novembre) — gamme hors du titre, budget sous la gamme, doublons retirés
+| Point | Ce qui change |
+|---|---|
+| **Titres** | La gamme n'est plus dans le titre (« Dîner », pas « Dîner Premium ») ; elle reste sur la ligne sous le titre (texte coloré). La ligne affiche format, gamme et prix (les langues sont sur la fiche). |
+| **« Ce que vous payez »** | Encadré retiré. Sous le prix, une seule ligne : « En ligne. Rien à régler sur place. », « En ligne, puis 120 DH sur place. » ou « En ligne, puis votre consommation sur place. » |
+| **Budget du restaurant** | Dans la case Gamme de l'encadré : « Premium » puis « 250–400 DH sur place · Chic et décontractée ». |
+| **Expliquer les gammes** | Lien « Comprendre les gammes » sous la gamme, vers l'article d'aide « Les gammes des Tables » (Casual, Premium, Exclusive et budget). |
+| **Doublons (site d'essai)** | Une fois, au déploiement : titres des événements des modèles sans la gamme, et doublons retirés (même modèle et même gamme, créés par la Vitrine puis par le déploiement). On garde celui qui a des réservations ; sinon celui du déploiement (textes à jour). |
+
+**Fiche reproductible** : la structure ne dépend pas des modèles. Elle est fixée par le site pour tous les événements, ceux des modèles comme ceux créés à la main : 6 cases dans le même ordre, puis L'expérience et Inclus, Bon à savoir, Avis. Les modèles ne fournissent que le contenu (textes, format, gamme, budget) ; ils ont été allégés à l'étape R pour ne rien répéter de l'encadré.

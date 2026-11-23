@@ -293,7 +293,12 @@
     "fromAge": "ابتداءً من {age} سنة",
     "openToAll": "مفتوح للجميع",
     "noReviewsYet": "لا توجد تقييمات بعد: تصل الأولى بعد أول موعد.",
-    "tablesRange": "موائد من {min} إلى {max}"
+    "tablesRange": "موائد من {min} إلى {max}",
+    "tierBudget": "{amount} في المكان",
+    "tierHelp": "فهم الفئات",
+    "onSiteFixed": "عبر الإنترنت، ثم {amount} في المكان.",
+    "onSiteConsumption": "عبر الإنترنت، ثم ما تستهلكه في المكان.",
+    "onSiteNothing": "عبر الإنترنت. لا شيء للدفع في المكان."
   },
   "booking": {
     "title": "احجز مكاني",
