@@ -49,7 +49,7 @@ export function PreferencesFields({ value, onChange, disabled, consentError, idP
           {SPOKEN_LANGUAGES.map((l) => {
             const on = value.languages.includes(l);
             return (
-              <label key={l} className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transition ${on ? "border-brand-900 bg-brand-900 text-white" : "border-line bg-white text-ink"}`}>
+              <label key={l} className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transition ${on ? "border-brand-700 bg-brand-700 text-white" : "border-line bg-white text-ink"}`}>
                 <input
                   type="checkbox"
                   className="sr-only"

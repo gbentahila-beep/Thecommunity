@@ -321,7 +321,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" pricing={null} t2={t2} budget={null} />
                 <span className="text-sm text-muted">{t("perPerson")}</span>
               </p>
-              {exp.membersOnly && <p className="mt-2 rounded-xl bg-brand-900 px-3 py-2 text-sm font-medium text-white">{t("membersOnlyNote")}</p>}
+              {exp.membersOnly && <p className="mt-2 rounded-xl bg-brand-50 px-3 py-2 text-sm font-medium text-brand-700">{t("membersOnlyNote")}</p>}
               {/* Étape S : une seule ligne sous le prix ; le budget d'un restaurant est dans la case « Gamme ». */}
               <p className="mt-1 text-sm text-muted" data-testid="on-site-line">{onSiteLine}</p>
               {/* Étape 28 : l'abonnement n'est proposé ici que si l'expérience est réservée aux membres (sinon : après la 1re expérience). */}

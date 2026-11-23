@@ -250,7 +250,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                       href={filters.date ? `${prefix}${hrefOf(state, { filters: { date: d.key } })}` : `#jour-${d.key}`}
                       aria-current={filters.date === d.key ? "date" : undefined}
                       aria-label={`${formatLongDate(`${d.key}T12:00:00Z`, locale)} : ${t("results", { count: d.count })}`}
-                      className={`${base} ${filters.date === d.key ? "bg-brand-900 text-white" : "text-ink hover:bg-white"}`}
+                      className={`${base} ${filters.date === d.key ? "bg-brand-700 text-white" : "text-ink hover:bg-white"}`}
                     >
                       {inner}
                     </a>

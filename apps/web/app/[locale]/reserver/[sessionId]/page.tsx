@@ -310,10 +310,10 @@ function isAfterNow(d: Date) {
 
 function MembersOnlyNotice({ title, text, cta }: { title: string; text: string; cta: string }) {
   return (
-    <section className="mt-6 rounded-[var(--radius-card)] bg-brand-900 p-5 text-white">
+    <section className="mt-6 rounded-[var(--radius-card)] bg-brand-50 p-5 text-ink">
       <h2 className="font-semibold">{title}</h2>
-      <p className="mt-1 text-sm text-brand-50">{text}</p>
-      <Link href="/abonnement" className="mt-4 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-brand-900">{cta}</Link>
+      <p className="mt-1 text-sm text-ink/80">{text}</p>
+      <Link href="/abonnement" className="btn btn-primary mt-4 inline-flex">{cta}</Link>
     </section>
   );
 }
