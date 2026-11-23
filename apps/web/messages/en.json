@@ -112,14 +112,6 @@
         "factValue": "Matched to yours",
         "cta": "See sport & wellbeing"
       },
-      "play": {
-        "tagline": "Team up with strangers",
-        "text": "Escape game, quiz, paintball or board games: playing breaks the ice in minutes. We build balanced teams so everyone has a good time.",
-        "group": "In teams",
-        "factLabel": "Teams",
-        "factValue": "Balanced by us",
-        "cta": "See games"
-      },
       "create": {
         "tagline": "Learn and create, together",
         "text": "Pottery, guided tours, workshops and culture: your hands or your mind are busy and the conversation flows on its own.",
@@ -135,22 +127,6 @@
         "factLabel": "Format",
         "factValue": "Solo or as two",
         "cta": "See outings"
-      },
-      "meet": {
-        "tagline": "Meet-ups to talk and settle in",
-        "text": "Language exchanges, book clubs, newcomer get-togethers: formats built for conversation, perfect when you've just moved to Casablanca.",
-        "group": "Open to everyone",
-        "factLabel": "For",
-        "factValue": "Newcomers welcome",
-        "cta": "See meet-ups"
-      },
-      "learn": {
-        "tagline": "Learn something new, together",
-        "text": "An Art Deco tour, a specialty coffee class, a talk: you learn with a guide or an expert, and share the discovery with other curious people.",
-        "group": "Small groups",
-        "factLabel": "With",
-        "factValue": "A guide or an expert",
-        "cta": "See culture"
       }
     },
     "thisWeekAt": "This week in",
@@ -300,7 +276,8 @@
     "tier_premium": "Premium · quality experience",
     "tier_exclusive": "Exclusive · high end",
     "cuisineLabel": "Cuisine",
-    "ambianceLabel": "Atmosphere"
+    "ambianceLabel": "Atmosphere",
+    "goodToKnow": "Good to know"
   },
   "booking": {
     "title": "Book my spot",
@@ -2054,15 +2031,6 @@
       "safety": "Safety",
       "other": "Other"
     }
-  },
-  "agenda": {
-    "title": "What's on",
-    "week0": "This week",
-    "week1": "Next week",
-    "week2": "In 2 weeks",
-    "full": "Full",
-    "free": "Free",
-    "seeAll": "See all dates"
   },
   "emptyStates": {
     "upcomingTitle": "Your calendar is nice and quiet",

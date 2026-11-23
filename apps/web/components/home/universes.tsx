@@ -13,19 +13,18 @@ import { DEFAULT_CATEGORY_COLOR, DEFAULT_CITY } from "@/lib/site";
 export const PHOTOS: Record<string, string> = {
   eat: "/images/photos/univers-diners.webp",
   move: "/images/photos/univers-sport-bien-etre.webp",
-  play: "/images/photos/univers-jeux-vinyles.webp",
   create: "/images/photos/univers-ateliers.webp",
   discover: "/images/photos/univers-sorties-soiree.webp",
 };
 
-/** Couleurs des cinq univers historiques (identité : docs/18) ; les autres prennent la couleur choisie dans le back-office. */
-const COLORS: Record<string, string> = { eat: "#b5563a", move: "#5f7f5e", play: "#b07a1f", create: "#a8616c", discover: "#2f3e5c" };
+/** Couleurs des 4 univers (identité : docs/18) ; une catégorie créée plus tard prend la couleur choisie dans le back-office. */
+const COLORS: Record<string, string> = { eat: "#b5563a", move: "#5f7f5e", create: "#a8616c", discover: "#2f3e5c" };
 
 /** Cadrage quand le sujet n'est pas au centre (visages en haut de la photo). */
 const POSITION: Record<string, string> = { discover: "object-[50%_12%]" };
 
 /** Textes enrichis connus (messages home.universe.<id>) ; une catégorie créée plus tard garde sa description du back-office. */
-export const RICH = ["eat", "move", "play", "create", "discover", "meet", "learn"] as const;
+export const RICH = ["eat", "move", "create", "discover"] as const;
 
 /** Taille de groupe réelle d'un univers, à partir de ses expériences publiées (tables, équipes). */
 function groupRange(c: Category, experiences: Experience[]): { min: number; max: number } | null {

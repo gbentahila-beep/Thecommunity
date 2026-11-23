@@ -90,7 +90,6 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await d.keyboard.press('Escape');
   assert(!(await dialog.isVisible()), 'galerie : Échap ferme');
   await d.goto(base + '/experiences/balade-street-art-centre-ville', { waitUntil: 'load' });
-  assert(await d.getByTestId('not-included').getByText("Transport jusqu'au point de rendez-vous").isVisible(), 'fiche : « Non inclus »');
   const map = d.getByTestId('venue-map');
   assert(!(await map.locator('iframe').count()), 'carte : rien de chargé avant le clic');
   assert((await map.getByRole('link', { name: 'Itinéraire (Google Maps)' }).getAttribute('href')).includes('destination=33.5967,-7.6189'), 'carte : lien d\'itinéraire');
@@ -99,6 +98,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await d.goto(base + '/experiences/diner-entre-inconnus-casablanca', { waitUntil: 'load' });
   assert(!(await d.getByTestId('venue-map').count()), 'carte : jamais pour un lieu révélé plus tard');
   await d.goto(base + '/experiences/padel-entre-inconnus-anfa', { waitUntil: 'load' });
+  assert(await d.getByRole('heading', { name: 'Bon à savoir' }).isVisible() && await d.getByRole('heading', { name: 'Éditions passées' }).count() === 0, 'fiche simplifiée : « Bon à savoir », plus d\'éditions passées');
   const org = d.getByTestId('organizer-block');
   assert(await org.getByText('Club Padel Anfa').isVisible(), 'fiche : « Organisé par Club Padel Anfa »');
   await org.getByRole('link', { name: "Voir la page de l'organisateur" }).click();

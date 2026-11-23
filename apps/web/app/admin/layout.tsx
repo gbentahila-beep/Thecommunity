@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AdminLogout } from "@/components/admin/admin-logout";
-import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminNav, AdminTabs } from "@/components/admin/admin-nav";
 import { MobileAdminMenu } from "@/components/admin/mobile-admin-menu";
 import { requireAdmin } from "@/lib/auth/admin";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
@@ -57,7 +57,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             <AdminNav />
             <Link href="/" className="mt-auto px-3 text-sm text-muted hover:text-brand-900">← Voir le site public</Link>
           </aside>
-          <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">{children}</main>
+          <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+            <AdminTabs />
+            {children}
+          </main>
         </div>
       </body>
     </html>

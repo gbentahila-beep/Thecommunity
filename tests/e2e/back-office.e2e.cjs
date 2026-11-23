@@ -202,11 +202,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.getByLabel(/^Lieu partenaire/).selectOption('p-padel-anfa');
   assert(await page.getByTestId('insurance-warning').count() === 0, 'lieu assuré : pas d\'alerte');
   await go('/admin/propositions');
-  assert(await page.getByTestId('proposal').count() === 2, 'sorties proposées : 2 propositions d\'exemple');
-  await page.getByRole('link', { name: 'Créer l\'expérience à partir de la proposition' }).first().click();
-  await page.waitForURL('**/admin/experiences/nouvelle?proposition=*');
-  assert(await page.getByTestId('from-proposal').isVisible(), 'création pré-remplie : bandeau de la proposition');
-  assert(await page.getByLabel('Titre (français)').inputValue() === 'Padel du samedi matin', 'création pré-remplie : titre repris');
+  assert(new URL(page.url()).pathname === '/admin/experiences', 'propositions retirées : renvoi vers les événements');
   await go('/admin/partenaires');
   assert(await page.getByText('Assurance (activités physiques)').first().isVisible(), 'partenaires : état de l\'assurance affiché');
   await go('/admin/partenaires/p-padel-anfa');
@@ -237,6 +233,13 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.getByRole('button', { name: 'Refuser' }).click();
   await page.getByRole('button', { name: 'Confirmer le refus' }).click();
   assert(await page.getByRole('status').filter({ hasText: 'Expliquez le refus' }).isVisible(), 'refus : motif exigé');
+  // Étape N : menu réduit (13 entrées en rubriques) et onglets des pages réunies
+  await page.goto(`${base}/admin/remboursements`);
+  assert(await page.locator('aside nav[aria-label="Back-office"] a').count() === 13, 'menu : 13 entrées');
+  assert(await page.locator('aside nav[aria-label="Back-office"]').getByRole('link', { name: 'Paiements' }).getAttribute('aria-current') === 'page', 'menu : Paiements actif sur Remboursements');
+  assert(await page.getByRole('navigation', { name: 'Paiements' }).getByRole('link', { name: 'Codes promo' }).isVisible(), 'onglets Paiements : codes promo');
+  await page.goto(`${base}/`);
+  assert(await page.getByRole('heading', { name: "L'agenda" }).count() === 0, 'accueil : plus d\'agenda');
   await page.goto(`${base}/admin/vitrine`);
   assert(await page.getByTestId('showcase-tables').getByRole('checkbox').count() >= 12, 'vitrine : Tables par modèle et gamme');
   assert(await page.getByTestId('showcase-tables').getByRole('checkbox', { name: /Dîner · Premium/ }).isChecked(), 'vitrine : Dîner Premium présélectionné (lieu compatible)');

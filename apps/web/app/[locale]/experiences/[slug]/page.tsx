@@ -10,7 +10,7 @@ import {
   type Experience,
   restaurantBudget,
 } from "@thecommunity/shared";
-import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, Handshake, Gift, Gem, UtensilsCrossed, Sparkles } from "lucide-react";
+import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Leaf, MapPin, Shirt, UserCheck, Users, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
@@ -28,7 +28,7 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
 import { memberAmountFor, onSiteText, PriceTag } from "@/components/price-tag";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
-import { getArchivedExperience, getCategory, getCity, getExperienceBySlug, getMembershipPlan, getPastSessions, getPublicOrganizer, getPublishedExperiences, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
+import { getArchivedExperience, getCategory, getCity, getExperienceBySlug, getMembershipPlan, getPublicOrganizer, getPublishedExperiences, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { richText } from "@/lib/rich-text";
@@ -103,7 +103,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     if (!retired) notFound();
     return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} cityId={retired.cityId} />;
   }
-  const [t, tCard, t2, category, subcategory, sessions, reviews, past, plan, policies, organizer, tm, tInt, city] = await Promise.all([
+  const [t, tCard, t2, category, subcategory, sessions, reviews, plan, policies, organizer, tm, tInt, city] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),
     getTranslations("twoPart"),
@@ -111,7 +111,6 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     exp.subcategoryId ? getCategory(exp.subcategoryId) : Promise.resolve(null),
     getUpcomingSessions({ experienceId: exp.id }),
     getReviews(exp.id),
-    getPastSessions(exp.id),
     getMembershipPlan(),
     getCancellationPolicies(),
     getPublicOrganizer(exp.organizerId),
@@ -191,6 +190,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               <span className="inline-block rounded-full bg-badge px-3 py-1 text-xs font-medium text-brand-900">
                 {category ? tr(category.shortName, locale) : ""}
                 {subcategory ? ` · ${tr(subcategory.shortName, locale)}` : ""}
+                {exp.venueTier ? ` · ${t2(`tier_${exp.venueTier}`)}` : ""}
               </span>
               <h1 className="page-title mt-3">{tr(exp.title, locale)}</h1>
               <p className="mt-3 text-lg text-ink/80">{tr(exp.summary, locale)}</p>
@@ -203,25 +203,22 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               )}
             </header>
 
+            {/* L'essentiel en un coup d'œil (simplifié) : quand, où, en quel format, combien de temps, niveau. */}
             <ul className="grid gap-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card sm:grid-cols-2">
               {next && (
                 <Fact icon={CalendarDays} label={formatLongDate(next.startAt, locale)} value={formatTimeRange(next.startAt, next.endAt, locale)} />
               )}
-              {exp.district ? <Fact icon={MapPin} label={exp.district} value={cityName} /> : <Fact icon={MapPin} label={cityName} value="" />}
-              <Fact icon={Users} label={t("groupSize")} value={formatLabel(exp, t, next?.capacity ?? 0)} />
-              <Fact icon={Clock} label={t("duration")} value={duration} />
-              <Fact icon={Languages} label={t("languages")} value={exp.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ")} />
-              {surprise && <Fact icon={Gift} label={t("surpriseVenue")} value={t("surpriseVenueValue")} />}
-              {exp.venueTier && <Fact icon={Gem} label={t("tierLabel")} value={t2(`tier_${exp.venueTier}`)} />}
-              {/* docs/22, décision 14 : lieu secret → la cuisine n'apparaît qu'avec le lieu, à la révélation. */}
-              {exp.cuisine && !surprise && <Fact icon={UtensilsCrossed} label={t("cuisineLabel")} value={exp.cuisine} />}
-              {exp.ambiance && <Fact icon={Sparkles} label={t("ambianceLabel")} value={exp.ambiance} />}
-              {exp.alcoholServed === false && <Fact icon={Leaf} label={t("alcoholFree")} value="" />}
-              {(exp.bookingMode === "social_dinner" || exp.bookingMode === "group" || exp.onSiteHost) && (
-                <Fact icon={Handshake} label={exp.onSiteHost ? t("onSiteHost") : t("selfArrival")} value="" />
+              {surprise ? (
+                <Fact icon={MapPin} label={cityName} value={t("surpriseVenueValue")} />
+              ) : exp.district ? (
+                <Fact icon={MapPin} label={exp.district} value={cityName} />
+              ) : (
+                <Fact icon={MapPin} label={cityName} value="" />
               )}
+              <Fact icon={Users} label={t("groupSize")} value={formatLabel(exp, t, next?.capacity ?? 0)} />
+              {/* Tables : sans limite de temps, donc pas de durée affichée. */}
+              {exp.bookingMode !== "social_dinner" && <Fact icon={Clock} label={t("duration")} value={duration} />}
               {exp.level && <Fact icon={Gauge} label={t("levelLabel")} value={t(`level_${exp.level}`)} />}
-              {exp.minAge != null && exp.minAge > 18 && <Fact icon={UserCheck} label={t("minAgeLabel")} value={t("minAgeValue", { age: exp.minAge })} />}
             </ul>
             <MeetingSection
               meeting={meeting}
@@ -239,49 +236,49 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 newPeople: meeting.composedGroups ? tm("newPeople") : "",
               }}
             />
-            {exp.proposedBy?.firstName && (
-              <p className="-mt-6 text-sm text-muted" data-testid="proposed-by">{t("proposedBy", { name: exp.proposedBy.firstName })}</p>
-            )}
 
             <Section title={t("about")}>
               <p className="leading-relaxed text-ink/85">{tr(exp.description, locale)}</p>
+              {exp.included.length > 0 && (
+                <>
+                  <h3 className="mt-5 text-sm font-semibold uppercase tracking-wide text-muted">{t("included")}</h3>
+                  <ul className="mt-2 grid gap-2 sm:grid-cols-2">
+                    {exp.included.map((item) => (
+                      <li key={item.fr} className="flex items-start gap-2.5 text-ink/85">
+                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-brand-700" aria-hidden />
+                        {tr(item, locale)}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </Section>
 
-            <Section title={t("included")}>
-              <ul className="grid gap-2 sm:grid-cols-2">
-                {exp.included.map((item) => (
-                  <li key={item.fr} className="flex items-start gap-2.5 text-ink/85">
-                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-brand-700" aria-hidden />
-                    {tr(item, locale)}
-                  </li>
-                ))}
-              </ul>
-            </Section>
-
-            {(exp.notIncluded?.length ?? 0) > 0 && (
-              <Section title={t("notIncluded")}>
-                <ul className="grid gap-2 sm:grid-cols-2" data-testid="not-included">
-                  {exp.notIncluded!.map((item) => (
-                    <li key={item.fr} className="flex items-start gap-2.5 text-ink/85">
-                      <span className="mt-2 size-1.5 shrink-0 rounded-full border border-brand-700" aria-hidden />
-                      {tr(item, locale)}
-                    </li>
-                  ))}
-                </ul>
+            {/* Lieu secret (Tables) : rien à montrer avant la révélation, c'est dit dans l'essentiel. */}
+            {surprise ? (
+              <p className="-mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm font-medium text-brand-900" data-testid="venue-secret">{t("venueRevealed", { hours: VENUE_REVEAL_HOURS })}</p>
+            ) : (
+              <Section title={t("venue")}>
+                <p className="font-medium text-ink">{exp.venue.name}</p>
+                <p className="text-muted">{exp.venue.address}</p>
+                {exp.venue.geo && <VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} />}
               </Section>
             )}
 
-            <Section title={t("venue")}>
-              {/* Lieu secret : ni nom, ni adresse, ni carte avant la révélation (docs/22). */}
-              {surprise ? (
-                <p className="rounded-xl bg-brand-50 px-4 py-3 text-sm font-medium text-brand-900" data-testid="venue-secret">{t("venueRevealed", { hours: VENUE_REVEAL_HOURS })}</p>
-              ) : (
-                <>
-                  <p className="font-medium text-ink">{exp.venue.name}</p>
-                  <p className="text-muted">{exp.venue.address}</p>
-                  {exp.venue.geo && <VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} />}
-                </>
-              )}
+            {/* Tout le reste en une seule liste : à apporter, tenue, plein air, âge, alcool, infos pratiques, annulation. */}
+            <Section title={t("goodToKnow")}>
+              <ul className="space-y-3" data-testid="activity-details">
+                {exp.equipmentProvided && <Detail icon={Backpack} label={t("equipmentProvided")} text={exp.equipmentProvided} />}
+                {exp.whatToBring && <Detail icon={Backpack} label={t("whatToBring")} text={exp.whatToBring} />}
+                {exp.dressCode && <Detail icon={Shirt} label={t("dressCode")} text={exp.dressCode} />}
+                {exp.outdoor && <Detail icon={CloudSun} label={t("outdoorTitle")} text={t("outdoorText")} />}
+                {exp.physicalActivity && <Detail icon={HeartPulse} label={t("physicalTitle")} text={richText(t.raw("physicalText") as string, "")} />}
+                {exp.minAge != null && exp.minAge > 18 && <Detail icon={UserCheck} label={t("minAgeLabel")} text={t("minAgeValue", { age: exp.minAge })} />}
+                {exp.alcoholServed === false && <Detail icon={Leaf} label={t("alcoholFree")} text="" />}
+                {tr(exp.practicalInfo, locale) && <Detail icon={Sparkles} label={t("practical")} text={tr(exp.practicalInfo, locale)} />}
+                <Detail icon={CalendarDays} label={t("cancellation")} text={`${tr(policy.label, locale)}.`} />
+              </ul>
+              {(exp.questionnaire?.length ?? 0) > 0 && <p className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-900">{t("questionnaireNote", { count: exp.questionnaire!.length })}</p>}
             </Section>
 
             {organizer && (
@@ -303,36 +300,6 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               </Section>
             )}
 
-            {(exp.equipmentProvided || exp.whatToBring || exp.dressCode || exp.outdoor || exp.physicalActivity || (exp.questionnaire?.length ?? 0) > 0) && (
-              <Section title={t("activityTitle")}>
-                <ul className="space-y-3" data-testid="activity-details">
-                  {exp.equipmentProvided && <Detail icon={Backpack} label={t("equipmentProvided")} text={exp.equipmentProvided} />}
-                  {exp.whatToBring && <Detail icon={Backpack} label={t("whatToBring")} text={exp.whatToBring} />}
-                  {exp.dressCode && <Detail icon={Shirt} label={t("dressCode")} text={exp.dressCode} />}
-                  {exp.outdoor && <Detail icon={CloudSun} label={t("outdoorTitle")} text={t("outdoorText")} />}
-                  {exp.physicalActivity && <Detail icon={HeartPulse} label={t("physicalTitle")} text={richText(t.raw("physicalText") as string, "")} />}
-                </ul>
-                {(exp.questionnaire?.length ?? 0) > 0 && <p className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-900">{t("questionnaireNote", { count: exp.questionnaire!.length })}</p>}
-              </Section>
-            )}
-
-            {tr(exp.practicalInfo, locale) && (
-              <Section title={t("practical")}>
-                <p className="text-ink/85">{tr(exp.practicalInfo, locale)}</p>
-              </Section>
-            )}
-
-            <Section title={t("cancellation")}>
-              <p className="text-ink/85">{tr(policy.label, locale)}.</p>
-            </Section>
-
-            {past.length > 0 && (
-              <Section title={t("pastEditions")}>
-                <p className="text-ink/85">
-                  {t("pastEditionsText", { count: past.length, last: formatLongDate(past[0]!.startAt, locale) })}
-                </p>
-              </Section>
-            )}
             {reviews.length > 0 && (
               <Section title={t("reviews")}>
                 <ul className="space-y-4" id="avis">

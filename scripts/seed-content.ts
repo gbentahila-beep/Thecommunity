@@ -48,6 +48,30 @@ async function upsertUntouched(path: string, data: Record<string, unknown>): Pro
   return "updated";
 }
 
+/**
+ * docs/22, décision 36 : 4 univers seulement. Les anciens (Jeux, Rencontres et vie sociale, Culture et apprentissage)
+ * sont désactivés, avec leurs sous-catégories ; leurs événements et leurs dates passent dans l'univers qui les réunit
+ * (Jeux et Vie sociale → Sortir, Culture → Découvrir). Sans effet une fois fait.
+ */
+const UNIVERSE_OF_OLD: Record<string, string> = { play: "discover", meet: "discover", learn: "create" };
+async function retireOldUniverses() {
+  const keep = new Set(DEMO_CATEGORIES.map((c) => c.id));
+  const all = await db.collection("categories").get();
+  const old = all.docs.filter((d) => !keep.has(d.id) && (UNIVERSE_OF_OLD[d.id] || UNIVERSE_OF_OLD[String(d.get("parentId") ?? "")]) && d.get("isActive") !== false);
+  for (const d of old) await d.ref.update({ isActive: false, isComingSoon: false, retiredAt: Timestamp.now() });
+  let moved = 0;
+  for (const [from, to] of Object.entries(UNIVERSE_OF_OLD)) {
+    for (const col of ["experiences", "sessions"]) {
+      const snap = await db.collection(col).where("categoryId", "==", from).get();
+      for (const d of snap.docs) {
+        await d.ref.update({ categoryId: to, ...(col === "experiences" ? { subcategoryId: null } : {}) });
+        moved++;
+      }
+    }
+  }
+  if (old.length || moved) console.log(`✅ Anciens univers retirés : ${old.length} catégorie(s) désactivée(s), ${moved} événement(s) ou date(s) déplacé(s).`);
+}
+
 async function main() {
   // Réglages : créés s'ils manquent, jamais réécrits (frais de service, annulation… restent ceux de l'équipe).
   const created = (p: Promise<unknown>) => p.then(() => true, () => false);
@@ -58,6 +82,7 @@ async function main() {
   for (const c of DEMO_CITIES) counts[await upsertUntouched(`cities/${c.id}`, { ...c, isDemo: false })]++;
   for (const c of DEMO_CATEGORIES) counts[await upsertUntouched(`categories/${c.id}`, { ...c })]++;
   console.log(`✅ Référentiels : ${counts.created} créés, ${counts.updated} mis à jour, ${counts.kept} modifiés par l'équipe (inchangés).`);
+  await retireOldUniverses();
 
   // Formule d'abonnement proposée, NON active : l'équipe règle le prix et l'active dans le back-office.
   const plan = await db.doc("membershipPlans/annual").create({
