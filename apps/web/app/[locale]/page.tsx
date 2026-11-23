@@ -11,7 +11,6 @@ import { ReviewsShowcase } from "@/components/home/reviews-showcase";
 import { Universes } from "@/components/home/universes";
 import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { Bab } from "@/components/brand/bab";
 import { BabLineup } from "@/components/brand/bab-lineup";
 import { experienceBadge, NEW_EXPERIENCE_DAYS, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
 import { getCategories, getCities, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences, getReviews } from "@/lib/data";
@@ -109,27 +108,17 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           />
         </PageShell>
       ),
-    cities: (
-      <PageShell key="cities" className="pb-8">
-        <div id="villes" className="scroll-mt-24 overflow-hidden rounded-3xl bg-white px-6 py-12 text-center text-ink shadow-card sm:px-12">
-          <h2 className="font-display text-3xl sm:text-4xl">
-            {t("citiesTitle")}
-            <Bab name="scout" mood="big" className="ms-2 inline-block w-12 align-[-8px]" />
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-muted">{t("citiesText")}</p>
-          <ul className="mt-8 flex flex-wrap justify-center gap-2.5">
-            {cities.map((c) => (
-              <li
-                key={c.id}
-                className={`rounded-full px-4 py-2 text-sm ${c.isActive ? "bg-gradient-brand font-semibold text-ink" : "border border-line text-muted"}`}
-              >
-                {tr(c.name, locale)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </PageShell>
-    ),
+    // Étape V : une ligne discrète au lieu d'un grand bloc.
+    cities: (() => {
+      const soon = cities.filter((c) => !c.isActive).map((c) => tr(c.name, locale));
+      if (!soon.length) return null;
+      const list = new Intl.ListFormat(locale, { style: "long", type: "conjunction" }).format(soon);
+      return (
+        <PageShell key="cities" className="pb-4">
+          <p id="villes" className="scroll-mt-24 text-center text-sm text-muted" data-testid="cities-line">{t("citiesLine", { list })}</p>
+        </PageShell>
+      );
+    })(),
     faq: (
       <PageShell key="faq">
         <HomeFaq />

@@ -85,7 +85,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await eat.getByRole('link').getAttribute('href') === '/casablanca/eat', 'tuile Tables : ouvre l\'univers');
   assert(await d.getByRole('heading', { level: 2, name: 'Pourquoi venir' }).isVisible(), 'section « Pourquoi venir »');
   assert(await d.getByRole('heading', { name: 'Questions fréquentes' }).isVisible(), 'FAQ sur l\'accueil');
-  assert(await d.getByRole('link', { name: /Consulter le centre d'aide/ }).getAttribute('href') === '/aide', 'renvoi vers le centre d\'aide');
+  assert(await d.getByRole('link', { name: /Toutes les questions/ }).getAttribute('href') === '/aide', 'V : « Toutes les questions » vers le centre d\'aide');
 
   // Blog
   await header.getByRole('button', { name: 'Plus' }).first().click();

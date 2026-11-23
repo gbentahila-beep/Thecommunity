@@ -38,16 +38,18 @@ export type HomeSettings = {
 export const DEFAULT_HOME_SETTINGS: HomeSettings = {
   banner: null,
   sections: [
+    // Étape V : Cette semaine (et la ligne des villes), Univers, Comment ça marche, Avis, Questions fréquentes
+    // (suivies de « Travaillons ensemble » et de la phrase de fin).
     { id: "trust", enabled: true },
     { id: "featured", enabled: true },
     { id: "thisWeek", enabled: true },
+    { id: "cities", enabled: true },
     { id: "weekend", enabled: false },
     { id: "new", enabled: false },
     { id: "popular", enabled: false },
-    { id: "how", enabled: true },
     { id: "universes", enabled: true },
+    { id: "how", enabled: true },
     { id: "reviews", enabled: true },
-    { id: "cities", enabled: true },
     { id: "faq", enabled: true },
   ],
   featuredExperienceIds: [],

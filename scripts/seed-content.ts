@@ -83,6 +83,18 @@ async function main() {
   for (const c of DEMO_CATEGORIES) counts[await upsertUntouched(`categories/${c.id}`, { ...c })]++;
   console.log(`✅ Référentiels : ${counts.created} créés, ${counts.updated} mis à jour, ${counts.kept} modifiés par l'équipe (inchangés).`);
   await retireOldUniverses();
+  // Étape V : une fois, l'ordre des sections de l'accueil suit le nouvel ordre (sections cochées gardées telles quelles).
+  const homeRef = db.doc("settings/home");
+  const homeSnap = await homeRef.get();
+  const flagV = db.doc("settings/showcase");
+  if (homeSnap.exists && !(await flagV.get()).get("homeOrderV")) {
+    const { DEFAULT_HOME_SETTINGS } = await import("@thecommunity/shared");
+    const current = new Map(((homeSnap.get("sections") ?? []) as { id: string; enabled: boolean }[]).map((x) => [x.id, x.enabled]));
+    const sections = DEFAULT_HOME_SETTINGS.sections.map((x) => ({ id: x.id, enabled: current.has(x.id) ? Boolean(current.get(x.id)) : x.enabled }));
+    await homeRef.update({ sections });
+    await flagV.set({ homeOrderV: Timestamp.now() }, { merge: true });
+    console.log("✅ Accueil : sections remises dans le nouvel ordre.");
+  }
   // Étape R : une fois, les 4 univers et leurs formats reprennent les noms, textes et ordre de la refonte, même s'ils
   // avaient été modifiés dans le back-office (les anciens noms restaient affichés). La photo choisie est gardée.
   const resetRef = db.doc("settings/showcase");

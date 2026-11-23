@@ -155,7 +155,9 @@
       "Rencontrer sa future bande",
       "Trouver des copains de rando",
       "Ne plus jamais sortir seul·e"
-    ]
+    ],
+    "allQuestions": "Toutes les questions",
+    "citiesLine": "Bientôt à {list}."
   },
   "card": {
     "people": "{count} pers.",

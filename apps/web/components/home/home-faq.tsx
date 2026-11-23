@@ -1,9 +1,10 @@
 import { ChevronDown, LifeBuoy } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { PrimaryLink } from "@/components/ui";
+import { Link } from "@/i18n/navigation";
 import { Bab } from "@/components/brand/bab";
 
-const KEYS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+/** Étape V : les 5 questions les plus utiles ; les autres sont dans la FAQ et le centre d'aide. */
+const KEYS = [1, 2, 3, 6, 4] as const;
 
 /** FAQ de l'accueil (les mêmes 10 questions que la page FAQ), puis renvoi vers le centre d'aide. */
 export async function HomeFaq() {
@@ -25,11 +26,11 @@ export async function HomeFaq() {
           </details>
         ))}
       </div>
-      <div className="info-box mt-10 flex flex-col items-center gap-3">
-        <LifeBuoy className="size-7 text-brand-900" aria-hidden />
-        <h3 className="font-display text-[1.45rem] leading-tight font-medium text-brand-900">{t("moreQuestions")}</h3>
-        <p className="text-ink/75">{t("moreQuestionsText")}</p>
-        <PrimaryLink href="/aide" className="mt-2">{t("helpCta")}</PrimaryLink>
+      <div className="mt-6 flex justify-center">
+        <Link href="/aide" className="btn btn-secondary inline-flex items-center gap-2">
+          <LifeBuoy className="size-4" aria-hidden />
+          {t("allQuestions")}
+        </Link>
       </div>
     </section>
   );

@@ -155,7 +155,9 @@
       "Meet your future crew",
       "Find hiking buddies",
       "Never go out alone again"
-    ]
+    ],
+    "allQuestions": "All questions",
+    "citiesLine": "Coming soon to {list}."
   },
   "card": {
     "people": "{count} people",
