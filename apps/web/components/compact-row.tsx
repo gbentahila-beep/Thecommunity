@@ -1,4 +1,10 @@
-import { experienceBadge, formatMoney, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
+import {
+  experienceBadge,
+  formatMoney,
+  seatsAvailable,
+  type Experience,
+  type Session,
+} from "@thecommunity/shared";
 import { getLocale, getTranslations } from "next-intl/server";
 import { MediaImage as Image } from "@/components/media";
 import { Link } from "@/i18n/navigation";
@@ -15,54 +21,128 @@ import { TIER_TEXT } from "./card-pills";
  * (ou « Prochaines dates bientôt » sans date),
  * quartier · groupe, univers ; prix à droite. Toute la ligne ouvre la fiche.
  */
-export async function CompactRow({ experience, session, priority = false }: { experience: Experience; session?: Session; priority?: boolean }) {
-  const [locale, t, category, home, tp, subcategory] = await Promise.all([getLocale(), getTranslations("card"), getCategory(experience.categoryId), getHomeSettings(), getTranslations("twoPart"), experience.subcategoryId ? getCategory(experience.subcategoryId) : Promise.resolve(null)]);
-  const full = session ? session.status === "full" || seatsAvailable(session) === 0 : false;
-  const badge = full ? null : experienceBadge(experience, session, new Date(), home.featuredExperienceIds);
+export async function CompactRow({
+  experience,
+  session,
+  priority = false,
+}: {
+  experience: Experience;
+  session?: Session;
+  priority?: boolean;
+}) {
+  const [locale, t, category, home, tp, subcategory] = await Promise.all([
+    getLocale(),
+    getTranslations("card"),
+    getCategory(experience.categoryId),
+    getHomeSettings(),
+    getTranslations("twoPart"),
+    experience.subcategoryId
+      ? getCategory(experience.subcategoryId)
+      : Promise.resolve(null),
+  ]);
+  const full = session
+    ? session.status === "full" || seatsAvailable(session) === 0
+    : false;
+  const badge = full
+    ? null
+    : experienceBadge(
+        experience,
+        session,
+        new Date(),
+        home.featuredExperienceIds,
+      );
   const cover = experience.images[0];
-  const formatFull = subcategory ? tr(subcategory.shortName, locale) : category ? tr(category.shortName, locale) : "";
-  const formatName = formatFull && tr(experience.title, locale).toLowerCase().startsWith(formatFull.toLowerCase()) ? "" : formatFull;
+  const formatFull = subcategory
+    ? tr(subcategory.shortName, locale)
+    : category
+      ? tr(category.shortName, locale)
+      : "";
+  const formatName =
+    formatFull &&
+    tr(experience.title, locale)
+      .toLowerCase()
+      .startsWith(formatFull.toLowerCase())
+      ? ""
+      : formatFull;
   const price = session?.price ?? experience.price;
   return (
-    <article className="group relative flex gap-3.5 px-4 py-3.5" data-testid="compact-row">
+    <article
+      className="group relative flex gap-3.5 px-4 py-3.5"
+      data-testid="compact-row"
+    >
       <div className="relative shrink-0">
         <div className="relative size-16 overflow-hidden rounded-xl bg-cream-deep">
-          {cover && <Image src={cover.path} alt="" fill priority={priority} sizes="64px" className="object-cover" />}
+          {cover && (
+            <Image
+              src={cover.path}
+              alt=""
+              fill
+              priority={priority}
+              sizes="64px"
+              className="object-cover"
+            />
+          )}
         </div>
         {badge && <CornerRibbon badge={badge} label={t(`badge_${badge}`)} />}
       </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-start justify-between gap-3">
+      {/* Étape W : le prix est dans sa propre colonne, à droite ; il ne repousse plus la date sous le titre. */}
+      <div className="flex min-w-0 flex-1 items-start gap-3">
+        <div className="min-w-0 flex-1">
           <h3 className="min-w-0 text-[15px] leading-snug font-semibold text-ink">
-            <Link href={`/experiences/${experience.slug}`} className="after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:rounded-2xl focus-visible:after:outline-2 focus-visible:after:outline-brand-700">
+            <Link
+              href={`/experiences/${experience.slug}`}
+              className="after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:rounded-2xl focus-visible:after:outline-2 focus-visible:after:outline-brand-700"
+            >
               {tr(experience.title, locale)}
             </Link>
           </h3>
-          <span className="shrink-0 text-end text-[14px] font-semibold text-ink">
-            {formatMoney(price, locale as "fr" | "ar" | "en")}
-            {experience.pricing && experience.pricing.model !== "online_only" && <span className="block text-[11px] font-medium text-muted">{tp("plusOnSite")}</span>}
-          </span>
-        </div>
-        <p className="mt-0.5 text-[13px] text-ink/80">{session ? formatDaySlot(session.startAt, locale) : t("datesSoon")}</p>
-        <p className="truncate text-[13px] text-muted">
-          {[experience.district, session ? await groupLabel(experience, session) : ""].filter(Boolean).join(" · ")}
-        </p>
-        {/* Étape Q : format, gamme et public en une ligne de texte (plus de pastilles) ; le badge est sur la photo. */}
-        <p className="mt-0.5 truncate text-[13px] text-muted">
-          {experience.audience === "women" && <span className="font-semibold text-rose-700">{t("women")} · </span>}
-          {/* Le format n'est pas répété s'il ouvre déjà le titre (« Dîner Premium »). */}
-          {formatName}
-          {experience.venueTier && (
-            <>
-              {formatName ? " · " : ""}
-              <span className={`inline-flex items-center gap-0.5 font-semibold ${TIER_TEXT[experience.venueTier]}`} data-testid="tier-pill">
-                {experience.venueTier !== "casual" && <Gem className="size-3" aria-hidden />}
-                {tp(`tier_${experience.venueTier}`)}
+          <p className="mt-0.5 text-[13px] text-ink/80">
+            {session ? formatDaySlot(session.startAt, locale) : t("datesSoon")}
+          </p>
+          <p className="truncate text-[13px] text-muted">
+            {[
+              experience.district,
+              session ? await groupLabel(experience, session) : "",
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          {/* Étape Q : format, gamme et public en une ligne de texte (plus de pastilles) ; le badge est sur la photo. */}
+          <p className="mt-0.5 truncate text-[13px] text-muted">
+            {experience.audience === "women" && (
+              <span className="font-semibold text-rose-700">
+                {t("women")} ·{" "}
               </span>
-            </>
+            )}
+            {/* Le format n'est pas répété s'il ouvre déjà le titre (« Dîner Premium »). */}
+            {formatName}
+            {experience.venueTier && (
+              <>
+                {formatName ? " · " : ""}
+                <span
+                  className={`inline-flex items-center gap-0.5 font-semibold ${TIER_TEXT[experience.venueTier]}`}
+                  data-testid="tier-pill"
+                >
+                  {experience.venueTier !== "casual" && (
+                    <Gem className="size-3" aria-hidden />
+                  )}
+                  {tp(`tier_${experience.venueTier}`)}
+                </span>
+              </>
+            )}
+            {full && (
+              <span className="font-semibold text-ink"> · {t("full")}</span>
+            )}
+          </p>
+        </div>
+        <span className="shrink-0 text-end text-[14px] font-semibold text-ink">
+          {formatMoney(price, locale as "fr" | "ar" | "en")}
+          {experience.pricing && experience.pricing.model !== "online_only" && (
+            <span className="block text-[11px] font-medium text-muted">
+              {tp("plusOnSite")}
+            </span>
           )}
-          {full && <span className="font-semibold text-ink"> · {t("full")}</span>}
-        </p>
+        </span>
       </div>
     </article>
   );
