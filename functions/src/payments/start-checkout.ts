@@ -7,7 +7,6 @@ import { invalidArgument, requireAuth } from "../lib/guards";
 import { refuse } from "../reservations/refuse";
 import { bankDetails, paymentSettings, providerFor } from "./provider";
 import { bankTransferProvider } from "./providers/bank-transfer";
-import { cmiSecretsOption } from "./providers/cmi";
 import { sendTransferInstructions } from "./transfer-mail";
 
 const input = z.object({ reservationId: z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/) });
@@ -16,7 +15,7 @@ const input = z.object({ reservationId: z.string().trim().min(1).max(128).regex(
  * Démarre le paiement d'une réservation « pending_payment » encore bloquée.
  * Le montant est relu en base (jamais fourni par le navigateur). Renvoie l'adresse du prestataire.
  */
-export const startCheckout = onCall({ region: REGION, ...cmiSecretsOption() }, async (req) => {
+export const startCheckout = onCall({ region: REGION }, async (req) => {
   const { uid } = requireAuth(req);
   const parsed = input.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);

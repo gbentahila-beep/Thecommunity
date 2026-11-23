@@ -15,13 +15,6 @@ import type { PaymentProvider } from "../provider";
  * - remboursement : « en cours », à faire depuis l'espace commerçant CMI puis à marquer effectué dans
  *   « Remboursements » (comme un virement), tant que l'API de remboursement du CMI n'est pas ouverte.
  */
-/**
- * Secrets CMI liés aux fonctions de paiement SEULEMENT quand CMI_ENABLED=true (fichier functions/.env.<projet> lu au
- * déploiement) : déclarer un secret qui n'existe pas encore dans Secret Manager ferait échouer tout le déploiement.
- */
-export const CMI_SECRETS = ["CMI_CLIENT_ID", "CMI_STORE_KEY"];
-export const cmiSecretsOption = (): { secrets?: string[] } => (process.env.CMI_ENABLED === "true" ? { secrets: CMI_SECRETS } : {});
-
 export function cmiCredentials(): { clientId: string; storeKey: string } | null {
   const clientId = process.env.CMI_CLIENT_ID ?? "";
   const storeKey = process.env.CMI_STORE_KEY ?? "";

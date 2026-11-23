@@ -17,7 +17,6 @@ import { audit } from "../lib/audit";
 import { invalidArgument, requireAuth, requireRole, roleOf } from "../lib/guards";
 import { paymentSettings, providerFor } from "../payments/provider";
 import { sendTransferInstructions } from "../payments/transfer-mail";
-import { cmiSecretsOption } from "../payments/providers/cmi";
 import { requireMemberReady } from "../reservations/create-reservation";
 import { refuse } from "../reservations/refuse";
 import { carnetRef, memberFromDoc, planRef } from "./state";
@@ -61,7 +60,7 @@ export const adminSaveMembershipPlan = onCall({ region: REGION }, async (req) =>
  * Un pass prolonge le pass en cours ; un carnet ajoute des crédits. Par virement : pas de pass semaine (il arrive
  * avec le paiement par carte). Activation à la confirmation du paiement (applyPaymentEvent).
  */
-export const startMembershipCheckout = onCall({ region: REGION, ...cmiSecretsOption() }, async (req) => {
+export const startMembershipCheckout = onCall({ region: REGION }, async (req) => {
   const { uid, token } = requireAuth(req);
   const input = z.object({ offerId: z.string().regex(/^[a-z0-9]{2,20}$/) }).safeParse(req.data ?? {});
   if (!input.success) invalidArgument(input.error.issues);

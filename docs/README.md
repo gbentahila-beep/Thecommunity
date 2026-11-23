@@ -23,6 +23,7 @@
 | [13 — Mise en ligne sur le projet d'essai](13-mise-en-ligne-essai.md) | **À faire par Rita** : clé GitHub, App Hosting, compte super-admin |
 | [11 — Checklist avant lancement](11-checklist-avant-lancement.md) | **À faire par Rita** : société, banque, paiement, CNDP, textes juridiques, marque, comptes, partenaires |
 | [22 — Les Babs](22-babs.md) | Petits personnages de Wenzy : les sept Babs, leurs humeurs, les états vides et où ils apparaissent sur le site |
+| [24 — Audit du parcours membre](24-plan-corrections-audit.md) | Corrections du 23 novembre (lots 1 à 7) et ce qu'il reste à brancher : Brevo, CMI, Google, WhatsApp |
 
 ## Synthèse en 10 points
 

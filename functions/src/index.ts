@@ -5,8 +5,11 @@
  */
 import { setGlobalOptions } from "firebase-functions/v2";
 import { REGION } from "./lib/admin";
+import { enabledSecrets } from "./lib/secrets";
 
-setGlobalOptions({ region: REGION, maxInstances: 10 });
+// Audit 23/11 : secrets des services activés (Brevo, CMI, WhatsApp) liés à toutes les fonctions (lib/secrets.ts).
+const secrets = enabledSecrets();
+setGlobalOptions({ region: REGION, maxInstances: 10, ...(secrets.length ? { secrets } : {}) });
 
 export { onUserCreated } from "./account/on-user-created";
 export { completeProfile } from "./account/complete-profile";

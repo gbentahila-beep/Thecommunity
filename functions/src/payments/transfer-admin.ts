@@ -8,7 +8,7 @@ import { invalidArgument, requireRole, roleOf } from "../lib/guards";
 import { refuse } from "../reservations/refuse";
 import { applyPaymentEvent } from "./apply-event";
 import { bankTransferProvider } from "./providers/bank-transfer";
-import { cmiCredentials, cmiSecretsOption } from "./providers/cmi";
+import { cmiCredentials } from "./providers/cmi";
 
 const idSchema = z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/);
 
@@ -77,7 +77,7 @@ export const adminCompleteManualRefund = onCall({ region: REGION }, async (req) 
  * Mode de paiement (super-admin) : paiement de TEST ou virement bancaire. Le virement exige des coordonnées
  * complètes (titulaire, banque, RIB de 24 chiffres). Journalisé (avant / après, RIB masqué dans le journal).
  */
-export const adminSavePaymentSettings = onCall({ region: REGION, ...cmiSecretsOption() }, async (req) => {
+export const adminSavePaymentSettings = onCall({ region: REGION }, async (req) => {
   const actor = requireRole(req, ["superadmin"]);
   const parsed = paymentSettingsInputSchema.safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);

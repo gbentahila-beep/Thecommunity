@@ -4,7 +4,7 @@ import { logger } from "firebase-functions/v2";
 import { onRequest } from "firebase-functions/v2/https";
 import { db, REGION } from "../lib/admin";
 import { applyPaymentEvent } from "./apply-event";
-import { cmiCredentials, cmiHash, cmiSecretsOption } from "./providers/cmi";
+import { cmiCredentials, cmiHash } from "./providers/cmi";
 
 /** Réponses attendues par le CMI (à confirmer avec sa documentation) : accepter / refuser la notification. */
 export const CMI_ACK = "ACTION=POSTAUTH";
@@ -49,7 +49,7 @@ export async function processCmiCallback(body: Record<string, string>, storeKey:
 }
 
 /** Adresse de retour serveur du CMI (POST application/x-www-form-urlencoded). */
-export const cmiCallback = onRequest({ region: REGION, ...cmiSecretsOption() }, async (req, res) => {
+export const cmiCallback = onRequest({ region: REGION }, async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).send("Method Not Allowed");
     return;

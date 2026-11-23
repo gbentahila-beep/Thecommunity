@@ -199,7 +199,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "Nos mesures",
         body: [
-          "Selon la gravité : avertissement, restriction, suspension temporaire ou exclusion définitive. Les faits graves entraînent une exclusion immédiate, et nous pouvons coopérer avec les autorités dans le cadre prévu par la loi. Le détail, y compris le recours, figure dans nos [règles de la communauté](/charte).",
+          "Selon la gravité : avertissement, restriction, suspension temporaire ou exclusion définitive. Les faits graves entraînent une exclusion immédiate, et nous pouvons coopérer avec les autorités dans le cadre prévu par la loi. Un compte signalé par deux personnes différentes en 90 jours ne peut plus réserver le temps que l'équipe examine la situation ; un compte suspendu perd ses réservations à venir et quitte aussitôt ses tables et leurs messages. Le détail, y compris le recours, figure dans nos [règles de la communauté](/charte).",
         ],
       },
       {
@@ -474,7 +474,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         title: "11. Contenus publiés par les membres",
         body: [
           "Les avis, la photo de profil, la biographie et les messages joints aux demandes restent sous votre responsabilité. Vous accordez à Wenzy, gratuitement et pour la durée nécessaire, une licence non exclusive pour les héberger et les afficher dans le cadre du service (vos avis sont signés de votre prénom et de l'initiale de votre nom). L'équipe peut masquer un contenu inapproprié, faux ou contraire à la loi.",
-          "Avis : une photo jointe n'est publiée qu'après vérification par l'équipe (n'y montrez personne sans son accord). L'organisateur de l'activité et l'équipe peuvent répondre publiquement sous votre avis. Tout membre ou organisateur peut signaler un avis ; un signalement ne le masque pas automatiquement : l'équipe vérifie et décide, et chaque décision est conservée dans l'historique de l'avis.",
+          "Avis : une photo jointe n'est publiée qu'après vérification par l'équipe (n'y montrez personne sans son accord). Un avis de 2 étoiles ou moins, ou qui contient des propos injurieux ou des coordonnées personnelles, est relu par l'équipe avant publication : il est publié s'il respecte nos règles, même s'il est négatif. Un avis reste possible après un remboursement accordé pour une expérience à laquelle vous étiez inscrit·e. L'organisateur de l'activité et l'équipe peuvent répondre publiquement sous votre avis. Tout membre ou organisateur peut signaler un avis ; un signalement ne le masque pas automatiquement : l'équipe vérifie et décide, et chaque décision est conservée dans l'historique de l'avis.",
         ],
       },
       {
@@ -548,7 +548,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         "title": "4. Annulation et changement de date par le participant",
         "body": [
           "Vous pouvez toujours annuler depuis votre réservation. Les frais Wenzy sont remboursés selon les conditions d'annulation de l'événement, affichées avant la réservation (la plus courante : remboursement intégral jusqu'à 48 heures avant, aucun remboursement ensuite). Le montant remboursé est indiqué avant que vous confirmiez.",
-          "Jusqu'à la fermeture des réservations, vous pouvez déplacer votre réservation sur une autre date du même rendez-vous, sans repayer, s'il reste de la place.",
+          "Jusqu'à la fermeture des réservations, vous pouvez déplacer votre réservation sur une autre date du même rendez-vous, sans repayer, s'il reste de la place. En cas d'annulation ensuite, le remboursement reste calculé sur votre date d'origine (déplacer puis annuler ne rembourse pas davantage qu'annuler à la date d'origine). Chaque changement est confirmé par e-mail, avec l'invitation agenda mise à jour.",
           "Le remboursement se fait sur le moyen de paiement d'origine (par virement pour un paiement par virement)."
         ]
       },
@@ -565,10 +565,10 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         "body": [
           [
             "Carnet : 3 crédits valables 3 mois à compter de l'achat ; 1 crédit par place, invité compris. Un crédit revient si vous annulez dans les délais remboursés de l'événement, ou si la place n'est pas payée à temps. Un nouveau carnet ajoute ses crédits et repousse leur validité à 3 mois.",
-            "Pass (1 semaine, 1 mois, 3 mois, 6 mois ou 1 an) : votre place est incluse à chaque réservation (la place d'un invité se paie ou se règle avec un crédit du carnet), avec l'accès en avant-première aux nouvelles dates, les événements réservés aux abonnés et la priorité sur la liste d'attente. Le pass couvre 2 réservations à venir au maximum à la fois.",
+            "Pass (1 semaine, 1 mois, 3 mois, 6 mois ou 1 an) : votre place est incluse à chaque réservation (la place d'un invité se paie ou se règle avec un crédit du carnet), avec l'accès en avant-première aux nouvelles dates, les événements réservés aux abonnés et la priorité sur la liste d'attente. Le pass couvre 2 réservations à venir au maximum à la fois, et seulement les événements qui ont lieu pendant sa période de validité.",
             "Le Carnet et le Pass couvrent les frais Wenzy, y compris pour les activités des organisateurs ; ils ne couvrent jamais ce qui se règle sur place.",
             "Paiement en une fois, sans renouvellement automatique. Un nouveau pass prolonge le pass en cours. Le pass semaine ne se paie que par carte.",
-            "Droit de rétractation : vous pouvez demander le remboursement d'un Carnet ou d'un Pass dans les 7 jours suivant l'achat s'il n'a pas encore été utilisé."
+            "Droit de rétractation : dans les 7 jours suivant l'achat, si le Carnet ou le Pass n'a pas encore servi (aucun crédit utilisé, aucune place couverte), le bouton « Me rétracter » de la page Carnet et Pass l'annule et vous rembourse intégralement ; un avoir est émis."
           ]
         ]
       },
@@ -576,7 +576,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         "title": "7. Check-in et absences",
         "body": [
           "Le jour J, vous indiquez votre arrivée depuis votre réservation (« check-in »), de 30 minutes avant à 1 heure après le début ; avec une hôtesse ou un organisateur, c'est son pointage qui fait foi.",
-          "Sans check-in, la place est notée comme une absence et n'est pas remboursée. Pour une place incluse dans un Pass : une première absence donne un avertissement ; une deuxième dans les 90 jours suspend le pass pendant 14 jours (vous pouvez toujours réserver, mais vos places ne sont plus incluses). Si vous étiez bien présent·e, écrivez-nous : l'absence est annulée."
+          "Sans check-in, la place est notée comme une absence et n'est pas remboursée. Pour une place incluse dans un Pass : une première absence donne un avertissement ; une deuxième dans les 90 jours suspend le pass pendant 14 jours (vous pouvez toujours réserver, mais vos places ne sont plus incluses). Si vous étiez bien présent·e, écrivez-nous : l'absence est annulée. Une place incluse dans votre Pass que vous annulez à moins de 24 heures du début compte aussi comme une absence."
         ]
       },
       {
@@ -931,7 +931,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "What we do about it",
         body: [
-          "Depending on severity: a warning, a restriction, a temporary suspension or a permanent ban. Serious acts lead to an immediate ban, and we may cooperate with the authorities as provided by law. Details, including how to appeal, are in our [community rules](/charte).",
+          "Depending on severity: a warning, a restriction, a temporary suspension or a permanent ban. Serious acts lead to an immediate ban, and we may cooperate with the authorities as provided by law. An account reported by two different people within 90 days can't book while the team reviews the situation; a suspended account loses its upcoming bookings and immediately leaves its tables and their messages. Details, including how to appeal, are in our [community rules](/charte).",
         ],
       },
       {
@@ -1176,7 +1176,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
           "For your part, ask people for their agreement before posting a photo or video of them.",
         ],
       },
-      { title: "11. Member content", body: ["Reviews, profile photo, bio and messages attached to requests remain your responsibility. You grant Wenzy a free, non-exclusive licence, for as long as needed, to host and display them as part of the service (reviews are signed with your first name and last initial). The team may hide content that is inappropriate, false or unlawful.", "Reviews: an attached photo is only published after the team checks it (don't show anyone without their consent). The activity's organizer and the team may reply publicly under your review. Any member or organizer can report a review; a report does not hide it automatically: the team checks and decides, and every decision is kept in the review's history."] },
+      { title: "11. Member content", body: ["Reviews, profile photo, bio and messages attached to requests remain your responsibility. You grant Wenzy a free, non-exclusive licence, for as long as needed, to host and display them as part of the service (reviews are signed with your first name and last initial). The team may hide content that is inappropriate, false or unlawful.", "Reviews: an attached photo is only published after the team checks it (don't show anyone without their consent). A review of 2 stars or less, or containing insults or personal contact details, is read by the team before publication: it is published if it follows our rules, even if it is negative. You can still leave a review after a refund granted for an experience you were booked on. The activity's organizer and the team may reply publicly under your review. Any member or organizer can report a review; a report does not hide it automatically: the team checks and decides, and every decision is kept in the review's history."] },
       {
         title: "12. Reports, sanctions and appeals",
         body: [
@@ -1235,7 +1235,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         "title": "4. Cancellation and date change by the participant",
         "body": [
           "You can always cancel from your booking. The Wenzy fee is refunded according to the event's cancellation terms, shown before you book (the most common: full refund up to 48 hours before, no refund after). The refund amount is shown before you confirm.",
-          "Until bookings close, you can move your booking to another date of the same event, at no extra cost, if seats are left.",
+          "Until bookings close, you can move your booking to another date of the same event, at no extra cost, if seats are left. If you cancel afterwards, the refund is still based on your original date (moving then cancelling doesn't refund more than cancelling at the original date). Every change is confirmed by email, with an updated calendar invitation.",
           "Refunds go back to the original payment method (by bank transfer for a transfer payment)."
         ]
       },
@@ -1252,10 +1252,10 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         "body": [
           [
             "Pack: 3 credits valid for 3 months from purchase; 1 credit per seat, guest included. A credit comes back if you cancel within the event's refundable period, or if the seat isn't paid in time. A new pack adds its credits and extends their validity to 3 months.",
-            "Pass (1 week, 1 month, 3 months, 6 months or 1 year): your seat is included in every booking (a guest's seat is paid or covered with a pack credit), with early access to new dates, members-only events and priority on the waiting list. The pass covers up to 2 upcoming bookings at a time.",
+            "Pass (1 week, 1 month, 3 months, 6 months or 1 year): your seat is included in every booking (a guest's seat is paid or covered with a pack credit), with early access to new dates, members-only events and priority on the waiting list. The pass covers up to 2 upcoming bookings at a time, and only events taking place while it is valid.",
             "The Pack and the Pass cover the Wenzy fee, including for organizers' activities; they never cover what is paid on site.",
             "One-off payment, no automatic renewal. A new pass extends the current one. The weekly pass can only be paid by card.",
-            "Right of withdrawal: you can ask for a refund of a Pack or Pass within 7 days of purchase if it hasn't been used yet."
+            "Right of withdrawal: within 7 days of purchase, if the Pack or Pass hasn't been used (no credit spent, no seat covered), the “Withdraw” button on the Pack and Pass page cancels it with a full refund; a credit note is issued."
           ]
         ]
       },
@@ -1263,7 +1263,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         "title": "7. Check-in and no-shows",
         "body": [
           "On the day, you check in from your booking, from 30 minutes before to 1 hour after the start; with a host or an organizer, their check-in counts.",
-          "Without check-in, the seat counts as a no-show and isn't refunded. For a seat included in a Pass: a first no-show is a warning; a second within 90 days suspends the pass for 14 days (you can still book, but your seats aren't included). If you were actually there, write to us: the no-show is cancelled."
+          "Without check-in, the seat counts as a no-show and isn't refunded. For a seat included in a Pass: a first no-show is a warning; a second within 90 days suspends the pass for 14 days (you can still book, but your seats aren't included). If you were actually there, write to us: the no-show is cancelled. Cancelling a seat included in your Pass within 24 hours of the start also counts as a no-show."
         ]
       },
       {
