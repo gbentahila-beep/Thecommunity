@@ -111,17 +111,17 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       ),
     cities: (
       <PageShell key="cities" className="pb-8">
-        <div id="villes" className="scroll-mt-24 overflow-hidden rounded-3xl bg-night px-6 py-12 text-center text-white sm:px-12">
+        <div id="villes" className="scroll-mt-24 overflow-hidden rounded-3xl bg-white px-6 py-12 text-center text-ink shadow-card sm:px-12">
           <h2 className="font-display text-3xl sm:text-4xl">
             {t("citiesTitle")}
             <Bab name="scout" mood="big" className="ms-2 inline-block w-12 align-[-8px]" />
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-cream/75">{t("citiesText")}</p>
+          <p className="mx-auto mt-3 max-w-xl text-muted">{t("citiesText")}</p>
           <ul className="mt-8 flex flex-wrap justify-center gap-2.5">
             {cities.map((c) => (
               <li
                 key={c.id}
-                className={`rounded-full px-4 py-2 text-sm ${c.isActive ? "bg-gradient-brand font-semibold text-ink" : "border border-white/20 text-cream/80"}`}
+                className={`rounded-full px-4 py-2 text-sm ${c.isActive ? "bg-gradient-brand font-semibold text-ink" : "border border-line text-muted"}`}
               >
                 {tr(c.name, locale)}
               </li>
@@ -145,7 +145,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     <>
       {banner && (
         <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 lg:px-8" data-testid="home-banner">
-          <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-2xl bg-brand-900 px-5 py-3 text-center text-sm text-white">
+          <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-2xl bg-brand-50 px-5 py-3 text-center text-sm text-brand-900">
             <span>{tr(banner.text, locale)}</span>
             {banner.href && banner.linkLabel && (
               banner.href.startsWith("/") ? (

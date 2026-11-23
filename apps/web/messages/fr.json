@@ -102,7 +102,8 @@
         "group": "Tables composées",
         "factLabel": "Formats",
         "factValue": "Café, brunch, déjeuner, dîner",
-        "cta": "Voir les tables"
+        "cta": "Voir les tables",
+        "formats": "Café · Brunch · Déjeuner · Dîner"
       },
       "move": {
         "tagline": "Bougez avec des personnes de votre niveau",
@@ -110,7 +111,8 @@
         "group": "Petits groupes",
         "factLabel": "Niveau",
         "factValue": "Selon le vôtre",
-        "cta": "Voir le sport & bien-être"
+        "cta": "Voir le sport & bien-être",
+        "formats": "Padel · Yoga · Running"
       },
       "create": {
         "tagline": "Apprenez et créez, à plusieurs",
@@ -118,7 +120,8 @@
         "group": "Petits groupes",
         "factLabel": "Niveau",
         "factValue": "Débutants bienvenus",
-        "cta": "Voir les découvertes"
+        "cta": "Voir les découvertes",
+        "formats": "Céramique · Visites guidées"
       },
       "discover": {
         "tagline": "Sortez et rencontrez du monde",
@@ -126,7 +129,8 @@
         "group": "En équipe ou ouvert à tous",
         "factLabel": "Format",
         "factValue": "Seul·e ou à deux",
-        "cta": "Voir les sorties"
+        "cta": "Voir les sorties",
+        "formats": "Escape game · Quiz · Jeux · Afterwork · Langues"
       }
     },
     "thisWeekAt": "Cette semaine à",
@@ -1895,7 +1899,7 @@
     "closingDiscover": "Voir les expériences",
     "closingBookings": "Mes réservations",
     "sectionTitle": "Travaillons ensemble",
-    "sectionText": "Trois façons de faire vivre Wenzy : accueillir nos groupes, publier vos activités, ou proposer vos idées de sortie.",
+    "sectionText": "Deux façons de faire vivre Wenzy : accueillir nos groupes, ou publier vos activités.",
     "trustedEyebrow": "Membres de confiance",
     "trustedTitle": "Pour les habitués qui ont des idées",
     "trustedText": "Vous venez souvent et vous avez une idée de sortie ? L'équipe invite des membres réguliers à devenir membres de confiance : vous proposez une sortie, nous la vérifions, puis nous la publions.",

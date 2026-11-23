@@ -43,11 +43,11 @@ export async function HowItWorks({ categories, showTitle = true }: { categories:
           </ul>
           {categories.length > 3 && <p className="mt-2.5 text-center text-xs font-medium text-muted" aria-hidden>{t("howMoreUniverses", { count: categories.length - 3 })}</p>}
         </li>
-        <li className={`${card} rotate-2 bg-brand-900 text-white md:-translate-y-2`}>
-          <span className="font-display text-5xl text-white/30">2</span>
-          <h3 className="mt-1 text-xl font-semibold">{t("how2Title")}</h3>
-          <p className="mt-2 text-[15px] text-white/85">{t("how2Text")}</p>
-          <Link href="/experiences" className="group mt-6 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-[15px] font-semibold text-brand-900 shadow-float transition hover:bg-cream">
+        <li className={`${card} rotate-2 bg-brand-50 md:-translate-y-2`}>
+          <span className="font-display text-5xl text-brand-200">2</span>
+          <h3 className="mt-1 text-xl font-semibold text-ink">{t("how2Title")}</h3>
+          <p className="mt-2 text-[15px] text-muted">{t("how2Text")}</p>
+          <Link href="/experiences" className="btn btn-primary group mt-6 inline-flex">
             {t("heroCta")}
             <ArrowRight className="size-4 transition group-hover:translate-x-0.5 rtl:-scale-x-100" aria-hidden />
           </Link>

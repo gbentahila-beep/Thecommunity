@@ -79,11 +79,10 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await how.locator('img').count() === 3, 'carte 3 : trois photos');
   const uni = d.locator('section[aria-labelledby="universes-title"]');
   assert(await uni.locator('li').count() === 4, 'quatre univers (docs/22 : Tables, Bouger, Sortir, Découvrir)');
-  assert((await uni.locator('li').evaluateAll((lis) => lis.map((li) => getComputedStyle(li).position))).every((p) => p === 'sticky'), 'univers : cartes empilées (sticky)');
+  assert((await uni.locator('li').evaluateAll((lis) => lis.map((li) => getComputedStyle(li).position))).every((p) => p !== 'sticky'), 'U : univers en tuiles, plus d\'empilement');
   const eat = uni.locator('li').first();
-  assert(await eat.getByText('Une table, de nouvelles têtes, une bonne adresse').isVisible(), 'carte Tables : accroche');
-  assert(await eat.getByText(/De \d+ à \d+ personnes/).isVisible(), 'carte Tables : taille de groupe calculée sur les expériences');
-  assert(await eat.getByRole('link', { name: /tables/i }).first().getAttribute('href') === '/casablanca/eat', 'carte Tables : bouton vers l\'univers');
+  assert(await eat.getByText('Café · Brunch · Déjeuner · Dîner').isVisible() && /cette semaine|Voir les dates/.test(await eat.innerText()), 'tuile Tables : formats et dates de la semaine');
+  assert(await eat.getByRole('link').getAttribute('href') === '/casablanca/eat', 'tuile Tables : ouvre l\'univers');
   assert(await d.getByRole('heading', { level: 2, name: 'Pourquoi venir' }).isVisible(), 'section « Pourquoi venir »');
   assert(await d.getByRole('heading', { name: 'Questions fréquentes' }).isVisible(), 'FAQ sur l\'accueil');
   assert(await d.getByRole('link', { name: /Consulter le centre d'aide/ }).getAttribute('href') === '/aide', 'renvoi vers le centre d\'aide');

@@ -102,7 +102,8 @@
         "group": "Tables put together",
         "factLabel": "Formats",
         "factValue": "Coffee, brunch, lunch, dinner",
-        "cta": "See tables"
+        "cta": "See tables",
+        "formats": "Coffee · Brunch · Lunch · Dinner"
       },
       "move": {
         "tagline": "Get moving with people at your level",
@@ -110,7 +111,8 @@
         "group": "Small groups",
         "factLabel": "Level",
         "factValue": "Matched to yours",
-        "cta": "See sport & wellbeing"
+        "cta": "See sport & wellbeing",
+        "formats": "Padel · Yoga · Running"
       },
       "create": {
         "tagline": "Learn and create, together",
@@ -118,7 +120,8 @@
         "group": "Small groups",
         "factLabel": "Level",
         "factValue": "Beginners welcome",
-        "cta": "See discoveries"
+        "cta": "See discoveries",
+        "formats": "Ceramics · Guided tours"
       },
       "discover": {
         "tagline": "Go out and meet people",
@@ -126,7 +129,8 @@
         "group": "As a team or open to all",
         "factLabel": "Format",
         "factValue": "Solo or as two",
-        "cta": "See outings"
+        "cta": "See outings",
+        "formats": "Escape game · Quiz · Games · Afterwork · Languages"
       }
     },
     "thisWeekAt": "This week in",
@@ -1895,7 +1899,7 @@
     "closingDiscover": "See experiences",
     "closingBookings": "My bookings",
     "sectionTitle": "Let's work together",
-    "sectionText": "Three ways to bring Wenzy to life: host our groups, publish your activities, or suggest outing ideas.",
+    "sectionText": "Two ways to bring Wenzy to life: host our groups, or publish your activities.",
     "trustedEyebrow": "Trusted members",
     "trustedTitle": "For regulars with ideas",
     "trustedText": "You come often and have an idea for an outing? The team invites regular members to become trusted members: you propose an outing, we check it, then we publish it.",

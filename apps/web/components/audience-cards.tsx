@@ -22,9 +22,9 @@ export async function AudienceCards({ headingLevel = "h3", withTitle = false }: 
           <p className="mx-auto mt-2 max-w-xl text-muted">{t("sectionText")}</p>
         </div>
       )}
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className="mx-auto grid max-w-4xl gap-5 md:grid-cols-2">
         {cards.map(({ key, icon: Icon, href }) => (
-          <div key={key} className="info-box flex flex-col items-start text-start">
+          <div key={key} className="info-box flex flex-col items-center text-center">
             <span className="grid size-11 place-items-center rounded-full bg-white text-brand-900 shadow-card">
               <Icon className="size-5" aria-hidden />
             </span>
