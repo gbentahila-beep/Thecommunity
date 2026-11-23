@@ -121,7 +121,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
         <section aria-labelledby="org-upcoming" className="space-y-4">
           <h2 id="org-upcoming" className="section-title">{t("upcoming")}</h2>
           {next.length ? (
-            <div className="event-list mx-auto max-w-3xl lg:max-w-none" data-testid="organizer-activities">
+            <div className={`event-list mx-auto max-w-3xl ${next.length < 3 ? "is-few" : "lg:max-w-none"}`} data-testid="organizer-activities">
               {next.map((s) => <ExperienceRow key={s.id} session={s} experience={s.experience} showDay />)}
             </div>
           ) : (
@@ -132,7 +132,7 @@ export default async function OrganizerPage({ params }: PageProps<"/[locale]/org
         {undated.length > 0 && (
           <section aria-labelledby="org-undated" className="space-y-4">
             <h2 id="org-undated" className="section-title">{t("undated")}</h2>
-            <div className="event-list mx-auto max-w-3xl lg:max-w-none">
+            <div className={`event-list mx-auto max-w-3xl ${undated.length < 3 ? "is-few" : "lg:max-w-none"}`}>
               {undated.map((e) => <ExperienceRow key={e.id} experience={e} />)}
             </div>
           </section>

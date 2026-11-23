@@ -799,6 +799,12 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 - « Cette semaine » : filtres centrés sur ordinateur.
 - Avis : résumé de la note centré quand il n'y a pas de photos (sinon centré verticalement à côté des photos) ; une seule barre de filtres (univers s'il y en a plusieurs, note, tri en petit menu à droite) ; les cartes d'avis ne s'étirent plus à la hauteur de leur voisine.
 
+### Grille seulement quand il y a de quoi la remplir (23 novembre)
+
+- Sur ordinateur, une liste d'événements devient une grille de cartes à partir de 3 événements ; avec 1 ou 2 (classe `is-few`), elle reste en lignes dans une colonne centrée (plus de carte seule au milieu d'un grand vide). Vaut aussi après un clic sur un filtre de « Cette semaine ».
+- Découvrir sur ordinateur : une seule grille continue triée par date (plus une petite grille par jour), chaque carte indique son jour et son heure ; le calendrier mène à la première carte du jour. Sur téléphone : inchangé (un titre et une liste par jour).
+- Technique : la mise en forme des cartes dépend du conteneur (`.event-list`, `.event-agenda`) ; les lignes portent des classes sémantiques (`ev-row`, `ev-thumb`, `ev-cta`…) ; les règles d'ordinateur sont hors couche CSS pour passer devant les classes utilitaires.
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes

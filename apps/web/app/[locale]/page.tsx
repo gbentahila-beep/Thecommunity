@@ -60,7 +60,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       dated.length > 0 && (
         <PageShell key={id} className="max-w-3xl space-y-5 py-8 lg:max-w-6xl" data-testid={`home-${id}`}>
           <SectionHeading title={title} action={{ href: "/experiences", label: t("seeAll") }} />
-          <ul className="event-list">
+          <ul className={`event-list ${dated.length < 3 ? "is-few" : ""}`}>
             {dated.map((x) => (
               <li key={x.experience.id}>
                 <CompactRow experience={x.experience} session={x.session} />

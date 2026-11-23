@@ -267,24 +267,28 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
       {total > 0 ? (
         <div className="mx-auto max-w-4xl space-y-8 lg:max-w-6xl" data-testid="catalog-results">
           {agenda ? (
-            days.map((d, di) => {
-              const h = formatDayHeading(d.items[0]!.session!.startAt, locale);
-              return (
-                <section key={d.key} id={`jour-${d.key}`} aria-labelledby={`jour-${d.key}-title`} className="scroll-mt-44">
-                  <h2 id={`jour-${d.key}-title`} className="flex items-baseline gap-2.5">
-                    <span className="card-title sm:text-[1.75rem]">{h.weekday}</span>
-                    <span className="text-[15px] text-muted">{h.date}</span>
-                  </h2>
-                  <div className="event-list mt-3">
-                    {d.items.map((x, i) => (
-                      <ExperienceRow key={x.session!.id} session={x.session!} experience={x.experience} priority={di === 0 && i < 3} />
-                    ))}
-                  </div>
-                </section>
-              );
-            })
+            // Téléphone : un titre et une liste par jour. Ordinateur : une seule grille de cartes, chacune avec son jour
+            // (une grille par jour laisserait des cartes seules) ; le calendrier mène à la première carte du jour.
+            <div className={`event-agenda space-y-8 ${results.dated.length < 3 ? "is-few" : ""}`}>
+              {days.map((d, di) => {
+                const h = formatDayHeading(d.items[0]!.session!.startAt, locale);
+                return (
+                  <section key={d.key} aria-labelledby={`jour-${d.key}-title`} className="ev-day">
+                    <h2 id={`jour-${d.key}-title`} className="ev-day-title flex items-baseline gap-2.5">
+                      <span className="card-title sm:text-[1.75rem]">{h.weekday}</span>
+                      <span className="text-[15px] text-muted">{h.date}</span>
+                    </h2>
+                    <div className={`event-list ev-day-list mt-3 ${results.dated.length < 3 ? "is-few" : ""}`}>
+                      {d.items.map((x, i) => (
+                        <ExperienceRow key={x.session!.id} session={x.session!} experience={x.experience} agenda anchorId={i === 0 ? `jour-${d.key}` : undefined} priority={di === 0 && i < 3} />
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
           ) : (
-            <div className="event-list mt-3">
+            <div className={`event-list mt-3 ${results.dated.length < 3 ? "is-few" : ""}`}>
               {results.dated.map((x, i) => (
                 <ExperienceRow key={x.session!.id} session={x.session!} experience={x.experience} showDay priority={i < 3} />
               ))}
@@ -310,7 +314,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
             <h2 id="undated-title" className="section-title">{tc("undatedTitle")}</h2>
             <p className="mt-1 text-sm text-muted">{tc("undatedText")}</p>
           </div>
-          <div className="event-list" data-testid="undated-list">
+          <div className={`event-list ${results.undated.length < 3 ? "is-few" : ""}`} data-testid="undated-list">
             {results.undated.map((x) => (
               <ExperienceRow key={x.experience.id} experience={x.experience} />
             ))}

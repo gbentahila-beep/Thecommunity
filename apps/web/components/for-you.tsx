@@ -33,18 +33,18 @@ export function ForYou() {
         <p className="text-sm text-muted">{t("subtitle")}</p>
       </div>
       {/* Étape Y : même liste que « Cette semaine » et Découvrir (une carte blanche, lignes séparées). */}
-      <ul className="event-list">
+      <ul className={`event-list ${items.length < 3 ? "is-few" : ""}`}>
         {items.map((it) => (
           <li key={it.href}>
-            <Link href={it.href} className="group flex items-center gap-3.5 px-4 py-3.5 transition hover:bg-cream/50 lg:h-full lg:flex-col lg:items-stretch lg:gap-0 lg:rounded-3xl lg:bg-white lg:p-0 lg:shadow-card lg:hover:bg-white lg:hover:shadow-float">
-              <span className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-cream lg:aspect-[4/3] lg:size-auto lg:w-full lg:rounded-none lg:rounded-t-3xl">
-                {it.image && <Image src={it.image} alt="" fill sizes="(min-width: 1024px) 320px, 64px" className="object-cover transition duration-500 lg:group-hover:scale-[1.04]" />}
+            <Link href={it.href} className="ev-row group flex items-center gap-3.5 px-4 py-3.5 transition hover:bg-cream/50">
+              <span className="ev-thumb relative size-16 shrink-0 overflow-hidden rounded-xl bg-cream">
+                {it.image && <Image src={it.image} alt="" fill sizes="(min-width: 1024px) 320px, 64px" className="ev-img object-cover transition duration-500" />}
               </span>
-              <span className="min-w-0 flex-1 lg:p-4">
+              <span className="ev-text min-w-0 flex-1">
                 <span className="block truncate text-[15px] font-semibold text-ink">{it.title}</span>
                 <span className="block truncate text-[13px] text-muted">{it.detail}</span>
               </span>
-              <ChevronRight className="size-5 shrink-0 text-brand-700 lg:hidden rtl:-scale-x-100" aria-hidden />
+              <ChevronRight className="ev-chevron size-5 shrink-0 text-brand-700 rtl:-scale-x-100" aria-hidden />
             </Link>
           </li>
         ))}

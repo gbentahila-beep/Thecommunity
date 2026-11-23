@@ -163,26 +163,15 @@
     @apply rounded-3xl bg-white shadow-card;
   }
   /*
-   * Listes d'événements (docs/22) : sur téléphone, une carte blanche avec une ligne par événement ; sur ordinateur
-   * (≥ 1024 px), une grille de cartes photo, comme Kitchi ou Airbnb (autant de colonnes que la largeur le permet).
+   * Listes d'événements (docs/22) : sur téléphone, une carte blanche avec une ligne par événement. Sur ordinateur
+   * (≥ 1024 px), une grille de cartes photo comme Kitchi ou Airbnb, dès 3 événements ; avec 1 ou 2 (« is-few »),
+   * les lignes restent, dans une colonne centrée (une carte seule au milieu d'un grand vide ne ressemble à rien).
+   * Les lignes portent ev-row, ev-thumb-wrap, ev-thumb, ev-img, ev-body, ev-text, ev-cta, ev-ribbon, ev-chevron.
    */
   .event-list {
     @apply overflow-hidden rounded-3xl bg-white shadow-card divide-y divide-line/70;
   }
-  @media (width >= 64rem) {
-    .event-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-      gap: 1.25rem;
-      overflow: visible;
-      border-radius: 0;
-      background: transparent;
-      box-shadow: none;
-    }
-    .event-list > * {
-      border-top-width: 0 !important;
-    }
-  }
+  /* Grille d'ordinateur : voir la fin du fichier (hors couche, pour passer devant les classes utilitaires). */
   .info-box {
     @apply rounded-3xl bg-cream-deep px-6 py-8 text-center sm:px-10;
   }
@@ -229,4 +218,79 @@
 .bab-chip { animation: bab-chip 2.6s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .bab-bob, .bab-hop, .bab-march, .bab-chip { animation: none; }
+}
+
+/*
+ * Listes d'événements sur ordinateur (grille de cartes dès 3 événements) : règles hors couche, prioritaires sur les
+ * classes utilitaires des lignes (size-16, flex…), qui décrivent la version téléphone.
+ */
+@media (width >= 64rem) {
+  .event-list.is-few {
+    @apply mx-auto max-w-3xl;
+  }
+  .event-list:not(.is-few) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1.25rem;
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .event-list:not(.is-few) > * {
+    border-top-width: 0 !important;
+  }
+  .event-list:not(.is-few) .ev-row {
+    @apply h-full flex-col items-stretch gap-0 rounded-3xl bg-white p-0 shadow-card transition;
+  }
+  .event-list:not(.is-few) .ev-row:hover {
+    @apply bg-white shadow-float;
+  }
+  .event-list:not(.is-few) .ev-thumb-wrap {
+    @apply w-full;
+  }
+  .event-list:not(.is-few) .ev-thumb {
+    @apply aspect-[4/3] size-auto w-full rounded-none rounded-t-3xl;
+  }
+  .event-list:not(.is-few) .ev-row:hover .ev-img {
+    transform: scale(1.04);
+  }
+  .event-list:not(.is-few) .ev-body {
+    @apply flex-1 flex-col items-stretch p-4;
+  }
+  .event-list:not(.is-few) .ev-text {
+    @apply flex-1 px-4 pt-4;
+  }
+  .event-list:not(.is-few) .ev-cta {
+    @apply m-4 mt-3 justify-center self-stretch py-2.5;
+  }
+  .event-list:not(.is-few) .ev-body .ev-cta {
+    @apply m-0 mt-auto;
+  }
+  .event-list:not(.is-few) .ev-ribbon {
+    @apply start-3 top-3 bottom-auto translate-x-0 -rotate-6 px-2.5 py-1.5 text-[11px] tracking-[0.05em];
+  }
+  .event-list:not(.is-few) .ev-chevron {
+    @apply hidden;
+  }
+  /* Découvrir : les jours fondus en une seule grille (titres des jours masqués, le jour écrit sur chaque carte). */
+  .event-agenda:not(.is-few) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1.25rem;
+  }
+  .event-agenda:not(.is-few) > * {
+    margin-top: 0 !important;
+  }
+  .event-agenda:not(.is-few) .ev-day,
+  .event-agenda:not(.is-few) .ev-day-list {
+    display: contents;
+  }
+  .event-agenda:not(.is-few) .ev-day-title,
+  .event-agenda:not(.is-few) .ev-when-short {
+    display: none;
+  }
+  .event-agenda:not(.is-few) .ev-when-long {
+    display: inline;
+  }
 }
