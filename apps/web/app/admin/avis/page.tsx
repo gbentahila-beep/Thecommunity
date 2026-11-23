@@ -11,20 +11,22 @@ import { getAdminReviews } from "@/lib/data/admin-reviews";
 
 export const metadata = { title: "Avis" };
 
-const VIEWS = { tous: "Tous", signales: "Signalés", photos: "Photos à vérifier" } as const;
+const VIEWS = { tous: "Tous", attente: "À valider", signales: "Signalés", photos: "Photos à vérifier" } as const;
 const BY = { member: "membre", organizer: "organisateur", team: "équipe", system: "système" } as Record<string, string>;
 
 /** Avis : lecture et modération (masquer), signalements, photos à vérifier, réponse de l'équipe, historique (24). */
 export default async function ReviewsAdminPage({ searchParams }: { searchParams: Promise<{ vue?: string }> }) {
   const { vue } = await searchParams;
-  const view = vue === "signales" || vue === "photos" ? vue : "tous";
+  const view = vue === "signales" || vue === "photos" || vue === "attente" ? vue : "tous";
   const [{ reviews, isDemo }, d] = await Promise.all([getAdminReviews(), getAdminData()]);
   const published = reviews.filter((r) => r.status === "published");
   const avg = published.length ? published.reduce((a, r) => a + r.rating, 0) / published.length : 0;
   const reported = reviews.filter((r) => (r.reportsOpen ?? 0) > 0);
   const photos = reviews.filter((r) => r.photo?.status === "pending");
-  const shown = view === "signales" ? reported : view === "photos" ? photos : reviews;
-  const counts = { tous: reviews.length, signales: reported.length, photos: photos.length };
+  // Audit 23/11 : file de modération (note basse ou mot sensible), à traiter avant publication.
+  const waiting = reviews.filter((r) => r.status === "pending");
+  const shown = view === "signales" ? reported : view === "photos" ? photos : view === "attente" ? waiting : reviews;
+  const counts = { tous: reviews.length, attente: waiting.length, signales: reported.length, photos: photos.length };
   return (
     <>
       <PageHeader title="Avis" subtitle={`${reviews.length} avis · moyenne ${avg.toFixed(1)} / 5${isDemo ? " · démonstration" : ""}`} />
@@ -49,7 +51,8 @@ export default async function ReviewsAdminPage({ searchParams }: { searchParams:
                   <td className="max-w-md text-sm text-ink/85">{r.comment || <span className="text-muted">—</span>}</td>
                   <td className="whitespace-nowrap">{r.publicName}</td>
                   <td className="space-y-1">
-                    <Badge tone={r.status === "published" ? "green" : "red"}>{r.status === "published" ? "Publié" : "Masqué"}</Badge>
+                    <Badge tone={r.status === "published" ? "green" : r.status === "pending" ? "amber" : "red"}>{r.status === "published" ? "Publié" : r.status === "pending" ? "À valider" : "Masqué"}</Badge>
+                    {r.status === "pending" && r.moderation && <div className="text-xs text-muted">{r.moderation.why === "low_rating" ? "Note basse" : `Mot sensible : ${r.moderation.word === "phone" ? "numéro de téléphone" : r.moderation.word}`}</div>}
                     {(r.reportsOpen ?? 0) > 0 && <div><Badge tone="amber">Signalé ({r.reportsOpen})</Badge></div>}
                     {r.photo?.status === "pending" && <div><Badge tone="amber">Photo à vérifier</Badge></div>}
                     {r.reply && <div><Badge tone="gray">Réponse</Badge></div>}

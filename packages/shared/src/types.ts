@@ -259,7 +259,9 @@ export type Review = {
   rating: number;
   comment: string;
   publicName: string;
-  status?: "published" | "hidden";
+  /** Audit 23/11 : « pending » = en attente de modération (note basse ou mot sensible). */
+  status?: "published" | "hidden" | "pending";
+  moderation?: { why: "low_rating" | "sensitive" | null; word?: string };
   createdAt: string;
   isDemo?: boolean;
   /** Étape 24 : réponse publique de l'organisateur ou de l'équipe. */
@@ -353,6 +355,8 @@ export type Reservation = {
   experienceId: string;
   /** Organisateur de l'activité (null = Wenzy). */
   organizerId?: string | null;
+  /** Ville de la date (copiée à la réservation). */
+  cityId?: string;
   status: ReservationStatus;
   seats: number;
   pricing: Pricing;

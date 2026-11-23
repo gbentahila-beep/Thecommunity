@@ -96,6 +96,11 @@ export async function setReviewStatus(reviewId: string, status: "published" | "h
     if (rv.status === status) return false;
     const expRef = db.doc(`experiences/${rv.experienceId}`);
     const e = (await tx.get(expRef)).data() ?? {};
+    // Audit 23/11 : un avis « en attente » ne comptait pas encore : le masquer ne change rien à la note.
+    if (rv.status === "pending" && status === "hidden") {
+      tx.update(ref, { status, moderatedBy: actorUid, moderatedAt: FieldValue.serverTimestamp() });
+      return true;
+    }
     const sign = status === "hidden" ? -1 : 1;
     const count = Math.max(0, ((e.ratingCount as number) ?? 0) + sign);
     const sum = Math.max(0, ((e.ratingSum as number) ?? ((e.ratingAvg as number) ?? 0) * ((e.ratingCount as number) ?? 0)) + sign * (rv.rating as number));

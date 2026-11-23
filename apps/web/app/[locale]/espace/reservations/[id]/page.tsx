@@ -81,7 +81,8 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const covered = Boolean(r.pricing.coverage && (r.pricing.coverage.passSeats > 0 || r.pricing.coverage.carnetSeats > 0));
   const refundable = Boolean(r.paymentId) && canRequestRefund({ status: r.status, sessionStartAt: s.startAt, paidAmount: r.pricing.total, refundedAmount: r.refundedAmount }, now);
   const review = data.review;
-  const city = await getCity(experience?.cityId ?? "casablanca");
+  // Audit 23/11 : la ville de la réservation (copiée à la réservation), même si l'expérience a été archivée.
+  const city = await getCity(r.cityId ?? experience?.cityId ?? "casablanca");
   const cityName = city ? tr(city.name, locale) : "Casablanca";
   // Lieu pas encore communiqué (lieu secret) : la ville seulement, jamais le quartier (docs/22).
   const venueText = r.venue ? `${r.venue.name}, ${r.venue.address}` : cityName;
@@ -530,7 +531,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
             <div className="mt-3 space-y-2">
               <Stars value={review.rating} />
               {review.comment && <p className="text-ink/85">{review.comment}</p>}
-              <p className="text-sm text-emerald-800">{review.status === "hidden" ? t("reviewHidden") : t("reviewThanks")}</p>
+              <p className="text-sm text-emerald-800">{review.status === "hidden" ? t("reviewHidden") : review.status === "pending" ? t("reviewPending") : t("reviewThanks")}</p>
               {review.photo?.status && (
                 <p className="text-sm text-muted" data-testid="review-photo-status">{t(`reviewPhoto_${review.photo.status}`)}</p>
               )}

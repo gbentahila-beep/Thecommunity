@@ -83,3 +83,41 @@ export function organizerRating(experiences: { ratingAvg: number; ratingCount: n
   const avg = count ? experiences.reduce((a, e) => a + (e.ratingAvg || 0) * (e.ratingCount || 0), 0) / count : 0;
   return { avg: Math.round(avg * 10) / 10, count };
 }
+
+/**
+ * Audit du 23/11 — file de modération : un avis noté 2 étoiles ou moins, ou dont le texte contient un mot sensible,
+ * attend la validation de l'équipe avant d'être publié (il ne compte pas dans la note tant qu'il est en attente).
+ * Liste par défaut (FR, darija en lettres latines, arabe, EN) complétée dans le back-office (settings/reviews).
+ */
+export const REVIEW_MODERATION_MAX_RATING = 2;
+export const DEFAULT_SENSITIVE_WORDS = [
+  // insultes et propos haineux
+  "connard", "connasse", "salope", "pute", "encule", "enculé", "batard", "bâtard", "fdp", "nique", "pd",
+  "zamel", "9ahba", "qahba", "khanzir", "hmar", "tfou", "wld l9ahba",
+  "قحبة", "زامل", "حمار", "خنزير", "كلب",
+  "bitch", "asshole", "fuck", "slut", "whore",
+  // signaux à vérifier (sécurité, accusations, données personnelles)
+  "agression", "harcèlement", "harcele", "harcelé", "drogue", "vol", "volé", "police", "arnaque", "escroc",
+  "harassment", "assault", "scam",
+  "تحرش", "نصب",
+];
+const fold = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+/**
+ * Le texte contient-il un mot sensible ? Sans tenir compte des accents ni de la casse ; mot entier pour les mots
+ * courts (« vol » ne prend pas « volontiers »), début de mot à partir de 5 lettres (« harcelé » prend « harcelée »).
+ */
+export function sensitiveWordIn(text: string, words: string[] = DEFAULT_SENSITIVE_WORDS): string | null {
+  const t = ` ${fold(text).replace(/[^\p{L}\p{N}]+/gu, " ")} `;
+  for (const w of words) {
+    const f = fold(w).trim().replace(/[^\p{L}\p{N}]+/gu, " ");
+    if (f && t.includes(f.length >= 5 ? ` ${f}` : ` ${f} `)) return w;
+  }
+  // Numéros de téléphone (06/07…, +212) : données personnelles dans un avis public.
+  if (/(?:\+?212|0)[\s.-]?[5-7](?:[\s.-]?\d){8}/.test(text)) return "phone";
+  return null;
+}
+export function reviewNeedsModeration(rating: number, comment: string, words?: string[]): { pending: boolean; why: "low_rating" | "sensitive" | null; word?: string } {
+  if (rating <= REVIEW_MODERATION_MAX_RATING) return { pending: true, why: "low_rating" };
+  const w = comment ? sensitiveWordIn(comment, words) : null;
+  return w ? { pending: true, why: "sensitive", word: w } : { pending: false, why: null };
+}

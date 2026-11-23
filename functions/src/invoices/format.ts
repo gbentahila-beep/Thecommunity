@@ -29,3 +29,9 @@ export function dateTimeFor(d: Date, locale: string): string {
   const intl = locale === "ar" ? "ar-MA" : "en-GB";
   return plainSpaces(new Intl.DateTimeFormat(intl, { timeZone: MOROCCO_TIMEZONE, numberingSystem: "latn", weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(d));
 }
+
+/** « 19h30 » (fr) ou « 19:30 » (ar, en), heure du Maroc. */
+export function timeFor(d: Date, locale: string): string {
+  const v = new Intl.DateTimeFormat(locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR", { timeZone: MOROCCO_TIMEZONE, numberingSystem: "latn", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(d);
+  return plainSpaces(locale === "fr" ? v.replace(":", "h") : v);
+}

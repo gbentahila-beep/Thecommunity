@@ -8,10 +8,19 @@ import { changeMail, reminderMail } from "../mail/templates";
 
 const HOUR = 3_600_000;
 
+const cityNames = new Map<string, Record<string, string>>();
+/** Nom de la ville de la réservation, dans la langue de la personne (audit 23/11 : plus de « Casablanca » écrit en dur). */
+export async function cityNameOf(cityId: string | undefined, locale: string): Promise<string> {
+  const id = cityId || "casablanca";
+  if (!cityNames.has(id)) cityNames.set(id, ((await db.doc(`cities/${id}`).get()).get("name") as Record<string, string> | undefined) ?? {});
+  const n = cityNames.get(id)!;
+  return n[locale] ?? n.fr ?? id.charAt(0).toUpperCase() + id.slice(1);
+}
+
 /** Où aller : le lieu exact s'il est communiqué ; sinon (lieu secret pas encore révélé) la ville seulement, jamais le quartier. */
-function whereOf(r: DocumentData): string {
+export async function whereOf(r: DocumentData, locale = "fr"): Promise<string> {
   if (r.venue?.name) return `${r.venue.name}, ${r.venue.address ?? ""}`.replace(/, $/, "");
-  return "Casablanca";
+  return cityNameOf(r.cityId as string | undefined, locale);
 }
 
 export async function personOf(uid: string) {
@@ -56,7 +65,7 @@ export async function sendDueReminders(now = Date.now()): Promise<{ d1: number; 
       createdAt: FieldValue.serverTimestamp(),
     });
     if (p.email && p.emailOk) {
-      await sendMail({ to: p.email, locale: p.locale, ...reminderMail({ locale: p.locale, kind, firstName: p.firstName, title, when, where: whereOf(r), reservationId: doc.id }), kind: `reminder_${kind}`, refs: { reservationId: doc.id } });
+      await sendMail({ to: p.email, locale: p.locale, ...reminderMail({ locale: p.locale, kind, firstName: p.firstName, title, when, where: await whereOf(r, p.locale), reservationId: doc.id }), kind: `reminder_${kind}`, refs: { reservationId: doc.id } });
     }
     out[kind]++;
   }
@@ -79,12 +88,12 @@ export async function notifyReservationChange(reservationId: string, kind: "date
     await db.collection(`users/${r.userId}/notifications`).add({
       type: "event_updated",
       title: { fr: "Le lieu a changé", ar: "تغيّر المكان", en: "The venue has changed" },
-      body: { fr: `Nouveau lieu : ${whereOf(r)}.`, ar: `المكان الجديد: ${whereOf(r)}.`, en: `New venue: ${whereOf(r)}.` },
+      body: { fr: `Nouveau lieu : ${await whereOf(r)}.`, ar: `المكان الجديد: ${await whereOf(r, "ar")}.`, en: `New venue: ${await whereOf(r, "en")}.` },
       link: `/espace/reservations/${reservationId}`,
       createdAt: FieldValue.serverTimestamp(),
     });
   }
   if (p.email) {
-    await sendMail({ to: p.email, locale: p.locale, ...changeMail({ locale: p.locale, kind, firstName: p.firstName, title, when, where: whereOf(r), reservationId }), kind: `change_${kind}`, refs: { reservationId } });
+    await sendMail({ to: p.email, locale: p.locale, ...changeMail({ locale: p.locale, kind, firstName: p.firstName, title, when, where: await whereOf(r, p.locale), reservationId }), kind: `change_${kind}`, refs: { reservationId } });
   }
 }

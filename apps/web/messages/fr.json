@@ -865,7 +865,8 @@
     "cancelCreditsLost": "Si vous annulez maintenant, {count, plural, one {votre crédit n'est pas rendu} other {vos # crédits ne sont pas rendus}} (conditions d'annulation de l'événement).",
     "cancelPassLate": "Votre place est incluse dans votre pass : annuler à moins de 24 h du début compte comme une absence (un avertissement, puis le pass est suspendu 2 semaines à la deuxième).",
     "cancelDoneLate": "Réservation annulée. Annulation à moins de 24 h d'une place incluse dans votre pass : elle compte comme une absence.",
-    "cancelDonePending": "Réservation annulée : {amount} vous seront remboursés, le remboursement est en cours."
+    "cancelDonePending": "Réservation annulée : {amount} vous seront remboursés, le remboursement est en cours.",
+    "reviewPending": "Merci pour votre avis : il est en cours de vérification par l'équipe avant d'être publié."
   },
   "profilePage": {
     "title": "Mon profil",

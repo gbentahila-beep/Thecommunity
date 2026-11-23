@@ -1,4 +1,4 @@
-import { canReview, publicNameOf, reviewInputSchema } from "@thecommunity/shared";
+import { canReview, DEFAULT_SENSITIVE_WORDS, publicNameOf, reviewInputSchema, reviewNeedsModeration } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -32,6 +32,10 @@ export const submitReview = onCall({ region: REGION }, async (req) => {
     if (!exists) refuse("invalid_photo", "Photo introuvable : envoyez-la de nouveau.");
   }
 
+  // Audit 23/11 : file de modération (2 étoiles ou moins, ou mot sensible : liste par défaut + back-office).
+  const extraWords = ((await db.doc("settings/reviews").get()).get("sensitiveWords") as string[] | undefined) ?? [];
+  const moderation = reviewNeedsModeration(rating, comment, [...DEFAULT_SENSITIVE_WORDS, ...extraWords]);
+
   return db.runTransaction(async (tx) => {
     const resRef = db.doc(`reservations/${reservationId}`);
     const reviewRef = db.doc(`reviews/${reservationId}`);
@@ -39,7 +43,7 @@ export const submitReview = onCall({ region: REGION }, async (req) => {
     const r = res.data();
     if (!r || r.userId !== uid) throw new HttpsError("not-found", "Réservation introuvable.", { reason: "not_found" });
     if (existing.exists) refuse("already_reviewed", "Vous avez déjà donné votre avis.");
-    if (!canReview({ status: r.status, sessionSnapshot: { endAt: iso(r.sessionSnapshot?.endAt) } })) refuse("not_reviewable", "Avis impossible pour cette réservation.");
+    if (!canReview({ status: r.status, sessionSnapshot: { startAt: iso(r.sessionSnapshot?.startAt), endAt: iso(r.sessionSnapshot?.endAt) }, cancellation: r.cancellation?.at ? { at: iso(r.cancellation.at) } : null })) refuse("not_reviewable", "Avis impossible pour cette réservation.");
     const expRef = db.doc(`experiences/${r.experienceId}`);
     const e = (await tx.get(expRef)).data() ?? {};
 
@@ -51,7 +55,8 @@ export const submitReview = onCall({ region: REGION }, async (req) => {
       rating,
       comment,
       publicName: publicNameOf(user.firstName, user.lastName),
-      status: "published",
+      status: moderation.pending ? "pending" : "published",
+      ...(moderation.pending ? { moderation: { why: moderation.why, ...(moderation.word ? { word: moderation.word } : {}) } } : {}),
       organizerId: e.organizerId ?? null,
       ...(photoPath ? { photo: { path: photoPath, status: "pending" } } : {}),
       ...(details && Object.values(details).some((v) => v != null) ? { details: Object.fromEntries(Object.entries(details).filter(([, v]) => v != null)) } : {}),
@@ -60,12 +65,15 @@ export const submitReview = onCall({ region: REGION }, async (req) => {
       createdAt: FieldValue.serverTimestamp(),
     });
     tx.update(resRef, { reviewId: reservationId, updatedAt: FieldValue.serverTimestamp() });
-    const count = ((e.ratingCount as number) ?? 0) + 1;
-    const sum = ((e.ratingSum as number) ?? ((e.ratingAvg as number) ?? 0) * ((e.ratingCount as number) ?? 0)) + rating;
-    tx.update(expRef, { ratingCount: count, ratingSum: sum, ratingAvg: Math.round((sum / count) * 100) / 100 });
-    return { ok: true, reviewId: reservationId };
+    // En attente de modération : la note moyenne n'est mise à jour qu'à la publication (setReviewStatus).
+    if (!moderation.pending) {
+      const count = ((e.ratingCount as number) ?? 0) + 1;
+      const sum = ((e.ratingSum as number) ?? ((e.ratingAvg as number) ?? 0) * ((e.ratingCount as number) ?? 0)) + rating;
+      tx.update(expRef, { ratingCount: count, ratingSum: sum, ratingAvg: Math.round((sum / count) * 100) / 100 });
+    }
+    return { ok: true, reviewId: reservationId, status: moderation.pending ? "pending" : "published" };
   }).then(async (res) => {
-    await addHistory(reservationId, "created", "member", undefined, photoPath ? "avec une photo à vérifier" : undefined);
+    await addHistory(reservationId, "created", "member", undefined, [photoPath ? "avec une photo à vérifier" : "", moderation.pending ? (moderation.why === "low_rating" ? "en attente : note basse" : `en attente : mot sensible (${moderation.word})`) : ""].filter(Boolean).join(" · ") || undefined);
     return res;
   });
 });
@@ -89,7 +97,7 @@ export const adminSetReviewStatus = onCall({ region: REGION }, async (req) => {
 export async function sendReviewRequests(now = Date.now()) {
   const snap = await db
     .collection("reservations")
-    .where("status", "in", ["confirmed", "attended"])
+    .where("status", "in", ["confirmed", "attended", "refunded"])
     .where("sessionSnapshot.endAt", ">=", Timestamp.fromMillis(now - 26 * 3_600_000))
     .where("sessionSnapshot.endAt", "<=", Timestamp.fromMillis(now - 2 * 3_600_000))
     .limit(500)
@@ -98,6 +106,8 @@ export async function sendReviewRequests(now = Date.now()) {
   for (const d of snap.docs) {
     const r = d.data();
     if (r.reviewId || r.reviewRequestedAt) continue;
+    // Audit 23/11 : remboursé·e après coup → avis possible ; annulé·e avant le jour J → pas de demande.
+    if (!canReview({ status: r.status, sessionSnapshot: { startAt: iso(r.sessionSnapshot?.startAt), endAt: iso(r.sessionSnapshot?.endAt) }, cancellation: r.cancellation?.at ? { at: iso(r.cancellation.at) } : null }, new Date(now))) continue;
     const batch = db.batch();
     batch.update(d.ref, { reviewRequestedAt: FieldValue.serverTimestamp() });
     batch.set(db.collection(`users/${r.userId}/notifications`).doc(), {

@@ -672,7 +672,7 @@ describe("avis", () => {
     const b = await member();
     await db().doc(`users/${a.uid}`).update({ firstName: "Sara", lastName: "benali" });
     const ra = await pastReservation(a, { checkIn: "attended" });
-    expect(await a.call("submitReview", { reservationId: ra.reservationId, rating: 5, comment: "Super soirée !" })).toEqual({ ok: true, reviewId: ra.reservationId });
+    expect(await a.call("submitReview", { reservationId: ra.reservationId, rating: 5, comment: "Super soirée !" })).toEqual({ ok: true, reviewId: ra.reservationId, status: "published" });
     const rv = (await db().doc(`reviews/${ra.reservationId}`).get()).data()!;
     expect(rv).toMatchObject({ userId: a.uid, experienceId: ra.experienceId, rating: 5, comment: "Super soirée !", publicName: "Sara B.", status: "published" });
     expect((await reservation(ra.reservationId)).reviewId).toBe(ra.reservationId);
@@ -702,13 +702,14 @@ describe("avis", () => {
   it("modération : un avis masqué sort de la note moyenne, puis peut être republié", async () => {
     const u = await member();
     const r = await pastReservation(u);
-    await u.call("submitReview", { reservationId: r.reservationId, rating: 2, comment: "Bof" });
+    // 4 étoiles : publié directement (2 étoiles ou moins : en attente de modération, voir audit-fixes.test.ts).
+    await u.call("submitReview", { reservationId: r.reservationId, rating: 4, comment: "Correct" });
     expect(await refusal(u.call("adminSetReviewStatus", { reviewId: r.reservationId, status: "hidden" }))).toBe("permission-denied:");
     await team.call("adminSetReviewStatus", { reviewId: r.reservationId, status: "hidden" });
     expect((await db().doc(`reviews/${r.reservationId}`).get()).data()!.status).toBe("hidden");
     expect((await db().doc(`experiences/${r.experienceId}`).get()).data()).toMatchObject({ ratingCount: 0, ratingAvg: 0 });
     await team.call("adminSetReviewStatus", { reviewId: r.reservationId, status: "published" });
-    expect((await db().doc(`experiences/${r.experienceId}`).get()).data()).toMatchObject({ ratingCount: 1, ratingAvg: 2 });
+    expect((await db().doc(`experiences/${r.experienceId}`).get()).data()).toMatchObject({ ratingCount: 1, ratingAvg: 4 });
   });
 
   it("le lendemain : une demande d'avis, une seule fois", async () => {

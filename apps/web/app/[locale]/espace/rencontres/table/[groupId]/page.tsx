@@ -2,6 +2,7 @@ import { tablesTimeline } from "@thecommunity/shared";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
+import { LiveTableMessages, TABLE_MESSAGES_SHOWN } from "@/components/account/live-table-messages";
 import { TableChatForm } from "@/components/account/table-chat";
 import { MemberAvatar } from "@/components/member-avatar";
 import { Link } from "@/i18n/navigation";
@@ -30,8 +31,9 @@ export default async function TableChatPage({ params }: PageProps<"/[locale]/esp
   const open = now >= timeline.chatFrom.getTime() && now <= timeline.chatUntil.getTime();
   let messages: Message[] = [];
   if (FIREBASE_ENABLED) {
-    const snap = await adminDb().collection(`groups/${groupId}/messages`).orderBy("createdAt").limit(300).get();
-    messages = snap.docs.map((d) => ({ id: d.id, uid: String(d.get("uid")), firstName: String(d.get("firstName") ?? ""), text: String(d.get("text") ?? ""), createdAt: d.get("createdAt")?.toDate?.().toISOString() ?? new Date(0).toISOString() }));
+    // Audit 23/11 : les 300 DERNIERS messages (avant : les 300 premiers, les plus récents disparaissaient).
+    const snap = await adminDb().collection(`groups/${groupId}/messages`).orderBy("createdAt", "desc").limit(TABLE_MESSAGES_SHOWN).get();
+    messages = [...snap.docs].reverse().map((d) => ({ id: d.id, uid: String(d.get("uid")), firstName: String(d.get("firstName") ?? ""), text: String(d.get("text") ?? ""), createdAt: d.get("createdAt")?.toDate?.().toISOString() ?? new Date(0).toISOString() }));
   } else {
     const other = group.members.find((m) => m.uid !== me);
     const live = now < new Date(r.sessionSnapshot.endAt).getTime();
@@ -42,7 +44,6 @@ export default async function TableChatPage({ params }: PageProps<"/[locale]/esp
         ]
       : other ? [{ id: "m1", uid: other.uid, firstName: other.firstName, text: t("demoMessage"), createdAt: timeline.chatFrom.toISOString() }] : [];
   }
-  const byUid = new Map(group.members.map((m) => [m.uid, m]));
   const live = now < new Date(r.sessionSnapshot.endAt).getTime();
   const statusOf = (uid: string) => ((group.arrivedUids ?? []).includes(uid) ? "arrived" : group.late?.[uid] ? "late" : "waiting");
   return (
@@ -69,19 +70,13 @@ export default async function TableChatPage({ params }: PageProps<"/[locale]/esp
         })}
       </ul>
       <section className="card space-y-3 p-5" data-testid="table-chat">
-        {messages.length === 0 ? <p className="text-sm text-muted">{t("empty")}</p> : (
-          <ul className="space-y-3">
-            {messages.map((m) => (
-              <li key={m.id} className={`flex items-end gap-2 ${m.uid === me ? "flex-row-reverse" : ""}`}>
-                {m.uid !== me && <MemberAvatar uid={m.uid} photoPath={byUid.get(m.uid)?.photoPath} size={32} />}
-                <span className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-[15px] text-ink ${m.uid === me ? "bg-brand-100" : "bg-cream"}`}>
-                  <span className="block text-xs font-semibold text-muted">{m.uid === me ? t("you") : m.firstName} · {formatTime(m.createdAt, locale)}</span>
-                  <span className="whitespace-pre-wrap">{m.text}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <LiveTableMessages
+          groupId={groupId}
+          me={me}
+          locale={locale}
+          initial={messages}
+          avatars={Object.fromEntries(group.members.map((m) => [m.uid, <MemberAvatar key={m.uid} uid={m.uid} photoPath={m.photoPath} size={32} />]))}
+        />
         <TableChatForm groupId={groupId} open={open} />
       </section>
     </div>

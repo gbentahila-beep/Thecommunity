@@ -865,7 +865,8 @@
     "cancelCreditsLost": "If you cancel now, {count, plural, one {your credit is not returned} other {your # credits are not returned}} (event cancellation terms).",
     "cancelPassLate": "Your seat is included in your pass: cancelling within 24 hours of the start counts as a no-show (a warning, then a 2-week pass suspension at the second).",
     "cancelDoneLate": "Booking cancelled. Cancelling a pass seat within 24 hours counts as a no-show.",
-    "cancelDonePending": "Booking cancelled: {amount} will be refunded, the refund is in progress."
+    "cancelDonePending": "Booking cancelled: {amount} will be refunded, the refund is in progress.",
+    "reviewPending": "Thank you for your review: the team is checking it before it's published."
   },
   "profilePage": {
     "title": "My profile",

@@ -67,7 +67,7 @@ export function DayOfCard(p: Props) {
   };
 
   return (
-    <section aria-labelledby="day-of-title" className="card overflow-hidden" data-testid="day-of">
+    <section id="arrivee" aria-labelledby="day-of-title" className="card scroll-mt-28 overflow-hidden" data-testid="day-of">
       <div className="bg-brand-50 px-5 py-4">
         <p className="text-xs font-semibold tracking-[0.14em] text-brand-700 uppercase">{t(p.dayLabel)} · {p.timeLabel}</p>
         <h2 id="day-of-title" className="mt-1 font-display text-[1.9rem] leading-tight font-semibold text-brand-900" data-testid="day-of-countdown">

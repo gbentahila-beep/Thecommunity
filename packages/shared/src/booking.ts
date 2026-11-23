@@ -181,11 +181,20 @@ export const reviewInputSchema = z.object({
 export const REVIEW_DETAIL_KEYS = ["group", "organisation", "venue"] as const;
 export type ReviewDetailKey = (typeof REVIEW_DETAIL_KEYS)[number];
 
-/** Peut-on laisser un avis sur cette réservation à `now` ? (présent·e, ou confirmé·e et expérience terminée) */
-export function canReview(r: { status: string; sessionSnapshot: { endAt: string } }, now: Date = new Date()): boolean {
+/**
+ * Peut-on laisser un avis sur cette réservation à `now` ? (présent·e, ou confirmé·e et expérience terminée)
+ * Audit 23/11 : aussi après un remboursement, si la personne était bien inscrite le jour J (remboursée après coup,
+ * pas annulée avant) : sinon les expériences décevantes, souvent remboursées, n'auraient jamais d'avis.
+ */
+export function canReview(r: { status: string; sessionSnapshot: { startAt?: string; endAt: string }; cancellation?: { at: string } | null }, now: Date = new Date()): boolean {
   const end = new Date(r.sessionSnapshot.endAt).getTime();
   if (now.getTime() > end + REVIEW_WINDOW_DAYS * 86_400_000) return false;
   if (r.status === "attended") return true;
+  if (r.status === "refunded") {
+    if (now.getTime() < end) return false;
+    const start = new Date(r.sessionSnapshot.startAt ?? r.sessionSnapshot.endAt).getTime();
+    return !r.cancellation || new Date(r.cancellation.at).getTime() >= start;
+  }
   return r.status === "confirmed" && now.getTime() >= end;
 }
 

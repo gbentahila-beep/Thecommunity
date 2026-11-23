@@ -42,3 +42,26 @@ describe("audit 23/11 — règles partagées", () => {
     expect(withdrawalRefusal({ ...carnet, creditsLeft: 2 }, new Date("2026-12-02T10:00:00Z"))).toBe("already_used");
   });
 });
+
+import { canReview, reviewNeedsModeration, sensitiveWordIn } from "./index";
+
+describe("audit 23/11 — avis", () => {
+  it("modération : note basse, mot sensible (accents et casse ignorés, mot entier), téléphone", () => {
+    expect(reviewNeedsModeration(2, "")).toMatchObject({ pending: true, why: "low_rating" });
+    expect(reviewNeedsModeration(5, "Quelle ARNAQUE")).toMatchObject({ pending: true, why: "sensitive", word: "arnaque" });
+    expect(reviewNeedsModeration(5, "Il m'a harcelée toute la soirée").pending).toBe(true); // début de mot (5 lettres et plus)
+    expect(sensitiveWordIn("Il m'a HARCELÉ")).toBeTruthy();
+    expect(sensitiveWordIn("Volontiers, à refaire")).toBeNull(); // « vol » n'est pas un mot entier ici
+    expect(sensitiveWordIn("Appelez le +212 6 12 34 56 78")).toBe("phone");
+    expect(reviewNeedsModeration(4, "Très bonne soirée, merci !")).toMatchObject({ pending: false });
+  });
+
+  it("avis après remboursement : oui si remboursé après coup, non si annulé avant", () => {
+    const snap = { startAt: "2026-12-01T19:00:00Z", endAt: "2026-12-01T22:00:00Z" };
+    const now = new Date("2026-12-02T10:00:00Z");
+    expect(canReview({ status: "refunded", sessionSnapshot: snap }, now)).toBe(true);
+    expect(canReview({ status: "refunded", sessionSnapshot: snap, cancellation: { at: "2026-11-30T10:00:00Z" } }, now)).toBe(false);
+    expect(canReview({ status: "refunded", sessionSnapshot: snap, cancellation: { at: "2026-12-01T20:00:00Z" } }, now)).toBe(true);
+    expect(canReview({ status: "refunded", sessionSnapshot: snap }, new Date("2026-12-01T20:00:00Z"))).toBe(false);
+  });
+});

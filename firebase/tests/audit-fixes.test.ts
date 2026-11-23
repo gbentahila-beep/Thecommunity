@@ -12,6 +12,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 // Importés AVANT la création de l'application d'administration nommée : le SDK des fonctions crée l'application par défaut.
 import { expireDueHolds } from "../../functions/src/reservations/expire-holds";
 import { retryPendingRefunds } from "../../functions/src/refunds/retry";
+import { sendArrivalChecks } from "../../functions/src/notify/arrival";
+import { sendDueReminders } from "../../functions/src/notify/reminders";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -389,5 +391,93 @@ describe("lot 2 — carnet, pass et remboursements", () => {
     expect(await c.call("withdrawMembership", { paymentId: pid3 })).toMatchObject({ ok: true });
     expect((await db().doc(`carnets/${c.uid}`).get()).data()!.credits).toBe(0);
     await db().doc("membershipPlans/annual").set({ isActive: false }, { merge: true });
+  });
+});
+
+describe("lot 3 — jour J, lieu", () => {
+  it("place payée : les coordonnées GPS du lieu sont copiées (comme pour une place gratuite)", async () => {
+    const { sid } = await makeExperience({ startInHours: 80 });
+    const u = await member();
+    const rid = await paid(u, sid);
+    expect((await reservation(rid)).venue).toMatchObject({ name: "Studio Audit", geo: { lat: 33.59, lng: -7.62 } });
+  });
+
+  it("à l'heure du début : « Vous êtes arrivé·e ? » à qui n'a pas fait son check-in, une seule fois", async () => {
+    const { sid } = await makeExperience({ startInHours: 30 });
+    const a = await member();
+    const b = await member();
+    const ra = await paid(a, sid);
+    const rb = await paid(b, sid);
+    await db().doc(`reservations/${rb}`).update({ arrivedAt: Timestamp.now() });
+    const s = await session(sid);
+    const e = (await db().doc(`experiences/${s.experienceId}`).get()).data()!;
+    const start = (s.startAt as Timestamp).toMillis();
+    expect(await sendArrivalChecks(sid, s, e, start - 60_000)).toBe(0); // pas avant le début
+    expect(await sendArrivalChecks(sid, s, e, start + 60_000)).toBe(1);
+    expect(await sendArrivalChecks(sid, await session(sid), e, start + 120_000)).toBe(0); // une seule fois
+    expect((await db().collection(`users/${a.uid}/notifications`).where("type", "==", "arrival_check").get()).size).toBe(1);
+    expect((await db().collection(`users/${b.uid}/notifications`).where("type", "==", "arrival_check").get()).size).toBe(0);
+    expect((await db().collection("mail").where("refs.reservationId", "==", ra).where("kind", "==", "arrival_check").get()).size).toBe(1);
+  });
+
+  it("rappel d'un lieu encore secret : la vraie ville, pas « Casablanca » écrit en dur", async () => {
+    await db().doc("cities/rabat").set({ isActive: true, name: { fr: "Rabat", ar: "الرباط", en: "Rabat" } }, { merge: true });
+    // Lieu secret pas encore révélé : réservation sans lieu (comme avant la révélation des tables).
+    const { sid, experienceId } = await makeExperience({ startInHours: 20, sessionExtra: { cityId: "rabat" } });
+    const u = await member();
+    const s = await session(sid);
+    const ref = db().collection("reservations").doc();
+    await ref.set({ userId: u.uid, sessionId: sid, experienceId, cityId: "rabat", seats: 1, status: "confirmed", pricing: { total: 3500, currency: "MAD" }, sessionSnapshot: { title: { fr: "Dîner" }, slug: "x", startAt: s.startAt, endAt: s.endAt }, createdAt: Timestamp.now() });
+    const rid = ref.id;
+    await sendDueReminders();
+    const mail = (await db().collection("mail").where("refs.reservationId", "==", rid).where("kind", "==", "reminder_d1").get()).docs[0]!.data();
+    expect(mail.text).toContain("Rabat");
+    expect(mail.text).not.toContain("Casablanca");
+  });
+});
+
+describe("lot 4 — avis", () => {
+  /** Réservation terminée (confirmée) d'une expérience, prête pour un avis. */
+  async function past(u: Client, extra: Record<string, unknown> = {}) {
+    const { sid, experienceId } = await makeExperience({ startInHours: -5 });
+    const ref = db().collection("reservations").doc();
+    const s = await session(sid);
+    await ref.set({ userId: u.uid, sessionId: sid, experienceId, seats: 1, status: "confirmed", pricing: { total: 3500, currency: "MAD" }, sessionSnapshot: { title: { fr: "Atelier" }, slug: "x", startAt: s.startAt, endAt: s.endAt }, createdAt: Timestamp.now(), ...extra });
+    return { rid: ref.id, experienceId };
+  }
+  const exp = async (id: string) => (await db().doc(`experiences/${id}`).get()).data()!;
+
+  it("4 étoiles sans mot sensible : publié et compté ; 2 étoiles : en attente, pas compté, puis publié par l'équipe", async () => {
+    const team = await member({ role: "admin" });
+    const u = await member();
+    const v = await member();
+    const a = await past(u);
+    expect(await u.call("submitReview", { reservationId: a.rid, rating: 4, comment: "Très bonne soirée" })).toMatchObject({ status: "published" });
+    expect((await exp(a.experienceId)).ratingCount).toBe(1);
+    const b = await past(v);
+    expect(await v.call("submitReview", { reservationId: b.rid, rating: 2, comment: "Bof" })).toMatchObject({ status: "pending" });
+    expect((await db().doc(`reviews/${b.rid}`).get()).data()).toMatchObject({ status: "pending", moderation: { why: "low_rating" } });
+    expect((await exp(b.experienceId)).ratingCount ?? 0).toBe(0);
+    await team.call("adminSetReviewStatus", { reviewId: b.rid, status: "published" });
+    expect(await exp(b.experienceId)).toMatchObject({ ratingCount: 1, ratingAvg: 2 });
+  });
+
+  it("mot sensible ou numéro de téléphone : en attente ; refusé par l'équipe, la note ne bouge pas", async () => {
+    const team = await member({ role: "admin" });
+    const u = await member();
+    const a = await past(u);
+    expect(await u.call("submitReview", { reservationId: a.rid, rating: 5, comment: "Super, appelez Karim au 06 12 34 56 78" })).toMatchObject({ status: "pending" });
+    expect((await db().doc(`reviews/${a.rid}`).get()).data()!.moderation).toMatchObject({ why: "sensitive", word: "phone" });
+    await team.call("adminSetReviewStatus", { reviewId: a.rid, status: "hidden" });
+    expect((await exp(a.experienceId)).ratingCount ?? 0).toBe(0);
+  });
+
+  it("remboursé·e après coup : peut donner son avis ; annulé·e avant le jour J : non", async () => {
+    const u = await member();
+    const after = await past(u, { status: "refunded", refundedAmount: 3500 });
+    expect(await u.call("submitReview", { reservationId: after.rid, rating: 4, comment: "Remboursé mais sympa" })).toMatchObject({ ok: true });
+    const v = await member();
+    const before = await past(v, { status: "refunded", cancellation: { at: Timestamp.fromMillis(Date.now() - 30 * H), by: "user", refundAmount: 3500 } });
+    expect(await refusal(v.call("submitReview", { reservationId: before.rid, rating: 4, comment: "" }))).toBe("failed-precondition:not_reviewable");
   });
 });

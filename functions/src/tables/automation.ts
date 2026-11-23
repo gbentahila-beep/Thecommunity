@@ -10,6 +10,7 @@ import { cancelReservationCore } from "../reservations/cancel-reservation";
 import { cancelRequests, isAllocated, processPendingRequests, requestFixedVenue, runAllocation, sendRecap, venueCapacity } from "./allocation";
 import { teamAlert } from "./team";
 import { markAbsences } from "../membership/absences";
+import { sendArrivalChecks } from "../notify/arrival";
 
 const HOUR = 3_600_000;
 const SYSTEM = "system";
@@ -72,6 +73,9 @@ async function stepSession(id: string, s: DocumentData, e: DocumentData, now: nu
     out.absences = (out.absences ?? 0) + (await markAbsences(id, s, e, now));
     return;
   }
+
+  // Audit 23/11 : à l'heure du début, « Vous êtes arrivé·e ? » à qui n'a pas fait son check-in.
+  if (now >= start.getTime() && !s.arrivalCheckAt) out.arrivalChecks = (out.arrivalChecks ?? 0) + (await sendArrivalChecks(id, s, e, now));
 
   // 7. Proposition arrivée à échéance : qui n'a pas répondu est remboursé ; date vidée → annulée.
   if (s.risk?.status === "proposed" && s.risk.deadline && (s.risk.deadline as Timestamp).toMillis() <= now) {
