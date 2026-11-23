@@ -787,6 +787,11 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 - Cartes : l'alignement suit la forme de la carte. Carte courte empilée (numéro ou icône en haut, titre, une ou deux lignes) : centrée — les 3 cartes de « Comment ça marche », les offres Carnet et Pass, « Ce qui compte pour nous », les outils d'À propos, « Travaillons ensemble ». Liste ou ligne avec une icône ou une coche à gauche (étapes numérotées, avantages du Pass, sécurité, événements, réglages, formulaires, articles) : à gauche, pour que l'œil suive les icônes.
 - Carnet et Pass : « Choisir » devient un titre de section centré ; offres et « Autres durées » centrés.
 
+### Photo de profil privée affichée (23 novembre)
+
+- Les photos de profil ne sont pas publiques dans Storage : affichées directement, elles apparaissaient comme une image cassée. Elles passent maintenant par `/api/avatar`, qui ne les sert qu'à la personne elle-même, aux membres d'un de ses groupes et à l'équipe (sinon « introuvable », 401 sans connexion).
+- L'avatar dessine toujours la tête de Bab, recouverte par la photo ; si la photo ne se charge pas, le Bab reste visible (plus jamais d'image cassée). Vérifié sur les émulateurs : photo affichée sur « Mon profil », refusée sans connexion.
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes
