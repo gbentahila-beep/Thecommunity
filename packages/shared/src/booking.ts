@@ -195,6 +195,17 @@ export function canReview(r: { status: string; sessionSnapshot: { endAt: string 
  */
 export const SELF_CHECKIN_BEFORE_MIN = 30;
 export const SELF_CHECKIN_AFTER_MIN = 60;
+
+/** « Je serai en retard » (étape Z) : de 3 h avant le début à 30 min après ; retards proposés, en minutes. */
+export const LATE_SIGNAL_BEFORE_MIN = 180;
+export const LATE_SIGNAL_AFTER_MIN = 30;
+export const LATE_OPTIONS = [10, 20, 30] as const;
+export const lateSignalSchema = z.object({ reservationId: z.string().min(1).max(128), minutes: z.union([z.literal(10), z.literal(20), z.literal(30)]) });
+
+export function canSignalLate(startAt: string, now: Date = new Date()): boolean {
+  const start = new Date(startAt).getTime();
+  return now.getTime() >= start - LATE_SIGNAL_BEFORE_MIN * 60_000 && now.getTime() <= start + LATE_SIGNAL_AFTER_MIN * 60_000;
+}
 export function selfCheckInState(startAt: string, now: Date = new Date()): "early" | "open" | "closed" {
   const start = new Date(startAt).getTime();
   if (now.getTime() < start - SELF_CHECKIN_BEFORE_MIN * 60_000) return "early";

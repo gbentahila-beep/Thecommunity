@@ -1,6 +1,9 @@
-import { SelfCheckIn } from "@/components/account/self-check-in";
-import { VENUE_REVEAL_HOURS, bookingClosesAt, isTablesFlow, revealAtFor, seatsAvailable, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds } from "@thecommunity/shared";
-import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, Star } from "lucide-react";
+import { DayOfCard } from "@/components/account/day-of-card";
+import { VenueCard } from "@/components/account/venue-card";
+import { MemberAvatar } from "@/components/member-avatar";
+import { mapsLinks } from "@/lib/maps";
+import { VENUE_REVEAL_HOURS, bookingClosesAt, isTablesFlow, revealAtFor, seatsAvailable, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds, canSignalLate, tablesTimeline } from "@thecommunity/shared";
+import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, MessageCircle, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
@@ -92,13 +95,27 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const closesAt = experience ? bookingClosesAt(new Date(s.startAt), experience.bookingMode) : null;
   const proposal = r.proposal?.status === "pending" && isActive ? r.proposal : null;
   const proposedSession = proposal ? await getSession(proposal.targetSessionId).catch(() => null) : null;
-  const canMove = isActive && isUpcoming && !proposal && experience && closesAt !== null && closesAt.getTime() > now.getTime();
+  // Lieu révélé (Tables) : la date ne se déplace plus.
+  const canMove = isActive && isUpcoming && !proposal && !(tablesFlow && r.venue) && experience && closesAt !== null && closesAt.getTime() > now.getTime();
   const moveOptions = canMove
     ? (await getUpcomingSessions({ experienceId: experience!.id })).filter((x) => x.id !== r.sessionId && seatsAvailable(x) >= r.seats && bookingClosesAt(new Date(x.startAt), experience!.bookingMode).getTime() > now.getTime()).slice(0, 12).map((x) => ({ id: x.id, label: when(x.startAt) }))
     : [];
   const namesHidden = Boolean(group?.namesAtCheckIn) && !r.arrivedAt && r.status !== "attended";
   const summary = r.tableSummary && r.tableSummary.others > 0 && (namesHidden || !group) ? r.tableSummary : null;
-  const [tlang, tsec, tts] = await Promise.all([getTranslations("labels.languages"), getTranslations("labels.sector"), getTranslations("tableSummary")]);
+  const [tlang, tsec, tts, td] = await Promise.all([getTranslations("labels.languages"), getTranslations("labels.sector"), getTranslations("tableSummary"), getTranslations("dayOf")]);
+  // Étape Z : jour J, table, chat ouvert dès l'arrivée et gardé 14 jours.
+  const startMs = new Date(s.startAt).getTime();
+  const timeline = tablesTimeline(s.startAt);
+  const meArrived = Boolean(r.arrivedAt) || (group?.arrivedUids ?? []).includes(profile.uid);
+  const chatHref = group && meArrived && now.getTime() >= timeline.chatFrom.getTime() && now.getTime() <= timeline.chatUntil.getTime() ? `/espace/rencontres/table/${group.id}` : null;
+  const statusOf = (uid: string) => ((group?.arrivedUids ?? []).includes(uid) ? "arrived" : group?.late?.[uid] ? "late" : "waiting") as "arrived" | "late" | "waiting";
+  const mates = group && !namesHidden
+    ? group.members.map((m) => ({ uid: m.uid, firstName: m.firstName, me: m.uid === profile.uid, status: statusOf(m.uid), lateMinutes: group.late?.[m.uid], avatar: <MemberAvatar uid={m.uid} photoPath={m.photoPath} size={40} /> }))
+    : null;
+  const dayOf = isActive && !needsTicket(experience, r) && checkIn !== "closed" && startMs - now.getTime() < 86_400_000;
+  const sameDay = formatLongDate(s.startAt, locale) === formatLongDate(now.toISOString(), locale);
+  const venueKind = (experience?.categoryId ?? s.categoryId) === "eat" ? "restaurant" : "venue";
+  const showVenue = Boolean(r.venue) && ["confirmed", "attended", "pending_payment"].includes(r.status);
 
   return (
     <div className="space-y-6">
@@ -196,24 +213,25 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                 <dd className="text-sm text-muted">{formatTimeRange(s.startAt, s.endAt, locale)}</dd>
               </div>
             </div>
-            <div className="flex gap-3">
-              <MapPin className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
-              <div>
-                <dt className="sr-only">{t("where")}</dt>
-                {r.venue ? (
-                  <>
-                    <dd className="font-medium text-ink">{r.venue.name}</dd>
-                    <dd className="text-sm text-muted">{r.venue.address}</dd>
-                    {r.venue.cuisine && <dd className="text-sm text-muted">{r.venue.cuisine}</dd>}
-                  </>
-                ) : (
-                  <>
-                    <dd className="font-medium text-ink">{cityName}</dd>
-                    <dd className="text-sm text-muted" data-testid="venue-arrives">{tablesFlow ? tts("venueArrives", { when: revealWhen }) : t("venueHidden", { hours: VENUE_REVEAL_HOURS })}</dd>
-                  </>
-                )}
+            {!showVenue && (
+              <div className="flex gap-3">
+                <MapPin className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
+                <div>
+                  <dt className="sr-only">{t("where")}</dt>
+                  {r.venue ? (
+                    <>
+                      <dd className="font-medium text-ink">{r.venue.name}</dd>
+                      <dd className="text-sm text-muted">{r.venue.address}</dd>
+                    </>
+                  ) : (
+                    <>
+                      <dd className="font-medium text-ink">{cityName}</dd>
+                      <dd className="text-sm text-muted" data-testid="venue-arrives">{tablesFlow ? tts("venueArrives", { when: revealWhen }) : t("venueHidden", { hours: VENUE_REVEAL_HOURS })}</dd>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </dl>
           <div className="flex flex-wrap gap-3 pt-1">
             {isActive && isUpcoming && (
@@ -238,6 +256,35 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
       )}
 
       {canMove && closesAt && <MoveReservation reservationId={r.id} options={moveOptions} until={when(closesAt.toISOString())} />}
+
+      {/* Jour J (étape Z) : la veille et le jour même, jusqu'à 1 h après le début ; jamais en même temps qu'un billet. */}
+      {dayOf && (
+        <DayOfCard
+          reservationId={r.id}
+          startAt={s.startAt}
+          nowIso={now.toISOString()}
+          timeLabel={formatTime(s.startAt, locale)}
+          dayLabel={sameDay ? "today" : "tomorrow"}
+          state={checkIn}
+          arrived={meArrived}
+          lateMinutes={r.lateMinutes}
+          canLate={canSignalLate(s.startAt, now)}
+          directionsUrl={r.venue && !showVenue ? mapsLinks(r.venue.name, r.venue.address).directions : undefined}
+          table={mates ? { label: group!.label, mates } : null}
+          chatHref={chatHref}
+        />
+      )}
+
+      {showVenue && r.venue && (
+        <VenueCard
+          kind={venueKind}
+          detail={r.venue.cuisine}
+          name={r.venue.name}
+          address={r.venue.address}
+          table={tablesFlow && group && !namesHidden ? group.label : null}
+          tableAfter={tablesFlow && isActive && namesHidden}
+        />
+      )}
 
       {summary && (
         <section className="card p-5" data-testid="table-summary">
@@ -266,12 +313,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </section>
       )}
 
-      {/* Arrivée autonome (docs/16) : affichée la veille et le jour J, jusqu'à 1 h après le début ; jamais en même temps qu'un billet. */}
-      {isActive && !needsTicket(experience, r) && checkIn !== "closed" && new Date(s.startAt).getTime() - now.getTime() < 86_400_000 && (
-        <SelfCheckIn reservationId={r.id} state={checkIn} arrived={Boolean(r.arrivedAt)} onSiteHost={Boolean(experience?.onSiteHost)} hasGroup={Boolean(group)} />
-      )}
-
-      {group && !namesHidden && (
+      {group && mates && !(dayOf && meArrived) && (
         <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="my-table">
           <h2 className="font-display text-2xl font-medium text-brand-900">
             {t("group")} · {group.label}
@@ -280,21 +322,26 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
             {group.members.map((m) => (
               <li key={m.uid} className="flex items-center gap-3 rounded-2xl bg-cream/70 p-3">
-                <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-100 font-display text-lg text-brand-900" aria-hidden>
-                  {m.firstName.charAt(0)}
-                </span>
+                <MemberAvatar uid={m.uid} photoPath={m.photoPath} size={44} />
                 <span>
                   <span className="block font-semibold text-ink">
                     {m.firstName} {m.uid === profile.uid && <span className="font-normal text-muted">({t("you")})</span>}
                   </span>
                   <span className="text-sm text-muted">{m.interests.map((i) => tl(i)).join(" · ")}</span>
-                  {group.namesAtCheckIn && (group.arrivedUids ?? []).includes(m.uid) && <span className="mt-0.5 block text-xs font-semibold text-emerald-800">{tts("arrived")}</span>}
+                  {checkIn === "open" && statusOf(m.uid) !== "waiting" && (
+                    <span className={`mt-0.5 block text-xs font-semibold ${statusOf(m.uid) === "arrived" ? "text-emerald-800" : "text-amber-800"}`}>
+                      {statusOf(m.uid) === "arrived" ? tts("arrived") : td("statusLate", { minutes: group.late?.[m.uid] ?? 0 })}
+                    </span>
+                  )}
                 </span>
               </li>
             ))}
           </ul>
-          {group.namesAtCheckIn && (group.arrivedUids ?? []).includes(profile.uid) && (
-            <Link href={`/espace/rencontres/table/${group.id}`} className="mt-4 inline-flex rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-brand-900 hover:bg-cream">{tts("chat")}</Link>
+          {chatHref && (
+            <Link href={chatHref} className="btn btn-secondary btn-sm mt-4" data-testid="table-chat-link">
+              <MessageCircle className="size-4" aria-hidden />
+              {tts("chat")}
+            </Link>
           )}
         </section>
       )}
@@ -375,7 +422,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </dl>
       </section>
 
-      {(isActive || r.status === "pending_payment") && questions.length > 0 && (
+      {(isActive || r.status === "pending_payment") && isUpcoming && questions.length > 0 && (
         <section id="questionnaire" aria-labelledby="questionnaire-title" className="scroll-mt-28 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="questionnaire">
           <h2 id="questionnaire-title" className="font-display text-2xl font-medium text-brand-900">{tq("title")}</h2>
           <p className="mb-4 mt-1 text-sm text-muted">{r.questionnaire ? tq("introDone") : tq("intro")}</p>
@@ -383,7 +430,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </section>
       )}
 
-      {(isActive || r.status === "pending_payment") && (needs.food || needs.languages) && (
+      {(isActive || r.status === "pending_payment") && isUpcoming && (needs.food || needs.languages) && (
         <section aria-labelledby="prefs" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
           <h2 id="prefs" className="font-display text-2xl font-medium text-brand-900">{tp(welcomeTitleKeys(needs).edit)}</h2>
           <p className="mb-4 mt-1 text-sm text-muted">{tp(welcomeTitleKeys(needs).intro)}</p>

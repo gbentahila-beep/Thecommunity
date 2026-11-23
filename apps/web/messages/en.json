@@ -1771,7 +1771,7 @@
     "sendInvite": "Send invitation",
     "invited": "Invitation sent to {name}.",
     "tooMany": "Too many invitations today: try again tomorrow.",
-    "groups": "My past groups",
+    "groups": "My groups",
     "groupsIntro": "Up to 60 days after the experience. Nobody sees your choice unless you both feel the same.",
     "noGroups": "Your groups will appear here after your first group experience.",
     "discover": "Discover experiences",
@@ -1790,7 +1790,8 @@
     "proposeToGroup": "Suggest an outing to this group",
     "demo": "Demo: nothing is saved.",
     "error": "Couldn't do that. Please try again.",
-    "privacy": "We never share your contact details. For an issue with someone, write to the team from the Contact page."
+    "privacy": "We never share your contact details. For an issue with someone, write to the team from the Contact page.",
+    "chat": "Message the group"
   },
   "forYou": {
     "title": "For you",
@@ -1978,15 +1979,17 @@
     "back": "My connections",
     "title": "{label}: messages",
     "window": "Open until {until}.",
-    "empty": "No messages yet. A word to thank your table?",
+    "empty": "No messages yet. Say where you are to find each other, or thank your table.",
     "label": "Your message",
     "send": "Send",
     "busy": "Sending…",
     "privacy": "No phone numbers or social accounts are shown.",
-    "closed": "Messages open 2 hours after the start and stay open for 14 days.",
+    "closed": "Messages open when you check in and stay open for 14 days.",
     "error": "Couldn't send right now.",
     "you": "You",
-    "demoMessage": "Thanks for a lovely evening, let's do it again!"
+    "demoMessage": "Thanks for a lovely evening, let's do it again!",
+    "demoLive1": "I'm at the back table, by the window.",
+    "demoLive2": "I'll be there in 20 min, start without me!"
   },
   "ticketCard": {
     "label": "Your table",
@@ -2084,5 +2087,46 @@
   "babs": {
     "seat": "Your spot",
     "caption": "All that's missing is you."
+  },
+  "dayOf": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "inMinutes": "In {minutes} min",
+    "inHours": "In {hours} h {minutes}",
+    "inHoursOnly": "In {hours} h",
+    "started": "It has started",
+    "at": "Starts at {time}",
+    "here": "I'm here",
+    "busy": "One moment…",
+    "late": "I'll be late",
+    "lateTitle": "How late?",
+    "lateMinutes": "{minutes} min",
+    "lateCancel": "Cancel",
+    "lateDone": "Delay shared: {minutes} min. Your table knows.",
+    "lateChange": "Change",
+    "early": "The “I'm here” button opens 30 minutes before the start.",
+    "openText": "On site? Check in: you'll see your table and can message the group.",
+    "arrived": "You've arrived",
+    "arrivedSolo": "You're checked in. Enjoy!",
+    "directions": "Directions",
+    "atTable": "At the table",
+    "statusArrived": "Arrived",
+    "statusLate": "Late ({minutes} min)",
+    "statusWaiting": "Not here yet",
+    "you": "you",
+    "chat": "Message the table",
+    "chatHint": "Say where you are, if you can't find the table… Messages stay 14 days in My connections.",
+    "error": "Couldn't save right now. Please try again in a moment."
+  },
+  "venueCard": {
+    "title": "The venue",
+    "restaurant": "Restaurant",
+    "venue": "Venue",
+    "table": "Your table",
+    "tableAfter": "Your table appears when you check in.",
+    "showMap": "Show map",
+    "openMaps": "Open in Maps",
+    "directions": "Directions",
+    "mapLabel": "Map: {name}"
   }
 }

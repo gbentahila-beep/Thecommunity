@@ -1,4 +1,4 @@
-import { selfCheckInState } from "@thecommunity/shared";
+import { canSignalLate, lateSignalSchema, selfCheckInState } from "@thecommunity/shared";
 import type { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -28,6 +28,31 @@ export async function checkInSelf(uid: string, reservationId: string, now = new 
     return { arrivedAt: now.toISOString() };
   });
 }
+
+/**
+ * « Je serai en retard » (étape Z) : de 3 h avant le début à 30 min après, tant que la personne n'est pas arrivée.
+ * Le retard est visible par sa table (et l'équipe) ; un nouvel appel remplace le précédent.
+ */
+export async function signalLateCore(uid: string, reservationId: string, minutes: number, now = new Date()): Promise<void> {
+  const ref = db.doc(`reservations/${reservationId}`);
+  await db.runTransaction(async (tx) => {
+    const r = (await tx.get(ref)).data();
+    if (!r || r.userId !== uid) throw new HttpsError("not-found", "Réservation introuvable.", { reason: "not_found" });
+    if (r.status !== "confirmed") refuse("not_checkable", "Seule une réservation confirmée peut annoncer un retard.");
+    if (r.arrivedAt) refuse("already_arrived", "Vous êtes déjà indiqué·e comme arrivé·e.");
+    if (!canSignalLate((r.sessionSnapshot.startAt as Timestamp).toDate().toISOString(), now)) refuse("not_now", "Un retard s'annonce à partir de 3 h avant le début.");
+    tx.update(ref, { lateMinutes: minutes, lateAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
+    if (r.groupId) tx.set(db.doc(`groups/${r.groupId}`), { late: { [uid]: minutes } }, { merge: true });
+  });
+}
+
+export const signalLate = onCall({ region: REGION }, async (req) => {
+  const { uid } = requireAuth(req);
+  const parsed = lateSignalSchema.safeParse(req.data);
+  if (!parsed.success) invalidArgument(parsed.error.issues);
+  await signalLateCore(uid, parsed.data.reservationId, parsed.data.minutes);
+  return { ok: true };
+});
 
 export const selfCheckIn = onCall({ region: REGION, enforceAppCheck: process.env.ENFORCE_APP_CHECK === "true" }, async (req) => {
   const { uid } = requireAuth(req);

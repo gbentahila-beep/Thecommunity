@@ -73,6 +73,7 @@ async function writeGroups(sessionId: string, experienceId: string, groups: { la
   const old = await db.collection("groups").where("sessionId", "==", sessionId).get();
   // Check-ins déjà faits : conservés pour les personnes qui restent placées (docs/22 § 17.H, H13).
   const arrived = new Set(old.docs.flatMap((d) => (d.get("arrivedUids") as string[] | undefined) ?? []));
+  const late = Object.assign({}, ...old.docs.map((d) => (d.get("late") as Record<string, number> | undefined) ?? {})) as Record<string, number>;
   const revealedAt = old.docs.find((d) => d.get("revealedAt"))?.get("revealedAt");
   const batch = db.batch();
   old.docs.forEach((d) => batch.delete(d.ref));
@@ -87,6 +88,7 @@ async function writeGroups(sessionId: string, experienceId: string, groups: { la
       members: g.memberIds.map((uid) => memberSnapshot(byUid.get(uid)!)),
       seats: g.memberIds.reduce((a, uid) => a + (byUid.get(uid)?.seats ?? 1), 0),
       arrivedUids: g.memberIds.filter((uid) => arrived.has(uid)),
+      late: Object.fromEntries(g.memberIds.filter((uid) => late[uid]).map((uid) => [uid, late[uid]])),
       ...(namesAtCheckIn ? { namesAtCheckIn: true } : {}),
       ...(status === "revealed" && revealedAt ? { revealedAt } : {}),
       updatedAt: FieldValue.serverTimestamp(),

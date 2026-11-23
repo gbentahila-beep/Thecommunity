@@ -68,7 +68,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await contact.locator('select').selectOption({ index: 1 });
   await contact.getByRole('button', { name: "Envoyer l'invitation" }).click();
   assert(await visible(contact.getByRole('status').filter({ hasText: 'Démonstration' })), '31 : invitation (démonstration)');
-  const group = p.getByTestId('meet-group').first();
+  const group = p.getByTestId('meet-group').filter({ hasText: 'Escape' });
   assert(await group.getByTestId('meet-member').count() === 5, '31 : les 5 autres membres du groupe');
   assert(await group.getByTestId('meet-member').filter({ hasText: 'Lina' }).getByTestId('meet-matched').isVisible(), '31 : « C\'est réciproque » pour Lina');
   const omar = group.getByTestId('meet-member').filter({ hasText: 'Omar' });

@@ -372,6 +372,8 @@ export type Reservation = {
   groupId?: string;
   /** Arrivée indiquée par le participant lui-même (docs/16) ; le pointage de l'organisateur reste à part. */
   arrivedAt?: string;
+  /** « Je serai en retard » (étape Z) : retard annoncé, en minutes. */
+  lateMinutes?: number;
   /** Résumé de la table sans les noms, montré à la révélation (docs/22, décision 37). */
   tableSummary?: { others: number; ageMin: number | null; ageMax: number | null; languages: string[]; sectors: string[]; interests: string[] } | null;
   /** Date à risque (décision 46) : autre date ou regroupement proposé ; accepter, ou être remboursé. */
@@ -417,6 +419,8 @@ export type Group = {
   /** Tables (docs/22 § 17.H) : prénoms visibles après son check-in ; qui est déjà arrivé. */
   namesAtCheckIn?: boolean;
   arrivedUids?: string[];
+  /** Retards annoncés (uid → minutes), visibles par la table. */
+  late?: Record<string, number>;
   isDemo?: boolean;
 };
 

@@ -722,6 +722,15 @@ Pages vérifiées sans changement : Aujourd'hui, Attribution des lieux, Réserva
 - Site d'essai : les Tables sans réservation sont recréées une fois au bon jour (`rescheduleTablesOnce`, repère `tiersY`) ; le Four Seasons accueille aussi le vendredi.
 - Plus de blocs noirs côté public : suggestion d'abonnement de l'espace, appel du blog, contact presse, en-tête du centre d'aide, cartes « Le saviez-vous ? » et carte finale du questionnaire passent sur fond clair. Reste l'encadré « Votre sécurité » (étape AB).
 
+### Étape Z livrée (23 novembre) — après la réservation : lieu, jour J, chat, avatars
+
+- Carte du lieu (inspirée de Timeleft) dès que le lieu est connu (lieu fixe à la réservation, Tables à la révélation) : type et cuisine, nom, adresse exacte, table (après l'arrivée), carte dessinée qui charge Google Maps seulement quand on appuie, boutons Itinéraire et Ouvrir dans Maps. Le lieu n'est plus répété dans l'en-tête de la réservation.
+- Carte « Jour J » (la veille et le jour même, jusqu'à 1 h après le début) : compte à rebours, « Je suis là » (30 min avant), « Je serai en retard » (10, 20 ou 30 min, de 3 h avant à 30 min après ; nouvelle fonction `signalLate`, retard visible par la table), puis après l'arrivée : la table, chaque personne avec son statut (arrivé·e, en retard, pas encore là) et « Écrire à la table ». Remplace l'ancien encadré d'arrivée.
+- Chat de la table : ouvert dès son arrivée (30 min avant le début) au lieu de 2 h après, gardé 14 jours après le début, dans « Mon groupe » (Mes rencontres), qui montre aussi la rencontre en cours dès l'arrivée. Avatars et pastilles de statut en haut du chat.
+- Avatars : photo du membre, sinon une tête de Bab (couleur et humeur toujours les mêmes pour une personne, tirées de son identifiant). Utilisés dans la réservation, le jour J, le chat et Mon groupe.
+- Lieu révélé (Tables) : plus de « Changer de date ». Une fois la rencontre commencée : plus de questionnaire ni de formulaire régime/allergies.
+- Démonstration : trois Tables pour voir tout le parcours (brunch de demain lieu révélé, dîner dans 20 min check-in ouvert, dîner commencé après l'arrivée).
+
 ## 20. Plan de la suite (demandes du 23 novembre, à valider)
 
 ### Étape Y — Listes d'événements homogènes

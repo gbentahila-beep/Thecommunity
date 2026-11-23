@@ -12,8 +12,7 @@ import { VENUE_REVEAL_HOURS } from "./venue";
 
 /** Tables définitives et message au lieu : 1 h avant le début. */
 export const TABLES_FINAL_HOURS = 1;
-/** Messages entre les personnes d'une table : ouverts 2 h après le début, pendant 14 jours. */
-export const TABLE_CHAT_OPENS_AFTER_HOURS = 2;
+/** Messages entre les personnes d'une table (étape Z) : ouverts dès le check-in (30 min avant), gardés 14 jours. */
 export const TABLE_CHAT_DAYS = 14;
 export const TABLE_MESSAGE_MAX = 500;
 /** Relances à l'équipe quand le lieu d'une date à lieu secret n'est pas renseigné (heures avant le début). */
@@ -43,7 +42,7 @@ export function revealAtFor(startAt: Date | string): Date {
 export function tablesTimeline(startAt: Date | string): TablesTimeline {
   const start = new Date(startAt);
   const t = start.getTime();
-  const chatFrom = new Date(t + TABLE_CHAT_OPENS_AFTER_HOURS * HOUR);
+  const chatFrom = new Date(t - SELF_CHECKIN_BEFORE_MIN * 60_000);
   return {
     closesAt: bookingClosesAt(start, "social_dinner"),
     revealAt: revealAtFor(start),
@@ -51,7 +50,7 @@ export function tablesTimeline(startAt: Date | string): TablesTimeline {
     checkInFrom: new Date(t - SELF_CHECKIN_BEFORE_MIN * 60_000),
     checkInUntil: new Date(t + SELF_CHECKIN_AFTER_MIN * 60_000),
     chatFrom,
-    chatUntil: new Date(chatFrom.getTime() + TABLE_CHAT_DAYS * 24 * HOUR),
+    chatUntil: new Date(t + TABLE_CHAT_DAYS * 24 * HOUR),
   };
 }
 

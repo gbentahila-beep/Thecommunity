@@ -173,8 +173,8 @@ export const respondProposal = onCall({ region: REGION }, async (req) => {
 });
 
 /**
- * Messages entre les personnes d'une table (décision 39) : celles qui ont fait leur check-in, ouverts 2 h après le
- * début, pendant 14 jours. Ni numéro ni réseaux affichés. Les autres reçoivent une notification (au plus une par 3 h).
+ * Messages entre les personnes d'une table (décision 39) : celles qui ont fait leur check-in, ouverts dès leur
+ * arrivée (30 min avant le début), pendant 14 jours (étape Z). Ni numéro ni réseaux affichés. Les autres reçoivent une notification (au plus une par 3 h).
  */
 export const sendTableMessage = onCall({ region: REGION }, async (req) => {
   const { uid } = requireAuth(req);
@@ -187,7 +187,7 @@ export const sendTableMessage = onCall({ region: REGION }, async (req) => {
   const s = (await db.doc(`sessions/${g.sessionId}`).get()).data();
   const t = tablesTimeline((s!.startAt as Timestamp).toDate());
   const now = Date.now();
-  if (now < t.chatFrom.getTime()) refuse("too_early", "Les messages s'ouvrent 2 h après le début.");
+  if (now < t.chatFrom.getTime()) refuse("too_early", "Les messages s'ouvrent à votre arrivée, 30 minutes avant le début.");
   if (now > t.chatUntil.getTime()) refuse("closed", "Les messages de cette table sont fermés.");
   const me = (g.members as { uid: string; firstName: string }[]).find((m) => m.uid === uid);
   await gRef.collection("messages").add({ uid, firstName: me?.firstName ?? "Membre", text: v.data.text, createdAt: FieldValue.serverTimestamp() });

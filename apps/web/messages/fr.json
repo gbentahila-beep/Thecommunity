@@ -1771,7 +1771,7 @@
     "sendInvite": "Envoyer l'invitation",
     "invited": "Invitation envoyée à {name}.",
     "tooMany": "Trop d'invitations aujourd'hui : réessayez demain.",
-    "groups": "Mes groupes passés",
+    "groups": "Mes groupes",
     "groupsIntro": "Jusqu'à 60 jours après l'expérience. Personne ne voit votre choix, sauf si l'envie est partagée.",
     "noGroups": "Vos groupes apparaîtront ici après votre première expérience en groupe.",
     "discover": "Découvrir les expériences",
@@ -1790,7 +1790,8 @@
     "proposeToGroup": "Proposer une sortie à ce groupe",
     "demo": "Démonstration : rien n'est enregistré.",
     "error": "Action impossible. Réessayez.",
-    "privacy": "Nous ne partageons jamais vos coordonnées. Pour un souci avec une personne, écrivez à l'équipe depuis la page Contact."
+    "privacy": "Nous ne partageons jamais vos coordonnées. Pour un souci avec une personne, écrivez à l'équipe depuis la page Contact.",
+    "chat": "Écrire au groupe"
   },
   "forYou": {
     "title": "Pour vous",
@@ -1978,15 +1979,17 @@
     "back": "Mes rencontres",
     "title": "{label} : messages",
     "window": "Ouverts jusqu'au {until}.",
-    "empty": "Aucun message pour l'instant. Un mot pour remercier votre table ?",
+    "empty": "Aucun message pour l'instant. Dites où vous êtes pour vous retrouver, ou un mot pour remercier la table.",
     "label": "Votre message",
     "send": "Envoyer",
     "busy": "Envoi…",
     "privacy": "Ni numéro ni réseaux ne sont affichés.",
-    "closed": "Les messages s'ouvrent 2 h après le début et restent ouverts 14 jours.",
+    "closed": "Les messages s'ouvrent à votre arrivée et restent ouverts 14 jours.",
     "error": "Envoi impossible pour le moment.",
     "you": "Vous",
-    "demoMessage": "Merci pour cette belle soirée, à refaire !"
+    "demoMessage": "Merci pour cette belle soirée, à refaire !",
+    "demoLive1": "Je suis à la table du fond, près de la fenêtre.",
+    "demoLive2": "J'arrive dans 20 min, commencez sans moi !"
   },
   "ticketCard": {
     "label": "Votre table",
@@ -2084,5 +2087,46 @@
   "babs": {
     "seat": "Votre place",
     "caption": "Il ne manque plus que vous."
+  },
+  "dayOf": {
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "inMinutes": "Dans {minutes} min",
+    "inHours": "Dans {hours} h {minutes}",
+    "inHoursOnly": "Dans {hours} h",
+    "started": "C'est commencé",
+    "at": "Début à {time}",
+    "here": "Je suis là",
+    "busy": "Un instant…",
+    "late": "Je serai en retard",
+    "lateTitle": "Combien de retard ?",
+    "lateMinutes": "{minutes} min",
+    "lateCancel": "Annuler",
+    "lateDone": "Retard annoncé : {minutes} min. Votre table est prévenue.",
+    "lateChange": "Modifier",
+    "early": "Le bouton « Je suis là » s'active 30 minutes avant le début.",
+    "openText": "Sur place ? Indiquez votre arrivée : vous verrez votre table et pourrez écrire au groupe.",
+    "arrived": "Vous êtes arrivé·e",
+    "arrivedSolo": "Vous êtes bien arrivé·e. Belle expérience !",
+    "directions": "Itinéraire",
+    "atTable": "À la table",
+    "statusArrived": "Arrivé·e",
+    "statusLate": "En retard ({minutes} min)",
+    "statusWaiting": "Pas encore là",
+    "you": "vous",
+    "chat": "Écrire à la table",
+    "chatHint": "Dites où vous êtes, si vous cherchez la table… Les messages restent 14 jours dans Mes rencontres.",
+    "error": "Impossible d'enregistrer pour le moment. Réessayez dans un instant."
+  },
+  "venueCard": {
+    "title": "Le lieu",
+    "restaurant": "Restaurant",
+    "venue": "Lieu",
+    "table": "Votre table",
+    "tableAfter": "Votre table s'affiche à votre arrivée.",
+    "showMap": "Afficher la carte",
+    "openMaps": "Ouvrir dans Maps",
+    "directions": "Itinéraire",
+    "mapLabel": "Carte : {name}"
   }
 }

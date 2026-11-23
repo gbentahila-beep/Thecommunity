@@ -32,7 +32,7 @@ export { dailyHealthCheck } from "./maintenance/health";
 export { adminCompleteManualRefund, adminConfirmTransfer, adminSavePaymentSettings } from "./payments/transfer-admin";
 export { requestBooking, cancelBookingRequest, adminDecideRequest } from "./requests/booking-requests";
 export { cancelReservation } from "./reservations/cancel-reservation";
-export { selfCheckIn } from "./reservations/self-check-in";
+export { selfCheckIn, signalLate } from "./reservations/self-check-in";
 export { submitQuestionnaire } from "./reservations/questionnaire";
 export { submitOutingProposal, adminDecideProposal, adminSetTrustedHost } from "./proposals/proposals";
 export { joinWaitlist, leaveWaitlist } from "./waitlist/waitlist";

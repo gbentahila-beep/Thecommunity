@@ -12,8 +12,8 @@ describe("parcours des Tables (docs/22 § 17.H)", () => {
     expect(t.finalAt.toISOString()).toBe("2026-11-26T18:30:00.000Z");
     expect(t.checkInFrom.toISOString()).toBe("2026-11-26T19:00:00.000Z");
     expect(t.checkInUntil.toISOString()).toBe("2026-11-26T20:30:00.000Z");
-    expect(t.chatFrom.toISOString()).toBe("2026-11-26T21:30:00.000Z");
-    expect(t.chatUntil.toISOString()).toBe("2026-12-10T21:30:00.000Z");
+    expect(t.chatFrom.toISOString()).toBe("2026-11-26T19:00:00.000Z");
+    expect(t.chatUntil.toISOString()).toBe("2026-12-10T19:30:00.000Z");
   });
 
   it("matin et midi (décision 42) : fermeture au plus tard 18 h la veille, révélation ramenée à 21 h la veille", () => {

@@ -4,7 +4,7 @@
  * - Mode Firebase : utilisateur authentifié par le cookie de session (vérifié côté serveur) ;
  *   sinon redirection vers la connexion. Les données sont lues par le serveur pour CET utilisateur.
  */
-import { canReview, meetWindowOpen, otherOf, type Connection, type Reservation } from "@thecommunity/shared";
+import { canReview, meetWindowOpen, otherOf, tablesTimeline, type Connection, type Reservation } from "@thecommunity/shared";
 import { getLocale } from "next-intl/server";
 import { connection } from "next/server";
 import { cache } from "react";
@@ -101,7 +101,11 @@ export type MeetGroup = {
   startAt: string;
   endAt: string;
   windowOpen: boolean;
-  members: { uid: string; firstName: string; interests: string[]; wished: boolean; avoided: boolean; matched: boolean }[];
+  /** Étape Z : messages de la table, ouverts dès l'arrivée et pendant 14 jours. */
+  chatOpen: boolean;
+  /** La rencontre a commencé mais n'est pas finie (on vient d'arriver). */
+  live: boolean;
+  members: { uid: string; firstName: string; photoPath?: string; interests: string[]; wished: boolean; avoided: boolean; matched: boolean }[];
 };
 export type MeetData = { groups: MeetGroup[]; connections: Connection[]; trustedHost: boolean; isDemo: boolean };
 
@@ -129,14 +133,20 @@ export async function getMeetData(): Promise<MeetData> {
   } else {
     // Démonstration : Lina et Salma se sont choisies, Salma aimerait aussi revoir Omar (il ne le sait pas).
     wishes = new Set(["u-lina", "u-omar"]);
-    const g = space.groups[0];
+    const g = space.groups.find((x) => space.reservations.some((y) => y.groupId === x.id && new Date(y.sessionSnapshot.endAt).getTime() < space.now.getTime()));
     const r = g ? space.reservations.find((x) => x.groupId === g.id) : undefined;
     connections = g && r ? [{ id: "demo-conn", uids: [me, "u-lina"].sort(), names: { [me]: space.profile.firstName, "u-lina": "Lina" }, groupId: g.id, sessionId: g.sessionId, experienceTitle: r.sessionSnapshot.title.fr, metAt: r.sessionSnapshot.startAt, matchedAt: r.sessionSnapshot.endAt }] : [];
   }
   const matchedWith = new Set(connections.map((c) => otherOf(c, me).uid));
   const groups: MeetGroup[] = space.groups.flatMap((g) => {
     const r = space.reservations.find((x) => x.groupId === g.id);
-    if (!r || new Date(r.sessionSnapshot.endAt).getTime() > space.now.getTime()) return [];
+    if (!r) return [];
+    const ended = new Date(r.sessionSnapshot.endAt).getTime() <= space.now.getTime();
+    const arrived = Boolean(r.arrivedAt) || (g.arrivedUids ?? []).includes(me);
+    // Mon groupe : après la rencontre, ou dès son arrivée (pour se retrouver sur place).
+    if (!ended && !arrived) return [];
+    const t = tablesTimeline(r.sessionSnapshot.startAt);
+    const nowMs = space.now.getTime();
     return [{
       id: g.id,
       label: g.label,
@@ -144,7 +154,9 @@ export async function getMeetData(): Promise<MeetData> {
       startAt: r.sessionSnapshot.startAt,
       endAt: r.sessionSnapshot.endAt,
       windowOpen: meetWindowOpen(r.sessionSnapshot.endAt, space.now),
-      members: g.members.filter((m) => m.uid !== me).map((m) => ({ uid: m.uid, firstName: m.firstName, interests: m.interests, wished: wishes.has(m.uid), avoided: avoids.has(m.uid), matched: matchedWith.has(m.uid) })),
+      chatOpen: arrived && nowMs >= t.chatFrom.getTime() && nowMs <= t.chatUntil.getTime(),
+      live: !ended,
+      members: g.members.filter((m) => m.uid !== me).map((m) => ({ uid: m.uid, firstName: m.firstName, photoPath: m.photoPath, interests: m.interests, wished: wishes.has(m.uid), avoided: avoids.has(m.uid), matched: matchedWith.has(m.uid) })),
     }];
   }).sort((a, b) => b.startAt.localeCompare(a.startAt));
   return { groups, connections, trustedHost: space.profile.trustedHost === true, isDemo: !FIREBASE_ENABLED };

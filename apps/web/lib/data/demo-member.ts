@@ -95,6 +95,19 @@ export function buildDemoMemberData(now: Date = new Date()) {
   const sPilates = firstSession(sessions, pilates.id);
   const sRooftop = firstSession(sessions, rooftop.id);
   const pEscape = pastAt(now, 12, 19, escape.durationMinutes);
+  // Étape Z : trois Tables pour voir tout le parcours (lieu révélé la veille, check-in ouvert, après l'arrivée).
+  const brunch = exp("exp-brunch-inconnus");
+  const tajine = exp("exp-tajine-conversations");
+  const chef = exp("exp-diner-du-chef");
+  const at = (minutesFromNow: number, durationMin: number) => {
+    const d = new Date(Math.round((now.getTime() + minutesFromNow * 60_000) / 300_000) * 300_000);
+    return { startAt: d.toISOString(), endAt: new Date(d.getTime() + durationMin * 60_000).toISOString() };
+  };
+  // Brunch demain 11 h 30 (Casablanca, UTC+1) : lieu et résumé de table déjà révélés.
+  const tBrunch = (() => { const d = new Date(now.getTime() + DAY); d.setUTCHours(10, 30, 0, 0); return { startAt: d.toISOString(), endAt: new Date(d.getTime() + brunch.durationMinutes * 60_000).toISOString() }; })();
+  const tToday = at(20, tajine.durationMinutes);
+  const tNow = at(-10, chef.durationMinutes);
+  const summary = { others: 5, ageMin: 27, ageMax: 36, languages: ["fr", "darija", "en"], sectors: ["tech", "health", "creative_media"], interests: ["gastronomy", "travel", "music"] };
   const pCeramic = pastAt(now, 6, 14, ceramic.durationMinutes);
 
   const reservations: Reservation[] = [
@@ -170,9 +183,81 @@ export function buildDemoMemberData(now: Date = new Date()) {
       createdAt: new Date(now.getTime() - 20 * DAY).toISOString(),
       isDemo: true,
     },
+    {
+      id: "res-demo-brunch",
+      userId: DEMO_MEMBER.uid,
+      sessionId: "ses-demo-brunch",
+      experienceId: brunch.id,
+      status: "confirmed",
+      seats: 1,
+      pricing: pricing(brunch.price.amount),
+      sessionSnapshot: snapshot(brunch, tBrunch.startAt, tBrunch.endAt),
+      venue: { name: "La Sqala", address: "Boulevard des Almohades, Casablanca", cuisine: "Marocaine, brunch beldi" },
+      groupId: "grp-demo-brunch",
+      tableSummary: summary,
+      paidAt: new Date(now.getTime() - 3 * DAY).toISOString(),
+      createdAt: new Date(now.getTime() - 3 * DAY).toISOString(),
+      isDemo: true,
+    },
+    {
+      id: "res-demo-today",
+      userId: DEMO_MEMBER.uid,
+      sessionId: "ses-demo-today",
+      experienceId: tajine.id,
+      status: "confirmed",
+      seats: 1,
+      pricing: pricing(tajine.price.amount),
+      sessionSnapshot: snapshot(tajine, tToday.startAt, tToday.endAt),
+      venue: { name: "Al Mounia", address: "95 rue du Prince Moulay Abdallah, Casablanca", cuisine: "Marocaine traditionnelle" },
+      groupId: "grp-demo-today",
+      tableSummary: summary,
+      paidAt: new Date(now.getTime() - 4 * DAY).toISOString(),
+      createdAt: new Date(now.getTime() - 4 * DAY).toISOString(),
+      isDemo: true,
+    },
+    {
+      id: "res-demo-now",
+      userId: DEMO_MEMBER.uid,
+      sessionId: "ses-demo-now",
+      experienceId: chef.id,
+      status: "confirmed",
+      seats: 1,
+      pricing: pricing(chef.price.amount),
+      sessionSnapshot: snapshot(chef, tNow.startAt, tNow.endAt),
+      venue: { name: "Le Rouget de l'Isle", address: "16 rue Rouget de l'Isle, Villa Élise, Casablanca", cuisine: "Française" },
+      groupId: "grp-demo-now",
+      tableSummary: summary,
+      arrivedAt: new Date(now.getTime() - 14 * 60_000).toISOString(),
+      paidAt: new Date(now.getTime() - 5 * DAY).toISOString(),
+      createdAt: new Date(now.getTime() - 5 * DAY).toISOString(),
+      isDemo: true,
+    },
   ];
 
+  const table = (id: string, sessionId: string, label: string, arrivedUids: string[], late: Record<string, number>): Group => ({
+    id,
+    sessionId,
+    label,
+    status: "revealed",
+    memberIds: [DEMO_MEMBER.uid, "u-karim", "u-lina", "u-omar", "u-sofia", "u-yassine"],
+    members: [
+      { uid: DEMO_MEMBER.uid, firstName: "Salma", interests: ["gastronomy", "culture", "wellness"] },
+      { uid: "u-karim", firstName: "Karim", interests: ["games", "sport", "travel"] },
+      { uid: "u-lina", firstName: "Lina", interests: ["art", "music", "culture"] },
+      { uid: "u-omar", firstName: "Omar", interests: ["games", "discovery", "gastronomy"] },
+      { uid: "u-sofia", firstName: "Sofia", interests: ["travel", "wellness", "music"] },
+      { uid: "u-yassine", firstName: "Yassine", interests: ["sport", "games", "nightlife"] },
+    ],
+    namesAtCheckIn: true,
+    arrivedUids,
+    late,
+    isDemo: true,
+  });
+
   const groups: Group[] = [
+    table("grp-demo-brunch", "ses-demo-brunch", "Table 2", [], {}),
+    table("grp-demo-today", "ses-demo-today", "Table 1", ["u-karim", "u-lina"], { "u-omar": 10 }),
+    table("grp-demo-now", "ses-demo-now", "Table 3", [DEMO_MEMBER.uid, "u-karim", "u-sofia", "u-yassine"], { "u-lina": 20 }),
     {
       id: "grp-demo-escape",
       sessionId: "ses-escape-passee",

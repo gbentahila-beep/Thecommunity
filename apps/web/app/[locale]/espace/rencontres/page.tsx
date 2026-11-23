@@ -2,6 +2,8 @@ import { otherOf } from "@thecommunity/shared";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { InviteForm, MeetActions } from "@/components/account/meet-actions";
 import { EmptyState } from "@/components/empty-state";
+import { MemberAvatar } from "@/components/member-avatar";
+import { MessageCircle } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getNextSessionPerExperience } from "@/lib/data";
 import { getMeetData, getMemberSpace } from "@/lib/data/member";
@@ -33,8 +35,8 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
               const o = otherOf(c, me);
               return (
                 <li key={c.id} className="flex flex-wrap items-center gap-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="meet-contact">
-                  <span className="grid size-12 shrink-0 place-items-center rounded-full bg-brand-50 font-display text-xl text-brand-900" aria-hidden>{o.firstName.slice(0, 1)}</span>
-                  <div className="min-w-0 flex-1">
+                  <MemberAvatar uid={o.uid} size={48} />
+                  <div className="min-w-0 flex-1 basis-48">
                     <p className="font-semibold text-ink">{o.firstName}</p>
                     <p className="text-sm text-muted">{t("metAt", { title: c.experienceTitle, date: c.metAt ? formatLongDate(c.metAt, locale).replace(/^./, (x) => (locale === "fr" ? x.toLowerCase() : x)) : "" })}</p>
                   </div>
@@ -60,15 +62,24 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
                 <h3 className="text-lg font-semibold text-ink">{g.title} <span className="font-normal text-muted">· {g.label}</span></h3>
                 <p className="text-sm text-muted">{formatLongDate(g.startAt, locale)}</p>
               </div>
-              {!g.windowOpen && <p className="mt-1 text-xs text-muted">{t("windowClosed")}</p>}
+              {!g.windowOpen && !g.live && <p className="mt-1 text-xs text-muted">{t("windowClosed")}</p>}
+              {g.chatOpen && (
+                <Link href={`/espace/rencontres/table/${g.id}`} className="btn btn-primary btn-sm mt-3" data-testid="meet-chat">
+                  <MessageCircle className="size-4" aria-hidden />
+                  {t("chat")}
+                </Link>
+              )}
               <ul className="mt-4 divide-y divide-line">
                 {g.members.map((m) => (
                   <li key={m.uid} className="flex flex-wrap items-center justify-between gap-3 py-3" data-testid="meet-member">
-                    <div>
+                    <div className="flex items-center gap-3">
+                      <MemberAvatar uid={m.uid} photoPath={m.photoPath} size={40} />
+                      <div>
                       <p className="font-medium text-ink">{m.firstName}</p>
                       {m.interests.length > 0 && <p className="text-xs text-muted">{m.interests.slice(0, 3).map((i) => tInt(i)).join(" · ")}</p>}
+                      </div>
                     </div>
-                    <MeetActions groupId={g.id} otherUid={m.uid} firstName={m.firstName} wished={m.wished} avoided={m.avoided} matched={m.matched} windowOpen={g.windowOpen} live={!data.isDemo} />
+                    {!g.live && <MeetActions groupId={g.id} otherUid={m.uid} firstName={m.firstName} wished={m.wished} avoided={m.avoided} matched={m.matched} windowOpen={g.windowOpen} live={!data.isDemo} />}
                   </li>
                 ))}
               </ul>

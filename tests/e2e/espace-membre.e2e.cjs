@@ -113,7 +113,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.goto(base + '/espace/preferences', { waitUntil: 'load' });
   const [dl2] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /Télécharger mes données/ }).click()]);
   const json = JSON.parse(fs.readFileSync(await dl2.path(), 'utf8'));
-  assert(json.profile.firstName === 'Salma' && json.reservations.length === 5, 'export JSON des données');
+  assert(json.profile.firstName === 'Salma' && json.reservations.length === 8, 'export JSON des données');
   const sw = page.getByRole('switch').nth(2);
   await sw.check({ force: true });
   await page.reload({ waitUntil: 'load' }).then(() => page.waitForTimeout(500));
@@ -136,7 +136,21 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.getByTestId('move-reservation').getByRole('button', { name: 'Déplacer sur une autre date' }).click();
   assert(await page.getByTestId('move-reservation').getByLabel('Nouvelle date').locator('option').count() >= 1, 'déplacer : autres dates proposées');
   await page.goto(base + '/espace/reservations/res-demo-escape', { waitUntil: 'load' });
-  assert(/Arrivé·e/.test(await page.getByTestId('my-table').innerText()), 'après le check-in : qui est arrivé');
+  assert(/Karim/.test(await page.getByTestId('my-table').innerText()), 'après la rencontre : la table avec les prénoms');
+  // Étape Z : lieu révélé (carte du lieu), jour J (je suis là, retard), après l'arrivée (table, statuts, chat)
+  await page.goto(base + '/espace/reservations/res-demo-brunch', { waitUntil: 'load' });
+  assert(/La Sqala/.test(await page.getByTestId('venue-card').innerText()) && /Itinéraire/.test(await page.getByTestId('venue-card').innerText()), 'Z : carte du lieu révélé avec itinéraire');
+  await page.goto(base + '/espace/reservations/res-demo-today', { waitUntil: 'load' });
+  assert(await page.getByTestId('check-in-here').isVisible() && await page.getByTestId('late-open').isVisible(), 'Z : jour J, « Je suis là » et « Je serai en retard »');
+  await page.getByTestId('late-open').click();
+  await page.getByRole('button', { name: '20 min' }).click();
+  assert(/Retard annoncé : 20 min/.test(await page.getByTestId('late-done').innerText()), 'Z : retard annoncé');
+  await page.goto(base + '/espace/reservations/res-demo-now', { waitUntil: 'load' });
+  assert(/En retard \(20 min\)/.test(await page.getByTestId('day-of-table').innerText()) && /Arrivé·e/.test(await page.getByTestId('day-of-table').innerText()), 'Z : à la table, arrivés et retards');
+  await page.getByTestId('day-of-chat').click();
+  await page.waitForURL('**/espace/rencontres/table/grp-demo-now');
+  assert(await page.getByTestId('chat-members').getByRole('listitem').count() === 6, 'Z : chat ouvert dès l’arrivée, avec la table');
+  await page.goto(base + '/espace/reservations/res-demo-escape', { waitUntil: 'load' });
   await page.getByRole('link', { name: 'Écrire à ma table' }).click();
   await page.waitForURL('**/espace/rencontres/table/**');
   assert(await page.getByTestId('table-chat').getByRole('listitem').count() >= 1, 'messages de la table après la rencontre');
