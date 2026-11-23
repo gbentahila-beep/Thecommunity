@@ -21,7 +21,8 @@ import { runSessionAutomation } from "../../functions/src/tables/automation";
 import { processPendingRequests } from "../../functions/src/tables/allocation";
 import { checkInSelf } from "../../functions/src/reservations/self-check-in";
 import { markAbsences } from "../../functions/src/membership/absences";
-import { DEFAULT_EVENT_TEMPLATES, DEFAULT_HOME_SETTINGS, QUESTIONNAIRE_TEMPLATES, tablesTimeline, zonedParts } from "@thecommunity/shared";
+import { resetShowcaseCore } from "../../functions/src/experiences/showcase";
+import { ORGANIZER_TERMS_VERSION, DEFAULT_EVENT_TEMPLATES, DEFAULT_HOME_SETTINGS, QUESTIONNAIRE_TEMPLATES, tablesTimeline, zonedParts } from "@thecommunity/shared";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -2019,7 +2020,7 @@ describe("organisateurs (20)", () => {
     expect(org.slug).toMatch(/^club-padel-test/);
     const det = (await db().doc(`organizers/${orgId}/private/details`).get()).data()!;
     expect(det.memberUids).toEqual([pro.uid]);
-    expect(det.terms.version).toBe("2026-11-20");
+    expect(det.terms.version).toBe(ORGANIZER_TERMS_VERSION);
     expect((await db().doc(`users/${pro.uid}`).get()).get("organizerId")).toBe(orgId);
     expect(await refusal(pro.call("applyAsOrganizer", application(pro.uid, "Club Padel Test")))).toBe("failed-precondition:already_organizer");
     // Pas encore validé : aucune activité possible.
@@ -2712,4 +2713,51 @@ describe("attribution des lieux et parcours des Tables (Étape H)", () => {
     const [req] = await requestsOf(sid);
     expect(req).toMatchObject({ fixed: true, status: "sent", people: 1, partnerId: pid });
   });
+});
+
+/* Dernier bloc du fichier : la vitrine efface TOUS les événements de l'émulateur. */
+describe("vitrine : remplacer tous les événements (Étape M)", () => {
+  it("super-admin seulement, confirmation SUPPRIMER exigée", async () => {
+    const adm = await member({ role: "admin" });
+    const sup = await member({ role: "superadmin" });
+    const data = { tables: [], activities: [], weeks: 1 };
+    expect(await refusal(adm.call("adminResetShowcase", { ...data, confirm: "SUPPRIMER" }))).toBe("permission-denied:");
+    expect(await refusal(sup.call("adminResetShowcase", data))).toBe("failed-precondition:confirm_required");
+    expect(await refusal(sup.call("adminResetShowcase", { ...data, confirm: "supprimer" }))).toBe("failed-precondition:confirm_required");
+  });
+
+  it("annule et rembourse, archive ou supprime l'existant, puis crée les événements des modèles", async () => {
+    for (const c of ["eat", "move"]) await db().doc(`categories/${c}`).set({ isActive: true, parentId: null }, { merge: true });
+    await db().doc("categories/diner").set({ isActive: true, parentId: "eat" }, { merge: true });
+    // Aucun lieu actif ne doit accueillir le padel ; un seul accueille le yoga.
+    const actives = await db().collection("partners").where("status", "==", "active").get();
+    for (const p of actives.docs) if ((p.get("formats") ?? []).some((f: string) => f === "padel" || f === "yoga")) await p.ref.update({ status: "archived" });
+    const yoga = db().collection("partners").doc();
+    await yoga.set({ name: `Studio Yoga ${run}`, type: "studio", status: "active", cityId: "casablanca", district: "Gauthier", address: "5 rue du Yoga, Casablanca", formats: ["yoga"], tiers: [] });
+
+    const booked = await makeSession({ startInHours: 72, price: 10000 });
+    const u = await member();
+    const { reservationId: resId } = await paidReservation(u, booked);
+    const bookedExp = (await session(booked)).experienceId as string;
+    const empty = await makeSession({ startInHours: 96 });
+    const emptyExp = (await session(empty)).experienceId as string;
+
+    const r = await resetShowcaseCore({ confirm: "SUPPRIMER", tables: [{ templateId: "diner", tier: "premium" }], activities: ["yoga", "padel"], weeks: 2 }, { uid: "sup-test", role: "superadmin" });
+    expect((await reservation(resId)).status).toMatch(/cancelled|refunded/);
+    expect((await session(booked)).status).toBe("cancelled");
+    expect((await db().doc(`experiences/${bookedExp}`).get()).get("status")).toBe("archived");
+    expect((await db().doc(`experiences/${emptyExp}`).get()).exists).toBe(false);
+    expect((await db().doc(`sessions/${empty}`).get()).exists).toBe(false);
+    expect(r.created.map((c) => `${c.templateId}/${c.tier}/${c.sessions}`).sort()).toEqual(["diner/premium/2", "yoga/null/2"]);
+    expect(r.skipped).toEqual([{ templateId: "padel", tier: null, reason: "no_partner" }]);
+
+    const live = (await db().collection("experiences").where("status", "==", "published").get()).docs;
+    expect(live.map((d) => d.id).sort()).toEqual(r.created.map((c) => c.experienceId).sort());
+    const diner = live.find((d) => d.get("templateId") === "diner")!.data();
+    expect(diner).toMatchObject({ venueTier: "premium", images: [{ path: "/images/modeles/diner.webp" }] });
+    const yogaExp = live.find((d) => d.get("templateId") === "yoga")!;
+    expect((await db().doc(`experiences/${yogaExp.id}/private/economics`).get()).get("partnerId")).toBe(yoga.id);
+    const sessions = await db().collection("sessions").where("experienceId", "==", yogaExp.id).get();
+    expect(sessions.docs.every((s) => s.get("status") === "published" && (s.get("startAt") as Timestamp).toMillis() > Date.now() + 86_400_000)).toBe(true);
+  }, 600_000);
 });

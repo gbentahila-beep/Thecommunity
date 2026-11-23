@@ -37,3 +37,19 @@ describe("modèles d'événements (docs/22, étape F)", () => {
     expect(nextWeekdayDate(0, new Date("2026-11-22T10:00:00Z"))).toBe("2026-11-29");
   });
 });
+
+describe("vitrine (étape M)", () => {
+  it("chaque modèle donne un événement valide (Tables dans chaque gamme ; activités avec un lieu)", async () => {
+    const { experienceInputSchema } = await import("./experience-input");
+    const { templateExperienceInput, DEFAULT_EVENT_TEMPLATES } = await import("./event-templates");
+    const venue = { name: "Lieu partenaire", address: "12 rue du Test, Casablanca", district: "Maarif", partnerId: "p1" };
+    for (const t of DEFAULT_EVENT_TEMPLATES) {
+      const tiers = t.values.revealPolicy === "on_group_reveal" ? (["casual", "premium", "exclusive"] as const) : [null];
+      for (const tier of tiers) {
+        const input = templateExperienceInput(t, { tier, firstDate: "2099-01-05", weeks: 4, cityId: "casablanca", venue: t.values.revealPolicy === "immediate" ? venue : null });
+        const r = experienceInputSchema.safeParse(input);
+        expect(r.success ? "ok" : `${t.id}/${tier}: ${JSON.stringify(r.error.issues.slice(0, 3))}`).toBe("ok");
+      }
+    }
+  });
+});

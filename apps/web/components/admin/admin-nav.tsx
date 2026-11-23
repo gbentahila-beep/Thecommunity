@@ -18,6 +18,7 @@ import {
   Star,
   ShieldCheck,
   Store,
+  RefreshCcw,
   Undo2,
   Ticket,
   ScanLine,
@@ -56,6 +57,7 @@ export const ADMIN_LINKS = [
   { href: "/admin/statistiques", label: "Statistiques", icon: BarChart3 },
   { href: "/admin/demandes", label: "Demandes 09-08", icon: ShieldCheck },
   { href: "/admin/parametres", label: "Paramètres", icon: Settings },
+  { href: "/admin/vitrine", label: "Vitrine", icon: RefreshCcw },
 ];
 
 export function AdminNav({ onNavigate }: { onNavigate?: () => void }) {

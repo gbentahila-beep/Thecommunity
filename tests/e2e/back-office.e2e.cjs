@@ -237,7 +237,12 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.getByRole('button', { name: 'Refuser' }).click();
   await page.getByRole('button', { name: 'Confirmer le refus' }).click();
   assert(await page.getByRole('status').filter({ hasText: 'Expliquez le refus' }).isVisible(), 'refus : motif exigé');
-  for (const p of ['/admin', '/admin/experiences', '/admin/experiences/nouvelle', '/admin/sessions/ses-diner-inconnus-1', '/admin/sessions/ses-diner-inconnus-1/groupes', '/admin/reservations', '/admin/utilisateurs', '/admin/partenaires', '/admin/paiements', '/admin/promos', '/admin/statistiques', '/admin/parametres', '/admin/remboursements']) {
+  await page.goto(`${base}/admin/vitrine`);
+  assert(await page.getByTestId('showcase-tables').getByRole('checkbox').count() >= 12, 'vitrine : Tables par modèle et gamme');
+  assert(await page.getByTestId('showcase-tables').getByRole('checkbox', { name: /Dîner · Premium/ }).isChecked(), 'vitrine : Dîner Premium présélectionné (lieu compatible)');
+  assert(await page.getByTestId('showcase-run').isDisabled(), 'vitrine : bouton désactivé en démonstration');
+  assert(await page.getByText('Indisponible en démonstration.').isVisible(), 'vitrine : mention démonstration');
+  for (const p of ['/admin', '/admin/experiences', '/admin/experiences/nouvelle', '/admin/sessions/ses-diner-inconnus-1', '/admin/sessions/ses-diner-inconnus-1/groupes', '/admin/reservations', '/admin/utilisateurs', '/admin/partenaires', '/admin/paiements', '/admin/promos', '/admin/statistiques', '/admin/parametres', '/admin/remboursements', '/admin/vitrine']) {
     await mp.goto(base + p, { waitUntil: 'load' });
     assert(!(await mp.evaluate(() => document.documentElement.scrollWidth > innerWidth)), 'mobile sans débordement : ' + p);
   }

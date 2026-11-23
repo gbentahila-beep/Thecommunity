@@ -413,7 +413,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | **J — Organisateurs et rôles** ✅ | Encaissement sur place, formulaire court, pointage, Statistiques ; suppression des reversements, commissions, propositions et membres de confiance ; signalement d'un participant | Faite (journal § 19) |
 | **K — Découvrir et agenda** ✅ | Agenda de l'accueil, filtres, moment de la journée | Faite (journal § 19) |
 | **L — Textes** ✅ (à faire relire) | Tous les textes FR / EN / AR (§ 15), juridique compris, à faire relire | Faite (journal § 19) ; relecture juridique à faire |
-| **M — Vitrine** | **Suppression de tous les événements existants** (avec ta confirmation), puis **création des nouveaux** à partir des modèles validés, avec leurs images | Rendu final |
+| **M — Vitrine** ✅ (à lancer) | **Suppression de tous les événements existants** (avec ta confirmation), puis **création des nouveaux** à partir des modèles validés, avec leurs images | Faite (journal § 19) ; action à lancer par toi dans *Vitrine*, une fois les fiches des lieux remplies |
 
 **Mise en ligne** : A est prête ; E à L sortent ensemble, une fois les textes juridiques validés ; M ensuite.
 
@@ -610,3 +610,16 @@ Aucune pour l'instant. Les questions Q1 à Q7 du 22 novembre sont tranchées (d�
 
 **À faire** : faire relire les CGV, CGU, la confidentialité et le contrat organisateur par un juriste avant la mise en ligne. Les autres articles du blog et de l'aide restent valables ; ils peuvent être enrichis au fil de l'eau.
 
+### Étape M livrée (23 novembre, nuit) — action prête, à lancer
+| Point | Ce qui est fait |
+|---|---|
+| **Où** | Back-office → **Vitrine** (dernier lien du menu). Réservé aux super-admins ; indisponible en démonstration. |
+| **Confirmation (décision 35)** | Il faut taper **SUPPRIMER** au moment même ; sans ce mot, le serveur refuse. Rien n'est lancé tout seul. |
+| **Ce qui disparaît** | Toutes les dates à venir avec des participants sont **annulées et remboursées intégralement**, chacun est prévenu (même traitement que « Annuler la date »). Les événements qui n'ont jamais eu de réservation, de demande ni d'avis sont **supprimés définitivement** (dates, photos, alertes). Les autres sont **archivés** : factures, avis et statistiques restent. |
+| **Ce qui est créé** | **Tables** : un événement par modèle et par gamme cochés, publié, avec la photo du modèle et des dates chaque semaine (1 à 8 semaines, au plus tôt dans 2 jours) ; le lieu est attribué automatiquement à chaque date. **Activités** : un événement par modèle coché, **seulement si un lieu partenaire actif accueille ce format** (case « formats » de sa fiche, adresse et quartier remplis) : c'est son lieu fixe. Sinon l'activité est ignorée et signalée dans le compte rendu. |
+| **Présélection** | Sont cochés d'office les Tables (modèle et gamme) et les activités qui ont au moins un lieu partenaire compatible ; le nombre de lieux est affiché à côté de chacun. |
+| **Compte rendu** | Événements créés, supprimés, archivés, dates annulées, montant remboursé, et la liste de ce qui a été ignoré avec la raison. Journalisé (« showcase.reset »). |
+
+**Avant de lancer** : remplir les fiches des lieux partenaires (gammes, formats, créneaux, capacités, adresse, quartier), sinon aucune activité n'est créée et les Tables n'auront pas de lieu à attribuer.
+
+**Tests** : unitaire (chaque modèle donne un événement valide, dans chaque gamme pour les Tables) ; émulateur (refus sans le mot ou sans le rôle super-admin ; annulation et remboursement, archivage, suppression ; création des Tables et de l'activité avec son lieu ; activité sans lieu ignorée) ; back-office de bout en bout.

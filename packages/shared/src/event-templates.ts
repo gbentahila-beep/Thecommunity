@@ -361,3 +361,36 @@ export function templateSlug(name: string): string {
   return /^[a-z]/.test(s) ? s : `modele-${s || "nouveau"}`;
 }
 
+
+/**
+ * Vitrine (docs/22, étape M) : données d'un événement créé à partir d'un modèle, prêtes pour experienceInputSchema.
+ * Tables : lieu attribué (secret), une gamme ; activités : lieu fixe (un lieu partenaire compatible).
+ */
+export function templateExperienceInput(t: EventTemplate, o: { tier?: VenueTier | null; firstDate: string; weeks: number; cityId: string; venue?: { name: string; address: string; district: string; partnerId?: string } | null }) {
+  const x = t.values;
+  const g = o.tier ? t.tiers?.[o.tier] : undefined;
+  const grouped = x.bookingMode === "group" || x.bookingMode === "social_dinner";
+  return {
+    titleFr: x.titleFr, summaryFr: x.summaryFr, descriptionFr: x.descriptionFr,
+    titleAr: x.titleAr ?? "", summaryAr: x.summaryAr ?? "", descriptionAr: x.descriptionAr ?? "",
+    titleEn: x.titleEn ?? "", summaryEn: x.summaryEn ?? "", descriptionEn: x.descriptionEn ?? "",
+    categoryId: x.categoryId, subcategoryId: x.subcategoryId ?? "", cityId: o.cityId,
+    district: o.venue?.district ?? "", venueName: o.venue?.name ?? "", address: o.venue?.address ?? "", partnerId: o.venue?.partnerId ?? "",
+    revealPolicy: x.revealPolicy, bookingMode: x.bookingMode,
+    ...(grouped ? { groupMin: x.groupMin ?? 4, groupTarget: x.groupMax ?? 6, groupMax: x.groupMax ?? 6 } : {}),
+    maxSeatsPerBooking: x.maxSeatsPerBooking, admission: "direct" as const, requestMessageRequired: false,
+    durationMinutes: x.durationMinutes, languages: x.languages, alcoholServed: x.alcoholServed,
+    cancellationPolicyId: x.cancellationPolicyId, status: "published" as const,
+    sessions: { firstDate: o.firstDate, time: x.time, weeks: o.weeks, capacity: x.capacity },
+    pricingModel: x.pricingModel,
+    ...(x.partnerPriceDh !== undefined ? { partnerPriceDh: x.partnerPriceDh } : {}),
+    ...(x.budgetMinDh !== undefined ? { budgetMinDh: x.budgetMinDh } : {}),
+    ...(x.budgetMaxDh !== undefined ? { budgetMaxDh: x.budgetMaxDh } : {}),
+    venueTier: o.tier ?? "", ambiance: g?.ambiance ?? x.ambiance ?? "", cuisine: x.cuisine ?? "",
+    included: x.included, practicalInfo: g?.practicalInfo ?? x.practicalInfo ?? "",
+    ...(x.level ? { level: x.level } : {}), equipmentProvided: x.equipmentProvided ?? "", whatToBring: x.whatToBring ?? "", dressCode: x.dressCode ?? "",
+    outdoor: x.outdoor, physicalActivity: x.physicalActivity, foodServed: x.categoryId === "eat",
+    audience: x.audience, membersOnly: x.membersOnly, earlyAccessDays: x.earlyAccessDays,
+    questionnaire: x.questionnaire, templateId: t.id, free: false, economicsModel: "own" as const,
+  };
+}

@@ -58,6 +58,12 @@ export const adminCancelSession = onCall({ region: REGION, timeoutSeconds: 300 }
   const sessRef = db.doc(`sessions/${sessionId}`);
   // Étape 20 : l'organisateur annule les dates de SES activités (même remboursement intégral).
   const actor = await requireTeamOrOrganizerOf(req, (await sessRef.get()).get("organizerId"));
+  return { ok: true, ...(await cancelSessionCore(sessionId, { uid: actor.uid, role: actor.role }, reason)) };
+});
+
+/** Cœur de l'annulation d'une date (aussi utilisé par la vitrine, étape M) : remboursement intégral, tout le monde prévenu. */
+export async function cancelSessionCore(sessionId: string, actor: { uid: string; role: string }, reason: string) {
+  const sessRef = db.doc(`sessions/${sessionId}`);
   await db.runTransaction(async (tx) => {
     const s = (await tx.get(sessRef)).data();
     if (!s) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
@@ -101,8 +107,8 @@ export const adminCancelSession = onCall({ region: REGION, timeoutSeconds: 300 }
   }
   await audit({ actorUid: actor.uid, actorRole: actor.role, action: "session.cancel", targetType: "session", targetId: sessionId, after: { reason, reservations: active.size, refunded, failures } });
   await cancelRequests(sessionId).catch(() => undefined);
-  return { ok: true, cancelled: active.size - failures.length, refunded, failures };
-});
+  return { cancelled: active.size - failures.length, refunded, failures };
+}
 
 /**
  * Déplace une réservation vers une autre date de la MÊME expérience, dans une transaction sur les deux dates :
