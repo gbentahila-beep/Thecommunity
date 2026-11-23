@@ -215,7 +215,7 @@
     "included": "Included",
     "practical": "Practical info",
     "venue": "The venue",
-    "venueRevealed": "The venue and address are revealed {hours} hours before.",
+    "venueRevealed": "Venue and address arrive {hours} h before",
     "cancellation": "Cancellation",
     "reviews": "Reviews",
     "reviewsCount": "{count, plural, one {# review} other {# reviews}}",
@@ -279,7 +279,15 @@
     "tier_exclusive": "Exclusive · high end",
     "cuisineLabel": "Cuisine",
     "ambianceLabel": "Atmosphere",
-    "goodToKnow": "Good to know"
+    "goodToKnow": "Good to know",
+    "secretVenue": "Secret venue",
+    "tablesOf": "Tables of {size}",
+    "teamsOf": "Teams of {count}",
+    "teamsRange": "Teams of {min} to {max}",
+    "composedByTeam": "Put together by our team",
+    "targetAge": "{min} to {max} years old",
+    "targetAgeNote": "Target age, indicative",
+    "questionnaireLabel": "Questionnaire"
   },
   "booking": {
     "title": "Book my spot",

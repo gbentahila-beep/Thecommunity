@@ -653,3 +653,13 @@ Le contenu de départ crée ces fiches, et remplace la première version (« pro
 | **Vitrine et site d'essai** | La vitrine pose Coup de cœur sur les Tables Exclusive et Nouveau sur un événement sur trois ; les événements de démonstration ont des badges variés. |
 
 **Tests** : unitaires (choix de l'équipe, automatique sans « Nouveau ») ; catalogue de bout en bout (au moins 4 badges différents, « Nouveau » pas partout, gammes visibles) ; vitrine et création d'événement sur émulateur.
+
+### Étape P livrée (23 novembre) — fiche sans répétition
+| Avant | Après |
+|---|---|
+| Un carré blanc (date, lieu, format…) **puis** « Qui allez-vous rencontrer ? » (venir seul·e, petits groupes, langues, mixte, âge, « nous évitons de vous replacer… », « Le principe… ») | **Un seul encadré** : date et heure ; lieu ; format (« Tables de 6 » ou « Équipes de 4 », « Composées par notre équipe ») ; durée (sauf Tables) ; niveau ; langues ; âge visé ; « Réservé aux femmes » s'il y a lieu ; puis la ligne sur les inscrits. Retirés : « Vous pouvez venir seul·e », « Petits groupes de… » (doublon du format), « Groupe mixte », « Nous évitons de vous replacer… », « Le principe… ». |
+| Lieu dit deux ou trois fois (quartier dans le carré, section « Le lieu », bandeau « révélé 5 h avant ») | Dit **une fois** dans l'encadré : nom du lieu et quartier (activités, avec la carte) ou « Lieu secret, le lieu et l'adresse arrivent 5 h avant » (Tables). |
+| « Équipes de 4 à 4 personnes » | « Équipes de 4 ». |
+| Matériel fourni répété dans « Inclus » et « Bon à savoir » | Seulement dans « Inclus » ; le questionnaire rejoint la liste « Bon à savoir ». |
+
+À surveiller dans les textes des événements (description, inclus, infos pratiques) : ne pas répéter ce que l'encadré dit déjà (taille de la table, révélation du lieu, âge minimum).

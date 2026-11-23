@@ -215,7 +215,7 @@
     "included": "Inclus",
     "practical": "Infos pratiques",
     "venue": "Le lieu",
-    "venueRevealed": "Le lieu et l'adresse vous sont révélés {hours} h avant.",
+    "venueRevealed": "Le lieu et l'adresse arrivent {hours} h avant",
     "cancellation": "Annulation",
     "reviews": "Avis",
     "reviewsCount": "{count} avis",
@@ -279,7 +279,15 @@
     "tier_exclusive": "Exclusive · haut de gamme",
     "cuisineLabel": "Cuisine",
     "ambianceLabel": "Ambiance",
-    "goodToKnow": "Bon à savoir"
+    "goodToKnow": "Bon à savoir",
+    "secretVenue": "Lieu secret",
+    "tablesOf": "Tables de {size}",
+    "teamsOf": "Équipes de {count}",
+    "teamsRange": "Équipes de {min} à {max}",
+    "composedByTeam": "Composées par notre équipe",
+    "targetAge": "{min} à {max} ans",
+    "targetAgeNote": "Âge visé, indicatif",
+    "questionnaireLabel": "Questionnaire"
   },
   "booking": {
     "title": "Réserver ma place",

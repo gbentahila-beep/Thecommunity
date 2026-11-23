@@ -151,7 +151,8 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   // 18 : fiches d'activités physiques (démonstration padel et paintball)
   await d.goto(`${base}/experiences/padel-entre-inconnus-anfa`);
   const details = d.getByTestId('activity-details');
-  for (const txt of ['Matériel fourni', 'À apporter', 'Tenue conseillée', 'Activité physique']) assert(await details.getByText(txt).isVisible(), `padel : « ${txt} »`);
+  for (const txt of ['À apporter', 'Tenue conseillée', 'Activité physique']) assert(await details.getByText(txt).isVisible(), `padel : « ${txt} »`);
+  assert(await details.getByText('Matériel fourni').count() === 0, 'padel : matériel déjà dans « Inclus », pas répété');
   assert(await d.getByText('Tous niveaux').isVisible(), 'padel : niveau affiché');
   assert(await d.getByText(/court questionnaire \(2 questions\)/).isVisible(), 'padel : questionnaire annoncé (2 questions validées)');
   assert(await details.getByRole('link', { name: /conditions de participation/ }).getAttribute('href') === '/conditions-activites-physiques', 'lien vers les conditions des activités physiques');

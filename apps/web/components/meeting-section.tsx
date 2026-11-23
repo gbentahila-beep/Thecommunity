@@ -1,41 +1,32 @@
-import type { MeetingSummary } from "@thecommunity/shared";
-import { HeartHandshake, Languages, Repeat, Sparkles, UserRound, Users, UsersRound } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-type Labels = {
-  title: string; principle: string; comeAlone: string; groupSize: string; languages: string; audience: string;
-  targetAge: string; crowd: string; crowdAge: string; crowdInterests: string; newPeople: string;
-};
+export type EssentialItem = { icon: LucideIcon; label: string; value?: string };
 
 /**
- * Étape 29 — « Qui allez-vous rencontrer ? » : rassurer sans identifier personne. Les chiffres sur les inscrits
- * n'apparaissent qu'à partir de 4 personnes, l'âge arrondi à 5 ans, et seulement les centres d'intérêt partagés.
+ * L'essentiel d'un événement, en un seul encadré (étape P) : quand, où, en quel format, combien de temps, niveau,
+ * langues, âge visé, public. Chaque information une seule fois ; plus de phrases d'explication répétées.
+ * Les chiffres sur les inscrits n'apparaissent qu'à partir de 4 personnes (âge arrondi, intérêts partagés seulement).
  */
-export function MeetingSection({ meeting, t }: { meeting: MeetingSummary; t: Labels }) {
-  const items = [
-    { icon: UserRound, text: t.comeAlone },
-    t.groupSize && { icon: Users, text: t.groupSize },
-    meeting.languages.length > 0 && { icon: Languages, text: t.languages },
-    { icon: meeting.audience === "women" ? UsersRound : HeartHandshake, text: t.audience },
-    t.targetAge && { icon: Sparkles, text: t.targetAge },
-    t.newPeople && { icon: Repeat, text: t.newPeople },
-  ].filter(Boolean) as { icon: typeof Users; text: string }[];
+export function EventEssentials({ items, crowd, children }: { items: EssentialItem[]; crowd?: string; children?: React.ReactNode }) {
   return (
-    <section aria-labelledby="meeting-title" className="rounded-[var(--radius-card)] bg-brand-50 p-5 sm:p-6" data-testid="meeting">
-      <h2 id="meeting-title" className="font-display text-2xl font-medium text-brand-900">{t.title}</h2>
-      <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-        {items.map(({ icon: Icon, text }) => (
-          <li key={text} className="flex items-start gap-3 text-[15px] text-ink">
+    <section aria-label="L'essentiel" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="meeting">
+      <ul className="grid gap-4 sm:grid-cols-2">
+        {items.map(({ icon: Icon, label, value }) => (
+          <li key={label} className="flex items-start gap-3">
             <Icon className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
-            <span>{text}</span>
+            <span>
+              <span className="block font-medium text-ink">{label}</span>
+              {value && <span className="text-sm text-muted">{value}</span>}
+            </span>
           </li>
         ))}
       </ul>
-      {t.crowd && (
-        <p className="mt-4 rounded-xl bg-white px-4 py-3 text-sm text-ink/85" data-testid="meeting-crowd">
-          {[t.crowd, t.crowdAge, t.crowdInterests].filter(Boolean).join(" · ")}
+      {crowd && (
+        <p className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-ink/85" data-testid="meeting-crowd">
+          {crowd}
         </p>
       )}
-      <p className="mt-4 text-sm text-muted">{t.principle}</p>
+      {children}
     </section>
   );
 }

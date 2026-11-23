@@ -215,7 +215,7 @@
     "included": "يشمل",
     "practical": "معلومات عملية",
     "venue": "المكان",
-    "venueRevealed": "نكشف لك المكان والعنوان قبل {hours} ساعات من الموعد.",
+    "venueRevealed": "يصلك المكان والعنوان قبل {hours} ساعات",
     "cancellation": "الإلغاء",
     "reviews": "الآراء",
     "reviewsCount": "{count} رأي",
@@ -279,7 +279,15 @@
     "tier_exclusive": "حصرية · فاخرة",
     "cuisineLabel": "المطبخ",
     "ambianceLabel": "الأجواء",
-    "goodToKnow": "معلومات مفيدة"
+    "goodToKnow": "معلومات مفيدة",
+    "secretVenue": "مكان سري",
+    "tablesOf": "موائد من {size}",
+    "teamsOf": "فرق من {count}",
+    "teamsRange": "فرق من {min} إلى {max}",
+    "composedByTeam": "يكوّنها فريقنا",
+    "targetAge": "من {min} إلى {max} سنة",
+    "targetAgeNote": "العمر المستهدف، تقريبي",
+    "questionnaireLabel": "استبيان"
   },
   "booking": {
     "title": "احجز مكاني",

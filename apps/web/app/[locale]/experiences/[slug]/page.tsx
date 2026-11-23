@@ -10,13 +10,13 @@ import {
   type Experience,
   restaurantBudget,
 } from "@thecommunity/shared";
-import { Backpack, CalendarDays, Clock, CloudSun, Gauge, HeartPulse, Leaf, MapPin, Shirt, UserCheck, Users, Sparkles } from "lucide-react";
+import { Backpack, CalendarDays, ClipboardList, Clock, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, UsersRound, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
 import { VenueMap } from "@/components/venue-map";
 import { ReviewItem } from "@/components/reviews/review-item";
-import { MeetingSection } from "@/components/meeting-section";
+import { EventEssentials, type EssentialItem } from "@/components/meeting-section";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoriteButton } from "@/components/favorite-button";
@@ -139,6 +139,36 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         ? t("durationHours", { hours })
         : t("durationMinutes", { minutes });
 
+  // Étape P : l'essentiel, sans répétition (lieu une fois, taille du groupe une fois).
+  const g = exp.groupConfig;
+  const composed = exp.bookingMode === "social_dinner" || exp.bookingMode === "group";
+  const groupText =
+    exp.bookingMode === "social_dinner"
+      ? t("tablesOf", { size: g?.targetSize ?? g?.maxSize ?? 6 })
+      : exp.bookingMode === "group"
+        ? (g?.minSize ?? 4) === (g?.maxSize ?? 6) ? t("teamsOf", { count: g?.maxSize ?? 4 }) : t("teamsRange", { min: g?.minSize ?? 4, max: g?.maxSize ?? 6 })
+        : formatLabel(exp, t, next?.capacity ?? 0);
+  const essentials: EssentialItem[] = [
+    ...(next ? [{ icon: CalendarDays, label: formatLongDate(next.startAt, locale), value: formatTimeRange(next.startAt, next.endAt, locale) }] : []),
+    surprise
+      ? { icon: MapPin, label: t("secretVenue"), value: t("venueRevealed", { hours: VENUE_REVEAL_HOURS }) }
+      : { icon: MapPin, label: exp.venue.name || exp.district || cityName, value: [exp.venue.name ? exp.district : "", cityName].filter(Boolean).join(", ") },
+    { icon: Users, label: groupText, value: composed ? t("composedByTeam") : undefined },
+    ...(exp.bookingMode !== "social_dinner" ? [{ icon: Clock, label: duration, value: t("duration") }] : []),
+    ...(exp.level ? [{ icon: Gauge, label: t(`level_${exp.level}`), value: t("levelLabel") }] : []),
+    ...(meeting.languages.length ? [{ icon: Languages, label: meeting.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", "), value: t("languages") }] : []),
+    ...(meeting.targetAge ? [{ icon: Sparkles, label: t("targetAge", { min: meeting.targetAge.min ?? 18, max: meeting.targetAge.max ?? 99 }), value: t("targetAgeNote") }] : []),
+    ...(meeting.audience === "women" ? [{ icon: UsersRound, label: tm("audienceWomen") }] : []),
+  ];
+  const crowd = meeting.crowd
+    ? [
+        tm("crowd", { count: meeting.crowd.count }),
+        meeting.crowd.ageMin != null ? tm("crowdAge", { min: meeting.crowd.ageMin, max: meeting.crowd.ageMax ?? meeting.crowd.ageMin + 5 }) : "",
+        meeting.crowd.topInterests.length ? tm("crowdInterests", { list: meeting.crowd.topInterests.map((i) => tInt(i)).join(", ") }) : "",
+      ].filter(Boolean).join(" · ")
+    : undefined;
+  const includedText = exp.included.map((i) => i.fr.toLowerCase()).join(" | ");
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": sessions.map((s) => ({
@@ -203,39 +233,10 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               )}
             </header>
 
-            {/* L'essentiel en un coup d'œil (simplifié) : quand, où, en quel format, combien de temps, niveau. */}
-            <ul className="grid gap-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card sm:grid-cols-2">
-              {next && (
-                <Fact icon={CalendarDays} label={formatLongDate(next.startAt, locale)} value={formatTimeRange(next.startAt, next.endAt, locale)} />
-              )}
-              {surprise ? (
-                <Fact icon={MapPin} label={cityName} value={t("surpriseVenueValue")} />
-              ) : exp.district ? (
-                <Fact icon={MapPin} label={exp.district} value={cityName} />
-              ) : (
-                <Fact icon={MapPin} label={cityName} value="" />
-              )}
-              <Fact icon={Users} label={t("groupSize")} value={formatLabel(exp, t, next?.capacity ?? 0)} />
-              {/* Tables : sans limite de temps, donc pas de durée affichée. */}
-              {exp.bookingMode !== "social_dinner" && <Fact icon={Clock} label={t("duration")} value={duration} />}
-              {exp.level && <Fact icon={Gauge} label={t("levelLabel")} value={t(`level_${exp.level}`)} />}
-            </ul>
-            <MeetingSection
-              meeting={meeting}
-              t={{
-                title: tm("title"),
-                principle: tm("principle"),
-                comeAlone: tm("comeAlone"),
-                groupSize: meeting.groupSize ? tm("groupSize", { min: meeting.groupSize.min, max: meeting.groupSize.max }) : meeting.capacity ? tm("capacity", { count: meeting.capacity }) : "",
-                languages: tm("languages", { list: meeting.languages.map((l) => LANGUAGE_NAMES[l] ?? l).join(", ") }),
-                audience: tm(meeting.audience === "women" ? "audienceWomen" : "audienceAll"),
-                targetAge: meeting.targetAge ? tm("targetAge", { min: meeting.targetAge.min ?? 18, max: meeting.targetAge.max ?? 99 }) : "",
-                crowd: meeting.crowd ? tm("crowd", { count: meeting.crowd.count }) : "",
-                crowdAge: meeting.crowd?.ageMin != null ? tm("crowdAge", { min: meeting.crowd.ageMin, max: meeting.crowd.ageMax ?? meeting.crowd.ageMin + 5 }) : "",
-                crowdInterests: meeting.crowd?.topInterests.length ? tm("crowdInterests", { list: meeting.crowd.topInterests.map((i) => tInt(i)).join(", ") }) : "",
-                newPeople: meeting.composedGroups ? tm("newPeople") : "",
-              }}
-            />
+            {/* Étape P : l'essentiel en un seul encadré, chaque information une seule fois. */}
+            <EventEssentials items={essentials} crowd={crowd}>
+              {!surprise && exp.venue.geo && <div className="mt-4"><VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} /></div>}
+            </EventEssentials>
 
             <Section title={t("about")}>
               <p className="leading-relaxed text-ink/85">{tr(exp.description, locale)}</p>
@@ -254,21 +255,10 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               )}
             </Section>
 
-            {/* Lieu secret (Tables) : rien à montrer avant la révélation, c'est dit dans l'essentiel. */}
-            {surprise ? (
-              <p className="-mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm font-medium text-brand-900" data-testid="venue-secret">{t("venueRevealed", { hours: VENUE_REVEAL_HOURS })}</p>
-            ) : (
-              <Section title={t("venue")}>
-                <p className="font-medium text-ink">{exp.venue.name}</p>
-                <p className="text-muted">{exp.venue.address}</p>
-                {exp.venue.geo && <VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} />}
-              </Section>
-            )}
-
             {/* Tout le reste en une seule liste : à apporter, tenue, plein air, âge, alcool, infos pratiques, annulation. */}
             <Section title={t("goodToKnow")}>
               <ul className="space-y-3" data-testid="activity-details">
-                {exp.equipmentProvided && <Detail icon={Backpack} label={t("equipmentProvided")} text={exp.equipmentProvided} />}
+                {exp.equipmentProvided && !includedText.includes(exp.equipmentProvided.trim().toLowerCase()) && <Detail icon={Backpack} label={t("equipmentProvided")} text={exp.equipmentProvided} />}
                 {exp.whatToBring && <Detail icon={Backpack} label={t("whatToBring")} text={exp.whatToBring} />}
                 {exp.dressCode && <Detail icon={Shirt} label={t("dressCode")} text={exp.dressCode} />}
                 {exp.outdoor && <Detail icon={CloudSun} label={t("outdoorTitle")} text={t("outdoorText")} />}
@@ -276,9 +266,9 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 {exp.minAge != null && exp.minAge > 18 && <Detail icon={UserCheck} label={t("minAgeLabel")} text={t("minAgeValue", { age: exp.minAge })} />}
                 {exp.alcoholServed === false && <Detail icon={Leaf} label={t("alcoholFree")} text="" />}
                 {tr(exp.practicalInfo, locale) && <Detail icon={Sparkles} label={t("practical")} text={tr(exp.practicalInfo, locale)} />}
+                {(exp.questionnaire?.length ?? 0) > 0 && <Detail icon={ClipboardList} label={t("questionnaireLabel")} text={t("questionnaireNote", { count: exp.questionnaire!.length })} />}
                 <Detail icon={CalendarDays} label={t("cancellation")} text={`${tr(policy.label, locale)}.`} />
               </ul>
-              {(exp.questionnaire?.length ?? 0) > 0 && <p className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-900">{t("questionnaireNote", { count: exp.questionnaire!.length })}</p>}
             </Section>
 
             {organizer && (
@@ -416,18 +406,6 @@ function formatLabel(exp: Experience, t: (key: string, values?: Record<string, s
     default:
       return t("individualFormat", { capacity });
   }
-}
-
-function Fact({ icon: Icon, label, value }: { icon: typeof Clock; label: string; value: string }) {
-  return (
-    <li className="flex items-start gap-3">
-      <Icon className="mt-0.5 size-5 shrink-0 text-brand-700" strokeWidth={1.6} aria-hidden />
-      <span>
-        <span className="block font-medium text-ink">{label}</span>
-        {value && <span className="text-sm text-muted">{value}</span>}
-      </span>
-    </li>
-  );
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
