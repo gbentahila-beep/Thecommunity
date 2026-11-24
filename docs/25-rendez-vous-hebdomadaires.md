@@ -117,3 +117,12 @@ proposent le jour et l'heure du rendez-vous (mercredi 20h30, samedi 16h, dimanch
   Pass ; fermeture la veille à 20h30. Dans les listes, seule l'activité de la semaine apparaît ; sa fiche montre
   « L'activité du samedi : une activité différente chaque samedi ».
 - Les dates sont créées 6 semaines à l'avance et recalculées chaque nuit et à chaque changement.
+
+### Site d'essai propre et textes (24 novembre)
+- Une fois, au déploiement : les événements archivés ou retirés du programme sont **supprimés définitivement** du site
+  d'essai, avec leurs dates, réservations, paiements, factures et avis (comptes fictifs). Jamais en production.
+- Textes réécrits avec le principe des rendez-vous de la semaine (FR, EN, AR) : articles « Comment fonctionne Wenzy »
+  du blog (dîner du mercredi, guide complet, première réservation, « votre semaine avec Wenzy », composition des
+  groupes, quel rendez-vous choisir, questionnaire, sport) et appels à l'action des autres articles ; CGU (le service),
+  CGV (rendez-vous, gammes et gamme voisine), conditions des activités physiques ; centre d'aide ; dossier de presse ;
+  FAQ, page « À propos », accueil, pied de page et description du site pour les moteurs de recherche.

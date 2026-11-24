@@ -23,7 +23,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
   physical: {
     "title": "Conditions de participation aux activités physiques",
     "updated": UPDATED_FR,
-    "intro": "Ces conditions s'appliquent aux expériences marquées « Activité physique » sur leur fiche : sport, padel, course, paintball, randonnée, danse… Vous les acceptez en réservant ou en demandant à participer. Elles complètent les [conditions générales d'utilisation](/cgu), les [conditions générales de vente](/cgv) et nos conseils de [sécurité](/securite).",
+    "intro": "Ces conditions s'appliquent aux expériences marquées « Activité physique » sur leur fiche : sport, padel, course, yoga, randonnée, danse… Vous les acceptez en réservant ou en demandant à participer. Elles complètent les [conditions générales d'utilisation](/cgu), les [conditions générales de vente](/cgv) et nos conseils de [sécurité](/securite).",
     "sections": [
       {
         "title": "1. À quoi servent ces conditions",
@@ -53,7 +53,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         "body": [
           [
             "Suivez les consignes de l'encadrant et du lieu, et les règles du jeu.",
-            "Portez la tenue et les protections demandées (par exemple, le masque au paintball reste en place pendant tout le jeu) et utilisez le matériel conformément aux instructions.",
+            "Portez la tenue et les protections demandées (par exemple, des chaussures adaptées au padel) et utilisez le matériel conformément aux instructions.",
             "Échauffez-vous, hydratez-vous et allez à votre rythme : personne ne doit suivre à tout prix.",
             "Ni alcool ni substance avant ou pendant l'activité. L'encadrant ou l'équipe peut refuser la participation d'une personne qui se met en danger ou met les autres en danger.",
             "Respectez les autres participants et leur niveau : le fair-play fait partie de l'expérience."
@@ -63,7 +63,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
       {
         "title": "5. Les risques de l'activité",
         "body": [
-          "Malgré ces précautions, une activité physique comporte des risques normaux et prévisibles : courbatures, chutes, entorses, hématomes (par exemple, impacts de billes au paintball), fatigue. Vous participez en connaissance de ces risques."
+          "Malgré ces précautions, une activité physique comporte des risques normaux et prévisibles : courbatures, chutes, entorses, hématomes (par exemple, un choc de balle au padel), fatigue. Vous participez en connaissance de ces risques."
         ]
       },
       {
@@ -386,7 +386,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "2. Le service",
         body: [
-          "Wenzy propose des expériences sociales en petit groupe (repas, ateliers, sport, jeux, sorties) pour rencontrer de nouvelles personnes, dans des lieux publics ou chez des partenaires. Nous choisissons les lieux, composons les groupes, vous informons et restons votre interlocuteur unique.",
+          "Wenzy réunit une communauté qui se retrouve chaque semaine, en petits groupes, autour de rendez-vous fixes : le Dîner du mercredi, l'activité du samedi (une activité différente chaque semaine), le Café du samedi et le Brunch du dimanche, ainsi que des éditions spéciales. Des organisateurs partenaires proposent aussi leurs activités, validées par notre équipe. Tout se passe dans des lieux publics ou chez des partenaires. Nous choisissons les lieux, composons les groupes, vous informons et restons votre interlocuteur unique.",
           "Wenzy n'est pas un service de rencontre amoureuse. Des liens peuvent naître entre adultes consentants, mais toute pression amoureuse ou sexuelle, toute insistance et tout comportement qui met le groupe mal à l'aise sont interdits.",
         ],
       },
@@ -431,7 +431,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         title: "6. Réservations, demandes et listes d'attente",
         body: [
           "Une expérience se réserve directement ou, si elle est « sur demande », après validation de votre demande par l'équipe. Quand une date est complète, vous pouvez rejoindre la liste d'attente. Le fonctionnement détaillé (prix, délais de paiement, annulation, remboursement) figure dans les [conditions générales de vente](/cgv).",
-          "Pour les activités physiques (sport, paintball, randonnée…), réserver ou demander à participer implique d'accepter les [conditions de participation aux activités physiques](/conditions-activites-physiques).",
+          "Pour les activités physiques (running, padel, yoga, randonnée…), réserver ou demander à participer implique d'accepter les [conditions de participation aux activités physiques](/conditions-activites-physiques).",
         ],
       },
       {
@@ -540,7 +540,8 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
             "Liste d'attente : une place libérée est proposée en priorité aux personnes qui ont un Pass, puis dans l'ordre d'inscription, et réservée 4 heures pour payer.",
             "Virement bancaire : une référence unique et les coordonnées de Wenzy vous sont communiquées ; la réservation est confirmée dès réception du virement du montant exact. Non reçu à l'échéance, la place est libérée ; un virement arrivé ensuite donne droit à une place s'il en reste, sinon il est remboursé.",
             "Paiement par carte : auprès d'un prestataire sécurisé ; Wenzy ne reçoit ni ne conserve aucune donnée de carte.",
-            "Les rendez-vous de la semaine (ex. le Dîner du mercredi) : une seule date est ouverte à la fois et ses réservations ferment la veille à 20h30 ; la date suivante s'ouvre alors (avec un Pass, une semaine plus tôt). Les autres Tables ferment 12 heures avant le début (au plus tard la veille à 18 h pour un début avant 14 h) ; les autres activités, 2 heures avant."
+            "Les rendez-vous de la semaine (le Dîner du mercredi, l'activité du samedi, le Café du samedi, le Brunch du dimanche) : une seule date est ouverte à la fois (pour l'activité du samedi, une seule pour toute la rotation) et ses réservations ferment la veille à 20h30 ; la date suivante s'ouvre alors (avec un Pass, une semaine plus tôt).",
+            "Tables : vous choisissez votre gamme (Casual, Premium ou Exclusive), qui fixe le type de restaurant et le budget sur place. Si vous acceptez la gamme voisine, vous pouvez y être placé·e quand votre gamme n'a pas assez d'inscrits ; sinon, l'article 5 s'applique. Les autres Tables ferment 12 heures avant le début (au plus tard la veille à 18 h pour un début avant 14 h) ; les autres activités, 2 heures avant."
           ]
         ]
       },
@@ -756,7 +757,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
   physical: {
     "title": "Terms for physical activities",
     "updated": UPDATED_EN,
-    "intro": "These terms apply to experiences marked “Physical activity” on their page: sport, padel, running, paintball, hiking, dance… You accept them when you book or request to take part. They complete the [terms of use](/cgu), the [terms of sale](/cgv) and our [safety](/securite) advice.",
+    "intro": "These terms apply to experiences marked “Physical activity” on their page: sport, padel, running, yoga, hiking, dance… You accept them when you book or request to take part. They complete the [terms of use](/cgu), the [terms of sale](/cgv) and our [safety](/securite) advice.",
     "sections": [
       {
         "title": "1. What these terms are for",
@@ -786,7 +787,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         "body": [
           [
             "Follow the instructions of the coach and the venue, and the rules of the game.",
-            "Wear the required outfit and protective gear (for example, your paintball mask stays on throughout the game) and use equipment as instructed.",
+            "Wear the required outfit and protective gear (for example, suitable shoes for padel) and use equipment as instructed.",
             "Warm up, drink water and go at your own pace: nobody has to keep up at all costs.",
             "No alcohol or substances before or during the activity. The coach or the team may refuse to let someone take part if they put themselves or others in danger.",
             "Respect other participants and their level: fair play is part of the experience."
@@ -796,7 +797,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
       {
         "title": "5. The risks of the activity",
         "body": [
-          "Despite these precautions, a physical activity carries normal, foreseeable risks: sore muscles, falls, sprains, bruises (for example, paintball impacts), fatigue. You take part knowing these risks."
+          "Despite these precautions, a physical activity carries normal, foreseeable risks: sore muscles, falls, sprains, bruises (for example, being hit by a padel ball), fatigue. You take part knowing these risks."
         ]
       },
       {
@@ -1113,7 +1114,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
     intro: "These terms govern access to and use of Wenzy. By creating an account or ticking “I accept”, you enter into an electronic contract with Wenzy. If you do not accept them, do not use the service. Prices, payment, cancellation and membership are covered by the [terms of sale](/cgv); the behaviour expected from everyone is set out in the [community rules](/charte). The French version prevails.",
     sections: [
       { title: "1. Publisher", body: ["The site is published by {{publisher}}, registered office {{address}} (ICE {{ice}}, RC {{rc}}). Contact: {{supportEmail}}. Hosting: {{host}}."] },
-      { title: "2. The service", body: ["Wenzy offers small-group social experiences (meals, workshops, sport, games, outings) to meet new people, in public places or at partner venues. We choose the venues, put the groups together, keep you informed and are your single point of contact.", "Wenzy is not a dating service. Connections may grow between consenting adults, but any romantic or sexual pressure, pushiness or behaviour that makes the group uncomfortable is prohibited."] },
+      { title: "2. The service", body: ["Wenzy brings together a community that meets every week, in small groups, around fixed gatherings: Wednesday Dinner, the Saturday activity (a different one each week), Saturday Coffee and Sunday Brunch, plus special editions. Partner organisers also offer their activities, approved by our team. Everything takes place in public places or at partner venues. We choose the venues, put the groups together, keep you informed and are your single point of contact.", "Wenzy is not a dating service. Connections may grow between consenting adults, but any romantic or sexual pressure, pushiness or behaviour that makes the group uncomfortable is prohibited."] },
       {
         title: "3. What we do, and what the venue does",
         body: [
@@ -1151,7 +1152,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
           "If you no longer meet these conditions, your access may end.",
         ],
       },
-      { title: "6. Bookings, requests and waitlists", body: ["An experience is booked directly or, if it is “on request”, once the team approves your request. When a date is full, you can join the waitlist. Prices, payment deadlines, cancellation and refunds are described in the [terms of sale](/cgv).", "For physical activities (sport, paintball, hiking…), booking or requesting to take part means accepting the [terms for physical activities](/conditions-activites-physiques).",] },
+      { title: "6. Bookings, requests and waitlists", body: ["An experience is booked directly or, if it is “on request”, once the team approves your request. When a date is full, you can join the waitlist. Prices, payment deadlines, cancellation and refunds are described in the [terms of sale](/cgv).", "For physical activities (running, padel, yoga, hiking…), booking or requesting to take part means accepting the [terms for physical activities](/conditions-activites-physiques).",] },
       { title: "7. How groups are put together", body: ["Groups are based on your city, languages, age, interests and questionnaire answers, avoiding seating the same people together again, so that everyone can join the conversation. A person on our team reviews each line-up. This is neither a psychological assessment nor a judgement about you.", "Some experiences also include a short questionnaire (10 questions at most, multiple choice only: level, pace, preferences…) to fill in while booking, before payment. Depending on the experience, answers are used to group similar levels (e.g. padel) or to mix profiles; they are never shown to other participants and are deleted 30 days after the experience."] },
       {
         title: "8. Code of conduct",
@@ -1228,7 +1229,8 @@ const en: Record<BaseLegalKey, LegalDoc> = {
             "Waiting list: a freed seat is offered first to people with a Pass, then in sign-up order, and held for 4 hours for payment.",
             "Bank transfer: you receive a unique reference and Wenzy's bank details; the booking is confirmed once the exact amount is received. If not received by the deadline, the seat is released; a later transfer gets a seat if one is left, otherwise it is refunded.",
             "Card payment: through a secure provider; Wenzy never receives or stores card data.",
-            "Weekly meet-ups (e.g. Wednesday Dinner): one date is open at a time and its bookings close at 8:30 pm the day before; the next date then opens (a week earlier with a Pass). Other Tables close 12 hours before the start (at the latest 6 pm the day before for a start before 2 pm); other activities, 2 hours before."
+            "Weekly gatherings (Wednesday Dinner, the Saturday activity, Saturday Coffee, Sunday Brunch): one date is open at a time (for the Saturday activity, one for the whole rotation) and its bookings close at 8:30 pm the day before; the next date then opens (a week earlier with a Pass).",
+            "Tables: you choose your tier (Casual, Premium or Exclusive), which sets the type of restaurant and the budget on site. If you accept the neighbouring tier, you may be placed there when your tier doesn't have enough people; otherwise, section 5 applies. Other Tables close 12 hours before the start (at the latest 6 pm the day before for a start before 2 pm); other activities, 2 hours before."
           ]
         ]
       },
