@@ -37,17 +37,17 @@ export const HELP_ARTICLES_Z: HelpArticleZ[] = [
     body: {
       fr: [
         "Chaque semaine, la communauté Wenzy se retrouve à Casablanca, en petits groupes, à des rendez-vous fixes : le Dîner du mercredi (20h30), l'activité du samedi (une activité différente chaque semaine), le Café du samedi (16h) et le Brunch du dimanche (12h30). Le site les range en trois univers : Tables, Activités et Événements (éditions spéciales comme Girls only, afterworks).",
-        ["Choisissez votre rendez-vous dans [Découvrir](/experiences), votre gamme, et réservez la date de la semaine (une seule date est ouverte à la fois, jusqu'à la veille 20h30) : 35 DH en ligne, ou rien avec le Pass.", "Pour les Tables, nous composons des tables de 4 à 6 d'après votre profil ; le lieu vous est révélé quelques heures avant, avec l'itinéraire.", "Sur place, appuyez sur « Je suis là » : vous découvrez votre table, les prénoms, et le chat du groupe s'ouvre.", "Votre repas ou l'activité se règle sur place."],
+        ["Choisissez votre rendez-vous dans [Découvrir](/experiences), votre gamme, et réservez la date de la semaine (une seule date est ouverte à la fois, jusqu'à la veille 20h30) : 35 DH en ligne, ou rien avec le Pass.", "Pour les Tables, nous composons des tables de 4 à 6 d'après votre profil ; le lieu vous est dévoilé la veille à 21h30, avec l'itinéraire.", "Sur place, appuyez sur « Je suis là » : vous découvrez votre table, les prénoms, et le chat du groupe s'ouvre.", "Votre repas ou l'activité se règle sur place."],
         "Ce n'est pas une application de rencontre amoureuse : l'idée est d'élargir son cercle.",
       ],
       en: [
         "Every week, the Wenzy community gets together in Casablanca, in small groups, at fixed gatherings: Wednesday Dinner (8:30 pm), the Saturday activity (a different one each week), Saturday Coffee (4 pm) and Sunday Brunch (12:30 pm). The site groups them into three universes: Tables, Activities and Events (special editions such as Girls only, afterworks).",
-        ["Choose your gathering in [Discover](/experiences), your tier, and book this week's date (one date is open at a time, until 8:30 pm the day before): 35 DH online, or nothing with the Pass.", "For Tables, we put tables of 4 to 6 together from your profile; the venue is revealed a few hours before, with directions.", "On site, tap “I'm here”: you see your table and first names, and the group chat opens.", "Your meal or the activity is paid on site."],
+        ["Choose your gathering in [Discover](/experiences), your tier, and book this week's date (one date is open at a time, until 8:30 pm the day before): 35 DH online, or nothing with the Pass.", "For Tables, we put tables of 4 to 6 together from your profile; the venue is revealed the evening before at 9:30 pm, with directions.", "On site, tap “I'm here”: you see your table and first names, and the group chat opens.", "Your meal or the activity is paid on site."],
         "This is not a dating app: the idea is to widen your circle.",
       ],
       ar: [
         "كل أسبوع يلتقي مجتمع Wenzy في الدار البيضاء، في مجموعات صغيرة، في مواعيد ثابتة: عشاء الأربعاء (20:30)، نشاط السبت (نشاط مختلف كل أسبوع)، قهوة السبت (16:00) وبرانش الأحد (12:30). ويرتّبها الموقع في ثلاثة أقسام: الموائد، الأنشطة والفعاليات (إصدارات خاصة مثل Girls only، أمسيات بعد العمل).",
-        ["اختر موعدك في [اكتشف](/experiences) وفئتك، واحجز موعد هذا الأسبوع: 35 درهماً عبر الإنترنت، أو لا شيء مع الباس.", "بالنسبة للموائد، نكوّن طاولات من 4 إلى 6 أشخاص حسب ملفك؛ ويُكشف عن المكان قبل ساعات مع الاتجاهات.", "في المكان، اضغط على « أنا هنا »: تكتشف طاولتك والأسماء، وتُفتح دردشة المجموعة.", "تدفع وجبتك أو النشاط في المكان."],
+        ["اختر موعدك في [اكتشف](/experiences) وفئتك، واحجز موعد هذا الأسبوع: 35 درهماً عبر الإنترنت، أو لا شيء مع الباس.", "بالنسبة للموائد، نكوّن طاولات من 4 إلى 6 أشخاص حسب ملفك؛ ويُكشف عن المكان مساء اليوم السابق على الساعة 21:30 مع الاتجاهات.", "في المكان، اضغط على « أنا هنا »: تكتشف طاولتك والأسماء، وتُفتح دردشة المجموعة.", "تدفع وجبتك أو النشاط في المكان."],
         "ليست تطبيقاً للمواعدة: الفكرة هي توسيع دائرة معارفك.",
       ],
     },
@@ -57,21 +57,21 @@ export const HELP_ARTICLES_Z: HelpArticleZ[] = [
   {
     slug: "le-lieu-secret", category: "day-of",
     title: { fr: "Le lieu : quand et comment je le découvre", en: "The venue: when and how I find out", ar: "المكان: متى وكيف أكتشفه" },
-    summary: { fr: "Révélé quelques heures avant pour les Tables, avec l'adresse exacte, la carte et l'itinéraire.", en: "Revealed a few hours before for Tables, with the exact address, map and directions.", ar: "يُكشف عنه قبل ساعات بالنسبة للموائد، مع العنوان الدقيق والخريطة والاتجاهات." },
+    summary: { fr: "Dévoilé la veille à 21h30 pour les Tables, avec l'adresse exacte, la carte et l'itinéraire.", en: "Revealed the evening before at 9:30 pm for Tables, with the exact address, map and directions.", ar: "يُكشف عنه مساء اليوم السابق على الساعة 21:30 بالنسبة للموائد، مع العنوان الدقيق والخريطة والاتجاهات." },
     body: {
       fr: [
-        "Pour les Tables, le restaurant est choisi après la fermeture des réservations, parmi nos lieux partenaires de la gamme choisie.",
-        ["Il vous est révélé quelques heures avant, par notification et e-mail : 5 h avant un dîner, la veille au soir pour un début le matin ou le midi (comme le brunch).", "Dans votre réservation, la carte du lieu affiche son nom, l'adresse exacte, la carte et le bouton « Itinéraire ».", "Plusieurs restaurants peuvent accueillir les tables d'une même date.", "S'il change, vous êtes prévenu·e aussitôt."],
+        "Pour les Tables, le restaurant est réservé la veille dans l'après-midi parmi nos lieux partenaires de la gamme choisie, puis reçoit le nombre final à la fermeture des réservations (20h30).",
+        ["Il vous est dévoilé la veille à 21h30, par notification et e-mail, pour tous les rendez-vous (dîner, café, brunch).", "Dans votre réservation, la carte du lieu affiche son nom, l'adresse exacte, la carte et le bouton « Itinéraire ».", "Plusieurs restaurants peuvent accueillir les tables d'une même date.", "S'il change, vous êtes prévenu·e aussitôt."],
         "Pour les autres activités, le lieu est indiqué dès la fiche, avec la même carte et l'itinéraire.",
       ],
       en: [
-        "For Tables, the restaurant is chosen after bookings close, among our partner venues of the chosen tier.",
-        ["It is revealed a few hours before, by notification and email: 5 hours before a dinner, the evening before for a morning or midday start (such as brunch).", "In your booking, the venue card shows its name, exact address, map and a “Directions” button.", "Several restaurants may host the tables of the same date.", "If it changes, you're told right away."],
+        "For Tables, the restaurant is booked the afternoon before among our partner venues of the chosen tier, then gets the final number when bookings close (8:30 pm).",
+        ["It is revealed the evening before at 9:30 pm, by notification and email, for every gathering (dinner, coffee, brunch).", "In your booking, the venue card shows its name, exact address, map and a “Directions” button.", "Several restaurants may host the tables of the same date.", "If it changes, you're told right away."],
         "For other activities, the venue is shown on the experience page from the start, with the same map and directions.",
       ],
       ar: [
-        "بالنسبة للموائد، يُختار المطعم بعد إغلاق الحجوزات، من بين أماكننا الشريكة من الفئة المختارة.",
-        ["يُكشف لك عنه قبل ساعات عبر إشعار وبريد إلكتروني: 5 ساعات قبل العشاء، ومساء اليوم السابق للبدايات صباحاً أو ظهراً (مثل البرانش).", "في حجزك، تعرض بطاقة المكان اسمه وعنوانه الدقيق والخريطة وزر « الاتجاهات ».", "قد تستقبل عدة مطاعم طاولات الموعد نفسه.", "إذا تغيّر، تُبلَّغ فوراً."],
+        "بالنسبة للموائد، يُحجز المطعم بعد ظهر اليوم السابق من بين أماكننا الشريكة من الفئة المختارة، ثم يصله العدد النهائي عند إغلاق الحجوزات (20:30).",
+        ["يُكشف لك عنه مساء اليوم السابق على الساعة 21:30 عبر إشعار وبريد إلكتروني، لكل المواعيد (العشاء والقهوة والبرانش).", "في حجزك، تعرض بطاقة المكان اسمه وعنوانه الدقيق والخريطة وزر « الاتجاهات ».", "قد تستقبل عدة مطاعم طاولات الموعد نفسه.", "إذا تغيّر، تُبلَّغ فوراً."],
         "بالنسبة للأنشطة الأخرى، يظهر المكان منذ البداية في صفحة التجربة، مع الخريطة والاتجاهات نفسها.",
       ],
     },
@@ -234,11 +234,11 @@ export const HELP_ARTICLES_Z: HelpArticleZ[] = [
     summary: { fr: "Ce que nous vous transmettons avant chaque date, et ce que nous attendons le jour J.", en: "What we send you before each date, and what we expect on the day.", ar: "ما نرسله إليك قبل كل موعد، وما ننتظره يوم الموعد." },
     body: {
       fr: [
-        "1 h avant chaque date, vous recevez un récapitulatif : les tables attendues, les prénoms, et les régimes ou allergies que les participants ont accepté de partager.",
+        "La veille à 15h, vous recevez une demande d'option (nombre d'inscrits du moment), puis le nombre final à 20h30, à la fermeture des réservations. Le jour J à 11h (la veille au soir pour un brunch ou une activité du matin), vous recevez le récapitulatif : les tables attendues, les prénoms, et les régimes ou allergies que les participants ont accepté de partager. Une mise à jour arrive 1 h avant seulement si quelque chose a changé.",
         ["Prévoyez les tables convenues à l'heure indiquée, au nom de « Wenzy ».", "Les participants arrivent seuls et se retrouvent grâce à l'application : pas besoin d'hôte.", "Des coordonnées GPS exactes sur votre fiche permettent à chacun d'arriver sans se perdre.", "Prévenez-nous immédiatement en cas d'imprévu (retard, fermeture, problème technique)."],
       ],
       en: [
-        "1 hour before each date, you receive a summary: the tables expected, first names, and the diets or allergies participants agreed to share.",
+        "At 3 pm the day before, you receive an option request (current number of sign-ups), then the final number at 8:30 pm, when bookings close. On the day at 11 am (the evening before for a brunch or a morning activity), you receive the summary: the tables expected, first names, and the diets or allergies participants agreed to share. An update arrives 1 hour before only if something changed.",
         ["Have the agreed tables ready at the time given, under the name “Wenzy”.", "Participants arrive on their own and find each other through the app: no host needed.", "Exact GPS coordinates on your venue sheet help everyone arrive without getting lost.", "Tell us right away if anything comes up (delay, closure, technical problem)."],
       ],
       ar: [

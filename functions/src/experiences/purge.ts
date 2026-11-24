@@ -55,3 +55,51 @@ export async function purgeRetiredExperiences(): Promise<PurgeResult> {
   logger.info("Événements archivés supprimés (site d'essai)", r);
   return r;
 }
+
+/**
+ * SITE D'ESSAI UNIQUEMENT (même garde que ci-dessus) : supprime les dates annulées, et les dates des rendez-vous qui
+ * ne sont plus au programme (activité du samedi hors planning, gamme hors de son jour et de son heure), même réservées,
+ * avec leurs réservations, paiements, factures, tables, demandes aux lieux et avis.
+ */
+export async function purgeStaleSessions(now = new Date()): Promise<{ sessions: number; reservations: number; payments: number; invoices: number; other: number }> {
+  const { localDayKey, onRendezvousSlot, rotationDays, rotationPlan } = await import("@thecommunity/shared");
+  const r = { sessions: 0, reservations: 0, payments: 0, invoices: 0, other: 0 };
+  const stale = new Set((await db.collection("sessions").where("status", "==", "cancelled").get()).docs.map((d) => d.id));
+  // Activité du samedi : seules les dates du planning restent.
+  const rotations = (await db.collection("rendezvous").where("kind", "==", "rotation").get()).docs;
+  for (const rv of rotations) {
+    const x = rv.data();
+    const plan = rotationPlan({ weekday: Number(x.weekday), anchor: String(x.anchor), cycle: x.cycle ?? [], overrides: x.overrides ?? {} }, rotationDays(Number(x.weekday), now, Number(x.weeksAhead ?? 6) + 1));
+    const planned = new Map(plan.map((w) => [w.date, w.entry?.experienceId ?? null]));
+    const ids = new Set<string>([...(x.cycle ?? []).map((c: { experienceId: string }) => c.experienceId), ...Object.values(x.overrides ?? {}).map((o) => (o as { experienceId: string | null }).experienceId).filter(Boolean) as string[]]);
+    for (const part of chunks([...ids])) {
+      const future = await db.collection("sessions").where("experienceId", "in", part).where("startAt", ">", now).get();
+      for (const s of future.docs) {
+        const day = localDayKey(s.get("startAt").toDate());
+        if (s.get("rendezvousId") !== rv.id || planned.get(day) !== s.get("experienceId")) stale.add(s.id);
+      }
+    }
+  }
+  // Gammes des rendez-vous : une date hors du jour et de l'heure du rendez-vous disparaît.
+  const tiered = (await db.collection("experiences").where("closeRule", "==", "eve").get()).docs.filter((e) => e.get("rendezvousId") && e.get("rendezvousKind") !== "rotation" && e.get("rendezvousSlot"));
+  for (const e of tiered) {
+    const future = await db.collection("sessions").where("experienceId", "==", e.id).where("startAt", ">", now).get();
+    for (const s of future.docs) if (!onRendezvousSlot(s.get("startAt").toDate(), e.data())) stale.add(s.id);
+  }
+  const sessionIds = [...stale];
+  if (!sessionIds.length) return r;
+  const reservationIds: string[] = [];
+  for (const part of chunks(sessionIds)) reservationIds.push(...(await db.collection("reservations").where("sessionId", "in", part).get()).docs.map((d) => d.id));
+  if (reservationIds.length) {
+    r.payments = (await deleteWhere("payments", "reservationId", reservationIds)).count;
+    r.invoices = (await deleteWhere("invoices", "reservationId", reservationIds)).count;
+  }
+  for (const c of ["groups", "venueRequests", "invitations", "reports", "reviews", "bookingRequests"]) r.other += (await deleteWhere(c, "sessionId", sessionIds)).count;
+  r.reservations = (await deleteWhere("reservations", "sessionId", sessionIds)).count;
+  for (const part of chunks(sessionIds)) {
+    for (const id of part) await db.recursiveDelete(db.doc(`sessions/${id}`));
+  }
+  r.sessions = sessionIds.length;
+  logger.info("Dates annulées ou hors programme supprimées (site d'essai)", r);
+  return r;
+}

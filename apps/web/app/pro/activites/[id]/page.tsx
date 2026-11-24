@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ExperienceForm } from "@/components/admin/experience-form";
 import { Badge, Card, PageHeader } from "@/components/admin/ui";
 import { SaturdayProposal } from "@/components/pro/org-requests";
-import { ORGANIZER_UNIVERSES, rotationDays } from "@thecommunity/shared";
+import { rotationDays } from "@thecommunity/shared";
 import { experienceToValues } from "@/lib/admin-forms";
 import { getProData, requireApprovedOrganizer } from "@/lib/data/organizer";
 import { getOrganizerFinance } from "@/lib/data/finance";
@@ -34,7 +34,7 @@ export default async function ProEditActivityPage({ params }: PageProps<"/pro/ac
           <strong>Modifications en attente de validation.</strong> La version en ligne reste inchangée jusqu&apos;à la validation de l&apos;équipe. Si vous enregistrez à nouveau, vos nouvelles modifications remplacent celles en attente.
         </p>
       )}
-      {e.status === "published" && ORGANIZER_UNIVERSES.includes(e.categoryId) && (
+      {e.status === "published" && e.categoryId === "move" && (
         <Card title="Proposer pour l'activité du samedi" className="mb-5">
           <SaturdayProposal
             experienceId={e.id}

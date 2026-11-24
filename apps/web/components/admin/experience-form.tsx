@@ -181,8 +181,16 @@ export function ExperienceForm({
     e.preventDefault();
     setSaved(null);
     setServerError("");
+    // Activités : pas de date dans le formulaire (planning du samedi) → champs de date neutres, jamais bloquants.
+    const sessions = v.categoryId !== "move" ? v.sessions : {
+      firstDate: /^\d{4}-\d{2}-\d{2}$/.test(v.sessions.firstDate) ? v.sessions.firstDate : new Date(Date.now() + 86_400_000).toISOString().slice(0, 10),
+      time: /^([01]\d|2[0-3]):[0-5]\d$/.test(v.sessions.time) ? v.sessions.time : "10:00",
+      weeks: "1",
+      capacity: String(Math.min(50, Math.max(Number(v.sessions.capacity) || 12, Number(v.groupMin) || 1))),
+    };
     const parsed = experienceInputSchema.safeParse({
       ...v,
+      sessions,
       // docs/22 : Tables → toujours des tables composées ; plus de « taille cible » (la composition vise le maximum).
       bookingMode: isTables ? "social_dinner" : v.bookingMode,
       groupMin: grouped ? opt(v.groupMin) : undefined,
@@ -248,7 +256,7 @@ export function ExperienceForm({
       const res = await httpsCallable(functions, proSelf ? "organizerSaveExperience" : "adminSaveExperience")({
         ...(experienceId ? { experienceId } : { newId: id }),
         data: JSON.parse(JSON.stringify(parsed.data)), // retire les champs vides (undefined)
-        addSessions,
+        addSessions: addSessions && parsed.data.categoryId !== "move",
         images: photos,
       });
       const data = res.data as { experienceId: string; slug: string; sessionsCreated: number; status?: string; revision?: boolean; changes?: string[] };
@@ -269,7 +277,7 @@ export function ExperienceForm({
 
   const preview = useMemo(() => {
     if (!result) return null;
-    const dates = addSessions ? planSessionDates(result.sessions, result.durationMinutes, MOROCCO_TIMEZONE) : [];
+    const dates = addSessions && result.categoryId !== "move" ? planSessionDates(result.sessions, result.durationMinutes, MOROCCO_TIMEZONE) : [];
     const price = pro ? Math.round((result.priceDh ?? 0) * 100) : result.free ? 0 : wenzyPrice;
     return { dates, price };
   }, [result, addSessions, pro, wenzyPrice]);
@@ -395,9 +403,9 @@ export function ExperienceForm({
       </Section>
 
       <Section title="2. Lieu">
-        <div className="sm:col-span-2"><Label k="revealPolicy" hint={secret ? "Nom, adresse et cuisine restent cachés jusqu'à 5 h avant. Le lieu peut être choisi plus tard, quand vous connaissez le nombre d'inscrits (au plus tard 5 h avant)." : "Nom, adresse et carte visibles dès la fiche."}>Lieu</Label>
+        <div className="sm:col-span-2"><Label k="revealPolicy" hint={secret ? "Nom, adresse et cuisine restent cachés jusqu'à la veille 21h30. Les lieux sont réservés automatiquement la veille à 15h (ou choisis à la main sur la page de la date)." : "Nom, adresse et carte visibles dès la fiche."}>Lieu</Label>
           <select {...field("revealPolicy")} value={v.revealPolicy} onChange={(e) => set("revealPolicy", e.target.value as "immediate" | "on_group_reveal")}>
-            <option value="on_group_reveal">Secret, révélé 5 h avant</option>
+            <option value="on_group_reveal">Secret, dévoilé la veille à 21h30</option>
             <option value="immediate">Affiché dès la fiche</option>
           </select>{err("revealPolicy")}</div>
         <div><Label k="cityId">Ville</Label>
@@ -417,7 +425,7 @@ export function ExperienceForm({
               <option value="exclusive">Exclusive</option>
             </select>{err("venueTier")}</div>
           <div><Label k="ambiance" hint="Affichée sur la fiche, sous la gamme (ex. « Chic et décontractée »).">Ambiance</Label><input {...field("ambiance")} maxLength={60} value={v.ambiance ?? ""} onChange={(e) => set("ambiance", e.target.value)} />{err("ambiance")}</div>
-          <div className="sm:col-span-2"><Label k="cuisine" hint={secret ? "Affichée seulement avec le lieu, 5 h avant." : "Affichée sur la fiche."}>Cuisine</Label><input {...field("cuisine")} maxLength={60} value={v.cuisine ?? ""} onChange={(e) => set("cuisine", e.target.value)} />{err("cuisine")}</div>
+          <div className="sm:col-span-2"><Label k="cuisine" hint={secret ? "Affichée seulement avec le lieu, la veille à 21h30." : "Affichée sur la fiche."}>Cuisine</Label><input {...field("cuisine")} maxLength={60} value={v.cuisine ?? ""} onChange={(e) => set("cuisine", e.target.value)} />{err("cuisine")}</div>
         </>)}
       </Section>
 
@@ -645,6 +653,18 @@ export function ExperienceForm({
         )}
       </Section>
 
+      {v.categoryId === "move" ? (
+      <Section id="dates" title={mode === "create" ? "6. Dates : l'activité du samedi" : "6. Dates : l'activité du samedi"}>
+        <div className="space-y-2 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-950 sm:col-span-2" data-testid="saturday-dates-note">
+          <p><strong>Pas de date à saisir ici.</strong> Les Activités passent le samedi, dans le planning de l&apos;activité du samedi : la date, l&apos;heure et le nombre de places s&apos;y choisissent.</p>
+          {pro ? (
+            <p>Une fois votre activité validée par l&apos;équipe, proposez-la pour un ou plusieurs samedis depuis sa fiche.</p>
+          ) : (
+            <p>Après l&apos;enregistrement (statut « Publiée »), ouvrez la fiche : carte <strong>Activité du samedi</strong> → « Ajouter à la rotation » (elle revient à son tour) ou « Programmer un samedi » (une fois). Pour une activité un autre jour, choisissez plutôt l&apos;univers Événements.</p>
+          )}
+        </div>
+      </Section>
+      ) : (
       <Section id="dates" title={mode === "create" ? "6. Dates" : "6. Ajouter des dates (ou reproposer l'expérience)"}>
         <label className="flex items-center gap-2 text-sm sm:col-span-2">
           <input type="checkbox" checked={addSessions} onChange={(e) => setAddSessions(e.target.checked)} className="size-4 accent-brand-900" />
@@ -660,8 +680,9 @@ export function ExperienceForm({
         <div><Label k="sessions.firstDate">Première date</Label><input type="date" {...field("sessions.firstDate")} value={v.sessions.firstDate} onChange={(e) => setSession("firstDate", e.target.value)} />{err("sessions.firstDate")}</div>
         <div><Label k="sessions.time" hint="Heure de Casablanca.">Heure</Label><input type="time" {...field("sessions.time")} value={v.sessions.time} onChange={(e) => setSession("time", e.target.value)} />{err("sessions.time")}</div>
         <div><Label k="sessions.weeks" hint={`1 = date unique ; jusqu'à ${RECURRENCE_MAX_WEEKS} semaines.`}>Répéter chaque semaine pendant</Label><input {...field("sessions.weeks")} inputMode="numeric" value={v.sessions.weeks} onChange={(e) => setSession("weeks", e.target.value)} />{err("sessions.weeks")}</div>
-        <div><Label k="sessions.capacity">Capacité par date</Label><input {...field("sessions.capacity")} inputMode="numeric" value={v.sessions.capacity} onChange={(e) => setSession("capacity", e.target.value)} />{err("sessions.capacity")}</div>
+        <div><Label k="sessions.capacity" hint="Nombre de participants maximum pour chaque date.">Capacité par date</Label><input {...field("sessions.capacity")} inputMode="numeric" value={v.sessions.capacity} onChange={(e) => setSession("capacity", e.target.value)} />{err("sessions.capacity")}</div>
       </Section>
+      )}
 
       <fieldset className="rounded-2xl bg-white p-4 shadow-card sm:p-5">
         <legend className="float-left mb-3 w-full text-base font-semibold text-ink">7. Photos</legend>
@@ -735,7 +756,7 @@ export function ExperienceForm({
           <p className="mt-3 flex flex-wrap gap-4 font-medium">
             {saved.status === "published" && <Link href={`/experiences/${saved.slug}`} className="underline">Voir sur le site</Link>}
             <Link href={proSelf ? "/pro/activites" : "/admin/experiences"} className="underline">{proSelf ? "Retour à mes activités" : "Retour aux expériences"}</Link>
-            {mode === "create" && <Link href={proSelf ? `/pro/activites/${saved.experienceId}` : `/admin/experiences/${saved.experienceId}`} className="underline">Continuer à modifier</Link>}
+            {mode === "create" && <Link href={proSelf ? `/pro/activites/${saved.experienceId}` : `/admin/experiences/${saved.experienceId}`} className="underline">{v.categoryId === "move" && !proSelf ? "Ouvrir la fiche pour la programmer un samedi" : "Continuer à modifier"}</Link>}
           </p>
         </section>
       )}

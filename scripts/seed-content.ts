@@ -292,6 +292,16 @@ async function main() {
     await db.doc("settings/showcase").set({ purgeArchivedAt: Timestamp.now() }, { merge: true });
     console.log(`✅ Site d'essai nettoyé : ${p.experiences} événement(s) archivé(s) supprimé(s), ${p.sessions} date(s), ${p.reservations} réservation(s), ${p.payments} paiement(s), ${p.invoices} facture(s), ${p.reviews} avis.`);
   }
+  // 24/11 (2) : une fois, les dates annulées et celles qui ne sont plus au programme (samedi hors planning, gamme hors
+  // de son jour) disparaissent, réservations comprises ; puis le planning du samedi recrée ce qui manque.
+  if (!(await db.doc("settings/showcase").get()).get("purgeCancelledAt")) {
+    const { purgeStaleSessions } = await import("../functions/src/experiences/purge");
+    const p = await purgeStaleSessions();
+    await db.doc("settings/showcase").set({ purgeCancelledAt: Timestamp.now() }, { merge: true });
+    const { ensureRotationSessions } = await import("../functions/src/rendezvous/rotation");
+    for (const rv of (await db.collection("rendezvous").where("kind", "==", "rotation").get()).docs) await ensureRotationSessions(rv.id);
+    console.log(`✅ Dates annulées ou hors programme supprimées : ${p.sessions} date(s), ${p.reservations} réservation(s), ${p.payments} paiement(s), ${p.invoices} facture(s).`);
+  }
 
   // Étape R : une fois, les événements créés depuis les modèles (et jamais modifiés par l'équipe) reprennent les textes
   // allégés des modèles : description et « Inclus » sans répéter ce que dit l'encadré de la fiche.

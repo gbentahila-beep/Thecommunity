@@ -11,8 +11,8 @@ describe("réservation", () => {
     expect(computePricing(35000, 3, "MAD")).toEqual({ unitAmount: 35000, seats: 3, subtotal: 105000, memberDiscount: 0, discount: 0, fees: 0, total: 105000, currency: "MAD" });
     expect(computePricing(30000, 2, "MAD", { memberUnitAmount: 25500 })).toMatchObject({ subtotal: 60000, memberDiscount: 9000, total: 51000 });
   });
-  it("ferme les dîners 12 h avant, les autres formats 2 h avant", () => {
-    expect(bookingClosesAt(start, "social_dinner").toISOString()).toBe("2026-12-10T07:00:00.000Z");
+  it("ferme les Tables la veille à 20h30, les autres formats 2 h avant", () => {
+    expect(bookingClosesAt(start, "social_dinner").toISOString()).toBe("2026-12-09T20:30:00.000Z");
     expect(bookingClosesAt(start, "individual").toISOString()).toBe("2026-12-10T17:00:00.000Z");
   });
   it("accepte une demande valide", () => {

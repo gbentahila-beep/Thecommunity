@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BookOpen,
   CalendarCheck,
   CreditCard,
   Handshake,
@@ -16,7 +17,7 @@ type Tab = { href: string; label: string };
 type NavLink = { href: string; label: string; icon: typeof Settings; exact?: boolean; tabs?: Tab[]; /** Pages rangées sous cette entrée (sans onglet). */ match?: string[] };
 
 /**
- * Menu du back-office (simplifié le 24/11) : 7 entrées. Tout ce qui concerne une date (lieux, tables, participants,
+ * Menu du back-office (simplifié le 24/11) : 7 entrées, plus le guide. Tout ce qui concerne une date (lieux, tables, participants,
  * demandes, liste d'attente, signalements) est sur la page de la date, ouverte depuis « À faire » ou « Programme ».
  * Seuls Partenaires, Argent et Réglages gardent quelques onglets.
  */
@@ -53,6 +54,7 @@ export const ADMIN_SECTIONS: { title: string | null; links: NavLink[] }[] = [
           { href: "/admin/vitrine", label: "Vitrine" },
         ],
       },
+      { href: "/admin/guide", label: "Guide", icon: BookOpen },
     ],
   },
 ];

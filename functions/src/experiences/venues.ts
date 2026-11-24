@@ -43,7 +43,7 @@ export function venueByGroup(groups: { id: string; label: string }[], venues: Se
 }
 
 /**
- * Lieux d'une date (équipe) : un ou plusieurs restaurants, au plus tard 5 h avant. Peut aussi les appliquer aux
+ * Lieux d'une date (équipe) : un ou plusieurs restaurants, avant le dévoilement (la veille à 21h30). Peut aussi les appliquer aux
  * prochaines dates qui n'en ont pas, et en faire le lieu habituel du rendez-vous. Après la révélation, chaque
  * participant reçoit le nouveau lieu de sa table (notification et e-mail). Journalisé.
  */

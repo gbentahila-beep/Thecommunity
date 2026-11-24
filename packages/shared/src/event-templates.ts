@@ -309,6 +309,24 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
     },
   },
   {
+    // 24/11 : l'édition spéciale du mois, dans Événements, réservée aux femmes (vérifié à la réservation).
+    id: "girls-only", name: "Girls only", image: "/images/modeles/brunch.webp", order: 2, isActive: true, builtIn: true,
+    values: {
+      ...COMMON, categoryId: "discover", audience: "women", revealPolicy: "immediate", bookingMode: "group", groupMin: 4, groupMax: 6, capacity: 24, durationMinutes: 150, weekday: 6, time: "13:00",
+      titleFr: "Brunch Girls only",
+      summaryFr: "L'édition spéciale du mois, entre femmes : un brunch pour élargir son cercle.",
+      descriptionFr: "Une fois par mois, un brunch réservé aux femmes dans une adresse partenaire, à des tables de 4 à 6, pour rencontrer d'autres femmes de Casablanca.",
+      titleAr: "برانش للنساء فقط", summaryAr: "الإصدار الخاص لهذا الشهر، بين النساء: برانش لتوسيع دائرتك.",
+      descriptionAr: "مرة في الشهر، برانش مخصص للنساء في عنوان شريك، على طاولات من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء.",
+      titleEn: "Girls only brunch", summaryEn: "This month's special edition, women only: a brunch to widen your circle.",
+      descriptionEn: "Once a month, a women-only brunch at a partner venue, at tables of 4 to 6, to meet other women in Casablanca.",
+      pricingModel: "variable_consumption", budgetMinDh: 150, budgetMaxDh: 300,
+      included: "Une table réservée pour le groupe",
+      includedAr: "طاولة محجوزة للمجموعة", includedEn: "A table reserved for the group",
+      questionnaire: [],
+    },
+  },
+  {
     id: "echange-langues", name: "Échange de langues", image: "/images/modeles/echange-langues.webp", order: 5, isActive: true, builtIn: true,
     values: {
       ...COMMON, categoryId: "discover", revealPolicy: "immediate", bookingMode: "group", groupMin: 4, groupMax: 6, capacity: 24, durationMinutes: 120, weekday: 3, time: "19:00",

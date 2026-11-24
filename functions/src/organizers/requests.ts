@@ -1,4 +1,4 @@
-import { localDayAt, ORGANIZER_UNIVERSES, organizerCancelRequestSchema, organizerRequestDecisionSchema, saturdayProposalSchema } from "@thecommunity/shared";
+import { localDayAt, organizerCancelRequestSchema, organizerRequestDecisionSchema, saturdayProposalSchema } from "@thecommunity/shared";
 import { Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -61,7 +61,8 @@ export const organizerProposeSaturday = onCall({ region: REGION }, async (req) =
   const e = (await db.doc(`experiences/${v.data.experienceId}`).get()).data();
   if (!e || e.organizerId !== o.orgId) throw new HttpsError("permission-denied", "Cette activité ne vous appartient pas.", { reason: "not_owner" });
   if (e.status !== "published") refuse("not_published", "Seule une activité validée et en ligne peut être proposée.");
-  if (!ORGANIZER_UNIVERSES.includes(String(e.categoryId))) refuse("not_activity", "Seule une activité ou un événement peut être proposé.");
+  // 24/11 : seul l'univers Activités passe le samedi (les Événements ont leurs propres dates).
+  if (String(e.categoryId) !== "move") refuse("not_activity", "Seule une activité (univers Activités) peut être proposée pour un samedi.");
   if (v.data.dates.some((d) => new Date(`${d}T12:00:00Z`).getUTCDay() !== 6 || localDayAt(d, "23:59").getTime() < Date.now())) invalidArgument([{ path: ["dates"], message: "saturday" }]);
   const open = await db.collection("organizerRequests").where("experienceId", "==", v.data.experienceId).where("status", "==", "pending").get();
   if (open.docs.some((d) => d.get("type") === "saturday")) refuse("already_requested", "Cette activité est déjà proposée : l'équipe vous répondra.");

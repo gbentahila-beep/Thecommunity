@@ -3,7 +3,6 @@ import {
   formatMoney,
   meetingSummary,
   placeLabel,
-  VENUE_REVEAL_HOURS,
   pricingOf,
   seatsAvailable,
   type CategoryKey,
@@ -175,7 +174,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
       ? { icon: CalendarDays, label: formatLongDate(next.startAt, locale), value: formatTimeRange(next.startAt, next.endAt, locale) }
       : { icon: CalendarDays, label: t("datesSoonLabel"), value: t("datesSoonValue") },
     surprise
-      ? { icon: MapPin, label: t("secretVenue"), value: t("venueRevealed", { hours: VENUE_REVEAL_HOURS }) }
+      ? { icon: MapPin, label: t("secretVenue"), value: t("venueRevealed") }
       : { icon: MapPin, label: exp.venue.name || exp.district || cityName, value: [exp.venue.name ? exp.district : "", cityName].filter(Boolean).join(", ") },
     { icon: Users, label: groupText, value: composed ? t("composedByTeam") : t("bookAlone") },
     exp.categoryId === "eat"

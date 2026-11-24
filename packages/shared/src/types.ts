@@ -253,7 +253,10 @@ export type Session = {
   groupsStatus?: "none" | "proposed" | "validated" | "revealed";
   groupsNeedReview?: boolean;
   /** docs/22 § 17.H : attribution automatique des lieux, date à risque, plafond de vente. */
-  allocation?: { status: "requested" | "short" | "confirmed" | "manual"; needed?: number; people?: number; confirmed?: number; missing?: number; round?: number } | null;
+  allocation?: { status: "requested" | "short" | "confirmed" | "manual"; needed?: number; people?: number; confirmed?: number; missing?: number; round?: number; phase?: "option" | "final"; finalAt?: string } | null;
+  /** Timeline du 24/11 : récapitulatif envoyé aux lieux (jour J 11h) ; demande au lieu fixe envoyée (veille 15h). */
+  tablesFinalAt?: string | null;
+  fixedRequestAt?: string | null;
   risk?: { status: "at_risk" | "kept" | "proposed" | "closed"; kind?: "date" | "merge"; targetSessionId?: string; deadline?: string } | null;
   /** docs/25 : rendez-vous de la semaine — gammes réunies sur cette ligne de liste, et nom du rendez-vous. */
   rendezvousId?: string | null;

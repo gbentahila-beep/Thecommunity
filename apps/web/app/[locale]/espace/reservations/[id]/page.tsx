@@ -2,7 +2,7 @@ import { DayOfCard } from "@/components/account/day-of-card";
 import { VenueCard } from "@/components/account/venue-card";
 import { MemberAvatar } from "@/components/member-avatar";
 import { mapsLinks } from "@/lib/maps";
-import { VENUE_REVEAL_HOURS, bookingClosesAt, isTablesFlow, revealAtFor, seatsAvailable, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds, canSignalLate, reportWindowOpen, refundBasisDate, isLatePassCancel, tablesTimeline } from "@thecommunity/shared";
+import { bookingClosesAt, isTablesFlow, revealAtFor, seatsAvailable, canRequestRefund, canReview, formatMoney, refundAmountFor, ticketCode, ticketScanPath, type BookingPreferences, selfCheckInState, needsTicket, welcomeNeeds, canSignalLate, reportWindowOpen, refundBasisDate, isLatePassCancel, tablesTimeline } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, CalendarPlus, CheckCircle2, Clock, Info, MapPin, MessageCircle, Star } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { notFound } from "next/navigation";
@@ -242,7 +242,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
                   ) : (
                     <>
                       <dd className="font-medium text-ink">{cityName}</dd>
-                      <dd className="text-sm text-muted" data-testid="venue-arrives">{tablesFlow ? tts("venueArrives", { when: revealWhen }) : t("venueHidden", { hours: VENUE_REVEAL_HOURS })}</dd>
+                      <dd className="text-sm text-muted" data-testid="venue-arrives">{tablesFlow ? tts("venueArrives", { when: revealWhen }) : t("venueHidden")}</dd>
                     </>
                   )}
                 </div>

@@ -165,7 +165,7 @@ export async function validateProposedGroups(sessionId: string) {
 }
 
 /**
- * Remet les tables d'accord avec les réservations actives (1 h avant, docs/22 § 17.H) : les personnes qui ont annulé
+ * Remet les tables d'accord avec les réservations actives (au récapitulatif, puis 1 h avant ; docs/22 § 17.H) : les personnes qui ont annulé
  * sont retirées, une personne placée sur la date entre-temps rejoint la plus petite table. Renvoie la taille des tables.
  */
 export async function reconcileGroups(sessionId: string, actorUid: string): Promise<{ sizes: number[]; changed: boolean }> {

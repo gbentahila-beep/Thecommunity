@@ -1,4 +1,4 @@
-import { bookingClosesAt, bookingRefusal, bookingWindow, formatMoney, type VenueTier, LOW_SEATS_THRESHOLD, VENUE_REVEAL_HOURS, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
+import { bookingClosesAt, bookingRefusal, bookingWindow, formatMoney, type VenueTier, LOW_SEATS_THRESHOLD, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -166,7 +166,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             </p>
             <p className="flex items-center gap-2 text-sm text-muted">
               <MapPin className="size-4 shrink-0 text-brand-700" aria-hidden />
-              {exp.venue.revealPolicy === "on_group_reveal" ? t("secretVenueShort", { hours: VENUE_REVEAL_HOURS }) : placeLabel(exp.district, city ? tr(city.name, locale) : "Casablanca")}
+              {exp.venue.revealPolicy === "on_group_reveal" ? t("secretVenueShort") : placeLabel(exp.district, city ? tr(city.name, locale) : "Casablanca")}
             </p>
           </div>
         </div>

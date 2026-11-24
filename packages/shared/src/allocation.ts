@@ -171,9 +171,22 @@ export const unitWord = (u: VenueUnit, n: number) => UNIT_WORDS[u][n > 1 ? 1 : 0
 export function venueRequestText(o: VenueRequestInfo): string {
   return [
     `Bonjour ${o.venue}, c'est Wenzy.`,
-    `Demande de réservation : ${o.when}, ${o.tables} ${unitWord(o.unit, o.tables)} pour ${o.people} personne${o.people > 1 ? "s" : ""} (${o.format}${o.tier ? ` ${o.tier}` : ""}).`,
-    "Chacun règle sa consommation sur place.",
+    `Demande de réservation : ${o.when}, ${o.tables} ${unitWord(o.unit, o.tables)} pour environ ${o.people} personne${o.people > 1 ? "s" : ""} (${o.format}${o.tier ? ` ${o.tier}` : ""}).`,
+    "Les réservations ferment ce soir à 20h30 : nous vous envoyons alors le nombre final, puis le récapitulatif (prénoms, allergies) le jour même. Chacun règle sa consommation sur place.",
     `Pouvez-vous confirmer ? Accepter ou refuser : ${o.link}`,
+    `Référence ${o.reference}.`,
+  ].join("\n");
+}
+
+/** Nombre final, envoyé à la fermeture des réservations (veille 20h30) si la demande a changé. 0 = table libérée. */
+export function venueFinalText(o: VenueRequestInfo & { before: { tables: number; people: number } }): string {
+  if (o.tables === 0) {
+    return [`Bonjour ${o.venue}, c'est Wenzy.`, `Pour ${o.when}, nous n'aurons finalement pas besoin de ${o.before.tables > 1 ? "ces" : "cette"} ${unitWord(o.unit, o.before.tables)} : vous pouvez ${o.before.tables > 1 ? "les" : "la"} libérer. Merci et à bientôt.`, `Référence ${o.reference}.`].join("\n");
+  }
+  return [
+    `Bonjour ${o.venue}, c'est Wenzy.`,
+    `Nombre final pour ${o.when} : ${o.tables} ${unitWord(o.unit, o.tables)}, ${o.people} personne${o.people > 1 ? "s" : ""} (au lieu de ${o.before.tables} ${unitWord(o.unit, o.before.tables)}, ${o.before.people} personne${o.before.people > 1 ? "s" : ""}).`,
+    `Le récapitulatif (prénoms, allergies) suit. Détail : ${o.link}`,
     `Référence ${o.reference}.`,
   ].join("\n");
 }
@@ -184,9 +197,9 @@ export function venueReminderText(o: VenueRequestInfo): string {
 
 export type VenueRecapInfo = { venue: string; when: string; title: string; tables: { label: string; names: string[] }[]; people: number; notes: string[]; unit: VenueUnit; link: string };
 
-export function venueRecapText(o: VenueRecapInfo): string {
+export function venueRecapText(o: VenueRecapInfo & { update?: boolean }): string {
   return [
-    `Bonjour ${o.venue}, voici le récapitulatif Wenzy pour ${o.when} : ${o.tables.length} ${unitWord(o.unit, o.tables.length)}, ${o.people} personne${o.people > 1 ? "s" : ""}.`,
+    `Bonjour ${o.venue}, ${o.update ? "mise à jour du" : "voici le"} récapitulatif Wenzy pour ${o.when} : ${o.tables.length} ${unitWord(o.unit, o.tables.length)}, ${o.people} personne${o.people > 1 ? "s" : ""}.`,
     ...o.tables.map((t) => `${t.label} : ${t.names.join(", ")}`),
     o.notes.length ? `Régimes et allergies : ${o.notes.join(" ; ")}.` : "Aucun régime ni allergie signalé.",
     `Détail : ${o.link}`,

@@ -1,6 +1,6 @@
 import {
   ACTIVE_REQUEST_STATUSES, allocateTables, allocationSettingsOf, DEFAULT_EVENT_TEMPLATES, groupCount, partnerMatches, partnerUnitsAt, peopleFor, reliabilityOf,
-  venueRecapText, venueReminderText, venueRequestText, type HostPartner, type SessionVenue, type VenueRequestInfo, type VenueUnit,
+  venueFinalText, venueRecapText, venueReminderText, venueRequestText, type HostPartner, type SessionVenue, type VenueRequestInfo, type VenueUnit,
 } from "@thecommunity/shared";
 import { randomBytes } from "node:crypto";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
@@ -57,6 +57,13 @@ export async function candidatesFor(sessionId: string, s: DocumentData, e: Docum
     .filter((p) => partnerMatches(p, { templateId: e.templateId, subcategoryId: e.subcategoryId, venueTier: e.venueTier, cityId: e.cityId }))
     .map((p) => ({ partner: p, available: Math.max(0, partnerUnitsAt(p, startAt) - (used.get(p.id) ?? 0)) }))
     .filter((c) => c.available > 0);
+}
+
+/** Personnes pour lesquelles on prend une option la veille à 15h : les inscrits + une table de marge, au plus les places de la date. */
+export function optionPeople(confirmed: number, e: DocumentData, capacity: number): number {
+  if (confirmed <= 0) return 0;
+  const margin = e.groupConfig ? Number(e.groupConfig.maxSize ?? 6) : 0;
+  return capacity > 0 ? Math.min(capacity, confirmed + margin) : confirmed + margin;
 }
 
 /** Taille des tables et nombre de ressources nécessaires pour `people` personnes. */
@@ -139,12 +146,16 @@ export async function sendRequestMessages(id: string, kind: "request" | "reminde
  * d'abord, répartition équilibrée) et envoie une demande à chacun. Les lieux qui ont déjà refusé ou pas répondu pour
  * cette date sont écartés. Tables manquantes : alerte à l'équipe. Renvoie ce qui a été demandé.
  */
-export async function runAllocation(sessionId: string, actorUid: string): Promise<{ needed: number; requested: number; missing: number }> {
+export async function runAllocation(sessionId: string, actorUid: string, opts: { option?: boolean } = {}): Promise<{ needed: number; requested: number; missing: number }> {
   const sessRef = db.doc(`sessions/${sessionId}`);
   const s = (await sessRef.get()).data();
   if (!s) return { needed: 0, requested: 0, missing: 0 };
   const e = (await db.doc(`experiences/${s.experienceId}`).get()).data() ?? {};
-  const people = Number(s.seatsConfirmed ?? 0);
+  // Timeline du 24/11 : les demandes d'option partent la veille à 15h, réservations encore ouvertes → une table de
+  // marge (dans la limite des places de la date). Après la fermeture : le nombre réel. Un nouveau tour garde la base.
+  const confirmed = Number(s.seatsConfirmed ?? 0);
+  const optionPhase = opts.option || (s.allocation?.phase === "option" && !s.allocation?.finalAt);
+  const people = optionPhase ? optionPeople(confirmed, e, Number(s.capacity ?? 0)) : confirmed;
   const needed = needOf(people, e);
   const existing = await db.collection("venueRequests").where("sessionId", "==", sessionId).get();
   const active = existing.docs.filter((d) => (ACTIVE_REQUEST_STATUSES as readonly string[]).includes(d.data().status));
@@ -181,12 +192,85 @@ export async function runAllocation(sessionId: string, actorUid: string): Promis
       requested += line.tables;
     }
   }
-  await sessRef.update({ allocation: { status: missing > 0 ? "short" : "requested", needed, people, round, missing, updatedAt: FieldValue.serverTimestamp() }, venueCapacity: FieldValue.delete() });
+  await sessRef.update({
+    "allocation.status": missing > 0 ? "short" : "requested", "allocation.needed": needed, "allocation.people": people, "allocation.round": round, "allocation.missing": missing,
+    "allocation.phase": optionPhase ? "option" : "final", "allocation.updatedAt": FieldValue.serverTimestamp(),
+  });
   if (missing > 0) {
     await teamAlert({ sessionId, key: `alloc_short_${round}`, subject: `Lieux insuffisants : ${missing} table${missing > 1 ? "s" : ""} sans lieu`, paragraphs: [`« ${String(e.title?.fr ?? "")} », ${dateTimeFr((s.startAt as Timestamp).toDate())} : ${people} inscrits, ${needed} tables nécessaires, ${missing} sans lieu compatible disponible.`, "Ajoutez un lieu ou de la capacité, puis relancez l'attribution depuis la page de la date."], path: `/admin/sessions/${sessionId}` });
   }
   await checkAllocation(sessionId);
   return { needed, requested, missing };
+}
+
+/**
+ * Fermeture des réservations (veille 20h30, timeline du 24/11) : les options prises à 15h passent au nombre réel.
+ * Tables en trop → libérées (demandes en attente d'abord, puis les dernières confirmées) ; tables manquantes → nouvelle
+ * demande tout de suite. Chaque lieu dont la demande change reçoit le nombre final. Une seule fois par date.
+ */
+export async function finalizeAllocation(sessionId: string): Promise<{ released: number; updated: number; missing: number }> {
+  const sessRef = db.doc(`sessions/${sessionId}`);
+  const s = (await sessRef.get()).data();
+  const out = { released: 0, updated: 0, missing: 0 };
+  if (!s?.allocation || s.allocation.finalAt || s.allocation.status === "manual") return out;
+  const e = (await db.doc(`experiences/${s.experienceId}`).get()).data() ?? {};
+  const people = Number(s.seatsConfirmed ?? 0);
+  const needed = needOf(people, e);
+  const reqs = (await db.collection("venueRequests").where("sessionId", "==", sessionId).get()).docs
+    .filter((d) => (ACTIVE_REQUEST_STATUSES as readonly string[]).includes(d.get("status")) && !d.get("fixed"));
+  const total = reqs.reduce((n, d) => n + Number(d.get("tables") ?? 0), 0);
+  // Ordre de libération : demandes en attente d'abord, puis les confirmées les plus récentes.
+  const sentAt = (d: FirebaseFirestore.QueryDocumentSnapshot) => (d.get("sentAt") as Timestamp | undefined)?.toMillis() ?? 0;
+  const order = [...reqs].sort((a, b) => (a.get("status") === b.get("status") ? sentAt(b) - sentAt(a) : a.get("status") === "sent" ? -1 : 1));
+  const tablesOf = new Map(reqs.map((d) => [d.id, Number(d.get("tables") ?? 0)]));
+  let surplus = Math.max(0, total - needed);
+  for (const d of order) {
+    if (surplus <= 0) break;
+    const take = Math.min(tablesOf.get(d.id)!, surplus);
+    tablesOf.set(d.id, tablesOf.get(d.id)! - take);
+    surplus -= take;
+  }
+  // Répartition des personnes entre les tables gardées, dans l'ordre des demandes.
+  const all = sizes(people, needed);
+  let cursor = 0;
+  const kept = [...reqs].sort((a, b) => sentAt(a) - sentAt(b));
+  for (const d of kept) {
+    const before = { tables: Number(d.get("tables") ?? 0), people: Number(d.get("people") ?? 0) };
+    const tables = tablesOf.get(d.id)!;
+    const share = tables > 0 ? all.slice(cursor, cursor + tables).reduce((a, b) => a + b, 0) : 0;
+    cursor += tables;
+    if (tables === before.tables && share === before.people) continue;
+    if (tables === 0) {
+      await d.ref.update({ status: "cancelled", tables: 0, released: true, history: FieldValue.arrayUnion({ at: Timestamp.now(), event: "released", before }) });
+      out.released += before.tables;
+    } else {
+      await d.ref.update({ tables, people: share, history: FieldValue.arrayUnion({ at: Timestamp.now(), event: "final", before, tables, people: share }) });
+      out.updated++;
+    }
+    await sendFinalMessage(d.id, before);
+  }
+  await sessRef.update({ "allocation.needed": needed, "allocation.people": people, "allocation.phase": "final", "allocation.finalAt": FieldValue.serverTimestamp() });
+  const active = total - out.released;
+  if (needed > active) {
+    const r = await runAllocation(sessionId, "system");
+    out.missing = r.missing;
+  } else await checkAllocation(sessionId);
+  return out;
+}
+
+/** Nombre final (ou table libérée) au lieu, par e-mail et WhatsApp. */
+export async function sendFinalMessage(id: string, before: { tables: number; people: number }) {
+  const ref = db.doc(`venueRequests/${id}`);
+  const r = (await ref.get()).data();
+  if (!r) return;
+  const info = infoOf(r, id);
+  const text = venueFinalText({ ...info, before });
+  const subject = info.tables === 0 ? `Wenzy · Table libérée · ${info.when}` : `Wenzy · Nombre final · ${info.when}`;
+  const [email, whatsapp] = await Promise.all([
+    r.partnerEmail ? sendMail({ to: r.partnerEmail, locale: "fr", ...venueMessageMail({ subject, text, link: info.link, cta: "Voir la demande" }), kind: "venue_final", refs: { requestId: id, sessionId: r.sessionId } }).then((m) => m.status) : Promise.resolve("no_email"),
+    sendWhatsApp({ to: r.partnerWhatsapp ?? "", kind: "final", text, params: [info.venue, info.when, info.tables === 0 ? "table libérée" : `${info.tables} × ${info.people} pers.`, info.link], refs: { requestId: id } }),
+  ]);
+  await ref.update({ "channels.final": { email, whatsapp, at: Timestamp.now() } });
 }
 
 /**
@@ -262,7 +346,7 @@ export async function processPendingRequests(now = Date.now(), sessionId?: strin
   return out;
 }
 
-/** Demande au lieu fixe d'une activité (décision 47) : confirmation la veille avec le nombre d'inscrits. */
+/** Demande au lieu fixe d'une activité (décision 47) : confirmation la veille à 15h avec le nombre d'inscrits. */
 export async function requestFixedVenue(sessionId: string, s: DocumentData, e: DocumentData, partnerId: string) {
   const p = (await db.doc(`partners/${partnerId}`).get()).data() as PartnerDoc | undefined;
   if (!p) return;
@@ -282,20 +366,29 @@ export async function requestFixedVenue(sessionId: string, s: DocumentData, e: D
 /** Annule les demandes en cours d'une date (date annulée ou vidée). */
 export async function cancelRequests(sessionId: string) {
   const snap = await db.collection("venueRequests").where("sessionId", "==", sessionId).get();
-  await Promise.all(snap.docs.filter((d) => (ACTIVE_REQUEST_STATUSES as readonly string[]).includes(d.data().status)).map((d) => d.ref.update({ status: "cancelled", history: FieldValue.arrayUnion({ at: Timestamp.now(), event: "cancelled" }) })));
+  for (const d of snap.docs.filter((x) => (ACTIVE_REQUEST_STATUSES as readonly string[]).includes(x.data().status))) {
+    const before = { tables: Number(d.get("tables") ?? 0), people: Number(d.get("people") ?? 0) };
+    await d.ref.update({ status: "cancelled", tables: 0, history: FieldValue.arrayUnion({ at: Timestamp.now(), event: "cancelled", before }) });
+    // Timeline du 24/11 : le lieu a pu recevoir une option la veille à 15h → il est prévenu que la table est libérée.
+    await sendFinalMessage(d.id, before).catch(() => undefined);
+  }
 }
 
-/** Récapitulatif final au lieu, 1 h avant (décision du § 13) : tables, prénoms, régimes et allergies partagés. */
-export async function sendRecap(requestId: string, tables: { label: string; names: string[] }[], notes: string[]) {
+/** Récapitulatif au lieu (jour J 11h, ou la veille au soir pour un début avant 14h) : tables, prénoms, régimes et allergies partagés. */
+export async function sendRecap(requestId: string, tables: { label: string; names: string[] }[], notes: string[], opts: { onlyIfChanged?: boolean } = {}): Promise<boolean> {
   const ref = db.doc(`venueRequests/${requestId}`);
   const r = (await ref.get()).data();
-  if (!r) return;
+  if (!r) return false;
   const info = infoOf(r, requestId);
   const people = tables.reduce((n, t) => n + t.names.reduce((m, x) => m + 1 + (/\(\+(\d+)\)/.exec(x) ? Number(/\(\+(\d+)\)/.exec(x)![1]) : 0), 0), 0);
-  const text = venueRecapText({ venue: info.venue, when: info.when, title: info.title, tables, people, notes, unit: info.unit, link: info.link });
+  // 1 h avant : mise à jour seulement si les tables, les prénoms ou les allergies ont changé depuis le récapitulatif.
+  const update = Boolean(opts.onlyIfChanged);
+  if (update && JSON.stringify({ tables: r.recap?.tables ?? [], notes: r.recap?.notes ?? [] }) === JSON.stringify({ tables, notes })) return false;
+  const text = venueRecapText({ venue: info.venue, when: info.when, title: info.title, tables, people, notes, unit: info.unit, link: info.link, update });
   const [email, whatsapp] = await Promise.all([
-    r.partnerEmail ? sendMail({ to: r.partnerEmail, locale: "fr", ...venueMessageMail({ subject: `Wenzy · Récapitulatif · ${info.when}`, text, link: info.link, cta: "Voir le détail" }), kind: "venue_recap", refs: { requestId, sessionId: r.sessionId } }).then((m) => m.status) : Promise.resolve("no_email"),
+    r.partnerEmail ? sendMail({ to: r.partnerEmail, locale: "fr", ...venueMessageMail({ subject: `Wenzy · ${update ? "Mise à jour du récapitulatif" : "Récapitulatif"} · ${info.when}`, text, link: info.link, cta: "Voir le détail" }), kind: "venue_recap", refs: { requestId, sessionId: r.sessionId } }).then((m) => m.status) : Promise.resolve("no_email"),
     sendWhatsApp({ to: r.partnerWhatsapp ?? "", kind: "recap", text, params: [info.venue, info.when, `${tables.length} × ${people} pers.`, info.link], refs: { requestId } }),
   ]);
-  await ref.update({ recap: { tables, notes, people, text }, recapSentAt: FieldValue.serverTimestamp(), "channels.recap": { email, whatsapp, at: Timestamp.now() }, history: FieldValue.arrayUnion({ at: Timestamp.now(), event: "recap", email, whatsapp }) });
+  await ref.update({ recap: { tables, notes, people, text }, recapSentAt: FieldValue.serverTimestamp(), "channels.recap": { email, whatsapp, at: Timestamp.now() }, history: FieldValue.arrayUnion({ at: Timestamp.now(), event: update ? "recap_update" : "recap", email, whatsapp }) });
+  return true;
 }

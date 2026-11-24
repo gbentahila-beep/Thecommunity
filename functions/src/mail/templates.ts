@@ -257,7 +257,7 @@ export function newExperiencesMail(o: { locale: string; items: { title: string; 
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, list, cta: { label: t.cta, href: `${SITE_URL}${prefix(l)}/experiences` }, footer: t.footer }) };
 }
 
-/** docs/22 § 8 : 5 h avant, le lieu, l'adresse et la cuisine, avec le résumé de la table sans les noms. */
+/** docs/22 § 8 (timeline du 24/11) : la veille à 21h30, le lieu, l'adresse et la cuisine, avec le résumé de la table sans les noms. */
 export function venueRevealedMail(o: { locale: string; firstName: string; title: string; when: string; venue: string | null; cuisine: string | null; summary: string | null; checkInFrom: string; reservationId: string }) {
   const l = lang(o.locale);
   const href = `${SITE_URL}${prefix(l)}/espace/reservations/${o.reservationId}`;
@@ -269,19 +269,19 @@ export function venueRevealedMail(o: { locale: string; firstName: string; title:
   return { subject: t.subject, ...layout(l, { heading: t.heading, paragraphs: t.p, cta: { label: t.cta, href }, footer: NOTICE_FOOTER[l] }) };
 }
 
-/** docs/22 § 13 : 1 h avant, message au lieu (nombre de tables, prénoms, régimes et allergies partagés). */
+/** docs/22 § 13 (timeline du 24/11) : récapitulatif au lieu, le jour J à 11h (nombre de tables, prénoms, régimes et allergies partagés). */
 export function venueBriefMail(o: { venue: string; title: string; when: string; tables: { label: string; names: string[] }[]; people: number; notes: string[] }) {
   return {
     subject: `Wenzy · ${o.when} · ${o.tables.length} table${o.tables.length > 1 ? "s" : ""}, ${o.people} personne${o.people > 1 ? "s" : ""}`,
     ...layout("fr", {
-      heading: `Ce soir chez ${o.venue}`,
+      heading: `Récapitulatif pour ${o.venue}`,
       paragraphs: [
         `« ${o.title} », ${o.when} : ${o.tables.length} table${o.tables.length > 1 ? "s" : ""}, ${o.people} personne${o.people > 1 ? "s" : ""}.`,
         ...o.tables.map((t) => `${t.label} : ${t.names.join(", ")}.`),
         o.notes.length ? `Régimes et allergies : ${o.notes.join(" ; ")}.` : "Aucun régime ni allergie signalé.",
         "Chacun règle sa consommation sur place. Merci pour votre accueil !",
       ],
-      footer: "Message envoyé par Wenzy à ses lieux partenaires, 1 h avant chaque rendez-vous.",
+      footer: "Message envoyé par Wenzy à ses lieux partenaires : le jour même à 11h (la veille au soir pour un début avant 14h).",
     }),
   };
 }

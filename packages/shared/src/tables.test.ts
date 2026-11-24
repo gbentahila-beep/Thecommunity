@@ -5,30 +5,32 @@ import { zonedDateTimeToUtc, zonedParts } from "./time";
 import { isTablesFlow, minimumMet, proposalResponseSchema, revealAtFor, riskDecisionSchema, tableMessageSchema, tableSummary, tablesOutOfBounds, tablesTimeline } from "./tables";
 
 describe("parcours des Tables (docs/22 § 17.H)", () => {
-  it("horaires d'une date : fermeture 12 h, révélation 5 h, tables 1 h avant, check-in, messages", () => {
-    const t = tablesTimeline("2026-11-26T19:30:00.000Z");
-    expect(t.closesAt.toISOString()).toBe("2026-11-26T07:30:00.000Z");
-    expect(t.revealAt.toISOString()).toBe("2026-11-26T14:30:00.000Z");
-    expect(t.finalAt.toISOString()).toBe("2026-11-26T18:30:00.000Z");
-    expect(t.checkInFrom.toISOString()).toBe("2026-11-26T19:00:00.000Z");
-    expect(t.checkInUntil.toISOString()).toBe("2026-11-26T20:30:00.000Z");
-    expect(t.chatFrom.toISOString()).toBe("2026-11-26T19:00:00.000Z");
-    expect(t.chatUntil.toISOString()).toBe("2026-12-10T19:30:00.000Z");
+  it("timeline du 24/11 : options veille 15h, appel 18h30, fermeture 20h30, dévoilement 21h30, récap J 11h", () => {
+    const local = (d: Date) => { const z = zonedParts(d, MOROCCO_TIMEZONE); return `${z.day} ${z.hour}h${String(z.minute).padStart(2, "0")}`; };
+    // Dîner du mercredi 25 novembre à 20h30.
+    const t = tablesTimeline(zonedDateTimeToUtc({ year: 2026, month: 11, day: 25, hour: 20, minute: 30 }, MOROCCO_TIMEZONE));
+    expect(local(t.optionsAt)).toBe("24 15h00");
+    expect(local(t.callAt)).toBe("24 18h30");
+    expect(local(t.closesAt)).toBe("24 20h30");
+    expect(local(t.revealAt)).toBe("24 21h30");
+    expect(local(t.recapAt)).toBe("25 11h00");
+    expect(local(t.finalAt)).toBe("25 19h30");
+    expect(local(t.checkInFrom)).toBe("25 20h00");
+    expect(t.chatUntil.getTime() - t.chatFrom.getTime()).toBe(14 * 24 * 3_600_000 + 30 * 60_000);
   });
 
-  it("matin et midi (décision 42) : fermeture au plus tard 18 h la veille, révélation ramenée à 21 h la veille", () => {
-    const at = (day: number, hour: number) => zonedDateTimeToUtc({ year: 2026, month: 11, day, hour, minute: 0 }, MOROCCO_TIMEZONE);
-    const local = (d: Date) => { const z = zonedParts(d, MOROCCO_TIMEZONE); return `${z.day} ${z.hour}h`; };
-    // Brunch dimanche 29 à 11 h : fermeture samedi 18 h, révélation samedi 21 h.
-    expect(local(bookingClosesAt(at(29, 11), "social_dinner"))).toBe("28 18h");
-    expect(local(revealAtFor(at(29, 11)))).toBe("28 21h");
-    // Déjeuner 13 h : fermeture la veille 18 h ; révélation 8 h le jour même (pas la nuit).
-    expect(local(bookingClosesAt(at(29, 13), "social_dinner"))).toBe("28 18h");
-    expect(local(revealAtFor(at(29, 13)))).toBe("29 8h");
-    // Dîner 20 h : 12 h et 5 h avant, inchangés ; activité : 2 h avant.
-    expect(local(bookingClosesAt(at(29, 20), "social_dinner"))).toBe("29 8h");
-    expect(local(revealAtFor(at(29, 20)))).toBe("29 15h");
-    expect(local(bookingClosesAt(at(29, 11), "group"))).toBe("29 9h");
+  it("brunch et café : mêmes heures la veille ; récap dès le dévoilement pour un début avant 14 h", () => {
+    const at = (day: number, hour: number, minute = 0) => zonedDateTimeToUtc({ year: 2026, month: 11, day, hour, minute }, MOROCCO_TIMEZONE);
+    const local = (d: Date) => { const z = zonedParts(d, MOROCCO_TIMEZONE); return `${z.day} ${z.hour}h${String(z.minute).padStart(2, "0")}`; };
+    // Brunch du dimanche 29 à 12h30 : fermeture samedi 20h30, dévoilement et récap samedi 21h30.
+    expect(local(bookingClosesAt(at(29, 12, 30), "social_dinner"))).toBe("28 20h30");
+    expect(local(revealAtFor(at(29, 12, 30)))).toBe("28 21h30");
+    expect(local(tablesTimeline(at(29, 12, 30)).recapAt)).toBe("28 21h30");
+    // Café du samedi 28 à 16h : dévoilement vendredi 21h30, récap samedi 11h.
+    expect(local(revealAtFor(at(28, 16)))).toBe("27 21h30");
+    expect(local(tablesTimeline(at(28, 16)).recapAt)).toBe("28 11h00");
+    // Activité : 2 h avant.
+    expect(local(bookingClosesAt(at(29, 11), "group"))).toBe("29 9h00");
   });
 
   it("seules les tables composées suivent ce parcours", () => {

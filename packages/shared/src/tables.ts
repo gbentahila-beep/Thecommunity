@@ -1,16 +1,30 @@
 import { z } from "zod";
 import { bookingClosesAt, localOnDayBefore, SELF_CHECKIN_AFTER_MIN, SELF_CHECKIN_BEFORE_MIN } from "./booking";
 import { MOROCCO_TIMEZONE } from "./constants";
-import { zonedParts } from "./time";
+import { zonedDateTimeToUtc, zonedParts } from "./time";
 import { ageOn } from "./profile";
-import { VENUE_REVEAL_HOURS } from "./venue";
 
 /**
  * Parcours des Tables (docs/22 § 8 et § 17.H) : horaires d'une date, résumé de table sans les noms, minimum.
  * Utilisé à l'identique par le serveur (tâche planifiée, callables) et par l'interface.
  */
 
-/** Tables définitives et message au lieu : 1 h avant le début. */
+/**
+ * Timeline des Tables (24/11, remplace la décision 42), la même pour tous les rendez-vous :
+ * - veille 15h : demandes d'« option » aux restaurants, entre les deux services (nombre d'inscrits + une table de marge) ;
+ * - veille 18h30 : lieux encore sans réponse → l'équipe appelle (2 h avant la fermeture) ;
+ * - veille 20h30 : fermeture des réservations, gamme voisine, minimum, nombre final envoyé aux lieux ;
+ * - veille 21h30 : tables composées et lieu dévoilé ;
+ * - jour J 11h (la veille à 21h30 pour un début avant 14h) : récapitulatif à chaque lieu (prénoms, allergies) ;
+ * - 1 h avant : mise à jour au lieu seulement si quelque chose a changé depuis le récapitulatif.
+ */
+export const VENUE_OPTIONS_AT = { hour: 15, minute: 0 } as const;
+export const VENUE_CALL_AT = { hour: 18, minute: 30 } as const;
+export const VENUE_REVEAL_AT = { hour: 21, minute: 30 } as const;
+export const VENUE_RECAP_AT = { hour: 11, minute: 0 } as const;
+/** Début avant cette heure : le récapitulatif part dès le dévoilement (la veille au soir). */
+export const RECAP_SAME_DAY_FROM_HOUR = 14;
+/** Dernière vérification avant le début : mise à jour au lieu si les tables ont changé. */
 export const TABLES_FINAL_HOURS = 1;
 /** Messages entre les personnes d'une table (étape Z) : ouverts dès le check-in (30 min avant), gardés 14 jours. */
 export const TABLE_CHAT_DAYS = 14;
@@ -25,17 +39,29 @@ export function isTablesFlow(e: { bookingMode?: string; groupConfig?: unknown } 
   return e?.bookingMode === "social_dinner" && Boolean(e.groupConfig);
 }
 
-export type TablesTimeline = { closesAt: Date; revealAt: Date; finalAt: Date; checkInFrom: Date; checkInUntil: Date; chatFrom: Date; chatUntil: Date };
+export type TablesTimeline = { optionsAt: Date; callAt: Date; closesAt: Date; revealAt: Date; recapAt: Date; finalAt: Date; checkInFrom: Date; checkInUntil: Date; chatFrom: Date; chatUntil: Date };
 
-/**
- * Révélation du lieu (décision 42) : 5 h avant, ramenée à 21 h la veille si elle tombe la nuit (entre 22 h et 8 h,
- * heure du Maroc), pour les débuts du matin et du midi.
- */
+/** Demandes d'option aux restaurants : la veille à 15h. */
+export function venueOptionsAt(startAt: Date | string): Date {
+  return localOnDayBefore(new Date(startAt), VENUE_OPTIONS_AT.hour, VENUE_OPTIONS_AT.minute);
+}
+
+/** Lieux encore sans réponse : l'équipe appelle, la veille à 18h30. */
+export function venueCallAt(startAt: Date | string): Date {
+  return localOnDayBefore(new Date(startAt), VENUE_CALL_AT.hour, VENUE_CALL_AT.minute);
+}
+
+/** Dévoilement du lieu et des tables : la veille à 21h30, une heure après la fermeture des réservations. */
 export function revealAtFor(startAt: Date | string): Date {
+  return localOnDayBefore(new Date(startAt), VENUE_REVEAL_AT.hour, VENUE_REVEAL_AT.minute);
+}
+
+/** Récapitulatif aux lieux : le jour J à 11h ; pour un début avant 14h, dès le dévoilement la veille. */
+export function recapAtFor(startAt: Date | string): Date {
   const start = new Date(startAt);
-  const at = new Date(start.getTime() - VENUE_REVEAL_HOURS * HOUR);
-  const h = zonedParts(at, MOROCCO_TIMEZONE).hour;
-  return h >= 22 || h < 8 ? localOnDayBefore(start, 21) : at;
+  const z = zonedParts(start, MOROCCO_TIMEZONE);
+  if (z.hour < RECAP_SAME_DAY_FROM_HOUR) return revealAtFor(start);
+  return zonedDateTimeToUtc({ year: z.year, month: z.month, day: z.day, hour: VENUE_RECAP_AT.hour, minute: VENUE_RECAP_AT.minute }, MOROCCO_TIMEZONE);
 }
 
 /** Les heures clés d'une date de Tables. */
@@ -44,8 +70,11 @@ export function tablesTimeline(startAt: Date | string): TablesTimeline {
   const t = start.getTime();
   const chatFrom = new Date(t - SELF_CHECKIN_BEFORE_MIN * 60_000);
   return {
+    optionsAt: venueOptionsAt(start),
+    callAt: venueCallAt(start),
     closesAt: bookingClosesAt(start, "social_dinner"),
     revealAt: revealAtFor(start),
+    recapAt: recapAtFor(start),
     finalAt: new Date(t - TABLES_FINAL_HOURS * HOUR),
     checkInFrom: new Date(t - SELF_CHECKIN_BEFORE_MIN * 60_000),
     checkInUntil: new Date(t + SELF_CHECKIN_AFTER_MIN * 60_000),

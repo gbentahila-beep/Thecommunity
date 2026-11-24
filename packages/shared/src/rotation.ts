@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { MOROCCO_TIMEZONE } from "./constants";
+import { bookingClosesAt } from "./booking";
+import { bookingWindow, type WindowState } from "./rendezvous";
 import { zonedDateTimeToUtc, zonedParts } from "./time";
 
 /**
@@ -50,6 +52,14 @@ export const rotationWeekInputSchema = z.object({
     .nullable(),
 });
 
+/** Ajouter une activité à la fin de la rotation (depuis sa fiche). */
+export const rotationAddSchema = z.object({
+  id: z.string().trim().regex(/^[a-z0-9-]{3,80}$/),
+  experienceId: ID,
+  time: z.string().regex(HHMM, "time"),
+  capacity: z.coerce.number().int().min(2, "min2").max(500, "tooMany"),
+});
+
 /** Jour local (heure du Maroc) d'un instant, « AAAA-MM-JJ ». */
 export function localDayKey(instant: Date): string {
   const z = zonedParts(instant, MOROCCO_TIMEZONE);
@@ -95,6 +105,22 @@ export function rotationPlan(rv: RotationConfig, days: string[]): RotationWeek[]
     }
     return { date, entry: cycleIndex === null ? null : rv.cycle[cycleIndex]!, source: "cycle", cycleIndex, shift: false, note: "" };
   });
+}
+
+/**
+ * Ouverture des réservations de chaque samedi du programme (même fenêtre que les rendez-vous) : un samedi s'ouvre à
+ * tous quand le précédent ferme (vendredi 20h30), une semaine plus tôt pour les abonnés Pass. Tant qu'il n'est pas
+ * ouvert, l'équipe peut changer son activité sans toucher à personne : c'est son heure limite.
+ */
+export function rotationWindows(plan: RotationWeek[], now: Date): Map<string, WindowState> {
+  const list = plan.filter((w) => w.entry).map((w) => ({ id: w.date, startAt: localDayAt(w.date, w.entry!.time) }));
+  return bookingWindow(list, { closeRule: "eve" }, now, bookingClosesAt);
+}
+
+/** Heure limite pour choisir l'activité d'un samedi : son ouverture aux abonnés Pass (sinon à tous) ; null = déjà ouvert. */
+export function rotationDeadline(w: WindowState | undefined): Date | null {
+  if (!w || w.state === "open" || w.state === "off") return null;
+  return w.passOpensAt ?? (w.state === "later" ? w.opensAt : null);
 }
 
 /** docs/25, lot D : l'activité du samedi au lancement, dans l'ordre de la rotation (modèles et heure conseillée). */

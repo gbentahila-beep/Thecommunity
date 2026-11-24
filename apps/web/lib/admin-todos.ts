@@ -1,4 +1,4 @@
-import { bookingClosesAt, revealAtFor } from "@thecommunity/shared";
+import { bookingClosesAt, revealAtFor, venueOptionsAt } from "@thecommunity/shared";
 import { adminDate } from "@/components/admin/ui";
 import type { AdminData } from "@/lib/data/admin";
 
@@ -33,8 +33,9 @@ export function sessionTodos(d: AdminData, s: S): SessionTodo[] {
   else if (secret && a?.status === "manual") todos.push({ tone: "gray", text: "Lieux choisis à la main", anchor: "lieux" });
   else if (secret && !hasVenue) {
     if (s.venueCapacity === 0) todos.push({ tone: "red", text: "Aucun lieu compatible : ventes bloquées", anchor: "lieux" });
-    todos.push(now >= closesAt && s.seatsConfirmed > 0 ? { tone: "red", text: "Attribution des lieux non lancée", anchor: "lieux" } : { tone: "gray", text: `Lieux choisis à la fermeture (${adminDate(new Date(closesAt).toISOString())})`, anchor: "lieux" });
-    if (now >= revealAt && s.groupsStatus !== "revealed") todos.push({ tone: "red", text: "Révélation bloquée : lieux non confirmés", anchor: "lieux" });
+    const optionsAt = venueOptionsAt(s.startAt).getTime();
+    todos.push(now >= Math.min(optionsAt + 30 * 60_000, closesAt) && s.seatsConfirmed > 0 ? { tone: "red", text: "Restaurants pas encore demandés", anchor: "lieux" } : { tone: "gray", text: `Restaurants demandés la veille à 15h (${adminDate(new Date(optionsAt).toISOString())})`, anchor: "lieux" });
+    if (now >= revealAt && s.groupsStatus !== "revealed") todos.push({ tone: "red", text: "Dévoilement bloqué : lieux non confirmés", anchor: "lieux" });
   } else if (secret && !(d.sessionVenues[s.id]?.length)) {
     todos.push({ tone: "gray", text: `Lieu habituel : ${e.venue.name}`, anchor: "lieux" });
   }
@@ -44,8 +45,8 @@ export function sessionTodos(d: AdminData, s: S): SessionTodo[] {
   if (grouped && s.seatsConfirmed > 0) {
     const g = s.groupsStatus ?? "none";
     todos.push(
-      g === "revealed" ? { tone: "green", text: "Tables révélées", anchor: "tables" }
-      : g === "validated" ? { tone: "amber", text: "Tables à révéler", anchor: "tables" }
+      g === "revealed" ? { tone: "green", text: "Tables dévoilées", anchor: "tables" }
+      : g === "validated" ? { tone: "amber", text: "Tables à dévoiler", anchor: "tables" }
       : g === "proposed" ? { tone: "amber", text: "Composition des tables à valider", anchor: "tables" }
       : { tone: start - now < 24 * HOUR ? "amber" : "gray", text: "Tables à composer", anchor: "tables" },
     );

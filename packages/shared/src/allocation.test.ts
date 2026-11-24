@@ -52,7 +52,8 @@ describe("attribution des lieux (docs/22, décisions 41 à 45)", () => {
 
   it("messages prédéfinis : demande et récapitulatif", () => {
     const t = venueRequestText({ venue: "Maison A", title: "Dîner", when: "lundi 23 novembre à 20h00", format: "Dîner", tier: "Premium", tables: 3, people: 16, unit: "table", reference: "W-AB12", link: "https://wenzy.ma/partenaire/demande/x?t=y" });
-    expect(t).toContain("3 tables pour 16 personnes (Dîner Premium)");
+    expect(t).toContain("3 tables pour environ 16 personnes (Dîner Premium)");
+    expect(t).toContain("ferment ce soir à 20h30");
     expect(t).toContain("https://wenzy.ma/partenaire/demande/x?t=y");
     const r = venueRecapText({ venue: "Maison A", when: "lundi", title: "Dîner", tables: [{ label: "Table 1", names: ["Salma", "Karim (+1)"] }], people: 3, notes: ["Salma : végétarien"], unit: "table", link: "l" });
     expect(r).toContain("Table 1 : Salma, Karim (+1)");

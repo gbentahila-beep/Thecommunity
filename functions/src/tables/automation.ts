@@ -1,4 +1,4 @@
-import { bookingClosesAt, isTablesFlow, RISK_CHECK_HOURS, tablesOutOfBounds, tablesTimeline } from "@thecommunity/shared";
+import { bookingClosesAt, isTablesFlow, recapAtFor, revealAtFor, RISK_CHECK_HOURS, tablesOutOfBounds, tablesTimeline, venueCallAt, venueOptionsAt } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
 import { onSchedule } from "firebase-functions/v2/scheduler";
@@ -7,7 +7,7 @@ import { dateTimeFr } from "../invoices/format";
 import { sessionVenues, venueByGroup } from "../experiences/venues";
 import { loadSession, proposeGroupsCore, reconcileGroups, revealGroupsCore, validateProposedGroups } from "../groups/groups";
 import { cancelReservationCore } from "../reservations/cancel-reservation";
-import { cancelRequests, isAllocated, processPendingRequests, requestFixedVenue, runAllocation, sendRecap, venueCapacity } from "./allocation";
+import { cancelRequests, finalizeAllocation, isAllocated, processPendingRequests, requestFixedVenue, runAllocation, sendFinalMessage, sendRecap, venueCapacity } from "./allocation";
 import { teamAlert } from "./team";
 import { markAbsences } from "../membership/absences";
 import { sendArrivalChecks } from "../notify/arrival";
@@ -18,20 +18,20 @@ const SYSTEM = "system";
 const DIET_FR: Record<string, string> = { vegetarian: "végétarien", vegan: "végan", pescatarian: "pesco-végétarien", gluten_free: "sans gluten", lactose_free: "sans lactose", other: "régime particulier" };
 
 /**
- * Cycle de vie d'une date (docs/22 § 17.H), toutes les 15 minutes :
- * 1. la veille : date « à risque » si le minimum n'est pas atteint (alerte équipe, décision 46) ;
- * 2. lieu fixe : demande de confirmation au lieu la veille (décision 47) ;
- * 3. fermeture : attribution automatique des lieux et demandes (décisions 41, 45) ;
- * 4. relances et demandes sans réponse → autre lieu ;
- * 5. révélation (lieux confirmés) : tables composées dans les lieux confirmés, puis lieu et résumé de table ;
- * 6. 1 h avant : tables définitives et récapitulatif à chaque lieu ;
+ * Cycle de vie d'une date (docs/22 § 17.H, timeline du 24/11), toutes les 15 minutes :
+ * 1. date « à risque » si le minimum n'est pas atteint (rendez-vous : à la fermeture ; alerte équipe, décision 46) ;
+ * 2. veille 15h : demandes d'option aux restaurants (inscrits + une table de marge) ; lieu fixe : demande de confirmation ;
+ * 3. relances (1 h) et demandes sans réponse (2 h) → autre lieu ; veille 18h30 : l'équipe appelle les lieux manquants ;
+ * 4. veille 20h30, fermeture : nombre final aux lieux (tables en trop libérées, manquantes demandées) ;
+ * 5. veille 21h30 : tables composées dans les lieux confirmés, lieu et résumé de table dévoilés ;
+ * 6. jour J 11h (la veille 21h30 pour un début avant 14h) : récapitulatif à chaque lieu ; 1 h avant : mise à jour si changement ;
  * 7. propositions « autre date / regroupement » arrivées à échéance : remboursement de qui n'a pas répondu.
  */
 export async function runTablesAutomation(now = Date.now()) {
   const out = { risk: 0, allocated: 0, revealed: 0, finalized: 0, fixed: 0, closedProposals: 0, ...(await processPendingRequests(now)) };
   const snap = await db.collection("sessions")
     .where("startAt", ">", Timestamp.fromMillis(now - 2 * HOUR))
-    .where("startAt", "<=", Timestamp.fromMillis(now + 26 * HOUR))
+    .where("startAt", "<=", Timestamp.fromMillis(now + 36 * HOUR))
     .get();
   const exps = new Map<string, DocumentData>();
   for (const doc of snap.docs) {
@@ -111,8 +111,9 @@ async function stepSession(id: string, s: DocumentData, e: DocumentData, now: nu
   }
   const riskPending = s.risk?.status === "at_risk" || s.risk?.status === "proposed";
 
-  // 2. Lieu fixe (activité) : demande de confirmation la veille, avec le nombre d'inscrits.
-  if (!isAllocated(e) && !s.fixedRequestAt && people > 0 && now >= start.getTime() - 24 * HOUR) {
+  // 2. Veille 15h : demande au lieu fixe d'une activité (nombre d'inscrits du moment ; nombre final à la fermeture).
+  const optionsAt = venueOptionsAt(start).getTime();
+  if (!isAllocated(e) && !s.fixedRequestAt && people > 0 && now >= Math.min(optionsAt, closesAt)) {
     const partnerId = (await db.doc(`experiences/${s.experienceId}/private/economics`).get()).data()?.partnerId;
     await sessRef.update({ fixedRequestAt: FieldValue.serverTimestamp() });
     if (partnerId) {
@@ -120,34 +121,57 @@ async function stepSession(id: string, s: DocumentData, e: DocumentData, now: nu
       out.fixed++;
     }
   }
+  if (!isAllocated(e) && s.fixedRequestAt && !s.fixedFinalAt && now >= closesAt) {
+    await sessRef.update({ fixedFinalAt: FieldValue.serverTimestamp() });
+    out.fixedFinal = (out.fixedFinal ?? 0) + (await fixedFinalCount(id, people));
+  }
 
   if (isAllocated(e)) {
     // Plafond de vente tenu à jour pour l'affichage (le serveur de réservation le recalcule de toute façon).
-    if (now < closesAt && !s.allocation) {
+    if (now < closesAt) {
       const cap = await venueCapacity(id, s, e);
       if (cap !== null && cap !== s.venueCapacity) await sessRef.update({ venueCapacity: cap });
       if (cap !== null && people + Number(s.seatsHeld ?? 0) >= cap) await teamAlert({ sessionId: id, key: "capacity_full", subject: `Capacité des lieux atteinte : ${title}`, paragraphs: [`${when} : ${people} inscrits, les lieux compatibles ne peuvent pas en accueillir plus. Les ventes sont arrêtées (liste d'attente).`, "Ajoutez un lieu ou de la capacité (fiche du lieu) pour rouvrir des places."] });
     }
-    // 3. Fermeture : attribution automatique (sauf date à risque sans décision, ou lieux déjà choisis à la main).
     // Lieux choisis par l'équipe (date ou lieu habituel) : pas d'attribution automatique.
-    const manual = (await sessionVenues(id, s.experienceId, e)).venues.length > 0;
-    if (now >= closesAt && !s.allocation && people > 0 && !manual) {
-      if (riskPending) {
-        await teamAlert({ sessionId: id, key: "risk_closure", subject: `Décision attendue : ${title}`, paragraphs: [`${when} : les réservations sont fermées et la date est à risque. Décidez (maintenir, autre date, regroupement, annulation) pour lancer l'attribution des lieux.`] });
-      } else {
-        await runAllocation(id, SYSTEM);
-        out.allocated++;
-      }
+    // (Les lieux confirmés par l'attribution sont aussi rangés comme lieux de la date : ce n'est pas un choix manuel.)
+    const manual = s.allocation?.status === "manual" || (!s.allocation && (await sessionVenues(id, s.experienceId, e)).venues.length > 0);
+    // 2 bis. Veille 15h, entre les deux services : options aux restaurants, réservations encore ouvertes.
+    if (!manual && !s.allocation && people > 0 && !riskPending && now >= optionsAt && now < closesAt) {
+      await runAllocation(id, SYSTEM, { option: true });
+      out.allocated++;
       return;
+    }
+    // 4. Fermeture : nombre final (ou première attribution si la date n'en a pas encore eu).
+    if (!manual && now >= closesAt && people > 0) {
+      if (!s.allocation || !s.allocation.finalAt) {
+        if (riskPending) {
+          await teamAlert({ sessionId: id, key: "risk_closure", subject: `Décision attendue : ${title}`, paragraphs: [`${when} : les réservations sont fermées et la date est à risque. Décidez (maintenir, autre date, regroupement, annulation) pour finaliser les lieux.`] });
+        } else if (!s.allocation) {
+          await runAllocation(id, SYSTEM);
+          await sessRef.update({ "allocation.finalAt": FieldValue.serverTimestamp(), "allocation.phase": "final" });
+          out.allocated++;
+        } else {
+          await finalizeAllocation(id);
+          out.finalCount = (out.finalCount ?? 0) + 1;
+        }
+        return;
+      }
+    }
+    // 3 bis. Veille 18h30 : des lieux n'ont toujours pas confirmé → l'équipe appelle (une fois par date).
+    if (s.allocation && !["confirmed", "manual"].includes(String(s.allocation.status)) && !s.venueCallAlertAt && now >= venueCallAt(start).getTime() && now < start.getTime()) {
+      await sessRef.update({ venueCallAlertAt: FieldValue.serverTimestamp() });
+      const confirmedTables = Number(s.allocation.confirmed ?? 0);
+      await teamAlert({ sessionId: id, key: "venue_call", subject: `Lieux à appeler : ${title}`, paragraphs: [`${when} : ${confirmedTables} / ${s.allocation.needed ?? "?"} tables confirmées. Appelez les lieux qui n'ont pas répondu (ou choisissez un autre lieu) avant ${now < closesAt ? "la fermeture de 20h30" : "le dévoilement de 21h30"}.`], path: `/admin/sessions/${id}#lieux` });
     }
   }
 
-  // 5. Révélation : seulement avec des lieux confirmés (ou choisis par l'équipe).
-  const revealAt = isTablesFlow(e) ? t.revealAt.getTime() : start.getTime() - 5 * HOUR;
+  // 5. Dévoilement (veille 21h30) : seulement avec des lieux confirmés (ou choisis par l'équipe).
+  const revealAt = isTablesFlow(e) ? t.revealAt.getTime() : Math.max(revealAtFor(start).getTime(), closesAt);
   if (isAllocated(e) && now >= revealAt && s.groupsStatus !== "revealed" && people > 0 && !riskPending) {
     const { venues } = await sessionVenues(id, s.experienceId, e);
     if (venues.length === 0 || (s.allocation && !["confirmed", "manual"].includes(s.allocation.status))) {
-      await teamAlert({ sessionId: id, key: "reveal_blocked", subject: `Révélation bloquée : ${title}`, paragraphs: [`${when} : les lieux ne sont pas tous confirmés. Confirmez les demandes (appel ou WhatsApp) : la révélation partira aussitôt.`] });
+      await teamAlert({ sessionId: id, key: "reveal_blocked", subject: `Dévoilement bloqué : ${title}`, paragraphs: [`${when} : les lieux ne sont pas tous confirmés. Confirmez les demandes (appel ou WhatsApp) : le dévoilement partira aussitôt.`] });
       return;
     }
     if (e.groupConfig) {
@@ -171,17 +195,43 @@ async function stepSession(id: string, s: DocumentData, e: DocumentData, now: nu
     return;
   }
 
-  // 6. 1 h avant : tables définitives et récapitulatif à chaque lieu.
-  if (now >= t.finalAt.getTime() && !s.tablesFinalAt && people > 0 && (s.groupsStatus === "revealed" || !e.groupConfig)) {
+  // 6. Récapitulatif à chaque lieu : jour J 11h (la veille 21h30 pour un début avant 14h), après le dévoilement.
+  const ready = s.groupsStatus === "revealed" || !e.groupConfig;
+  const recapAt = Math.max(recapAtFor(start).getTime(), isAllocated(e) ? revealAt : closesAt);
+  if (now >= recapAt && !s.tablesFinalAt && people > 0 && ready) {
     await sessRef.update({ tablesFinalAt: FieldValue.serverTimestamp() });
-    if (e.groupConfig && s.groupsStatus === "revealed") {
-      const { sizes } = await reconcileGroups(id, SYSTEM);
-      const odd = tablesOutOfBounds(sizes, e.groupConfig);
-      if (odd.length) await teamAlert({ sessionId: id, key: "tables_final", subject: `Table trop petite ou trop grande : ${title}`, paragraphs: [`${when} : après les dernières annulations, ${odd.map((i) => `table ${i + 1} (${sizes[i]} personnes)`).join(", ")}.`], path: `/admin/sessions/${id}/groupes` });
-    }
+    if (e.groupConfig && s.groupsStatus === "revealed") await reconcileAndAlert(id, e, title, when, "tables_recap");
     await recapToVenues(id, s, e);
     out.finalized++;
+    return;
   }
+  // 6 bis. 1 h avant : tables remises d'accord avec les dernières annulations ; mise à jour au lieu seulement si changement.
+  if (now >= t.finalAt.getTime() && s.tablesFinalAt && !s.recapCheckAt && people > 0 && ready) {
+    await sessRef.update({ recapCheckAt: FieldValue.serverTimestamp() });
+    if (e.groupConfig && s.groupsStatus === "revealed") await reconcileAndAlert(id, e, title, when, "tables_final");
+    out.recapUpdates = (out.recapUpdates ?? 0) + (await recapToVenues(id, s, e, { onlyIfChanged: true }));
+  }
+}
+
+/** Tables remises d'accord avec les réservations ; alerte si une table sort des limites. */
+async function reconcileAndAlert(id: string, e: DocumentData, title: string, when: string, key: string) {
+  const { sizes } = await reconcileGroups(id, SYSTEM);
+  const odd = tablesOutOfBounds(sizes, e.groupConfig);
+  if (odd.length) await teamAlert({ sessionId: id, key, subject: `Table trop petite ou trop grande : ${title}`, paragraphs: [`${when} : après les dernières annulations, ${odd.map((i) => `table ${i + 1} (${sizes[i]} personnes)`).join(", ")}.`], path: `/admin/sessions/${id}/groupes` });
+}
+
+/** Lieu fixe : nombre final à la fermeture des réservations, si le nombre d'inscrits a changé depuis la demande. */
+async function fixedFinalCount(id: string, people: number): Promise<number> {
+  const reqs = (await db.collection("venueRequests").where("sessionId", "==", id).where("fixed", "==", true).get()).docs.filter((d) => ["sent", "confirmed"].includes(String(d.get("status"))));
+  let n = 0;
+  for (const d of reqs) {
+    const before = { tables: Number(d.get("tables") ?? 1), people: Number(d.get("people") ?? 0) };
+    if (before.people === people) continue;
+    await d.ref.update({ people, history: FieldValue.arrayUnion({ at: Timestamp.now(), event: "final", before, people }) });
+    await sendFinalMessage(d.id, before);
+    n++;
+  }
+  return n;
 }
 
 /** Activité à lieu attribué sans tables composées : le lieu est révélé à chacun. */
@@ -198,9 +248,10 @@ async function revealVenueOnly(id: string, v: { name: string; address: string; c
 }
 
 /** Récapitulatif par lieu : tables qui y vont, prénoms (+ invités), régimes et allergies partagés avec le lieu. */
-async function recapToVenues(id: string, s: DocumentData, e: DocumentData) {
+async function recapToVenues(id: string, s: DocumentData, e: DocumentData, opts: { onlyIfChanged?: boolean } = {}): Promise<number> {
   const reqs = (await db.collection("venueRequests").where("sessionId", "==", id).where("status", "==", "confirmed").get()).docs;
-  if (reqs.length === 0) return;
+  if (reqs.length === 0) return 0;
+  let sent = 0;
   const { participants } = e.groupConfig ? await loadSession(id) : { participants: [] as Awaited<ReturnType<typeof loadSession>>["participants"] };
   const groups = e.groupConfig ? (await db.collection("groups").where("sessionId", "==", id).get()).docs : [];
   const { venues, cuisine, cuisineI18n } = await sessionVenues(id, s.experienceId, e);
@@ -226,10 +277,14 @@ async function recapToVenues(id: string, s: DocumentData, e: DocumentData) {
       const users = res.docs.length ? await db.getAll(...res.docs.map((d) => db.doc(`users/${d.get("userId")}`))) : [];
       tables.push({ label: "Participants", names: res.docs.map((d, i) => `${String(users[i]?.get("firstName") ?? "Membre")}${Number(d.get("seats") ?? 1) > 1 ? ` (+${Number(d.get("seats")) - 1})` : ""}`) });
     }
-    await sendRecap(r.id, tables, notes);
+    if (await sendRecap(r.id, tables, notes, opts)) sent++;
   }
+  return sent;
 }
 
 export const tablesAutomation = onSchedule({ schedule: "every 15 minutes", region: REGION, timeZone: "Africa/Casablanca", timeoutSeconds: 300 }, async () => {
   await runTablesAutomation();
+  // Activité du samedi : alerte 48 h avant l'ouverture de chaque samedi (à confirmer ou à changer).
+  const { rotationOpeningAlerts } = await import("../rendezvous/rotation");
+  await rotationOpeningAlerts().catch((err) => logger.error("Alertes d'ouverture du samedi", { error: String(err) }));
 });

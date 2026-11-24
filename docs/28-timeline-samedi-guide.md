@@ -1,0 +1,56 @@
+# 28 — Timeline des rendez-vous, activité du samedi, Girls only, guide (24/11)
+
+Décisions validées le 24/11. Elles remplacent la **décision 42** (lieu révélé 5 h avant, ramené à 21 h la veille le
+matin et le midi ; fermeture 12 h avant, 18 h la veille avant 14 h).
+
+## 1. La timeline des Tables (dîner, café, brunch)
+
+La même pour tous les rendez-vous, et pour toutes les Tables (rendez-vous ou non) :
+
+| Quand | Quoi | Pour qui |
+|---|---|---|
+| Veille 15h | Demande d'**option** aux restaurants, entre les deux services : inscrits du moment + **une table de marge** (au plus les places de la date) | Restaurants |
+| +1 h / +2 h | Relance, puis autre restaurant si pas de réponse (réglages d'attribution inchangés) | Restaurants |
+| Veille 18h30 | Alerte « Lieux à appeler » s'il manque des confirmations (une fois par date) | Équipe |
+| Veille 20h30 | **Fermeture** des réservations ; gamme voisine ; minimum ; **nombre final** envoyé aux lieux dont la demande change (tables en trop libérées : demandes en attente d'abord, puis les dernières confirmées ; tables manquantes demandées aussitôt) | Membres, restaurants |
+| Veille 21h30 | Tables composées, **lieu dévoilé** (notification, e-mail, aperçu de la table) | Membres |
+| Jour J 11h (veille 21h30 si début avant 14h) | **Récapitulatif** à chaque lieu : tables, prénoms, régimes et allergies partagés | Restaurants |
+| 1 h avant | Tables remises d'accord ; **mise à jour** au lieu seulement si le récapitulatif a changé | Restaurants |
+
+- Concrètement : Dîner du mercredi 20h30 → options mardi 15h, dévoilement mardi 21h30, récap mercredi 11h. Café du
+  samedi 16h → vendredi 15h / 21h30, récap samedi 11h. Brunch du dimanche 12h30 → samedi 15h / 21h30, récap samedi 21h30.
+- Une date annulée (ou vidée) libère ses options : chaque lieu reçoit « table libérée ».
+- Activité à lieu fixe (activité du samedi) : demande au lieu la veille à 15h, nombre final à la fermeture s'il a
+  changé, récapitulatif comme ci-dessus.
+- Nouveau modèle WhatsApp à faire valider par Meta : `wenzy_nombre_final_lieu` (docs/22 § 17.H).
+- Code : `packages/shared/src/tables.ts` (heures), `functions/src/tables/automation.ts` (étapes, toutes les 15 min),
+  `functions/src/tables/allocation.ts` (`runAllocation` avec option, `finalizeAllocation`, `sendFinalMessage`).
+  Page d'une date : bloc « déroulé » (fait / à venir / en retard).
+
+## 2. L'activité du samedi
+
+- Seul l'univers **Activités** alimente l'activité du samedi ; une activité n'a pas de date à elle (formulaire :
+  étape 6 remplacée par une explication). Les **Événements** ont leurs propres dates (soirée, padel ponctuel…).
+- Ajouter une activité : créer l'événement (univers Activités, publié), puis sur sa fiche, carte « Activité du
+  samedi » : **Ajouter à la rotation** (`adminRotationAddActivity`, en dernière position) ou **Programmer un samedi**.
+- Planning : chaque samedi indique son ouverture (« s'ouvre le … (Pass), le … pour tous ») et l'heure limite pour le
+  changer. Un samedi s'ouvre quand le précédent ferme (vendredi 20h30), une semaine plus tôt pour les abonnés Pass.
+- **48 h avant** l'ouverture d'un samedi, l'équipe reçoit l'activité prévue, à confirmer ou à changer
+  (`rotationOpeningAlerts`, une fois par samedi, marquée sur `rendezvous/{id}.alerts`).
+
+## 3. Exclusive et Girls only
+
+- Exclusive : **en plus** de Casual et Premium, le premier mercredi du mois (3 dîners en parallèle ce jour-là).
+- Girls only : édition spéciale du mois dans **Événements**, nouveau modèle « Girls only » (brunch, réservé aux femmes,
+  vérifié par le serveur à la réservation). L'équipe crée l'événement depuis le modèle et ajoute une date par mois.
+
+## 4. Site d'essai : nettoyage
+
+Une fois (`settings/showcase.purgeCancelledAt`, contenu de départ avec `--with-demo-experiences` seulement) : les dates
+annulées, les dates de l'activité du samedi hors planning et les dates de gammes hors de leur jour sont supprimées,
+réservations comprises. Le Programme du back-office n'affiche plus les dates annulées.
+
+## 5. Guide
+
+`/admin/guide` (menu « Guide ») : le principe, la semaine type, et « comment faire » pas à pas (places, nouvelle
+activité, samedi d'un partenaire, ordre de la rotation, événement, Girls only, organisateurs, alertes).

@@ -31,7 +31,8 @@ export default async function ProgrammePage({ searchParams }: PageProps<"/admin/
   }
   const now = d.now.getTime();
   const list = (past ? d.recentSessions : d.sessions.filter((s) => new Date(s.endAt ?? s.startAt).getTime() >= now - 3 * 3_600_000))
-    .filter((s) => s.status !== "draft")
+    // Les dates annulées n'encombrent pas le programme (elles restent visibles depuis l'événement et les réservations).
+    .filter((s) => s.status !== "draft" && s.status !== "cancelled")
     .sort((a, b) => (past ? b.startAt.localeCompare(a.startAt) : a.startAt.localeCompare(b.startAt)));
 
   // Une ligne par (jour, rendez-vous ou événement, heure) ; les gammes d'un rendez-vous dans la même ligne.
@@ -47,7 +48,7 @@ export default async function ProgrammePage({ searchParams }: PageProps<"/admin/
     const rows = days.get(k)!.rows;
     if (!rows.has(rowKey)) rows.set(rowKey, { key: rowKey, time: hhmm(s.startAt), title: (rvId && rvTitles.get(rvId)) || e.title.fr, rv: Boolean(rvId), items: [], todos: [] });
     const row = rows.get(rowKey)!;
-    row.items.push({ id: s.id, label: e.venueTier ? TIER[e.venueTier as keyof typeof TIER] ?? e.venueTier : rvId ? e.title.fr : "Ouvrir", booked: s.seatsConfirmed, capacity: s.capacity, waitlist: s.waitlistCount ?? 0, cancelled: s.status === "cancelled" });
+    row.items.push({ id: s.id, label: e.venueTier ? TIER[e.venueTier as keyof typeof TIER] ?? e.venueTier : rvId ? e.title.fr : "Ouvrir", booked: s.seatsConfirmed, capacity: s.capacity, waitlist: s.waitlistCount ?? 0, cancelled: false });
     row.todos.push(...sessionTodos(d, s).filter((t) => t.tone === "red" || t.tone === "amber"));
   }
 

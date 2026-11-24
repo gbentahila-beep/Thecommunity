@@ -63,7 +63,7 @@ export default async function PartnerRequestPage({ params, searchParams }: PageP
         </ul>
         <div className="mt-5">
           {req.status === "sent" ? <PartnerResponse requestId={req.id} token={typeof sp.t === "string" ? sp.t : ""} />
-            : req.status === "confirmed" ? <p role="status" className="rounded-xl bg-emerald-50 px-4 py-3 font-semibold text-emerald-900">Confirmé, merci ! Vous recevrez les prénoms et les allergies 1 h avant.</p>
+            : req.status === "confirmed" ? <p role="status" className="rounded-xl bg-emerald-50 px-4 py-3 font-semibold text-emerald-900">Confirmé, merci ! Vous recevrez le nombre final ce soir à 20h30, puis les prénoms et les allergies le jour même à 11h (la veille au soir pour un début avant 14h).</p>
             : req.status === "refused" ? <p className="rounded-xl bg-stone-100 px-4 py-3 text-ink">Vous avez refusé cette demande. Merci de votre réponse.</p>
             : <p className="rounded-xl bg-stone-100 px-4 py-3 text-ink">Cette demande n&apos;est plus active.</p>}
         </div>

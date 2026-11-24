@@ -1,10 +1,11 @@
-import { PAYMENT_MODELS } from "@thecommunity/shared";
+import { localDayKey, mergeTemplates, PAYMENT_MODELS, rotationDays, rotationPlan, type RotationEntry, type RotationOverride } from "@thecommunity/shared";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddSessionsForm } from "@/components/admin/add-sessions-form";
 import { ExperienceActions } from "@/components/admin/experience-actions";
 import { ExperienceForm } from "@/components/admin/experience-form";
 import { ExperienceReview } from "@/components/admin/organizer-actions";
+import { SaturdayActivityCard, type SaturdayOption } from "@/components/admin/rotation-form";
 import { adminDate, Card, FillBar, PageHeader } from "@/components/admin/ui";
 import { experienceToValues, formOptions } from "@/lib/admin-forms";
 import { requireAdmin } from "@/lib/auth/admin";
@@ -38,6 +39,18 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
     time: lastStart ? new Intl.DateTimeFormat("fr-FR", { timeZone: "Africa/Casablanca", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(lastStart) : "19:30",
     capacity: String(last?.capacity ?? 12),
   };
+  // Univers Activités : sa place dans l'activité du samedi (rotation de la ville), les 8 prochains samedis.
+  type Rot = { id: string; cityId: string; weekday: number; anchor: string; cycle: RotationEntry[]; overrides?: Record<string, RotationOverride>; title?: { fr?: string } };
+  const rotation = e.categoryId === "move" && FIREBASE_ENABLED && !d.isDemo
+    ? (await adminDb().collection("rendezvous").where("kind", "==", "rotation").get()).docs.map((x) => ({ id: x.id, ...(x.data() as Omit<Rot, "id">) })).find((r) => r.cityId === e.cityId) ?? null
+    : null;
+  const tpl = mergeTemplates([]).find((t) => t.id === (e as { templateId?: string }).templateId);
+  const satLabel = (day: string) => new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`));
+  const plan = rotation ? rotationPlan({ weekday: rotation.weekday, anchor: rotation.anchor, cycle: rotation.cycle ?? [], overrides: rotation.overrides ?? {} }, rotationDays(rotation.weekday, d.now, 8)) : [];
+  const bookedOn = (day: string) => d.sessions.filter((s) => (s as { rendezvousId?: string | null }).rendezvousId === rotation?.id && localDayKey(new Date(s.startAt)) === day).reduce((n, s) => n + s.seatsConfirmed, 0);
+  const saturdays: SaturdayOption[] = plan.map((w) => ({ date: w.date, label: satLabel(w.date), planned: w.entry ? d.experiences.get(w.entry.experienceId)?.title.fr ?? "activité" : "pas d'activité", booked: bookedOn(w.date), locked: bookedOn(w.date) > 0 }));
+  const mine = plan.filter((w) => w.entry?.experienceId === e.id);
+  const cycleIndex = rotation ? (rotation.cycle ?? []).findIndex((c) => c.experienceId === e.id) : -1;
   const bookedSeats = sessions.filter((s) => new Date(s.startAt).getTime() > d.now.getTime()).reduce((n, s) => n + s.seatsConfirmed, 0);
   return (
     <div className="max-w-3xl">
@@ -69,13 +82,27 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
             ))}
           </ul>
         )}
-        {!archived && !(e as { rendezvousId?: string | null }).rendezvousId && (
+        {!archived && !(e as { rendezvousId?: string | null }).rendezvousId && e.categoryId !== "move" && (
           <details className="mt-3">
             <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Ajouter des dates</summary>
             <div className="mt-3"><AddSessionsForm experienceId={e.id} defaults={addDefaults} live={!d.isDemo} /></div>
           </details>
         )}
       </Card>
+      {e.categoryId === "move" && (
+        <Card title="Activité du samedi" className="mb-5" actions={<Link href="/admin/rendez-vous" className="text-sm font-medium text-brand-900">Planning des samedis →</Link>}>
+          <p className="mb-3 text-sm text-muted">
+            {!rotation ? "Les activités passent par le planning de l'activité du samedi (Programme → Rendez-vous de la semaine)." : cycleIndex >= 0
+              ? `Dans la rotation : position ${cycleIndex + 1} sur ${rotation.cycle.length} (${rotation.cycle[cycleIndex]!.time.replace(":", "h")}, ${rotation.cycle[cycleIndex]!.capacity} places).`
+              : "Pas dans la rotation."}
+            {rotation && (mine.length ? ` Prévue le ${mine.map((w) => satLabel(w.date)).join(", ")}.` : " Aucun samedi prévu dans les 8 prochaines semaines.")}
+          </p>
+          {rotation && e.status === "published" && (
+            <SaturdayActivityCard rotationId={rotation.id} experienceId={e.id} inCycle={cycleIndex >= 0} defaults={{ time: cycleIndex >= 0 ? rotation.cycle[cycleIndex]!.time : tpl?.values.time ?? "10:00", capacity: cycleIndex >= 0 ? rotation.cycle[cycleIndex]!.capacity : tpl?.values.capacity ?? 12 }} saturdays={saturdays} live={!d.isDemo} />
+          )}
+          {rotation && e.status !== "published" && <p className="text-sm text-amber-800">Publiez-la d&apos;abord (statut « Publiée » dans la fiche ci-dessous) pour pouvoir la programmer.</p>}
+        </Card>
+      )}
       <ExperienceForm
         mode="edit"
         live={!d.isDemo}

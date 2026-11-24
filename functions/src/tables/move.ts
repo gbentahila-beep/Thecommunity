@@ -16,7 +16,7 @@ import { notifyReservationChange } from "../notify/reminders";
  * Déplacer une réservation sur une autre date du même rendez-vous, dans UNE transaction : places, verrous, liste
  * d'attente de la date quittée (places aussitôt proposées). La table, le lieu et le résumé de table sont remis à zéro.
  * - équipe : à tout moment avant le début de la nouvelle date ;
- * - membre (décision 38) : jusqu'à la fermeture de sa date (12 h avant pour les Tables), vers une date encore ouverte,
+ * - membre (décision 38) : jusqu'à la fermeture de sa date (la veille à 20h30 pour les Tables), vers une date encore ouverte,
  *   sans repayer ; `minimum` : choix « autre date » quand le minimum n'est pas atteint (sa date est déjà fermée).
  */
 export async function moveReservationCore(o: { reservationId: string; targetSessionId: string; actorUid: string; by: "user" | "admin"; proposal?: boolean; /** Lot C : vers la gamme voisine du même rendez-vous, même date. */ tierMove?: boolean }) {

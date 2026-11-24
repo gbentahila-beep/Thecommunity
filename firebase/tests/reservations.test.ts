@@ -2676,6 +2676,45 @@ describe("attribution des lieux et parcours des Tables (Étape H)", () => {
     expect(alphaRecap.tables[0].names[0]).toMatch(/^T\d/);
   });
 
+  it("timeline du 24/11 : options la veille à 15h (une table de marge), nombre final à la fermeture (table en trop libérée)", async () => {
+    const { sid, start } = await tablesSession();
+    await partner("Option", start, 3, { level: "regular" });
+    await partner("Marge", start, 3);
+    await people(sid, 6);
+    const t = tablesTimeline(start);
+    // Avant 15h la veille : rien n'est demandé.
+    await runSessionAutomation(sid, t.optionsAt.getTime() - 60_000);
+    expect(await requestsOf(sid)).toHaveLength(0);
+    // 15h : options pour 6 inscrits + une table de marge (11 personnes).
+    await runSessionAutomation(sid, t.optionsAt.getTime() + 60_000);
+    const opt = (await session(sid)).allocation;
+    expect(opt).toMatchObject({ phase: "option", people: 11 });
+    const optionTables = (await requestsOf(sid)).reduce((n, r) => n + Number(r.tables), 0);
+    expect(optionTables).toBe(opt.needed);
+    const adm = await member({ role: "admin" });
+    for (const r of await requestsOf(sid)) await adm.call("adminRequestAction", { requestId: r.id, action: "confirm_phone" });
+    // 20h30 : 6 inscrits → moins de tables ; la table en trop est libérée et le lieu prévenu.
+    await runSessionAutomation(sid, t.closesAt.getTime() + 60_000);
+    const fin = (await session(sid)).allocation;
+    expect(fin).toMatchObject({ phase: "final", people: 6, status: "confirmed" });
+    expect(fin.needed).toBeLessThan(opt.needed);
+    const active = (await requestsOf(sid)).filter((r) => r.status === "confirmed");
+    expect(active.reduce((n, r) => n + Number(r.tables), 0)).toBe(fin.needed);
+    expect(active.reduce((n, r) => n + Number(r.people), 0)).toBe(6);
+    expect((await db().collection("mail").where("refs.sessionId", "==", sid).where("kind", "==", "venue_final").get()).size).toBeGreaterThan(0);
+    // Une seule fois.
+    await runSessionAutomation(sid, t.closesAt.getTime() + 2 * 60_000);
+    expect((await session(sid)).allocation.needed).toBe(fin.needed);
+    // 21h30 : dévoilement ; récapitulatif au jour J 11h (ou la veille pour un début avant 14h).
+    await runSessionAutomation(sid, t.revealAt.getTime() + 60_000);
+    expect((await session(sid)).groupsStatus).toBe("revealed");
+    await runSessionAutomation(sid, t.recapAt.getTime() + 60_000);
+    expect((await db().collection("mail").where("refs.sessionId", "==", sid).where("kind", "==", "venue_recap").get()).size).toBe(active.length);
+    // 1 h avant, sans changement : pas de mise à jour.
+    await runSessionAutomation(sid, t.finalAt.getTime() + 60_000);
+    expect((await db().collection("mail").where("refs.sessionId", "==", sid).where("kind", "==", "venue_recap").get()).size).toBe(active.length);
+  });
+
   it("sans réponse : relance après 1 h, puis autre lieu après 2 h", async () => {
     const { sid, start } = await tablesSession();
     await partner("Lent", start, 1);

@@ -453,6 +453,7 @@ Chaque étape se termine par ta validation avant de passer à la suivante.
 | `wenzy_demande_lieu` | Bonjour {{1}}, c'est Wenzy. Demande de réservation : {{2}}, {{3}}. Chacun règle sa consommation sur place. Accepter ou refuser : {{4}} |
 | `wenzy_relance_lieu` | Bonjour {{1}}, petit rappel de Wenzy : notre demande pour {{2}} ({{3}}) attend votre réponse : {{4}} |
 | `wenzy_recap_lieu` | Bonjour {{1}}, voici le récapitulatif Wenzy pour {{2}} : {{3}}. Prénoms, régimes et allergies : {{4}} |
+| `wenzy_nombre_final_lieu` (24/11) | Bonjour {{1}}, c'est Wenzy. Nombre final pour {{2}} : {{3}}. Détail : {{4}} |
 
 Le jeton d'accès Meta se règle comme secret Cloud `WHATSAPP_TOKEN` (comme la clé d'envoi des e-mails), jamais dans la base.
 

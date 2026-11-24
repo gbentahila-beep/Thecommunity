@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { localDayKey, mergeTemplates, rotationDays, rotationPlan, type RotationEntry, type RotationOverride } from "@thecommunity/shared";
+import { localDayKey, mergeTemplates, rotationDays, rotationDeadline, rotationPlan, rotationWindows, type RotationEntry, type RotationOverride } from "@thecommunity/shared";
 import { connection } from "next/server";
 import { RendezvousForm, WEEKDAYS, type RendezvousFormValues } from "@/components/admin/rendezvous-form";
 import { RendezvousLaunch } from "@/components/admin/rendezvous-launch";
@@ -36,7 +36,8 @@ export default async function RendezvousAdminPage() {
   const tiersList = list.filter((r) => r.kind !== "rotation");
   const tpl = new Map(mergeTemplates([]).map((t) => [t.id, t]));
   const activities: ActivityOption[] = [...d.experiences.values()]
-    .filter((e) => e.status === "published" && ["move", "discover"].includes(e.categoryId) && (!e.rendezvousId || e.rendezvousKind === "rotation"))
+    // Seul l'univers Activités alimente l'activité du samedi (les Événements ont leurs propres dates).
+    .filter((e) => e.status === "published" && e.categoryId === "move" && (!e.rendezvousId || e.rendezvousKind === "rotation"))
     .map((e) => {
       const t = tpl.get(String((e as { templateId?: string }).templateId ?? ""));
       return { id: e.id, label: `${e.title.fr}${e.venue?.name ? ` · ${e.venue.name}` : e.district ? ` · ${e.district}` : ""}`, time: t?.values.time ?? "10:00", capacity: t?.values.capacity ?? 12 };
@@ -47,7 +48,12 @@ export default async function RendezvousAdminPage() {
   for (const r of rotations) {
     const plan = rotationPlan({ weekday: r.weekday, anchor: r.anchor ?? "", cycle: r.cycle ?? [], overrides: r.overrides ?? {} }, rotationDays(r.weekday, new Date(), 8));
     const sessions = FIREBASE_ENABLED ? (await adminDb().collection("sessions").where("rendezvousId", "==", r.id).where("startAt", ">", new Date()).get()).docs.filter((x) => x.get("status") !== "cancelled") : [];
+    const windows = rotationWindows(plan, new Date());
+    const fmt = (x: Date) => new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "Africa/Casablanca" }).format(x).replace(":", "h");
     weeks.set(r.id, plan.map((w) => {
+      const win = windows.get(w.date);
+      const deadline = rotationDeadline(win);
+      const opens = !w.entry ? "" : !win || win.state === "open" ? "Ouvert aux réservations" : win.state === "pass" ? `Ouvert aux abonnés Pass · à tous le ${fmt(win.opensAt!)}` : `S'ouvre le ${fmt(win.passOpensAt ?? win.opensAt!)} (Pass), le ${fmt(win.opensAt!)} pour tous`;
       const day = sessions.filter((x) => localDayKey(x.get("startAt").toDate()) === w.date);
       const mine = day.find((x) => x.get("experienceId") === w.entry?.experienceId);
       return {
@@ -62,6 +68,8 @@ export default async function RendezvousAdminPage() {
         note: w.note,
         booked: Number(mine?.get("seatsConfirmed") ?? 0),
         conflicts: day.filter((x) => x.get("experienceId") !== w.entry?.experienceId).map((x) => `${label(String(x.get("experienceId")))} (${x.get("seatsConfirmed") ?? 0} inscrit(s))`),
+        opens,
+        deadline: deadline ? `à choisir avant le ${fmt(deadline)}` : "",
       };
     }));
   }
@@ -102,7 +110,16 @@ export default async function RendezvousAdminPage() {
             <Badge tone={r.status === "active" ? "green" : "gray"}>{r.status === "active" ? "Actif" : "En pause"}</Badge>
             <span className="text-sm text-muted">{WEEKDAYS[r.weekday]} · rotation : {(r.cycle ?? []).map((c) => label(c.experienceId)).join(" → ")}</span>
           </div>
-          <p className="text-sm text-muted">Les 8 prochains samedis. Les dates sont créées 6 semaines à l&apos;avance ; une seule est ouverte à la réservation à la fois (la suivante pour les abonnés Pass).</p>
+          <p className="text-sm text-muted">Les 8 prochains samedis. Un samedi s&apos;ouvre aux réservations quand le précédent ferme (vendredi 20h30), une semaine plus tôt pour les abonnés Pass. Avant son ouverture, vous pouvez changer son activité librement ; l&apos;équipe reçoit un rappel 48 h avant.</p>
+          <details className="my-3 rounded-xl bg-cream p-3 text-sm" data-testid="saturday-howto">
+            <summary className="cursor-pointer font-semibold text-brand-900">Ajouter une nouvelle activité (ex. un cours de Pilates)</summary>
+            <ol className="mt-2 list-decimal space-y-1 ps-5">
+              <li><Link href="/admin/experiences/nouvelle" className="text-brand-900 underline">Créez l&apos;événement</Link> dans l&apos;univers <strong>Activités</strong> (modèle ou page blanche), publié. Pas de date à saisir : elle vient de ce planning.</li>
+              <li>Sur sa fiche, carte « Activité du samedi » : <strong>Ajouter à la rotation</strong> (elle revient à son tour) ou <strong>Programmer un samedi</strong> (une seule fois).</li>
+              <li>Ou ici : « Changer ce samedi » sur la ligne voulue, puis choisissez l&apos;activité, l&apos;heure et les places.</li>
+            </ol>
+            <p className="mt-2 text-muted">Un organisateur propose son activité depuis son espace : sa proposition apparaît ci-dessous, à accepter pour un samedi.</p>
+          </details>
           {proposals.filter((p) => p.cityId === r.cityId).length > 0 && (
             <div className="my-3 rounded-xl bg-brand-50 p-3" data-testid="saturday-proposals">
               <p className="text-sm font-semibold text-brand-900">Propositions des organisateurs</p>

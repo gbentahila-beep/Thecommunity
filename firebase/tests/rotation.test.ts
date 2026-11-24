@@ -8,7 +8,8 @@ import { deleteApp as deleteClient, initializeApp, type FirebaseApp } from "fire
 import { connectAuthEmulator, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/functions";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { bookingClosesAt, localDayKey, rotationDays, rotationPlan } from "@thecommunity/shared";
+import { bookingClosesAt, localDayKey, rotationDays, rotationDeadline, rotationPlan, rotationWindows } from "@thecommunity/shared";
+import { rotationOpeningAlerts } from "../../functions/src/rendezvous/rotation";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -124,5 +125,33 @@ describe("activité du samedi (lot D)", () => {
     await db().doc(`experiences/${draft}`).update({ status: "draft" });
     expect(await refusal(team.call("adminSetRotationWeek", { id, date: day2, override: { experienceId: draft, shift: false } }))).toBe("invalid-argument:");
     expect(await refusal(u.call("adminSetRotationWeek", { id, date: day2, override: null }))).toBe("permission-denied:");
+  });
+
+  it("fiche d'une activité : « Ajouter à la rotation » ; alerte à l'équipe 48 h avant l'ouverture d'un samedi, une seule fois", async () => {
+    const team = await member("admin");
+    const [yoga, pilates] = [await activity("Yoga"), await activity("Pilates")];
+    const anchor = rotationDays(6, new Date(), 1)[0]!;
+    const out = await team.call("adminSaveRotation", { titleFr: "Samedi bis", cityId: `${city}-bis`, weekday: 6, anchor, cycle: [{ experienceId: yoga, time: "10:00", capacity: 12 }] });
+    const id = String(out.id);
+    const u = await member();
+    expect(await refusal(u.call("adminRotationAddActivity", { id, experienceId: pilates, time: "11:00", capacity: 10 }))).toBe("permission-denied:");
+    const add = await team.call("adminRotationAddActivity", { id, experienceId: pilates, time: "11:00", capacity: 10 });
+    expect(add.position).toBe(2);
+    const rv = (await db().doc(`rendezvous/${id}`).get()).data()!;
+    expect(rv.cycle.map((c: { experienceId: string }) => c.experienceId)).toEqual([yoga, pilates]);
+    expect((await db().doc(`experiences/${pilates}`).get()).get("rendezvousKind")).toBe("rotation");
+    expect((await rvSessions(id)).some((d) => d.get("experienceId") === pilates)).toBe(true);
+    // 48 h avant l'ouverture (aux abonnés Pass) du prochain samedi pas encore ouvert : une alerte, une seule fois.
+    const plan = rotationPlan({ weekday: 6, anchor, cycle: rv.cycle }, rotationDays(6, new Date(), 4));
+    const windows = rotationWindows(plan, new Date());
+    const target = plan.find((w) => rotationDeadline(windows.get(w.date)))!;
+    const deadline = rotationDeadline(windows.get(target.date))!;
+    const at = new Date(deadline.getTime() - 47 * 3_600_000);
+    await rotationOpeningAlerts(at);
+    expect((await db().doc(`rendezvous/${id}`).get()).get(`alerts.opening_${target.date}`)).toBeTruthy();
+    const mails = async () => (await db().collection("mail").where("kind", "==", "team_alert").where("refs.path", "==", "/admin/rendez-vous").get()).docs.filter((d) => String(d.get("subject") ?? "").includes(target.entry!.experienceId === yoga ? "Yoga" : "Pilates")).length;
+    const n = await mails();
+    await rotationOpeningAlerts(at);
+    expect(await mails()).toBe(n);
   });
 });

@@ -124,7 +124,7 @@ export default async function SettingsAdminPage() {
         <Card title="Prix Wenzy et réservations">
           <dl className="mb-4 grid grid-cols-2 gap-3 text-sm">
             <div><dt className="text-xs text-muted">Blocage d&apos;une place pendant le paiement</dt><dd>15 minutes</dd></div>
-            <div><dt className="text-xs text-muted">Fermeture des réservations</dt><dd>12 h avant (Tables ; au plus tard 18 h la veille pour un début avant 14 h) · 2 h (autres)</dd></div>
+            <div><dt className="text-xs text-muted">Fermeture des réservations</dt><dd>Tables : la veille à 20h30 (lieu dévoilé à 21h30) · autres : 2 h avant</dd></div>
             <div><dt className="text-xs text-muted">Âge minimum</dt><dd>18 ans</dd></div>
           </dl>
           {wenzyPrice !== null ? (

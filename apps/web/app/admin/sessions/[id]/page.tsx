@@ -1,4 +1,4 @@
-import { ageBand, ageOn, bookingClosesAt, pricingOf, refundAmountFor, revealAtFor, seatsAvailable, unitWord, venueRequestText, whatsappMobileUrl, whatsappWebUrl } from "@thecommunity/shared";
+import { ageBand, ageOn, bookingClosesAt, pricingOf, recapAtFor, refundAmountFor, revealAtFor, seatsAvailable, unitWord, venueCallAt, venueOptionsAt, venueRequestText, whatsappMobileUrl, whatsappWebUrl } from "@thecommunity/shared";
 import { AllocationCard, RiskCard } from "@/components/admin/allocation-card";
 import { SITE_URL } from "@/lib/site";
 import Link from "next/link";
@@ -42,7 +42,7 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
   const confirmed = rows.filter((x) => x.r.status === "confirmed");
   const waitlist = (d.waitlists[s.id] ?? []).map((uid) => d.usersById.get(uid)!);
   const grouped = e.bookingMode === "social_dinner" || e.bookingMode === "group";
-  // docs/22, décision 15 : lieu secret → lieu(x) renseigné(s) date par date, au plus tard 5 h avant.
+  // docs/22, décision 15 : lieu secret → lieux réservés automatiquement la veille à 15h, ou choisis à la main.
   const secret = e.venue.revealPolicy === "on_group_reveal";
   const venues = d.sessionVenues[s.id] ?? [];
   const revealAt = revealAtFor(start);
@@ -64,7 +64,25 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
   const allocationSummary = alloc
     ? alloc.status === "manual" ? "Lieux choisis à la main par l'équipe (ci-dessous) : l'attribution automatique est arrêtée pour cette date."
     : `${alloc.people ?? s.seatsConfirmed} inscrits · ${alloc.needed ?? "?"} table${(alloc.needed ?? 0) > 1 ? "s" : ""} nécessaire${(alloc.needed ?? 0) > 1 ? "s" : ""} · ${alloc.confirmed ?? 0} confirmée${(alloc.confirmed ?? 0) > 1 ? "s" : ""}${alloc.missing ? ` · ${alloc.missing} sans lieu disponible` : ""}${alloc.status === "confirmed" ? " · tous les lieux sont confirmés" : ""}.`
-    : `Les lieux sont choisis automatiquement à la fermeture des réservations (${adminDate(closesAt.toISOString())}), d'après les fiches des lieux. ${s.venueCapacity != null ? `Capacité des lieux compatibles : ${s.venueCapacity} personnes.` : ""}`;
+    : `Les restaurants sont réservés automatiquement la veille à 15h (${adminDate(venueOptionsAt(start).toISOString())}), d'après les fiches des lieux. ${s.venueCapacity != null ? `Capacité des lieux compatibles : ${s.venueCapacity} personnes.` : ""}`;
+  // Timeline du 24/11 : le déroulé de la date, étape par étape (fait / à venir).
+  const nowMs = d.now.getTime();
+  const step = (label: string, at: Date, done: boolean, detail: string) => ({ label, at: adminDate(at.toISOString()), done, late: !done && nowMs >= at.getTime(), detail });
+  const timeline = secret
+    ? [
+        step("Options aux restaurants", venueOptionsAt(start), Boolean(alloc), "Inscrits du moment + une table de marge."),
+        step("Appel des lieux sans réponse", venueCallAt(start), alloc?.status === "confirmed" || alloc?.status === "manual", "Alerte à l'équipe s'il manque des confirmations."),
+        step("Fermeture des réservations", closesAt, nowMs >= closesAt.getTime(), "Gamme voisine, minimum, nombre final envoyé aux lieux."),
+        step("Dévoilement du lieu et des tables", revealAt, s.groupsStatus === "revealed", "Notification et e-mail aux participants."),
+        step("Récapitulatif aux lieux", recapAtFor(start), Boolean(s.tablesFinalAt), "Prénoms, allergies ; mise à jour 1 h avant si changement."),
+      ]
+    : requests.length > 0 || e.venue.revealPolicy !== "on_group_reveal"
+      ? [
+          step("Demande au lieu", venueOptionsAt(start), Boolean(s.fixedRequestAt) || requests.length > 0, "Nombre d'inscrits du moment."),
+          step("Fermeture des réservations", closesAt, nowMs >= closesAt.getTime(), "Nombre final envoyé au lieu s'il a changé."),
+          step("Récapitulatif au lieu", new Date(Math.max(recapAtFor(start).getTime(), closesAt.getTime())), Boolean(s.tablesFinalAt), "Prénoms et allergies."),
+        ]
+      : [];
   const riskOptions = s.risk?.status === "at_risk"
     ? d.sessions.filter((x) => x.id !== s.id && (x.status === "published" || x.status === "full") && new Date(x.startAt).getTime() > d.now.getTime() && seatsAvailable(x) >= s.seatsConfirmed && (x.experienceId === s.experienceId || (() => { const oe = d.experiences.get(x.experienceId); return Boolean(oe && (oe.templateId || oe.subcategoryId) === (e.templateId || e.subcategoryId) && (oe.venueTier ?? null) === (e.venueTier ?? null)); })()))
       .slice(0, 20).map((x) => ({ id: x.id, label: `${x.experienceId === s.experienceId ? "Autre date" : `Regrouper avec ${d.experiences.get(x.experienceId)?.title.fr ?? ""}`} · ${adminDate(x.startAt)} (${x.seatsConfirmed} inscrits)` }))
@@ -249,7 +267,18 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
       )}
       {(secret || requests.length > 0) && (
         <Card title={secret ? "Lieux : attribution automatique" : "Lieu : confirmation"} className="mt-6 scroll-mt-16" id="lieux">
-          <AllocationCard sessionId={s.id} summary={secret ? allocationSummary : "Le lieu fixe reçoit une demande de confirmation la veille, puis le récapitulatif 1 h avant."} rows={allocationRows} live={!d.isDemo} canRun={secret && s.seatsConfirmed > 0 && alloc?.status !== "manual" && d.now.getTime() < start.getTime()} />
+          {timeline.length > 0 && (
+            <ol className="mb-4 grid gap-2 sm:grid-cols-5" data-testid="session-timeline">
+              {timeline.map((t) => (
+                <li key={t.label} className={`rounded-xl border p-2.5 text-xs ${t.done ? "border-emerald-200 bg-emerald-50" : t.late ? "border-amber-300 bg-amber-50" : "border-line bg-white"}`}>
+                  <p className="font-semibold text-ink">{t.done ? "✓ " : ""}{t.label}</p>
+                  <p className="tabular-nums text-muted">{t.at}</p>
+                  <p className="mt-0.5 text-muted">{t.detail}</p>
+                </li>
+              ))}
+            </ol>
+          )}
+          <AllocationCard sessionId={s.id} summary={secret ? allocationSummary : "Le lieu fixe reçoit une demande la veille à 15h, le nombre final à la fermeture des réservations, puis le récapitulatif (le jour même à 11h, ou la veille au soir pour un début avant 14h)."} rows={allocationRows} live={!d.isDemo} canRun={secret && s.seatsConfirmed > 0 && alloc?.status !== "manual" && d.now.getTime() < start.getTime()} />
         </Card>
       )}
       {secret && (

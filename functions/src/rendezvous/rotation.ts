@@ -1,7 +1,8 @@
 import {
-  localDayAt, localDayKey, LAUNCH_ROTATION, mergeTemplates, rotationDays, rotationInputSchema, rotationPlan, rotationWeekInputSchema,
+  localDayAt, localDayKey, LAUNCH_ROTATION, mergeTemplates, rotationAddSchema, rotationDays, rotationDeadline, rotationInputSchema, rotationPlan, rotationWeekInputSchema, rotationWindows,
   type EventTemplate, type RotationEntry, type RotationOverride,
 } from "@thecommunity/shared";
+import { teamAlertOn } from "../tables/team";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -161,6 +162,7 @@ export async function setRotationWeekCore(raw: unknown, actor: { uid: string; ro
   if (override?.experienceId) {
     const e = await db.doc(`experiences/${override.experienceId}`).get();
     if (!e.exists || e.get("status") !== "published") invalidArgument([{ path: ["override", "experienceId"], message: "notPublished" }]);
+    if (e.get("categoryId") !== "move") invalidArgument([{ path: ["override", "experienceId"], message: "notActivity" }]);
     if (e.get("rendezvousId") && e.get("rendezvousId") !== id) invalidArgument([{ path: ["override", "experienceId"], message: "inOtherRendezvous" }]);
   }
   const overrides = { ...((rv.overrides ?? {}) as Record<string, RotationOverride>) };
@@ -171,6 +173,53 @@ export async function setRotationWeekCore(raw: unknown, actor: { uid: string; ro
   const r = await ensureRotationSessions(id);
   await audit({ actorUid: actor.uid, actorRole: actor.role, action: "rotation.week", targetType: "rendezvous", targetId: id, after: { date, experienceId: override ? override.experienceId ?? "none" : "rotation", shift: override?.shift ?? false, ...r } });
   return { ok: true, ...r };
+}
+
+/** Équipe : ajouter une activité à la fin de la rotation (depuis sa fiche), avec son heure et ses places. */
+export const adminRotationAddActivity = onCall({ region: REGION, timeoutSeconds: 120 }, async (req) => {
+  const actor = requireRole(req, ["admin", "superadmin"]);
+  const v = rotationAddSchema.safeParse(req.data);
+  if (!v.success) invalidArgument(v.error.issues);
+  const { id, experienceId, time, capacity } = v.data;
+  const ref = db.doc(`rendezvous/${id}`);
+  const rv = (await ref.get()).data();
+  if (!rv || rv.kind !== "rotation") throw new HttpsError("not-found", "Rotation introuvable.", { reason: "not_found" });
+  const e = await db.doc(`experiences/${experienceId}`).get();
+  if (!e.exists) throw new HttpsError("not-found", "Activité introuvable.", { reason: "not_found" });
+  if (e.get("status") !== "published") invalidArgument([{ path: ["experienceId"], message: "notPublished" }]);
+  if (e.get("categoryId") !== "move") invalidArgument([{ path: ["experienceId"], message: "notActivity" }]);
+  if (e.get("rendezvousId") && e.get("rendezvousId") !== id) invalidArgument([{ path: ["experienceId"], message: "inOtherRendezvous" }]);
+  const cycle = ((rv.cycle ?? []) as RotationEntry[]).filter((c) => c.experienceId !== experienceId);
+  if (cycle.length >= 12) invalidArgument([{ path: ["experienceId"], message: "tooMany" }]);
+  cycle.push({ experienceId, time, capacity });
+  await ref.update({ cycle, updatedAt: FieldValue.serverTimestamp(), updatedBy: actor.uid });
+  await syncExperiences(id, involvedIds(cycle, (rv.overrides ?? {}) as Record<string, RotationOverride>), new Date());
+  const r = await ensureRotationSessions(id);
+  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "rotation.add", targetType: "rendezvous", targetId: id, after: { experienceId, position: cycle.length, ...r } });
+  return { ok: true, position: cycle.length, ...r };
+});
+
+/**
+ * 48 h avant qu'un samedi s'ouvre aux réservations (aux abonnés Pass d'abord), l'équipe reçoit l'activité prévue :
+ * à confirmer, ou à changer tant que personne n'a réservé. Une seule alerte par samedi.
+ */
+export async function rotationOpeningAlerts(now = new Date()): Promise<number> {
+  const rvs = await db.collection("rendezvous").where("kind", "==", "rotation").where("status", "==", "active").get();
+  let sent = 0;
+  for (const d of rvs.docs) {
+    const rv = d.data();
+    const plan = rotationPlan({ weekday: Number(rv.weekday), anchor: String(rv.anchor), cycle: (rv.cycle ?? []) as RotationEntry[], overrides: (rv.overrides ?? {}) as Record<string, RotationOverride> }, rotationDays(Number(rv.weekday), now, 4));
+    const windows = rotationWindows(plan, now);
+    for (const w of plan) {
+      const deadline = rotationDeadline(windows.get(w.date));
+      if (!deadline || !w.entry || deadline.getTime() - now.getTime() > 48 * 3_600_000) continue;
+      const title = String((await db.doc(`experiences/${w.entry.experienceId}`).get()).get("title.fr") ?? "Activité");
+      const when = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Casablanca" }).format(deadline);
+      const day = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${w.date}T12:00:00Z`));
+      if (await teamAlertOn(d.ref, { key: `opening_${w.date}`, subject: `Activité du ${day} : ${title}`, paragraphs: [`Le ${day}, l'activité prévue est « ${title} » (${w.entry.time.replace(":", "h")}, ${w.entry.capacity} places). Elle s'ouvre aux réservations ${when}.`, "Rien à faire si c'est bon. Pour la changer (proposition d'un partenaire, autre activité, pas d'activité), faites-le avant l'ouverture depuis le planning."], path: "/admin/rendez-vous" })) sent++;
+    }
+  }
+  return sent;
 }
 
 /**

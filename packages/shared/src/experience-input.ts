@@ -40,7 +40,7 @@ export const experienceInputSchema = z
     /** Étape 19 : sous-catégorie facultative (rattachée à la catégorie choisie, vérifié par le serveur). */
     subcategoryId: z.string().regex(CATEGORY_ID_PATTERN, "required").optional().or(z.literal("")),
     cityId: z.string().min(1, "required"),
-    // docs/22, décision 15 : lieu secret → le lieu peut être choisi plus tard (au plus tard 5 h avant) ; lieu affiché → obligatoire.
+    // docs/22, décision 15 : lieu secret → le lieu peut être choisi plus tard (avant le dévoilement, la veille 21h30) ; lieu affiché → obligatoire.
     district: z.string().trim().max(60, "tooLong").default(""),
     venueName: z.string().trim().max(100, "tooLong").default(""),
     address: z.string().trim().max(200, "tooLong").default(""),

@@ -541,7 +541,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
             "Virement bancaire : une référence unique et les coordonnées de Wenzy vous sont communiquées ; la réservation est confirmée dès réception du virement du montant exact. Non reçu à l'échéance, la place est libérée ; un virement arrivé ensuite donne droit à une place s'il en reste, sinon il est remboursé.",
             "Paiement par carte : auprès d'un prestataire sécurisé ; Wenzy ne reçoit ni ne conserve aucune donnée de carte.",
             "Les rendez-vous de la semaine (le Dîner du mercredi, l'activité du samedi, le Café du samedi, le Brunch du dimanche) : une seule date est ouverte à la fois (pour l'activité du samedi, une seule pour toute la rotation) et ses réservations ferment la veille à 20h30 ; la date suivante s'ouvre alors (avec un Pass, une semaine plus tôt).",
-            "Tables : vous choisissez votre gamme (Casual, Premium ou Exclusive), qui fixe le type de restaurant et le budget sur place. Si vous acceptez la gamme voisine, vous pouvez y être placé·e quand votre gamme n'a pas assez d'inscrits ; sinon, l'article 5 s'applique. Les autres Tables ferment 12 heures avant le début (au plus tard la veille à 18 h pour un début avant 14 h) ; les autres activités, 2 heures avant."
+            "Tables : vous choisissez votre gamme (Casual, Premium ou Exclusive), qui fixe le type de restaurant et le budget sur place. Si vous acceptez la gamme voisine, vous pouvez y être placé·e quand votre gamme n'a pas assez d'inscrits ; sinon, l'article 5 s'applique. Les autres Tables ferment aussi la veille à 20h30 ; les autres activités, 2 heures avant."
           ]
         ]
       },
@@ -558,7 +558,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
         "body": [
           "Si Wenzy annule un événement, les frais Wenzy sont intégralement remboursés.",
           "S'il n'y a pas assez d'inscrits pour former une table ou un groupe, Wenzy peut maintenir l'événement, vous proposer une autre date ou un événement équivalent (même format, même gamme). Vous acceptez la proposition, sans repayer, ou vous êtes intégralement remboursé·e ; vous n'êtes jamais déplacé·e sans votre accord, et sans réponse à l'heure indiquée, vous êtes remboursé·e.",
-          "Le lieu des Tables est choisi après la fermeture des réservations, parmi nos lieux partenaires, puis révélé 5 heures avant le début (la veille à 21 h pour un début le matin ou le midi). Plusieurs lieux peuvent accueillir les tables d'une même date. Si un lieu change après la révélation, les personnes concernées sont prévenues aussitôt."
+          "Le lieu des Tables est réservé parmi nos lieux partenaires la veille, avant la fermeture des réservations, puis dévoilé la veille à 21h30. Plusieurs lieux peuvent accueillir les tables d'une même date. Si un lieu change après la révélation, les personnes concernées sont prévenues aussitôt."
         ]
       },
       {
@@ -1230,7 +1230,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
             "Bank transfer: you receive a unique reference and Wenzy's bank details; the booking is confirmed once the exact amount is received. If not received by the deadline, the seat is released; a later transfer gets a seat if one is left, otherwise it is refunded.",
             "Card payment: through a secure provider; Wenzy never receives or stores card data.",
             "Weekly gatherings (Wednesday Dinner, the Saturday activity, Saturday Coffee, Sunday Brunch): one date is open at a time (for the Saturday activity, one for the whole rotation) and its bookings close at 8:30 pm the day before; the next date then opens (a week earlier with a Pass).",
-            "Tables: you choose your tier (Casual, Premium or Exclusive), which sets the type of restaurant and the budget on site. If you accept the neighbouring tier, you may be placed there when your tier doesn't have enough people; otherwise, section 5 applies. Other Tables close 12 hours before the start (at the latest 6 pm the day before for a start before 2 pm); other activities, 2 hours before."
+            "Tables: you choose your tier (Casual, Premium or Exclusive), which sets the type of restaurant and the budget on site. If you accept the neighbouring tier, you may be placed there when your tier doesn't have enough people; otherwise, section 5 applies. Other Tables also close at 8:30 pm the evening before; other activities, 2 hours before."
           ]
         ]
       },
@@ -1247,7 +1247,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
         "body": [
           "If Wenzy cancels an event, the Wenzy fee is refunded in full.",
           "If there aren't enough people to form a table or group, Wenzy may keep the event, or offer you another date or an equivalent event (same format, same tier). You accept the offer at no extra cost, or you're refunded in full; you're never moved without your consent, and without an answer by the stated time, you're refunded.",
-          "The venue for Tables is chosen after bookings close, among our partner venues, then revealed 5 hours before the start (9 pm the day before for a morning or lunchtime start). Several venues may host the tables of one date. If a venue changes after the reveal, the people concerned are told straight away."
+          "The venue for Tables is booked among our partner venues the day before, before bookings close, then revealed at 9:30 pm the evening before. Several venues may host the tables of one date. If a venue changes after the reveal, the people concerned are told straight away."
         ]
       },
       {

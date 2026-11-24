@@ -25,16 +25,17 @@ export const wenzyPriceInputSchema = z.object({ priceDh: z.coerce.number().min(0
 export const MAX_SEATS_PER_BOOKING = 20;
 
 /**
- * Fermeture des réservations avant le début (docs/08 §4) : 12 h pour les dîners, dont les tables
- * doivent être composées à l'avance ; 2 h pour les autres formats.
+ * Fermeture des réservations avant le début (docs/08 §4) : 2 h avant pour les activités et événements. Les Tables
+ * (dîners, cafés, brunchs en tables composées) ferment toujours la veille à 20h30 (timeline du 24/11, ci-dessous).
  */
 export function bookingCloseHours(mode: BookingMode): number {
-  return mode === "social_dinner" ? 12 : 2;
+  return mode === "social_dinner" ? 24 : 2;
 }
 
 /**
  * Règle de fermeture propre à une expérience (docs/25) : « eve » = la veille à 20h30 (heure du Maroc), pour les
- * rendez-vous de la semaine (tables composées et restaurants réservés la veille). Sans règle : selon le format.
+ * rendez-vous de la semaine. Timeline du 24/11 : c'est aussi la règle de TOUTES les Tables (restaurants réservés
+ * l'après-midi de la veille, tables composées et lieu dévoilé le soir même).
  */
 export type CloseRule = "eve";
 export const EVE_CLOSE = { hour: 20, minute: 30 } as const;
@@ -43,14 +44,9 @@ type CloseInput = BookingMode | { bookingMode?: unknown; closeRule?: unknown };
 
 export function bookingClosesAt(startAt: Date, modeOrExperience: CloseInput): Date {
   const mode = (typeof modeOrExperience === "string" ? modeOrExperience : modeOrExperience.bookingMode) as BookingMode;
-  if (typeof modeOrExperience !== "string" && modeOrExperience.closeRule === "eve") return localOnDayBefore(startAt, EVE_CLOSE.hour, EVE_CLOSE.minute);
-  const closes = new Date(startAt.getTime() - bookingCloseHours(mode) * 3_600_000);
-  if (mode !== "social_dinner") return closes;
-  // docs/22, décision 42 : début avant 14 h → fermeture au plus tard à 18 h la veille (on appelle les lieux de jour).
-  const z = zonedParts(startAt, MOROCCO_TIMEZONE);
-  if (z.hour >= 14) return closes;
-  const eve = localOnDayBefore(startAt, 18);
-  return eve.getTime() < closes.getTime() ? eve : closes;
+  const eve = typeof modeOrExperience !== "string" && modeOrExperience.closeRule === "eve";
+  if (eve || mode === "social_dinner") return localOnDayBefore(startAt, EVE_CLOSE.hour, EVE_CLOSE.minute);
+  return new Date(startAt.getTime() - bookingCloseHours(mode) * 3_600_000);
 }
 
 /** `hour` h (heure du Maroc) la veille du jour de `instant`. */

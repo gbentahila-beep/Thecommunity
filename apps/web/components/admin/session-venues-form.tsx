@@ -16,7 +16,7 @@ const emptyRow = (): Row => ({ partnerId: "", name: "", address: "", coords: "",
 
 /**
  * Lieu(x) d'une date à lieu secret (docs/22, décision 15) : un ou plusieurs restaurants, choisis parmi les lieux
- * partenaires ou saisis librement, au plus tard 5 h avant. Options : appliquer aux prochaines dates, lieu habituel.
+ * partenaires ou saisis librement, avant le dévoilement (la veille 21h30). Options : appliquer aux prochaines dates, lieu habituel.
  */
 export function SessionVenuesForm({ sessionId, initial, defaultVenue, partners, live, past }: { sessionId: string; initial: SessionVenue[]; defaultVenue: { name: string; address: string } | null; partners: PartnerOption[]; live: boolean; past: boolean }) {
   const router = useRouter();
