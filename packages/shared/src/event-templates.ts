@@ -110,7 +110,7 @@ const TABLE = {
   questionnaire: [] as QuestionDef[],
 };
 
-export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
+const BASE_TEMPLATES: EventTemplate[] = [
   // ——— Tables ———
   {
     id: "cafe", name: "Café", image: "/images/modeles/cafe.webp", order: 1, isActive: true, builtIn: true,
@@ -309,24 +309,6 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
     },
   },
   {
-    // 24/11 : l'édition spéciale du mois, dans Événements, réservée aux femmes (vérifié à la réservation).
-    id: "girls-only", name: "Girls only", image: "/images/modeles/brunch.webp", order: 2, isActive: true, builtIn: true,
-    values: {
-      ...COMMON, categoryId: "discover", audience: "women", revealPolicy: "immediate", bookingMode: "group", groupMin: 4, groupMax: 6, capacity: 24, durationMinutes: 150, weekday: 6, time: "13:00",
-      titleFr: "Brunch Girls only",
-      summaryFr: "L'édition spéciale du mois, entre femmes : un brunch pour élargir son cercle.",
-      descriptionFr: "Une fois par mois, un brunch réservé aux femmes dans une adresse partenaire, à des tables de 4 à 6, pour rencontrer d'autres femmes de Casablanca.",
-      titleAr: "برانش للنساء فقط", summaryAr: "الإصدار الخاص لهذا الشهر، بين النساء: برانش لتوسيع دائرتك.",
-      descriptionAr: "مرة في الشهر، برانش مخصص للنساء في عنوان شريك، على طاولات من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء.",
-      titleEn: "Girls only brunch", summaryEn: "This month's special edition, women only: a brunch to widen your circle.",
-      descriptionEn: "Once a month, a women-only brunch at a partner venue, at tables of 4 to 6, to meet other women in Casablanca.",
-      pricingModel: "variable_consumption", budgetMinDh: 150, budgetMaxDh: 300,
-      included: "Une table réservée pour le groupe",
-      includedAr: "طاولة محجوزة للمجموعة", includedEn: "A table reserved for the group",
-      questionnaire: [],
-    },
-  },
-  {
     id: "echange-langues", name: "Échange de langues", image: "/images/modeles/echange-langues.webp", order: 5, isActive: true, builtIn: true,
     values: {
       ...COMMON, categoryId: "discover", revealPolicy: "immediate", bookingMode: "group", groupMin: 4, groupMax: 6, capacity: 24, durationMinutes: 120, weekday: 3, time: "19:00",
@@ -386,6 +368,41 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
       questionnaire: [],
     },
   },
+];
+
+/**
+ * 25/11 : éditions spéciales « Girls only », dans les Tables (café, brunch, déjeuner, dîner), réservées aux femmes
+ * (vérifié par le serveur à la réservation). Rien d'automatique : l'équipe crée chaque édition à la main depuis ces
+ * modèles (date, gamme, places), aucune date ni rendez-vous n'est créé tout seul.
+ */
+const GIRLS_ONLY: { id: string; fr: [string, string, string]; ar: [string, string, string]; en: [string, string, string] }[] = [
+  { id: "cafe", fr: ["Café Girls only", "Un café entre femmes, pour élargir son cercle.", "Une édition spéciale réservée aux femmes : un café choisi par notre équipe, à une table de 4 à 6, pour rencontrer d'autres femmes de Casablanca."], ar: ["قهوة للنساء فقط", "قهوة بين النساء لتوسيع دائرتك.", "إصدار خاص مخصص للنساء: مقهى يختاره فريقنا، على طاولة من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء."], en: ["Girls only coffee", "A women-only coffee, to widen your circle.", "A special edition for women only: a café chosen by our team, at a table of 4 to 6, to meet other women in Casablanca."] },
+  { id: "brunch", fr: ["Brunch Girls only", "Un brunch entre femmes, pour élargir son cercle.", "Une édition spéciale réservée aux femmes : un brunch dans un restaurant choisi par notre équipe, à une table de 4 à 6, pour rencontrer d'autres femmes de Casablanca."], ar: ["برانش للنساء فقط", "برانش بين النساء لتوسيع دائرتك.", "إصدار خاص مخصص للنساء: برانش في مطعم يختاره فريقنا، على طاولة من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء."], en: ["Girls only brunch", "A women-only brunch, to widen your circle.", "A special edition for women only: a brunch in a restaurant chosen by our team, at a table of 4 to 6, to meet other women in Casablanca."] },
+  { id: "dejeuner", fr: ["Déjeuner Girls only", "Un déjeuner entre femmes, pour élargir son cercle.", "Une édition spéciale réservée aux femmes : un déjeuner dans un restaurant choisi par notre équipe, à une table de 4 à 6, pour rencontrer d'autres femmes de Casablanca."], ar: ["غداء للنساء فقط", "غداء بين النساء لتوسيع دائرتك.", "إصدار خاص مخصص للنساء: غداء في مطعم يختاره فريقنا، على طاولة من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء."], en: ["Girls only lunch", "A women-only lunch, to widen your circle.", "A special edition for women only: lunch in a restaurant chosen by our team, at a table of 4 to 6, to meet other women in Casablanca."] },
+  { id: "diner", fr: ["Dîner Girls only", "Un dîner entre femmes, pour élargir son cercle.", "Une édition spéciale réservée aux femmes : un dîner dans un restaurant choisi par notre équipe, à une table de 4 à 6, pour rencontrer d'autres femmes de Casablanca."], ar: ["عشاء للنساء فقط", "عشاء بين النساء لتوسيع دائرتك.", "إصدار خاص مخصص للنساء: عشاء في مطعم يختاره فريقنا، على طاولة من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء."], en: ["Girls only dinner", "A women-only dinner, to widen your circle.", "A special edition for women only: dinner in a restaurant chosen by our team, at a table of 4 to 6, to meet other women in Casablanca."] },
+];
+
+/** Préfixe des modèles « Girls only » (éditions spéciales, créées à la main à chaque fois). */
+export const SPECIAL_TEMPLATE_PREFIX = "girls-only-";
+export const isSpecialTemplate = (t: Pick<EventTemplate, "id">) => t.id.startsWith(SPECIAL_TEMPLATE_PREFIX);
+
+export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
+  ...BASE_TEMPLATES,
+  ...GIRLS_ONLY.map((g, i): EventTemplate => {
+    const base = BASE_TEMPLATES.find((t) => t.id === g.id)!;
+    return {
+      ...base,
+      id: `${SPECIAL_TEMPLATE_PREFIX}${g.id}`,
+      name: `${base.name} Girls only`,
+      order: 10 + i,
+      values: {
+        ...base.values, audience: "women",
+        titleFr: g.fr[0], summaryFr: g.fr[1], descriptionFr: g.fr[2],
+        titleAr: g.ar[0], summaryAr: g.ar[1], descriptionAr: g.ar[2],
+        titleEn: g.en[0], summaryEn: g.en[1], descriptionEn: g.en[2],
+      },
+    };
+  }),
 ];
 
 /** Univers où ranger un modèle, dans l'ordre d'affichage : Tables, Activités, Événements (docs/25). */

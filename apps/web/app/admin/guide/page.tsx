@@ -19,7 +19,8 @@ const A = ({ href, children }: { href: string; children: ReactNode }) => <Link h
 
 /**
  * 24/11 : guide de l'équipe. Le principe, la semaine type (qui fait quoi et quand), et « comment faire » pas à pas
- * pour les questions qui reviennent : places, activité du samedi, événements, Girls only, organisateurs.
+ * pour les questions qui reviennent : places, activité du samedi, événements, Tables Girls only, participants,
+ * organisateurs, alertes, site de démo (mis à jour le 25/11).
  */
 export default function AdminGuidePage() {
   return (
@@ -30,9 +31,9 @@ export default function AdminGuidePage() {
         <div className="space-y-3 text-sm">
           <p>Wenzy, ce sont <strong>des rendez-vous qui reviennent chaque semaine</strong>, rangés en 3 univers :</p>
           <ul className="list-disc space-y-1.5 ps-5">
-            <li><strong>Tables</strong> : le Dîner du mercredi (20h30), le Café du samedi (16h), le Brunch du dimanche (12h30). Chaque rendez-vous a ses gammes : Casual et Premium chaque semaine, <strong>Exclusive en plus</strong> le premier mercredi du mois (ce jour-là, il y a donc 3 dîners en parallèle : Casual, Premium et Exclusive). Le restaurant est secret, choisi et réservé par le site.</li>
+            <li><strong>Tables</strong> : le Dîner du mercredi (20h30), le Café du samedi (16h), le Brunch du dimanche (12h30). Chaque rendez-vous a ses gammes : Casual et Premium chaque semaine, <strong>Exclusive en plus</strong> le premier mercredi du mois (ce jour-là, il y a donc 3 dîners en parallèle : Casual, Premium et Exclusive). Le restaurant est secret, choisi et réservé par le site. Et de temps en temps, une <strong>Table Girls only</strong> que vous créez à la main.</li>
             <li><strong>Activités</strong> : <em>l&apos;activité du samedi</em>, une seule par samedi, qui tourne (céramique, padel, yoga, escape game…). Une activité de cet univers n&apos;a pas de date à elle : elle passe le samedi, via le planning.</li>
-            <li><strong>Événements</strong> : tout le reste, avec sa propre date : une soirée, un afterwork, un padel ponctuel un autre jour, le Girls only du mois.</li>
+            <li><strong>Événements</strong> : tout le reste, avec sa propre date : une soirée, un afterwork, un padel ponctuel un autre jour.</li>
           </ul>
           <p>Une seule date est ouverte à la réservation à la fois pour chaque rendez-vous : la suivante s&apos;ouvre quand la précédente ferme (la veille à 20h30). Les abonnés Pass voient une date d&apos;avance.</p>
           <p>Au quotidien : l&apos;<A href="/admin">Accueil</A> (ce qui attend une action et les 7 prochains jours), le <A href="/admin/programme">Calendrier</A> (la semaine, jour par jour) et les <A href="/admin/rendez-vous">Rendez-vous</A> (dîner, café, brunch, planning des samedis). Tout ce qui concerne une date (lieux, tables, participants, demandes, signalements) est sur la page de cette date : en haut, « Où en est cette date » montre l&apos;étape en cours.</p>
@@ -81,23 +82,41 @@ export default function AdminGuidePage() {
         </Q>
         <Q id="evenement" title="Créer un événement (soirée, afterwork, padel ponctuel…)">
           <Steps>
-            <li><A href="/admin/experiences/nouvelle">Créer</A> → « <strong>Un événement avec sa date</strong> » → un modèle (Afterwork, Girls only…) ou une page blanche.</li>
+            <li><A href="/admin/experiences/nouvelle">Créer</A> → « <strong>Un événement avec sa date</strong> » → un modèle (Afterwork…) ou une page blanche.</li>
             <li>Étape 6 : cochez « Programmer des dates maintenant », choisissez la date, l&apos;heure, la répétition éventuelle et la <em>capacité par date</em>. Sans date, la fiche s&apos;affiche avec « Prochaines dates bientôt ».</li>
             <li>Statut <strong>Publiée</strong> : l&apos;événement apparaît dans Événements, et sur l&apos;accueil la semaine où il a lieu.</li>
           </Steps>
         </Q>
-        <Q id="girls-only" title="Prévoir le Girls only du mois">
+        <Q id="girls-only" title="Créer une Table Girls only (café, brunch, déjeuner, dîner)">
+          <p>Rien n&apos;est automatique : chaque édition Girls only se crée à la main, quand vous le décidez.</p>
           <Steps>
-            <li><A href="/admin/experiences/nouvelle">Créer</A> → « Un événement avec sa date » → modèle <strong>Girls only</strong> (univers Événements, déjà réglé « réservé aux femmes » : le site le vérifie à la réservation).</li>
-            <li>Choisissez le lieu partenaire, puis à l&apos;étape 6 la date du mois (ex. un samedi à 13h) et les places.</li>
-            <li>Les mois suivants : sur sa fiche, « + Ajouter des dates ». Il apparaît dans Événements et sur l&apos;accueil la semaine concernée.</li>
+            <li><A href="/admin/experiences/nouvelle">Créer</A> → « <strong>Une Table spéciale (dont Girls only)</strong> » → section <em>Éditions spéciales Girls only</em> → Café, Brunch, Déjeuner ou Dîner Girls only.</li>
+            <li>Choisissez la gamme (Casual, Premium, Exclusive) : elle fixe le type de restaurant et le budget.</li>
+            <li>Étape 6 : la date, l&apos;heure et les places. Le modèle est déjà réglé « réservé aux femmes » (le site le vérifie à la réservation).</li>
+            <li>Statut <strong>Publiée</strong> : elle apparaît dans Tables et sur l&apos;accueil la semaine concernée. Ensuite, tout suit le même déroulé qu&apos;une Table : restaurants réservés la veille à 15h, lieu dévoilé à 21h30, récapitulatif le jour J.</li>
           </Steps>
+          <p className="text-muted">Pour refaire la même édition un autre jour : sur sa fiche, « + Ajouter des dates ».</p>
+        </Q>
+        <Q id="participants" title="Voir qui vient, déplacer ou annuler une réservation">
+          <ul className="list-disc space-y-1.5 ps-5">
+            <li>Ouvrez la date (Calendrier ou Accueil) : partie <strong>Participants</strong>. Pour chacun : âge, langues, régime et allergies, paiement en ligne et sur place.</li>
+            <li><em>Déplacer</em> : vers une autre date du même événement ; <em>Annuler</em> : remboursement selon la règle (intégral par défaut quand c&apos;est l&apos;équipe qui annule).</li>
+            <li><em>Imprimer, exporter</em> (en haut de la page) : liste des participants, supports imprimés, fiche pour le lieu.</li>
+          </ul>
+        </Q>
+        <Q id="demo" title="Site de démo : tout remettre à zéro">
+          <p>Sur le site de démonstration seulement : <A href="/admin/demo">Réglages → Site de démo</A> (ou le raccourci de l&apos;Accueil).</p>
+          <Steps>
+            <li>Indiquez les <strong>comptes invités</strong> (une adresse par ligne) : à chaque remise à zéro, ils sont inscrits à un créneau de chaque rendez-vous de la semaine, pour vivre le parcours complet. Le compte doit exister et son profil être complété.</li>
+            <li>« <strong>Réinitialiser et remplir la semaine</strong> », puis tapez RÉINITIALISER : tout ce qui s&apos;est passé est effacé (réservations, paiements, factures, tables, boîte d&apos;envoi, dates passées), le contenu est gardé, et 300 participants fictifs remplissent les 7 prochains jours.</li>
+          </Steps>
+          <p className="text-muted">À refaire quand le temps passe : la semaine se remplit à nouveau en moins d&apos;une minute. Les participants fictifs n&apos;ont pas d&apos;e-mail réel : rien ne leur est envoyé.</p>
         </Q>
         <Q id="organisateur" title="Un organisateur propose une activité">
           <ul className="list-disc space-y-1.5 ps-5">
             <li>Sa fiche arrive dans « À traiter » sur l&apos;<A href="/admin">Accueil</A> : relisez, publiez ou refusez avec un message. Ses modifications ultérieures attendent aussi votre validation.</li>
             <li>Une activité proposée <strong>pour un samedi</strong> apparaît en haut du <A href="/admin/rendez-vous">planning des samedis</A> : acceptez-la pour le samedi choisi.</li>
-            <li>Ses demandes d&apos;annulation d&apos;une date arrivent aussi dans À faire.</li>
+            <li>Ses demandes d&apos;annulation d&apos;une date arrivent aussi dans « À traiter ».</li>
           </ul>
         </Q>
         <Q id="alertes" title="Que faire sur une alerte ?">
@@ -115,10 +134,11 @@ export default function AdminGuidePage() {
           <li><A href="/admin">Accueil</A> : ce qui attend une action, les 7 prochains jours, des raccourcis.</li>
           <li><A href="/admin/programme">Calendrier</A> : la semaine, jour par jour ; une date s&apos;ouvre sur sa page.</li>
           <li><A href="/admin/rendez-vous">Rendez-vous</A> : dîner, café, brunch (réglages, prochaine date) et planning des samedis.</li>
-          <li><A href="/admin/experiences">Événements</A> : les fiches, rangées en Activités du samedi, Événements et Tables.</li>
+          <li><A href="/admin/experiences">Événements</A> : les fiches, rangées en Activités du samedi, Événements et Tables (dont Girls only).</li>
           <li><A href="/admin/utilisateurs">Membres</A> : comptes, Pass, avis, signalements.</li>
           <li><A href="/admin/partenaires">Partenaires</A> : lieux (capacité, créneaux, gammes) et organisateurs.</li>
-          <li><A href="/admin/paiements">Argent</A> et <A href="/admin/parametres">Réglages</A>.</li>
+          <li><A href="/admin/paiements">Argent</A> : paiements, remboursements, virements, codes promo, statistiques.</li>
+          <li><A href="/admin/parametres">Réglages</A> : paramètres, accueil du site, centre d&apos;aide, boîte d&apos;envoi, site de démo.</li>
         </ul>
       </Card>
     </div>

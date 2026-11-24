@@ -25,8 +25,8 @@ const TIER_ORDER = ["casual", "premium", "exclusive"];
 
 const SECTIONS = [
   { key: "move", title: "Activités du samedi", hint: "Elles passent le samedi, via le planning des samedis.", bar: "border-s-emerald-600" },
-  { key: "discover", title: "Événements", hint: "Chacun a ses propres dates (soirées, Girls only…).", bar: "border-s-amber-500" },
-  { key: "eat", title: "Tables", hint: "Les gammes des rendez-vous de la semaine (dîner, café, brunch).", bar: "border-s-brand-700" },
+  { key: "discover", title: "Événements", hint: "Chacun a ses propres dates (soirées, afterworks…).", bar: "border-s-amber-500" },
+  { key: "eat", title: "Tables", hint: "Les gammes des rendez-vous de la semaine (dîner, café, brunch) et les éditions Girls only.", bar: "border-s-brand-700" },
 ] as const;
 
 /**

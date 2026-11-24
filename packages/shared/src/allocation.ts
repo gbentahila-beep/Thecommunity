@@ -63,7 +63,8 @@ export function partnerMatches(p: HostPartner, e: { templateId?: string | null; 
   if (p.status && p.status !== "active") return false;
   if (e.cityId && p.cityId && p.cityId !== e.cityId) return false;
   const formats = p.formats ?? [];
-  const format = e.templateId || e.subcategoryId || "";
+  // Une édition Girls only (modèle « girls-only-diner ») va dans les mêmes lieux que son format (« diner »).
+  const format = (e.templateId || e.subcategoryId || "").replace(/^girls-only-/, "");
   if (!format || !formats.includes(format)) return false;
   if (e.venueTier && !(p.tiers ?? []).includes(e.venueTier as never)) return false;
   return true;

@@ -1,4 +1,4 @@
-import { isCalendarTemplate, TEMPLATE_UNIVERSES, tierRange, VENUE_TIERS, type EventTemplate, type VenueTier } from "@thecommunity/shared";
+import { isCalendarTemplate, isSpecialTemplate, TEMPLATE_UNIVERSES, tierRange, VENUE_TIERS, type EventTemplate, type VenueTier } from "@thecommunity/shared";
 import Link from "next/link";
 import { ExperienceForm } from "@/components/admin/experience-form";
 import { PageHeader } from "@/components/admin/ui";
@@ -91,10 +91,13 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
         <Steps univers={univers} template={null} gamme={null} catName={catName} />
         <PageHeader title={`${catName.get(univers) ?? "Univers"} : quel modèle ?`} subtitle="Tout sera pré-rempli, photo comprise. Vous pourrez tout modifier." />
         {/* docs/25 : les modèles du calendrier d'abord, ceux « pour plus tard » ensuite. */}
-        {([["calendar", list.filter(isCalendarTemplate)], ["later", list.filter((t) => !isCalendarTemplate(t))]] as const).map(([k, items]) =>
+        {/* 25/11 : les éditions Girls only à part — créées à la main, une à une (rien d'automatique). */}
+        {([["calendar", list.filter((t) => isCalendarTemplate(t) && !isSpecialTemplate(t))], ["special", list.filter(isSpecialTemplate)], ["later", list.filter((t) => !isCalendarTemplate(t))]] as const).map(([k, items]) =>
           items.length === 0 ? null : (
-            <section key={k} className={k === "later" ? "mt-8" : ""}>
-              <h2 className="mb-3 text-sm font-semibold tracking-wide text-muted uppercase">{k === "calendar" ? "Au calendrier" : "Pour plus tard"}</h2>
+            <section key={k} className={k !== "calendar" ? "mt-8" : ""}>
+              <h2 className="mb-1 text-sm font-semibold tracking-wide text-muted uppercase">{k === "calendar" ? "Au calendrier" : k === "special" ? "Éditions spéciales Girls only" : "Pour plus tard"}</h2>
+              {k === "special" && <p className="mb-3 text-sm text-muted">Réservées aux femmes (vérifié à la réservation). Rien d&apos;automatique : vous créez chaque édition ici, avec sa date, sa gamme et ses places.</p>}
+              {k !== "special" && <div className="mb-2" />}
               <ul className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ${k === "later" ? "opacity-80" : ""}`} data-testid="template-choice">
                 {items.map((t) => (
                   <li key={t.id}>
@@ -118,8 +121,8 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
   // Étape 1 (refonte UX du 25/11) : ce que l'on veut créer, en mots simples ; l'univers en découle.
   const INTENTS = [
     { u: "move", title: "Une activité pour le samedi", text: "Pilates, tennis, atelier… Elle passe le samedi, dans le planning des samedis : pas de date à saisir.", tone: "border-s-emerald-600" },
-    { u: "discover", title: "Un événement avec sa date", text: "Soirée, afterwork, Girls only du mois, padel un autre jour… Vous choisissez la date et les places.", tone: "border-s-amber-500" },
-    { u: "eat", title: "Une Table spéciale", text: "Dîner, café ou brunch en tables composées. Les rendez-vous de la semaine existent déjà et créent leurs dates tout seuls.", tone: "border-s-brand-700" },
+    { u: "discover", title: "Un événement avec sa date", text: "Soirée, afterwork, padel un autre jour… Vous choisissez la date et les places.", tone: "border-s-amber-500" },
+    { u: "eat", title: "Une Table spéciale (dont Girls only)", text: "Café, brunch, déjeuner ou dîner en tables composées, par exemple une édition Girls only. Les rendez-vous de la semaine existent déjà et créent leurs dates tout seuls.", tone: "border-s-brand-700" },
   ] as const;
   return (
     <div className="max-w-4xl">
@@ -127,7 +130,7 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
       <PageHeader title="Que voulez-vous créer ?" subtitle="Choisissez, puis un modèle : tout est pré-rempli, photo comprise." actions={<Link href="/admin/modeles" className="text-sm font-semibold text-brand-900 underline">Gérer les modèles</Link>} />
       <ul className="grid gap-4" data-testid="universe-choice">
         {INTENTS.filter((x) => (TEMPLATE_UNIVERSES as readonly string[]).includes(x.u)).map((x) => {
-          const list = active.filter((t) => t.values.categoryId === x.u && isCalendarTemplate(t));
+          const list = active.filter((t) => t.values.categoryId === x.u && isCalendarTemplate(t) && !isSpecialTemplate(t));
           return (
             <li key={x.u}>
               <Link href={`/admin/experiences/nouvelle?univers=${x.u}`} className={`${card} border-s-4 p-5 ${x.tone}`}>
@@ -136,7 +139,7 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
                   <span className="text-xs font-medium uppercase tracking-wide text-muted">{catName.get(x.u) ?? x.u}</span>
                 </span>
                 <span className="mt-1 text-sm text-ink/80">{x.text}</span>
-                {list.length > 0 && <span className="mt-2 text-xs text-muted">Modèles : {list.map((t) => t.name).join(" · ")}</span>}
+                {list.length > 0 && <span className="mt-2 text-xs text-muted">Modèles : {list.map((t) => t.name).join(" · ")}{x.u === "eat" ? " · éditions Girls only" : ""}</span>}
               </Link>
             </li>
           );

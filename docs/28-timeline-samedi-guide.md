@@ -41,8 +41,10 @@ La même pour tous les rendez-vous, et pour toutes les Tables (rendez-vous ou no
 ## 3. Exclusive et Girls only
 
 - Exclusive : **en plus** de Casual et Premium, le premier mercredi du mois (3 dîners en parallèle ce jour-là).
-- Girls only : édition spéciale du mois dans **Événements**, nouveau modèle « Girls only » (brunch, réservé aux femmes,
-  vérifié par le serveur à la réservation). L'équipe crée l'événement depuis le modèle et ajoute une date par mois.
+- Girls only (révisé le 25/11) : dans les **Tables**, 4 modèles « Café / Brunch / Déjeuner / Dîner Girls only »
+  (`girls-only-*`, réservés aux femmes, vérifié à la réservation, mêmes lieux que leur format). **Rien
+  d'automatique** : l'équipe crée chaque édition à la main (gamme, date, places). Section « Éditions spéciales Girls
+  only » dans « Créer ».
 
 ## 4. Site d'essai : nettoyage
 

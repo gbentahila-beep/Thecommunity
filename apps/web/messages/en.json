@@ -98,7 +98,7 @@
     "universe": {
       "eat": {
         "tagline": "One table, new faces, a great spot",
-        "text": "Coffee, brunch or dinner: join a table of four to six people who also want to meet new people. We put the table together and choose the place: come alone or with a friend.",
+        "text": "Coffee, brunch or dinner: join a table of four to six people who also want to meet new people. We put the table together and choose the place: come alone or with a friend. Now and then, Girls only editions.",
         "group": "Tables put together",
         "factLabel": "Formats",
         "factValue": "Coffee, brunch, dinner",
@@ -125,12 +125,12 @@
       },
       "discover": {
         "tagline": "Special editions",
-        "text": "Now and then, a one-off meet-up: Girls only dinner, Exclusive afterwork, parties. Not to be missed.",
+        "text": "Now and then, a one-off meet-up: Exclusive afterwork, parties. Not to be missed.",
         "group": "Limited spots",
         "factLabel": "Rhythm",
         "factValue": "Now and then",
         "cta": "See the events",
-        "formats": "Girls only · Afterwork · Parties"
+        "formats": "Afterwork · Parties"
       }
     },
     "thisWeekAt": "This week in",

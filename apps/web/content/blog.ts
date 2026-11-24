@@ -742,10 +742,10 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
     cover: "/images/photos/a-propos-hero.webp",
     body: {
       fr: [
-        { summary: ["Chaque semaine, la communauté Wenzy se retrouve : le mercredi on dîne, le samedi on bouge (et on prend un café), le dimanche on brunche.", "Trois univers : Tables, Activités, Événements (éditions spéciales comme Girls only, afterworks).", "Vous réservez la date de la semaine, jusqu'à la veille 20h30 ; nous composons le groupe et révélons le lieu.", "35 DH en ligne par place (rien avec le Pass), le repas ou l'activité réglé sur place."] },
+        { summary: ["Chaque semaine, la communauté Wenzy se retrouve : le mercredi on dîne, le samedi on bouge (et on prend un café), le dimanche on brunche.", "Trois univers : Tables (dont, de temps en temps, des éditions Girls only), Activités, Événements (afterworks, soirées).", "Vous réservez la date de la semaine, jusqu'à la veille 20h30 ; nous composons le groupe et révélons le lieu.", "35 DH en ligne par place (rien avec le Pass), le repas ou l'activité réglé sur place."] },
         "Wenzy réunit une communauté qui se retrouve chaque semaine à Casablanca, autour de rendez-vous fixes, pour rencontrer de nouvelles personnes sans rien organiser. Vous choisissez votre rendez-vous, nous nous occupons du groupe, du lieu et de l'accueil. Voici l'essentiel, en une page.",
         { h: "Votre semaine Wenzy" },
-        ["Mercredi 20h30 : le Dîner du mercredi (Casual et Premium chaque semaine, Exclusive le premier mercredi du mois).", "Samedi : l'activité du samedi, une activité différente chaque semaine (running, céramique, padel, yoga, escape game…).", "Samedi 16h : le Café du samedi, un format court et détendu.", "Dimanche 12h30 : le Brunch du dimanche.", "Et de temps en temps, des éditions spéciales (Girls only, afterworks) dans Événements."],
+        ["Mercredi 20h30 : le Dîner du mercredi (Casual et Premium chaque semaine, Exclusive le premier mercredi du mois).", "Samedi : l'activité du samedi, une activité différente chaque semaine (running, céramique, padel, yoga, escape game…).", "Samedi 16h : le Café du samedi, un format court et détendu.", "Dimanche 12h30 : le Brunch du dimanche.", "Et de temps en temps, des éditions spéciales : une Table Girls only (café, brunch, déjeuner ou dîner entre femmes), des afterworks."],
         { h: "Les trois univers" },
         ["Tables : café, brunch et dîner, à une table de 4 à 6 nouvelles têtes, dans un restaurant de votre gamme dévoilé la veille à 21h30.", "Activités : l'activité du samedi, et les activités proposées par nos organisateurs partenaires, validées par l'équipe.", "Événements : les éditions spéciales et les soirées."],
         { h: "Réserver" },
@@ -764,10 +764,10 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         { tip: "Une question précise ? Le [centre d'aide](/aide) répond à la plupart d'entre elles." },
       ],
       en: [
-        { summary: ["Every week, the Wenzy community gets together: dinner on Wednesday, an activity (and a coffee) on Saturday, brunch on Sunday.", "Three universes: Tables, Activities, Events (special editions such as Girls only, afterworks).", "You book this week's date, until 8:30 pm the day before; we put the group together and reveal the venue.", "35 DH online per seat (nothing with the Pass); the meal or activity is paid on site."] },
+        { summary: ["Every week, the Wenzy community gets together: dinner on Wednesday, an activity (and a coffee) on Saturday, brunch on Sunday.", "Three universes: Tables (including Girls only editions now and then), Activities, Events (afterworks, evenings).", "You book this week's date, until 8:30 pm the day before; we put the group together and reveal the venue.", "35 DH online per seat (nothing with the Pass); the meal or activity is paid on site."] },
         "Wenzy brings together a community that meets every week in Casablanca, around fixed gatherings, to meet new people without organising anything. You choose your gathering; we take care of the group, the venue and the welcome. Here are the essentials, on one page.",
         { h: "Your Wenzy week" },
-        ["Wednesday 8:30 pm: Wednesday Dinner (Casual and Premium every week, Exclusive on the first Wednesday of the month).", "Saturday: the Saturday activity, a different one each week (running, pottery, padel, yoga, escape game…).", "Saturday 4 pm: Saturday Coffee, a short and relaxed format.", "Sunday 12:30 pm: Sunday Brunch.", "And from time to time, special editions (Girls only, afterworks) under Events."],
+        ["Wednesday 8:30 pm: Wednesday Dinner (Casual and Premium every week, Exclusive on the first Wednesday of the month).", "Saturday: the Saturday activity, a different one each week (running, pottery, padel, yoga, escape game…).", "Saturday 4 pm: Saturday Coffee, a short and relaxed format.", "Sunday 12:30 pm: Sunday Brunch.", "And from time to time, special editions: a Girls only Table (coffee, brunch, lunch or dinner among women), afterworks."],
         { h: "The three universes" },
         ["Tables: coffee, brunch and dinner, at a table of 4 to 6 new faces, in a restaurant of your tier revealed the evening before at 9:30 pm.", "Activities: the Saturday activity, and activities offered by our partner organisers, approved by our team.", "Events: special editions and evenings."],
         { h: "Booking" },
@@ -1019,7 +1019,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
     cover: "/images/photos/univers-ateliers.webp",
     body: {
       fr: [
-        {"summary": ["Wenzy, ce sont des rendez-vous fixes chaque semaine, pas une liste d'événements à rallonge.", "Tables : le Dîner du mercredi, le Café du samedi, le Brunch du dimanche.", "Activités : l'activité du samedi, différente chaque semaine (running, céramique, padel, yoga, escape game).", "Événements : les éditions spéciales, comme Girls only, et les afterworks."]},
+        {"summary": ["Wenzy, ce sont des rendez-vous fixes chaque semaine, pas une liste d'événements à rallonge.", "Tables : le Dîner du mercredi, le Café du samedi, le Brunch du dimanche.", "Activités : l'activité du samedi, différente chaque semaine (running, céramique, padel, yoga, escape game).", "Événements : afterworks et soirées ; et côté Tables, des éditions Girls only de temps en temps."]},
         "On nous connaît pour les dîners entre inconnus, mais l'idée est plus large : une communauté qui se retrouve chaque semaine, à des rendez-vous qu'on peut retenir par cœur. Plutôt que de choisir parmi des dizaines de dates, vous choisissez votre rendez-vous, et vous retrouvez la communauté.",
         {"h": "Tables : manger ensemble"},
         ["Le Dîner du mercredi, à 20h30 : notre rendez-vous phare, en Casual et Premium chaque semaine, et en Exclusive le premier mercredi du mois.", "Le Café du samedi, à 16h : un format court et détendu, parfait pour une première fois.", "Le Brunch du dimanche, à 12h30 : pour finir la semaine en douceur."],
@@ -1027,7 +1027,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         {"h": "Activités : l'activité du samedi"},
         "Chaque samedi, une activité différente, qui revient en rotation : running, céramique, padel, yoga, escape game. Faire quelque chose ensemble crée souvent le lien plus vite qu'une conversation debout. Nos organisateurs partenaires proposent aussi leurs activités, validées par l'équipe, et certaines prennent la place de l'activité du samedi le temps d'une semaine.",
         {"h": "Événements : les éditions spéciales"},
-        "Une fois par mois, une édition spéciale (un dîner ou un brunch Girls only, par exemple) s'ajoute au programme, ainsi que des afterworks ou des soirées. Elles sont annoncées sur l'accueil et dans Découvrir.",
+        "De temps en temps, une édition spéciale s'ajoute au programme : une Table Girls only (un dîner ou un brunch entre femmes, par exemple), un afterwork ou une soirée. Elles sont annoncées sur l'accueil et dans Découvrir.",
         {"h": "Comment nous composons les groupes, selon le format"},
         {"ol": ["À table : un mélange de langues communes, d'âges proches et de centres d'intérêt partagés, dans votre gamme, sans remettre ensemble les mêmes personnes.", "Au padel ou en running : un court questionnaire donne votre niveau ou votre allure, et nous réunissons des personnes proches (quatre joueurs de même niveau par terrain).", "À l'escape game : nous mélangeons au contraire les profils, pour des équipes équilibrées.", "À l'atelier céramique ou au yoga : peu importe le niveau, l'activité occupe les mains et la conversation suit."]},
         {"h": "Avant de venir"},
@@ -1035,7 +1035,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         {"tip": "Envie de découvrir le programme de la semaine ? [Voir les rendez-vous](/experiences). Et pour comprendre le questionnaire : [à quoi il sert](/blog/le-questionnaire-avant-votre-experience)."},
       ],
       en: [
-        {"summary": ["Wenzy means fixed gatherings every week, not an endless list of events.", "Tables: Wednesday Dinner, Saturday Coffee, Sunday Brunch.", "Activities: the Saturday activity, different every week (running, pottery, padel, yoga, escape game).", "Events: special editions such as Girls only, and afterworks."]},
+        {"summary": ["Wenzy means fixed gatherings every week, not an endless list of events.", "Tables: Wednesday Dinner, Saturday Coffee, Sunday Brunch.", "Activities: the Saturday activity, different every week (running, pottery, padel, yoga, escape game).", "Events: afterworks and evenings; and on the Tables side, Girls only editions now and then."]},
         "People know us for dinners with strangers, but the idea is broader: a community that gets together every week, at gatherings you can learn by heart. Rather than choosing among dozens of dates, you choose your gathering, and meet the community.",
         {"h": "Tables: eating together"},
         ["Wednesday Dinner, at 8:30 pm: our flagship gathering, Casual and Premium every week, and Exclusive on the first Wednesday of the month.", "Saturday Coffee, at 4 pm: a short, relaxed format, perfect for a first time.", "Sunday Brunch, at 12:30 pm: to end the week gently."],
@@ -1043,7 +1043,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         {"h": "Activities: the Saturday activity"},
         "Every Saturday, a different activity, in rotation: running, pottery, padel, yoga, escape game. Doing something together often builds connection faster than a standing conversation. Our partner organisers also offer their activities, approved by our team, and some take the place of the Saturday activity for a week.",
         {"h": "Events: special editions"},
-        "Once a month, a special edition (a Girls only dinner or brunch, for example) is added to the programme, along with afterworks and evenings. They're announced on the home page and in Discover.",
+        "From time to time, a special edition is added to the programme: a Girls only Table (a dinner or brunch among women, for example), an afterwork or an evening. They're announced on the home page and in Discover.",
         {"h": "How we put groups together, depending on the format"},
         {"ol": ["At the table: a mix of shared languages, similar ages and common interests, within your tier, without seating the same people together again.", "For padel or running: a short questionnaire gives your level or pace, and we group similar people (four players of the same level per court).", "For an escape game: we mix profiles instead, for balanced teams.", "At a pottery workshop or yoga: level doesn't matter, the activity keeps hands busy and the conversation follows."]},
         {"h": "Before you come"},
