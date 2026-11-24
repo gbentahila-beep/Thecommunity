@@ -1,4 +1,4 @@
-import { TEMPLATE_UNIVERSES, tierRange, VENUE_TIERS, type EventTemplate, type VenueTier } from "@thecommunity/shared";
+import { isCalendarTemplate, TEMPLATE_UNIVERSES, tierRange, VENUE_TIERS, type EventTemplate, type VenueTier } from "@thecommunity/shared";
 import Link from "next/link";
 import { ExperienceForm } from "@/components/admin/experience-form";
 import { PageHeader } from "@/components/admin/ui";
@@ -90,18 +90,26 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
       <div className="max-w-5xl">
         <Steps univers={univers} template={null} gamme={null} catName={catName} />
         <PageHeader title={`${catName.get(univers) ?? "Univers"} : quel modèle ?`} subtitle="Tout sera pré-rempli, photo comprise. Vous pourrez tout modifier." />
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="template-choice">
-          {list.map((t) => (
-            <li key={t.id}>
-              <Link href={`/admin/experiences/nouvelle?modele=${t.id}`} className={card}>
-                {/* eslint-disable-next-line @next/next/no-img-element -- photo du modèle (fichier du site ou Storage) */}
-                <img src={mediaUrl(t.image)} alt="" className="aspect-[4/3] w-full object-cover" />
-                <span className="p-4 font-semibold text-ink">{t.name}{t.tiers && <span className="block text-xs font-normal text-muted">Casual · Premium · Exclusive</span>}</span>
-              </Link>
-            </li>
-          ))}
-          {list.length === 0 && <li className="text-sm text-muted">Aucun modèle dans cet univers pour l&apos;instant.</li>}
-        </ul>
+        {/* docs/25 : les modèles du calendrier d'abord, ceux « pour plus tard » ensuite. */}
+        {([["calendar", list.filter(isCalendarTemplate)], ["later", list.filter((t) => !isCalendarTemplate(t))]] as const).map(([k, items]) =>
+          items.length === 0 ? null : (
+            <section key={k} className={k === "later" ? "mt-8" : ""}>
+              <h2 className="mb-3 text-sm font-semibold tracking-wide text-muted uppercase">{k === "calendar" ? "Au calendrier" : "Pour plus tard"}</h2>
+              <ul className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ${k === "later" ? "opacity-80" : ""}`} data-testid="template-choice">
+                {items.map((t) => (
+                  <li key={t.id}>
+                    <Link href={`/admin/experiences/nouvelle?modele=${t.id}`} className={card}>
+                      {/* eslint-disable-next-line @next/next/no-img-element -- photo du modèle (fichier du site ou Storage) */}
+                      <img src={mediaUrl(t.image)} alt="" className="aspect-[4/3] w-full object-cover" />
+                      <span className="p-4 font-semibold text-ink">{t.name}{t.tiers && <span className="block text-xs font-normal text-muted">Casual · Premium · Exclusive</span>}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ),
+        )}
+        {list.length === 0 && <p className="text-sm text-muted">Aucun modèle dans cet univers pour l&apos;instant.</p>}
         <p className="mt-6 text-sm"><Link href="/admin/experiences/nouvelle?modele=vide" className="font-semibold text-brand-900 underline">Partir de zéro</Link></p>
       </div>
     );
@@ -119,7 +127,8 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
             <li key={u}>
               <Link href={`/admin/experiences/nouvelle?univers=${u}`} className={`${card} p-5`}>
                 <span className="text-lg font-semibold text-ink">{catName.get(u) ?? u}</span>
-                <span className="mt-1 text-sm text-muted">{list.map((t) => t.name).join(" · ") || "Aucun modèle"}</span>
+                <span className="mt-1 text-sm text-muted">{list.filter(isCalendarTemplate).map((t) => t.name).join(" · ") || "Aucun modèle"}</span>
+                {list.some((t) => !isCalendarTemplate(t)) && <span className="mt-1 text-xs text-muted">Pour plus tard : {list.filter((t) => !isCalendarTemplate(t)).map((t) => t.name).join(" · ")}</span>}
               </Link>
             </li>
           );

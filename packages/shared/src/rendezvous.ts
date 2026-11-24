@@ -161,3 +161,30 @@ export function collapseRendezvous<T extends { experienceId: string; startAt: st
   }
   return out;
 }
+
+/**
+ * docs/25, lot E — le calendrier de lancement (Casablanca). Chaque rendez-vous part d'un modèle de Tables ; ses
+ * gammes reprennent les événements existants de ce modèle (mêmes avis, mêmes réservations) ou sont créées.
+ */
+export const LAUNCH_RENDEZVOUS: readonly {
+  id: string;
+  templateId: string;
+  title: { fr: string; en: string; ar: string };
+  weekday: number;
+  time: string;
+  capacity: number;
+  tiers: readonly { tier: VenueTier; frequency: RendezvousFrequency }[];
+}[] = [
+  {
+    id: "diner-du-mercredi", templateId: "diner", title: { fr: "Dîner du mercredi", en: "Wednesday Dinner", ar: "عشاء الأربعاء" }, weekday: 3, time: "20:30", capacity: 36,
+    tiers: [{ tier: "casual", frequency: "weekly" }, { tier: "premium", frequency: "weekly" }, { tier: "exclusive", frequency: "first_of_month" }],
+  },
+  {
+    id: "cafe-du-samedi", templateId: "cafe", title: { fr: "Café du samedi", en: "Saturday Coffee", ar: "قهوة السبت" }, weekday: 6, time: "16:00", capacity: 36,
+    tiers: [{ tier: "casual", frequency: "weekly" }, { tier: "premium", frequency: "weekly" }],
+  },
+  {
+    id: "brunch-du-dimanche", templateId: "brunch", title: { fr: "Brunch du dimanche", en: "Sunday Brunch", ar: "برانش الأحد" }, weekday: 0, time: "12:30", capacity: 36,
+    tiers: [{ tier: "casual", frequency: "weekly" }, { tier: "premium", frequency: "weekly" }],
+  },
+];

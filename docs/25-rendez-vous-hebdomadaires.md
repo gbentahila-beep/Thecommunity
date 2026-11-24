@@ -73,3 +73,30 @@ ajoute un déjeuner en semaine.
 | **C. La composition** | Tables par gamme, gamme voisine à la fermeture, mémoire des restaurants vus, équilibre hommes / femmes. |
 | **D. La rotation du samedi** | Un programme sur 4 semaines (quelle activité, quel samedi) qui boucle tout seul, modifiable dans le back-office. |
 | **E. La bascule** | Les événements actuels (ex. « Déjeuner Premium » et « Déjeuner Exclusive » séparés) sont archivés et remplacés par les rendez-vous ; les réservations déjà prises sont honorées. |
+
+## Avancement
+| Lot | État |
+|---|---|
+| A. Le modèle | Fait (Back-office → Rendez-vous ; dates créées 6 semaines à l'avance, prolongées chaque nuit). |
+| B. Les écrans | Fait : accueil « Votre semaine Wenzy », choix de la gamme, fermeture la veille à 20h30, une seule date ouverte (deux avec le Pass). 3 univers : **Tables · Activités · Événements**. |
+| E. La bascule | Fait (24 novembre). Back-office → Rendez-vous → « Calendrier de lancement » (super-admin, taper `BASCULER`). Faite automatiquement une fois sur le site d'essai. |
+| C. La composition | À faire. |
+| D. La rotation du samedi | À faire. |
+
+### Ce que fait la bascule (lot E)
+1. Crée le **Dîner du mercredi** (20h30 ; Casual et Premium chaque semaine, Exclusive le premier mercredi du mois),
+   le **Café du samedi** (16h) et le **Brunch du dimanche** (12h30) en Casual et Premium, 36 places par gamme.
+2. Chaque gamme reprend l'événement existant du même modèle et de la même gamme (avis et réservations gardés) ;
+   sinon elle est créée à partir du modèle. Les Tables passent en « chacun paie sa consommation » (budget de la gamme
+   affiché, seuls les 35 DH Wenzy en ligne).
+3. Les Tables hors rendez-vous (Déjeuner, Café et Brunch Exclusive) et les formats « pour plus tard » sont retirés :
+   dates sans inscrit supprimées, **dates avec inscrits maintenues**, puis archivage automatique après la dernière date.
+4. Ne touche pas : les activités du calendrier (running, céramique, padel, yoga, escape game), l'Afterwork, les
+   événements créés à la main. Un rendez-vous déjà créé au même jour et à la même heure est gardé ; la relancer ne
+   crée pas de doublon.
+
+### Modèles : « Au calendrier » et « Pour plus tard »
+Back-office → Modèles et « Nouvel événement » rangent d'abord les modèles du lancement (Café, Brunch, Dîner ;
+Running, Céramique, Padel, Yoga, Escape game ; Afterwork), puis, repliés, ceux **pour plus tard** (Déjeuner, Soirée
+jeux, Quiz, Échange de langues, Visite guidée), toujours utilisables pour un événement ponctuel. Les modèles de Tables
+proposent le jour et l'heure du rendez-vous (mercredi 20h30, samedi 16h, dimanche 12h30) pour toutes les gammes.

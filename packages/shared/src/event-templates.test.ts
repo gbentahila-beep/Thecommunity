@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_EVENT_TEMPLATES, mergeTemplates, nextWeekdayDate, templateInputSchema, templateSlug } from "./event-templates";
+import { DEFAULT_EVENT_TEMPLATES, isCalendarTemplate, mergeTemplates, nextWeekdayDate, scheduleFor, templateInputSchema, templateSlug } from "./event-templates";
 
 describe("modèles d'événements (docs/22, étape F)", () => {
   it("les 14 modèles du lancement, tous valides", () => {
@@ -35,6 +35,24 @@ describe("modèles d'événements (docs/22, étape F)", () => {
     expect(templateSlug("2 en 1")).toBe("modele-2-en-1");
     expect(nextWeekdayDate(3, new Date("2026-11-22T10:00:00Z"))).toBe("2026-11-25");
     expect(nextWeekdayDate(0, new Date("2026-11-22T10:00:00Z"))).toBe("2026-11-29");
+  });
+});
+
+describe("modèles et calendrier de lancement (docs/25)", () => {
+  it("3 univers ; « Au calendrier » / « Pour plus tard » ; Tables au jour du rendez-vous", () => {
+    const all = mergeTemplates([]);
+    expect(new Set(all.map((t) => t.values.categoryId))).toEqual(new Set(["eat", "move", "discover"]));
+    expect(all.filter((t) => !isCalendarTemplate(t)).map((t) => t.id).sort()).toEqual(["dejeuner", "echange-langues", "quiz", "soiree-jeux", "visite-guidee"]);
+    expect(all.filter((t) => t.values.categoryId === "move" && isCalendarTemplate(t)).map((t) => t.id)).toEqual(["running", "ceramique", "padel", "yoga", "escape-game"]);
+    const diner = all.find((t) => t.id === "diner")!;
+    for (const tier of ["casual", "premium", "exclusive"] as const) expect(scheduleFor(diner, tier)).toEqual({ weekday: 3, time: "20:30" });
+    expect(scheduleFor(all.find((t) => t.id === "brunch")!, "premium")).toEqual({ weekday: 0, time: "12:30" });
+    expect(isCalendarTemplate({ id: "karaoke" })).toBe(true);
+  });
+  it("un modèle enregistré dans un ancien univers passe dans Activités", () => {
+    const old = { ...DEFAULT_EVENT_TEMPLATES.find((t) => t.id === "ceramique")!, builtIn: undefined };
+    const saved = { ...old, values: { ...old.values, categoryId: "create", subcategoryId: "" } };
+    expect(mergeTemplates([saved]).find((t) => t.id === "ceramique")!.values).toMatchObject({ categoryId: "move", subcategoryId: "ceramique" });
   });
 });
 

@@ -273,6 +273,10 @@ async function main() {
   const { tidyTemplateEventsOnce } = await import("../functions/src/experiences/showcase");
   const tidy = await tidyTemplateEventsOnce({ uid: "seed-content", role: "superadmin" });
   if (tidy) console.log(`✅ Événements des modèles rangés : ${tidy.renamed} titre(s) sans la gamme, ${tidy.removed} doublon(s) retiré(s).`);
+  // docs/25, lot E : une fois, le site d'essai passe au calendrier des rendez-vous de la semaine.
+  const { launchRendezvousOnce } = await import("../functions/src/rendezvous/launch");
+  const launch = await launchRendezvousOnce({ uid: "seed-content", role: "superadmin" });
+  if (launch) console.log(`✅ Rendez-vous de la semaine : ${launch.rendezvous.map((x) => `${x.id} (${x.created ? "créé" : "déjà là"})`).join(", ")} ; ${launch.retired.length} événement(s) retiré(s) du programme (${launch.retired.reduce((n, x) => n + x.keptDates, 0)} date(s) avec inscrits maintenue(s)).`);
   // Étape R : une fois, les événements créés depuis les modèles (et jamais modifiés par l'équipe) reprennent les textes
   // allégés des modèles : description et « Inclus » sans répéter ce que dit l'encadré de la fiche.
   const textsRef = db.doc("settings/showcase");

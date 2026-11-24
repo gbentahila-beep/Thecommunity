@@ -6,6 +6,7 @@ import { QUESTIONNAIRE_TEMPLATES, questionnaireSchema, type QuestionDef } from "
 import type { VenueTier } from "./two-part";
 import type { BookingMode, SpokenLanguage } from "./types";
 import { EXTRA_I18N_KEYS, EXTRA_I18N_SHAPE, type ExtraI18nStrings } from "./extra-i18n";
+import { launchUniverse } from "./launch-universes";
 
 /**
  * Modèles d'événements (docs/22 § 5 et 7, docs/23) : toute création part d'un modèle qui pré-remplit tout, du titre
@@ -115,7 +116,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
     id: "cafe", name: "Café", image: "/images/modeles/cafe.webp", order: 1, isActive: true, builtIn: true,
     tiers: { casual: { ambiance: "Cosy et détendue", ambianceAr: "دافئة ومريحة", ambianceEn: "Cosy and relaxed" }, premium: { ambiance: "Café de spécialité", ambianceAr: "قهوة مختصة", ambianceEn: "Specialty coffee" }, exclusive: { ambiance: "Salon de thé raffiné", ambianceAr: "صالون شاي راقٍ", ambianceEn: "Refined tea room" } },
     values: {
-      ...TABLE, subcategoryId: "cafe", weekday: 6, time: "10:30",
+      ...TABLE, subcategoryId: "cafe", weekday: 6, time: "16:00",
       titleFr: "Café",
       summaryFr: "Un café, une table, et des discussions avec des gens que vous ne connaissez pas encore.",
       descriptionFr: "Un café choisi par notre équipe, avec des personnes qui ont de quoi se parler. On commande, on discute, on fait connaissance, et chacun reste aussi longtemps qu'il le souhaite.",
@@ -131,7 +132,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
     id: "brunch", name: "Brunch", image: "/images/modeles/brunch.webp", order: 2, isActive: true, builtIn: true,
     tiers: { casual: { ambiance: "Lumineuse et décontractée", ambianceAr: "مشرقة ومريحة", ambianceEn: "Bright and relaxed" }, premium: { ambiance: "Adresse tendance", ambianceAr: "عنوان عصري", ambianceEn: "Trendy spot" }, exclusive: { ambiance: "Hôtel ou adresse d'exception", ambianceAr: "فندق أو عنوان استثنائي", ambianceEn: "Hotel or exceptional venue" } },
     values: {
-      ...TABLE, subcategoryId: "brunch", weekday: 6, time: "11:30",
+      ...TABLE, subcategoryId: "brunch", weekday: 0, time: "12:30",
       titleFr: "Brunch",
       summaryFr: "Un brunch partagé avec des gens que vous ne connaissez pas encore.",
       descriptionFr: "Le week-end commence autour d'un brunch, dans un restaurant choisi par notre équipe, avec tout le temps de faire connaissance.",
@@ -163,7 +164,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
     id: "diner", name: "Dîner", image: "/images/modeles/diner.webp", order: 4, isActive: true, builtIn: true,
     tiers: { casual: { ambiance: "Conviviale", ambianceAr: "ودية", ambianceEn: "Friendly" }, premium: { ambiance: "Chic et décontractée", ambianceAr: "أنيقة ومريحة", ambianceEn: "Smart casual" }, exclusive: { ambiance: "Haut de gamme", ambianceAr: "راقية", ambianceEn: "Upscale", practicalInfo: "Tenue soignée.", practicalInfoAr: "لباس أنيق.", practicalInfoEn: "Smart dress." } },
     values: {
-      ...TABLE, subcategoryId: "diner", weekday: 3, time: "20:00",
+      ...TABLE, subcategoryId: "diner", weekday: 3, time: "20:30",
       titleFr: "Dîner",
       summaryFr: "Une table, des inconnus, et une adresse à découvrir.",
       descriptionFr: "Notre format phare. Des personnes qui ont de quoi se parler, réunies d'après leurs profils, dans un restaurant choisi par notre équipe. Une soirée pour rencontrer de nouvelles têtes, à votre rythme.",
@@ -179,7 +180,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
   {
     id: "running", name: "Running", image: "/images/modeles/running.webp", order: 1, isActive: true, builtIn: true,
     values: {
-      ...COMMON, categoryId: "move", revealPolicy: "immediate", bookingMode: "group", groupMin: 4, groupMax: 8, capacity: 20, durationMinutes: 75, weekday: 6, time: "08:00",
+      ...COMMON, categoryId: "move", subcategoryId: "running", revealPolicy: "immediate", bookingMode: "group", groupMin: 4, groupMax: 8, capacity: 20, durationMinutes: 75, weekday: 6, time: "09:00",
       titleFr: "Running",
       summaryFr: "Courir à plusieurs, à votre allure, puis un café face à l'océan.",
       descriptionFr: "Un parcours de 5 à 8 km sur la Corniche, en groupes de même allure. On court, on discute, et ceux qui veulent prolongent par un café.",
@@ -197,7 +198,7 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
     },
   },
   {
-    id: "padel", name: "Padel", image: "/images/modeles/padel.webp", order: 2, isActive: true, builtIn: true,
+    id: "padel", name: "Padel", image: "/images/modeles/padel.webp", order: 3, isActive: true, builtIn: true,
     values: {
       ...COMMON, categoryId: "move", subcategoryId: "padel", revealPolicy: "immediate", bookingMode: "group", groupMin: 4, groupMax: 4, capacity: 8, durationMinutes: 90, weekday: 6, time: "10:00",
       titleFr: "Padel",
@@ -217,9 +218,9 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
     },
   },
   {
-    id: "yoga", name: "Yoga", image: "/images/modeles/yoga.webp", order: 3, isActive: true, builtIn: true,
+    id: "yoga", name: "Yoga", image: "/images/modeles/yoga.webp", order: 4, isActive: true, builtIn: true,
     values: {
-      ...COMMON, categoryId: "move", revealPolicy: "immediate", bookingMode: "individual", capacity: 12, durationMinutes: 75, weekday: 0, time: "09:00",
+      ...COMMON, categoryId: "move", subcategoryId: "yoga", revealPolicy: "immediate", bookingMode: "individual", capacity: 12, durationMinutes: 75, weekday: 6, time: "10:00",
       titleFr: "Yoga",
       summaryFr: "Une séance de yoga tous niveaux, en petit groupe.",
       descriptionFr: "Un cours accessible à tous, donné par un professeur dans un lieu partenaire : studio, jardin ou rooftop.",
@@ -239,9 +240,9 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
   },
   // ——— Sortir ———
   {
-    id: "escape-game", name: "Escape game", image: "/images/modeles/escape-game.webp", order: 1, isActive: true, builtIn: true,
+    id: "escape-game", name: "Escape game", image: "/images/modeles/escape-game.webp", order: 5, isActive: true, builtIn: true,
     values: {
-      ...COMMON, categoryId: "discover", revealPolicy: "immediate", bookingMode: "group", groupMin: 4, groupMax: 6, capacity: 12, durationMinutes: 60, weekday: 5, time: "19:00",
+      ...COMMON, categoryId: "move", subcategoryId: "escape-game", revealPolicy: "immediate", bookingMode: "group", groupMin: 4, groupMax: 6, capacity: 12, durationMinutes: 60, weekday: 6, time: "17:00",
       titleFr: "Escape game",
       summaryFr: "Une heure pour sortir ensemble, avec des coéquipiers que vous ne connaissez pas encore.",
       descriptionFr: "Une heure d'énigmes à résoudre ensemble dans une salle partenaire, en mêlant habitués et débutants.",
@@ -291,9 +292,9 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
     },
   },
   {
-    id: "afterwork", name: "Afterwork", image: "/images/modeles/afterwork.webp", order: 4, isActive: true, builtIn: true,
+    id: "afterwork", name: "Afterwork", image: "/images/modeles/afterwork.webp", order: 1, isActive: true, builtIn: true,
     values: {
-      ...COMMON, categoryId: "discover", revealPolicy: "immediate", bookingMode: "open", capacity: 30, durationMinutes: 120, weekday: 4, time: "19:30",
+      ...COMMON, categoryId: "discover", subcategoryId: "afterwork", revealPolicy: "immediate", bookingMode: "open", capacity: 30, durationMinutes: 120, weekday: 4, time: "19:30",
       titleFr: "Afterwork",
       summaryFr: "Après le travail, un verre avec des gens qui ont aussi envie de rencontrer du monde.",
       descriptionFr: "Un espace réservé pour le groupe dans un bar ou un rooftop partenaire, pour faire de nouvelles rencontres en fin de journée.",
@@ -327,9 +328,9 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
   },
   // ——— Découvrir ———
   {
-    id: "ceramique", name: "Céramique", image: "/images/modeles/ceramique.webp", order: 1, isActive: true, builtIn: true,
+    id: "ceramique", name: "Céramique", image: "/images/modeles/ceramique.webp", order: 2, isActive: true, builtIn: true,
     values: {
-      ...COMMON, categoryId: "create", revealPolicy: "immediate", bookingMode: "individual", capacity: 8, durationMinutes: 120, weekday: 6, time: "15:00",
+      ...COMMON, categoryId: "move", subcategoryId: "ceramique", revealPolicy: "immediate", bookingMode: "individual", capacity: 8, durationMinutes: 120, weekday: 6, time: "11:00",
       titleFr: "Céramique",
       summaryFr: "Les mains dans la terre, et de nouvelles têtes autour de la table.",
       descriptionFr: "Un céramiste vous guide pour façonner votre pièce (bol, tasse ou petit vase), en petit groupe.",
@@ -349,9 +350,9 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
     },
   },
   {
-    id: "visite-guidee", name: "Visite guidée", image: "/images/modeles/visite-guidee.webp", order: 2, isActive: true, builtIn: true,
+    id: "visite-guidee", name: "Visite guidée", image: "/images/modeles/visite-guidee.webp", order: 6, isActive: true, builtIn: true,
     values: {
-      ...COMMON, categoryId: "create", revealPolicy: "immediate", bookingMode: "individual", capacity: 15, durationMinutes: 120, weekday: 6, time: "10:00",
+      ...COMMON, categoryId: "move", revealPolicy: "immediate", bookingMode: "individual", capacity: 15, durationMinutes: 120, weekday: 6, time: "10:00",
       titleFr: "Visite guidée",
       summaryFr: "Casablanca racontée par un guide passionné, en petit groupe.",
       descriptionFr: "Une balade à pied avec un guide local, au choix : Art déco du centre-ville, Habous ou ancienne médina.",
@@ -369,8 +370,19 @@ export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
   },
 ];
 
-/** Univers où ranger un modèle, dans l'ordre d'affichage (docs/22, décision 36). */
-export const TEMPLATE_UNIVERSES = ["eat", "move", "discover", "create"] as const;
+/** Univers où ranger un modèle, dans l'ordre d'affichage : Tables, Activités, Événements (docs/25). */
+export const TEMPLATE_UNIVERSES = ["eat", "move", "discover"] as const;
+
+/**
+ * docs/25 : modèles livrés qui ne sont pas au calendrier de lancement (rangés « Pour plus tard » dans le back-office).
+ * Tous les autres, et ceux créés dans l'appli, sont « Au calendrier ».
+ */
+export const LATER_TEMPLATE_IDS: readonly string[] = ["dejeuner", "soiree-jeux", "quiz", "echange-langues", "visite-guidee"];
+
+/** Le modèle sert-il au calendrier de lancement (rendez-vous de la semaine, activités du samedi, événements) ? */
+export function isCalendarTemplate(t: Pick<EventTemplate, "id">): boolean {
+  return !LATER_TEMPLATE_IDS.includes(t.id);
+}
 
 /** Modèles visibles : ceux de l'appli l'emportent sur ceux livrés avec le site (même identifiant). */
 export function mergeTemplates(saved: EventTemplate[], defaults: EventTemplate[] = DEFAULT_EVENT_TEMPLATES): EventTemplate[] {
@@ -396,7 +408,10 @@ export function mergeTemplates(saved: EventTemplate[], defaults: EventTemplate[]
           } : g];
         }))
       : t.tiers;
-    byId.set(t.id, { ...t, ...(tiers ? { tiers } : {}), values: { ...t.values, ...filled }, builtIn: d?.builtIn ?? false });
+    // docs/25 : un modèle enregistré dans un ancien univers (Créer, escape game dans Découvrir) passe dans Activités.
+    const u = launchUniverse({ id: t.id, templateId: t.id, categoryId: t.values.categoryId, subcategoryId: t.values.subcategoryId || null });
+    const universe = u.categoryId === t.values.categoryId ? {} : { categoryId: u.categoryId, subcategoryId: u.subcategoryId ?? "" };
+    byId.set(t.id, { ...t, ...(tiers ? { tiers } : {}), values: { ...t.values, ...filled, ...universe }, builtIn: d?.builtIn ?? false });
   }
   return [...byId.values()].sort((a, b) => TEMPLATE_UNIVERSES.indexOf(a.values.categoryId as never) - TEMPLATE_UNIVERSES.indexOf(b.values.categoryId as never) || a.order - b.order || a.name.localeCompare(b.name, "fr"));
 }
@@ -406,10 +421,8 @@ export function mergeTemplates(saved: EventTemplate[], defaults: EventTemplate[]
  * « Déjeuner » à la suite. Jours : 0 dimanche … 6 samedi. Les autres modèles gardent leur jour conseillé.
  */
 export const TIER_SCHEDULE: Record<string, Partial<Record<VenueTier, { weekday: number; time: string }>>> = {
-  cafe: { casual: { weekday: 3, time: "16:30" }, premium: { weekday: 6, time: "16:30" }, exclusive: { weekday: 0, time: "10:30" } },
-  brunch: { casual: { weekday: 0, time: "11:30" }, premium: { weekday: 6, time: "11:30" }, exclusive: { weekday: 5, time: "11:30" } },
+  // docs/25 : café, brunch et dîner suivent le calendrier des rendez-vous (toutes les gammes le même jour), voir le modèle.
   dejeuner: { casual: { weekday: 2, time: "12:30" }, premium: { weekday: 4, time: "12:30" }, exclusive: { weekday: 5, time: "13:00" } },
-  diner: { casual: { weekday: 2, time: "20:00" }, premium: { weekday: 3, time: "20:00" }, exclusive: { weekday: 4, time: "20:30" } },
 };
 
 /** Jour et heure d'un modèle, selon la gamme pour les Tables. */

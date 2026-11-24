@@ -123,13 +123,18 @@ export async function ensureSessionsFor(rvId: string, now = new Date()): Promise
     const future = await db.collection("sessions").where("experienceId", "==", t.experienceId).where("startAt", ">", Timestamp.fromDate(now)).get();
     const existing = future.docs.filter((d) => d.get("status") !== "cancelled").map((d) => (d.get("startAt") as Timestamp).toDate());
     const missing = missingTierDates({ weekday: Number(rv.weekday), time: String(rv.time), weeksAhead: Number(rv.weeksAhead ?? 6) }, t, existing, now);
-    if (!missing.length) continue;
+    const current = (e.nextSessionAt as Timestamp | null | undefined)?.toMillis();
+    const all = [...missing, ...existing].map((d) => d.getTime());
+    // Prochaine date réelle (une date retirée du calendrier ne doit plus servir au tri des listes).
+    const first = all.length ? Math.min(...all) : null;
+    if (!missing.length) {
+      if (first !== null && current !== first) await eSnap.ref.update({ nextSessionAt: Timestamp.fromMillis(first) });
+      continue;
+    }
     const batch = db.batch();
     const minutes = Number(e.durationMinutes ?? 120);
     for (const d of missing) batch.set(db.collection("sessions").doc(), sessionDocFor(e, t.experienceId, d, new Date(d.getTime() + minutes * 60_000), Number(rv.capacity)));
-    const first = Math.min(...missing.map((d) => d.getTime()), ...existing.map((d) => d.getTime()));
-    const current = (e.nextSessionAt as Timestamp | null | undefined)?.toMillis();
-    if (!current || current < now.getTime() || first < current) batch.update(eSnap.ref, { nextSessionAt: Timestamp.fromMillis(first) });
+    if (first !== null && current !== first) batch.update(eSnap.ref, { nextSessionAt: Timestamp.fromMillis(first) });
     await batch.commit();
     created += missing.length;
   }
@@ -153,4 +158,8 @@ export async function ensureAllRendezvousSessions(now = new Date()) {
 
 export const rendezvousSessions = onSchedule({ schedule: "17 3 * * *", region: REGION, timeZone: "Africa/Casablanca" }, async () => {
   await ensureAllRendezvousSessions();
+  // Lot E : les événements retirés du programme sont archivés après leur dernière date honorée.
+  const { archiveRetiredExperiences } = await import("./launch");
+  const n = await archiveRetiredExperiences();
+  if (n) logger.info(`${n} événement(s) retiré(s) du programme archivé(s).`);
 });

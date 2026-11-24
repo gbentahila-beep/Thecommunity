@@ -1,5 +1,6 @@
 import { connection } from "next/server";
 import { RendezvousForm, WEEKDAYS, type RendezvousFormValues } from "@/components/admin/rendezvous-form";
+import { RendezvousLaunch } from "@/components/admin/rendezvous-launch";
 import { Badge, Card, PageHeader } from "@/components/admin/ui";
 import { requireAdmin } from "@/lib/auth/admin";
 import { getAdminData } from "@/lib/data/admin";
@@ -15,11 +16,16 @@ export default async function RendezvousAdminPage() {
   await connection();
   const d = await getAdminData();
   let list: Rv[] = [];
+  let launchedAt: string | null = null;
   if (FIREBASE_ENABLED) {
     await requireAdmin();
-    const snap = await adminDb().collection("rendezvous").get();
-    list = snap.docs.map((x) => ({ id: x.id, ...(x.data() as Omit<Rv, "id">) }));
+    const [snap, flag] = await Promise.all([adminDb().collection("rendezvous").get(), adminDb().doc("settings/showcase").get()]);
+    // Du lundi au dimanche, puis par heure.
+    list = snap.docs.map((x) => ({ id: x.id, ...(x.data() as Omit<Rv, "id">) })).sort((a, b) => ((a.weekday + 6) % 7) - ((b.weekday + 6) % 7) || a.time.localeCompare(b.time));
+    const at = flag.get("rendezvousLaunchAt") as { toDate(): Date } | undefined;
+    launchedAt = at ? new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeStyle: "short", timeZone: "Africa/Casablanca" }).format(at.toDate()) : null;
   }
+  const canLaunch = FIREBASE_ENABLED && !d.isDemo && d.admin?.role === "superadmin";
   const experiences = [...d.experiences.values()]
     .filter((e) => e.status !== "archived" && !(e as { rendezvousId?: string | null }).rendezvousId)
     .map((e) => ({ id: e.id, label: `${e.title.fr}${e.venueTier ? ` · ${e.venueTier}` : ""}` }))
@@ -29,6 +35,12 @@ export default async function RendezvousAdminPage() {
   return (
     <>
       <PageHeader title="Rendez-vous de la semaine" subtitle="Un jour fixe, une gamme choisie à la réservation, des dates créées 6 semaines à l'avance." />
+      <Card className="mb-6" title="Calendrier de lancement">
+        <details open={!launchedAt}>
+          <summary className="cursor-pointer text-sm font-semibold text-brand-900">{launchedAt ? "Bascule faite : voir le détail" : "Passer au calendrier de lancement (docs/25)"}</summary>
+          <div className="mt-3"><RendezvousLaunch canRun={canLaunch} reason={d.isDemo || !FIREBASE_ENABLED ? "demo" : canLaunch ? null : "role"} doneAt={launchedAt} /></div>
+        </details>
+      </Card>
       <Card className="mb-6">
         <details open={list.length === 0}>
           <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Nouveau rendez-vous</summary>

@@ -1,4 +1,4 @@
-import { mergeTemplates, nextWeekdayDate, scheduleFor, TIER_SCHEDULE, templateExperienceInput, VENUE_TIERS, type EventTemplate, type VenueTier } from "@thecommunity/shared";
+import { mergeTemplates, nextWeekdayDate, scheduleFor, templateExperienceInput, VENUE_TIERS, type EventTemplate, type VenueTier } from "@thecommunity/shared";
 import { getStorage } from "firebase-admin/storage";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -147,7 +147,7 @@ export async function resetShowcaseCore(raw: unknown, actor: { uid: string; role
 export async function rescheduleTablesOnce(actor: { uid: string; role: string }, now = Date.now(), cityId = "casablanca"): Promise<{ recreated: number; kept: number } | null> {
   const flag = db.doc("settings/showcase");
   if ((await flag.get()).get("tiersY")) return null;
-  const tablesIds = new Set(Object.keys(TIER_SCHEDULE));
+  const tablesIds = new Set(["cafe", "brunch", "dejeuner", "diner"]);
   const exps = (await db.collection("experiences").where("status", "==", "published").get()).docs.filter((d) => tablesIds.has(String(d.get("templateId"))) && d.get("venueTier"));
   const redo = new Set<string>();
   const jobs: { templateId: string; tier: VenueTier }[] = [];
