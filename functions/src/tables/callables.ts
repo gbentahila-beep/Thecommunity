@@ -12,7 +12,7 @@ import { sendMail } from "../mail/mailer";
 import { proposalMail } from "../mail/templates";
 import { cancelReservationCore } from "../reservations/cancel-reservation";
 import { refuse } from "../reservations/refuse";
-import { isAllocated, runAllocation, sendRequestMessages, settleRequest } from "./allocation";
+import { isAllocated, requestVenueByTeam, runAllocation, sendRequestMessages, settleRequest } from "./allocation";
 import { moveReservationCore } from "./move";
 
 const TEAM = ["admin", "superadmin"] as const;
@@ -64,6 +64,23 @@ export const adminAllocate = onCall({ region: REGION, timeoutSeconds: 120 }, asy
   if (!s.seatsConfirmed) refuse("no_participants", "Aucun inscrit.");
   const out = await runAllocation(v.data.sessionId, actor.uid);
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "session.allocate", targetType: "session", targetId: v.data.sessionId, after: out });
+  return { ok: true, ...out };
+});
+
+/** Équipe : demander à un lieu choisi (aucun lieu compatible restant, ou accord obtenu au téléphone). Journalisé. */
+export const adminRequestVenue = onCall({ region: REGION, timeoutSeconds: 120 }, async (req) => {
+  const actor = requireRole(req, [...TEAM]);
+  const v = z.object({ sessionId: idSchema, partnerId: idSchema, tables: z.coerce.number().int().min(1).max(20) }).safeParse(req.data);
+  if (!v.success) invalidArgument(v.error.issues);
+  const s = (await db.doc(`sessions/${v.data.sessionId}`).get()).data();
+  if (!s) throw new HttpsError("not-found", "Date introuvable.", { reason: "not_found" });
+  if ((s.startAt as Timestamp).toMillis() < Date.now()) refuse("past", "Cette date est passée.");
+  const p = (await db.doc(`partners/${v.data.partnerId}`).get()).data();
+  if (!p || p.status !== "active") throw new HttpsError("not-found", "Lieu introuvable.", { reason: "not_found" });
+  const pending = await db.collection("venueRequests").where("sessionId", "==", v.data.sessionId).where("partnerId", "==", v.data.partnerId).where("status", "in", ["sent", "confirmed"]).limit(1).get();
+  if (!pending.empty) refuse("already_requested", "Ce lieu a déjà une demande en cours pour cette date.");
+  const out = await requestVenueByTeam(v.data.sessionId, v.data.partnerId, v.data.tables, actor.uid);
+  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "session.request_venue", targetType: "session", targetId: v.data.sessionId, after: { partnerId: v.data.partnerId, tables: v.data.tables } });
   return { ok: true, ...out };
 });
 

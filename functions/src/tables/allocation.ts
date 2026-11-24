@@ -204,6 +204,37 @@ export async function runAllocation(sessionId: string, actorUid: string, opts: {
 }
 
 /**
+ * L'équipe choisit elle-même un lieu (aucun lieu compatible restant, ou un lieu hors gamme ou hors créneau accepté au
+ * téléphone) : une demande lui est envoyée pour `tables` tables, comme une demande automatique (relance, réponse,
+ * confirmation). Les tables manquantes de la date diminuent d'autant.
+ */
+export async function requestVenueByTeam(sessionId: string, partnerId: string, tables: number, actorUid: string): Promise<{ requestId: string }> {
+  const sessRef = db.doc(`sessions/${sessionId}`);
+  const s = (await sessRef.get()).data();
+  if (!s) throw new Error("not_found");
+  const e = (await db.doc(`experiences/${s.experienceId}`).get()).data() ?? {};
+  const p = (await db.doc(`partners/${partnerId}`).get()).data() as PartnerDoc | undefined;
+  if (!p) throw new Error("partner_not_found");
+  const people = Number(s.allocation?.people ?? s.seatsConfirmed ?? 0);
+  const max = tableMax(e);
+  const round = Number(s.allocation?.round ?? 0) + 1;
+  const ref = db.collection("venueRequests").doc();
+  await ref.set({
+    sessionId, experienceId: s.experienceId, partnerId, partnerName: p.name, partnerEmail: p.contactEmail ?? "", partnerWhatsapp: p.whatsapp || p.contactPhone || "",
+    address: p.address ?? "", geo: p.geo ?? null, cuisine: p.cuisine ?? "", cuisineI18n: p.cuisineI18n ?? null, title: String(e.title?.fr ?? ""), format: formatName(e), tier: e.venueTier ?? null, unit: p.unit ?? "table",
+    startAt: s.startAt, tables, people: Math.min(people, tables * max), reference: `W-${ref.id.slice(0, 6).toUpperCase()}`, token: randomBytes(24).toString("base64url"),
+    status: "sent", round, byTeam: true, createdAt: FieldValue.serverTimestamp(), sentAt: FieldValue.serverTimestamp(), createdBy: actorUid,
+    history: [{ at: Timestamp.now(), event: "created", by: actorUid, note: "Lieu choisi par l'équipe" }],
+  });
+  await db.doc(`partners/${partnerId}`).set({ stats: { requests: FieldValue.increment(1) } }, { merge: true });
+  await sendRequestMessages(ref.id, "request");
+  const missing = Math.max(0, Number(s.allocation?.missing ?? 0) - tables);
+  await sessRef.set({ allocation: { status: missing > 0 ? "short" : "requested", missing, round, updatedAt: FieldValue.serverTimestamp() } }, { merge: true });
+  await checkAllocation(sessionId);
+  return { requestId: ref.id };
+}
+
+/**
  * Fermeture des réservations (veille 20h30, timeline du 24/11) : les options prises à 15h passent au nombre réel.
  * Tables en trop → libérées (demandes en attente d'abord, puis les dernières confirmées) ; tables manquantes → nouvelle
  * demande tout de suite. Chaque lieu dont la demande change reçoit le nombre final. Une seule fois par date.

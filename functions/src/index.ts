@@ -73,5 +73,5 @@ export { adminResetDemo, adminSaveDemoGuests } from "./experiences/demo-reset";
 export { organizerRequestCancellation, organizerProposeSaturday, adminDecideOrganizerRequest } from "./organizers/requests";
 export { adminResetShowcase } from "./experiences/showcase";
 export { moveMyReservation } from "./tables/move";
-export { partnerRespondRequest, adminRequestAction, adminAllocate, adminSaveAllocationSettings, adminSaveWhatsAppSettings, adminRiskDecision, respondProposal, sendTableMessage } from "./tables/callables";
+export { partnerRespondRequest, adminRequestAction, adminAllocate, adminRequestVenue, adminSaveAllocationSettings, adminSaveWhatsAppSettings, adminRiskDecision, respondProposal, sendTableMessage } from "./tables/callables";
 export { tablesAutomation } from "./tables/automation";

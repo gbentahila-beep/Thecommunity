@@ -2715,6 +2715,29 @@ describe("attribution des lieux et parcours des Tables (Étape H)", () => {
     expect((await db().collection("mail").where("refs.sessionId", "==", sid).where("kind", "==", "venue_recap").get()).size).toBe(active.length);
   });
 
+  it("aucun lieu compatible restant : l'équipe choisit elle-même un lieu (autre gamme), demande envoyée", async () => {
+    const { sid, start } = await tablesSession({ startInHours: 97 }); // créneau à part (aucun lieu des autres tests)
+    const seul = await partner("Seul", start, 2);
+    await people(sid, 8); // 2 tables
+    // Le lieu n'a finalement plus qu'une table ce soir-là : il en manque une, sans autre lieu compatible.
+    const z = zonedParts(start, "Africa/Casablanca");
+    const hhmm = `${String(z.hour).padStart(2, "0")}:${String(z.minute).padStart(2, "0")}`;
+    await db().doc(`partners/${seul}`).update({ slots: [{ weekday: z.weekday, from: hhmm, to: hhmm, units: 1 }] });
+    const t = tablesTimeline(start);
+    await runSessionAutomation(sid, t.closesAt.getTime() + 60_000);
+    expect((await session(sid)).allocation).toMatchObject({ status: "short", missing: 1 });
+    // Un lieu d'une autre gamme, accord obtenu au téléphone.
+    const other = await partner("Autre", start, 2, { tiers: ["casual"] });
+    const adm = await member({ role: "admin" });
+    expect(await refusal((await member()).call("adminRequestVenue", { sessionId: sid, partnerId: other, tables: 1 }))).toBe("permission-denied:");
+    await adm.call("adminRequestVenue", { sessionId: sid, partnerId: other, tables: 1 });
+    const reqs = await requestsOf(sid);
+    expect(reqs.find((r) => r.partnerId === other)).toMatchObject({ status: "sent", tables: 1, byTeam: true });
+    expect((await session(sid)).allocation).toMatchObject({ status: "requested", missing: 0 });
+    expect(await refusal(adm.call("adminRequestVenue", { sessionId: sid, partnerId: other, tables: 1 }))).toBe("failed-precondition:already_requested");
+    await db().doc(`partners/${other}`).update({ status: "archived" });
+  });
+
   it("sans réponse : relance après 1 h, puis autre lieu après 2 h", async () => {
     const { sid, start } = await tablesSession();
     await partner("Lent", start, 1);

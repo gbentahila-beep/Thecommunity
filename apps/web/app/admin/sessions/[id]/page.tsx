@@ -1,4 +1,4 @@
-import { ageBand, ageOn, bookingClosesAt, pricingOf, recapAtFor, refundAmountFor, revealAtFor, seatsAvailable, unitWord, venueCallAt, venueOptionsAt, venueRequestText, whatsappMobileUrl, whatsappWebUrl } from "@thecommunity/shared";
+import { ageBand, ageOn, bookingClosesAt, partnerUnitsAt, pricingOf, recapAtFor, refundAmountFor, revealAtFor, seatsAvailable, unitWord, venueCallAt, venueOptionsAt, venueRequestText, whatsappMobileUrl, whatsappWebUrl } from "@thecommunity/shared";
 import { AllocationCard, RiskCard } from "@/components/admin/allocation-card";
 import { SITE_URL } from "@/lib/site";
 import Link from "next/link";
@@ -54,11 +54,29 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
     const info = { venue: r.partnerName, title: r.title, when: adminDate(r.startAt), format: r.format, tier: tierLabel(r.tier), tables: r.tables, people: r.people, unit: r.unit, reference: r.reference, link };
     return {
       id: r.id, partnerName: r.partnerName, tables: r.tables, people: r.people, unitWord: unitWord(r.unit, r.tables), status: r.status, round: r.round, reference: r.reference, fixed: r.fixed,
-      sentLabel: r.sentAt ? adminDate(r.sentAt) : "", responseLabel: r.respondedAt ? `${r.responseBy === "team" ? "confirmé par l'équipe" : "réponse du lieu"} ${adminDate(r.respondedAt)}` : r.remindedAt ? `relancé ${adminDate(r.remindedAt)}` : "",
+      sentLabel: r.sentAt ? adminDate(r.sentAt) : "", responseLabel: r.respondedAt ? `${r.status === "refused" ? (r.responseBy === "team" ? "refusé (noté par l'équipe)" : "refusé par le lieu") : r.responseBy === "team" ? "confirmé par l'équipe" : "réponse du lieu"} ${adminDate(r.respondedAt)}` : r.remindedAt ? `relancé ${adminDate(r.remindedAt)}` : "",
       phone: r.partnerWhatsapp, waWeb: whatsappWebUrl(r.partnerWhatsapp, venueRequestText(info)), waMobile: whatsappMobileUrl(r.partnerWhatsapp, venueRequestText(info)),
       recapWaWeb: r.recapText ? whatsappWebUrl(r.partnerWhatsapp, r.recapText) : null, link,
     };
   });
+  // Autres lieux possibles (aucun lieu compatible restant, ou accord au téléphone) : ceux qui servent ce format dans
+  // la ville, avec la raison pour laquelle le calcul automatique ne les a pas proposés.
+  const format = String((e as { templateId?: string }).templateId || e.subcategoryId || "").replace(/^girls-only-/, "");
+  const slotStart = start.getTime();
+  const usedBy = (pid: string) => d.venueRequests.filter((r) => r.partnerId === pid && r.sessionId !== s.id && (r.status === "sent" || r.status === "confirmed") && Math.abs(new Date(r.startAt).getTime() - slotStart) < 3 * 3_600_000).reduce((n, r) => n + r.tables, 0);
+  const askedHere = new Map(requests.map((r) => [r.partnerId, r.status]));
+  const candidates = secret ? d.partners
+    .filter((p) => p.status === "active" && (!p.cityId || p.cityId === e.cityId) && (p.formats ?? []).includes(format as never))
+    .map((p) => {
+      const units = partnerUnitsAt(p as never, start);
+      const free = Math.max(0, units - usedBy(p.id));
+      const tierOk = !e.venueTier || (p.tiers ?? []).includes(e.venueTier as never);
+      const here = askedHere.get(p.id);
+      const reason = here === "refused" ? "a refusé pour cette date" : here === "expired" ? "n'a pas répondu" : here ? "déjà demandé" : !tierOk ? `autre gamme (${(p.tiers ?? []).join(", ") || "—"})` : units === 0 ? "pas de créneau à cette heure" : free === 0 ? "complet ce soir-là" : `${free} table${free > 1 ? "s" : ""} libre${free > 1 ? "s" : ""}`;
+      return { id: p.id, name: p.name, reason, ok: tierOk && free > 0 && !here, blocked: here === "sent" || here === "confirmed" };
+    })
+    .filter((c) => !c.blocked)
+    .sort((a, b) => Number(b.ok) - Number(a.ok) || a.name.localeCompare(b.name, "fr")) : [];
   const alloc = s.allocation;
   const closesAt = bookingClosesAt(start, e);
   const allocationSummary = alloc
@@ -291,7 +309,7 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
       )}
       {(secret || requests.length > 0) && (
         <Card title={secret ? "Lieux : attribution automatique" : "Lieu : confirmation"} className="mt-6 scroll-mt-16" id="lieux">
-          <AllocationCard sessionId={s.id} summary={secret ? allocationSummary : "Le lieu fixe reçoit une demande la veille à 15h, le nombre final à la fermeture des réservations, puis le récapitulatif (le jour même à 11h, ou la veille au soir pour un début avant 14h)."} rows={allocationRows} live={!d.isDemo} canRun={secret && s.seatsConfirmed > 0 && alloc?.status !== "manual" && d.now.getTime() < start.getTime()} />
+          <AllocationCard sessionId={s.id} summary={secret ? allocationSummary : "Le lieu fixe reçoit une demande la veille à 15h, le nombre final à la fermeture des réservations, puis le récapitulatif (le jour même à 11h, ou la veille au soir pour un début avant 14h)."} rows={allocationRows} live={!d.isDemo} canRun={secret && s.seatsConfirmed > 0 && alloc?.status !== "manual" && d.now.getTime() < start.getTime()} candidates={secret && alloc && alloc.status !== "manual" && d.now.getTime() < start.getTime() ? candidates : []} missing={alloc?.missing ?? 0} />
         </Card>
       )}
       {secret && (
