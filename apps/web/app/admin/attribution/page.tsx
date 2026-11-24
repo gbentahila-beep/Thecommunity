@@ -55,7 +55,7 @@ export default async function AllocationPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <Link href={`/admin/sessions/${s.id}`} className="font-semibold text-ink hover:text-brand-900">{e.title.fr}{e.venueTier ? ` · ${e.venueTier.charAt(0).toUpperCase()}${e.venueTier.slice(1)}` : ""}</Link>
                     <span className="text-sm text-muted">{adminDate(s.startAt)} · {s.seatsConfirmed} inscrits{a?.needed ? ` · ${a.needed} tables` : ""}</span>
-                    {!a && <Badge tone="gray">{`Attribution le ${adminDate(bookingClosesAt(new Date(s.startAt), e.bookingMode).toISOString())}`}</Badge>}
+                    {!a && <Badge tone="gray">{`Attribution le ${adminDate(bookingClosesAt(new Date(s.startAt), e).toISOString())}`}</Badge>}
                     {a?.status === "confirmed" && <Badge tone="green">Lieux confirmés</Badge>}
                     {a?.status === "short" && <Badge tone="red">{`${a.missing} table${(a.missing ?? 0) > 1 ? "s" : ""} sans lieu`}</Badge>}
                     {a?.status === "manual" && <Badge tone="gray">Choisis à la main</Badge>}

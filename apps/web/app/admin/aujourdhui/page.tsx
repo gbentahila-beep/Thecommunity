@@ -27,7 +27,7 @@ export default async function TodayPage() {
     const secret = e.venue.revealPolicy === "on_group_reveal";
     const hasVenue = (d.sessionVenues[s.id]?.length ?? 0) > 0 || Boolean(e.venue.name);
     const revealAt = revealAtFor(s.startAt).getTime();
-    const closesAt = bookingClosesAt(new Date(s.startAt), e.bookingMode).getTime();
+    const closesAt = bookingClosesAt(new Date(s.startAt), e).getTime();
     // docs/22 § 17.H : date à risque, attribution des lieux, appels à passer.
     if (s.risk?.status === "at_risk") todos.push({ tone: "red", text: "À risque : décision à prendre" });
     else if (s.risk?.status === "proposed") todos.push({ tone: "amber", text: "Autre date proposée : réponses en cours" });

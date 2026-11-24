@@ -27,36 +27,8 @@ export const adminAddSessions = onCall({ region: REGION }, async (req) => {
   const planned = planSessionDates(v.data.sessions, Number(e.durationMinutes ?? 120), MOROCCO_TIMEZONE);
   const now = Date.now();
   if (planned.some((d) => new Date(d.startAt).getTime() < now)) invalidArgument([{ path: ["sessions", "firstDate"], message: "inPast" }]);
-  const snapshot = {
-    title: e.title,
-    slug: e.slug,
-    coverImagePath: e.images?.[0]?.path ?? "",
-    categoryId: e.categoryId,
-    bookingMode: e.bookingMode,
-    district: e.district ?? "",
-    admission: e.admission ?? "direct",
-  };
   const batch = db.batch();
-  for (const d of planned) {
-    batch.set(db.collection("sessions").doc(), {
-      experienceId: ref.id,
-      organizerId: e.organizerId ?? null,
-      experienceSnapshot: snapshot,
-      cityId: e.cityId,
-      categoryId: e.categoryId,
-      startAt: Timestamp.fromDate(new Date(d.startAt)),
-      endAt: Timestamp.fromDate(new Date(d.endAt)),
-      price: e.price,
-      capacity: v.data.sessions.capacity,
-      seatsConfirmed: 0,
-      seatsHeld: 0,
-      waitlistCount: 0,
-      status: e.status === "published" ? "published" : "draft",
-      isFeatured: false,
-      groupsStatus: "none",
-      createdAt: FieldValue.serverTimestamp(),
-    });
-  }
+  for (const d of planned) batch.set(db.collection("sessions").doc(), sessionDocFor(e, ref.id, new Date(d.startAt), new Date(d.endAt), v.data.sessions.capacity));
   const first = Math.min(...planned.map((d) => new Date(d.startAt).getTime()));
   const current = (e.nextSessionAt as Timestamp | null | undefined)?.toMillis();
   if (!current || current < now || first < current) batch.update(ref, { nextSessionAt: Timestamp.fromMillis(first) });
@@ -65,3 +37,36 @@ export const adminAddSessions = onCall({ region: REGION }, async (req) => {
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "sessions.add", targetType: "experience", targetId: ref.id, after: { count: planned.length, alerted } });
   return { created: planned.length };
 });
+
+/** Document d'une nouvelle date d'une expérience (ajout manuel, ou dates automatiques des rendez-vous, docs/25). */
+export function sessionDocFor(e: FirebaseFirestore.DocumentData, experienceId: string, startAt: Date, endAt: Date, capacity: number) {
+  return {
+    experienceId,
+    organizerId: e.organizerId ?? null,
+    experienceSnapshot: {
+      title: e.title,
+      slug: e.slug,
+      coverImagePath: e.images?.[0]?.path ?? "",
+      categoryId: e.categoryId,
+      bookingMode: e.bookingMode,
+      district: e.district ?? "",
+      admission: e.admission ?? "direct",
+      ...(e.venueTier ? { venueTier: e.venueTier } : {}),
+      ...(e.rendezvousId ? { rendezvousId: e.rendezvousId } : {}),
+    },
+    ...(e.rendezvousId ? { rendezvousId: e.rendezvousId } : {}),
+    cityId: e.cityId,
+    categoryId: e.categoryId,
+    startAt: Timestamp.fromDate(startAt),
+    endAt: Timestamp.fromDate(endAt),
+    price: e.price,
+    capacity,
+    seatsConfirmed: 0,
+    seatsHeld: 0,
+    waitlistCount: 0,
+    status: e.status === "published" ? "published" : "draft",
+    isFeatured: false,
+    groupsStatus: "none",
+    createdAt: FieldValue.serverTimestamp(),
+  };
+}

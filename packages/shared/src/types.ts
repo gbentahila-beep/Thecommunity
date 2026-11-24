@@ -115,6 +115,10 @@ export type Experience = {
   /** Étape 11 : part partenaire réglée sur place (absent = « tout en ligne »). */
   pricing?: ExperiencePricing | null;
   bookingMode: BookingMode;
+  /** docs/25 : rendez-vous de la semaine auquel appartient cette expérience (une expérience par gamme). */
+  rendezvousId?: string | null;
+  /** docs/25 : « eve » = réservations fermées la veille à 20h30. */
+  closeRule?: "eve" | null;
   groupConfig?: GroupConfig;
   maxSeatsPerBooking: number;
   /** Prix membre précis (centimes) ; à défaut, réduction de la formule d'abonnement. */

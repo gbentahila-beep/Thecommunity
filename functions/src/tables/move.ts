@@ -55,8 +55,8 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
     if (!["published", "full"].includes(t.status)) refuse("not_open", "La nouvelle date n'est pas ouverte.");
     if ((t.startAt as Timestamp).toMillis() <= now) refuse("already_started", "La nouvelle date est passée.");
     if (o.by === "user" && !proposed) {
-      if (now >= bookingClosesAt((f.startAt as Timestamp).toDate(), e.bookingMode).getTime()) refuse("closed", "Les réservations de cette date sont fermées.");
-      if (now >= bookingClosesAt((t.startAt as Timestamp).toDate(), e.bookingMode).getTime()) refuse("target_closed", "Les réservations de la nouvelle date sont fermées.");
+      if (now >= bookingClosesAt((f.startAt as Timestamp).toDate(), e).getTime()) refuse("closed", "Les réservations de cette date sont fermées.");
+      if (now >= bookingClosesAt((t.startAt as Timestamp).toDate(), e).getTime()) refuse("target_closed", "Les réservations de la nouvelle date sont fermées.");
     }
     if (toLock.exists) refuse("already_booked", "Une place est déjà réservée sur la nouvelle date.");
     const n = r.seats as number;

@@ -105,13 +105,13 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
   const tablesFlow = isTablesFlow(experience);
   const when = (iso: string) => (locale === "fr" ? `${formatLongDate(iso, locale).toLowerCase()} à ${formatTime(iso, locale)}` : `${formatLongDate(iso, locale)} ${formatTime(iso, locale)}`);
   const revealWhen = when(revealAtFor(s.startAt).toISOString());
-  const closesAt = experience ? bookingClosesAt(new Date(s.startAt), experience.bookingMode) : null;
+  const closesAt = experience ? bookingClosesAt(new Date(s.startAt), experience) : null;
   const proposal = r.proposal?.status === "pending" && isActive ? r.proposal : null;
   const proposedSession = proposal ? await getSession(proposal.targetSessionId).catch(() => null) : null;
   // Lieu révélé (Tables) : la date ne se déplace plus.
   const canMove = isActive && isUpcoming && !proposal && !(tablesFlow && r.venue) && experience && closesAt !== null && closesAt.getTime() > now.getTime();
   const moveOptions = canMove
-    ? (await getUpcomingSessions({ experienceId: experience!.id })).filter((x) => x.id !== r.sessionId && seatsAvailable(x) >= r.seats && bookingClosesAt(new Date(x.startAt), experience!.bookingMode).getTime() > now.getTime()).slice(0, 12).map((x) => ({ id: x.id, label: when(x.startAt) }))
+    ? (await getUpcomingSessions({ experienceId: experience!.id })).filter((x) => x.id !== r.sessionId && seatsAvailable(x) >= r.seats && bookingClosesAt(new Date(x.startAt), experience!).getTime() > now.getTime()).slice(0, 12).map((x) => ({ id: x.id, label: when(x.startAt) }))
     : [];
   const namesHidden = Boolean(group?.namesAtCheckIn) && !r.arrivedAt && r.status !== "attended";
   const summary = r.tableSummary && r.tableSummary.others > 0 && (namesHidden || !group) ? r.tableSummary : null;

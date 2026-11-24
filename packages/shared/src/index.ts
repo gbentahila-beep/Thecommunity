@@ -34,3 +34,4 @@ export * from "./allocation";
 export * from "./extra-i18n";
 export * from "./ics";
 export * from "./cmi";
+export * from "./rendezvous";

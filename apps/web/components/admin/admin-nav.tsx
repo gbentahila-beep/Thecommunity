@@ -36,7 +36,7 @@ export const ADMIN_SECTIONS: { title: string | null; links: NavLink[] }[] = [
   {
     title: "Événements",
     links: [
-      { href: "/admin/experiences", label: "Événements", icon: Sparkles, tabs: [{ href: "/admin/experiences", label: "Événements" }, { href: "/admin/sessions", label: "Dates et tables" }, { href: "/admin/modeles", label: "Modèles" }] },
+      { href: "/admin/experiences", label: "Événements", icon: Sparkles, tabs: [{ href: "/admin/experiences", label: "Événements" }, { href: "/admin/rendez-vous", label: "Rendez-vous" }, { href: "/admin/sessions", label: "Dates et tables" }, { href: "/admin/modeles", label: "Modèles" }] },
       { href: "/admin/attribution", label: "Attribution des lieux", icon: Route },
       { href: "/admin/reservations", label: "Réservations", icon: Ticket, tabs: [{ href: "/admin/reservations", label: "Réservations" }, { href: "/admin/participations", label: "Demandes de participation" }, { href: "/admin/billets", label: "Billets (check-in)" }] },
     ],

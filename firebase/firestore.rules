@@ -85,6 +85,11 @@ service cloud.firestore {
 
     // ---------- Expériences et sessions ----------
     // Écriture via Cloud Functions (validation complète, journalisation).
+    // docs/25 : rendez-vous de la semaine (jour, heure, gammes) : publics quand ils sont actifs ; écrits par le serveur.
+    match /rendezvous/{rendezvousId} {
+      allow read: if resource.data.status == 'active' || isAdmin();
+      allow write: if false;
+    }
     match /experiences/{experienceId} {
       allow read: if resource.data.status == 'published' || isAdmin() || isOrganizerOf(resource.data.get('organizerId', null));
       allow write: if false;

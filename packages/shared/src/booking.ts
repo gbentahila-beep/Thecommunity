@@ -32,7 +32,18 @@ export function bookingCloseHours(mode: BookingMode): number {
   return mode === "social_dinner" ? 12 : 2;
 }
 
-export function bookingClosesAt(startAt: Date, mode: BookingMode): Date {
+/**
+ * Règle de fermeture propre à une expérience (docs/25) : « eve » = la veille à 20h30 (heure du Maroc), pour les
+ * rendez-vous de la semaine (tables composées et restaurants réservés la veille). Sans règle : selon le format.
+ */
+export type CloseRule = "eve";
+export const EVE_CLOSE = { hour: 20, minute: 30 } as const;
+/** Le format seul, ou l'expérience (lue en base : champs non typés) avec sa règle de fermeture. */
+type CloseInput = BookingMode | { bookingMode?: unknown; closeRule?: unknown };
+
+export function bookingClosesAt(startAt: Date, modeOrExperience: CloseInput): Date {
+  const mode = (typeof modeOrExperience === "string" ? modeOrExperience : modeOrExperience.bookingMode) as BookingMode;
+  if (typeof modeOrExperience !== "string" && modeOrExperience.closeRule === "eve") return localOnDayBefore(startAt, EVE_CLOSE.hour, EVE_CLOSE.minute);
   const closes = new Date(startAt.getTime() - bookingCloseHours(mode) * 3_600_000);
   if (mode !== "social_dinner") return closes;
   // docs/22, décision 42 : début avant 14 h → fermeture au plus tard à 18 h la veille (on appelle les lieux de jour).
@@ -43,10 +54,10 @@ export function bookingClosesAt(startAt: Date, mode: BookingMode): Date {
 }
 
 /** `hour` h (heure du Maroc) la veille du jour de `instant`. */
-export function localOnDayBefore(instant: Date, hour: number): Date {
+export function localOnDayBefore(instant: Date, hour: number, minute = 0): Date {
   const z = zonedParts(instant, MOROCCO_TIMEZONE);
   const d = new Date(Date.UTC(z.year, z.month - 1, z.day - 1));
-  return zonedDateTimeToUtc({ year: d.getUTCFullYear(), month: d.getUTCMonth() + 1, day: d.getUTCDate(), hour, minute: 0 }, MOROCCO_TIMEZONE);
+  return zonedDateTimeToUtc({ year: d.getUTCFullYear(), month: d.getUTCMonth() + 1, day: d.getUTCDate(), hour, minute }, MOROCCO_TIMEZONE);
 }
 
 /** Demande de réservation envoyée par le navigateur ; tout le reste (prix, places) est décidé par le serveur. */
@@ -63,6 +74,8 @@ export const reservationRequestSchema = z.object({
   answers: questionnaireAnswersSchema.optional(),
   /** docs/22 § 17.I : régler les places avec les crédits du carnet. */
   useCarnet: z.boolean().optional(),
+  /** docs/25 : rendez-vous — si ma gamme n'est pas complète, j'accepte la gamme voisine (coché par défaut à l'écran). */
+  tierFallback: z.boolean().optional(),
 });
 export type ReservationRequest = z.infer<typeof reservationRequestSchema>;
 
@@ -144,12 +157,12 @@ export type BookingRefusal = "not_open" | "closed" | "full" | "not_enough_seats"
  */
 export function bookingRefusal(
   session: { status: string; startAt: Date; capacity: number; seatsConfirmed: number; seatsHeld: number },
-  experience: { bookingMode: BookingMode; maxSeatsPerBooking?: number },
+  experience: { bookingMode: BookingMode; maxSeatsPerBooking?: number; closeRule?: CloseRule | string | null },
   seats: number,
   now: Date = new Date(),
 ): BookingRefusal | null {
   if (session.status !== "published" && session.status !== "full") return "not_open";
-  if (now.getTime() >= bookingClosesAt(session.startAt, experience.bookingMode).getTime()) return "closed";
+  if (now.getTime() >= bookingClosesAt(session.startAt, experience).getTime()) return "closed";
   const available = seatsAvailable(session);
   if (available === 0) return "full";
   if (seats > maxSeatsFor(experience)) return "too_many_seats";

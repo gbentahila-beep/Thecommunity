@@ -50,7 +50,7 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
     };
   });
   const alloc = s.allocation;
-  const closesAt = bookingClosesAt(start, e.bookingMode);
+  const closesAt = bookingClosesAt(start, e);
   const allocationSummary = alloc
     ? alloc.status === "manual" ? "Lieux choisis à la main par l'équipe (ci-dessous) : l'attribution automatique est arrêtée pour cette date."
     : `${alloc.people ?? s.seatsConfirmed} inscrits · ${alloc.needed ?? "?"} table${(alloc.needed ?? 0) > 1 ? "s" : ""} nécessaire${(alloc.needed ?? 0) > 1 ? "s" : ""} · ${alloc.confirmed ?? 0} confirmée${(alloc.confirmed ?? 0) > 1 ? "s" : ""}${alloc.missing ? ` · ${alloc.missing} sans lieu disponible` : ""}${alloc.status === "confirmed" ? " · tous les lieux sont confirmés" : ""}.`

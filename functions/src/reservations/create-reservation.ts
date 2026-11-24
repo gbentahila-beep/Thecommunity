@@ -33,10 +33,10 @@ export async function reserveSeats(caller: { uid: string; emailVerified: boolean
   const clean = data && typeof data === "object" ? Object.fromEntries(Object.entries(data).filter(([, v]) => v !== null && v !== undefined)) : data;
   const parsed = reservationRequestSchema.safeParse(clean);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  const { sessionId, seats, promoCode, preferences, physicalTermsAccepted, answers, useCarnet } = parsed.data;
+  const { sessionId, seats, promoCode, preferences, physicalTermsAccepted, answers, useCarnet, tierFallback } = parsed.data;
 
   await requireMemberReady(uid);
-  const out = await runReservation({ uid, sessionId, seats, promoCode, preferences, physicalTermsAccepted, answers, useCarnet });
+  const out = await runReservation({ uid, sessionId, seats, promoCode, preferences, physicalTermsAccepted, answers, useCarnet, tierFallback });
   // 18a : réservation gratuite confirmée tout de suite → invitation à remplir le questionnaire.
   if (out.status === "confirmed" && !out.resumed) await notifyQuestionnaire(out.reservationId).catch(() => undefined);
   return out;
@@ -75,7 +75,7 @@ export async function runReservation(o: ReservationRun) {
   }
 }
 
-type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers; useCarnet?: boolean };
+type ReservationRun = { uid: string; sessionId: string; seats: number; requestId?: string; holdMs?: number; actorUid?: string; promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers; useCarnet?: boolean; tierFallback?: boolean };
 
 /** Plafond de vente d'une date à lieu attribué, avant l'attribution (null = pas de plafond). */
 export async function capacityBefore(sessionId: string): Promise<number | null> {
@@ -184,7 +184,7 @@ async function runReservationOnce(o: ReservationRun) {
       seatsConfirmed: s.seatsConfirmed as number,
       seatsHeld: (s.seatsHeld as number) - releasedHold,
     };
-    const refusal = bookingRefusal(view, { bookingMode: e.bookingMode, maxSeatsPerBooking: e.maxSeatsPerBooking }, seats, new Date(now));
+    const refusal = bookingRefusal(view, { bookingMode: e.bookingMode, maxSeatsPerBooking: e.maxSeatsPerBooking, closeRule: e.closeRule }, seats, new Date(now));
     if (refusal) refuse(refusal, "Réservation impossible pour cette date.");
 
     const resRef = db.collection("reservations").doc();
@@ -194,7 +194,7 @@ async function runReservationOnce(o: ReservationRun) {
       uid,
       sessionId,
       seats,
-      holdUntilMs: Math.min(now + (o.holdMs ?? HOLD_MINUTES * 60_000), bookingClosesAt(view.startAt, e.bookingMode).getTime()),
+      holdUntilMs: Math.min(now + (o.holdMs ?? HOLD_MINUTES * 60_000), bookingClosesAt(view.startAt, e).getTime()),
       coverage: terms.coverage,
       promo,
       serviceFee: readServiceFee(bookingSettings.data()?.serviceFee),
@@ -202,6 +202,8 @@ async function runReservationOnce(o: ReservationRun) {
       policies,
       extra: {
         ...(requestRef ? { requestId: requestRef.id } : {}),
+        // docs/25 : gamme du rendez-vous et accord pour la gamme voisine (utilisé à la composition des tables).
+        ...(e.rendezvousId ? { rendezvousId: e.rendezvousId, tier: e.venueTier ?? null, tierFallback: o.tierFallback !== false } : {}),
         ...(questionnaire ? { questionnaire } : {}),
         ...(e.physicalActivity === true
           ? { physicalTerms: acceptedWithRequest ?? { version: PHYSICAL_TERMS_VERSION, acceptedAt: Timestamp.fromMillis(now) } }

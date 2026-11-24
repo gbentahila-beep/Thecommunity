@@ -62,7 +62,7 @@ export async function runSessionAutomation(id: string, now = Date.now()) {
 async function stepSession(id: string, s: DocumentData, e: DocumentData, now: number, out: Record<string, number>) {
   const start = (s.startAt as Timestamp).toDate();
   const t = tablesTimeline(start);
-  const closesAt = bookingClosesAt(start, e.bookingMode).getTime();
+  const closesAt = bookingClosesAt(start, e).getTime();
   const people = Number(s.seatsConfirmed ?? 0);
   const title = String(e.title?.fr ?? "");
   const when = dateTimeFr(start);

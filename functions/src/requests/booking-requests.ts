@@ -40,7 +40,7 @@ export const requestBooking = onCall({ region: REGION }, async (req) => {
     if (e!.admission !== "on_request") refuse("direct_booking", "Cette expérience se réserve directement.");
     if (e!.membersOnly === true && !memberFromDoc(mem.data())) refuse("members_only", "Expérience réservée aux membres.");
     const startAt = (s.startAt as Timestamp).toDate();
-    if (Date.now() >= bookingClosesAt(startAt, e!.bookingMode).getTime()) refuse("closed", "Les inscriptions sont fermées.");
+    if (Date.now() >= bookingClosesAt(startAt, e!).getTime()) refuse("closed", "Les inscriptions sont fermées.");
     if (seats > maxSeatsFor(e!)) refuse("too_many_seats", "Trop de places.");
     if (e!.requestMessageRequired === true && !message) invalidArgument([{ path: ["message"], message: "required" }]);
     if (e!.requestInstagramRequired === true && !instagram) invalidArgument([{ path: ["instagram"], message: "required" }]);

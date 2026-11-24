@@ -56,7 +56,7 @@ export function writeOffers(
   o: { sessRef: DocumentReference; s: DocumentData; e: DocumentData; candidates: WaitlistCandidates; available: number; now: number },
 ): { heldDelta: number; confirmedDelta: number; waitingDelta: number; offered: string[]; offeredReservations: string[] } {
   const out = { heldDelta: 0, confirmedDelta: 0, waitingDelta: 0, offered: [] as string[], offeredReservations: [] as string[] };
-  const closesAt = bookingClosesAt((o.s.startAt as Timestamp).toDate(), o.e.bookingMode).getTime();
+  const closesAt = bookingClosesAt((o.s.startAt as Timestamp).toDate(), o.e).getTime();
   if (o.now >= closesAt || !["published", "full"].includes(o.s.status)) return out;
   let remaining = o.available;
   for (const entry of o.candidates.entries) {

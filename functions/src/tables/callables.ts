@@ -110,7 +110,7 @@ export const adminRiskDecision = onCall({ region: REGION, timeoutSeconds: 120 },
   if (start.getTime() <= Date.now()) refuse("already_started", "La date est passée.");
   if (v.data.action === "keep") {
     await sessRef.update({ risk: { ...(s.risk ?? {}), status: "kept", decidedAt: FieldValue.serverTimestamp(), decidedBy: actor.uid } });
-    if (isAllocated(e) && !s.allocation && Date.now() >= bookingClosesAt(start, e.bookingMode).getTime() && s.seatsConfirmed > 0) await runAllocation(sessRef.id, actor.uid);
+    if (isAllocated(e) && !s.allocation && Date.now() >= bookingClosesAt(start, e).getTime() && s.seatsConfirmed > 0) await runAllocation(sessRef.id, actor.uid);
     await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "session.risk.keep", targetType: "session", targetId: sessRef.id });
     return { ok: true };
   }
@@ -122,7 +122,7 @@ export const adminRiskDecision = onCall({ region: REGION, timeoutSeconds: 120 },
     const sameFormat = (te.templateId || te.subcategoryId) === (e.templateId || e.subcategoryId) && (te.venueTier ?? null) === (e.venueTier ?? null);
     if (!sameFormat) refuse("not_compatible", "Le regroupement se fait avec un événement du même format et de la même gamme.");
   }
-  let deadline = proposalDeadline(start, bookingClosesAt((target!.startAt as Timestamp).toDate(), e.bookingMode));
+  let deadline = proposalDeadline(start, bookingClosesAt((target!.startAt as Timestamp).toDate(), e));
   if (deadline.getTime() < Date.now() + 30 * 60_000) deadline = tablesTimeline(start).revealAt;
   if (deadline.getTime() < Date.now() + 30 * 60_000) refuse("too_late", "Trop tard pour proposer : maintenez ou annulez la date.");
   const kind = target!.experienceId === s.experienceId ? "date" : "merge";

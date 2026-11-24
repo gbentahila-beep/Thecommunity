@@ -59,6 +59,7 @@ export { adminProposeGroups, adminSaveGroups, adminRevealGroups } from "./groups
 export { sendReminders } from "./notify/reminders";
 export { adminSetSessionVenues, adminSessionVenueAction } from "./experiences/venues";
 export { adminAddSessions } from "./experiences/add-sessions";
+export { adminSaveRendezvous, rendezvousSessions } from "./rendezvous/rendezvous";
 export { adminResetShowcase } from "./experiences/showcase";
 export { moveMyReservation } from "./tables/move";
 export { partnerRespondRequest, adminRequestAction, adminAllocate, adminSaveAllocationSettings, adminSaveWhatsAppSettings, adminRiskDecision, respondProposal, sendTableMessage } from "./tables/callables";
