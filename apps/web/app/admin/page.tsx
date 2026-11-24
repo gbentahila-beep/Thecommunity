@@ -1,4 +1,4 @@
-import { AlertTriangle, BookOpen, CalendarDays, CalendarPlus, CheckCircle2, ChevronRight, Inbox, Repeat, Sparkles } from "lucide-react";
+import { AlertTriangle, BookOpen, CalendarDays, CalendarPlus, CheckCircle2, ChevronRight, Inbox, Repeat, RotateCcw, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { SiteHealthCard } from "@/components/admin/site-health";
 import { Card, dh, pct, StatTile } from "@/components/admin/ui";
@@ -7,6 +7,8 @@ import { dayKey, dayLabel, weekRows } from "@/lib/admin-week";
 import { computeStats, getAdminData } from "@/lib/data/admin";
 import { getSiteHealth } from "@/lib/data/admin-mail";
 import { getAdminTodo, getRendezvousTitles } from "@/lib/data/admin-todo";
+import { adminDb } from "@/lib/firebase/admin";
+import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 
 export const metadata = { title: "Accueil" };
 
@@ -43,6 +45,9 @@ export default async function AdminHomePage() {
   const today = dayKey(d.now);
   const tomorrow = dayKey(new Date(now + 24 * HOUR));
   const name = d.admin ? String(d.usersById.get(d.admin.uid)?.firstName ?? "") : "";
+  // Site de démonstration : raccourci vers la remise à zéro (jamais en production).
+  const trial = FIREBASE_ENABLED && !d.isDemo && (await adminDb().doc("settings/showcase").get()).get("trial") === true;
+  const shortcuts = [...SHORTCUTS, ...(trial ? [{ href: "/admin/demo", label: "Réinitialiser la démo", hint: "Tout effacer et remplir la semaine", icon: RotateCcw }] : [])];
 
   return (
     <>
@@ -80,7 +85,7 @@ export default async function AdminHomePage() {
         </Card>
         <Card title="Raccourcis">
           <ul className="grid gap-2" data-testid="shortcuts">
-            {SHORTCUTS.map((s) => (
+            {shortcuts.map((s) => (
               <li key={s.href}>
                 <Link href={s.href} className="flex items-center gap-3 rounded-xl border border-line px-3 py-2.5 hover:border-brand-700 hover:bg-brand-50">
                   <s.icon className="size-5 shrink-0 text-brand-900" aria-hidden />

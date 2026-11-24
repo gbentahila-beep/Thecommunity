@@ -69,6 +69,7 @@ export { adminAddSessions } from "./experiences/add-sessions";
 export { adminSaveRendezvous, rendezvousSessions } from "./rendezvous/rendezvous";
 export { adminLaunchRendezvous } from "./rendezvous/launch";
 export { adminRotationAddActivity, adminSaveRotation, adminSetRotationWeek } from "./rendezvous/rotation";
+export { adminResetDemo, adminSaveDemoGuests } from "./experiences/demo-reset";
 export { organizerRequestCancellation, organizerProposeSaturday, adminDecideOrganizerRequest } from "./organizers/requests";
 export { adminResetShowcase } from "./experiences/showcase";
 export { moveMyReservation } from "./tables/move";

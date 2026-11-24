@@ -54,6 +54,7 @@ export const ADMIN_SECTIONS: { title: string | null; links: NavLink[] }[] = [
           { href: "/admin/emails", label: "Boîte d'envoi" },
           { href: "/admin/demandes", label: "Demandes 09-08" },
           { href: "/admin/vitrine", label: "Vitrine" },
+          { href: "/admin/demo", label: "Site de démo" },
         ],
       },
       { href: "/admin/guide", label: "Guide", icon: BookOpen },

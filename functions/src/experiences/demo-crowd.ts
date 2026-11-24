@@ -34,6 +34,9 @@ export type CrowdResult = { users: number; reservations: number; sessions: numbe
 
 /** Crée (ou met à jour) `count` comptes fictifs complets. Identifiants stables : demo-crowd-001… */
 export async function ensureDemoCrowd(count: number): Promise<{ uid: string; gender: "female" | "male" }[]> {
+  // Déjà créés (réinitialisation de la démo) : on les reprend tels quels, sans réécrire 300 profils.
+  const existing = (await db.collection("users").where("demoCrowd", "==", true).get()).docs;
+  if (existing.length >= count) return existing.map((d) => ({ uid: d.id, gender: d.get("gender") === "female" ? ("female" as const) : ("male" as const) })).sort((a, b) => a.uid.localeCompare(b.uid)).slice(0, count);
   const r = rng(2026);
   const pick = <T>(a: readonly T[]) => a[Math.floor(r() * a.length)]!;
   const some = <T>(a: readonly T[], min: number, max: number) => [...a].sort(() => r() - 0.5).slice(0, min + Math.floor(r() * (max - min + 1)));

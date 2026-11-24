@@ -401,6 +401,8 @@ async function main() {
     await textsRef.set({ extraI18nAD: Timestamp.now() }, { merge: true });
     console.log(`✅ Arabe et anglais des textes secondaires : ${done} événements, ${venuesDone} lieux.`);
   }
+  // 25/11 : site de démonstration (garde du bouton « Réinitialiser la démo », jamais posée en production).
+  await db.doc("settings/showcase").set({ trial: true }, { merge: true });
   // 25/11 : une fois, les créneaux des lieux du site d'essai suivent les horaires des rendez-vous (brunch à 12h30) ;
   // seulement les fiches que l'équipe n'a pas modifiées.
   if (!(await db.doc("settings/showcase").get()).get("venueSlotsV2At")) {

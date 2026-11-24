@@ -62,3 +62,12 @@ fictifs `participantN@demo.wenzy.test` (mot de passe `Demo2026!`, profils comple
 jours par le vrai circuit (réservation, paiement de test, facture) : 60 à 100 % des places, un tiers des dates
 complètes. Aucun e-mail ne part vers une adresse fictive (`.test`, `example.com`), même avec Brevo (`isFakeAddress`).
 Les créneaux des lieux d'essai sont alignés sur le brunch de 12h30 (`venueSlotsV2At`).
+
+## 7. Site de démo : « Réinitialiser la démo » (25/11)
+
+Réglages → **Site de démo** (raccourci sur l'Accueil), super-admin, site de démonstration seulement (double garde :
+`settings/showcase.trial`, posé par le contenu de départ du site d'essai, et paiement de test). Un clic (confirmation
+« RÉINITIALISER ») : tout ce qui s'est passé est effacé (réservations, paiements, factures, tables, demandes aux lieux,
+boîte d'envoi, notifications, avis des membres, Pass et carnets, dates passées), les dates à venir sont remises à zéro,
+les **comptes invités** (liste saisie sur la page) sont inscrits à un créneau de chaque rendez-vous de la semaine
+(Premium de préférence, paiement de test), puis la foule remplit les 7 prochains jours. Durée : moins d'une minute.
