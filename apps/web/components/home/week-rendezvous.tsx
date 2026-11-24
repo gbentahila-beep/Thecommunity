@@ -28,6 +28,22 @@ export async function WeekRendezvous() {
   const rows = (
     await Promise.all(
       list.map(async (rv) => {
+        // Lot D : l'activité du samedi — l'activité de la semaine (date ouverte de la rotation).
+        if (rv.kind === "rotation") {
+          const sessions = (await getUpcomingSessions({ rendezvousId: rv.id })).filter((s) => s.rendezvousId === rv.id);
+          const any = sessions[0]?.experience;
+          if (!any) return null;
+          const w = bookingWindow(sessions, any, now, bookingClosesAt);
+          const open = sessions.find((s) => w.get(s.id)?.state === "open");
+          const shown = open ?? sessions[0]!;
+          return {
+            rv,
+            slug: shown.experience.slug,
+            first: open ? { slug: open.experience.slug, closesAt: bookingClosesAt(new Date(open.startAt), open.experience), startAt: open.startAt, left: seatsAvailable(open) } : undefined,
+            full: Boolean(open) && seatsAvailable(open!) === 0,
+            activity: { name: tr(shown.experience.title, locale), time: formatTime(shown.startAt, locale) },
+          };
+        }
         const opens: { slug: string; closesAt: Date; startAt: string; left: number }[] = [];
         let slug: string | null = null;
         for (const x of rv.tiers) {
@@ -42,7 +58,7 @@ export async function WeekRendezvous() {
         if (!slug) return null;
         const first = opens.sort((a, b) => a.startAt.localeCompare(b.startAt))[0];
         const left = opens.reduce((n, o) => n + o.left, 0);
-        return { rv, slug: first?.slug ?? slug, first, full: opens.length > 0 && left === 0 };
+        return { rv, slug: first?.slug ?? slug, first, full: opens.length > 0 && left === 0, activity: null };
       }),
     )
   )
@@ -56,7 +72,7 @@ export async function WeekRendezvous() {
       <h2 className="section-title mt-2 text-center">{t("weekRvTitle")}</h2>
       <p className="mx-auto mt-2 max-w-xl text-center text-ink/75">{t("weekRvText")}</p>
       <ul className="event-list mt-6">
-        {rows.map(({ rv, slug, first, full }) => (
+        {rows.map(({ rv, slug, first, full, activity }) => (
           <li key={rv.id}>
             <Link href={`/experiences/${slug}#dates`} className="flex items-center gap-4 px-4 py-4 hover:bg-cream/60">
               <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-brand-50 text-center">
@@ -65,7 +81,11 @@ export async function WeekRendezvous() {
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block font-semibold text-ink">{tr(rv.title as never, locale)}</span>
-                <span className="block text-sm text-muted">{t("weekRvWhen", { day: weekdayName(rv.weekday, locale), time: rv.time.replace(":", locale === "fr" ? "h" : ":") })}</span>
+                <span className="block text-sm text-muted">
+                  {activity
+                    ? t("weekRvActivity", { day: weekdayName(rv.weekday, locale).toLowerCase(), name: activity.name, time: activity.time })
+                    : t("weekRvWhen", { day: weekdayName(rv.weekday, locale), time: rv.time.replace(":", locale === "fr" ? "h" : ":") })}
+                </span>
                 <span className={`block text-xs font-semibold ${full ? "text-muted" : first ? "text-cat-move" : "text-brand-700"}`}>
                   {full ? t("weekRvFull") : first ? t("weekRvOpenUntil", { day: lowerFirst(formatLongDate(first.closesAt.toISOString(), locale), locale), time: formatTime(first.closesAt.toISOString(), locale) }) : t("weekRvSoon")}
                 </span>

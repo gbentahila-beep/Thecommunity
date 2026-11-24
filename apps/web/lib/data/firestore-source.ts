@@ -89,9 +89,10 @@ export async function fsExperiencesByIds(ids: string[]): Promise<Map<string, Exp
   return new Map(list.map((e) => [e.id, e]));
 }
 
-async function fsUpcomingSessionsRaw(f: { cityId?: string; categoryId?: CategoryKey; experienceId?: string; from: number; to: number }): Promise<Session[]> {
+async function fsUpcomingSessionsRaw(f: { cityId?: string; categoryId?: CategoryKey; experienceId?: string; rendezvousId?: string; from: number; to: number }): Promise<Session[]> {
   let q = adminDb().collection("sessions").where("status", "in", ["published", "full"]) as FirebaseFirestore.Query;
   if (f.experienceId) q = q.where("experienceId", "==", f.experienceId);
+  else if (f.rendezvousId) q = q.where("rendezvousId", "==", f.rendezvousId);
   else {
     if (f.cityId) q = q.where("cityId", "==", f.cityId);
     if (f.categoryId) q = q.where("categoryId", "==", f.categoryId);
@@ -246,8 +247,16 @@ async function fsSessionCrowdRaw(sessionId: string): Promise<Crowd | null> {
 export const fsSessionCrowd = cached(fsSessionCrowdRaw, "fsSessionCrowd");
 
 /* ——— docs/25 : rendez-vous de la semaine (actifs) ——— */
-async function fsRendezvousRaw(): Promise<{ id: string; title: Record<string, string>; weekday: number; time: string; tiers: { tier: string; experienceId: string; frequency: string }[] }[]> {
+async function fsRendezvousRaw(): Promise<{ id: string; kind: "tiers" | "rotation"; title: Record<string, string>; weekday: number; time: string; tiers: { tier: string; experienceId: string; frequency: string }[]; cycleIds: string[] }[]> {
   const snap = await adminDb().collection("rendezvous").where("status", "==", "active").get();
-  return snap.docs.map((d) => ({ id: d.id, title: d.get("title") ?? {}, weekday: Number(d.get("weekday")), time: String(d.get("time") ?? ""), tiers: d.get("tiers") ?? [] }));
+  return snap.docs.map((d) => ({
+    id: d.id,
+    kind: d.get("kind") === "rotation" ? "rotation" : "tiers",
+    title: d.get("title") ?? {},
+    weekday: Number(d.get("weekday")),
+    time: String(d.get("time") ?? ""),
+    tiers: d.get("tiers") ?? [],
+    cycleIds: ((d.get("cycle") ?? []) as { experienceId: string }[]).map((c) => c.experienceId),
+  }));
 }
 export const fsRendezvous = cached(fsRendezvousRaw, "fsRendezvous");

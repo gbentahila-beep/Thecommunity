@@ -122,8 +122,17 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         return { tier: x.tier as VenueTier, sessionId: sib?.id ?? null, experience: x.experienceId === exp.id ? exp : (await getPublishedExperiences()).find((e) => e.id === x.experienceId) ?? null };
       }))).filter((x) => x.sessionId)
     : [];
-  const rvWindow = exp.rendezvousId ? bookingWindow(await getUpcomingSessions({ experienceId: exp.id }), exp, new Date(), bookingClosesAt) : null;
-  const rvW = rvWindow?.get(session.id);
+  // Lot D : pour l'activité du samedi, la fenêtre couvre toute la rotation (une date hors programme est fermée).
+  const rvWindow = exp.rendezvousId
+    ? bookingWindow(
+        exp.rendezvousKind === "rotation"
+          ? (await getUpcomingSessions({ rendezvousId: exp.rendezvousId })).filter((x) => x.rendezvousId === exp.rendezvousId)
+          : await getUpcomingSessions({ experienceId: exp.id }),
+        exp, new Date(), bookingClosesAt,
+      )
+    : null;
+  // Une date de l'activité du samedi qui n'est plus au programme (gardée pour ses inscrits) n'est plus ouverte.
+  const rvW = rvWindow?.get(session.id) ?? (exp.rendezvousKind === "rotation" && rvWindow ? { state: "off" as const, opensAt: null, passOpensAt: null } : undefined);
   const rvOpenId = rvWindow ? [...rvWindow.entries()].find(([, v]) => v.state === "open")?.[0] ?? null : null;
   const rvLocked = Boolean(rvW && rvW.state !== "open" && !(rvW.state === "pass" && isMember));
 
@@ -150,7 +159,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             </div>
           )}
           <div className="min-w-0 space-y-1.5">
-            <h2 className="text-lg font-semibold text-ink">{rv ? `${tr(rv.title as never, locale)}${exp.venueTier ? ` · ${tTier(`tier_${exp.venueTier}`)}` : ""}` : tr(exp.title, locale)}</h2>
+            <h2 className="text-lg font-semibold text-ink">{rv && rv.kind !== "rotation" ? `${tr(rv.title as never, locale)}${exp.venueTier ? ` · ${tTier(`tier_${exp.venueTier}`)}` : ""}` : tr(exp.title, locale)}</h2>
             <p className="flex items-center gap-2 text-sm text-muted">
               <CalendarDays className="size-4 shrink-0 text-brand-700" aria-hidden />
               {formatLongDate(session.startAt, locale)} · {formatTimeRange(session.startAt, session.endAt, locale)}

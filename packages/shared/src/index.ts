@@ -36,3 +36,4 @@ export * from "./ics";
 export * from "./cmi";
 export * from "./rendezvous";
 export * from "./launch-universes";
+export * from "./rotation";

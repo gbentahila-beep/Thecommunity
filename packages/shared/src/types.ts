@@ -117,6 +117,8 @@ export type Experience = {
   bookingMode: BookingMode;
   /** docs/25 : rendez-vous de la semaine auquel appartient cette expérience (une expérience par gamme). */
   rendezvousId?: string | null;
+  /** docs/25, lot D : « rotation » = une activité du samedi (une activité différente chaque semaine). */
+  rendezvousKind?: "rotation" | null;
   /** docs/25 : « eve » = réservations fermées la veille à 20h30. */
   closeRule?: "eve" | null;
   /** docs/25 : jour (0 = dimanche) et heure du rendez-vous ; les dates hors de ce créneau ne sont plus ouvertes. */

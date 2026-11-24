@@ -134,7 +134,7 @@ export function windowRefusal(w: WindowState | undefined, pass: boolean): "not_y
  * Listes (accueil, Découvrir) : pour un rendez-vous, seule la date ouverte de chaque gamme est montrée, et les gammes
  * d'une même date sont réunies en une seule ligne (`rendezvousTiers`). Les autres expériences ne changent pas.
  */
-export function collapseRendezvous<T extends { experienceId: string; startAt: string; experience: { rendezvousId?: string | null; venueTier?: VenueTier | null } & Closable }>(
+export function collapseRendezvous<T extends { experienceId: string; startAt: string; rendezvousId?: string | null; experience: { rendezvousId?: string | null; rendezvousKind?: string | null; venueTier?: VenueTier | null } & Closable }>(
   sessions: T[],
   now: Date,
   closesAt: (start: Date, e: Closable) => Date,
@@ -145,8 +145,13 @@ export function collapseRendezvous<T extends { experienceId: string; startAt: st
   for (const s of sessions) {
     const rv = s.experience.rendezvousId;
     if (!rv) { out.push(s); continue; }
-    if (closesAt(new Date(s.startAt), s.experience).getTime() <= now.getTime() || !onRendezvousSlot(new Date(s.startAt), s.experience) || firstOpen.has(s.experienceId)) continue;
-    firstOpen.add(s.experienceId);
+    // Lot D : l'activité du samedi n'a qu'une date ouverte pour toute la rotation (pas une par activité) ; une ancienne
+    // date gardée pour ses inscrits (sans rendezvousId) n'est plus montrée.
+    const rotation = s.experience.rendezvousKind === "rotation";
+    const slotKey = rotation ? `rv:${rv}` : s.experienceId;
+    if (rotation && s.rendezvousId !== rv) continue;
+    if (closesAt(new Date(s.startAt), s.experience).getTime() <= now.getTime() || !onRendezvousSlot(new Date(s.startAt), s.experience) || firstOpen.has(slotKey)) continue;
+    firstOpen.add(slotKey);
     const key = `${rv}|${s.startAt}`;
     const tier = s.experience.venueTier ?? null;
     const row = byKey.get(key);

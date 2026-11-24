@@ -81,7 +81,7 @@ ajoute un déjeuner en semaine.
 | B. Les écrans | Fait : accueil « Votre semaine Wenzy », choix de la gamme, fermeture la veille à 20h30, une seule date ouverte (deux avec le Pass). 3 univers : **Tables · Activités · Événements**. |
 | E. La bascule | Fait (24 novembre). Back-office → Rendez-vous → « Calendrier de lancement » (super-admin, taper `BASCULER`). Faite automatiquement une fois sur le site d'essai. |
 | C. La composition | À faire. |
-| D. La rotation du samedi | À faire. |
+| D. La rotation du samedi | Fait (24 novembre) : Back-office → Rendez-vous → « L'activité du samedi ». |
 
 ### Ce que fait la bascule (lot E)
 1. Crée le **Dîner du mercredi** (20h30 ; Casual et Premium chaque semaine, Exclusive le premier mercredi du mois),
@@ -100,3 +100,20 @@ Back-office → Modèles et « Nouvel événement » rangent d'abord les modèle
 Running, Céramique, Padel, Yoga, Escape game ; Afterwork), puis, repliés, ceux **pour plus tard** (Déjeuner, Soirée
 jeux, Quiz, Échange de langues, Visite guidée), toujours utilisables pour un événement ponctuel. Les modèles de Tables
 proposent le jour et l'heure du rendez-vous (mercredi 20h30, samedi 16h, dimanche 12h30) pour toutes les gammes.
+
+### L'activité du samedi (lot D)
+- **Rotation** : une activité par samedi, dans l'ordre choisi (au lancement : running, céramique, padel, yoga, escape
+  game — seulement celles qui ont un lieu partenaire), puis on recommence. Chaque activité garde son lieu, son heure
+  et ses places (réglables dans « Modifier la rotation »).
+- **Planning des 8 prochains samedis** : pour chaque samedi, « Changer ce samedi » permet de choisir une autre activité
+  (par exemple le **tennis proposé par un partenaire** : créer et publier l'événement, puis le choisir ici), ou « pas
+  d'activité ». Deux possibilités :
+  - sans « décaler » : l'activité prévue saute son tour, la rotation continue normalement ;
+  - avec « décaler la rotation » : l'activité prévue passe au samedi suivant et toute la suite recule d'une semaine.
+  « Revenir à la rotation » annule le changement.
+- **Inscrits protégés** : si des personnes sont déjà inscrites à l'activité prévue, sa date est gardée (signalée en
+  orange dans le planning) ; l'équipe décide ensuite (déplacer ou annuler depuis la date).
+- **Réservations** : une seule date ouverte pour toute la rotation (celle de la semaine), la suivante pour les abonnés
+  Pass ; fermeture la veille à 20h30. Dans les listes, seule l'activité de la semaine apparaît ; sa fiche montre
+  « L'activité du samedi : une activité différente chaque samedi ».
+- Les dates sont créées 6 semaines à l'avance et recalculées chaque nuit et à chaque changement.

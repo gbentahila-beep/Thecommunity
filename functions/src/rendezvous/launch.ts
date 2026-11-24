@@ -23,6 +23,7 @@ export type LaunchResult = {
   rendezvous: { id: string; created: boolean; tiers: { tier: VenueTier; experienceId: string; reused: boolean }[]; sessions: number }[];
   retired: { experienceId: string; title: string; archived: boolean; keptDates: number }[];
   skipped: { id: string; reason: "unknown_template" }[];
+  rotation?: { id: string; created: boolean; cycle: string[] } | null;
 };
 
 const hasPeople = (s: FirebaseFirestore.DocumentData) => Number(s.seatsConfirmed ?? 0) + Number(s.seatsHeld ?? 0) + Number(s.waitlistCount ?? 0) > 0;
@@ -125,6 +126,10 @@ export async function launchRendezvousCore(actor: { uid: string; role: string },
     for (const x of tiers) await retireOffScheduleDates(x.experienceId, l.weekday, l.time, new Date(now));
     r.rendezvous.push({ id: rvId, created: true, tiers: report, sessions: await ensureSessionsFor(rvId, new Date(now)) });
   }
+
+  // Lot D : l'activité du samedi (rotation running, céramique, padel, yoga, escape game) si la ville n'en a pas.
+  const { ensureLaunchRotation } = await import("./rotation");
+  r.rotation = await ensureLaunchRotation(actor, cityId, new Date(now));
 
   // Retrait : événements issus d'un modèle, dans la ville, qui ne sont ni dans un rendez-vous, ni au calendrier.
   const all = await db.collection("experiences").where("status", "in", ["published", "draft"]).get();

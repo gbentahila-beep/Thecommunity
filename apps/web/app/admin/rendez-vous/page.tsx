@@ -1,6 +1,8 @@
+import { localDayKey, mergeTemplates, rotationDays, rotationPlan, type RotationEntry, type RotationOverride } from "@thecommunity/shared";
 import { connection } from "next/server";
 import { RendezvousForm, WEEKDAYS, type RendezvousFormValues } from "@/components/admin/rendezvous-form";
 import { RendezvousLaunch } from "@/components/admin/rendezvous-launch";
+import { RotationForm, RotationWeek, type ActivityOption, type RotationFormValues, type WeekRow } from "@/components/admin/rotation-form";
 import { Badge, Card, PageHeader } from "@/components/admin/ui";
 import { requireAdmin } from "@/lib/auth/admin";
 import { getAdminData } from "@/lib/data/admin";
@@ -9,7 +11,8 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 
 export const metadata = { title: "Rendez-vous" };
 
-type Rv = { id: string; title: { fr: string; ar?: string; en?: string }; cityId: string; weekday: number; time: string; capacity: number; status: "active" | "paused"; baseExperienceId: string; tiers: { tier: "casual" | "premium" | "exclusive"; experienceId: string; frequency: "weekly" | "first_of_month" }[] };
+type Rotation = { kind?: "rotation"; anchor?: string; cycle?: RotationEntry[]; overrides?: Record<string, RotationOverride>; weeksAhead?: number };
+type Rv = Rotation & { id: string; title: { fr: string; ar?: string; en?: string }; cityId: string; weekday: number; time: string; capacity: number; status: "active" | "paused"; baseExperienceId: string; tiers: { tier: "casual" | "premium" | "exclusive"; experienceId: string; frequency: "weekly" | "first_of_month" }[] };
 
 /** docs/25 — les rendez-vous de la semaine : un jour fixe, une expérience par gamme, des dates créées toutes seules. */
 export default async function RendezvousAdminPage() {
@@ -26,6 +29,42 @@ export default async function RendezvousAdminPage() {
     launchedAt = at ? new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeStyle: "short", timeZone: "Africa/Casablanca" }).format(at.toDate()) : null;
   }
   const canLaunch = FIREBASE_ENABLED && !d.isDemo && d.admin?.role === "superadmin";
+  // Lot D : l'activité du samedi (rotation) — activités possibles, programme des 8 prochains samedis.
+  const rotations = list.filter((r) => r.kind === "rotation");
+  const tiersList = list.filter((r) => r.kind !== "rotation");
+  const tpl = new Map(mergeTemplates([]).map((t) => [t.id, t]));
+  const activities: ActivityOption[] = [...d.experiences.values()]
+    .filter((e) => e.status === "published" && ["move", "discover"].includes(e.categoryId) && (!e.rendezvousId || e.rendezvousKind === "rotation"))
+    .map((e) => {
+      const t = tpl.get(String((e as { templateId?: string }).templateId ?? ""));
+      return { id: e.id, label: `${e.title.fr}${e.venue?.name ? ` · ${e.venue.name}` : e.district ? ` · ${e.district}` : ""}`, time: t?.values.time ?? "10:00", capacity: t?.values.capacity ?? 12 };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label, "fr"));
+  const label = (id: string) => d.experiences.get(id)?.title.fr ?? id;
+  const weeks = new Map<string, WeekRow[]>();
+  for (const r of rotations) {
+    const plan = rotationPlan({ weekday: r.weekday, anchor: r.anchor ?? "", cycle: r.cycle ?? [], overrides: r.overrides ?? {} }, rotationDays(r.weekday, new Date(), 8));
+    const sessions = FIREBASE_ENABLED ? (await adminDb().collection("sessions").where("rendezvousId", "==", r.id).where("startAt", ">", new Date()).get()).docs.filter((x) => x.get("status") !== "cancelled") : [];
+    weeks.set(r.id, plan.map((w) => {
+      const day = sessions.filter((x) => localDayKey(x.get("startAt").toDate()) === w.date);
+      const mine = day.find((x) => x.get("experienceId") === w.entry?.experienceId);
+      return {
+        date: w.date,
+        label: new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${w.date}T12:00:00Z`)),
+        source: w.source,
+        experienceId: w.entry?.experienceId ?? null,
+        activity: w.entry ? label(w.entry.experienceId) : "Pas d'activité",
+        time: w.entry?.time ?? "10:00",
+        capacity: w.entry?.capacity ?? 12,
+        shift: w.shift,
+        note: w.note,
+        booked: Number(mine?.get("seatsConfirmed") ?? 0),
+        conflicts: day.filter((x) => x.get("experienceId") !== w.entry?.experienceId).map((x) => `${label(String(x.get("experienceId")))} (${x.get("seatsConfirmed") ?? 0} inscrit(s))`),
+      };
+    }));
+  }
+  const rotationValues = (r: Rv): RotationFormValues => ({ id: r.id, titleFr: r.title.fr, titleAr: r.title.ar ?? "", titleEn: r.title.en ?? "", cityId: r.cityId, anchor: r.anchor ?? "", status: r.status, cycle: (r.cycle ?? []).map((c) => ({ experienceId: c.experienceId, time: c.time, capacity: String(c.capacity) })) });
+  const emptyRotation: RotationFormValues = { titleFr: "L'activité du samedi", titleAr: "نشاط السبت", titleEn: "Saturday Activity", cityId: "casablanca", anchor: rotationDays(6, new Date(), 1)[0]!, status: "active", cycle: [] };
   const experiences = [...d.experiences.values()]
     .filter((e) => e.status !== "archived" && !(e as { rendezvousId?: string | null }).rendezvousId)
     .map((e) => ({ id: e.id, label: `${e.title.fr}${e.venueTier ? ` · ${e.venueTier}` : ""}` }))
@@ -47,7 +86,32 @@ export default async function RendezvousAdminPage() {
           <div className="mt-4"><RendezvousForm initial={empty} experiences={experiences} live={FIREBASE_ENABLED} /></div>
         </details>
       </Card>
-      {list.map((r) => (
+      {rotations.map((r) => (
+        <Card key={r.id} className="mb-4">
+          <div className="mb-3 flex flex-wrap items-center gap-2" data-testid="rotation-card">
+            <h2 className="text-lg font-semibold text-ink">{r.title.fr}</h2>
+            <Badge tone={r.status === "active" ? "green" : "gray"}>{r.status === "active" ? "Actif" : "En pause"}</Badge>
+            <span className="text-sm text-muted">{WEEKDAYS[r.weekday]} · rotation : {(r.cycle ?? []).map((c) => label(c.experienceId)).join(" → ")}</span>
+          </div>
+          <p className="text-sm text-muted">Les 8 prochains samedis. Les dates sont créées 6 semaines à l&apos;avance ; une seule est ouverte à la réservation à la fois (la suivante pour les abonnés Pass).</p>
+          <ul className="divide-y divide-line">
+            {(weeks.get(r.id) ?? []).map((w) => <RotationWeek key={w.date} rotationId={r.id} row={w} activities={activities} live={FIREBASE_ENABLED} />)}
+          </ul>
+          <details className="mt-3">
+            <summary className="cursor-pointer text-sm font-semibold text-brand-900">Modifier la rotation (ordre, heures, places)</summary>
+            <div className="mt-4"><RotationForm initial={rotationValues(r)} activities={activities} live={FIREBASE_ENABLED} /></div>
+          </details>
+        </Card>
+      ))}
+      {rotations.length === 0 && (
+        <Card className="mb-6">
+          <details>
+            <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Créer l&apos;activité du samedi (rotation)</summary>
+            <div className="mt-4"><RotationForm initial={emptyRotation} activities={activities} live={FIREBASE_ENABLED} /></div>
+          </details>
+        </Card>
+      )}
+      {tiersList.map((r) => (
         <Card key={r.id} className="mb-4">
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <h2 className="text-lg font-semibold text-ink">{r.title.fr}</h2>

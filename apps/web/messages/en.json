@@ -178,7 +178,8 @@
     "weekRvWhen": "A Wenzy meet-up, every {day} at {time}",
     "weekRvOpenUntil": "Open until {day} at {time}",
     "weekRvFull": "Full this week · waiting list",
-    "weekRvSoon": "This week's date opens soon"
+    "weekRvSoon": "This week's date opens soon",
+    "weekRvActivity": "A different activity every {day} · this week: {name} at {time}"
   },
   "card": {
     "people": "{count} people",
@@ -330,7 +331,8 @@
     "rvTiersTitle": "Choose your range",
     "rvMonthly": "once a month",
     "rvOpensAt": "Opens {day} at {time}",
-    "rvPassEarly": "Bookable now with the Pass"
+    "rvPassEarly": "Bookable now with the Pass",
+    "rvRotation": "{name}: a different activity every {day}"
   },
   "booking": {
     "title": "Book my spot",

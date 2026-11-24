@@ -178,7 +178,8 @@
     "weekRvWhen": "موعد Wenzy، كل {day} على الساعة {time}",
     "weekRvOpenUntil": "مفتوح حتى {day} على الساعة {time}",
     "weekRvFull": "مكتمل هذا الأسبوع · لائحة الانتظار",
-    "weekRvSoon": "يُفتح موعد هذا الأسبوع قريبًا"
+    "weekRvSoon": "يُفتح موعد هذا الأسبوع قريبًا",
+    "weekRvActivity": "نشاط مختلف كل {day} · هذا الأسبوع: {name} على الساعة {time}"
   },
   "card": {
     "people": "{count} أشخاص",
@@ -330,7 +331,8 @@
     "rvTiersTitle": "اختر فئتك",
     "rvMonthly": "مرة في الشهر",
     "rvOpensAt": "يُفتح يوم {day} على الساعة {time}",
-    "rvPassEarly": "متاح للحجز الآن مع الباس"
+    "rvPassEarly": "متاح للحجز الآن مع الباس",
+    "rvRotation": "{name}: نشاط مختلف كل {day}"
   },
   "booking": {
     "title": "احجز مكاني",

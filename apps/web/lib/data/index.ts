@@ -142,6 +142,8 @@ export async function getUpcomingSessions(filters: {
   /** Étape 19 : sous-catégorie (filtrée sur l'expérience). */
   subcategoryId?: string;
   experienceId?: string;
+  /** Lot D : toutes les dates d'un rendez-vous (fenêtre unique de l'activité du samedi). */
+  rendezvousId?: string;
   when?: WhenFilter;
   limit?: number;
   now?: Date;
@@ -150,7 +152,7 @@ export async function getUpcomingSessions(filters: {
   const [from, to] = windowFor(filters.when ?? "all", now);
   if (FIREBASE_ENABLED) {
     // Début de fenêtre arrondi à la minute : la clé du cache reste stable entre deux visites.
-    const sessions = await fs.fsUpcomingSessions({ cityId: filters.cityId, categoryId: filters.categoryId, experienceId: filters.experienceId, from: Math.floor(from / 60_000) * 60_000, to });
+    const sessions = await fs.fsUpcomingSessions({ cityId: filters.cityId, categoryId: filters.categoryId, experienceId: filters.experienceId, rendezvousId: filters.rendezvousId, from: Math.floor(from / 60_000) * 60_000, to });
     const exps = await fs.fsExperiencesByIds(sessions.map((s) => s.experienceId));
     const joined = sessions.flatMap((s) => (exps.has(s.experienceId) ? [{ ...s, experience: exps.get(s.experienceId)! }] : []))
       .filter((s) => !filters.subcategoryId || s.experience.subcategoryId === filters.subcategoryId);
@@ -184,7 +186,8 @@ export async function getRendezvousList() {
  */
 async function withRendezvous<T extends SessionWithExperience>(sessions: T[]): Promise<T[]> {
   if (!sessions.some((s) => s.experience.rendezvousId)) return sessions;
-  const titles = new Map((await getRendezvousList()).map((r) => [r.id, r.title]));
+  // Lot D : l'activité du samedi garde le nom de l'activité (Céramique, Padel…), pas celui du rendez-vous.
+  const titles = new Map((await getRendezvousList()).filter((r) => r.kind !== "rotation").map((r) => [r.id, r.title]));
   return collapseRendezvous(sessions, new Date(), bookingClosesAt).map((s) =>
     s.experience.rendezvousId && titles.get(s.experience.rendezvousId) ? { ...s, rendezvousTitle: titles.get(s.experience.rendezvousId) as LocalizedText } : s,
   );

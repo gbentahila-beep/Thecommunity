@@ -9,7 +9,14 @@ import { refuse } from "../reservations/refuse";
  * Pass. Lecture dans la transaction (à appeler avant toute écriture). Sans effet hors rendez-vous.
  */
 export async function windowStateFor(tx: Transaction, experienceId: string, sessionId: string, e: DocumentData, now: number): Promise<WindowState | undefined> {
-  const up = await tx.get(db.collection("sessions").where("experienceId", "==", experienceId).where("startAt", ">", Timestamp.fromMillis(now)).orderBy("startAt").limit(4));
+  // Lot D : l'activité du samedi a une seule fenêtre pour toute la rotation ; une date hors programme est fermée.
+  const rotation = e.rendezvousKind === "rotation";
+  const up = await tx.get(
+    rotation
+      ? db.collection("sessions").where("rendezvousId", "==", e.rendezvousId).where("startAt", ">", Timestamp.fromMillis(now)).orderBy("startAt").limit(6)
+      : db.collection("sessions").where("experienceId", "==", experienceId).where("startAt", ">", Timestamp.fromMillis(now)).orderBy("startAt").limit(4),
+  );
+  if (rotation && !up.docs.some((d) => d.id === sessionId)) return { state: "off", opensAt: null, passOpensAt: null };
   const list = up.docs.filter((d) => ["published", "full"].includes(String(d.get("status")))).map((d) => ({ id: d.id, startAt: (d.get("startAt") as Timestamp).toDate() }));
   return bookingWindow(list, e, new Date(now), bookingClosesAt).get(sessionId);
 }

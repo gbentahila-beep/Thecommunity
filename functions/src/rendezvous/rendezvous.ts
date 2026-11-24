@@ -115,6 +115,10 @@ export async function retireOffScheduleDates(experienceId: string, weekday: numb
 export async function ensureSessionsFor(rvId: string, now = new Date()): Promise<number> {
   const rv = (await db.doc(`rendezvous/${rvId}`).get()).data();
   if (!rv || rv.status !== "active") return 0;
+  if (rv.kind === "rotation") {
+    const { ensureRotationSessions } = await import("./rotation");
+    return (await ensureRotationSessions(rvId, now)).created;
+  }
   let created = 0;
   for (const t of (rv.tiers ?? []) as { tier: VenueTier; experienceId: string; frequency: RendezvousFrequency }[]) {
     const eSnap = await db.doc(`experiences/${t.experienceId}`).get();

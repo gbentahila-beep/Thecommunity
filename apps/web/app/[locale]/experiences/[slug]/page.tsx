@@ -148,7 +148,11 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         return rv.tiers.map((x) => ({ tier: x.tier as VenueTier, monthly: x.frequency === "first_of_month", experience: all.get(x.experienceId) })).filter((x) => x.experience);
       })()
     : [];
-  const win = exp.rendezvousId ? bookingWindow(sessions, exp, new Date(), bookingClosesAt) : null;
+  // Lot D : l'activité du samedi a une seule date ouverte pour toute la rotation (fenêtre calculée sur toutes ses dates).
+  const rotation = rv?.kind === "rotation";
+  const win = exp.rendezvousId
+    ? bookingWindow(rotation ? (await getUpcomingSessions({ rendezvousId: exp.rendezvousId })).filter((s) => s.rendezvousId === exp.rendezvousId) : sessions, exp, new Date(), bookingClosesAt)
+    : null;
   const shownSessions = win ? sessions.filter((s) => win.has(s.id) && win.get(s.id)!.state !== "off").slice(0, 4) : sessions;
   const next = win ? sessions.find((s) => win.get(s.id)?.state === "open") : sessions.find((s) => seatsAvailable(s) > 0) ?? sessions[0];
   // Étape 29 : « Qui allez-vous rencontrer ? » (chiffres globaux sur les inscrits de la prochaine date, à partir de 4).
@@ -257,8 +261,14 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 {category ? tr(category.shortName, locale) : ""}
                 {subcategory ? ` · ${tr(subcategory.shortName, locale)}` : ""}
               </span>
-              <h1 className="page-title mt-3">{rv ? tr(rv.title as never, locale) : tr(exp.title, locale)}</h1>
-              {rv && <p className="mt-2 text-sm font-semibold text-brand-700" data-testid="rv-weekly">{t("rvWeekly", { day: weekdayName(rv.weekday, locale), time: rv.time.replace(":", locale === "fr" ? "h" : ":") })}</p>}
+              <h1 className="page-title mt-3">{rv && !rotation ? tr(rv.title as never, locale) : tr(exp.title, locale)}</h1>
+              {rv && (
+                <p className="mt-2 text-sm font-semibold text-brand-700" data-testid="rv-weekly">
+                  {rotation
+                    ? t("rvRotation", { name: tr(rv.title as never, locale), day: weekdayName(rv.weekday, locale).toLowerCase() })
+                    : t("rvWeekly", { day: weekdayName(rv.weekday, locale), time: rv.time.replace(":", locale === "fr" ? "h" : ":") })}
+                </p>
+              )}
               <p className="mt-3 text-lg text-ink/80">{tr(exp.summary, locale)}</p>
               {exp.ratingCount > 0 && (
                 <p className="mt-3 flex items-center justify-center gap-2 text-sm text-muted">

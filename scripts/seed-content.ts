@@ -277,6 +277,13 @@ async function main() {
   const { launchRendezvousOnce } = await import("../functions/src/rendezvous/launch");
   const launch = await launchRendezvousOnce({ uid: "seed-content", role: "superadmin" });
   if (launch) console.log(`✅ Rendez-vous de la semaine : ${launch.rendezvous.map((x) => `${x.id} (${x.created ? "créé" : "déjà là"})`).join(", ")} ; ${launch.retired.length} événement(s) retiré(s) du programme (${launch.retired.reduce((n, x) => n + x.keptDates, 0)} date(s) avec inscrits maintenue(s)).`);
+  // docs/25, lot D : une fois, l'activité du samedi (rotation) sur le site d'essai.
+  if (!(await db.doc("settings/showcase").get()).get("rotationD")) {
+    const { ensureLaunchRotation } = await import("../functions/src/rendezvous/rotation");
+    const rot = await ensureLaunchRotation({ uid: "seed-content" });
+    await db.doc("settings/showcase").set({ rotationD: Timestamp.now() }, { merge: true });
+    if (rot) console.log(`✅ Activité du samedi : ${rot.created ? "créée" : "déjà là"} (${rot.cycle.length} activité(s) en rotation).`);
+  }
   // Étape R : une fois, les événements créés depuis les modèles (et jamais modifiés par l'équipe) reprennent les textes
   // allégés des modèles : description et « Inclus » sans répéter ce que dit l'encadré de la fiche.
   const textsRef = db.doc("settings/showcase");
