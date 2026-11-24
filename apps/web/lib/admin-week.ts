@@ -17,7 +17,7 @@ export const dayLabel = (key: string, opts: Intl.DateTimeFormatOptions = { weekd
 export type WeekItem = { id: string; label: string; booked: number; capacity: number; waitlist: number };
 export type WeekRow = {
   key: string; time: string; title: string; kind: "table" | "samedi" | "event"; items: WeekItem[];
-  todos: SessionTodo[]; level: "red" | "amber" | "ok"; href: string;
+  todos: (SessionTodo & { sessionId?: string; tier?: string; startAt?: string })[]; level: "red" | "amber" | "ok"; href: string;
 };
 export type WeekDay = { key: string; rows: WeekRow[] };
 
@@ -48,12 +48,13 @@ export function weekRows(d: AdminData, sessions: S[], rvTitles: Map<string, stri
     const row = rows.get(rowKey)!;
     row.items.push({ id: s.id, label: e.venueTier ? TIER[e.venueTier as keyof typeof TIER] ?? e.venueTier : "", booked: s.seatsConfirmed, capacity: s.capacity, waitlist: s.waitlistCount ?? 0 });
     row.items.sort((a, b) => TIER_ORDER.indexOf(a.label.toLowerCase()) - TIER_ORDER.indexOf(b.label.toLowerCase()));
-    row.todos.push(...sessionTodos(d, s).filter((t) => t.tone === "red" || t.tone === "amber"), ...(extra?.(s) ?? []));
+    const tier = e.venueTier ? TIER[e.venueTier as keyof typeof TIER] ?? e.venueTier : "";
+    row.todos.push(...[...sessionTodos(d, s).filter((t) => t.tone === "red" || t.tone === "amber"), ...(extra?.(s) ?? [])].map((t) => ({ ...t, sessionId: s.id, tier, startAt: s.startAt })));
   }
   const out = new Map<string, WeekRow[]>();
   for (const [k, rows] of days) {
     out.set(k, [...rows.values()].map((r) => {
-      const todos = [...new Map(r.todos.map((t) => [t.text, t])).values()];
+      const todos = [...new Map(r.todos.map((t) => [`${t.sessionId}|${t.text}`, t])).values()];
       return { ...r, todos, level: todos.some((t) => t.tone === "red") ? "red" : todos.length ? "amber" : "ok" };
     }));
   }

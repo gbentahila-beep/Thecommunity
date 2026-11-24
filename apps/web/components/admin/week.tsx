@@ -52,7 +52,7 @@ export function WeekRowLine({ row }: { row: WeekRow }) {
         <Link href={row.href} className="font-semibold text-ink hover:text-brand-900">{row.title}</Link>
         {row.todos.length > 0 && (
           <span className="mt-1 flex flex-wrap gap-1">
-            {row.todos.slice(0, 3).map((t) => <Link key={t.text} href={`${row.href}${t.anchor ? `#${t.anchor}` : ""}`}><Badge tone={t.tone}>{t.text}</Badge></Link>)}
+            {row.todos.slice(0, 3).map((t) => <Link key={`${t.sessionId}|${t.text}`} href={`/admin/sessions/${t.sessionId ?? row.items[0]!.id}${t.anchor ? `#${t.anchor}` : ""}`}><Badge tone={t.tone}>{t.tier && row.items.length > 1 ? `${t.tier} : ` : ""}{t.text}</Badge></Link>)}
           </span>
         )}
       </span>

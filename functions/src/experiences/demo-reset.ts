@@ -27,7 +27,9 @@ const ACTIVITY = [
 
 export async function isDemoSite(): Promise<boolean> {
   const [show, pay] = await Promise.all([db.doc("settings/showcase").get(), db.doc("settings/payment").get()]);
-  return show.get("trial") === true && pay.get("provider") === "sandbox" && pay.get("mode") === "test";
+  // Marque du site d'essai : posée par le contenu de départ (`trial`), ou la foule de démonstration déjà créée.
+  const trial = show.get("trial") === true || Boolean(show.get("demoCrowdV1At")) || Boolean(show.get("rendezvousLaunchAt") && show.get("purgeArchivedAt"));
+  return trial && pay.get("provider") === "sandbox" && pay.get("mode") === "test";
 }
 
 export type DemoResetResult = { deleted: Record<string, number>; sessionsReset: number; pastSessionsDeleted: number; guests: { email: string; booked: string[]; problem?: string }[]; crowd: CrowdResult };

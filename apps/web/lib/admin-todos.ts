@@ -1,4 +1,4 @@
-import { bookingClosesAt, revealAtFor, venueOptionsAt } from "@thecommunity/shared";
+import { bookingClosesAt, revealAtFor, venueCallAt, venueOptionsAt } from "@thecommunity/shared";
 import { adminDate } from "@/components/admin/ui";
 import type { AdminData } from "@/lib/data/admin";
 
@@ -25,10 +25,12 @@ export function sessionTodos(d: AdminData, s: S): SessionTodo[] {
   else if (s.risk?.status === "proposed") todos.push({ tone: "amber", text: "Autre date proposée : réponses en cours", anchor: "risque" });
   const reqs = d.venueRequests.filter((r) => r.sessionId === s.id);
   const pending = reqs.filter((r) => r.status === "sent").length;
-  if (pending) todos.push({ tone: start - now < 8 * HOUR ? "red" : "amber", text: `${pending} lieu${pending > 1 ? "x" : ""} à relancer ou appeler`, anchor: "lieux" });
+  // Relances automatiques jusqu'à la veille 18h30 ; ensuite, l'équipe appelle les lieux qui n'ont pas répondu.
+  const callNow = now >= venueCallAt(s.startAt).getTime();
+  if (pending) todos.push(callNow ? { tone: "red", text: `${pending} restaurant${pending > 1 ? "s" : ""} à appeler (sans réponse)`, anchor: "lieux" } : { tone: "gray", text: `${pending} demande${pending > 1 ? "s" : ""} en attente de réponse (relance automatique)`, anchor: "lieux" });
   const a = s.allocation;
   if (secret && a?.status === "short") todos.push({ tone: "red", text: `${a.missing ?? "?"} table${(a.missing ?? 0) > 1 ? "s" : ""} sans lieu`, anchor: "lieux" });
-  else if (secret && a?.status === "requested") todos.push({ tone: "amber", text: `Lieux : ${a.confirmed ?? 0} / ${a.needed ?? "?"} tables confirmées`, anchor: "lieux" });
+  else if (secret && a?.status === "requested") { if (!pending) todos.push({ tone: callNow ? "red" : "amber", text: `Lieux : ${a.confirmed ?? 0} / ${a.needed ?? "?"} tables confirmées`, anchor: "lieux" }); }
   else if (secret && a?.status === "confirmed") todos.push({ tone: "green", text: "Lieux confirmés", anchor: "lieux" });
   else if (secret && a?.status === "manual") todos.push({ tone: "gray", text: "Lieux choisis à la main", anchor: "lieux" });
   else if (secret && !hasVenue) {

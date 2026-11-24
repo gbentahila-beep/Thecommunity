@@ -41,12 +41,24 @@ export default async function AdminHomePage() {
   const rows = days.flatMap(([, r]) => r);
   const urgent = rows.filter((r) => r.level === "red").length;
   const watch = rows.filter((r) => r.level === "amber").length;
-  const pending = todo.items.reduce((n, x) => n + x.count, 0);
+  // « À traiter » réunit aussi ce que demandent les dates des 7 prochains jours (restaurants à appeler, date à risque…),
+  // les plus urgentes d'abord ; chaque ligne mène à l'endroit de la date où le faire.
+  const sessionItems = rows
+    .flatMap((r) => r.todos.filter((t) => t.tone === "red" || t.tone === "amber").map((t) => ({
+      key: `${t.sessionId}|${t.text}`,
+      tone: t.tone as "red" | "amber",
+      label: `${r.title}${t.tier ? ` ${t.tier}` : ""} (${t.startAt ? dayLabel(dayKey(t.startAt), { weekday: "short", day: "numeric" }) : ""} ${r.time}) : ${t.text.charAt(0).toLowerCase()}${t.text.slice(1)}`,
+      href: `/admin/sessions/${t.sessionId ?? r.items[0]!.id}${t.anchor ? `#${t.anchor}` : ""}`,
+    })))
+    .sort((a, b) => (a.tone === b.tone ? 0 : a.tone === "red" ? -1 : 1));
+  const allItems = [...sessionItems.map((x) => ({ ...x, count: 0 })), ...todo.items];
+  const pending = todo.items.reduce((n, x) => n + x.count, 0) + sessionItems.length;
   const today = dayKey(d.now);
   const tomorrow = dayKey(new Date(now + 24 * HOUR));
   const name = d.admin ? String(d.usersById.get(d.admin.uid)?.firstName ?? "") : "";
   // Site de démonstration : raccourci vers la remise à zéro (jamais en production).
-  const trial = FIREBASE_ENABLED && !d.isDemo && (await adminDb().doc("settings/showcase").get()).get("trial") === true;
+  const show = FIREBASE_ENABLED && !d.isDemo ? await adminDb().doc("settings/showcase").get() : null;
+  const trial = Boolean(show && (show.get("trial") === true || show.get("demoCrowdV1At") || (show.get("rendezvousLaunchAt") && show.get("purgeArchivedAt"))));
   const shortcuts = [...SHORTCUTS, ...(trial ? [{ href: "/admin/demo", label: "Réinitialiser la démo", hint: "Tout effacer et remplir la semaine", icon: RotateCcw }] : [])];
 
   return (
@@ -64,17 +76,17 @@ export default async function AdminHomePage() {
 
       <div className="mb-6 grid gap-6 lg:grid-cols-3">
         <Card title="À traiter" className="lg:col-span-2">
-          {todo.items.length === 0 ? (
+          {allItems.length === 0 ? (
             <p className="flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900" data-testid="todo-empty"><CheckCircle2 className="size-4" aria-hidden /> Rien en attente.</p>
           ) : (
             <ul className="divide-y divide-line" data-testid="todo-list">
-              {todo.items.map((x) => (
+              {allItems.map((x) => (
                 <li key={x.key}>
                   <Link href={x.href} className="group flex items-center gap-3 py-3 text-sm">
                     <span className={`grid size-9 shrink-0 place-items-center rounded-full ${x.tone === "red" ? "bg-red-100 text-red-800" : "bg-amber-100 text-amber-800"}`}>
                       {x.tone === "red" ? <AlertTriangle className="size-4" aria-hidden /> : <Inbox className="size-4" aria-hidden />}
                     </span>
-                    <span className="flex-1 text-ink group-hover:text-brand-900"><strong className="tabular-nums">{x.count}</strong> {x.label}</span>
+                    <span className="flex-1 text-ink group-hover:text-brand-900">{x.count > 0 && <strong className="tabular-nums">{x.count} </strong>}{x.label}</span>
                     <span className="text-xs font-semibold text-brand-900">Traiter</span>
                     <ChevronRight className="size-4 text-muted" aria-hidden />
                   </Link>

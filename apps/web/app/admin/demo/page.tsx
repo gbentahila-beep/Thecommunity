@@ -17,8 +17,10 @@ export default async function DemoPage() {
   if (FIREBASE_ENABLED) {
     const me = await requireAdmin();
     superadmin = me.role === "superadmin";
-    const [show, demo] = await Promise.all([adminDb().doc("settings/showcase").get(), adminDb().doc("settings/demo").get()]);
-    trial = show.get("trial") === true;
+    const [show, demo, pay] = await Promise.all([adminDb().doc("settings/showcase").get(), adminDb().doc("settings/demo").get(), adminDb().doc("settings/payment").get()]);
+    // Même règle que le serveur : site d'essai (marque du contenu de départ ou foule déjà créée) et paiement de test.
+    const marked = show.get("trial") === true || Boolean(show.get("demoCrowdV1At")) || Boolean(show.get("rendezvousLaunchAt") && show.get("purgeArchivedAt"));
+    trial = marked && pay.get("provider") === "sandbox" && pay.get("mode") === "test";
     guestEmails = (demo.get("guestEmails") ?? []) as string[];
     const at = demo.get("lastResetAt") as { toDate(): Date } | undefined;
     if (at) last = { at: new Intl.DateTimeFormat("fr-FR", { dateStyle: "full", timeStyle: "short", timeZone: "Africa/Casablanca" }).format(at.toDate()), reservations: demo.get("lastResult.crowd.reservations"), guests: demo.get("lastResult.guests") };
