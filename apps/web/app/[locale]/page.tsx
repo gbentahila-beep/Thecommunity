@@ -8,7 +8,6 @@ import { AppPreview } from "@/components/home/app-preview";
 import { HomeFaq } from "@/components/home/home-faq";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { ReviewsShowcase } from "@/components/home/reviews-showcase";
-import { WeekRendezvous } from "@/components/home/week-rendezvous";
 import { Universes } from "@/components/home/universes";
 import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
@@ -80,7 +79,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     popular: cards("popular", t("popularTitle"), popular),
     thisWeek: (
       <PageShell key="thisWeek" className="max-w-3xl space-y-10 py-8 lg:max-w-6xl">
-        <ThisWeek limit={6} />
+        <ThisWeek limit={6} intro />
       </PageShell>
     ),
     // L'encadré de confiance est affiché sous le bouton « Découvrir les expériences » (voir plus bas).
@@ -165,8 +164,6 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           </div>
         </div>
       </section>
-      {/* docs/25 : « Votre semaine Wenzy » — les rendez-vous de la communauté, juste sous l'accroche. */}
-      <WeekRendezvous />
       <AppPreview />
       {trustOn && (
         <PageShell className="mt-14 lg:mt-16">

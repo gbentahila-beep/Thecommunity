@@ -14,7 +14,7 @@ import { WeekList } from "./week-list";
  * les pastilles filtrent sur place, puis les lignes compactes, « Voir toutes les expériences » et la ligne d'alerte.
  * Si la semaine est calme, la liste est complétée par les prochaines dates.
  */
-export async function ThisWeek({ limit, cityId = DEFAULT_CITY }: { limit: number; cityId?: string }) {
+export async function ThisWeek({ limit, cityId = DEFAULT_CITY, intro = false }: { limit: number; cityId?: string; /** Accueil : le principe des rendez-vous de la semaine, au-dessus de la liste. */ intro?: boolean }) {
   const [t, tf, locale, categories, cities, week, upcoming] = await Promise.all([
     getTranslations("home"),
     getTranslations("filters"),
@@ -36,9 +36,22 @@ export async function ThisWeek({ limit, cityId = DEFAULT_CITY }: { limit: number
   );
   return (
     <section aria-labelledby="this-week-title" className="space-y-5" data-testid="home-thisWeek">
-      <h2 id="this-week-title" className="section-title relative flex flex-wrap items-baseline justify-center gap-x-2">
-        {t("thisWeekAt")} <CityMenu variant="title" align="start" currentCityId={cityId} />
-      </h2>
+      {intro ? (
+        <>
+          <div className="text-center" data-testid="week-intro">
+            <p className="eyebrow">{t("weekRvEyebrow")}</p>
+            <h2 id="this-week-title" className="section-title mt-2">{t("weekRvTitle")}</h2>
+            <p className="mx-auto mt-2 max-w-xl text-ink/75">{t("weekRvText")}</p>
+          </div>
+          <h3 className="relative flex flex-wrap items-baseline justify-center gap-x-2 pt-2 font-display text-2xl font-semibold text-ink sm:text-3xl">
+            {t("thisWeekAt")} <CityMenu variant="title" align="start" currentCityId={cityId} />
+          </h3>
+        </>
+      ) : (
+        <h2 id="this-week-title" className="section-title relative flex flex-wrap items-baseline justify-center gap-x-2">
+          {t("thisWeekAt")} <CityMenu variant="title" align="start" currentCityId={cityId} />
+        </h2>
+      )}
       <WeekList
         chips={[
           { id: null, label: tf("all") },
