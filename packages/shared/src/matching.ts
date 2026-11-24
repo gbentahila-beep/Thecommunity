@@ -46,7 +46,7 @@ export type MatchPerson = {
 export type MatchQuestion = { id: string; kind: QuestionKind; match: QuestionMatch };
 export type MatchConfig = { minSize: number; targetSize: number; maxSize: number };
 /** avoidPairs (étape 31) : personnes qui ont demandé à ne plus être réunies — jamais à la même table si possible. */
-export type MatchOptions = { pastPairs?: Set<string>; questions?: MatchQuestion[]; avoidPairs?: Set<string>; /** Nombre de tables imposé (tables confirmées par les lieux, docs/22). */ count?: number };
+export type MatchOptions = { pastPairs?: Set<string>; questions?: MatchQuestion[]; avoidPairs?: Set<string>; /** Nombre de tables imposé (tables confirmées par les lieux, docs/22). */ count?: number; /** Lot C : part de femmes parmi les inscrits dont le genre est connu (calculée par composeGroups). */ womenShare?: number };
 
 export const pairKey = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
@@ -90,14 +90,29 @@ export function groupCost(g: MatchPerson[], c: MatchConfig, o: MatchOptions = {}
   }
   const levels = g.map((p) => p.sportLevel).filter((l): l is number => typeof l === "number");
   if (levels.length > 1) cost += 15 * Math.max(0, Math.max(...levels) - Math.min(...levels) - 1);
-  const women = g.filter((p) => p.gender === "female").reduce((a, p) => a + p.seats, 0);
-  const men = g.filter((p) => p.gender === "male").reduce((a, p) => a + p.seats, 0);
-  if (women + men >= 4) cost += 3 * Math.max(0, Math.abs(women - men) - 2);
+  cost += genderCost(g, o.womenShare);
   const counts = new Map<string, number>();
   for (const p of g) for (const i of p.interests) counts.set(i, (counts.get(i) ?? 0) + 1);
   cost -= [...counts.values()].filter((n) => n >= 2).length;
   cost += questionnaireCost(g, o.questions);
   cost += profileCost(g);
+  return cost;
+}
+
+/**
+ * Lot C (docs/25) : équilibre hommes / femmes visé à chaque table. Chaque table vise la même proportion que l'ensemble
+ * des inscrits de la date (genre connu) : 12 par personne d'écart au-delà d'une, et 25 de plus pour une table d'un
+ * seul genre quand les deux sont présents. Critère souple : il ne passe jamais devant la langue commune ou les
+ * « nouvelles têtes », et ne bloque aucune réservation. Sans proportion connue : ancien critère (écart de plus de 2).
+ */
+export function genderCost(g: Pick<MatchPerson, "gender" | "seats">[], womenShare?: number): number {
+  const women = g.filter((p) => p.gender === "female").reduce((a, p) => a + p.seats, 0);
+  const men = g.filter((p) => p.gender === "male").reduce((a, p) => a + p.seats, 0);
+  const known = women + men;
+  if (womenShare === undefined) return known >= 4 ? 3 * Math.max(0, Math.abs(women - men) - 2) : 0;
+  if (known < 3 || womenShare <= 0.1 || womenShare >= 0.9) return 0;
+  let cost = 12 * Math.max(0, Math.abs(women - womenShare * known) - 1);
+  if (women === 0 || men === 0) cost += 25;
   return cost;
 }
 
@@ -152,8 +167,12 @@ export function questionnaireCost(g: Pick<MatchPerson, "answers">[], questions: 
 }
 
 /** Propose des groupes (listes d'uid). */
-export function composeGroups(people: MatchPerson[], c: MatchConfig, o: MatchOptions = {}): string[][] {
+export function composeGroups(people: MatchPerson[], c: MatchConfig, opts: MatchOptions = {}): string[][] {
   const total = people.reduce((a, p) => a + p.seats, 0);
+  // Lot C : proportion de femmes de la date, visée à chaque table.
+  const w = people.filter((p) => p.gender === "female").reduce((a, p) => a + p.seats, 0);
+  const m = people.filter((p) => p.gender === "male").reduce((a, p) => a + p.seats, 0);
+  const o: MatchOptions = { ...opts, ...(opts.womenShare === undefined && w + m > 0 ? { womenShare: w / (w + m) } : {}) };
   const n = o.count && o.count > 0 ? Math.min(o.count, people.length) : groupCount(total, c);
   if (n === 0) return [];
   const groups: MatchPerson[][] = Array.from({ length: n }, () => []);

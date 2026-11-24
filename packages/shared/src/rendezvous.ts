@@ -193,3 +193,39 @@ export const LAUNCH_RENDEZVOUS: readonly {
     tiers: [{ tier: "casual", frequency: "weekly" }, { tier: "premium", frequency: "weekly" }],
   },
 ];
+
+/**
+ * docs/25, lot C — « gamme voisine » à la fermeture des réservations. Pour une même date d'un rendez-vous, une gamme
+ * qui n'atteint pas le minimum d'une table envoie dans une gamme voisine les personnes qui l'ont accepté, si cela
+ * permet à la gamme voisine d'atteindre (ou de garder) le minimum. Les autres restent : elles suivent le cas
+ * « minimum non atteint » (autre semaine ou remboursement, jamais déplacées sans leur accord).
+ */
+export const TIER_NEIGHBOURS: Record<VenueTier, VenueTier[]> = { casual: ["premium", "exclusive"], premium: ["casual", "exclusive"], exclusive: ["premium", "casual"] };
+export type TierLoad = { tier: VenueTier; sessionId: string; people: number; free: number; movable: { reservationId: string; seats: number }[] };
+export type TierMove = { reservationId: string; from: string; to: string; toTier: VenueTier; seats: number };
+
+export function planTierFallback(loads: TierLoad[], min: number): TierMove[] {
+  const state = new Map(loads.map((l) => [l.tier, { ...l, movable: [...l.movable] }]));
+  const moves: TierMove[] = [];
+  // Les gammes les plus petites d'abord : ce sont elles qui ont besoin de rejoindre une voisine.
+  for (let pass = 0; pass < 3; pass++) {
+    const order = [...state.values()].filter((l) => l.people > 0 && l.people < min).sort((a, b) => a.people - b.people);
+    let changed = false;
+    for (const src of order) {
+      const seats = src.movable.reduce((n, m) => n + m.seats, 0);
+      if (seats === 0) continue;
+      const target = TIER_NEIGHBOURS[src.tier]
+        .map((t) => state.get(t))
+        .find((t): t is NonNullable<typeof t> => Boolean(t) && t!.people > 0 && t!.people + seats >= min && t!.free >= seats && (t!.people >= min || t!.people >= src.people));
+      if (!target) continue;
+      for (const m of src.movable) moves.push({ reservationId: m.reservationId, from: src.sessionId, to: target.sessionId, toTier: target.tier, seats: m.seats });
+      target.people += seats;
+      target.free -= seats;
+      src.people -= seats;
+      src.movable = [];
+      changed = true;
+    }
+    if (!changed) break;
+  }
+  return moves;
+}

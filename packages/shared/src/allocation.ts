@@ -72,7 +72,7 @@ export function partnerMatches(p: HostPartner, e: { templateId?: string | null; 
 /** Personnes qu'un lieu peut accueillir avec `units` ressources pour des tables de `tableMax` au plus. */
 export const peopleFor = (p: HostPartner, units: number, tableMax: number) => units * Math.min(p.unitMax ?? tableMax, tableMax);
 
-export type AllocationCandidate = { partnerId: string; name: string; units: number; regular: boolean; reliability: number };
+export type AllocationCandidate = { partnerId: string; name: string; units: number; regular: boolean; reliability: number; /** Lot C : part des inscrits déjà venus dans ce lieu (0 à 1). */ seen?: number };
 export type AllocationLine = { partnerId: string; name: string; tables: number };
 export type Allocation = { lines: AllocationLine[]; missing: number };
 
@@ -84,7 +84,8 @@ export type Allocation = { lines: AllocationLine[]; missing: number };
 export function allocateTables(tables: number, candidates: AllocationCandidate[]): Allocation {
   const pool = candidates
     .filter((c) => c.units > 0)
-    .sort((a, b) => Number(b.regular) - Number(a.regular) || b.reliability - a.reliability || b.units - a.units || a.name.localeCompare(b.name));
+    // Lot C : à fidélité égale, les lieux que les inscrits connaissent le moins passent devant (rotation des restaurants).
+    .sort((a, b) => Number(b.regular) - Number(a.regular) || (a.seen ?? 0) - (b.seen ?? 0) || b.reliability - a.reliability || b.units - a.units || a.name.localeCompare(b.name));
   const used = new Map<string, number>();
   let left = tables;
   while (left > 0) {

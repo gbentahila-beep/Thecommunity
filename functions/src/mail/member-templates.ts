@@ -122,3 +122,14 @@ export function reportReceivedMail(o: { locale: string; firstName: string; title
   }[l];
   return build(l, t);
 }
+
+/** docs/25, lot C : la gamme n'avait pas assez d'inscrits, la personne (qui l'avait accepté) rejoint la gamme voisine. */
+export function tierMovedMail(o: { locale: string; firstName: string; title: string; when: string; tier: string; reservationId: string }): Out {
+  const l = lang(o.locale);
+  const t = {
+    fr: { subject: `Votre table passe en ${o.tier} : ${o.title}`, heading: `${o.firstName ? `${o.firstName}, v` : "V"}otre table passe en ${o.tier}`, p: [`« ${o.title} », ${o.when}.`, `Votre gamme n'avait pas assez d'inscrits pour former une table. Comme vous l'aviez accepté en réservant, vous rejoignez une table ${o.tier}, dans un restaurant de cette gamme (le budget est indiqué sur la fiche).`, "Rien ne change pour le reste : le lieu vous est révélé comme prévu, et votre place reste payée. Si cela ne vous convient pas, vous pouvez annuler depuis votre réservation."] },
+    en: { subject: `Your table moves to ${o.tier}: ${o.title}`, heading: `${o.firstName ? `${o.firstName}, y` : "Y"}our table moves to ${o.tier}`, p: [`“${o.title}”, ${o.when}.`, `Your tier didn't have enough people to form a table. As you agreed when booking, you're joining a ${o.tier} table, in a restaurant of that tier (the budget is shown on the page).`, "Nothing else changes: the venue is revealed as planned and your seat stays paid. If this doesn't suit you, you can cancel from your booking."] },
+    ar: { subject: `مائدتك تنتقل إلى ${o.tier}: ${o.title}`, heading: `مائدتك تنتقل إلى ${o.tier}`, p: [`« ${o.title} »، ${o.when}.`, `لم يكن عدد المسجّلين في فئتك كافيًا لتكوين مائدة. وكما وافقت عند الحجز، تنضم إلى مائدة ${o.tier} في مطعم من هذه الفئة (الميزانية مذكورة في الصفحة).`, "لا يتغيّر شيء آخر: يُكشف لك المكان كما هو مقرر ويبقى مكانك مدفوعًا. وإن لم يناسبك ذلك، يمكنك الإلغاء من صفحة حجزك."] },
+  }[l];
+  return build(l, { ...t, cta: { label: CTA_BOOKING[l], href: bookingHref(l, o.reservationId) } });
+}

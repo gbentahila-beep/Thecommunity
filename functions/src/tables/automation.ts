@@ -91,9 +91,19 @@ async function stepSession(id: string, s: DocumentData, e: DocumentData, now: nu
     return;
   }
 
-  // 1. La veille : à risque si le minimum d'une table n'est pas atteint.
+  // Lot C (docs/25) : à la fermeture d'une date de rendez-vous, gamme voisine pour qui l'a acceptée (toutes gammes
+  // de la date ensemble, une seule fois), avant le contrôle du minimum et l'attribution des lieux.
+  if (e.rendezvousId && e.venueTier && s.rendezvousId && now >= closesAt && !s.tierFallbackAt) {
+    const { applyTierFallback } = await import("../rendezvous/tier-fallback");
+    out.tierMoved = (out.tierMoved ?? 0) + (await applyTierFallback(String(s.rendezvousId), s.startAt as Timestamp));
+    return;
+  }
+
+  // 1. La veille : à risque si le minimum d'une table n'est pas atteint (rendez-vous : à la fermeture, après la
+  // gamme voisine, puisque les réservations restent ouvertes jusque-là).
   const min = Number(e.groupConfig?.minSize ?? 0);
-  if (min > 0 && people > 0 && !s.risk && now >= start.getTime() - RISK_CHECK_HOURS * HOUR && people < min) {
+  const riskFrom = e.rendezvousId && e.venueTier ? closesAt : start.getTime() - RISK_CHECK_HOURS * HOUR;
+  if (min > 0 && people > 0 && !s.risk && now >= riskFrom && people < min) {
     await sessRef.update({ risk: { status: "at_risk", at: FieldValue.serverTimestamp() } });
     await teamAlert({ sessionId: id, key: "risk", subject: `À risque : ${title}`, paragraphs: [`${when} : ${people} inscrit${people > 1 ? "s" : ""} pour un minimum de ${min} par table.`, "Maintenir, proposer une autre date, regrouper avec un événement compatible ou annuler : décidez depuis la page de la date. Personne n'est déplacé sans son accord."] });
     out.risk++;

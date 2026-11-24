@@ -10,7 +10,7 @@ import { refuse } from "../reservations/refuse";
 const TEAM = ["admin", "superadmin"] as const;
 
 type I18n = { ar?: string; en?: string };
-export type RevealedVenue = { name: string; address: string; cuisine?: string; cuisineI18n?: I18n; geo?: { lat: number; lng: number } };
+export type RevealedVenue = { name: string; address: string; cuisine?: string; cuisineI18n?: I18n; geo?: { lat: number; lng: number }; /** Lot C : mémoire des restaurants. */ partnerId?: string };
 
 /**
  * Lieux d'une date à lieu secret (docs/22, décision 15) : ceux renseignés pour la date, sinon le lieu habituel du
@@ -38,7 +38,7 @@ export function venueByGroup(groups: { id: string; label: string }[], venues: Se
     // Traductions : celles du lieu si sa cuisine est la sienne, sinon celles de l'événement.
     const ci = v.cuisine ? v.cuisineI18n : cuisineI18n;
     const clean = ci && (ci.ar || ci.en) ? { ...(ci.ar ? { ar: ci.ar } : {}), ...(ci.en ? { en: ci.en } : {}) } : null;
-    return [g.id, { name: v.name, address: v.address, ...(c ? { cuisine: c } : {}), ...(clean ? { cuisineI18n: clean } : {}), ...(v.geo ? { geo: v.geo } : {}) }];
+    return [g.id, { name: v.name, address: v.address, ...(c ? { cuisine: c } : {}), ...(clean ? { cuisineI18n: clean } : {}), ...(v.geo ? { geo: v.geo } : {}), ...(v.partnerId ? { partnerId: v.partnerId } : {}) }];
   }));
 }
 

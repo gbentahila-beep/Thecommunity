@@ -1,4 +1,4 @@
-import { ageOn, composeGroups, EXERCISE_FREQUENCIES, isTablesFlow, pairKey, tableSummary, tablesTimeline, VENUE_BUDGETS, type MatchPerson, type MatchQuestion, type TableSummary } from "@thecommunity/shared";
+import { ageOn, assignGroupsToVenues, assignTablesAvoidingRepeats, byTableLabel, composeGroups, EXERCISE_FREQUENCIES, isTablesFlow, pairKey, tableSummary, tablesTimeline, VENUE_BUDGETS, type MatchPerson, type MatchQuestion, type TableSummary } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { z } from "zod";
@@ -11,6 +11,7 @@ import { icsAttachment } from "../notify/ics";
 import { groupRevealedMail, venueRevealedMail } from "../mail/templates";
 import { refuse } from "../reservations/refuse";
 import { refreshRevealed, sessionVenues, venueByGroup } from "../experiences/venues";
+import { seenCount, visitedVenueKeys } from "../tables/venue-memory";
 
 const TEAM = ["admin", "superadmin"] as const;
 const idSchema = z.string().trim().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/);
@@ -310,7 +311,25 @@ export async function revealGroupsCore(sessionId: string, actorUid: string): Pro
   const secret = e.venue?.revealPolicy === "on_group_reveal";
   const found = secret ? await sessionVenues(sessRef.id, s.experienceId, e) : null;
   if (found && (found.venues.length === 0 || found.venues.some((v) => !v.name || !v.address))) refuse("venue_missing", "Renseignez le lieu avant de le révéler.");
-  const venueOf = found ? venueByGroup(groups.docs.map((g) => ({ id: g.id, label: String(g.data().label ?? "") })), found.venues, found.cuisine, found.cuisineI18n) : null;
+  // Lot C (docs/25) : plusieurs restaurants → chaque table va dans celui que ses membres connaissent le moins. Les tables
+  // sont renumérotées en conséquence (les lieux suivent l'ordre des tables partout : révélation, récapitulatif aux lieux).
+  const labels = new Map(groups.docs.map((g) => [g.id, String(g.data().label ?? "")]));
+  if (found && found.venues.length > 1 && groups.size > 1) {
+    const sorted = [...groups.docs].sort((a, b) => byTableLabel(String(a.data().label ?? ""), String(b.data().label ?? "")));
+    const visited = await visitedVenueKeys(participants.map((p) => p.uid), sessRef.id);
+    const slots = assignGroupsToVenues(sorted.length, found.venues);
+    const seen = sorted.map((g) => found.venues.map((v) => seenCount(visited, (g.data().memberIds as string[]) ?? [], v)));
+    const place = assignTablesAvoidingRepeats(slots, seen);
+    const prefix = labelPrefix(e);
+    const relabel = db.batch();
+    sorted.forEach((g, i) => {
+      const next = `${prefix} ${place[i]! + 1}`;
+      if (next !== labels.get(g.id)) relabel.update(g.ref, { label: next });
+      labels.set(g.id, next);
+    });
+    await relabel.commit();
+  }
+  const venueOf = found ? venueByGroup(groups.docs.map((g) => ({ id: g.id, label: labels.get(g.id) ?? "" })), found.venues, found.cuisine, found.cuisineI18n) : null;
   const tablesFlow = isTablesFlow(e);
   const sums = tablesFlow ? summariesOf(participants, groupOf) : null;
   const batch = db.batch();

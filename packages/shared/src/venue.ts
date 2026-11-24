@@ -127,5 +127,35 @@ export function assignGroupsToVenues(groupCount: number, venues: { tables?: numb
   return out;
 }
 
+/**
+ * Lot C (docs/25) : mémoire des restaurants. `slots[k]` = lieu de la place k (assignGroupsToVenues) ; `seen[g][v]` =
+ * nombre de membres de la table g déjà venus au lieu v. Renvoie, pour chaque table g, sa place k, en limitant le
+ * nombre de personnes renvoyées dans un restaurant qu'elles connaissent (échanges deux à deux jusqu'à stabilité).
+ */
+export function assignTablesAvoidingRepeats(slots: number[], seen: number[][]): number[] {
+  const n = slots.length;
+  const place = Array.from({ length: n }, (_, g) => g);
+  const cost = (g: number, k: number) => seen[g]?.[slots[k]!] ?? 0;
+  for (let round = 0; round < 50; round++) {
+    let improved = false;
+    for (let a = 0; a < n; a++) {
+      for (let b = a + 1; b < n; b++) {
+        const now = cost(a, place[a]!) + cost(b, place[b]!);
+        const swapped = cost(a, place[b]!) + cost(b, place[a]!);
+        if (swapped < now) {
+          [place[a], place[b]] = [place[b]!, place[a]!];
+          improved = true;
+        }
+      }
+    }
+    if (!improved) break;
+  }
+  return place;
+}
+
+/** Clé d'un lieu pour la mémoire des restaurants : le partenaire s'il est connu, sinon le nom. */
+export const venueKey = (v: { partnerId?: string | null; name?: string | null }): string[] =>
+  [v.partnerId ? `p:${v.partnerId}` : "", v.name ? `n:${v.name.trim().toLowerCase()}` : ""].filter(Boolean);
+
 /** « Table 2 » avant « Table 10 ». */
 export const byTableLabel = (a: string, b: string) => a.localeCompare(b, "fr", { numeric: true });

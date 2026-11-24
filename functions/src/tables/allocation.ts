@@ -10,6 +10,7 @@ import { sendMail } from "../mail/mailer";
 import { venueMessageMail } from "../mail/templates";
 import { sendWhatsApp, type WhatsAppKind } from "../whatsapp/whatsapp";
 import { teamAlert } from "./team";
+import { seenCount, visitedVenueKeys } from "./venue-memory";
 
 /**
  * Attribution automatique des lieux (docs/22, décisions 41 à 45). Les demandes sont dans `venueRequests/{id}`
@@ -155,7 +156,10 @@ export async function runAllocation(sessionId: string, actorUid: string): Promis
   let missing = missingBefore;
   if (missingBefore > 0) {
     const cands = (await candidatesFor(sessionId, s, e)).filter((c) => !tried.has(c.partner.id));
-    const alloc = allocateTables(missingBefore, cands.map((c) => ({ partnerId: c.partner.id, name: c.partner.name, units: c.available, regular: c.partner.level === "regular", reliability: reliabilityOf(c.partner.stats) })));
+    // Lot C : rotation des restaurants — part des inscrits déjà venus dans chaque lieu (les moins connus d'abord).
+    const uids = (await db.collection("reservations").where("sessionId", "==", sessionId).where("status", "==", "confirmed").get()).docs.map((d) => String(d.get("userId")));
+    const visited = uids.length ? await visitedVenueKeys(uids, sessionId) : new Map<string, Set<string>>();
+    const alloc = allocateTables(missingBefore, cands.map((c) => ({ partnerId: c.partner.id, name: c.partner.name, units: c.available, regular: c.partner.level === "regular", reliability: reliabilityOf(c.partner.stats), seen: uids.length ? seenCount(visited, uids, { partnerId: c.partner.id, name: c.partner.name }) / uids.length : 0 })));
     missing = alloc.missing;
     const all = sizes(people, needed);
     let cursor = already;

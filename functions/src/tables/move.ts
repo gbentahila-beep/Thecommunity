@@ -19,7 +19,7 @@ import { notifyReservationChange } from "../notify/reminders";
  * - membre (décision 38) : jusqu'à la fermeture de sa date (12 h avant pour les Tables), vers une date encore ouverte,
  *   sans repayer ; `minimum` : choix « autre date » quand le minimum n'est pas atteint (sa date est déjà fermée).
  */
-export async function moveReservationCore(o: { reservationId: string; targetSessionId: string; actorUid: string; by: "user" | "admin"; proposal?: boolean }) {
+export async function moveReservationCore(o: { reservationId: string; targetSessionId: string; actorUid: string; by: "user" | "admin"; proposal?: boolean; /** Lot C : vers la gamme voisine du même rendez-vous, même date. */ tierMove?: boolean }) {
   const resRef = db.doc(`reservations/${o.reservationId}`);
   // Audit 23/11 : plafond de la nouvelle date d'après la capacité des lieux compatibles (comme à la réservation), lu hors transaction.
   const targetCap = await capacityBefore(o.targetSessionId);
@@ -52,7 +52,11 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
     // Proposition de l'équipe (décision 46) : la date proposée peut être un autre événement compatible (regroupement).
     const proposed = o.proposal === true && r.proposal?.status === "pending" && r.proposal.targetSessionId === o.targetSessionId;
     if (o.proposal && !proposed) refuse("no_proposal", "Aucune proposition en cours pour cette date.");
-    if (t.experienceId !== r.experienceId && !proposed) refuse("different_experience", "La nouvelle date doit être de la même expérience.");
+    // Lot C : gamme voisine — autre gamme (autre expérience) du MÊME rendez-vous, à la MÊME date.
+    const te0 = targetExp?.data();
+    const tierMove = o.tierMove === true && o.by === "admin" && Boolean(e.rendezvousId) && te0?.rendezvousId === e.rendezvousId && (t.startAt as Timestamp).toMillis() === (f.startAt as Timestamp).toMillis();
+    if (o.tierMove && !tierMove) refuse("not_same_rendezvous", "La gamme voisine doit être du même rendez-vous, à la même date.");
+    if (t.experienceId !== r.experienceId && !proposed && !tierMove) refuse("different_experience", "La nouvelle date doit être de la même expérience.");
     if (!["published", "full"].includes(t.status)) refuse("not_open", "La nouvelle date n'est pas ouverte.");
     if ((t.startAt as Timestamp).toMillis() <= now) refuse("already_started", "La nouvelle date est passée.");
     if (o.by === "user" && !proposed) {
@@ -92,6 +96,7 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
       ...venueField,
       ...basisField,
       ...(proposed ? { "proposal.status": "accepted", "proposal.answeredAt": Timestamp.fromMillis(now) } : {}),
+      ...(tierMove ? { tier: te0?.venueTier ?? null, tierMovedFrom: e.venueTier ?? null } : {}),
       ...(t.experienceId !== r.experienceId
         ? { experienceId: t.experienceId, "sessionSnapshot.title": t.experienceSnapshot?.title ?? r.sessionSnapshot?.title, "sessionSnapshot.slug": t.experienceSnapshot?.slug ?? r.sessionSnapshot?.slug, "sessionSnapshot.coverImagePath": t.experienceSnapshot?.coverImagePath ?? "" }
         : {}),

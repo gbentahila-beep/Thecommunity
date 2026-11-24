@@ -80,7 +80,7 @@ ajoute un déjeuner en semaine.
 | A. Le modèle | Fait (Back-office → Rendez-vous ; dates créées 6 semaines à l'avance, prolongées chaque nuit). |
 | B. Les écrans | Fait : accueil « Votre semaine Wenzy », choix de la gamme, fermeture la veille à 20h30, une seule date ouverte (deux avec le Pass). 3 univers : **Tables · Activités · Événements**. |
 | E. La bascule | Fait (24 novembre). Back-office → Rendez-vous → « Calendrier de lancement » (super-admin, taper `BASCULER`). Faite automatiquement une fois sur le site d'essai. |
-| C. La composition | À faire. |
+| C. La composition | Fait (24 novembre) : gamme voisine à la fermeture, mémoire des restaurants, équilibre hommes / femmes. |
 | D. La rotation du samedi | Fait (24 novembre) : Back-office → Rendez-vous → « L'activité du samedi ». |
 
 ### Ce que fait la bascule (lot E)
@@ -126,3 +126,19 @@ proposent le jour et l'heure du rendez-vous (mercredi 20h30, samedi 16h, dimanch
   groupes, quel rendez-vous choisir, questionnaire, sport) et appels à l'action des autres articles ; CGU (le service),
   CGV (rendez-vous, gammes et gamme voisine), conditions des activités physiques ; centre d'aide ; dossier de presse ;
   FAQ, page « À propos », accueil, pied de page et description du site pour les moteurs de recherche.
+
+### La composition des tables (lot C)
+- **Gamme voisine** : à la fermeture des réservations (la veille à 20h30), pour chaque date d'un rendez-vous, une
+  gamme qui n'atteint pas le minimum d'une table (4) envoie dans la gamme voisine (Casual ↔ Premium, Exclusive →
+  Premium) les personnes qui ont coché « j'accepte la gamme voisine », si la gamme voisine atteint ainsi (ou garde)
+  le minimum et a la place. Chaque personne déplacée reçoit une notification et un e-mail (« Votre table passe en
+  Premium »), peut annuler si cela ne lui convient pas ; le prix payé ne change pas (35 DH). Les personnes qui n'ont
+  pas coché la case restent : la date suit le cas « minimum non atteint » (l'équipe propose une autre semaine ou
+  rembourse). Pour les rendez-vous, ce contrôle du minimum se fait à la fermeture (plus 24 h avant).
+- **Mémoire des restaurants** : le logiciel retient les restaurants où chaque membre est déjà venu. À l'attribution,
+  à fidélité égale, les restaurants que les inscrits connaissent le moins passent devant ; à la révélation, quand
+  une date a plusieurs restaurants, chaque table va dans celui que ses membres connaissent le moins (les tables
+  sont renumérotées en conséquence).
+- **Équilibre hommes / femmes** : chaque table vise la même proportion que l'ensemble des inscrits de la date (genre
+  renseigné) ; une table d'un seul genre est évitée quand les deux sont présents. Critère souple, après la langue
+  commune et les « nouvelles têtes » ; il ne bloque jamais une réservation (et ne joue pas pour un Girls only).
