@@ -1,5 +1,5 @@
 import "server-only";
-import { PAYMENT_MODELS, resolveCommission, type CommissionRule, type PaymentModel } from "@thecommunity/shared";
+import { ORGANIZER_UNIVERSES, PAYMENT_MODELS, resolveCommission, type CommissionRule, type PaymentModel } from "@thecommunity/shared";
 import { getAllCategories, getCities } from "@/lib/data";
 import { adminDb } from "@/lib/firebase/admin";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
@@ -9,7 +9,10 @@ import { getCancellationPolicies } from "@/lib/data/policies";
 export async function proFormOptions() {
   const [categories, cities, policies] = await Promise.all([getAllCategories(), getCities(), getCancellationPolicies()]);
   return {
-    categories: categories.map((c) => ({ id: c.id, label: c.name.fr, parentId: c.parentId ?? undefined })),
+    // Lot O (docs/26) : Activités et Événements seulement (les Tables sont les rendez-vous de Wenzy).
+    categories: categories
+      .filter((c) => ORGANIZER_UNIVERSES.includes(c.parentId ?? c.id))
+      .map((c) => ({ id: c.id, label: c.name.fr, parentId: c.parentId ?? undefined })),
     cities: cities.filter((c) => c.isActive).map((c) => ({ id: c.id, label: c.name.fr })),
     partners: [] as { id: string; label: string }[],
     policies: policies.map((p) => ({ id: p.id, label: p.label.fr })),

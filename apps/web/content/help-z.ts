@@ -256,15 +256,15 @@ export const HELP_ARTICLES_Z: HelpArticleZ[] = [
     body: {
       fr: [
         "Vous animez des activités (cours, ateliers, sorties, visites) ? Publiez-les sur Wenzy depuis l'[espace organisateur](/pro).",
-        ["Créez votre compte : présentation, catégories, pièces justificatives (registre de commerce ou statut d'auto-entrepreneur, attestation d'assurance) et acceptation du [contrat organisateur](/contrat-organisateur).", "L'équipe vérifie votre demande, en général sous 48 h ouvrées, et peut vous demander un complément.", "Un lieu partenaire qui veut organiser ses propres événements peut aussi devenir organisateur."],
+        ["Créez votre compte : présentation, où vous publierez (Activités, Événements, ou les deux ; les Tables sont les rendez-vous de Wenzy), pièces justificatives (registre de commerce ou statut d'auto-entrepreneur, attestation d'assurance) et acceptation du [contrat organisateur](/contrat-organisateur).", "L'équipe vérifie votre demande, en général sous 48 h ouvrées, et peut vous demander un complément.", "Un lieu partenaire qui veut organiser ses propres événements peut aussi devenir organisateur."],
       ],
       en: [
         "Do you run activities (classes, workshops, outings, tours)? Publish them on Wenzy from the [organiser area](/pro).",
-        ["Create your account: introduction, categories, supporting documents (trade register or self-employed status, insurance certificate) and acceptance of the [organiser agreement](/contrat-organisateur).", "Our team reviews your application, usually within 2 working days, and may ask for more information.", "A partner venue that wants to run its own events can also become an organiser."],
+        ["Create your account: introduction, where you will publish (Activities, Events, or both; Tables are Wenzy's own gatherings), supporting documents (trade register or self-employed status, insurance certificate) and acceptance of the [organiser agreement](/contrat-organisateur).", "Our team reviews your application, usually within 2 working days, and may ask for more information.", "A partner venue that wants to run its own events can also become an organiser."],
       ],
       ar: [
         "تنشّط أنشطة (دروس، ورشات، خرجات، جولات)؟ انشرها على Wenzy من [فضاء المنظِّم](/pro).",
-        ["أنشئ حسابك: التقديم، الفئات، الوثائق الداعمة (السجل التجاري أو صفة المقاول الذاتي، شهادة التأمين) وقبول [عقد المنظِّم](/contrat-organisateur).", "يدرس الفريق طلبك، عادةً خلال يومي عمل، وقد يطلب منك معلومات إضافية.", "يمكن لمكان شريك يريد تنظيم فعالياته الخاصة أن يصبح منظِّماً أيضاً."],
+        ["أنشئ حسابك: التقديم، القسم الذي ستنشر فيه (الأنشطة أو الفعاليات أو كلاهما؛ الموائد هي مواعيد Wenzy)، الوثائق الداعمة (السجل التجاري أو صفة المقاول الذاتي، شهادة التأمين) وقبول [عقد المنظِّم](/contrat-organisateur).", "يدرس الفريق طلبك، عادةً خلال يومي عمل، وقد يطلب منك معلومات إضافية.", "يمكن لمكان شريك يريد تنظيم فعالياته الخاصة أن يصبح منظِّماً أيضاً."],
       ],
     },
     related: ["remuneration-organisateur", "publier-une-activite"],
@@ -292,16 +292,22 @@ export const HELP_ARTICLES_Z: HelpArticleZ[] = [
   {
     slug: "publier-une-activite", category: "org-run",
     title: { fr: "Publier une activité et ses dates", en: "Publishing an activity and its dates", ar: "نشر نشاط ومواعيده" },
-    summary: { fr: "Chaque nouvelle activité est relue par l'équipe avant sa mise en ligne.", en: "Every new activity is reviewed by our team before it goes live.", ar: "يُراجع الفريق كل نشاط جديد قبل نشره." },
+    summary: { fr: "L'équipe valide chaque activité, chaque modification et chaque nouvelle date avant leur mise en ligne.", en: "Our team approves every activity, every change and every new date before it goes live.", ar: "يصادق الفريق على كل نشاط وكل تعديل وكل موعد جديد قبل نشره." },
     body: {
       fr: [
-        ["Dans l'[espace organisateur](/pro), créez l'activité : titre, description, lieu (nom, adresse, coordonnées GPS), prix sur place, nombre de places.", "Ajoutez vos dates.", "« Envoyer pour validation » : l'équipe relit l'activité et peut vous demander une correction.", "Une fois publiée, elle apparaît dans Découvrir, avec votre nom d'organisateur."],
+        ["Dans l'[espace organisateur](/pro), créez l'activité dans Activités ou Événements : titre, description, lieu (nom, adresse, coordonnées GPS), prix sur place, nombre de places.", "Ajoutez vos dates.", "« Envoyer pour validation » : l'équipe relit l'activité et peut vous demander une correction.", "Une fois publiée, elle apparaît dans Découvrir, avec votre nom d'organisateur."],
+        "Une modification d'une activité en ligne, ou de nouvelles dates ? Enregistrez-les : elles partent en validation et la version en ligne reste inchangée jusqu'à l'accord de l'équipe. Vous êtes prévenu(e) dès qu'elles sont en ligne.",
+        "Vous pouvez aussi proposer une activité en ligne pour l'activité du samedi (bouton « Proposer pour un samedi » sur sa fiche) : si l'équipe la retient, elle devient l'activité du samedi choisi.",
       ],
       en: [
-        ["In the [organiser area](/pro), create the activity: title, description, venue (name, address, GPS coordinates), on-site price, number of places.", "Add your dates.", "“Send for review”: our team checks the activity and may ask for a change.", "Once published, it appears in Discover, with your organiser name."],
+        ["In the [organiser area](/pro), create the activity under Activities or Events: title, description, venue (name, address, GPS coordinates), on-site price, number of places.", "Add your dates.", "“Send for review”: our team checks the activity and may ask for a change.", "Once published, it appears in Discover, with your organiser name."],
+        "Changing an online activity, or adding dates? Save them: they go for review and the online version stays as it is until our team approves. You are notified as soon as they are live.",
+        "You can also propose an online activity for the Saturday activity (“Propose for a Saturday” on its page): if our team picks it, it becomes the activity of the chosen Saturday.",
       ],
       ar: [
-        ["في [فضاء المنظِّم](/pro)، أنشئ النشاط: العنوان، الوصف، المكان (الاسم، العنوان، إحداثيات GPS)، الثمن في المكان، عدد الأماكن.", "أضف مواعيدك.", "« إرسال للمراجعة »: يراجع الفريق النشاط وقد يطلب منك تصحيحاً.", "بعد نشره، يظهر في « اكتشف » باسمك كمنظِّم."],
+        ["في [فضاء المنظِّم](/pro)، أنشئ النشاط في الأنشطة أو الفعاليات: العنوان، الوصف، المكان (الاسم، العنوان، إحداثيات GPS)، الثمن في المكان، عدد الأماكن.", "أضف مواعيدك.", "« إرسال للمراجعة »: يراجع الفريق النشاط وقد يطلب منك تصحيحاً.", "بعد نشره، يظهر في « اكتشف » باسمك كمنظِّم."],
+        "تعديل نشاط منشور أو إضافة مواعيد؟ احفظها: تُرسل للمراجعة وتبقى النسخة المنشورة كما هي إلى أن يوافق الفريق. ونُخبرك فور نشرها.",
+        "يمكنك أيضاً اقتراح نشاط منشور لنشاط السبت (زر « اقتراح ليوم سبت » في صفحته): إذا اختاره الفريق، يصبح نشاط السبت المختار.",
       ],
     },
     related: ["participants-et-pointage", "annuler-une-date-organisateur"],
@@ -312,15 +318,15 @@ export const HELP_ARTICLES_Z: HelpArticleZ[] = [
     summary: { fr: "Liste des inscrits, besoins particuliers, pointage à l'entrée.", en: "List of attendees, special needs, check-in at the door.", ar: "قائمة المسجلين، الاحتياجات الخاصة، تسجيل الحضور عند الدخول." },
     body: {
       fr: [
-        ["Dans « Réservations », retrouvez les inscrits de chaque date, avec leurs régimes ou allergies s'ils ont accepté de les partager.", "À l'entrée, pointez chacun avec le code ou le QR code de son billet.", "Un problème avec un participant ? Signalez-le depuis la date : l'équipe s'en occupe."],
+        ["Sur la page de chaque date, retrouvez les inscrits (prénom, initiale, téléphone pour les joindre le jour J), avec leurs régimes ou allergies s'ils ont accepté de les partager. La liste ne s'exporte pas ; le téléphone reste visible jusqu'à 7 jours après la date et ne sert qu'à l'activité.", "À l'entrée, pointez chacun avec le code ou le QR code de son billet.", "Un problème avec un participant ? Signalez-le depuis la date : l'équipe s'en occupe."],
         "En cas de danger immédiat, appelez d'abord le 19 (Police) ou le 15 (Protection civile).",
       ],
       en: [
-        ["Under “Bookings”, find the attendees of each date, with their diets or allergies if they agreed to share them.", "At the door, check everyone in with the code or QR code on their ticket.", "A problem with a participant? Report it from the date: our team handles it."],
+        ["On each date's page, find the attendees (first name, initial, phone to reach them on the day), with their diets or allergies if they agreed to share them. The list cannot be exported; the phone stays visible until 7 days after the date and is only for the activity.", "At the door, check everyone in with the code or QR code on their ticket.", "A problem with a participant? Report it from the date: our team handles it."],
         "In case of immediate danger, call 19 (Police) or 15 (Civil protection) first.",
       ],
       ar: [
-        ["في « الحجوزات »، تجد المسجلين في كل موعد، مع أنظمتهم الغذائية أو حساسياتهم إن وافقوا على مشاركتها.", "عند الدخول، سجّل حضور كل شخص بالرمز أو رمز QR الخاص بتذكرته.", "مشكل مع مشارك؟ أبلغ عنه من صفحة الموعد: يتكفّل به الفريق."],
+        ["في صفحة كل موعد، تجد المسجلين (الاسم الشخصي، الحرف الأول، الهاتف للتواصل يوم النشاط)، مع أنظمتهم الغذائية أو حساسياتهم إن وافقوا على مشاركتها. لا يمكن تصدير اللائحة؛ ويبقى الهاتف ظاهراً إلى غاية 7 أيام بعد الموعد ولا يُستعمل إلا للنشاط.", "عند الدخول، سجّل حضور كل شخص بالرمز أو رمز QR الخاص بتذكرته.", "مشكل مع مشارك؟ أبلغ عنه من صفحة الموعد: يتكفّل به الفريق."],
         "في حالة خطر فوري، اتصل أولاً بالرقم 19 (الشرطة) أو 15 (الوقاية المدنية).",
       ],
     },
@@ -329,19 +335,19 @@ export const HELP_ARTICLES_Z: HelpArticleZ[] = [
   {
     slug: "annuler-une-date-organisateur", category: "org-run",
     title: { fr: "Annuler ou modifier une date", en: "Cancelling or changing a date", ar: "إلغاء موعد أو تعديله" },
-    summary: { fr: "Les participants sont prévenus et leurs frais Wenzy remboursés.", en: "Participants are notified and their Wenzy fee is refunded.", ar: "يُبلَّغ المشاركون وتُعاد إليهم رسوم Wenzy." },
+    summary: { fr: "Vous demandez l'annulation, l'équipe décide et rembourse les participants.", en: "You request the cancellation; our team decides and refunds participants.", ar: "تطلب الإلغاء، ويقرر الفريق ويرد للمشاركين." },
     body: {
       fr: [
-        "Vous ne pouvez plus assurer une date ? Annulez-la depuis l'[espace organisateur](/pro), le plus tôt possible.",
-        ["Chaque participant est prévenu aussitôt et ses frais Wenzy lui sont remboursés intégralement.", "Un changement d'heure ou de lieu : modifiez la date ; les inscrits sont prévenus.", "Les règles en cas d'annulation tardive sont prévues au [contrat organisateur](/contrat-organisateur)."],
+        "Vous ne pouvez plus assurer une date ? Sur la page de la date, dans l'[espace organisateur](/pro), « Demander l'annulation » avec le motif, le plus tôt possible.",
+        ["L'équipe vous répond rapidement ; la date est maintenue d'ici là.", "Si la date est annulée, chaque participant est prévenu aussitôt et ses frais Wenzy lui sont remboursés intégralement.", "Un changement d'heure ou de lieu : modifiez l'activité ; le changement est validé par l'équipe, puis les inscrits sont prévenus.", "Les règles en cas d'annulation tardive sont prévues au [contrat organisateur](/contrat-organisateur)."],
       ],
       en: [
-        "Can't run a date any more? Cancel it from the [organiser area](/pro) as early as possible.",
-        ["Every participant is notified right away and their Wenzy fee is refunded in full.", "Change of time or venue: edit the date; attendees are notified.", "The rules for late cancellations are set out in the [organiser agreement](/contrat-organisateur)."],
+        "Can't run a date any more? On the date's page in the [organiser area](/pro), use “Request cancellation” with the reason, as early as possible.",
+        ["Our team replies quickly; the date stays on until then.", "If the date is cancelled, every participant is notified right away and their Wenzy fee is refunded in full.", "Change of time or venue: edit the activity; our team approves the change, then attendees are notified.", "The rules for late cancellations are set out in the [organiser agreement](/contrat-organisateur)."],
       ],
       ar: [
-        "لم يعد بإمكانك تأمين موعد؟ ألغِه من [فضاء المنظِّم](/pro) في أقرب وقت.",
-        ["يُبلَّغ كل مشارك فوراً وتُعاد إليه رسوم Wenzy كاملة.", "تغيير في الوقت أو المكان: عدّل الموعد؛ ويُبلَّغ المسجلون.", "قواعد الإلغاء المتأخر منصوص عليها في [عقد المنظِّم](/contrat-organisateur)."],
+        "لم يعد بإمكانك تأمين موعد؟ من صفحة الموعد في [فضاء المنظِّم](/pro)، « اطلب الإلغاء » مع ذكر السبب، في أقرب وقت.",
+        ["يردّ الفريق بسرعة، ويبقى الموعد قائماً إلى ذلك الحين.", "إذا أُلغي الموعد، يُبلَّغ كل مشارك فوراً وتُعاد إليه رسوم Wenzy كاملة.", "تغيير في الوقت أو المكان: عدّل النشاط؛ يصادق الفريق على التعديل ثم يُبلَّغ المسجلون.", "قواعد الإلغاء المتأخر منصوص عليها في [عقد المنظِّم](/contrat-organisateur)."],
       ],
     },
     related: ["participants-et-pointage", "publier-une-activite"],

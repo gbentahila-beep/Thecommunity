@@ -30,7 +30,7 @@ export default async function ProActivitiesPage() {
               return (
                 <tr key={e.id} data-testid="pro-activity">
                   <td className="w-16">{e.images[0] ? <Image src={e.images[0].path} alt="" width={56} height={40} className="h-10 w-14 rounded-lg object-cover" /> : null}</td>
-                  <td className="font-medium text-ink">{e.title.fr}{e.reviewFlag ? <span className="ms-2 text-xs text-amber-800">modifiée, relecture en cours</span> : null}</td>
+                  <td className="font-medium text-ink">{e.title.fr}{(e as { revisionPending?: boolean }).revisionPending ? <span className="ms-2 text-xs text-amber-800">modifications en attente de validation</span> : null}</td>
                   <td><Badge tone={st.tone}>{st.label}</Badge></td>
                   <td className="text-muted">{next ? new Intl.DateTimeFormat("fr-FR", { timeZone: "Africa/Casablanca", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(next.startAt)) : "—"}</td>
                   <td>{bookings}</td>

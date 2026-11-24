@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { CsvExportButton } from "@/components/admin/csv-export";
 import { RESERVATION_STATUS } from "@/components/admin/labels";
 import { adminDate, Badge, Card, dh, PageHeader, Table } from "@/components/admin/ui";
 import { getProData, requireApprovedOrganizer } from "@/lib/data/organizer";
@@ -8,7 +7,7 @@ export const metadata = { title: "Réservations" };
 
 const PERIODS = { all: "Toutes", upcoming: "À venir", past: "Passées" } as const;
 
-/** Étape 20 — réservations des activités de l'organisateur : filtres activité / statut / période, export CSV. */
+/** Étape 20 — réservations des activités de l'organisateur : filtres activité / statut / période (plus d'export : lot O, docs/26). */
 export default async function ProReservationsPage({ searchParams }: PageProps<"/pro/reservations">) {
   const sp = await searchParams;
   const space = await requireApprovedOrganizer();
@@ -20,14 +19,10 @@ export default async function ProReservationsPage({ searchParams }: PageProps<"/
   const list = d.reservations.filter(
     (r) => (!exp || r.experienceId === exp) && (!status || r.status === status) && (period === "all" || (period === "upcoming" ? r.sessionStartAt >= nowIso : r.sessionStartAt < nowIso)),
   );
-  const rows: (string | number)[][] = [
-    ["Billet", "Activité", "Date", "Participant", "Places", "Montant (DH)", "Statut", "Réservée le"],
-    ...list.map((r) => [r.code, r.title, adminDate(r.sessionStartAt), r.participant, r.seats, (r.total / 100).toFixed(2).replace(".", ","), RESERVATION_STATUS[r.status as keyof typeof RESERVATION_STATUS]?.[0] ?? r.status, adminDate(r.createdAt)]),
-  ];
   const select = "rounded-full border border-line bg-white px-3 py-2 text-sm";
   return (
     <>
-      <PageHeader title="Réservations" subtitle={`${list.length} réservation${list.length > 1 ? "s" : ""}`} actions={<CsvExportButton filename="reservations.csv" rows={rows} log={space.isDemo ? undefined : { kind: "reservations", targetId: space.organizer.id }} />} />
+      <PageHeader title="Réservations" subtitle={`${list.length} réservation${list.length > 1 ? "s" : ""}`} />
       <form className="mb-4 flex flex-wrap items-end gap-2" role="search" aria-label="Filtrer les réservations">
         <label className="text-sm"><span className="mb-1 block text-xs text-muted">Activité</span>
           <select name="activite" defaultValue={exp} className={select}>

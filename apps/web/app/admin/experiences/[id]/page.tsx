@@ -11,6 +11,8 @@ import { requireAdmin } from "@/lib/auth/admin";
 import { getAdminData } from "@/lib/data/admin";
 import { getWenzyPrice } from "@/lib/data/admin-mail";
 import { getCancellationPolicies } from "@/lib/data/policies";
+import { adminDb } from "@/lib/firebase/admin";
+import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 
 export const metadata = { title: "Modifier une expérience" };
 
@@ -21,6 +23,11 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
   if (!e) notFound();
   const sessions = d.sessions.filter((s) => s.experienceId === e.id);
   const me = d.isDemo ? null : await requireAdmin();
+  // Lot O (docs/26) : modifications de l'organisateur en attente de validation (la version en ligne ne bouge pas).
+  const revDoc = !d.isDemo && FIREBASE_ENABLED && e.organizerId ? (await adminDb().doc(`experiences/${e.id}/private/revision`).get()).data() : undefined;
+  const revision = revDoc
+    ? { changes: (revDoc.changes as string[] | undefined) ?? [], sessionsAdded: Number(revDoc.sessionsAdded ?? 0), submittedAt: revDoc.submittedAt?.toDate?.().toISOString() ?? "" }
+    : null;
   const archived = e.status === "archived";
   // docs/22, décision 24 : nouvelle date une semaine après la dernière, même heure et mêmes places.
   const last = [...sessions].sort((a, b) => a.startAt.localeCompare(b.startAt)).at(-1);
@@ -39,10 +46,10 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
       {e.organizerId && (
         <Card title={`Activité proposée par ${e.organizerSnapshot?.name ?? "un organisateur"}`} className="mb-5">
           <p className="mb-3 text-sm text-muted">
-            {e.status === "pending_review" ? "Envoyée pour validation : publiez-la ou refusez-la avec un message (l'organisateur est prévenu)." : e.reviewFlag ? "Publiée, puis modifiée par l'organisateur : relisez la fiche ci-dessous." : e.status === "rejected" ? `Refusée : « ${e.rejectionMessage ?? ""} »` : "Les réglages économiques suivent le contrat organisateur (commission)."}{" "}
+            {e.status === "pending_review" ? "Envoyée pour validation : publiez-la ou refusez-la avec un message (l'organisateur est prévenu)." : revision ? "En ligne, avec des modifications de l'organisateur en attente de validation." : e.reviewFlag ? "Publiée, puis modifiée par l'organisateur : relisez la fiche ci-dessous." : e.status === "rejected" ? `Refusée : « ${e.rejectionMessage ?? ""} »` : "Activité d'organisateur : 35 DH en ligne pour Wenzy, le prix de l'activité payé sur place à l'organisateur, sans commission."}{" "}
             <Link href={`/admin/organisateurs/${e.organizerId}`} className="font-semibold text-brand-900 underline">Voir l&apos;organisateur</Link>
           </p>
-          <ExperienceReview experienceId={e.id} status={e.status} reviewFlag={Boolean(e.reviewFlag)} live={!d.isDemo} />
+          <ExperienceReview experienceId={e.id} status={e.status} reviewFlag={Boolean(e.reviewFlag)} live={!d.isDemo} revision={revision} />
         </Card>
       )}
       {archived && (

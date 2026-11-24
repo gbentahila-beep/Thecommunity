@@ -697,6 +697,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
             "Notre équipe, uniquement les personnes qui en ont besoin (assistance, sécurité, modération, technique), selon leur rôle ; ces accès sont enregistrés.",
             "Les autres participants de votre groupe : uniquement votre prénom, votre photo de profil (si vous en avez mis une) et vos centres d'intérêt, une fois le groupe révélé.",
             "Le lieu qui accueille l'expérience : le nombre de participants, les prénoms pour l'accueil et les marque-places et, avec votre accord, votre régime, vos allergies et vos langues souhaitées. Jamais vos coordonnées.",
+            "L'organisateur d'une activité que vous réservez (activités proposées par des organisateurs) : votre prénom, l'initiale de votre nom et votre numéro de téléphone, pour vous accueillir et vous joindre au sujet de l'activité, jusqu'à 7 jours après la date. Il ne peut pas les exporter ni les utiliser à d'autres fins.",
             "Les autorités, lorsque la loi l'exige.",
           ],
           "Nos prestataires traitent les données pour notre compte, selon nos instructions et avec des garanties de sécurité :",
@@ -1322,7 +1323,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
       {
         title: "8. Who can access it",
         body: [
-          ["Our team, only people who need it (support, safety, moderation, technical), according to their role; this access is logged.", "Other participants in your group: only your first name, your profile photo (if you added one) and your interests, once the group is revealed.", "The venue hosting the experience: the number of participants, first names for the welcome and place cards and, with your consent, your diet, allergies and preferred languages. Never your contact details.", "Authorities, where required by law."],
+          ["Our team, only people who need it (support, safety, moderation, technical), according to their role; this access is logged.", "Other participants in your group: only your first name, your profile photo (if you added one) and your interests, once the group is revealed.", "The venue hosting the experience: the number of participants, first names for the welcome and place cards and, with your consent, your diet, allergies and preferred languages. Never your contact details.", "The organizer of an activity you book (activities offered by organizers): your first name, last-name initial and phone number, to welcome you and contact you about the activity, until 7 days after the date. It cannot export them or use them for anything else.", "Authorities, where required by law."],
           "Our providers process data on our behalf, following our instructions and with security safeguards:",
           {
             table: {

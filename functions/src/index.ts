@@ -62,6 +62,7 @@ export { adminAddSessions } from "./experiences/add-sessions";
 export { adminSaveRendezvous, rendezvousSessions } from "./rendezvous/rendezvous";
 export { adminLaunchRendezvous } from "./rendezvous/launch";
 export { adminSaveRotation, adminSetRotationWeek } from "./rendezvous/rotation";
+export { organizerRequestCancellation, organizerProposeSaturday, adminDecideOrganizerRequest } from "./organizers/requests";
 export { adminResetShowcase } from "./experiences/showcase";
 export { moveMyReservation } from "./tables/move";
 export { partnerRespondRequest, adminRequestAction, adminAllocate, adminSaveAllocationSettings, adminSaveWhatsAppSettings, adminRiskDecision, respondProposal, sendTableMessage } from "./tables/callables";

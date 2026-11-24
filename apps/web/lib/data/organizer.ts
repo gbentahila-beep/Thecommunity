@@ -89,6 +89,8 @@ export type ProReservation = {
   title: string;
   sessionStartAt: string;
   participant: string;
+  /** Lot O (docs/26) : téléphone du participant (inscrit, date à venir ou de la semaine passée), pour le jour J. */
+  phone?: string;
   diet?: string;
   allergies?: string;
   checkedIn: boolean;
@@ -97,7 +99,9 @@ export type ProReservation = {
 };
 export type ProRequest = { id: string; sessionId: string; experienceId: string; title: string; startAt: string; seats: number; message: string; instagram?: string; participant: string; createdAt: string; status: string };
 
-export type ProData = { experiences: Experience[]; sessions: ProSession[]; reservations: ProReservation[]; requests: ProRequest[]; now: Date };
+/** Lot O : demandes de l'organisateur à l'équipe (annulation d'une date, proposition pour un samedi). */
+export type ProOrgRequest = { id: string; type: "cancel_session" | "saturday"; status: "pending" | "accepted" | "refused"; sessionId?: string; experienceId: string; dates?: string[]; placedOn?: string; message?: string; createdAt: string };
+export type ProData = { experiences: Experience[]; sessions: ProSession[]; reservations: ProReservation[]; requests: ProRequest[]; orgRequests: ProOrgRequest[]; now: Date };
 
 const nameOf = (u: DocumentData | undefined) => (u?.firstName ? `${u.firstName} ${String(u.lastName ?? "").slice(0, 1)}${u.lastName ? "." : ""}` : "Compte supprimé");
 
@@ -108,11 +112,12 @@ export const getProData = cache(async function getProData(orgId: string): Promis
   if (!FIREBASE_ENABLED) return demoProData(orgId, now);
   const db = adminDb();
   // Requêtes d'égalité seulement (pas d'index composite) ; tri et filtres en mémoire.
-  const [expSnap, sesSnap, resSnap, reqSnap] = await Promise.all([
+  const [expSnap, sesSnap, resSnap, reqSnap, orgReqSnap] = await Promise.all([
     db.collection("experiences").where("organizerId", "==", orgId).get(),
     db.collection("sessions").where("organizerId", "==", orgId).get(),
     db.collection("reservations").where("organizerId", "==", orgId).get(),
     db.collection("bookingRequests").where("organizerId", "==", orgId).get(),
+    db.collection("organizerRequests").where("organizerId", "==", orgId).get(),
   ]);
   // Lieu secret (docs/22) : le lieu réel est rangé à part ; l'organisateur le retrouve dans son formulaire.
   const secretIds = expSnap.docs.filter((d) => d.data().venue?.revealPolicy === "on_group_reveal").map((d) => d.id);
@@ -150,6 +155,10 @@ export const getProData = cache(async function getProData(orgId: string): Promis
         title: titleOf.get(r.experienceId) ?? r.sessionSnapshot?.title?.fr ?? "",
         sessionStartAt: iso(r.sessionSnapshot?.startAt),
         participant: nameOf(userById.get(r.userId)),
+        // Lot O : le téléphone pour joindre les inscrits le jour J (jusqu'à 7 jours après la date), jamais l'e-mail.
+        ...(["confirmed", "attended", "no_show"].includes(r.status) && iso(r.sessionSnapshot?.startAt) >= new Date(now.getTime() - 7 * 86_400_000).toISOString() && userById.get(r.userId)?.phone
+          ? { phone: String(userById.get(r.userId)!.phone) }
+          : {}),
         // Régime et allergies : seulement si la personne accepte qu'ils soient transmis au lieu (5g).
         ...(share && r.preferences ? { diet: r.preferences.diet ?? "", allergies: r.preferences.allergies ?? "" } : {}),
         checkedIn: r.status === "attended",
@@ -163,7 +172,13 @@ export const getProData = cache(async function getProData(orgId: string): Promis
       return { id: d.id, sessionId: r.sessionId, experienceId: r.experienceId, title: titleOf.get(r.experienceId) ?? r.sessionSnapshot?.title?.fr ?? "", startAt: iso(r.sessionSnapshot?.startAt), seats: r.seats ?? 1, message: r.message ?? "", instagram: r.instagram ?? undefined, participant: nameOf(userById.get(r.userId)), createdAt: iso(r.createdAt), status: r.status };
     })
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-  return { experiences, sessions, reservations, requests, now };
+  const orgRequests: ProOrgRequest[] = orgReqSnap.docs
+    .map((d) => {
+      const r = d.data();
+      return { id: d.id, type: r.type, status: r.status, sessionId: r.sessionId ?? undefined, experienceId: r.experienceId, dates: r.dates ?? undefined, placedOn: r.placedOn ?? undefined, message: r.message ?? undefined, createdAt: iso(r.createdAt) };
+    })
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return { experiences, sessions, reservations, requests, orgRequests, now };
 });
 
 function demoProData(orgId: string, now: Date): ProData {
@@ -197,7 +212,7 @@ function demoProData(orgId: string, now: Date): ProData {
       };
     })
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  return { experiences, sessions, reservations, requests: [], now };
+  return { experiences, sessions, reservations, requests: [], orgRequests: [], now };
 }
 
 /** Chiffres du tableau de bord (réservations payées seulement). */

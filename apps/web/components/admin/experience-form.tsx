@@ -41,6 +41,7 @@ export type ExperienceFormValues = Omit<ExperienceInput, "sessions" | "groupMin"
 };
 
 const MESSAGES: Record<string, string> = {
+  organizerUniverse: "Un organisateur publie dans Activités ou Événements (les Tables sont les rendez-vous de Wenzy).",
   required: "Champ obligatoire.", tooShort: "Trop court.", tooLong: "Trop long.", tooMany: "Valeur trop élevée.",
   depositRange: "Acompte entre 10 et 90 %.", ageOrder: "L'âge minimum visé doit être inférieur au maximum.", invalidCoords: "Coordonnées illisibles : deux nombres séparés par une virgule (ex. 33.5951, -7.6187).", paymentModelDisabled: "Ce mode de paiement n'est pas proposé pour l'instant.",
   min0: "Doit être positif.", min1: "Au moins 1.", min2: "Au moins 2.", min15: "Au moins 15 minutes.", max100: "100 % maximum.",
@@ -156,7 +157,7 @@ export function ExperienceForm({
   const [images, setImages] = useState<{ url: string; name: string; file: File }[]>([]);
   const [addSessions, setAddSessions] = useState(mode === "create");
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState<{ experienceId: string; slug: string; sessionsCreated: number; status: string } | null>(null);
+  const [saved, setSaved] = useState<{ experienceId: string; slug: string; sessionsCreated: number; status: string; revision?: boolean; changes?: string[] } | null>(null);
   const [serverError, setServerError] = useState("");
   const [imageError, setImageError] = useState("");
 
@@ -250,7 +251,7 @@ export function ExperienceForm({
         addSessions,
         images: photos,
       });
-      const data = res.data as { experienceId: string; slug: string; sessionsCreated: number; status?: string };
+      const data = res.data as { experienceId: string; slug: string; sessionsCreated: number; status?: string; revision?: boolean; changes?: string[] };
       setSaved({ ...data, status: data.status ?? parsed.data.status });
       setImages([]);
       await fetch("/api/admin/revalidate", { method: "POST" }).catch(() => undefined);
@@ -388,9 +389,9 @@ export function ExperienceForm({
         <div><Label k="status">Statut</Label>
           <select {...field("status")} value={v.status} onChange={(e) => set("status", e.target.value as "draft" | "published")}>
             <option value="draft">Brouillon (non visible)</option>
-            <option value="published">{proSelf ? (organizer?.currentStatus === "published" ? "Publiée (reste en ligne)" : "Envoyer pour validation") : "Publiée"}</option>
+            <option value="published">{proSelf ? (organizer?.currentStatus === "published" ? "En ligne : envoyer mes modifications pour validation" : "Envoyer pour validation") : "Publiée"}</option>
           </select>
-          {proSelf && <p className="mt-1 text-xs text-muted">L&apos;équipe Wenzy relit chaque nouvelle activité avant sa publication. Une activité déjà en ligne le reste quand vous la modifiez.</p>}</div>
+          {proSelf && <p className="mt-1 text-xs text-muted">L&apos;équipe Wenzy valide chaque activité, chaque modification et chaque nouvelle date avant leur mise en ligne. Pendant la relecture, la version en ligne reste inchangée.</p>}</div>
       </Section>
 
       <Section title="2. Lieu">
@@ -725,8 +726,11 @@ export function ExperienceForm({
         <section id="form-result" role="status" className="scroll-mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-950">
           <h2 className="flex items-center gap-2 text-base font-semibold"><CheckCircle2 className="size-5" aria-hidden /> {pro ? "Activité enregistrée" : "Expérience enregistrée"}</h2>
           <p className="mt-2">
-            {saved.sessionsCreated > 0 ? `${saved.sessionsCreated} date${saved.sessionsCreated > 1 ? "s" : ""} créée${saved.sessionsCreated > 1 ? "s" : ""}. ` : ""}
-            {saved.status === "published" ? "Elle est visible sur le site." : saved.status === "pending_review" ? "Elle est envoyée à l'équipe pour validation : vous serez prévenu(e) dès sa publication." : "Elle reste en brouillon (invisible du public)."}
+            {saved.revision
+              ? `Vos modifications${saved.changes?.length ? ` (${saved.changes.join(", ").toLowerCase()})` : ""} sont envoyées à l'équipe pour validation. La version en ligne reste inchangée d'ici là ; vous serez prévenu(e).`
+              : null}
+            {!saved.revision && saved.sessionsCreated > 0 ? `${saved.sessionsCreated} date${saved.sessionsCreated > 1 ? "s" : ""} créée${saved.sessionsCreated > 1 ? "s" : ""}. ` : ""}
+            {saved.revision ? "" : saved.status === "published" ? "Elle est visible sur le site." : saved.status === "pending_review" ? "Elle est envoyée à l'équipe pour validation : vous serez prévenu(e) dès sa publication." : "Elle reste en brouillon (invisible du public)."}
           </p>
           <p className="mt-3 flex flex-wrap gap-4 font-medium">
             {saved.status === "published" && <Link href={`/experiences/${saved.slug}`} className="underline">Voir sur le site</Link>}

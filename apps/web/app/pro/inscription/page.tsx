@@ -1,3 +1,4 @@
+import { ORGANIZER_UNIVERSES } from "@thecommunity/shared";
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/admin/ui";
 import { OrganizerApplicationForm, type ApplicationValues } from "@/components/pro/organizer-application-form";
@@ -37,7 +38,7 @@ export default async function ProApplicationPage() {
       <OrganizerApplicationForm
         initial={initial}
         cities={cities.filter((c) => c.isActive).map((c) => ({ id: c.id, label: c.name.fr }))}
-        categories={categories.map((c) => ({ id: c.id, label: c.name.fr }))}
+        categories={categories.filter((c) => ORGANIZER_UNIVERSES.includes(c.id)).map((c) => ({ id: c.id, label: c.name.fr }))}
         uid={space.user?.uid ?? "demo"}
         live={!space.isDemo}
         emailVerified={space.user?.emailVerified ?? true}

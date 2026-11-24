@@ -1,4 +1,4 @@
-import { cleanQuestion, experienceInputSchema, extraI18nFrom, linesI18n, MOROCCO_TIMEZONE, parseCoords, PAYMENT_MODELS, planSessionDates, resolveCommission, splitForModel, wenzyPriceOf } from "@thecommunity/shared";
+import { cleanQuestion, experienceInputSchema, ORGANIZER_UNIVERSES, extraI18nFrom, linesI18n, MOROCCO_TIMEZONE, parseCoords, PAYMENT_MODELS, planSessionDates, resolveCommission, splitForModel, wenzyPriceOf } from "@thecommunity/shared";
 import { commissionRules, moroccoToday } from "../commissions/ledger";
 import { Timestamp } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -73,7 +73,7 @@ export const organizerSaveExperience = onCall({ region: REGION }, async (req) =>
   return saveExperience(req.data, { uid: o.uid, role: "organizer", organizer: { id: o.orgId, name: String(o.org.name ?? ""), slug: String(o.org.slug ?? "") } });
 });
 
-export async function saveExperience(raw: unknown, ctx: { uid: string; role: string; organizer: OrganizerActor | null }) {
+export async function saveExperience(raw: unknown, ctx: { uid: string; role: string; organizer: OrganizerActor | null; applyRevision?: boolean }) {
   const actor = { uid: ctx.uid };
   const org = ctx.organizer;
   const parsedInput = input.safeParse(raw);
@@ -123,6 +123,9 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   // Étape 19 : l'univers est une catégorie principale ; la sous-catégorie (facultative) en dépend.
   if (!category.exists || category.get("parentId")) invalidArgument([{ path: ["categoryId"], message: "required" }]);
   if (v.subcategoryId && (!subcategory?.exists || subcategory.get("parentId") !== v.categoryId)) invalidArgument([{ path: ["subcategoryId"], message: "required" }]);
+  // Lot O (docs/26) : un organisateur publie dans Activités ou Événements ; les Tables sont les rendez-vous de Wenzy.
+  if (org && !ORGANIZER_UNIVERSES.includes(v.categoryId)) invalidArgument([{ path: ["categoryId"], message: "organizerUniverse" }]);
+  if (org && (v.bookingMode === "social_dinner" || v.revealPolicy === "on_group_reveal")) invalidArgument([{ path: ["bookingMode"], message: "organizerUniverse" }]);
   if (v.partnerId && !partner?.exists) invalidArgument([{ path: ["partnerId"], message: "required" }]);
   // 18d : expérience issue de la proposition d'un membre de confiance (encore en attente, ou déjà liée à CETTE expérience).
   let proposal: FirebaseFirestore.DocumentData | undefined;
@@ -265,14 +268,26 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
     ...(org
       ? {
           organizerSnapshot: { name: org.name, slug: org.slug },
-          // Activité publiée modifiée par l'organisateur : reste en ligne, signalée à l'équipe.
-          ...(previousStatus === "published" ? { reviewFlag: true, reviewFlaggedAt: FieldValue.serverTimestamp() } : {}),
+          // Modifications validées par l'équipe (lot O) : plus rien en attente.
+          ...(ctx.applyRevision ? { reviewFlag: false, revisionPending: false, reviewedAt: FieldValue.serverTimestamp(), reviewedBy: actor.uid } : {}),
           ...(effectiveStatus === "pending_review" && previousStatus !== "pending_review" ? { submittedAt: FieldValue.serverTimestamp(), rejectionMessage: null } : {}),
         }
       : {}),
     updatedAt: FieldValue.serverTimestamp(),
     updatedBy: actor.uid,
   };
+
+  // Lot O (docs/26) : un organisateur ne modifie jamais directement une activité en ligne. Ses changements, nouvelles
+  // dates comprises, attendent la validation de l'équipe ; la version en ligne reste inchangée jusque-là.
+  if (org && previousStatus === "published" && !ctx.applyRevision) {
+    const planned = addSessions ? planSessionDates(v.sessions, v.durationMinutes, MOROCCO_TIMEZONE) : [];
+    if (planned.some((d) => new Date(d.startAt).getTime() < Date.now())) invalidArgument([{ path: ["sessions", "firstDate"], message: "inPast" }]);
+    const changes = revisionChanges(existing.data() ?? {}, experience as unknown as Record<string, unknown>, planned.length);
+    await db.doc(`experiences/${id}/private/revision`).set({ input: parsedInput.data, changes, sessionsAdded: planned.length, submittedAt: FieldValue.serverTimestamp(), submittedBy: actor.uid });
+    await existing.ref.update({ revisionPending: true, revisionSubmittedAt: FieldValue.serverTimestamp(), reviewFlag: true, reviewFlaggedAt: FieldValue.serverTimestamp() });
+    await audit({ actorUid: actor.uid, actorRole: ctx.role, action: "experience.revision.submit", targetType: "experience", targetId: id, after: { changes: changes.join(", "), sessionsAdded: planned.length, organizerId: org.id } });
+    return { ok: true, experienceId: id, slug, sessionsCreated: 0, status: "published", revision: true, changes };
+  }
 
   const batch = db.batch();
   const now = Date.now();
@@ -403,4 +418,20 @@ export async function saveExperience(raw: unknown, ctx: { uid: string; role: str
   const alerted = planned.length > 0 && effectiveStatus === "published" ? await notifyNewDates(id, v.titleFr, slug, planned.length) : 0;
   await audit({ actorUid: actor.uid, actorRole: ctx.role, action: isCreate ? "experience.create" : "experience.update", targetType: "experience", targetId: id, after: { title: v.titleFr, status: effectiveStatus, sessionsAdded: planned.length, alerted, pricingModel: pricing.model, ...(org ? { organizerId: org.id } : {}) } });
   return { ok: true, experienceId: id, slug, sessionsCreated: planned.length, status: effectiveStatus };
+}
+
+/** Lot O : ce qui change entre la version en ligne et celle proposée par l'organisateur (libellés pour l'équipe). */
+export function revisionChanges(before: Record<string, unknown>, after: Record<string, unknown>, sessionsAdded: number): string[] {
+  const FIELDS: [string, string][] = [
+    ["title", "Titre"], ["summary", "Accroche"], ["description", "Description"], ["images", "Photos"], ["categoryId", "Univers"],
+    ["subcategoryId", "Format"], ["venue", "Lieu"], ["district", "Quartier"], ["totalPrice", "Prix"], ["pricing", "Prix sur place"],
+    ["durationMinutes", "Durée"], ["included", "Ce qui est inclus"], ["notIncluded", "Non inclus"], ["practicalInfo", "Infos pratiques"],
+    ["languages", "Langues"], ["level", "Niveau"], ["audience", "Public"], ["minAge", "Âge minimum"], ["questionnaire", "Questionnaire"],
+    ["cancellationPolicyId", "Conditions d'annulation"], ["admission", "Inscription sur demande"], ["maxSeatsPerBooking", "Places par réservation"],
+    ["groupConfig", "Taille des groupes"], ["equipmentProvided", "Matériel fourni"], ["whatToBring", "À apporter"], ["dressCode", "Tenue"],
+  ];
+  const norm = (x: unknown) => JSON.stringify(x ?? null, (_k, val) => (val && typeof val === "object" && !Array.isArray(val) ? Object.fromEntries(Object.entries(val).filter(([, w]) => w !== undefined && w !== null && w !== "").sort(([a], [b]) => a.localeCompare(b))) : val));
+  const out = FIELDS.filter(([k]) => norm(before[k]) !== norm(after[k])).map(([, label]) => label);
+  if (sessionsAdded > 0) out.push(`${sessionsAdded} nouvelle(s) date(s)`);
+  return out;
 }

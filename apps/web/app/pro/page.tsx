@@ -9,8 +9,8 @@ export const metadata = { title: "Tableau de bord" };
 const STEPS = [
   ["Créez votre compte organisateur", "Présentez votre structure et joignez vos justificatifs (registre de commerce, assurance)."],
   ["L'équipe valide votre compte", "En général sous 48 h ouvrées. Vous êtes prévenu(e) par e-mail."],
-  ["Publiez vos activités", "Dates, prix, nombre de places : chaque activité est relue avant sa mise en ligne."],
-  ["Accueillez vos participants", "Réservations, liste des participants, pointage à l'entrée, demandes à valider."],
+  ["Publiez vos activités", "Dans Activités ou Événements : dates, prix, nombre de places. L'équipe valide chaque activité, modification et nouvelle date avant la mise en ligne."],
+  ["Accueillez vos participants", "Liste des participants avec leur téléphone, pointage à l'entrée ; le prix de l'activité se règle sur place."],
 ] as const;
 
 /** Étape 20 — accueil de l'espace organisateur : selon le statut du compte, présentation, attente ou tableau de bord. */
@@ -21,7 +21,7 @@ export default async function ProHomePage() {
   if (space.status === "none") {
     return (
       <div className="max-w-3xl">
-        <PageHeader title="Proposez vos activités sur Wenzy" subtitle="Clubs, ateliers, guides, restaurants, coachs : touchez des personnes qui veulent sortir et rencontrer du monde à Casablanca." />
+        <PageHeader title="Proposez vos activités sur Wenzy" subtitle="Clubs, ateliers, guides, coachs : proposez vos activités et vos événements à une communauté qui veut sortir et rencontrer du monde à Casablanca." />
         <Card>
           <ol className="grid gap-4 sm:grid-cols-2">
             {STEPS.map(([title, text], i) => (
@@ -32,7 +32,7 @@ export default async function ProHomePage() {
               </li>
             ))}
           </ol>
-          <p className="mt-5 text-sm text-muted">Commission, encaissement et reversements : tout est expliqué dans le <Link href="/contrat-organisateur" className="font-semibold text-brand-900 underline">contrat organisateur</Link>.</p>
+          <p className="mt-5 text-sm text-muted">Pas de commission : le participant paie 35 DH en ligne à Wenzy et vous règle le prix de l&apos;activité sur place. Tout est expliqué dans le <Link href="/contrat-organisateur" className="font-semibold text-brand-900 underline">contrat organisateur</Link>.</p>
           <Link href="/pro/inscription" className="mt-5 inline-flex items-center gap-2 rounded-full bg-brand-900 px-6 py-3 font-semibold text-white hover:bg-brand-800">
             Créer mon compte organisateur <ArrowRight className="size-4" aria-hidden />
           </Link>
@@ -115,6 +115,14 @@ export default async function ProHomePage() {
             <li className="flex items-center justify-between gap-2">
               <span>Activités en relecture</span>
               <Badge tone={s.inReview ? "amber" : "gray"}>{s.inReview || "aucune"}</Badge>
+            </li>
+            <li className="flex items-center justify-between gap-2">
+              <span>Modifications en attente de validation</span>
+              <Badge tone={d.experiences.some((e) => (e as { revisionPending?: boolean }).revisionPending) ? "amber" : "gray"}>{d.experiences.filter((e) => (e as { revisionPending?: boolean }).revisionPending).length || "aucune"}</Badge>
+            </li>
+            <li className="flex items-center justify-between gap-2">
+              <span>Demandes à l&apos;équipe en cours</span>
+              <Badge tone={d.orgRequests.some((r) => r.status === "pending") ? "amber" : "gray"}>{d.orgRequests.filter((r) => r.status === "pending").length || "aucune"}</Badge>
             </li>
             {d.experiences.filter((e) => e.status === "rejected").map((e) => (
               <li key={e.id} className="flex items-center justify-between gap-2">

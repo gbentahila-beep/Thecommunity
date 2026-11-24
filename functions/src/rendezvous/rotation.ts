@@ -145,7 +145,12 @@ export const adminSaveRotation = onCall({ region: REGION, timeoutSeconds: 120 },
 /** Équipe : changer UN samedi (autre activité, proposition d'un partenaire, pas d'activité) ou revenir à la rotation. */
 export const adminSetRotationWeek = onCall({ region: REGION, timeoutSeconds: 120 }, async (req) => {
   const actor = requireRole(req, ["admin", "superadmin"]);
-  const v = rotationWeekInputSchema.safeParse(req.data);
+  return setRotationWeekCore(req.data, { uid: actor.uid, role: roleOf(req) });
+});
+
+/** Cœur du changement d'un samedi (aussi utilisé quand l'équipe accepte la proposition d'un organisateur). */
+export async function setRotationWeekCore(raw: unknown, actor: { uid: string; role: string }) {
+  const v = rotationWeekInputSchema.safeParse(raw);
   if (!v.success) invalidArgument(v.error.issues);
   const { id, date, override } = v.data;
   const ref = db.doc(`rendezvous/${id}`);
@@ -164,9 +169,9 @@ export const adminSetRotationWeek = onCall({ region: REGION, timeoutSeconds: 120
   await ref.update({ overrides, updatedAt: FieldValue.serverTimestamp(), updatedBy: actor.uid });
   await syncExperiences(id, involvedIds((rv.cycle ?? []) as RotationEntry[], overrides), new Date());
   const r = await ensureRotationSessions(id);
-  await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "rotation.week", targetType: "rendezvous", targetId: id, after: { date, experienceId: override ? override.experienceId ?? "none" : "rotation", shift: override?.shift ?? false, ...r } });
+  await audit({ actorUid: actor.uid, actorRole: actor.role, action: "rotation.week", targetType: "rendezvous", targetId: id, after: { date, experienceId: override ? override.experienceId ?? "none" : "rotation", shift: override?.shift ?? false, ...r } });
   return { ok: true, ...r };
-});
+}
 
 /**
  * Lancement (lot D) : crée l'activité du samedi d'une ville si elle n'en a pas, avec les activités publiées issues des

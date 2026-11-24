@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ExperienceForm } from "@/components/admin/experience-form";
-import { Badge, PageHeader } from "@/components/admin/ui";
+import { Badge, Card, PageHeader } from "@/components/admin/ui";
+import { SaturdayProposal } from "@/components/pro/org-requests";
+import { ORGANIZER_UNIVERSES, rotationDays } from "@thecommunity/shared";
 import { experienceToValues } from "@/lib/admin-forms";
 import { getProData, requireApprovedOrganizer } from "@/lib/data/organizer";
 import { getOrganizerFinance } from "@/lib/data/finance";
@@ -26,6 +28,22 @@ export default async function ProEditActivityPage({ params }: PageProps<"/pro/ac
         title={e.title.fr}
         subtitle={<span className="inline-flex flex-wrap items-center gap-2"><Badge tone={st.tone}>{st.label}</Badge>{e.status === "published" && <Link href={`/experiences/${e.slug}`} className="text-brand-900 underline">Voir sur le site</Link>}</span>}
       />
+      {/* Lot O (docs/26) : les modifications d'une activité en ligne attendent la validation de l'équipe. */}
+      {e.status === "published" && (e as { revisionPending?: boolean }).revisionPending && (
+        <p role="note" className="mb-5 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-950" data-testid="revision-pending">
+          <strong>Modifications en attente de validation.</strong> La version en ligne reste inchangée jusqu&apos;à la validation de l&apos;équipe. Si vous enregistrez à nouveau, vos nouvelles modifications remplacent celles en attente.
+        </p>
+      )}
+      {e.status === "published" && ORGANIZER_UNIVERSES.includes(e.categoryId) && (
+        <Card title="Proposer pour l'activité du samedi" className="mb-5">
+          <SaturdayProposal
+            experienceId={e.id}
+            saturdays={rotationDays(6, d.now, 6).slice(1)}
+            existing={d.orgRequests.find((r) => r.type === "saturday" && r.experienceId === e.id) ?? null}
+            live={!space.isDemo}
+          />
+        </Card>
+      )}
       {e.status === "rejected" && e.rejectionMessage && (
         <p role="note" className="mb-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900" data-testid="rejection-message"><strong>Message de l&apos;équipe :</strong> {e.rejectionMessage}</p>
       )}

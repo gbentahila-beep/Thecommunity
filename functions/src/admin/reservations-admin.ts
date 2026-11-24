@@ -5,7 +5,7 @@ import { db, FieldValue, REGION } from "../lib/admin";
 import { audit } from "../lib/audit";
 import { notifyReservationChange } from "../notify/reminders";
 import { invalidArgument, requireAuth, requireRole, roleOf } from "../lib/guards";
-import { requireOrganizer, requireTeamOrOrganizerOf } from "../organizers/access";
+import { requireTeamOrOrganizerOf } from "../organizers/access";
 import { cancelReservationCore, idSchema } from "../reservations/cancel-reservation";
 import { refuse } from "../reservations/create-reservation";
 import { moveReservationCore } from "../tables/move";
@@ -45,14 +45,12 @@ export const adminCancelReservation = onCall({ region: REGION }, async (req) => 
  * tout le monde est prévenu. Journalisé.
  */
 export const adminCancelSession = onCall({ region: REGION, timeoutSeconds: 300 }, async (req) => {
-  requireAuth(req);
+  // Lot O (docs/26) : seule l'équipe annule une date ; l'organisateur en fait la demande (organizerRequestCancellation).
+  const team = requireRole(req, ["admin", "superadmin"]);
   const parsed = z.object({ sessionId: idSchema, reason: reasonSchema }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
   const { sessionId, reason } = parsed.data;
-  const sessRef = db.doc(`sessions/${sessionId}`);
-  // Étape 20 : l'organisateur annule les dates de SES activités (même remboursement intégral).
-  const actor = await requireTeamOrOrganizerOf(req, (await sessRef.get()).get("organizerId"));
-  return { ok: true, ...(await cancelSessionCore(sessionId, { uid: actor.uid, role: actor.role }, reason)) };
+  return { ok: true, ...(await cancelSessionCore(sessionId, { uid: team.uid, role: roleOf(req) }, reason)) };
 });
 
 /** Cœur de l'annulation d'une date (aussi utilisé par la vitrine, étape M) : remboursement intégral, tout le monde prévenu. */
@@ -177,15 +175,10 @@ export const adminSetPartnerPayment = onCall({ region: REGION }, async (req) => 
 
 /** Journalise un export de données personnelles (liste de participants, réservations) avant son téléchargement. */
 export const adminLogExport = onCall({ region: REGION }, async (req) => {
-  requireAuth(req);
-  const team = ["admin", "superadmin"].includes(roleOf(req));
-  // Étape 20 : un organisateur validé journalise aussi ses exports (participants et réservations de SES activités,
-  // préparés par le serveur de l'espace /pro) ; les autres types d'export restent réservés à l'équipe.
-  const org = team ? null : await requireOrganizer(req, { approvedOnly: true });
+  // Lot O (docs/26) : les organisateurs n'exportent plus de données personnelles (ils voient la liste à l'écran).
+  const team = requireRole(req, ["admin", "superadmin"]);
   const parsed = z.object({ kind: z.enum(["participants", "reservations", "users", "two_part"]), targetId: z.string().max(128).default(""), rows: z.number().int().min(0).max(100_000) }).safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
-  if (org && !["participants", "reservations"].includes(parsed.data.kind)) throw new HttpsError("permission-denied", "Action réservée à l'équipe.");
-  const actor = { uid: req.auth!.uid };
-  await audit({ actorUid: actor.uid, actorRole: org ? "organizer" : roleOf(req), action: `export.${parsed.data.kind}`, targetType: "export", targetId: parsed.data.targetId || parsed.data.kind, after: { rows: parsed.data.rows, ...(org ? { organizerId: org.orgId } : {}) } });
+  await audit({ actorUid: team.uid, actorRole: roleOf(req), action: `export.${parsed.data.kind}`, targetType: "export", targetId: parsed.data.targetId || parsed.data.kind, after: { rows: parsed.data.rows } });
   return { ok: true };
 });

@@ -16,8 +16,9 @@ const MESSAGES: Record<string, string> = {
   tooLong: "Trop long.",
   email: "Adresse e-mail invalide.",
   phone: "Numéro invalide.",
-  pickOne: "Choisissez au moins une catégorie.",
-  tooMany: "Trois catégories au maximum.",
+  pickOne: "Choisissez Activités, Événements, ou les deux.",
+  tooMany: "Activités et Événements au maximum.",
+  organizerUniverse: "Choisissez Activités ou Événements.",
   invalidDocument: "Pièce invalide.",
   invalidImage: "Image invalide.",
 };
@@ -157,7 +158,7 @@ export function OrganizerApplicationForm({
       <fieldset className="space-y-4 rounded-2xl bg-white p-5 shadow-card">
         <legend className="float-left mb-2 w-full text-base font-semibold text-ink">2. Vos activités</legend>
         <div className="clear-both">
-          <p className="mb-2 text-sm font-medium text-ink" id="o-categoryIds-label">Catégories (1 à 3)</p>
+          <p className="mb-2 text-sm font-medium text-ink" id="o-categoryIds-label">Où publierez-vous ? Activités, Événements, ou les deux</p>
           <div className="flex flex-wrap gap-2" role="group" aria-labelledby="o-categoryIds-label" aria-describedby={errors.categoryIds ? "o-categoryIds-error" : undefined}>
             {categories.map((c) => {
               const on = v.categoryIds.includes(c.id);

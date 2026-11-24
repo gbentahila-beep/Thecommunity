@@ -37,7 +37,7 @@ async function uniqueOrganizerSlug(base: string, ignoreId?: string) {
 }
 
 /** Prévient chaque membre de l'organisation (notification dans l'espace + e-mail). */
-async function notifyOrganizer(orgId: string, o: { type: string; heading: string; paragraphs: string[]; path: string; ctaLabel?: string }) {
+export async function notifyOrganizer(orgId: string, o: { type: string; heading: string; paragraphs: string[]; path: string; ctaLabel?: string }) {
   const details = (await db.doc(`organizers/${orgId}/private/details`).get()).data() ?? {};
   const uids = (details.memberUids as string[] | undefined) ?? [];
   for (const uid of uids) {
@@ -247,9 +247,9 @@ export const organizerUpdateProfile = onCall({ region: REGION }, async (req) => 
 export const adminReviewExperience = onCall({ region: REGION }, async (req) => {
   const actor = requireRole(req, ["admin", "superadmin"]);
   const parsed = z
-    .object({ experienceId: z.string().regex(ORG_ID), decision: z.enum(["publish", "reject", "reviewed"]), message: z.string().trim().max(800, "tooLong").optional().or(z.literal("")) })
+    .object({ experienceId: z.string().regex(ORG_ID), decision: z.enum(["publish", "reject", "reviewed", "apply_revision", "reject_revision"]), message: z.string().trim().max(800, "tooLong").optional().or(z.literal("")) })
     .superRefine((v, ctx) => {
-      if (v.decision === "reject" && (v.message ?? "").length < 5) ctx.addIssue({ code: "custom", path: ["message"], message: "required" });
+      if ((v.decision === "reject" || v.decision === "reject_revision") && (v.message ?? "").length < 5) ctx.addIssue({ code: "custom", path: ["message"], message: "required" });
     })
     .safeParse(req.data);
   if (!parsed.success) invalidArgument(parsed.error.issues);
@@ -261,6 +261,30 @@ export const adminReviewExperience = onCall({ region: REGION }, async (req) => {
   if (!orgId) refuse("not_organizer_experience", "Cette activité n'a pas d'organisateur.");
   if (decision === "reviewed") {
     await ref.update({ reviewFlag: false, reviewedAt: FieldValue.serverTimestamp(), reviewedBy: actor.uid });
+  } else if (decision === "apply_revision" || decision === "reject_revision") {
+    // Lot O : modifications d'une activité en ligne proposées par l'organisateur (version en ligne inchangée jusque-là).
+    const revRef = db.doc(`experiences/${experienceId}/private/revision`);
+    const rev = (await revRef.get()).data();
+    if (!rev) refuse("no_revision", "Aucune modification en attente.");
+    const title = String(e.title?.fr ?? "");
+    if (decision === "apply_revision") {
+      const org = (await db.doc(`organizers/${orgId}`).get()).data() ?? {};
+      if (org.status !== "approved") refuse("organizer_not_approved", "Le compte de l'organisateur n'est pas validé.");
+      const { saveExperience } = await import("../experiences/save-experience");
+      await saveExperience(rev!.input, { uid: actor.uid, role: roleOf(req), organizer: { id: orgId!, name: String(org.name ?? ""), slug: String(org.slug ?? "") }, applyRevision: true });
+    } else {
+      await ref.update({ revisionPending: false, reviewFlag: false, reviewedAt: FieldValue.serverTimestamp(), reviewedBy: actor.uid });
+    }
+    await revRef.delete();
+    await notifyOrganizer(orgId!, {
+      type: decision === "apply_revision" ? "organizer_revision_applied" : "organizer_revision_rejected",
+      heading: decision === "apply_revision" ? `Vos modifications de « ${title} » sont en ligne` : `Vos modifications de « ${title} » ne sont pas validées`,
+      paragraphs: decision === "apply_revision"
+        ? ["L'équipe a validé vos modifications" + (rev!.sessionsAdded ? " et vos nouvelles dates" : "") + " : elles sont visibles sur le site."]
+        : [`Message de l'équipe : ${message}`, "La version en ligne reste inchangée. Vous pouvez corriger et renvoyer vos modifications."],
+      path: `/pro/activites/${experienceId}`,
+      ctaLabel: "Voir l'activité",
+    });
   } else {
     if (e.status !== "pending_review") refuse("not_pending", "Cette activité n'attend pas de validation.");
     const org = (await db.doc(`organizers/${orgId}`).get()).data();

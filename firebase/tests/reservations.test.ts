@@ -2074,11 +2074,34 @@ describe("organisateurs (20)", () => {
     expect((await db().doc(`experiences/${expId}`).get()).get("status")).toBe("published");
     const after = await db().collection("sessions").where("experienceId", "==", expId).get();
     expect(after.docs.map((d) => d.get("status"))).toEqual(["published"]);
-    // Publiée puis modifiée par l'organisateur : reste en ligne, signalée à l'équipe.
-    await pro.call("organizerSaveExperience", { experienceId: expId, data: { ...activity, summaryFr: "Des matchs en double, tous niveaux, au club, puis un café.", sessions: plan(10) }, addSessions: false, images: [] });
-    expect((await db().doc(`experiences/${expId}`).get()).data()).toMatchObject({ status: "published", reviewFlag: true });
-    await team.call("adminReviewExperience", { experienceId: expId, decision: "reviewed" });
-    expect((await db().doc(`experiences/${expId}`).get()).get("reviewFlag")).toBe(false);
+    // Lot O (docs/26) : publiée puis modifiée par l'organisateur → la version en ligne NE CHANGE PAS ; les modifications
+    // (et les nouvelles dates) attendent la validation de l'équipe.
+    const liveSummary = (await db().doc(`experiences/${expId}`).get()).get("summary.fr");
+    const newSummary = "Des matchs en double, tous niveaux, au club, puis un café.";
+    const rev = await pro.call("organizerSaveExperience", { experienceId: expId, data: { ...activity, level: "all", summaryFr: newSummary, sessions: plan(17) }, addSessions: true, images: [] });
+    expect(rev).toMatchObject({ revision: true, sessionsCreated: 0 });
+    expect(rev.changes).toEqual(expect.arrayContaining(["Accroche", "1 nouvelle(s) date(s)"]));
+    expect((await db().doc(`experiences/${expId}`).get()).data()).toMatchObject({ status: "published", revisionPending: true, summary: { fr: liveSummary } });
+    expect((await db().collection("sessions").where("experienceId", "==", expId).get()).size).toBe(1);
+    // Refus : rien ne change, l'organisateur est prévenu.
+    expect(await refusal(team.call("adminReviewExperience", { experienceId: expId, decision: "reject_revision" }))).toBe("invalid-argument:");
+    await team.call("adminReviewExperience", { experienceId: expId, decision: "reject_revision", message: "Gardez le texte précédent." });
+    expect((await db().doc(`experiences/${expId}`).get()).data()).toMatchObject({ revisionPending: false, summary: { fr: liveSummary } });
+    expect((await db().doc(`experiences/${expId}/private/revision`).get()).exists).toBe(false);
+    // Nouvel envoi, puis validation : texte et date appliqués.
+    await pro.call("organizerSaveExperience", { experienceId: expId, data: { ...activity, level: "all", summaryFr: newSummary, sessions: plan(17) }, addSessions: true, images: [] });
+    await team.call("adminReviewExperience", { experienceId: expId, decision: "apply_revision" });
+    expect((await db().doc(`experiences/${expId}`).get()).data()).toMatchObject({ status: "published", revisionPending: false, reviewFlag: false, summary: { fr: newSummary } });
+    const dates = await db().collection("sessions").where("experienceId", "==", expId).get();
+    expect(dates.docs.map((d) => d.get("status"))).toEqual(["published", "published"]);
+    expect(await refusal(team.call("adminReviewExperience", { experienceId: expId, decision: "apply_revision" }))).toBe("failed-precondition:no_revision");
+  });
+
+  it("univers : un organisateur publie dans Activités ou Événements, jamais dans Tables (lot O)", async () => {
+    await db().doc("categories/eat").set({ isActive: true, parentId: null }, { merge: true });
+    expect(await refusal(pro.call("organizerSaveExperience", { data: { ...activity, categoryId: "eat", subcategoryId: "", sessions: plan(10) }, addSessions: false, images: [] }))).toBe("invalid-argument:");
+    const x = await member();
+    expect(await refusal(x.call("applyAsOrganizer", { ...application(x.uid, "Resto Test"), categoryIds: ["eat"] }))).toBe("invalid-argument:");
   });
 
   it("réservations et actions : seulement sur SES activités (pointage, demandes, annulation de date)", async () => {
@@ -2096,20 +2119,53 @@ describe("organisateurs (20)", () => {
     expect(await refusal(pro.call("adminCheckIn", { reservationId, presence: "attended" }))).toBe("failed-precondition:too_early");
     expect(await refusal(other.call("adminCheckIn", { reservationId, presence: "attended" }))).toBe("permission-denied:not_owner");
     expect(await refusal(buyer.call("adminCheckIn", { reservationId, presence: "attended" }))).toBe("permission-denied:");
-    // Une date de Wenzy : jamais accessible à un organisateur.
+    // Lot O (docs/26) : plus d'annulation directe ni d'export pour un organisateur.
     const thc = await makeSession({ startInHours: 1 });
-    expect(await refusal(pro.call("adminCancelSession", { sessionId: thc, reason: "Essai interdit" }))).toBe("permission-denied:not_owner");
-    // Export journalisé : participants et réservations seulement.
-    expect(await pro.call("adminLogExport", { kind: "participants", targetId: sid, rows: 1 })).toEqual({ ok: true });
-    expect(await refusal(pro.call("adminLogExport", { kind: "users", rows: 10 }))).toBe("permission-denied:");
-    // L'organisateur annule sa date : remboursement intégral, réservation annulée.
-    expect(await refusal(other.call("adminCancelSession", { sessionId: sid, reason: "Météo" }))).toBe("permission-denied:not_owner");
-    const cancelled = await pro.call("adminCancelSession", { sessionId: sid, reason: "Terrain indisponible" });
-    expect(cancelled).toMatchObject({ ok: true, cancelled: 1 });
+    expect(await refusal(pro.call("adminCancelSession", { sessionId: thc, reason: "Essai interdit" }))).toBe("permission-denied:");
+    expect(await refusal(pro.call("adminCancelSession", { sessionId: sid, reason: "Terrain indisponible" }))).toBe("permission-denied:");
+    expect(await refusal(pro.call("adminLogExport", { kind: "participants", targetId: sid, rows: 1 }))).toBe("permission-denied:");
+    // Il DEMANDE l'annulation (motif obligatoire, une seule demande à la fois, seulement pour SES dates).
+    expect(await refusal(other.call("organizerRequestCancellation", { sessionId: sid, reason: "Météo annoncée très mauvaise" }))).toBe("permission-denied:not_owner");
+    expect(await refusal(pro.call("organizerRequestCancellation", { sessionId: sid, reason: "court" }))).toBe("invalid-argument:");
+    const { requestId: refusedId } = await pro.call("organizerRequestCancellation", { sessionId: sid, reason: "Terrain indisponible ce jour-là" });
+    expect(await refusal(pro.call("organizerRequestCancellation", { sessionId: sid, reason: "Terrain indisponible ce jour-là" }))).toBe("failed-precondition:already_requested");
+    // L'équipe refuse (message obligatoire) : la date est maintenue.
+    expect(await refusal(team.call("adminDecideOrganizerRequest", { requestId: refusedId, decision: "refuse" }))).toBe("invalid-argument:");
+    await team.call("adminDecideOrganizerRequest", { requestId: refusedId, decision: "refuse", message: "Le club confirme le terrain." });
+    expect((await session(sid)).status).not.toBe("cancelled");
+    // Nouvelle demande, acceptée : la date est annulée et remboursée par l'équipe.
+    const { requestId } = await pro.call("organizerRequestCancellation", { sessionId: sid, reason: "Terrain finalement fermé pour travaux" });
+    expect(await refusal(pro.call("adminDecideOrganizerRequest", { requestId, decision: "accept" }))).toBe("permission-denied:");
+    await team.call("adminDecideOrganizerRequest", { requestId, decision: "accept" });
     expect((await session(sid)).status).toBe("cancelled");
     expect(["cancelled", "refunded"]).toContain((await reservation(String(reservationId))).status);
-    const log = await db().collection("auditLogs").where("targetId", "==", sid).where("action", "==", "session.cancel").get();
-    expect(log.docs[0]?.get("actorRole")).toBe("organizer");
+    expect((await db().doc(`organizerRequests/${requestId}`).get()).get("status")).toBe("accepted");
+    expect(await refusal(team.call("adminDecideOrganizerRequest", { requestId, decision: "accept" }))).toBe("failed-precondition:not_pending");
+  });
+
+  it("proposer une activité validée pour un samedi ; l'équipe la place dans la rotation (lot O)", async () => {
+    const res = await pro.call("organizerSaveExperience", { data: { ...activity, titleFr: `Tennis du samedi ${run}`, sessions: plan(30) }, addSessions: false, images: [] });
+    const expId = String(res.experienceId);
+    // Pas encore validée : refusée.
+    expect(await refusal(pro.call("organizerProposeSaturday", { experienceId: expId, dates: [] }))).toBe("failed-precondition:not_published");
+    await team.call("adminReviewExperience", { experienceId: expId, decision: "publish" });
+    const { rotationDays } = await import("@thecommunity/shared");
+    const sats = rotationDays(6, new Date(), 6).slice(2);
+    expect(await refusal(pro.call("organizerProposeSaturday", { experienceId: expId, dates: ["2099-01-01"] }))).toBe("invalid-argument:");
+    expect(await refusal(other.call("organizerProposeSaturday", { experienceId: expId, dates: [] }))).toMatch(/permission-denied|failed-precondition/);
+    const { requestId } = await pro.call("organizerProposeSaturday", { experienceId: expId, dates: [sats[0]!], note: "Deux terrains, 8 places." });
+    expect(await refusal(pro.call("organizerProposeSaturday", { experienceId: expId, dates: [] }))).toBe("failed-precondition:already_requested");
+    // L'équipe accepte sur le samedi souhaité : la rotation de la ville reçoit ce samedi.
+    const rv = db().doc("rendezvous/activite-du-samedi");
+    if (!(await rv.get()).exists) {
+      await rv.set({ kind: "rotation", title: { fr: "L'activité du samedi" }, cityId: "casablanca", weekday: 6, time: "10:00", anchor: rotationDays(6, new Date(), 1)[0], weeksAhead: 6, cycle: [{ experienceId: expId, time: "10:00", capacity: 8 }], overrides: {}, tiers: [], status: "active" });
+    }
+    const city = (await db().doc(`experiences/${expId}`).get()).get("cityId");
+    await rv.update({ cityId: city });
+    await team.call("adminDecideOrganizerRequest", { requestId, decision: "accept", date: sats[0], time: "15:00", capacity: 8 });
+    expect((await rv.get()).get(`overrides.${sats[0]}`)).toMatchObject({ experienceId: expId, time: "15:00", capacity: 8 });
+    expect((await db().doc(`organizerRequests/${requestId}`).get()).data()).toMatchObject({ status: "accepted", placedOn: sats[0] });
+    expect((await db().doc(`experiences/${expId}`).get()).get("rendezvousKind")).toBe("rotation");
   });
 
   it("demandes « sur demande » : l'organisateur décide pour ses activités seulement", async () => {
@@ -2151,7 +2207,7 @@ describe("commissions et reversements (21)", () => {
   };
   const activity = (title: string) => ({
     titleFr: title, summaryFr: "Atelier de céramique en petit groupe, cuisson comprise.", descriptionFr: "Deux heures au tour avec une céramiste, tous niveaux, terre et cuisson comprises.",
-    categoryId: "create", cityId: "casablanca", district: "Maarif", venueName: "Atelier Test", address: "10 rue de la Terre, Casablanca",
+    categoryId: "move", cityId: "casablanca", district: "Maarif", venueName: "Atelier Test", address: "10 rue de la Terre, Casablanca",
     revealPolicy: "immediate", bookingMode: "individual", maxSeatsPerBooking: 2, admission: "direct", requestMessageRequired: false,
     priceDh: 200, durationMinutes: 120, languages: ["fr"], alcoholServed: false, cancellationPolicyId: "standard-48h",
     economicsModel: "own", costPerSeatDh: 0, status: "published", sessions: plan(10),
@@ -2176,10 +2232,10 @@ describe("commissions et reversements (21)", () => {
     sup = await member({ role: "superadmin" });
     team = await member({ role: "admin" });
     pro = await member();
-    await db().doc("categories/create").set({ isActive: true }, { merge: true });
+    await db().doc("categories/move").set({ isActive: true, parentId: null }, { merge: true });
     const { organizerId } = await pro.call("applyAsOrganizer", {
       businessName: `Atelier Commission ${run}`, contactName: "Yasmine Test", email: "yasmine@example.com", phone: "+212 600 000 000", cityId: "casablanca",
-      address: "10 rue de la Terre, Casablanca", categoryIds: ["create"], description: "Atelier de céramique à Maârif, initiations au tour et au modelage.", documents: [], acceptTerms: true,
+      address: "10 rue de la Terre, Casablanca", categoryIds: ["move"], description: "Atelier de céramique à Maârif, initiations au tour et au modelage.", documents: [], acceptTerms: true,
     });
     orgId = String(organizerId);
     await team.call("adminDecideOrganizer", { organizerId: orgId, decision: "approve" });

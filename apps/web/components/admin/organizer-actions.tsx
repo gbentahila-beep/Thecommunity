@@ -101,14 +101,14 @@ export function OrganizerDocument({ path, name, live }: { path: string; name: st
 }
 
 /** Étape 20 — relecture d'une activité envoyée par un organisateur : publier ou refuser avec un message. */
-export function ExperienceReview({ experienceId, status, reviewFlag, live }: { experienceId: string; status: string; reviewFlag: boolean; live: boolean }) {
+export function ExperienceReview({ experienceId, status, reviewFlag, live, revision }: { experienceId: string; status: string; reviewFlag: boolean; live: boolean; revision?: { changes: string[]; submittedAt: string; sessionsAdded: number } | null }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [rejecting, setRejecting] = useState(false);
   const [message, setMessage] = useState("");
   const [result, setResult] = useState("");
-  const run = async (decision: "publish" | "reject" | "reviewed") => {
-    if (decision === "reject" && message.trim().length < 5) return setResult("Écrivez ce qu'il faut corriger (5 caractères minimum).");
+  const run = async (decision: "publish" | "reject" | "reviewed" | "apply_revision" | "reject_revision") => {
+    if ((decision === "reject" || decision === "reject_revision") && message.trim().length < 5) return setResult("Écrivez ce qu'il faut corriger (5 caractères minimum).");
     if (!live) return setResult("Démonstration : rien n'est enregistré.");
     setBusy(true);
     setResult("");
@@ -116,7 +116,13 @@ export function ExperienceReview({ experienceId, status, reviewFlag, live }: { e
       await firebase().auth.authStateReady();
       await httpsCallable(firebase().functions, "adminReviewExperience")({ experienceId, decision, message: message.trim() });
       await fetch("/api/admin/revalidate", { method: "POST" }).catch(() => undefined);
-      setResult(decision === "publish" ? "Publiée. L'organisateur est prévenu." : decision === "reject" ? "Refusée. L'organisateur est prévenu." : "Marquée comme relue.");
+      setResult(
+        decision === "publish" ? "Publiée. L'organisateur est prévenu."
+          : decision === "reject" ? "Refusée. L'organisateur est prévenu."
+          : decision === "apply_revision" ? "Modifications mises en ligne. L'organisateur est prévenu."
+          : decision === "reject_revision" ? "Modifications refusées : la version en ligne ne change pas. L'organisateur est prévenu."
+          : "Marquée comme relue.",
+      );
       setRejecting(false);
       router.refresh();
     } catch (e) {
@@ -132,14 +138,77 @@ export function ExperienceReview({ experienceId, status, reviewFlag, live }: { e
           <button type="button" disabled={busy} onClick={() => setRejecting(true)} className="rounded-full border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-800 hover:bg-red-50">Refuser…</button>
         </div>
       )}
-      {status === "published" && reviewFlag && (
+      {/* Lot O (docs/26) : modifications proposées par l'organisateur, en attente (la version en ligne ne bouge pas). */}
+      {status === "published" && revision && (
+        <div className="space-y-2 rounded-xl border border-amber-200 bg-amber-50 p-3" data-testid="revision-review">
+          <p className="text-sm text-amber-950"><strong>Modifications proposées</strong> le {revision.submittedAt ? new Date(revision.submittedAt).toLocaleString("fr-FR", { timeZone: "Africa/Casablanca", dateStyle: "long", timeStyle: "short" }) : "—"} : {revision.changes.length ? revision.changes.join(", ") : "aucun changement visible"}.</p>
+          <p className="text-xs text-amber-900">La fiche ci-dessous montre la version en ligne. Valider applique les modifications{revision.sessionsAdded ? " et crée les nouvelles dates" : ""} ; refuser les écarte (message transmis à l&apos;organisateur).</p>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={busy} onClick={() => run("apply_revision")} className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-60">Valider les modifications</button>
+            <button type="button" disabled={busy} onClick={() => setRejecting(true)} className="rounded-full border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-800 hover:bg-red-50">Refuser…</button>
+          </div>
+        </div>
+      )}
+      {status === "published" && reviewFlag && !revision && (
         <button type="button" disabled={busy} onClick={() => run("reviewed")} className="rounded-full border border-brand-900 px-4 py-2 text-sm font-semibold text-brand-900">Modifications relues ✓</button>
       )}
       {rejecting && (
         <div className="max-w-xl space-y-2 rounded-xl border border-line bg-cream p-3">
           <label htmlFor="review-message" className="block text-sm font-medium">Ce qu&apos;il faut corriger (transmis à l&apos;organisateur)</label>
           <textarea id="review-message" rows={3} maxLength={800} value={message} onChange={(e) => setMessage(e.target.value)} className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm" />
-          <button type="button" disabled={busy} onClick={() => run("reject")} className="rounded-full bg-red-800 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">Confirmer le refus</button>
+          <button type="button" disabled={busy} onClick={() => run(revision && status === "published" ? "reject_revision" : "reject")} className="rounded-full bg-red-800 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">Confirmer le refus</button>
+        </div>
+      )}
+      {result && <p role="status" className="text-sm text-muted">{result}</p>}
+    </div>
+  );
+}
+
+/** Lot O (docs/26) — demande d'un organisateur : annuler une date, ou placer son activité sur un samedi. */
+export function OrganizerRequestActions({ requestId, type, saturdays, defaultTime, defaultCapacity, live }: { requestId: string; type: "cancel_session" | "saturday"; saturdays?: { date: string; label: string }[]; defaultTime?: string; defaultCapacity?: number; live: boolean }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  const [refusing, setRefusing] = useState(false);
+  const [message, setMessage] = useState("");
+  const [date, setDate] = useState(saturdays?.[0]?.date ?? "");
+  const [time, setTime] = useState(defaultTime ?? "10:00");
+  const [capacity, setCapacity] = useState(String(defaultCapacity ?? 12));
+  const [result, setResult] = useState("");
+  const run = async (decision: "accept" | "refuse") => {
+    if (decision === "refuse" && message.trim().length < 5) return setResult("Expliquez votre réponse (5 caractères minimum).");
+    if (!live) return setResult("Démonstration : rien n'est enregistré.");
+    setBusy(true);
+    setResult("");
+    try {
+      await firebase().auth.authStateReady();
+      await httpsCallable(firebase().functions, "adminDecideOrganizerRequest", { timeout: 300_000 })({ requestId, decision, message: message.trim(), ...(decision === "accept" && type === "saturday" ? { date, time, capacity } : {}) });
+      setResult(decision === "accept" ? (type === "cancel_session" ? "Date annulée, inscrits remboursés et prévenus." : "Placée sur ce samedi.") : "Refusée. L'organisateur est prévenu.");
+      router.refresh();
+    } catch (e) {
+      setResult((e as { message?: string }).message ?? "Action impossible.");
+    }
+    setBusy(false);
+  };
+  const small = "rounded-lg border border-line bg-white px-2 py-1.5 text-sm";
+  return (
+    <div className="mt-2 space-y-2" data-testid="organizer-request-actions">
+      <div className="flex flex-wrap items-end gap-2">
+        {type === "saturday" && (
+          <>
+            <label className="flex flex-col text-xs font-medium">Samedi<select className={small} value={date} onChange={(e) => setDate(e.target.value)}>{saturdays?.map((s) => <option key={s.date} value={s.date}>{s.label}</option>)}</select></label>
+            <label className="flex flex-col text-xs font-medium">Heure<input type="time" className={small} value={time} onChange={(e) => setTime(e.target.value)} /></label>
+            <label className="flex flex-col text-xs font-medium">Places<input inputMode="numeric" className={`${small} w-16`} value={capacity} onChange={(e) => setCapacity(e.target.value)} /></label>
+          </>
+        )}
+        <button type="button" disabled={busy} onClick={() => run("accept")} className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-60">
+          {type === "cancel_session" ? "Annuler la date et rembourser" : "Placer ce samedi"}
+        </button>
+        <button type="button" disabled={busy} onClick={() => setRefusing((x) => !x)} className="rounded-full border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-800 hover:bg-red-50">Refuser…</button>
+      </div>
+      {refusing && (
+        <div className="max-w-xl space-y-2">
+          <textarea rows={2} maxLength={600} value={message} onChange={(e) => setMessage(e.target.value)} className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm" aria-label="Message à l'organisateur" placeholder="Message à l'organisateur" />
+          <button type="button" disabled={busy} onClick={() => run("refuse")} className="rounded-full bg-red-800 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">Confirmer le refus</button>
         </div>
       )}
       {result && <p role="status" className="text-sm text-muted">{result}</p>}

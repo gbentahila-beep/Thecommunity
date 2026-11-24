@@ -2,6 +2,7 @@ import { localDayKey, mergeTemplates, rotationDays, rotationPlan, type RotationE
 import { connection } from "next/server";
 import { RendezvousForm, WEEKDAYS, type RendezvousFormValues } from "@/components/admin/rendezvous-form";
 import { RendezvousLaunch } from "@/components/admin/rendezvous-launch";
+import { OrganizerRequestActions } from "@/components/admin/organizer-actions";
 import { RotationForm, RotationWeek, type ActivityOption, type RotationFormValues, type WeekRow } from "@/components/admin/rotation-form";
 import { Badge, Card, PageHeader } from "@/components/admin/ui";
 import { requireAdmin } from "@/lib/auth/admin";
@@ -63,6 +64,12 @@ export default async function RendezvousAdminPage() {
       };
     }));
   }
+  // Lot O (docs/26) : activités proposées par des organisateurs pour un samedi.
+  const proposals = FIREBASE_ENABLED && !d.isDemo
+    ? (await adminDb().collection("organizerRequests").where("status", "==", "pending").get()).docs
+        .filter((x) => x.get("type") === "saturday")
+        .map((x) => ({ id: x.id, cityId: String(x.get("cityId") ?? ""), title: String(x.get("title") ?? ""), organizerName: String(x.get("organizerName") ?? ""), dates: (x.get("dates") ?? []) as string[], note: String(x.get("note") ?? "") }))
+    : [];
   const rotationValues = (r: Rv): RotationFormValues => ({ id: r.id, titleFr: r.title.fr, titleAr: r.title.ar ?? "", titleEn: r.title.en ?? "", cityId: r.cityId, anchor: r.anchor ?? "", status: r.status, cycle: (r.cycle ?? []).map((c) => ({ experienceId: c.experienceId, time: c.time, capacity: String(c.capacity) })) });
   const emptyRotation: RotationFormValues = { titleFr: "L'activité du samedi", titleAr: "نشاط السبت", titleEn: "Saturday Activity", cityId: "casablanca", anchor: rotationDays(6, new Date(), 1)[0]!, status: "active", cycle: [] };
   const experiences = [...d.experiences.values()]
@@ -94,6 +101,23 @@ export default async function RendezvousAdminPage() {
             <span className="text-sm text-muted">{WEEKDAYS[r.weekday]} · rotation : {(r.cycle ?? []).map((c) => label(c.experienceId)).join(" → ")}</span>
           </div>
           <p className="text-sm text-muted">Les 8 prochains samedis. Les dates sont créées 6 semaines à l&apos;avance ; une seule est ouverte à la réservation à la fois (la suivante pour les abonnés Pass).</p>
+          {proposals.filter((p) => p.cityId === r.cityId).length > 0 && (
+            <div className="my-3 rounded-xl bg-brand-50 p-3" data-testid="saturday-proposals">
+              <p className="text-sm font-semibold text-brand-900">Propositions des organisateurs</p>
+              <ul className="divide-y divide-brand-100">
+                {proposals.filter((p) => p.cityId === r.cityId).map((p) => {
+                  const rows = weeks.get(r.id) ?? [];
+                  const options = [...rows.filter((w) => p.dates.includes(w.date)), ...rows.filter((w) => !p.dates.includes(w.date))].map((w) => ({ date: w.date, label: `${w.label}${p.dates.includes(w.date) ? " (souhaité)" : ""} · prévu : ${w.activity}` }));
+                  return (
+                    <li key={p.id} className="py-2 text-sm">
+                      <p><strong>{p.title}</strong> <span className="text-muted">· {p.organizerName}{p.note ? ` · « ${p.note} »` : ""}</span></p>
+                      <OrganizerRequestActions requestId={p.id} type="saturday" saturdays={options} live={FIREBASE_ENABLED} />
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
           <ul className="divide-y divide-line">
             {(weeks.get(r.id) ?? []).map((w) => <RotationWeek key={w.date} rotationId={r.id} row={w} activities={activities} live={FIREBASE_ENABLED} />)}
           </ul>
