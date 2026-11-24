@@ -2730,6 +2730,8 @@ describe("vitrine : remplacer tous les événements (Étape M)", () => {
   it("annule et rembourse, archive ou supprime l'existant, puis crée les événements des modèles", async () => {
     for (const c of ["eat", "move"]) await db().doc(`categories/${c}`).set({ isActive: true, parentId: null }, { merge: true });
     await db().doc("categories/diner").set({ isActive: true, parentId: "eat" }, { merge: true });
+    // docs/25 : les modèles d'activités portent leur format (sous-catégorie de « move »).
+    await db().doc("categories/yoga").set({ isActive: true, parentId: "move" }, { merge: true });
     // Aucun lieu actif ne doit accueillir le padel ; un seul accueille le yoga.
     const actives = await db().collection("partners").where("status", "==", "active").get();
     for (const p of actives.docs) if ((p.get("formats") ?? []).some((f: string) => f === "padel" || f === "yoga")) await p.ref.update({ status: "archived" });
