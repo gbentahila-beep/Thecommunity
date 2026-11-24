@@ -28,7 +28,14 @@ export { createReservation } from "./reservations/create-reservation";
 export { expireHolds } from "./reservations/expire-holds";
 export { startCheckout } from "./payments/start-checkout";
 export { sandboxCompletePayment } from "./payments/sandbox-complete";
-export { cmiCallback } from "./payments/cmi-callback";
+import { cmiCallback as cmiCallbackFn } from "./payments/cmi-callback";
+/**
+ * Adresse de retour du CMI (fonction HTTPS publique) : déployée seulement quand le CMI est activé
+ * (CMI_ENABLED=true dans functions/.env.<projet>). Son premier déploiement demande au compte de déploiement le rôle
+ * « Cloud Functions Admin » (droit cloudfunctions.functions.setIamPolicy) : sans ce rôle, tout le déploiement
+ * des fonctions échouait. Voir docs/24, § CMI.
+ */
+export const cmiCallback = process.env.CMI_ENABLED === "true" ? cmiCallbackFn : undefined;
 export { purgePreferences } from "./maintenance/purge-preferences";
 export { transferReminders } from "./payments/transfer-reminders";
 export { submitContactMessage, submitPartnerApplication } from "./public/forms";

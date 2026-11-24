@@ -104,14 +104,18 @@ du Pass, annulation tardive, bouton de rétractation, gel après signalements, m
 
 ### 2. CMI (carte bancaire)
 1. Contrat CMI et identifiants du magasin : `firebase functions:secrets:set CMI_CLIENT_ID` puis `CMI_STORE_KEY`.
-2. Dans `functions/.env.<id-du-projet>` : `CMI_ENABLED=true`, puis redéployer.
-3. Donner au CMI l'adresse de retour serveur :
+2. **Avant** d'activer : dans Google Cloud (IAM du projet), donner au compte de service de déploiement (celui de
+   GitHub Actions) le rôle **« Cloud Functions Admin »**. Sans ce rôle, le déploiement de la fonction publique
+   `cmiCallback` échoue, et avec lui celui de toutes les fonctions.
+3. Dans `functions/.env.<id-du-projet>` : `CMI_ENABLED=true`, puis redéployer (la fonction `cmiCallback` n'est
+   déployée qu'à ce moment-là).
+4. Donner au CMI l'adresse de retour serveur :
    `https://europe-west1-<id-du-projet>.cloudfunctions.net/cmiCallback`
    (ou la fixer avec `CMI_CALLBACK_URL` dans le même fichier `.env`).
-4. **Comparer avec la documentation du CMI** : ordre et noms des champs, signature, texte de réponse attendu
+5. **Comparer avec la documentation du CMI** : ordre et noms des champs, signature, texte de réponse attendu
    (`ACTION=POSTAUTH` / `FAILURE` dans `functions/src/payments/cmi-callback.ts`), type de transaction (`PreAuth`).
    Le code suit le format standard CMI ; un exemple signé fourni par le CMI se vérifie avec `cmiHashInput`.
-5. Back-office → Paramètres → Paiement → « Carte bancaire (CMI) » en **Test CMI**, essais avec les cartes de test,
+6. Back-office → Paramètres → Paiement → « Carte bancaire (CMI) » en **Test CMI**, essais avec les cartes de test,
    puis passage en **Réel** une fois les essais validés par le CMI.
 
 ### 3. Connexion Google
