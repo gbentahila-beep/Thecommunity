@@ -29,6 +29,7 @@ export default async function ReviewsAdminPage({ searchParams }: { searchParams:
   const counts = { tous: reviews.length, attente: waiting.length, signales: reported.length, photos: photos.length };
   return (
     <>
+      <p className="mb-2 text-sm"><Link href="/admin/utilisateurs" className="text-brand-900">← Membres</Link></p>
       <PageHeader title="Avis" subtitle={`${reviews.length} avis · moyenne ${avg.toFixed(1)} / 5${isDemo ? " · démonstration" : ""}`} />
       <nav aria-label="Filtrer les avis" className="mb-4 flex flex-wrap gap-2">
         {(Object.keys(VIEWS) as (keyof typeof VIEWS)[]).map((k) => (

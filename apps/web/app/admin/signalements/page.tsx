@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Timestamp } from "firebase-admin/firestore";
 import { connection } from "next/server";
 import { BookingHoldActions, ReportActions } from "@/components/admin/report-actions";
@@ -32,6 +33,7 @@ export default async function ReportsPage() {
   const open = rows.filter((r) => r.status === "open").length;
   return (
     <>
+      <p className="mb-2 text-sm"><Link href="/admin/utilisateurs" className="text-brand-900">← Membres</Link></p>
       <PageHeader title="Signalements" subtitle={FIREBASE_ENABLED ? `${open} à traiter · confidentiels, jamais montrés à la personne signalée` : "Démonstration : les signalements des participants arrivent ici sur le site en ligne."} />
       <Card>
         {rows.length === 0 ? <p className="text-sm text-muted" data-testid="reports-empty">Aucun signalement.</p> : (

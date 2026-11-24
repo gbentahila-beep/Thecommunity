@@ -23,6 +23,7 @@ export default async function ReservationsAdminPage({ searchParams }: PageProps<
   const csvRows = [["Réservation", "Créée le", "Participant", "E-mail", "Expérience", "Session", "Places", "Montant (DH)", "Code promo", "Statut"], ...rows.map(({ r, u, e, s }) => [r.id, r.createdAt, `${u.firstName} ${u.lastName}`, u.email, e.title.fr, s.startAt, r.seats, (r.total / 100).toFixed(2), r.promoCode ?? "", RESERVATION_STATUS[r.status][0]])];
   return (
     <>
+      <p className="mb-2 text-sm"><Link href="/admin/programme" className="text-brand-900">← Programme</Link></p>
       <PageHeader title="Réservations" subtitle={`${rows.length} résultat${rows.length > 1 ? "s" : ""}`} actions={<CsvExportButton filename="reservations.csv" rows={csvRows} log={d.isDemo ? undefined : { kind: "reservations" }} />} />
       <form className="mb-4 flex flex-wrap gap-2" role="search">
         <label className="sr-only" htmlFor="q">Rechercher</label>

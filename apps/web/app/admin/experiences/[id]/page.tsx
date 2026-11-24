@@ -57,24 +57,24 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
           Expérience <strong>archivée</strong> : elle n&apos;apparaît plus sur le site. Réactivez-la pour la republier ou lui ajouter des dates.
         </p>
       )}
-      <Card title="Archiver ou supprimer" className="mb-5">
-        <ExperienceActions id={e.id} status={e.status} canDelete={me?.role === "superadmin"} live={!d.isDemo} />
-      </Card>
-      {!archived && (
-        <Card title="Ajouter des dates" className="mb-5">
-          <AddSessionsForm experienceId={e.id} defaults={addDefaults} live={!d.isDemo} />
-        </Card>
-      )}
-      <Card title="Dates programmées" className="mb-5">
-        <ul className="divide-y divide-line text-sm">
-          {sessions.map((s) => (
-            <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 py-2">
-              <span>{adminDate(s.startAt)}</span>
-              <FillBar value={s.seatsConfirmed} max={s.capacity} />
-              <Link href={`/admin/sessions/${s.id}`} className="font-medium text-brand-900">Participants</Link>
-            </li>
-          ))}
-        </ul>
+      <Card title={`Dates (${sessions.length})`} className="mb-5" actions={(e as { rendezvousId?: string | null }).rendezvousId ? <Link href="/admin/rendez-vous" className="text-sm font-medium text-brand-900">Créées par le rendez-vous de la semaine →</Link> : undefined}>
+        {sessions.length === 0 ? <p className="text-sm text-muted">Aucune date à venir.</p> : (
+          <ul className="divide-y divide-line text-sm">
+            {sessions.map((s) => (
+              <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 py-2">
+                <span>{adminDate(s.startAt)}</span>
+                <FillBar value={s.seatsConfirmed} max={s.capacity} />
+                <Link href={`/admin/sessions/${s.id}`} className="font-medium text-brand-900">Ouvrir la date →</Link>
+              </li>
+            ))}
+          </ul>
+        )}
+        {!archived && !(e as { rendezvousId?: string | null }).rendezvousId && (
+          <details className="mt-3">
+            <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Ajouter des dates</summary>
+            <div className="mt-3"><AddSessionsForm experienceId={e.id} defaults={addDefaults} live={!d.isDemo} /></div>
+          </details>
+        )}
       </Card>
       <ExperienceForm
         mode="edit"
@@ -87,6 +87,9 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
         {...(wenzyPrice !== null ? { wenzyPrice } : {})}
         {...(e.organizerId ? { organizer: { orgId: e.organizerId, currentStatus: e.status, asTeam: true, models: [...PAYMENT_MODELS] } } : {})}
       />
+      <Card title="Archiver ou supprimer" className="mt-8">
+        <ExperienceActions id={e.id} status={e.status} canDelete={me?.role === "superadmin"} live={!d.isDemo} />
+      </Card>
     </div>
   );
 }

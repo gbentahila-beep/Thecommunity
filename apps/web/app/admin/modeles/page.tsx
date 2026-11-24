@@ -45,6 +45,7 @@ export default async function TemplatesPage() {
     });
   return (
     <>
+      <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-brand-900">← Événements</Link></p>
       <PageHeader
         title="Modèles"
         subtitle={`${templates.filter((t) => t.isActive).length} modèles proposés à la création d'un événement`}

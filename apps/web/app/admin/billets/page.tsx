@@ -29,6 +29,7 @@ export default async function TicketsPage({ searchParams }: PageProps<"/admin/bi
 
   return (
     <div className="max-w-2xl">
+      <p className="mb-2 text-sm"><Link href="/admin/programme" className="text-brand-900">← Programme</Link></p>
       <PageHeader title="Billets" subtitle="Vérifier un billet à l'accueil, pointer la présence et la part partenaire." />
       <Card className="mb-5">
         <p className="flex items-start gap-3 text-sm text-ink">

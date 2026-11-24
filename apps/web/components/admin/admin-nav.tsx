@@ -1,74 +1,48 @@
 "use client";
 
 import {
-  BadgeCheck,
-  BarChart3,
   CalendarCheck,
   CreditCard,
   Handshake,
   LayoutDashboard,
-  Route,
   Settings,
   Sparkles,
-  Star,
-  Store,
-  Ticket,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 type Tab = { href: string; label: string };
-type NavLink = { href: string; label: string; icon: typeof Settings; exact?: boolean; tabs?: Tab[] };
+type NavLink = { href: string; label: string; icon: typeof Settings; exact?: boolean; tabs?: Tab[]; /** Pages rangées sous cette entrée (sans onglet). */ match?: string[] };
 
 /**
- * Menu du back-office (docs/22, étape N) : 13 entrées en 5 rubriques au lieu de 27 onglets. Les pages voisines sont
- * réunies sous une entrée et s'ouvrent par des onglets en haut de la page (AdminTabs).
+ * Menu du back-office (simplifié le 24/11) : 7 entrées. Tout ce qui concerne une date (lieux, tables, participants,
+ * demandes, liste d'attente, signalements) est sur la page de la date, ouverte depuis « À faire » ou « Programme ».
+ * Seuls Partenaires, Argent et Réglages gardent quelques onglets.
  */
 export const ADMIN_SECTIONS: { title: string | null; links: NavLink[] }[] = [
   {
     title: null,
     links: [
-      { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
-      { href: "/admin/aujourdhui", label: "Aujourd'hui", icon: CalendarCheck },
+      { href: "/admin", label: "À faire", icon: LayoutDashboard, exact: true, match: ["/admin/aujourdhui"] },
+      { href: "/admin/programme", label: "Programme", icon: CalendarCheck, match: ["/admin/sessions", "/admin/attribution", "/admin/reservations", "/admin/participations", "/admin/billets"] },
+      { href: "/admin/experiences", label: "Événements", icon: Sparkles, match: ["/admin/rendez-vous", "/admin/modeles"] },
     ],
   },
   {
-    title: "Événements",
+    title: "Personnes",
     links: [
-      { href: "/admin/experiences", label: "Événements", icon: Sparkles, tabs: [{ href: "/admin/experiences", label: "Événements" }, { href: "/admin/rendez-vous", label: "Rendez-vous" }, { href: "/admin/sessions", label: "Dates et tables" }, { href: "/admin/modeles", label: "Modèles" }] },
-      { href: "/admin/attribution", label: "Attribution des lieux", icon: Route },
-      { href: "/admin/reservations", label: "Réservations", icon: Ticket, tabs: [{ href: "/admin/reservations", label: "Réservations" }, { href: "/admin/participations", label: "Demandes de participation" }, { href: "/admin/billets", label: "Billets (check-in)" }] },
+      { href: "/admin/utilisateurs", label: "Membres", icon: Users, match: ["/admin/abonnement", "/admin/avis", "/admin/signalements"] },
+      { href: "/admin/partenaires", label: "Partenaires", icon: Handshake, tabs: [{ href: "/admin/partenaires", label: "Lieux" }, { href: "/admin/organisateurs", label: "Organisateurs" }] },
     ],
   },
   {
-    title: "Membres",
+    title: "Gestion",
     links: [
-      { href: "/admin/utilisateurs", label: "Membres", icon: Users },
-      { href: "/admin/abonnement", label: "Carnet et Pass", icon: BadgeCheck },
-      { href: "/admin/avis", label: "Avis et signalements", icon: Star, tabs: [{ href: "/admin/avis", label: "Avis" }, { href: "/admin/signalements", label: "Signalements" }] },
-    ],
-  },
-  {
-    title: "Partenaires",
-    links: [
-      { href: "/admin/partenaires", label: "Lieux partenaires", icon: Handshake },
-      { href: "/admin/organisateurs", label: "Organisateurs", icon: Store },
-    ],
-  },
-  {
-    title: "Argent et chiffres",
-    links: [
-      { href: "/admin/paiements", label: "Paiements", icon: CreditCard, tabs: [{ href: "/admin/paiements", label: "Paiements" }, { href: "/admin/remboursements", label: "Remboursements" }, { href: "/admin/virements", label: "Virements" }, { href: "/admin/promos", label: "Codes promo" }] },
-      { href: "/admin/statistiques", label: "Statistiques", icon: BarChart3 },
-    ],
-  },
-  {
-    title: "Réglages",
-    links: [
+      { href: "/admin/paiements", label: "Argent", icon: CreditCard, tabs: [{ href: "/admin/paiements", label: "Paiements" }, { href: "/admin/remboursements", label: "Remboursements" }, { href: "/admin/virements", label: "Virements" }, { href: "/admin/promos", label: "Codes promo" }, { href: "/admin/statistiques", label: "Statistiques" }] },
       {
         href: "/admin/parametres",
-        label: "Paramètres",
+        label: "Réglages",
         icon: Settings,
         tabs: [
           { href: "/admin/parametres", label: "Paramètres" },
@@ -87,7 +61,7 @@ export const ADMIN_SECTIONS: { title: string | null; links: NavLink[] }[] = [
 export const ADMIN_LINKS = ADMIN_SECTIONS.flatMap((s) => s.links);
 
 const under = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`);
-const isActive = (pathname: string, l: NavLink) => (l.exact ? pathname === l.href : under(pathname, l.href) || (l.tabs ?? []).some((t) => under(pathname, t.href)));
+const isActive = (pathname: string, l: NavLink) => (l.exact ? pathname === l.href : under(pathname, l.href)) || (l.tabs ?? []).some((t) => under(pathname, t.href)) || (l.match ?? []).some((m) => under(pathname, m));
 
 export function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();

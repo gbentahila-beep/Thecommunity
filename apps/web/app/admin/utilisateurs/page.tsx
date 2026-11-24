@@ -5,7 +5,7 @@ import { UserActions } from "@/components/admin/user-actions";
 import { adminDate, Badge, Card, PageHeader, Table } from "@/components/admin/ui";
 import { getAdminData } from "@/lib/data/admin";
 
-export const metadata = { title: "Utilisateurs" };
+export const metadata = { title: "Membres" };
 
 const ROLE = { user: ["Membre", "gray"], organizer: ["Organisateur", "amber"], admin: ["Admin", "brand"], superadmin: ["Super-admin", "brand"] } as const;
 
@@ -17,7 +17,17 @@ export default async function UsersAdminPage({ searchParams }: PageProps<"/admin
   const users = d.users.filter((u) => !q || `${u.firstName} ${u.lastName} ${u.email}`.toLowerCase().includes(q));
   return (
     <>
-      <PageHeader title="Utilisateurs" subtitle={`${users.length} membre${users.length > 1 ? "s" : ""}`} />
+      <PageHeader
+        title="Membres"
+        subtitle={`${users.length} membre${users.length > 1 ? "s" : ""}`}
+        actions={
+          <>
+            <Link href="/admin/abonnement" className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">Carnet et Pass</Link>
+            <Link href="/admin/avis" className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">Avis</Link>
+            <Link href="/admin/signalements" className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">Signalements</Link>
+          </>
+        }
+      />
       <form className="mb-4 flex flex-wrap gap-2" role="search">
         <label className="sr-only" htmlFor="q">Rechercher</label>
         <input id="q" name="q" defaultValue={q} placeholder="Nom ou e-mail…" className="min-w-64 flex-1 rounded-full border border-line bg-white px-4 py-2.5 text-sm" />

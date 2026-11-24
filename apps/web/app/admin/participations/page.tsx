@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AtSign, CalendarDays, MessageSquareQuote } from "lucide-react";
 import { INTEREST_LABELS } from "@/components/admin/labels";
 import { PrivateAvatar } from "@/components/admin/private-avatar";
@@ -17,6 +18,7 @@ export default async function ParticipationRequestsPage() {
   const { pending, decided, isDemo } = await getAdminRequests();
   return (
     <>
+      <p className="mb-2 text-sm"><Link href="/admin/programme" className="text-brand-900">← Programme</Link></p>
       <PageHeader
         title="Demandes de participation"
         subtitle={isDemo ? "Disponible avec Firebase (projet d'essai ou réel)." : `${pending.length} en attente · les expériences « sur demande » se règlent dans leur fiche`}

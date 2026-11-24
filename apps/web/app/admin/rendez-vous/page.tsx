@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { localDayKey, mergeTemplates, rotationDays, rotationPlan, type RotationEntry, type RotationOverride } from "@thecommunity/shared";
 import { connection } from "next/server";
 import { RendezvousForm, WEEKDAYS, type RendezvousFormValues } from "@/components/admin/rendezvous-form";
@@ -80,6 +81,7 @@ export default async function RendezvousAdminPage() {
   const toValues = (r: Rv): RendezvousFormValues => ({ id: r.id, titleFr: r.title.fr, titleAr: r.title.ar ?? "", titleEn: r.title.en ?? "", cityId: r.cityId, weekday: r.weekday, time: r.time, capacity: String(r.capacity), baseExperienceId: r.baseExperienceId, tiers: Object.fromEntries(r.tiers.map((t) => [t.tier, t.frequency])), status: r.status });
   return (
     <>
+      <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-brand-900">← Événements</Link></p>
       <PageHeader title="Rendez-vous de la semaine" subtitle="Un jour fixe, une gamme choisie à la réservation, des dates créées 6 semaines à l'avance." />
       <Card className="mb-6" title="Calendrier de lancement">
         <details open={!launchedAt}>

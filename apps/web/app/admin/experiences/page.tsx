@@ -45,7 +45,13 @@ export default async function ExperiencesAdminPage({ searchParams }: PageProps<"
       <PageHeader
         title="Événements"
         subtitle={`${all.length - archivedCount} expérience${all.length - archivedCount > 1 ? "s" : ""} · ${archivedCount} archivée${archivedCount > 1 ? "s" : ""}`}
-        actions={<Link href="/admin/experiences/nouvelle" className="rounded-full bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">+ Nouvel événement</Link>}
+        actions={
+          <>
+            <Link href="/admin/rendez-vous" className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">Rendez-vous de la semaine</Link>
+            <Link href="/admin/modeles" className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">Modèles</Link>
+            <Link href="/admin/experiences/nouvelle" className="rounded-full bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">+ Nouvel événement</Link>
+          </>
+        }
       />
       {sp.supprime === "1" && <p role="status" className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900">Expérience supprimée.</p>}
       <nav aria-label="Filtrer les expériences" className="mb-4 flex gap-2">

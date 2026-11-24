@@ -24,6 +24,7 @@ export default async function AllocationPage() {
     .sort((a, b) => a.startAt.localeCompare(b.startAt));
   return (
     <>
+      <p className="mb-2 text-sm"><Link href="/admin/programme" className="text-brand-900">← Programme</Link></p>
       <PageHeader title="Attribution des lieux" subtitle="Le logiciel choisit les lieux à la fermeture des réservations et leur envoie la demande ; vous confirmez ici après un appel ou un message." />
       <Card title={`Appels à passer (${pending.length})`}>
         {pending.length === 0 ? <p className="text-sm text-muted">Aucune demande en attente.</p> : (

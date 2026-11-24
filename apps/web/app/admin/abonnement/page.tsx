@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AbsenceActions, GrantMembershipForm, MembershipPlanForm, RevokeMembershipButton } from "@/components/admin/membership-admin";
 import { adminDate, Badge, Card, dh, PageHeader, StatTile, Table } from "@/components/admin/ui";
 import { getAdminMembership } from "@/lib/data/admin-membership";
@@ -13,6 +14,7 @@ export default async function MembershipAdminPage() {
   const offers = planOffers(plan);
   return (
     <>
+      <p className="mb-2 text-sm"><Link href="/admin/utilisateurs" className="text-brand-900">← Membres</Link></p>
       <PageHeader title="Carnet et Pass" subtitle={plan?.isActive === false ? "Non proposés pour le moment" : "Proposés sur le site"} />
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="Pass actifs" value={String(active.length)} hint={suspended.length ? `${suspended.length} suspendu${suspended.length > 1 ? "s" : ""}` : undefined} />

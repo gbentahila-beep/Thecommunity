@@ -25,7 +25,7 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
   );
 }
 
-export function StatTile({ label, value, hint }: { label: string; value: string; hint?: string }) {
+export function StatTile({ label, value, hint }: { label: string; value: string; hint?: React.ReactNode }) {
   return (
     <div className="rounded-2xl bg-white p-4 shadow-card">
       <p className="text-xs font-medium uppercase tracking-wide text-muted">{label}</p>
@@ -35,9 +35,9 @@ export function StatTile({ label, value, hint }: { label: string; value: string;
   );
 }
 
-export function Card({ title, children, actions, className = "" }: { title?: string; children: ReactNode; actions?: ReactNode; className?: string }) {
+export function Card({ title, children, actions, className = "", id }: { title?: string; children: ReactNode; actions?: ReactNode; className?: string; /** Ancre (page d'une date : sections). */ id?: string }) {
   return (
-    <section className={`rounded-2xl bg-white p-4 shadow-card sm:p-5 ${className}`}>
+    <section id={id} className={`rounded-2xl bg-white p-4 shadow-card sm:p-5 ${className}`}>
       {(title || actions) && (
         <div className="mb-3 flex items-center justify-between gap-3">
           {title && <h2 className="text-base font-semibold text-ink">{title}</h2>}
