@@ -1,4 +1,4 @@
-# 25 — Les rendez-vous de la semaine (proposition du 24 novembre 2026, à valider)
+# 25 — Les rendez-vous de la semaine (validé le 24 novembre 2026)
 
 ## L'idée en une phrase
 Chaque format devient **un rendez-vous fixe, le même jour chaque semaine** (« le Dîner du mercredi »). On ne choisit
@@ -24,16 +24,29 @@ de réserver. Des **éditions spéciales** (Girls only, par exemple) s'ajoutent 
 | Rotation sur 4 semaines pour Bouger, Sortir et Découvrir | Les quotas stricts hommes / femmes : remplacés par un équilibre visé à la composition des tables (voir plus bas) |
 | WhatsApp pour les rappels (déjà préparé, à faire valider par Meta) | |
 
-## Le calendrier de lancement proposé (Casablanca)
+## Le calendrier de lancement (Casablanca, validé)
 | Jour | Rendez-vous | Gammes | Commentaire |
 |---|---|---|---|
-| **Mercredi 20h30** | **Dîner** (Tables) | Casual, Premium, Exclusive | Le produit d'appel, chaque semaine |
-| **Samedi** (heure selon l'activité) | **L'activité de la semaine** : rotation sur 4 semaines entre Bouger, Sortir et Découvrir | — | Ex. S1 running + café, S2 quiz, S3 céramique, S4 padel |
-| **Dimanche 12h30** | **Brunch** (Tables) | Casual, Premium | Deuxième rendez-vous Tables, plus détendu |
+| **Mercredi 20h30** | **Dîner** (Tables) | Casual et Premium chaque semaine, **Exclusive le premier mercredi du mois** | Le produit d'appel |
+| **Samedi** (heure selon l'activité) | **L'activité de la semaine**, en rotation sur 5 semaines : **running, céramique, padel, yoga, escape game** | — | Le programme boucle tout seul (lot D) |
+| **Samedi 16h** | **Café** (Tables) | Casual et Premium | Format court, détendu |
+| **Dimanche 12h30** | **Brunch** (Tables) | Casual et Premium | Dès le lancement |
 | **1 fois par mois** | **Édition spéciale** : Dîner ou Brunch **Girls only** | selon le rendez-vous | Remplace le rendez-vous habituel ce jour-là, ou s'y ajoute |
 
-Règle de croissance : une activité qui affiche complet 3 semaines de suite gagne son propre jour fixe
-(ex. un « Jeudi Sortir »), puis le déjeuner en semaine.
+**En plus, à la main** : l'équipe peut toujours ajouter des événements ponctuels, ou un rendez-vous d'une seule gamme
+(ex. un **Afterwork Exclusive chaque jeudi**) depuis Back-office → Rendez-vous.
+
+**Déjeuner** : pas de rendez-vous déjeuner au lancement (le brunch du dimanche et le café du samedi couvrent la
+journée). Les « Déjeuner » actuels restent visibles jusqu'à la bascule (lot E), puis sont archivés.
+
+Règle de croissance : une activité qui affiche complet 3 semaines de suite gagne son propre jour fixe, puis on
+ajoute un déjeuner en semaine.
+
+## Décisions prises (24 novembre)
+1. Exclusive du mercredi : un mercredi par mois (le premier).
+2. Réservations des rendez-vous fermées la veille à 20h30.
+3. Brunch du dimanche dès le lancement ; café du samedi à 16h ajouté.
+4. Activité du samedi : running, céramique, padel, yoga, escape game (pas de quiz).
 
 ## Le parcours membre
 1. **Découvrir / Accueil** : « Cette semaine » montre les 3 rendez-vous avec leur prochaine date (et l'édition
@@ -60,9 +73,3 @@ Règle de croissance : une activité qui affiche complet 3 semaines de suite gag
 | **C. La composition** | Tables par gamme, gamme voisine à la fermeture, mémoire des restaurants vus, équilibre hommes / femmes. |
 | **D. La rotation du samedi** | Un programme sur 4 semaines (quelle activité, quel samedi) qui boucle tout seul, modifiable dans le back-office. |
 | **E. La bascule** | Les événements actuels (ex. « Déjeuner Premium » et « Déjeuner Exclusive » séparés) sont archivés et remplacés par les rendez-vous ; les réservations déjà prises sont honorées. |
-
-## Décisions à prendre
-1. **Gammes du mercredi au lancement** : les 3 chaque semaine, ou Casual + Premium chaque semaine et Exclusive un mercredi par mois (plus rare, tables plus sûrement complètes) ?
-2. **Fermeture des réservations du mercredi** : garder 12 h avant (mercredi 8h30), ou passer à la veille (mardi 20h30) pour mieux composer les tables et réserver les restaurants ?
-3. **Brunch du dimanche** : dès le lancement, ou seulement le mercredi + le samedi au début ?
-4. **Activités du samedi** : valider la rotation proposée (running, quiz, céramique, padel) ou donner ta liste.
