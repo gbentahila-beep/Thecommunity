@@ -418,16 +418,8 @@ async function main() {
     await db.doc("settings/showcase").set({ venueSlotsV2At: Timestamp.now() }, { merge: true });
     console.log(`✅ Créneaux des lieux d'essai alignés sur les rendez-vous : ${n} lieu(x).`);
   }
-  // 25/11 : une fois, 300 participants fictifs (adresses en .test, jamais d'e-mail) remplissent les dates des
-  // 7 prochains jours par le vrai circuit (réservation, paiement de test, facture), pour voir le site rempli.
-  if (!(await db.doc("settings/showcase").get()).get("demoCrowdV1At")) {
-    const { fillWeekWithDemoCrowd } = await import("../functions/src/experiences/demo-crowd");
-    const crowd = await fillWeekWithDemoCrowd({ people: 300, days: 7 });
-    await db.doc("settings/showcase").set({ demoCrowdV1At: Timestamp.now() }, { merge: true });
-    const { runTablesAutomation } = await import("../functions/src/tables/automation");
-    await runTablesAutomation().catch((err) => console.error("Déroulé des dates :", err));
-    console.log(`✅ Foule de démonstration : ${crowd.users} comptes, ${crowd.reservations} réservation(s) sur ${crowd.sessions} date(s) ; refus : ${JSON.stringify(crowd.refused)}.`);
-  }
+  // 25/11 : la foule de démonstration n'est plus créée ici (trop lent depuis GitHub Actions, loin de la base) : le
+  // bouton « Réinitialiser la démo » du back-office la crée et remplit la semaine, depuis le serveur, en moins d'une minute.
   console.log(toAdd.length ? `✅ Démonstration : ${toAdd.length} expériences ajoutées (${toAdd.map((e) => e.id).join(", ")}), ${dates} dates (isDemo).` : "ℹ️  Démonstration : rien à ajouter.");
 }
 
