@@ -13,7 +13,7 @@ import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { BabLineup } from "@/components/brand/bab-lineup";
 import { experienceBadge, NEW_EXPERIENCE_DAYS, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
-import { getCategories, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences, getReviews } from "@/lib/data";
+import { getCategories, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
 import { DEFAULT_CITY } from "@/lib/site";
 
@@ -22,12 +22,11 @@ export const revalidate = 3600;
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, tb, city, categories, reviews, home, upcomingAll, undated, published, weekend] = await Promise.all([
+  const [t, tb, city, categories, home, upcomingAll, undated, published, weekend] = await Promise.all([
     getTranslations("home"),
     getTranslations("babs"),
     getCity(DEFAULT_CITY),
     getCategories(),
-    getReviews(),
     getHomeSettings(),
     getNextSessionPerExperience({ cityId: DEFAULT_CITY }),
     getExperiencesWithoutUpcoming({ cityId: DEFAULT_CITY }),
@@ -95,10 +94,11 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         <Universes categories={categories} />
       </PageShell>
     ),
-    reviews: reviews.length > 0 && (
+    // Avis de l'accueil : choisis une fois pour toutes (24/11), ils ne changent pas avec les nouveaux avis.
+    reviews: (
         <PageShell key="reviews">
           <ReviewsShowcase
-            reviews={reviews.slice(0, 3).map((r) => ({ id: r.id, rating: r.rating, comment: r.comment, publicName: r.publicName }))}
+            reviews={(["r1", "r2", "r3"] as const).map((k) => ({ id: k, rating: 5, comment: t(`featuredReviews.${k}.text`), publicName: t(`featuredReviews.${k}.name`) }))}
             title={t("reviewsTitle")}
             subtitle={t("reviewsSubtitle")}
             photoAlt={t("reviewsPhotoAlt")}

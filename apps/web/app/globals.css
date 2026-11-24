@@ -61,6 +61,19 @@
 }
 
 @layer base {
+  /* iPhone (Safari) : un champ date garde sa largeur « naturelle » et déborde à droite ; on le force dans sa colonne. */
+  input[type="date"],
+  input[type="time"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 3rem;
+  }
+  input[type="date"]::-webkit-date-and-time-value,
+  input[type="time"]::-webkit-date-and-time-value {
+    text-align: start;
+  }
   html {
     -webkit-tap-highlight-color: transparent;
   }

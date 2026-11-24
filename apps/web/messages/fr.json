@@ -157,7 +157,21 @@
       "Ne plus jamais sortir seul·e"
     ],
     "allQuestions": "Toutes les questions",
-    "citiesLine": "Bientôt à {list}."
+    "citiesLine": "Bientôt à {list}.",
+    "featuredReviews": {
+      "r1": {
+        "name": "Omar S.",
+        "text": "Les groupes d'allure changent tout : personne n'est laissé derrière. Le jus à la fin, parfait."
+      },
+      "r2": {
+        "name": "Hamza B.",
+        "text": "Un moment magique sur le toit, et les musiciens prennent le temps d'expliquer."
+      },
+      "r3": {
+        "name": "Lina M.",
+        "text": "J'ai enfin osé parler anglais, et j'ai appris trois expressions en darija. Ambiance super bienveillante."
+      }
+    }
   },
   "card": {
     "people": "{count} pers.",

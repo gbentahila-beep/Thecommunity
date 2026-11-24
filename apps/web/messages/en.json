@@ -157,7 +157,21 @@
       "Never go out alone again"
     ],
     "allQuestions": "All questions",
-    "citiesLine": "Coming soon to {list}."
+    "citiesLine": "Coming soon to {list}.",
+    "featuredReviews": {
+      "r1": {
+        "name": "Omar S.",
+        "text": "Pace groups change everything: nobody gets left behind. The juice at the end, perfect."
+      },
+      "r2": {
+        "name": "Hamza B.",
+        "text": "A magical moment on the rooftop, and the musicians take the time to explain."
+      },
+      "r3": {
+        "name": "Lina M.",
+        "text": "I finally dared to speak English, and I learned three expressions in darija. Such a kind atmosphere."
+      }
+    }
   },
   "card": {
     "people": "{count} people",
