@@ -55,6 +55,19 @@ export default function AdminGuidePage() {
       </Card>
 
       <Card title="Comment faire…" className="mb-5">
+        <Q id="pourquoi-option" title="Pourquoi demander aux restaurants avant d'avoir la liste définitive ?">
+          <p>Parce qu&apos;à 20h30 (fermeture des réservations), les restaurants sont en plein service : une demande envoyée à ce moment-là attendrait souvent le lendemain, et un refus laisserait trop peu de temps pour trouver un autre lieu.</p>
+          <ul className="list-disc space-y-1.5 ps-5">
+            <li><strong>Veille 15h, une option</strong>, pas une réservation définitive : « environ N tables pour demain, nombre final ce soir ». L&apos;option compte les inscrits du moment <strong>+ une table de marge</strong>, puisque des personnes peuvent encore réserver jusqu&apos;à 20h30.</li>
+            <li><strong>Veille 20h30, le nombre final</strong> part automatiquement : la table en trop est <strong>libérée</strong> (le restaurant est prévenu), une table manquante est demandée tout de suite à un autre lieu, sinon le nombre exact est confirmé.</li>
+            <li><strong>Jour J 11h, le récapitulatif</strong> : prénoms, régimes et allergies (la veille au soir pour un brunch).</li>
+          </ul>
+          <p>Résultat : le restaurant a une option dès l&apos;après-midi, le chiffre exact le soir, les détails le jour même ; et vous savez entre 15h et 18h30 s&apos;il manque un lieu, avec le temps d&apos;appeler.</p>
+          <p className="text-muted">Les <strong>tables</strong>, elles, attendent la liste définitive : elles sont composées à 20h30, et vous pouvez les retoucher jusqu&apos;au dévoilement de 21h30.</p>
+        </Q>
+        <Q id="partenaires" title="Trouver un restaurant ou un lieu partenaire">
+          <p><A href="/admin/partenaires">Partenaires</A> : la liste se filtre par gamme (en un clic), format (dîner, café, brunch…), quartier, lieux réels ou de démo, et se trie par nom, capacité (tables par soir), fiabilité (part des demandes acceptées) ou nombre de demandes reçues. Cliquez sur un lieu pour sa fiche : créneaux, capacité, contact, historique.</p>
+        </Q>
         <Q id="places" title="Choisir le nombre de places">
           <ul className="list-disc space-y-1.5 ps-5">
             <li><strong>Dîner, café, brunch</strong> : menu <A href="/admin/rendez-vous">Rendez-vous</A> → la carte du rendez-vous → « Réglages » → <em>Places par date et par gamme</em>. Le site ne vend jamais plus que ce que les restaurants compatibles peuvent accueillir.</li>
