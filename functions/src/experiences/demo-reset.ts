@@ -143,6 +143,9 @@ export async function resetDemoCore(o: { people?: number; now?: Date } = {}): Pr
   const guests = [];
   for (const email of emails) guests.push(await bookGuest(email, now));
   const crowd = await fillWeekWithDemoCrowd({ people: o.people ?? Number(settings.people ?? 300), days: 7, now });
+  // Le déroulé des dates démarre tout de suite (demandes aux restaurants, etc.), sans attendre la tâche planifiée.
+  const { runTablesAutomation } = await import("../tables/automation");
+  await runTablesAutomation(now.getTime()).catch((err) => logger.error("Démo : déroulé des dates", { error: String(err) }));
   await db.doc("settings/demo").set({ lastResetAt: FieldValue.serverTimestamp(), lastResult: JSON.parse(JSON.stringify({ deleted, sessionsReset: reset, pastSessionsDeleted: past, guests, crowd: { users: crowd.users, reservations: crowd.reservations, sessions: crowd.sessions } })) }, { merge: true });
   return { deleted, sessionsReset: reset, pastSessionsDeleted: past, guests, crowd };
 }

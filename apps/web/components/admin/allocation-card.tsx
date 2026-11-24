@@ -98,8 +98,11 @@ export function AllocationCard({ sessionId, summary, rows, live, canRun }: { ses
       )}
       {live && canRun ? (
         <button type="button" disabled={Boolean(busy)} className="rounded-full bg-brand-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60" onClick={() => run("run", "adminAllocate", { sessionId }, "Attribution lancée.")}>
-          {rows.length ? "Relancer l'attribution (tables manquantes)" : "Lancer l'attribution maintenant"}
+          {rows.length ? "Relancer l'attribution (tables manquantes)" : "Demander les restaurants maintenant"}
         </button>
+      ) : null}
+      {live && canRun && !rows.length ? (
+        <p className="text-xs text-muted">Facultatif : sinon, la demande part toute seule la veille à 15h.</p>
       ) : !live ? (
         <p className="text-xs text-muted">Démonstration : les demandes aux lieux partent sur le site en ligne.</p>
       ) : null}

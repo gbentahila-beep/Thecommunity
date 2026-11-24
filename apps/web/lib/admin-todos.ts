@@ -34,7 +34,14 @@ export function sessionTodos(d: AdminData, s: S): SessionTodo[] {
   else if (secret && !hasVenue) {
     if (s.venueCapacity === 0) todos.push({ tone: "red", text: "Aucun lieu compatible : ventes bloquées", anchor: "lieux" });
     const optionsAt = venueOptionsAt(s.startAt).getTime();
-    todos.push(now >= Math.min(optionsAt + 30 * 60_000, closesAt) && s.seatsConfirmed > 0 ? { tone: "red", text: "Restaurants pas encore demandés", anchor: "lieux" } : { tone: "gray", text: `Restaurants demandés la veille à 15h (${adminDate(new Date(optionsAt).toISOString())})`, anchor: "lieux" });
+    // Automatique (tâche toutes les 15 min) : rien à faire tant que la demande part normalement ; alerte seulement si
+    // elle n'est toujours pas partie 45 min après l'heure prévue.
+    const startedAt = Math.max(optionsAt, 0);
+    todos.push(
+      s.seatsConfirmed === 0 || now < startedAt ? { tone: "gray", text: `Restaurants demandés automatiquement la veille à 15h (${adminDate(new Date(optionsAt).toISOString())})`, anchor: "lieux" }
+      : now < Math.min(startedAt + 45 * 60_000, closesAt) ? { tone: "gray", text: "Demande aux restaurants en cours (automatique)", anchor: "lieux" }
+      : { tone: "red", text: "Restaurants pas encore demandés : lancez l'attribution", anchor: "lieux" },
+    );
     if (now >= revealAt && s.groupsStatus !== "revealed") todos.push({ tone: "red", text: "Dévoilement bloqué : lieux non confirmés", anchor: "lieux" });
   } else if (secret && !(d.sessionVenues[s.id]?.length)) {
     todos.push({ tone: "gray", text: `Lieu habituel : ${e.venue.name}`, anchor: "lieux" });
@@ -46,9 +53,10 @@ export function sessionTodos(d: AdminData, s: S): SessionTodo[] {
     const g = s.groupsStatus ?? "none";
     todos.push(
       g === "revealed" ? { tone: "green", text: "Tables dévoilées", anchor: "tables" }
-      : g === "validated" ? { tone: "amber", text: "Tables à dévoiler", anchor: "tables" }
+      : g === "validated" ? (now < revealAt ? { tone: "gray", text: "Tables prêtes, dévoilées automatiquement", anchor: "tables" } : { tone: "amber", text: "Tables à dévoiler", anchor: "tables" })
       : g === "proposed" ? { tone: "amber", text: "Composition des tables à valider", anchor: "tables" }
-      : { tone: start - now < 24 * HOUR ? "amber" : "gray", text: "Tables à composer", anchor: "tables" },
+      : now < revealAt ? { tone: "gray", text: "Tables composées automatiquement au dévoilement", anchor: "tables" }
+      : { tone: "amber", text: "Tables pas encore dévoilées", anchor: "tables" },
     );
   }
   if (start - now < 3 * HOUR && start - now > -3 * HOUR) {

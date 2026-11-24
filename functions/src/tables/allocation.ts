@@ -323,15 +323,23 @@ export async function settleRequest(id: string, accept: boolean, by: { kind: "pa
 }
 
 /** Relances et demandes sans réponse (décision 45) : relance après X min, puis autre lieu proposé. */
-export async function processPendingRequests(now = Date.now(), sessionId?: string): Promise<{ reminded: number; expired: number }> {
+export async function processPendingRequests(now = Date.now(), sessionId?: string): Promise<{ reminded: number; expired: number; simulated?: number }> {
   const conf = allocationSettingsOf((await db.doc("settings/allocation").get()).data());
   const base = db.collection("venueRequests").where("status", "==", "sent");
   const snap = await (sessionId ? base.where("sessionId", "==", sessionId) : base).get();
-  const out = { reminded: 0, expired: 0 };
+  const out: { reminded: number; expired: number; simulated?: number } = { reminded: 0, expired: 0 };
+  // Site de démonstration : les lieux d'essai ont des coordonnées fictives et ne répondront jamais. Leur réponse
+  // (acceptée) est simulée 10 minutes après la demande, pour voir tout le parcours (dévoilement, tables, récap).
+  const demo = snap.size > 0 && (await db.doc("settings/showcase").get()).get("trial") === true;
   for (const d of snap.docs) {
     const r = d.data();
     const sent = (r.sentAt as Timestamp | undefined)?.toMillis() ?? now;
     if ((r.startAt as Timestamp).toMillis() < now) continue;
+    if (demo && /@example\.(com|org|net)$/i.test(String(r.partnerEmail ?? "")) && now - sent >= 10 * 60_000) {
+      await settleRequest(d.id, true, { kind: "partner", note: "Réponse simulée (site de démonstration)" });
+      out.simulated = (out.simulated ?? 0) + 1;
+      continue;
+    }
     if (now - sent >= conf.expireAfterMinutes * 60_000) {
       await d.ref.update({ status: "expired", history: FieldValue.arrayUnion({ at: Timestamp.now(), event: "expired" }) });
       await db.doc(`partners/${r.partnerId}`).set({ stats: { expired: FieldValue.increment(1) } }, { merge: true });

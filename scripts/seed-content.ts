@@ -424,6 +424,8 @@ async function main() {
     const { fillWeekWithDemoCrowd } = await import("../functions/src/experiences/demo-crowd");
     const crowd = await fillWeekWithDemoCrowd({ people: 300, days: 7 });
     await db.doc("settings/showcase").set({ demoCrowdV1At: Timestamp.now() }, { merge: true });
+    const { runTablesAutomation } = await import("../functions/src/tables/automation");
+    await runTablesAutomation().catch((err) => console.error("Déroulé des dates :", err));
     console.log(`✅ Foule de démonstration : ${crowd.users} comptes, ${crowd.reservations} réservation(s) sur ${crowd.sessions} date(s) ; refus : ${JSON.stringify(crowd.refused)}.`);
   }
   console.log(toAdd.length ? `✅ Démonstration : ${toAdd.length} expériences ajoutées (${toAdd.map((e) => e.id).join(", ")}), ${dates} dates (isDemo).` : "ℹ️  Démonstration : rien à ajouter.");
