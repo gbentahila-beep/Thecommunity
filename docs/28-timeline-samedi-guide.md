@@ -13,7 +13,8 @@ La même pour tous les rendez-vous, et pour toutes les Tables (rendez-vous ou no
 | +1 h / +2 h | Relance, puis autre restaurant si pas de réponse (réglages d'attribution inchangés) | Restaurants |
 | Veille 18h30 | Alerte « Lieux à appeler » s'il manque des confirmations (une fois par date) | Équipe |
 | Veille 20h30 | **Fermeture** des réservations ; gamme voisine ; minimum ; **nombre final** envoyé aux lieux dont la demande change (tables en trop libérées : demandes en attente d'abord, puis les dernières confirmées ; tables manquantes demandées aussitôt) | Membres, restaurants |
-| Veille 21h30 | Tables composées, **lieu dévoilé** (notification, e-mail, aperçu de la table) | Membres |
+| Dès que tous les lieux ont confirmé | **Tables composées** (modifiables par l'équipe ; recomposées tant qu'elles ne sont pas retouchées) | Équipe |
+| Veille 21h30 | **Lieu et tables dévoilés** (notification, e-mail, aperçu de la table) | Membres |
 | Jour J 11h (veille 21h30 si début avant 14h) | **Récapitulatif** à chaque lieu : tables, prénoms, régimes et allergies partagés | Restaurants |
 | 1 h avant | Tables remises d'accord ; **mise à jour** au lieu seulement si le récapitulatif a changé | Restaurants |
 
@@ -73,3 +74,10 @@ Réglages → **Site de démo** (raccourci sur l'Accueil), super-admin, site de 
 boîte d'envoi, notifications, avis des membres, Pass et carnets, dates passées), les dates à venir sont remises à zéro,
 les **comptes invités** (liste saisie sur la page) sont inscrits à un créneau de chaque rendez-vous de la semaine
 (Premium de préférence, paiement de test), puis la foule remplit les 7 prochains jours. Durée : moins d'une minute.
+
+## 8. Lieux choisis par l'équipe, 180 lieux de démonstration (25/11)
+
+- Aucun lieu compatible restant (refus, complet) : la page d'une date liste tous les lieux du format avec la raison
+  pour laquelle ils n'ont pas été proposés ; « Demander à ce lieu » (`adminRequestVenue`) envoie la demande.
+- Site de démonstration : 180 lieux fictifs (`demo-lieu-001…180`, toutes gammes, formats et jours ;
+  `settings/showcase.demoVenuesV1At`), coordonnées en example.com ; leurs réponses sont simulées (10 min).

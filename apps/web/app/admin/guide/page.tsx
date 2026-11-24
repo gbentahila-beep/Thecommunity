@@ -46,7 +46,8 @@ export default function AdminGuidePage() {
           <li><strong>Veille 15h</strong> : le site demande une <em>option</em> aux restaurants de la gamme (inscrits du moment + une table de marge), entre les deux services. Relance 1 h après ; sans réponse 2 h après, il passe à un autre restaurant.</li>
           <li><strong>Veille 18h30</strong> : s&apos;il manque des confirmations, vous recevez une alerte <em>« Lieux à appeler »</em> : appelez (bouton WhatsApp sur la page de la date) ou choisissez un autre lieu.</li>
           <li><strong>Veille 20h30</strong> : fermeture des réservations. Gamme voisine pour ceux qui l&apos;ont acceptée, contrôle du minimum (alerte <em>« À risque »</em> si besoin), <strong>nombre final</strong> envoyé aux restaurants (table en trop libérée, table manquante demandée).</li>
-          <li><strong>Veille 21h30</strong> : tables composées, <strong>lieu dévoilé</strong> aux participants (notification et e-mail, avec un aperçu de leur table). Bloqué tant qu&apos;un lieu n&apos;a pas confirmé : vous êtes alerté.</li>
+          <li><strong>Dès que tous les lieux ont confirmé</strong> : les <strong>tables sont composées</strong> tout de suite. Vous pouvez les voir et les retoucher sur la page de la date (« Voir et retoucher les tables ») jusqu&apos;au dévoilement. Sans retouche, elles sont recomposées avec les inscrits définitifs à la fermeture.</li>
+          <li><strong>Veille 21h30</strong> : <strong>lieu et tables dévoilés</strong> aux participants (notification et e-mail, avec un aperçu de leur table). Bloqué tant qu&apos;un lieu n&apos;a pas confirmé : vous êtes alerté.</li>
           <li><strong>Jour J à 11h</strong> (la veille à 21h30 pour le brunch) : <strong>récapitulatif</strong> à chaque restaurant (prénoms, allergies). 1 h avant : mise à jour seulement si quelque chose a changé.</li>
           <li><strong>Pendant</strong> : check-in des participants, numéro de table ; <strong>après</strong> : avis, absences.</li>
         </ol>
@@ -121,7 +122,7 @@ export default function AdminGuidePage() {
         </Q>
         <Q id="alertes" title="Que faire sur une alerte ?">
           <ul className="list-disc space-y-1.5 ps-5">
-            <li><strong>Lieux à appeler</strong> : page de la date → Lieux → bouton WhatsApp ou appel, puis « Confirmé par téléphone » ; ou choisir un lieu à la main.</li>
+            <li><strong>Lieux à appeler</strong> : page de la date → Lieux → bouton WhatsApp ou appel, puis « Confirmé par téléphone ». Si un lieu refuse et qu&apos;aucun autre lieu compatible ne reste : « <strong>Choisir un autre lieu</strong> » liste tous les restaurants du format (avec la raison s&apos;ils n&apos;ont pas été proposés) → « Demander à ce lieu ».</li>
             <li><strong>À risque</strong> (minimum non atteint) : maintenir, proposer une autre date, regrouper, ou annuler. Personne n&apos;est déplacé sans son accord.</li>
             <li><strong>Table à valider</strong> : une table sort des limites (ex. 7 personnes) : validez ou corrigez sur la page des tables.</li>
             <li><strong>Dévoilement bloqué</strong> : un lieu n&apos;a pas confirmé ; dès qu&apos;il l&apos;est, le dévoilement part tout seul.</li>

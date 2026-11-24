@@ -15,7 +15,7 @@ import { FieldValue, getFirestore, Timestamp } from "firebase-admin/firestore";
 import { DEFAULT_CANCELLATION_POLICY, launchUniverse } from "@thecommunity/shared";
 import { buildDemoSessions, DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES, DEMO_REVIEWS } from "../apps/web/lib/data/demo";
 import { DEMO_ECONOMICS, DEMO_PARTNERS } from "../apps/web/lib/data/demo-admin";
-import { CASABLANCA_VENUES } from "../apps/web/lib/data/casablanca-venues";
+import { CASABLANCA_VENUES, DEMO_GENERATED_VENUES } from "../apps/web/lib/data/casablanca-venues";
 import { DEMO_ORGANIZER } from "../apps/web/lib/data/demo-organizer";
 
 const arg = (name: string) => {
@@ -417,6 +417,19 @@ async function main() {
     }
     await db.doc("settings/showcase").set({ venueSlotsV2At: Timestamp.now() }, { merge: true });
     console.log(`✅ Créneaux des lieux d'essai alignés sur les rendez-vous : ${n} lieu(x).`);
+  }
+  // 25/11 : site de démonstration, 180 lieux fictifs en plus (toutes gammes, tous formats, tous les jours) pour que la
+  // démonstration ne manque jamais de restaurant. Créés une fois ; ceux que l'équipe a modifiés ne sont pas touchés.
+  if (!(await db.doc("settings/showcase").get()).get("demoVenuesV1At")) {
+    let batch = db.batch();
+    let n = 0;
+    for (const p of DEMO_GENERATED_VENUES) {
+      batch.set(db.doc(`partners/${p.id}`), { ...p, source: "demo", isDemo: true, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+      if (++n % 400 === 0) { await batch.commit(); batch = db.batch(); }
+    }
+    await batch.commit();
+    await db.doc("settings/showcase").set({ demoVenuesV1At: Timestamp.now() }, { merge: true });
+    console.log(`✅ Site de démonstration : ${n} lieux fictifs ajoutés.`);
   }
   // 25/11 : la foule de démonstration n'est plus créée ici (trop lent depuis GitHub Actions, loin de la base) : le
   // bouton « Réinitialiser la démo » du back-office la crée et remplit la semaine, depuis le serveur, en moins d'une minute.

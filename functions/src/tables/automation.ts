@@ -175,10 +175,11 @@ async function stepSession(id: string, s: DocumentData, e: DocumentData, now: nu
       return;
     }
     if (e.groupConfig) {
-      if (!s.groupsStatus || s.groupsStatus === "none") {
-        const count = venues.every((v) => Number(v.tables ?? 0) > 0) ? venues.reduce((n, v) => n + Number(v.tables), 0) : undefined;
-        await proposeGroupsCore(id, SYSTEM, count);
-      }
+      const count = venues.every((v) => Number(v.tables ?? 0) > 0) ? venues.reduce((n, v) => n + Number(v.tables), 0) : undefined;
+      // Composition automatique jamais retouchée : refaite avec les inscrits définitifs (fermeture à 20h30).
+      // Composition enregistrée par l'équipe : gardée, seulement remise d'accord (annulations, nouveaux inscrits).
+      if (!s.groupsStatus || s.groupsStatus === "none" || s.groupsStatus === "proposed") await proposeGroupsCore(id, SYSTEM, count);
+      else if (s.groupsStatus === "validated") await reconcileGroups(id, SYSTEM);
       if ((await sessRef.get()).data()?.groupsStatus === "proposed") {
         const sizes = await validateProposedGroups(id);
         const odd = tablesOutOfBounds(sizes, e.groupConfig);

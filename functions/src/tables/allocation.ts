@@ -4,6 +4,7 @@ import {
 } from "@thecommunity/shared";
 import { randomBytes } from "node:crypto";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
+import { logger } from "firebase-functions/v2";
 import { db, FieldValue } from "../lib/admin";
 import { dateTimeFr, SITE_URL } from "../invoices/format";
 import { sendMail } from "../mail/mailer";
@@ -326,10 +327,17 @@ export async function checkAllocation(sessionId: string): Promise<boolean> {
   });
   await db.doc(`sessions/${sessionId}/private/venues`).set({ venues, updatedAt: FieldValue.serverTimestamp(), updatedBy: "allocation" });
   await sessRef.update({ "allocation.status": "confirmed", "allocation.confirmed": confirmed, "allocation.confirmedAt": FieldValue.serverTimestamp() });
+  const e = (await db.doc(`experiences/${s.experienceId}`).get()).data() ?? {};
   if (s.groupsStatus === "revealed") {
     const { refreshRevealed } = await import("../experiences/venues");
-    const e = (await db.doc(`experiences/${s.experienceId}`).get()).data() ?? {};
     await refreshRevealed(sessionId, s.experienceId, e);
+  } else if (e.groupConfig && (!s.groupsStatus || s.groupsStatus === "none" || s.groupsStatus === "proposed")) {
+    // 25/11 : tous les lieux confirmés → les tables sont composées tout de suite (une table par table réservée), pour que
+    // l'équipe puisse les voir et les retoucher avant le dévoilement. Recomposées si les lieux changent, tant que
+    // l'équipe ne les a pas modifiées (une composition enregistrée à la main n'est plus jamais refaite).
+    const { proposeGroupsCore } = await import("../groups/groups");
+    const count = venues.every((v) => Number(v.tables ?? 0) > 0) ? venues.reduce((n, v) => n + Number(v.tables ?? 0), 0) : undefined;
+    await proposeGroupsCore(sessionId, "system", count).catch((err) => logger.warn("Composition des tables", { sessionId, error: String(err) }));
   }
   return true;
 }

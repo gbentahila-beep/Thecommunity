@@ -42,3 +42,41 @@ export const CASABLANCA_VENUES: Partner[] = [
   { ...base, ...fake(12, "four-seasons"), id: "v-four-seasons", name: "Four Seasons Casablanca (Bleu)", type: "restaurant", district: "Aïn Diab", address: "Anfa Place, boulevard de la Corniche, Casablanca", link: "",
     tiers: ["exclusive"], formats: ["brunch", "cafe"], unitMin: 4, unitMax: 6, cuisine: "Petit-déjeuner et brunch d'hôtel", cuisineI18n: { ar: "فطور وبرانش فندقي", en: "Hotel breakfast and brunch" }, avgBudget: 450, slots: evenings(2, [5, 6, 0], "10:00", "12:00"), notes: `${NOTE} Hôtel face à l'océan ; brunch du dimanche réputé.` },
 ];
+
+/**
+ * 25/11 — SITE DE DÉMONSTRATION : 180 lieux FICTIFS (noms inventés, coordonnées fictives en example.com) pour que la
+ * démonstration ne manque jamais de restaurant, quelle que soit la gamme, le format ou le jour. Jamais en production.
+ */
+const DEMO_PREFIX = ["Le Comptoir", "La Table", "Maison", "Dar", "Le Patio", "La Terrasse", "Bistrot", "L'Atelier", "Le Jardin", "Café"];
+const DEMO_NAMES = ["Atlas", "Zellige", "Safran", "Cèdre", "Jasmin", "Arganier", "Mogador", "Oudaya", "Andalou", "Corniche", "Palmeraie", "Menthe", "Figuier", "Oranger", "Amande", "Indigo", "Sable", "Lanterne"];
+const DEMO_DISTRICTS = ["Maarif", "Gauthier", "Racine", "Anfa", "Bourgogne", "CIL", "Palmier", "Oasis", "Ain Diab", "Centre-ville", "Californie", "Belvédère"];
+const DEMO_CUISINE: Record<string, [string, string, string][]> = {
+  casual: [["Marocaine familiale", "مغربية عائلية", "Moroccan home cooking"], ["Bistrot", "بيسترو", "Bistro"], ["Italienne", "إيطالية", "Italian"], ["Café, pâtisserie", "مقهى، حلويات", "Café, pastries"]],
+  premium: [["Méditerranéenne", "متوسطية", "Mediterranean"], ["Fusion", "مطبخ مدمج", "Fusion"], ["Marocaine revisitée", "مغربية مجددة", "Modern Moroccan"], ["Brasserie chic", "براسري أنيقة", "Smart brasserie"]],
+  exclusive: [["Gastronomique", "راقية", "Fine dining"], ["Française", "فرنسية", "French"], ["Japonaise", "يابانية", "Japanese"], ["Hôtel, table d'exception", "فندق، مائدة استثنائية", "Hotel fine dining"]],
+};
+const allDays = [0, 1, 2, 3, 4, 5, 6];
+export const DEMO_GENERATED_VENUES: Partner[] = Array.from({ length: 180 }, (_, i) => {
+  const tier = (["casual", "premium", "exclusive"] as const)[i % 3];
+  const kind = Math.floor(i / 3) % 3; // 0 : restaurant (dîner, déjeuner, brunch), 1 : café (café, brunch), 2 : bar (afterwork, dîner)
+  const name = `${DEMO_PREFIX[i % DEMO_PREFIX.length]} ${DEMO_NAMES[Math.floor(i / DEMO_PREFIX.length) % DEMO_NAMES.length]}`;
+  const district = DEMO_DISTRICTS[i % DEMO_DISTRICTS.length]!;
+  const c = DEMO_CUISINE[tier]![i % 4]!;
+  const units = 3 + (i % 4);
+  const id = `demo-lieu-${String(i + 1).padStart(3, "0")}`;
+  const formats = kind === 0 ? ["diner", "dejeuner", "brunch"] : kind === 1 ? ["cafe", "brunch"] : ["afterwork", "diner"];
+  const slots = [
+    ...(formats.includes("diner") ? evenings(units, allDays, "19:00", "22:00") : []),
+    ...(formats.includes("afterwork") ? evenings(units, [1, 2, 3, 4, 5], "18:00", "20:00") : []),
+    ...(formats.includes("dejeuner") ? evenings(units, [1, 2, 3, 4, 5], "12:00", "14:00") : []),
+    ...(formats.includes("brunch") ? evenings(units, [0, 6], "11:00", "13:30") : []),
+    ...(formats.includes("cafe") ? evenings(units, allDays, "15:00", "18:00") : []),
+  ];
+  return {
+    ...base, ...fake(200 + i, id), id, name: `${name} (démo)`, type: kind === 2 ? "venue" : "restaurant", district,
+    address: `${10 + i} rue ${DEMO_NAMES[i % DEMO_NAMES.length]}, ${district}, Casablanca`, link: "",
+    tiers: [tier], formats: formats as Partner["formats"], unitMin: 4, unitMax: 6, cuisine: c[0], cuisineI18n: { ar: c[1], en: c[2] },
+    avgBudget: tier === "casual" ? 150 : tier === "premium" ? 280 : 500, slots,
+    notes: "Lieu fictif du site de démonstration (nom inventé, coordonnées fictives). À supprimer avant de travailler pour de vrai.",
+  } as Partner;
+});

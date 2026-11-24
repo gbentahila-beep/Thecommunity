@@ -19,7 +19,7 @@ import { adminDb } from "@/lib/firebase/admin";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 
 const REPORT_REASONS: Record<string, string> = { behaviour: "Comportement inapproprié", harassment: "Harcèlement", safety: "Sécurité", other: "Autre" };
-const GROUP_STATUS: Record<string, [string, "green" | "amber" | "gray"]> = { revealed: ["Dévoilées", "green"], validated: ["Validées, dévoilées automatiquement à 21h30", "amber"], proposed: ["Proposées, à valider", "amber"], none: ["Composées automatiquement au dévoilement", "gray"] };
+const GROUP_STATUS: Record<string, [string, "green" | "amber" | "gray"]> = { revealed: ["Dévoilées", "green"], validated: ["Retouchées par l'équipe, dévoilées à 21h30", "green"], proposed: ["Composées, modifiables jusqu'au dévoilement", "green"], none: ["Composées dès que les lieux sont confirmés", "gray"] };
 
 export const metadata = { title: "Date" };
 
@@ -331,10 +331,10 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
         </Card>
       )}
       {grouped && (
-        <Card title="Tables" className="mt-6 scroll-mt-16" id="tables" actions={<Link href={`/admin/sessions/${s.id}/groupes`} className={groups.length ? "rounded-full bg-brand-900 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800" : "rounded-full border border-brand-900 px-4 py-2 text-sm font-semibold text-brand-900 hover:bg-brand-50"}>{groups.length ? "Voir et modifier les tables" : "Composer à la main (facultatif)"}</Link>}>
+        <Card title="Tables" className="mt-6 scroll-mt-16" id="tables" actions={<Link href={`/admin/sessions/${s.id}/groupes`} className={groups.length ? "rounded-full bg-brand-900 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800" : "rounded-full border border-brand-900 px-4 py-2 text-sm font-semibold text-brand-900 hover:bg-brand-50"}>{groups.length ? (s.groupsStatus === "revealed" ? "Voir et modifier les tables" : "Voir et retoucher les tables") : "Composer à la main (facultatif)"}</Link>}>
           <p className="mb-2 text-sm"><Badge tone={(GROUP_STATUS[s.groupsStatus ?? "none"] ?? GROUP_STATUS.none!)[1]}>{(GROUP_STATUS[s.groupsStatus ?? "none"] ?? GROUP_STATUS.none!)[0]}</Badge>{s.groupsNeedReview && <span className="ms-2"><Badge tone="amber">À revoir (changement depuis)</Badge></span>}</p>
           {groups.length === 0 ? (
-            <p className="text-sm text-muted">Rien à faire : les tables sont composées automatiquement au dévoilement du lieu ({adminDate(revealAt.toISOString())}). Vous pouvez les composer ou les modifier à la main avant, si vous le souhaitez.</p>
+            <p className="text-sm text-muted">Rien à faire : les tables sont composées dès que tous les lieux sont confirmés, puis dévoilées aux participants le {adminDate(revealAt.toISOString())}. Vous pouvez aussi les composer à la main.</p>
           ) : (
             <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 text-sm">
               {groups.map((g) => <li key={g.id} className="rounded-xl bg-cream px-3 py-2"><span className="font-semibold text-ink">{g.label}</span> <span className="text-muted">· {g.memberIds.length} pers.</span><span className="block text-xs text-muted">{g.memberIds.map((u) => d.usersById.get(u)?.firstName ?? "?").join(", ")}</span></li>)}

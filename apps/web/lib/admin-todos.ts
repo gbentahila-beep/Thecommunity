@@ -55,9 +55,9 @@ export function sessionTodos(d: AdminData, s: S): SessionTodo[] {
     const g = s.groupsStatus ?? "none";
     todos.push(
       g === "revealed" ? { tone: "green", text: "Tables dévoilées", anchor: "tables" }
-      : g === "validated" ? (now < revealAt ? { tone: "gray", text: "Tables prêtes, dévoilées automatiquement", anchor: "tables" } : { tone: "amber", text: "Tables à dévoiler", anchor: "tables" })
-      : g === "proposed" ? { tone: "amber", text: "Composition des tables à valider", anchor: "tables" }
-      : now < revealAt ? { tone: "gray", text: "Tables composées automatiquement au dévoilement", anchor: "tables" }
+      : g === "validated" ? (now < revealAt ? { tone: "gray", text: "Tables retouchées, dévoilées automatiquement", anchor: "tables" } : { tone: "amber", text: "Tables à dévoiler", anchor: "tables" })
+      : g === "proposed" ? (now < revealAt ? { tone: "gray", text: "Tables composées, modifiables jusqu'au dévoilement", anchor: "tables" } : { tone: "amber", text: "Tables à dévoiler", anchor: "tables" })
+      : now < revealAt ? { tone: "gray", text: "Tables composées dès que les lieux sont confirmés", anchor: "tables" }
       : { tone: "amber", text: "Tables pas encore dévoilées", anchor: "tables" },
     );
   }
