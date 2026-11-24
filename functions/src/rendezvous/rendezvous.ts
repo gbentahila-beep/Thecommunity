@@ -1,4 +1,4 @@
-import { missingTierDates, rendezvousInputSchema, tierRange, type RendezvousFrequency, type VenueTier } from "@thecommunity/shared";
+import { missingTierDates, MOROCCO_TIMEZONE, rendezvousInputSchema, tierRange, zonedParts, type RendezvousFrequency, type VenueTier } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -18,18 +18,19 @@ const slugify = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50) || "rendez-vous";
 
 /** Copie de l'expérience de base pour une gamme (ou l'expérience de base elle-même si elle est déjà de cette gamme). */
-async function tierExperience(rvId: string, base: FirebaseFirestore.DocumentSnapshot, tier: VenueTier, used: Set<string>): Promise<string> {
+export async function tierExperience(rvId: string, base: FirebaseFirestore.DocumentSnapshot, tier: VenueTier, used: Set<string>, slot?: { weekday: number; time: string }): Promise<string> {
   const existing = await db.collection("experiences").where("rendezvousId", "==", rvId).where("venueTier", "==", tier).limit(1).get();
   const range = tierRange(tier, base.get("subcategoryId") as string | undefined);
   const tierFields = {
     rendezvousId: rvId,
     closeRule: "eve",
+    ...(slot ? { rendezvousSlot: slot } : {}),
     venueTier: tier,
     budgetRange: { min: range.min * 100, max: range.max * 100, currency: "MAD" },
     updatedAt: FieldValue.serverTimestamp(),
   };
   if (!existing.empty) {
-    await existing.docs[0]!.ref.update({ rendezvousId: rvId, closeRule: "eve", updatedAt: FieldValue.serverTimestamp() });
+    await existing.docs[0]!.ref.update({ rendezvousId: rvId, closeRule: "eve", ...(slot ? { rendezvousSlot: slot } : {}), updatedAt: FieldValue.serverTimestamp() });
     used.add(existing.docs[0]!.id);
     return existing.docs[0]!.id;
   }
@@ -63,7 +64,7 @@ export const adminSaveRendezvous = onCall({ region: REGION, timeoutSeconds: 120 
   const before = (await ref.get()).data() ?? null;
   const used = new Set<string>();
   const tiers: { tier: VenueTier; experienceId: string; frequency: RendezvousFrequency }[] = [];
-  for (const t of x.tiers) tiers.push({ tier: t.tier, frequency: t.frequency, experienceId: await tierExperience(id, base, t.tier, used) });
+  for (const t of x.tiers) tiers.push({ tier: t.tier, frequency: t.frequency, experienceId: await tierExperience(id, base, t.tier, used, { weekday: x.weekday, time: x.time }) });
   await ref.set({
     title: { fr: x.titleFr, ...(x.titleAr ? { ar: x.titleAr } : {}), ...(x.titleEn ? { en: x.titleEn } : {}) },
     cityId: x.cityId,
@@ -78,10 +79,31 @@ export const adminSaveRendezvous = onCall({ region: REGION, timeoutSeconds: 120 
     updatedAt: FieldValue.serverTimestamp(),
     updatedBy: actor.uid,
   }, { merge: true });
+  for (const t of tiers) await retireOffScheduleDates(t.experienceId, x.weekday, x.time, new Date());
   const created = x.status === "active" ? await ensureSessionsFor(id) : 0;
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: before ? "rendezvous.update" : "rendezvous.create", targetType: "rendezvous", targetId: id, after: { weekday: x.weekday, time: x.time, tiers: tiers.map((t) => `${t.tier}:${t.frequency}`).join(" "), created } });
   return { ok: true, id, tiers, created };
 });
+
+/**
+ * Expérience reprise dans un rendez-vous : ses dates à venir qui ne tombent pas sur le jour et l'heure du rendez-vous
+ * et qui n'ont AUCUN inscrit (ni place bloquée, ni liste d'attente) sont retirées, pour ne pas mélanger deux calendriers.
+ * Les dates qui ont des inscrits sont gardées telles quelles.
+ */
+export async function retireOffScheduleDates(experienceId: string, weekday: number, time: string, now: Date): Promise<number> {
+  const future = await db.collection("sessions").where("experienceId", "==", experienceId).where("startAt", ">", Timestamp.fromDate(now)).get();
+  const [h, m] = time.split(":").map(Number) as [number, number];
+  let n = 0;
+  for (const d of future.docs) {
+    const z = zonedParts((d.get("startAt") as Timestamp).toDate(), MOROCCO_TIMEZONE);
+    const onSchedule = z.weekday === weekday && z.hour === h && z.minute === m;
+    const empty = Number(d.get("seatsConfirmed") ?? 0) === 0 && Number(d.get("seatsHeld") ?? 0) === 0 && Number(d.get("waitlistCount") ?? 0) === 0;
+    if (onSchedule || !empty || !["published", "full", "draft"].includes(String(d.get("status")))) continue;
+    await d.ref.update({ status: "cancelled", cancellation: { at: FieldValue.serverTimestamp(), by: "system", reason: "rendezvous_schedule" }, updatedAt: FieldValue.serverTimestamp() });
+    n++;
+  }
+  return n;
+}
 
 /** Crée les dates manquantes d'un rendez-vous (chaque gamme selon sa fréquence), sur `weeksAhead` semaines. */
 export async function ensureSessionsFor(rvId: string, now = new Date()): Promise<number> {

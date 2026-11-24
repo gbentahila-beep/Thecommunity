@@ -33,13 +33,15 @@ type Props = {
  * Choix du nombre de places, code promo, préférences pour l'accueil, puis réservation.
  * Le prix affiché vient du serveur (prix membre, code, frais) ; la réservation le recalcule.
  */
-export function BookingForm({ sessionId, unitAmount, currency, maxSeats, transfer = null, defaultLanguages = [], physical = false, questions = [], needs = { food: true, languages: true } }: Props & { needs?: WelcomeNeeds }) {
+export function BookingForm({ sessionId, unitAmount, currency, maxSeats, transfer = null, defaultLanguages = [], physical = false, questions = [], needs = { food: true, languages: true }, tierFallback: showFallback = false }: Props & { needs?: WelcomeNeeds; tierFallback?: boolean }) {
   const t = useTranslations("booking");
   const tp = useTranslations("prefs");
   const tq = useTranslations("questionnaire");
   const lang = useLocale() as "fr" | "ar" | "en";
   const router = useRouter();
   const [seats, setSeats] = useState(1);
+  // docs/25 : rendez-vous — gamme voisine acceptée par défaut si la sienne n'est pas complète.
+  const [fallback, setFallback] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<BookingError | null>(null);
   const [pricing, setPricing] = useState<Pricing | null>(null);
@@ -115,7 +117,7 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, transfe
     setError(null);
     try {
       await authReady();
-      const r = await createReservation(sessionId, seats, { promoCode: promo, preferences: shared ? { ...prefs, allergies: prefs.allergies.trim() } : undefined, physicalTermsAccepted: physical ? true : undefined, answers: questions.length ? answers : undefined, useCarnet: useCarnet && sub.credits > 0 ? true : undefined });
+      const r = await createReservation(sessionId, seats, { promoCode: promo, preferences: shared ? { ...prefs, allergies: prefs.allergies.trim() } : undefined, physicalTermsAccepted: physical ? true : undefined, answers: questions.length ? answers : undefined, useCarnet: useCarnet && sub.credits > 0 ? true : undefined, ...(showFallback ? { tierFallback: fallback } : {}) });
       if (r.status === "confirmed") {
         router.push(`/espace/reservations/${r.reservationId}?reservation=confirmee`);
         return;
@@ -272,6 +274,12 @@ export function BookingForm({ sessionId, unitAmount, currency, maxSeats, transfe
       </details>
       )}
       {consentError && <p role="alert" className="text-sm text-red-800">{tp("consentRequired")}</p>}
+      {showFallback && (
+        <label className="flex items-start gap-3 rounded-[var(--radius-card)] bg-white p-4 text-sm text-ink shadow-card" data-testid="tier-fallback">
+          <input type="checkbox" checked={fallback} onChange={(e) => setFallback(e.target.checked)} disabled={busy} className="mt-0.5 size-5 shrink-0 accent-brand-900" />
+          <span>{t("tierFallback")}</span>
+        </label>
+      )}
       {physical && <PhysicalTermsCheckbox checked={physicalOk} onChange={(v) => { setPhysicalOk(v); setPhysicalError(false); }} error={physicalError} disabled={busy} />}
 
       {error && (

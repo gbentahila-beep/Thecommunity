@@ -244,3 +244,10 @@ async function fsSessionCrowdRaw(sessionId: string): Promise<Crowd | null> {
   return crowdSummary(users.map((u) => ({ birthDate: u.get("birthDate") ?? null, interests: (u.get("interests") as Interest[] | undefined) ?? [] })), new Date());
 }
 export const fsSessionCrowd = cached(fsSessionCrowdRaw, "fsSessionCrowd");
+
+/* ——— docs/25 : rendez-vous de la semaine (actifs) ——— */
+async function fsRendezvousRaw(): Promise<{ id: string; title: Record<string, string>; weekday: number; time: string; tiers: { tier: string; experienceId: string; frequency: string }[] }[]> {
+  const snap = await adminDb().collection("rendezvous").where("status", "==", "active").get();
+  return snap.docs.map((d) => ({ id: d.id, title: d.get("title") ?? {}, weekday: Number(d.get("weekday")), time: String(d.get("time") ?? ""), tiers: d.get("tiers") ?? [] }));
+}
+export const fsRendezvous = cached(fsRendezvousRaw, "fsRendezvous");

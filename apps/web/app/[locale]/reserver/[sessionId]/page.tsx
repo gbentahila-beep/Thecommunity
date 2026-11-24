@@ -1,4 +1,4 @@
-import { bookingRefusal, formatMoney, LOW_SEATS_THRESHOLD, VENUE_REVEAL_HOURS, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
+import { bookingClosesAt, bookingRefusal, bookingWindow, formatMoney, type VenueTier, LOW_SEATS_THRESHOLD, VENUE_REVEAL_HOURS, isMemberActive, maxSeatsFor, pricingOf, seatsAvailable, transferDeadline, TRANSFER_CUTOFF_HOURS, TRANSFER_DEADLINE_HOURS, SPOKEN_LANGUAGES, type SpokenLanguage, welcomeNeeds, restaurantBudget, placeLabel } from "@thecommunity/shared";
 import { ArrowLeft, CalendarDays, Info, MapPin, MailWarning, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -13,7 +13,7 @@ import { budgetText, memberAmountFor } from "@/components/price-tag";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAccountState, getSessionUser } from "@/lib/auth/session";
-import { getCity, getMembershipPlan, getSessionForBooking } from "@/lib/data";
+import { getCity, getMembershipPlan, getPublishedExperiences, getRendezvousList, getSessionForBooking, getUpcomingSessions } from "@/lib/data";
 import { adminAuth, adminDb } from "@/lib/firebase/admin";
 import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { formatLongDate, formatTime, formatTimeRange } from "@/lib/format";
@@ -105,7 +105,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   const personal = visitor?.state === "ready" && Boolean((onRequest && visitor.request && visitor.request.status !== "cancelled") || visitor.booked);
   const here = `/reserver/${sessionId}`;
   const maxSeats = Math.min(maxSeatsFor(exp), Math.max(1, seatsAvailable(session)));
-  const [plan, tCard, tm] = await Promise.all([getMembershipPlan(), getTranslations("card"), getTranslations("membership")]);
+  const [plan, tCard, tm, tTier] = await Promise.all([getMembershipPlan(), getTranslations("card"), getTranslations("membership"), getTranslations("twoPart")]);
   const twoPart = pricingOf(exp);
   const memberAmount = memberAmountFor(plan, session.price, exp);
   const isMember = Boolean(visitor?.member);
@@ -114,6 +114,18 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
   const earlyUntil = earlyHours > 0 && session.createdAt ? new Date(new Date(session.createdAt).getTime() + earlyHours * 3_600_000) : null;
   const earlyLocked = Boolean(earlyUntil && !isMember && isAfterNow(earlyUntil));
   const membersLocked = Boolean(exp.membersOnly && !isMember);
+  // docs/25 : rendez-vous de la semaine — gammes de cette même date (une expérience chacune) et fenêtre de réservation.
+  const rv = exp.rendezvousId ? (await getRendezvousList()).find((x) => x.id === exp.rendezvousId) ?? null : null;
+  const rvTiers = rv
+    ? (await Promise.all(rv.tiers.map(async (x) => {
+        const sib = x.experienceId === exp.id ? session : (await getUpcomingSessions({ experienceId: x.experienceId })).find((y) => y.startAt === session.startAt);
+        return { tier: x.tier as VenueTier, sessionId: sib?.id ?? null, experience: x.experienceId === exp.id ? exp : (await getPublishedExperiences()).find((e) => e.id === x.experienceId) ?? null };
+      }))).filter((x) => x.sessionId)
+    : [];
+  const rvWindow = exp.rendezvousId ? bookingWindow(await getUpcomingSessions({ experienceId: exp.id }), exp, new Date(), bookingClosesAt) : null;
+  const rvW = rvWindow?.get(session.id);
+  const rvOpenId = rvWindow ? [...rvWindow.entries()].find(([, v]) => v.state === "open")?.[0] ?? null : null;
+  const rvLocked = Boolean(rvW && rvW.state !== "open" && !(rvW.state === "pass" && isMember));
 
   const budget = restaurantBudget(exp);
   const onSiteValue =
@@ -138,7 +150,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             </div>
           )}
           <div className="min-w-0 space-y-1.5">
-            <h2 className="text-lg font-semibold text-ink">{tr(exp.title, locale)}</h2>
+            <h2 className="text-lg font-semibold text-ink">{rv ? `${tr(rv.title as never, locale)}${exp.venueTier ? ` · ${tTier(`tier_${exp.venueTier}`)}` : ""}` : tr(exp.title, locale)}</h2>
             <p className="flex items-center gap-2 text-sm text-muted">
               <CalendarDays className="size-4 shrink-0 text-brand-700" aria-hidden />
               {formatLongDate(session.startAt, locale)} · {formatTimeRange(session.startAt, session.endAt, locale)}
@@ -166,6 +178,21 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
         </p>
       </section>
 
+
+      {rvTiers.length > 1 && (
+        <nav aria-label={t("rvTier")} className="mt-4 flex flex-wrap gap-2" data-testid="rv-tier-picker">
+          {rvTiers.map((x) => {
+            const on = x.sessionId === session.id;
+            const b = x.experience ? restaurantBudget(x.experience) : null;
+            return (
+              <Link key={x.tier} href={`/reserver/${x.sessionId}`} aria-current={on ? "page" : undefined} className={`rounded-2xl border px-4 py-2 text-sm ${on ? "border-brand-700 bg-brand-50 font-semibold text-brand-900" : "border-line bg-white text-ink hover:border-brand-700"}`}>
+                {tTier(`tier_${x.tier}`)}
+                {b && <span className="ms-2 font-normal text-muted">{budgetText(b, lang)}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+      )}
 
       {onRequest && refusal === null && (
         <section role="note" className="mt-6 rounded-[var(--radius-card)] bg-brand-50 p-4 text-brand-900">
@@ -263,6 +290,12 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
             {visitor.booked.pending ? t("finishPayment") : t("seeMyBooking")}
           </Link>
         </section>
+      ) : rvLocked && rvW ? (
+        <section className="mt-6 rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="rv-not-open">
+          <p className="text-ink">{rvW.state === "pass" && rvW.opensAt ? t("rvPassOnly", { day: lowerDay(formatLongDate(rvW.opensAt.toISOString(), locale), locale), time: formatTime(rvW.opensAt.toISOString(), locale) }) : rvW.opensAt ? t("rvNotOpen", { day: lowerDay(formatLongDate(rvW.opensAt.toISOString(), locale), locale), time: formatTime(rvW.opensAt.toISOString(), locale) }) : t("errors.not_yet_open")}</p>
+          {rvOpenId && <Link href={`/reserver/${rvOpenId}`} className="btn btn-primary btn-sm mt-4">{t("rvSeeOpen")}</Link>}
+          {rvW.state === "pass" && <Link href="/abonnement" className="ms-3 mt-4 inline-block text-sm font-semibold text-brand-900 underline underline-offset-4">{tm("become")}</Link>}
+        </section>
       ) : membersLocked ? (
         <MembersOnlyNotice title={t("membersOnlyTitle")} text={t("membersOnlyText")} cta={tm("become")} />
       ) : earlyLocked ? (
@@ -292,6 +325,7 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
           physical={exp.physicalActivity === true}
           questions={exp.questionnaire ?? []}
           needs={welcomeNeeds(exp)}
+          tierFallback={rvTiers.length > 1}
         />
       )}
     </PageShell>
@@ -301,6 +335,11 @@ export default async function BookingPage({ params }: PageProps<"/[locale]/reser
 /** Virement : date trop proche pour qu'un virement arrive avant la limite (hors du rendu, comme isAfterNow). */
 function transferClosed(start: Date, o: { hours: number; cutoff: number }) {
   return transferDeadline(new Date(), start, { deadlineHours: o.hours, cutoffHours: o.cutoff }) === null;
+}
+
+/** « mardi 24 novembre » au milieu d'une phrase (pas de majuscule au jour en français). */
+function lowerDay(s: string, locale: string) {
+  return locale === "fr" ? s.charAt(0).toLowerCase() + s.slice(1) : s;
 }
 
 /** Hors du rendu (règle de pureté React) : la page est de toute façon rendue à la demande. */

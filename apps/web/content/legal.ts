@@ -540,7 +540,7 @@ const fr: Record<BaseLegalKey, LegalDoc> = {
             "Liste d'attente : une place libérée est proposée en priorité aux personnes qui ont un Pass, puis dans l'ordre d'inscription, et réservée 4 heures pour payer.",
             "Virement bancaire : une référence unique et les coordonnées de Wenzy vous sont communiquées ; la réservation est confirmée dès réception du virement du montant exact. Non reçu à l'échéance, la place est libérée ; un virement arrivé ensuite donne droit à une place s'il en reste, sinon il est remboursé.",
             "Paiement par carte : auprès d'un prestataire sécurisé ; Wenzy ne reçoit ni ne conserve aucune donnée de carte.",
-            "Les réservations des Tables ferment 12 heures avant le début (au plus tard la veille à 18 h pour un début avant 14 h) ; celles des autres activités, 2 heures avant."
+            "Les rendez-vous de la semaine (ex. le Dîner du mercredi) : une seule date est ouverte à la fois et ses réservations ferment la veille à 20h30 ; la date suivante s'ouvre alors (avec un Pass, une semaine plus tôt). Les autres Tables ferment 12 heures avant le début (au plus tard la veille à 18 h pour un début avant 14 h) ; les autres activités, 2 heures avant."
           ]
         ]
       },
@@ -1227,7 +1227,7 @@ const en: Record<BaseLegalKey, LegalDoc> = {
             "Waiting list: a freed seat is offered first to people with a Pass, then in sign-up order, and held for 4 hours for payment.",
             "Bank transfer: you receive a unique reference and Wenzy's bank details; the booking is confirmed once the exact amount is received. If not received by the deadline, the seat is released; a later transfer gets a seat if one is left, otherwise it is refunded.",
             "Card payment: through a secure provider; Wenzy never receives or stores card data.",
-            "Bookings for Tables close 12 hours before the start (at the latest 6 pm the day before for a start before 2 pm); for other activities, 2 hours before."
+            "Weekly meet-ups (e.g. Wednesday Dinner): one date is open at a time and its bookings close at 8:30 pm the day before; the next date then opens (a week earlier with a Pass). Other Tables close 12 hours before the start (at the latest 6 pm the day before for a start before 2 pm); other activities, 2 hours before."
           ]
         ]
       },

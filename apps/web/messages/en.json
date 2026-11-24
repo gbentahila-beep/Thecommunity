@@ -62,10 +62,10 @@
     "thisWeek": "This week in {city}",
     "seeAll": "See all experiences",
     "howTitle": "How it works",
-    "how1Title": "Choose an experience",
-    "how1Text": "A Table (coffee, brunch, lunch, dinner), sport, a game or an outing: come alone or with a friend.",
-    "how2Title": "Book your spot",
-    "how2Text": "35 DH online (or your pass), the rest is paid on site. For Tables, the venue is revealed a few hours before.",
+    "how1Title": "Choose your meet-up",
+    "how1Text": "Every week, the same meet-ups: Wednesday dinner, Saturday's activity and coffee, Sunday brunch. Come alone or with a friend.",
+    "how2Title": "Book this week's date",
+    "how2Text": "Choose your range, then 35 DH online (or your pass); the rest is paid on site. For Tables, the venue is revealed a few hours before.",
     "how3Title": "Meet your group",
     "how3Text": "A table, a team or a small group, put together for the activity; when you check in, you meet your group and see first names.",
     "universesTitle": "Many ways to break your routine",
@@ -318,7 +318,12 @@
     "tierHelp": "About tiers",
     "onSiteFixed": "Online, then {amount} on site.",
     "onSiteConsumption": "Online, then what you order on site.",
-    "onSiteNothing": "Online. Nothing to pay on site."
+    "onSiteNothing": "Online. Nothing to pay on site.",
+    "rvWeekly": "Every {day} at {time}",
+    "rvTiersTitle": "Choose your range",
+    "rvMonthly": "once a month",
+    "rvOpensAt": "Opens {day} at {time}",
+    "rvPassEarly": "Bookable now with the Pass"
   },
   "booking": {
     "title": "Book my spot",
@@ -381,7 +386,8 @@
       "physical_terms_required": "Accept the terms for physical activities to book.",
       "audience_women_only": "This experience is for women only. If your profile is wrong, you can change it in “My profile”.",
       "questionnaire_required": "Answer the questions above to book.",
-      "account_under_review": "Your account is being reviewed by the team: you can't book for now. Write to us if needed."
+      "account_under_review": "Your account is being reviewed by the team: you can't book for now. Write to us if needed.",
+      "not_yet_open": "Bookings for this date aren't open yet: they open when the previous date closes (a week earlier with the Pass)."
     },
     "fullTextOnRequest": "All spots are taken for this date. Have a look at the other dates for this experience.",
     "seeMyBooking": "See my booking",
@@ -442,7 +448,12 @@
     "onSiteNothing": "Nothing",
     "secretVenueShort": "Venue revealed {hours} h before",
     "bookShort": "Book",
-    "passOutsidePeriod": "This date is after your pass ends: your seat isn't included. Extend your pass to include it."
+    "passOutsidePeriod": "This date is after your pass ends: your seat isn't included. Extend your pass to include it.",
+    "tierFallback": "If my range isn't full, I accept the neighbouring range (same date, a restaurant in a close range).",
+    "rvTier": "Range",
+    "rvNotOpen": "This date opens {day} at {time}, when the previous date closes.",
+    "rvPassOnly": "Early date for Pass holders until {day} at {time}.",
+    "rvSeeOpen": "See the open date"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -549,10 +560,10 @@
     "contactError": "Couldn't send. Please check the fields and try again.",
     "faqMore": "More answers in the help centre",
     "stepsTitle": "Your outing in 6 steps",
-    "step1Title": "Choose an activity",
-    "step1Text": "Universe, format, tier, day, time of day: filter the calendar. You can come alone, that's what it's made for.",
-    "step2Title": "Choose a date",
-    "step2Text": "Remaining spots are shown. Full? Join the waiting list: if a spot frees up, it's offered to you.",
+    "step1Title": "Choose your meet-up",
+    "step1Text": "Every week, the same meet-ups on a fixed day (for example Wednesday Dinner), plus special editions now and then. You can come alone — that's the whole idea.",
+    "step2Title": "Choose your range and book this week's date",
+    "step2Text": "Casual, Premium or Exclusive: the range sets the on-site budget. One date is open at a time, until 8:30 pm the day before; the next one opens then (a week earlier with the Pass). Full? Join the waiting list.",
     "step3Title": "Help us put your group together",
     "step3Text": "Your profile is enough for Tables (languages, interests, age); some activities have a short questionnaire, filled in before you pay. Diet and allergies to confirm for a meal.",
     "step4Title": "Pay 35 DH, or use your pass",

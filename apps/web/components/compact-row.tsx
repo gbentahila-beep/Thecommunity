@@ -72,6 +72,8 @@ export async function CompactRow({
       : experience.admission === "on_request"
         ? tr2("request")
         : tr2("book");
+  // docs/25 : un rendez-vous réunit ses gammes sur une seule ligne (Casual · Premium · Exclusive).
+  const tiers = session?.rendezvousTiers?.length ? session.rendezvousTiers : experience.venueTier ? [experience.venueTier] : [];
   return (
     <article
       className="ev-row group relative flex gap-3.5 px-4 py-3.5"
@@ -101,7 +103,7 @@ export async function CompactRow({
               href={`/experiences/${experience.slug}`}
               className="after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:rounded-2xl focus-visible:after:outline-2 focus-visible:after:outline-brand-700"
             >
-              {tr(experience.title, locale)}
+              {session?.rendezvousTitle ? tr(session.rendezvousTitle, locale) : tr(experience.title, locale)}
             </Link>
           </h3>
           <p className="mt-0.5 text-[13px] text-ink/80">
@@ -124,23 +126,21 @@ export async function CompactRow({
             )}
             {/* Le format n'est pas répété s'il ouvre déjà le titre (« Dîner Premium »). */}
             {formatName}
-            {experience.venueTier && (
-              <>
-                {formatName ? " · " : ""}
-                <span
-                  className={`inline-flex items-center gap-0.5 font-semibold ${TIER_TEXT[experience.venueTier]}`}
-                  data-testid="tier-pill"
-                >
-                  {experience.venueTier !== "casual" && (
-                    <Gem className="size-3" aria-hidden />
-                  )}
-                  {tp(`tier_${experience.venueTier}`)}
+            {tiers.length > 0 && (
+            <>
+              {formatName ? " · " : ""}
+              {tiers.map((tier, i) => (
+                <span key={tier} className={`inline-flex items-center gap-0.5 font-semibold ${TIER_TEXT[tier]}`} data-testid="tier-pill">
+                  {i > 0 && <span className="mx-1 font-normal text-muted">·</span>}
+                  {tier !== "casual" && <Gem className="size-3" aria-hidden />}
+                  {tp(`tier_${tier}`)}
                 </span>
-              </>
-            )}
+              ))}
+            </>
+          )}
             {/* Le prix n'est pas sur la ligne : il est sur la fiche et à la réservation. */}
             {full && (
-              <span className="font-semibold text-ink">{formatName || experience.venueTier ? " · " : ""}{t("full")}</span>
+              <span className="font-semibold text-ink">{formatName || tiers.length ? " · " : ""}{t("full")}</span>
             )}
           </p>
         </div>

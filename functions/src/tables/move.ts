@@ -8,6 +8,7 @@ import { refuse } from "../reservations/refuse";
 import { readWaitlist, writeOffers } from "../waitlist/offers";
 import { notifyWaitlistOffers } from "../waitlist/notify-offers";
 import { capacityBefore } from "../reservations/create-reservation";
+import { requireWindowOpen } from "../rendezvous/window";
 import { removeFromGroup } from "../groups/membership";
 import { notifyReservationChange } from "../notify/reminders";
 
@@ -57,6 +58,8 @@ export async function moveReservationCore(o: { reservationId: string; targetSess
     if (o.by === "user" && !proposed) {
       if (now >= bookingClosesAt((f.startAt as Timestamp).toDate(), e).getTime()) refuse("closed", "Les réservations de cette date sont fermées.");
       if (now >= bookingClosesAt((t.startAt as Timestamp).toDate(), e).getTime()) refuse("target_closed", "Les réservations de la nouvelle date sont fermées.");
+      // docs/25 : rendez-vous — seulement vers une date ouverte (la suivante, ou deux avec le Pass).
+      if (e.rendezvousId) await requireWindowOpen(tx, { experienceId: t.experienceId, sessionId: o.targetSessionId, e, membership: (await tx.get(db.doc(`memberships/${r.userId}`))).data(), now });
     }
     if (toLock.exists) refuse("already_booked", "Une place est déjà réservée sur la nouvelle date.");
     const n = r.seats as number;

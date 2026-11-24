@@ -10,6 +10,9 @@ import {
   type Experience,
   restaurantBudget,
   extraText,
+  bookingClosesAt,
+  bookingWindow,
+  type VenueTier,
 } from "@thecommunity/shared";
 import { Backpack, CalendarDays, Gem, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, UsersRound, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
@@ -29,8 +32,8 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
 import { budgetText, memberAmountFor, PriceTag } from "@/components/price-tag";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
-import { getArchivedExperience, getCategory, getCity, getExperienceBySlug, getMembershipPlan, getPublicOrganizer, getPublishedExperiences, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
-import { formatLongDate, formatShortSlot, formatTimeRange } from "@/lib/format";
+import { getArchivedExperience, getCategory, getCity, getExperienceBySlug, getMembershipPlan, getPublicOrganizer, getPublishedExperiences, getRendezvousList, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
+import { formatLongDate, formatShortSlot, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { richText } from "@/lib/rich-text";
 import { SITE_URL } from "@/lib/site";
@@ -92,6 +95,15 @@ async function RetiredExperience({ title, categoryId, cityId }: { title: string;
   );
 }
 
+/** « mardi 24 novembre » au milieu d'une phrase (le français ne met pas de majuscule au jour). */
+const lowerFirst = (s: string, locale: string) => (locale === "fr" ? s.charAt(0).toLowerCase() + s.slice(1) : s);
+
+/** Nom du jour (0 = dimanche) dans la langue de la page, d'après une date de référence (un dimanche). */
+function weekdayName(weekday: number, locale: string) {
+  const d = new Date(Date.UTC(2026, 10, 22 + weekday, 12));
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR", { weekday: "long", timeZone: "UTC" }).format(d);
+}
+
 const LANGUAGE_NAMES: Record<string, string> = { fr: "Français", ar: "العربية", darija: "Darija", en: "English", es: "Español" };
 
 export default async function ExperiencePage({ params }: PageProps<"/[locale]/experiences/[slug]">) {
@@ -127,7 +139,18 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
   const budget = restaurantBudget(exp);
   const surprise = exp.venue.revealPolicy === "on_group_reveal";
   const lang = locale as "fr" | "ar" | "en";
-  const next = sessions.find((s) => seatsAvailable(s) > 0) ?? sessions[0];
+  // docs/25 : rendez-vous de la semaine — gammes (une expérience chacune) et fenêtre de réservation (une date ouverte,
+  // la suivante en avance pour les abonnés Pass, les autres « ouvrent le … »).
+  const rv = exp.rendezvousId ? (await getRendezvousList()).find((x) => x.id === exp.rendezvousId) ?? null : null;
+  const rvSiblings = rv
+    ? await (async () => {
+        const all = new Map((await getPublishedExperiences()).map((x) => [x.id, x]));
+        return rv.tiers.map((x) => ({ tier: x.tier as VenueTier, monthly: x.frequency === "first_of_month", experience: all.get(x.experienceId) })).filter((x) => x.experience);
+      })()
+    : [];
+  const win = exp.rendezvousId ? bookingWindow(sessions, exp, new Date(), bookingClosesAt) : null;
+  const shownSessions = win ? sessions.filter((s) => win.has(s.id) && win.get(s.id)!.state !== "off").slice(0, 4) : sessions;
+  const next = win ? sessions.find((s) => win.get(s.id)?.state === "open") : sessions.find((s) => seatsAvailable(s) > 0) ?? sessions[0];
   // Étape 29 : « Qui allez-vous rencontrer ? » (chiffres globaux sur les inscrits de la prochaine date, à partir de 4).
   const meeting = meetingSummary(exp, next ?? null, await getSessionCrowd(next?.id));
 
@@ -234,7 +257,8 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 {category ? tr(category.shortName, locale) : ""}
                 {subcategory ? ` · ${tr(subcategory.shortName, locale)}` : ""}
               </span>
-              <h1 className="page-title mt-3">{tr(exp.title, locale)}</h1>
+              <h1 className="page-title mt-3">{rv ? tr(rv.title as never, locale) : tr(exp.title, locale)}</h1>
+              {rv && <p className="mt-2 text-sm font-semibold text-brand-700" data-testid="rv-weekly">{t("rvWeekly", { day: weekdayName(rv.weekday, locale), time: rv.time.replace(":", locale === "fr" ? "h" : ":") })}</p>}
               <p className="mt-3 text-lg text-ink/80">{tr(exp.summary, locale)}</p>
               {exp.ratingCount > 0 && (
                 <p className="mt-3 flex items-center justify-center gap-2 text-sm text-muted">
@@ -331,17 +355,49 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                 </Link>
               )}
               {exp.admission === "on_request" && <p className="mt-3 rounded-xl bg-brand-50 px-3 py-2 text-sm text-brand-900">{t("onRequestNote")}</p>}
+              {rvSiblings.length > 1 && (
+                <div className="mt-4" data-testid="rv-tiers">
+                  <p className="text-sm font-semibold uppercase tracking-wide text-muted">{t("rvTiersTitle")}</p>
+                  <div className="mt-2 grid gap-2" role="list">
+                    {rvSiblings.map((x) => {
+                      const on = x.experience!.id === exp.id;
+                      const b = restaurantBudget(x.experience!);
+                      return (
+                        <Link key={x.tier} role="listitem" href={`/experiences/${x.experience!.slug}#dates`} aria-current={on ? "true" : undefined} className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-2.5 text-sm ${on ? "border-brand-700 bg-brand-50" : "border-line hover:border-brand-700"}`}>
+                          <span className="font-semibold text-ink">{t2(`tier_${x.tier}`)}{x.monthly && <span className="ms-1 font-normal text-muted">· {t("rvMonthly")}</span>}</span>
+                          {b && <span className="text-muted">{budgetText(b, lang)}</span>}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
               <h2 id="alerte" className="mt-5 scroll-mt-28 text-sm font-semibold uppercase tracking-wide text-muted">{t("nextDates")}</h2>
-              {sessions.length === 0 ? (
+              {shownSessions.length === 0 ? (
                 <>
                   <p className="mt-3 text-sm text-muted">{t("noDates")}</p>
                   {FIREBASE_ENABLED && <ExperienceAlertButton experienceId={exp.id} slug={exp.slug} />}
                 </>
               ) : (
                 <ul className="mt-3 space-y-2.5">
-                  {sessions.map((s) => {
+                  {shownSessions.map((s) => {
                     const left = seatsAvailable(s);
                     const full = left === 0;
+                    const w = win?.get(s.id);
+                    // docs/25 : date pas encore ouverte → pas de lien, « Ouvre le … » (en avance pour les abonnés Pass).
+                    if (w && w.state !== "open") {
+                      return (
+                        <li key={s.id}>
+                          <div className="rounded-2xl border border-dashed border-line px-4 py-3" data-testid="rv-later">
+                            <span className="block font-semibold text-ink/70">{formatLongDate(s.startAt, locale)} · {formatTime(s.startAt, locale)}</span>
+                            {w.opensAt && <span className="mt-0.5 block text-xs text-muted">{t("rvOpensAt", { day: lowerFirst(formatLongDate(w.opensAt.toISOString(), locale), locale), time: formatTime(w.opensAt.toISOString(), locale) })}</span>}
+                            {w.state === "pass" && (
+                              <Link href={`/reserver/${s.id}`} className="mt-1 inline-block text-xs font-semibold text-brand-900 underline underline-offset-4">{t("rvPassEarly")}</Link>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    }
                     return (
                       <li key={s.id}>
                         <Link

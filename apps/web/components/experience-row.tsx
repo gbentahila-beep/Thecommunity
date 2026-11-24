@@ -36,6 +36,8 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
   const formatFull = subcategory ? tr(subcategory.shortName, locale) : category ? tr(category.shortName, locale) : "";
   const formatName = formatFull && tr(experience.title, locale).toLowerCase().startsWith(formatFull.toLowerCase()) ? "" : formatFull;
   const action = !session ? tr2("alert") : full ? tr2("waitlist") : experience.admission === "on_request" ? tr2("request") : tr2("book");
+  // docs/25 : un rendez-vous réunit ses gammes sur une seule ligne (Casual · Premium · Exclusive).
+  const tiers = session?.rendezvousTiers?.length ? session.rendezvousTiers : experience.venueTier ? [experience.venueTier] : [];
   return (
     <article id={anchorId} className={`ev-row group relative flex items-center gap-3.5 px-4 py-3.5 ${anchorId ? "scroll-mt-56 lg:scroll-mt-48" : ""}`} data-testid="catalog-row">
       {/* Téléphone : vignette de 64 px ; ordinateur : photo en haut de la carte. */}
@@ -49,7 +51,7 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <h3 className="text-[15px] leading-snug font-semibold text-ink">
             <Link href={`/experiences/${experience.slug}`} className="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-brand-700">
-              {tr(experience.title, locale)}
+              {session?.rendezvousTitle ? tr(session.rendezvousTitle, locale) : tr(experience.title, locale)}
             </Link>
           </h3>
         </div>
@@ -71,13 +73,16 @@ export async function ExperienceRow({ experience, session, showDay = false, prio
           {experience.audience === "women" && <span className="font-semibold text-rose-700" data-testid="card-women">{t("women")} · </span>}
           {/* Le format n'est pas répété s'il ouvre déjà le titre (« Dîner Premium »). */}
           {formatName}
-          {experience.venueTier && (
+          {tiers.length > 0 && (
             <>
               {formatName ? " · " : ""}
-              <span className={`inline-flex items-center gap-0.5 font-semibold ${TIER_TEXT[experience.venueTier]}`} data-testid="card-tier">
-                {experience.venueTier !== "casual" && <Gem className="size-3" aria-hidden />}
-                {tp(`tier_${experience.venueTier}`)}
-              </span>
+              {tiers.map((tier, i) => (
+                <span key={tier} className={`inline-flex items-center gap-0.5 font-semibold ${TIER_TEXT[tier]}`} data-testid="card-tier">
+                  {i > 0 && <span className="mx-1 font-normal text-muted">·</span>}
+                  {tier !== "casual" && <Gem className="size-3" aria-hidden />}
+                  {tp(`tier_${tier}`)}
+                </span>
+              ))}
             </>
           )}
           {/* Format et gamme ; le prix et les langues sont sur la fiche. */}

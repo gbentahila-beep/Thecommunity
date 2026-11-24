@@ -9,6 +9,7 @@ import { carnetRef, membershipRef, membershipTerms, passUpcoming, planRef } from
 import { reservationDoc } from "./reservation-doc";
 import { notifyQuestionnaire } from "./questionnaire";
 import { venueCapacity } from "../tables/allocation";
+import { requireWindowOpen } from "../rendezvous/window";
 
 import { refuse } from "./refuse";
 export { refuse };
@@ -126,6 +127,8 @@ async function runReservationOnce(o: ReservationRun) {
     const e = exp.data()!;
     const now = Date.now();
     if (!requestRef && e.admission === "on_request") refuse("approval_required", "Cette expérience est sur demande.");
+    // docs/25 : rendez-vous — une seule date ouverte (deux avec le Pass). Lecture avant toute écriture.
+    if (!requestRef) await requireWindowOpen(tx, { experienceId: s.experienceId, sessionId, e, membership: memSnap.data(), now });
     // 18b : âge minimum de l'expérience (au-delà de 18 ans), vérifié sur la date de naissance du profil.
     if (tooYoung(e.minAge, userSnap.data()?.birthDate, new Date(now))) refuse("too_young", "Cette expérience est réservée aux personnes plus âgées.");
     // Étape 29 : activité réservée aux femmes (genre indiqué dans le profil).

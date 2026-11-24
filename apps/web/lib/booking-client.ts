@@ -29,6 +29,7 @@ export const BOOKING_ERRORS = [
   "questionnaire_required",
   "audience_women_only",
   "account_under_review",
+  "not_yet_open",
   "busy",
   "signin",
   "generic",
@@ -58,7 +59,7 @@ async function freshUser() {
   return user;
 }
 
-export async function createReservation(sessionId: string, seats: number, opts: { promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers; useCarnet?: boolean } = {}) {
+export async function createReservation(sessionId: string, seats: number, opts: { promoCode?: string; preferences?: BookingPreferences; physicalTermsAccepted?: boolean; answers?: QuestionnaireAnswers; useCarnet?: boolean; tierFallback?: boolean } = {}) {
   await freshUser();
   // Champs absents plutôt que vides : le SDK transmettrait `undefined` comme `null`, refusé par le serveur.
   const extra = Object.fromEntries(Object.entries(opts).filter(([, v]) => v !== undefined && v !== null));

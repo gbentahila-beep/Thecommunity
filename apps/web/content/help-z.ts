@@ -36,18 +36,18 @@ export const HELP_ARTICLES_Z: HelpArticleZ[] = [
     summary: { fr: "Des rendez-vous en petit groupe pour rencontrer de nouvelles personnes : 35 DH en ligne, le reste sur place.", en: "Small-group meet-ups to meet new people: 35 DH online, the rest on site.", ar: "لقاءات في مجموعات صغيرة للتعرف على أشخاص جدد: 35 درهماً عبر الإنترنت، والباقي في المكان." },
     body: {
       fr: [
-        "Wenzy organise à Casablanca des rendez-vous en petit groupe, dans quatre univers : Tables (café, brunch, déjeuner, dîner), Bouger, Sortir et Découvrir.",
-        ["Choisissez une date dans [Découvrir](/experiences) et réservez : 35 DH en ligne, ou rien avec le Pass.", "Pour les Tables, nous composons des tables de 4 à 6 d'après votre profil ; le lieu vous est révélé quelques heures avant, avec l'itinéraire.", "Sur place, appuyez sur « Je suis là » : vous découvrez votre table, les prénoms, et le chat du groupe s'ouvre.", "Votre repas ou l'activité se règle sur place."],
+        "Wenzy organise à Casablanca des rendez-vous en petit groupe, dans quatre univers : Tables (café, brunch, dîner), Bouger, Sortir et Découvrir. Chaque semaine, les mêmes rendez-vous à jour fixe : le dîner du mercredi, l'activité et le café du samedi, le brunch du dimanche.",
+        ["Choisissez votre rendez-vous dans [Découvrir](/experiences), votre gamme, et réservez la date de la semaine : 35 DH en ligne, ou rien avec le Pass.", "Pour les Tables, nous composons des tables de 4 à 6 d'après votre profil ; le lieu vous est révélé quelques heures avant, avec l'itinéraire.", "Sur place, appuyez sur « Je suis là » : vous découvrez votre table, les prénoms, et le chat du groupe s'ouvre.", "Votre repas ou l'activité se règle sur place."],
         "Ce n'est pas une application de rencontre amoureuse : l'idée est d'élargir son cercle.",
       ],
       en: [
-        "Wenzy runs small-group meet-ups in Casablanca, in four worlds: Tables (coffee, brunch, lunch, dinner), Move, Go out and Discover.",
+        "Wenzy runs small-group meet-ups in Casablanca, in four worlds: Tables (coffee, brunch, dinner), Move, Go out and Discover. Every week, the same meet-ups on a fixed day: Wednesday dinner, Saturday's activity and coffee, Sunday brunch.",
         ["Pick a date in [Discover](/experiences) and book: 35 DH online, or nothing with the Pass.", "For Tables, we put tables of 4 to 6 together from your profile; the venue is revealed a few hours before, with directions.", "On site, tap “I'm here”: you see your table and first names, and the group chat opens.", "Your meal or the activity is paid on site."],
         "This is not a dating app: the idea is to widen your circle.",
       ],
       ar: [
-        "تنظم Wenzy في الدار البيضاء لقاءات في مجموعات صغيرة، ضمن أربعة عوالم: الموائد (قهوة، برانش، غداء، عشاء)، الحركة، الخروج والاكتشاف.",
-        ["اختر موعداً في [اكتشف](/experiences) واحجز: 35 درهماً عبر الإنترنت، أو لا شيء مع الباس.", "بالنسبة للموائد، نكوّن طاولات من 4 إلى 6 أشخاص حسب ملفك؛ ويُكشف عن المكان قبل ساعات مع الاتجاهات.", "في المكان، اضغط على « أنا هنا »: تكتشف طاولتك والأسماء، وتُفتح دردشة المجموعة.", "تدفع وجبتك أو النشاط في المكان."],
+        "تنظم Wenzy في الدار البيضاء لقاءات في مجموعات صغيرة، ضمن أربعة عوالم: الموائد (قهوة، برانش، عشاء)، الحركة، الخروج والاكتشاف. كل أسبوع، نفس المواعيد في يوم ثابت: عشاء الأربعاء، نشاط وقهوة السبت، وبرانش الأحد.",
+        ["اختر موعدك في [اكتشف](/experiences) وفئتك، واحجز موعد هذا الأسبوع: 35 درهماً عبر الإنترنت، أو لا شيء مع الباس.", "بالنسبة للموائد، نكوّن طاولات من 4 إلى 6 أشخاص حسب ملفك؛ ويُكشف عن المكان قبل ساعات مع الاتجاهات.", "في المكان، اضغط على « أنا هنا »: تكتشف طاولتك والأسماء، وتُفتح دردشة المجموعة.", "تدفع وجبتك أو النشاط في المكان."],
         "ليست تطبيقاً للمواعدة: الفكرة هي توسيع دائرة معارفك.",
       ],
     },

@@ -9,7 +9,7 @@ import { connectAuthEmulator, getAuth, signInWithEmailAndPassword } from "fireba
 import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/functions";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { ensureAllRendezvousSessions } from "../../functions/src/rendezvous/rendezvous";
-import { MOROCCO_TIMEZONE, zonedParts } from "@thecommunity/shared";
+import { bookingClosesAt, MOROCCO_TIMEZONE, zonedParts } from "@thecommunity/shared";
 
 const PROJECT = "demo-thecommunity";
 const PASSWORD = "MotDePasse!123";
@@ -79,7 +79,7 @@ describe("rendez-vous de la semaine (lot A)", () => {
     await db().doc(`experiences/${premium}`).update({ venue: { name: "Maison Test", address: "1 rue Test", revealPolicy: "immediate" } });
     const next = (await db().collection("sessions").where("experienceId", "==", premium).get()).docs
       .sort((a, b) => (a.get("startAt") as Timestamp).toMillis() - (b.get("startAt") as Timestamp).toMillis())
-      .find((d) => (d.get("startAt") as Timestamp).toMillis() > Date.now() + 2 * 86_400_000)!;
+      .find((d) => bookingClosesAt((d.get("startAt") as Timestamp).toDate(), { bookingMode: "social_dinner", closeRule: "eve" }).getTime() > Date.now())!; // la date ouverte
     const { reservationId } = await u.call("createReservation", { sessionId: next.id, seats: 1, tierFallback: false });
     expect((await db().doc(`reservations/${reservationId}`).get()).data()).toMatchObject({ rendezvousId: out.id, tier: "premium", tierFallback: false });
 
@@ -91,6 +91,31 @@ describe("rendez-vous de la semaine (lot A)", () => {
     const closed = zonedParts(new Date(), MOROCCO_TIMEZONE).hour * 60 + zonedParts(new Date(), MOROCCO_TIMEZONE).minute >= 20 * 60 + 30 || eve.day !== zonedParts(new Date(), MOROCCO_TIMEZONE).day;
     const v = await member();
     expect(await refusal(v.call("createReservation", { sessionId: tomorrow.id, seats: 1 }))).toBe(closed ? "failed-precondition:closed" : "ok");
+  });
+
+  it("fenêtre : une seule date ouverte, la suivante avec le Pass, jamais la troisième ; liste d'attente idem", async () => {
+    const team = await member("admin");
+    const base = db().collection("experiences").doc();
+    await base.set({ slug: `brunch-${run}`, title: { fr: "Brunch" }, status: "published", bookingMode: "individual", subcategoryId: "brunch", categoryId: "eat", cityId: "casablanca", maxSeatsPerBooking: 2, district: "", venue: { name: "Maison Brunch", address: "2 rue Test", revealPolicy: "immediate" }, images: [], price: { amount: 3500, currency: "MAD" }, durationMinutes: 120, cancellationPolicyId: "standard-48h", admission: "direct", membersOnly: false });
+    const out = await team.call("adminSaveRendezvous", { titleFr: "Brunch du dimanche", cityId: "casablanca", weekday: 0, time: "12:30", capacity: 20, baseExperienceId: base.id, tiers: [{ tier: "casual", frequency: "weekly" }] });
+    const expId = (out.tiers as { experienceId: string }[])[0]!.experienceId;
+    const dates = (await db().collection("sessions").where("experienceId", "==", expId).get()).docs
+      .sort((a, b) => (a.get("startAt") as Timestamp).toMillis() - (b.get("startAt") as Timestamp).toMillis());
+    // La première date peut déjà être fermée (si on est samedi soir) : on part des dates encore ouvertes.
+    const open = dates.filter((d) => bookingClosesAt((d.get("startAt") as Timestamp).toDate(), { bookingMode: "individual", closeRule: "eve" }).getTime() > Date.now());
+    const [d1, d2, d3] = open;
+    const u = await member();
+    expect(await refusal(u.call("createReservation", { sessionId: d2!.id, seats: 1 }))).toBe("failed-precondition:not_yet_open");
+    expect((await u.call("createReservation", { sessionId: d1!.id, seats: 1 })).status).toBe("pending_payment");
+    // Abonné Pass : une date d'avance, pas deux.
+    const p = await member();
+    await db().doc(`memberships/${p.uid}`).set({ uid: p.uid, status: "active", startAt: Timestamp.fromMillis(Date.now() - 86_400_000), endAt: Timestamp.fromMillis(Date.now() + 60 * 86_400_000) });
+    expect((await p.call("createReservation", { sessionId: d2!.id, seats: 1 })).status).toBe("confirmed"); // place incluse dans le pass (35 DH)
+    expect(await refusal(p.call("createReservation", { sessionId: d3!.id, seats: 1 }))).toBe("failed-precondition:not_yet_open");
+    // Liste d'attente : seulement pour une date ouverte.
+    await db().doc(`sessions/${d2!.id}`).update({ capacity: 1 });
+    const w = await member();
+    expect(await refusal(w.call("joinWaitlist", { sessionId: d2!.id, seats: 1 }))).toBe("failed-precondition:not_yet_open");
   });
 
   it("réservé à l'équipe", async () => {

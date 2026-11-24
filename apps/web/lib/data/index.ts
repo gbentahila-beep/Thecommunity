@@ -5,6 +5,8 @@
  */
 import {
   applyCatalog,
+  bookingClosesAt,
+  collapseRendezvous,
   crowdSummary,
   DEFAULT_HOME_SETTINGS,
   experienceSearchFields,
@@ -20,6 +22,7 @@ import {
   type CategoryKey,
   type Experience,
   type HomeSettings,
+  type LocalizedText,
   type Organizer,
   type Session,
 } from "@thecommunity/shared";
@@ -169,8 +172,26 @@ export async function getUpcomingSessions(filters: {
 }
 
 /** Une carte par expérience : sa prochaine date (pour les grilles du catalogue). */
+/** docs/25 : rendez-vous de la semaine actifs (nom, jour, heure, gammes). Démonstration : aucun. */
+export async function getRendezvousList() {
+  if (FIREBASE_ENABLED) return fs.fsRendezvous();
+  return [];
+}
+
+/**
+ * docs/25 : dans les listes, une seule ligne par date de rendez-vous (sa date ouverte), gammes réunies et nom du
+ * rendez-vous (« Dîner du mercredi ») ; les autres expériences ne changent pas.
+ */
+async function withRendezvous<T extends SessionWithExperience>(sessions: T[]): Promise<T[]> {
+  if (!sessions.some((s) => s.experience.rendezvousId)) return sessions;
+  const titles = new Map((await getRendezvousList()).map((r) => [r.id, r.title]));
+  return collapseRendezvous(sessions, new Date(), bookingClosesAt).map((s) =>
+    s.experience.rendezvousId && titles.get(s.experience.rendezvousId) ? { ...s, rendezvousTitle: titles.get(s.experience.rendezvousId) as LocalizedText } : s,
+  );
+}
+
 export async function getNextSessionPerExperience(filters: Parameters<typeof getUpcomingSessions>[0] = {}) {
-  const sessions = await getUpcomingSessions({ ...filters, limit: undefined });
+  const sessions = await withRendezvous(await getUpcomingSessions({ ...filters, limit: undefined }));
   const seen = new Set<string>();
   const result = sessions.filter((s) => {
     if (seen.has(s.experienceId)) return false;
@@ -283,7 +304,7 @@ export async function getCatalog(input: { cityId: string; categoryId?: CategoryK
     searchExtras(),
     getHomeSettings(),
   ]);
-  return applyCatalog({ sessions, undated, filters: input.filters, extras, featuredIds: home.featuredExperienceIds });
+  return applyCatalog({ sessions: await withRendezvous(sessions), undated, filters: input.filters, extras, featuredIds: home.featuredExperienceIds });
 }
 
 export type SearchSuggestion =

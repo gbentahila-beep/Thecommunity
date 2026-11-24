@@ -62,10 +62,10 @@
     "thisWeek": "Cette semaine à {city}",
     "seeAll": "Voir toutes les expériences",
     "howTitle": "Comment ça marche",
-    "how1Title": "Choisissez une expérience",
-    "how1Text": "Une Table (café, brunch, déjeuner, dîner), du sport, un jeu ou une sortie : venez seul·e ou à deux.",
-    "how2Title": "Réservez votre place",
-    "how2Text": "35 DH en ligne (ou votre pass), le reste se règle sur place. Pour les Tables, le lieu est révélé quelques heures avant.",
+    "how1Title": "Choisissez votre rendez-vous",
+    "how1Text": "Chaque semaine, les mêmes rendez-vous : le dîner du mercredi, l'activité et le café du samedi, le brunch du dimanche. Venez seul·e ou à deux.",
+    "how2Title": "Réservez la date de la semaine",
+    "how2Text": "Choisissez votre gamme, puis 35 DH en ligne (ou votre pass) ; le reste se règle sur place. Pour les Tables, le lieu est révélé quelques heures avant.",
     "how3Title": "Rencontrez votre groupe",
     "how3Text": "Une table, une équipe ou un petit groupe, composé selon l'activité ; à votre check-in, vous découvrez votre groupe et les prénoms.",
     "universesTitle": "Des univers pour sortir de sa routine",
@@ -318,7 +318,12 @@
     "tierHelp": "Comprendre les gammes",
     "onSiteFixed": "En ligne, puis {amount} sur place.",
     "onSiteConsumption": "En ligne, puis votre consommation sur place.",
-    "onSiteNothing": "En ligne. Rien à régler sur place."
+    "onSiteNothing": "En ligne. Rien à régler sur place.",
+    "rvWeekly": "Chaque {day} à {time}",
+    "rvTiersTitle": "Choisissez votre gamme",
+    "rvMonthly": "1 fois par mois",
+    "rvOpensAt": "Ouvre le {day} à {time}",
+    "rvPassEarly": "Réservable dès maintenant avec le Pass"
   },
   "booking": {
     "title": "Réserver ma place",
@@ -381,7 +386,8 @@
       "physical_terms_required": "Acceptez les conditions de participation aux activités physiques pour réserver.",
       "audience_women_only": "Cette expérience est réservée aux femmes. Si votre profil est incorrect, vous pouvez le modifier dans « Mon profil ».",
       "questionnaire_required": "Répondez aux questions ci-dessus pour réserver.",
-      "account_under_review": "Votre compte est en cours d'examen par l'équipe : vous ne pouvez pas réserver pour le moment. Écrivez-nous si besoin."
+      "account_under_review": "Votre compte est en cours d'examen par l'équipe : vous ne pouvez pas réserver pour le moment. Écrivez-nous si besoin.",
+      "not_yet_open": "Les réservations de cette date ne sont pas encore ouvertes : elles ouvrent à la fermeture de la date précédente (avec le Pass, une semaine plus tôt)."
     },
     "fullTextOnRequest": "Toutes les places sont prises pour cette date. Regardez les autres dates de cette expérience.",
     "seeMyBooking": "Voir ma réservation",
@@ -442,7 +448,12 @@
     "onSiteNothing": "Rien",
     "secretVenueShort": "Lieu révélé {hours} h avant",
     "bookShort": "Réserver",
-    "passOutsidePeriod": "Cette date a lieu après la fin de votre pass : votre place n'est pas incluse. Prolongez votre pass pour qu'elle le soit."
+    "passOutsidePeriod": "Cette date a lieu après la fin de votre pass : votre place n'est pas incluse. Prolongez votre pass pour qu'elle le soit.",
+    "tierFallback": "Si ma gamme n'est pas complète, j'accepte la gamme voisine (même date, restaurant d'une gamme proche).",
+    "rvTier": "Gamme",
+    "rvNotOpen": "Cette date ouvre le {day} à {time}, à la fermeture de la date précédente.",
+    "rvPassOnly": "Date en avance réservée aux abonnés Pass jusqu'au {day} à {time}.",
+    "rvSeeOpen": "Voir la date ouverte"
   },
   "auth": {
     "loginTitle": "Bon retour parmi nous",
@@ -549,10 +560,10 @@
     "contactError": "Envoi impossible. Vérifiez les champs et réessayez.",
     "faqMore": "Plus de réponses dans le centre d'aide",
     "stepsTitle": "Votre sortie en 6 étapes",
-    "step1Title": "Choisissez une activité",
-    "step1Text": "Univers, format, gamme, jour, moment de la journée : filtrez l'agenda. Vous pouvez venir seul·e, c'est même fait pour ça.",
-    "step2Title": "Choisissez une date",
-    "step2Text": "Les places restantes sont indiquées. C'est complet ? Rejoignez la liste d'attente : si une place se libère, elle vous est proposée.",
+    "step1Title": "Choisissez votre rendez-vous",
+    "step1Text": "Chaque semaine, les mêmes rendez-vous à jour fixe (par exemple le Dîner du mercredi), et des éditions spéciales de temps en temps. Vous pouvez venir seul·e, c'est même fait pour ça.",
+    "step2Title": "Choisissez votre gamme et réservez la date de la semaine",
+    "step2Text": "Casual, Premium ou Exclusive : la gamme fixe le budget sur place. Une seule date est ouverte à la fois, jusqu'à la veille 20h30 ; la suivante s'ouvre ensuite (avec le Pass, une semaine plus tôt). C'est complet ? Rejoignez la liste d'attente.",
     "step3Title": "Aidez-nous à composer votre groupe",
     "step3Text": "Votre profil suffit pour les Tables (langues, centres d'intérêt, âge) ; certaines activités ont un court questionnaire, rempli avant de payer. Régime et allergies à confirmer pour un repas.",
     "step4Title": "Payez 35 DH, ou utilisez votre pass",

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { db, FieldValue, REGION } from "../lib/admin";
 import { invalidArgument, requireAuth } from "../lib/guards";
 import { memberFromDoc, membershipRef } from "../membership/state";
+import { requireWindowOpen } from "../rendezvous/window";
 import { refuse, requireMemberReady } from "../reservations/create-reservation";
 
 /**
@@ -37,6 +38,7 @@ export const joinWaitlist = onCall({ region: REGION }, async (req) => {
     if (tooYoung(e!.minAge, user?.birthDate, new Date())) refuse("too_young", "Cette expérience est réservée aux personnes plus âgées.");
     if (e!.physicalActivity === true && physicalTermsAccepted !== true) refuse("physical_terms_required", "Acceptez les conditions de participation aux activités physiques.");
     if (Date.now() >= bookingClosesAt((s.startAt as Timestamp).toDate(), e!).getTime()) refuse("closed", "Inscriptions fermées.");
+    await requireWindowOpen(tx, { experienceId: s.experienceId, sessionId, e: e!, membership: mem.data(), now: Date.now() });
     if (seats > maxSeatsFor(e!)) refuse("too_many_seats", "Trop de places.");
     if (lock.exists) refuse("already_booked", "Vous avez déjà une place pour cette date.");
     if (entry.exists && ["waiting", "offered"].includes(entry.data()!.status)) refuse("already_waiting", "Déjà sur la liste d'attente.");

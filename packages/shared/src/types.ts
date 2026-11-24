@@ -119,6 +119,8 @@ export type Experience = {
   rendezvousId?: string | null;
   /** docs/25 : « eve » = réservations fermées la veille à 20h30. */
   closeRule?: "eve" | null;
+  /** docs/25 : jour (0 = dimanche) et heure du rendez-vous ; les dates hors de ce créneau ne sont plus ouvertes. */
+  rendezvousSlot?: { weekday: number; time: string } | null;
   groupConfig?: GroupConfig;
   maxSeatsPerBooking: number;
   /** Prix membre précis (centimes) ; à défaut, réduction de la formule d'abonnement. */
@@ -251,6 +253,10 @@ export type Session = {
   /** docs/22 § 17.H : attribution automatique des lieux, date à risque, plafond de vente. */
   allocation?: { status: "requested" | "short" | "confirmed" | "manual"; needed?: number; people?: number; confirmed?: number; missing?: number; round?: number } | null;
   risk?: { status: "at_risk" | "kept" | "proposed" | "closed"; kind?: "date" | "merge"; targetSessionId?: string; deadline?: string } | null;
+  /** docs/25 : rendez-vous de la semaine — gammes réunies sur cette ligne de liste, et nom du rendez-vous. */
+  rendezvousId?: string | null;
+  rendezvousTiers?: VenueTier[];
+  rendezvousTitle?: LocalizedText;
   venueCapacity?: number | null;
   isDemo?: boolean;
 };

@@ -80,3 +80,84 @@ export function missingTierDates(rv: { weekday: number; time: string; weeksAhead
   const have = new Set(existing.map((d) => d.getTime()));
   return rendezvousDates(rv, now, rv.weeksAhead).filter((d) => tierRunsOn(t.frequency, d) && !have.has(d.getTime()));
 }
+
+/**
+ * Fenêtre de réservation des rendez-vous (validé le 24/11) : une seule date ouverte à la fois, la suivante s'ouvre
+ * quand la précédente ferme (la veille à 20h30) ; les abonnés Pass ont une date d'avance (deux dates ouvertes).
+ * `upcoming` : dates à venir de l'expérience (une gamme), triées, sans les dates annulées.
+ */
+export const RENDEZVOUS_OPEN_DATES = 1;
+export const RENDEZVOUS_OPEN_DATES_PASS = 2;
+export type WindowState = { state: "open" | "pass" | "later" | "off"; opensAt: Date | null; passOpensAt: Date | null };
+
+type Closable = { bookingMode?: unknown; closeRule?: unknown; rendezvousSlot?: unknown };
+
+/**
+ * La date tombe-t-elle sur le jour et l'heure du rendez-vous ? (dates d'avant le rendez-vous, gardées pour leurs
+ * inscrits : hors calendrier, elles ne sont plus ouvertes ni montrées.) Sans créneau connu : oui.
+ */
+export function onRendezvousSlot(start: Date, e: Closable): boolean {
+  const slot = e.rendezvousSlot as { weekday?: number; time?: string } | null | undefined;
+  if (!slot || typeof slot.weekday !== "number" || !slot.time) return true;
+  const [h, m] = slot.time.split(":").map(Number);
+  const z = zonedParts(start, MOROCCO_TIMEZONE);
+  return z.weekday === slot.weekday && z.hour === h && z.minute === m;
+}
+export function bookingWindow(upcoming: { id: string; startAt: string | Date }[], e: Closable, now: Date, closesAt: (start: Date, e: Closable) => Date): Map<string, WindowState> {
+  const list = upcoming
+    .map((s) => ({ id: s.id, start: new Date(s.startAt) }))
+    .filter((s) => closesAt(s.start, e).getTime() > now.getTime())
+    .sort((a, b) => a.start.getTime() - b.start.getTime());
+  const out = new Map<string, WindowState>();
+  // Hors calendrier : fermée aux nouvelles réservations, et ne compte pas dans la fenêtre.
+  for (const s of list.filter((x) => !onRendezvousSlot(x.start, e))) out.set(s.id, { state: "off", opensAt: null, passOpensAt: null });
+  list.splice(0, list.length, ...list.filter((x) => onRendezvousSlot(x.start, e)));
+  list.forEach((s, i) => {
+    const prev = (k: number) => (i - k >= 0 ? closesAt(list[i - k]!.start, e) : null);
+    out.set(s.id, {
+      state: i < RENDEZVOUS_OPEN_DATES ? "open" : i < RENDEZVOUS_OPEN_DATES_PASS ? "pass" : "later",
+      opensAt: i < RENDEZVOUS_OPEN_DATES ? null : prev(RENDEZVOUS_OPEN_DATES),
+      passOpensAt: i < RENDEZVOUS_OPEN_DATES_PASS ? null : prev(RENDEZVOUS_OPEN_DATES_PASS),
+    });
+  });
+  return out;
+}
+
+/** La date est-elle réservable pour cette personne ? (null = oui ; les autres contrôles restent ceux de la réservation) */
+export function windowRefusal(w: WindowState | undefined, pass: boolean): "not_yet_open" | null {
+  if (!w) return null;
+  if (w.state === "open" || (w.state === "pass" && pass)) return null;
+  return "not_yet_open";
+}
+
+/**
+ * Listes (accueil, Découvrir) : pour un rendez-vous, seule la date ouverte de chaque gamme est montrée, et les gammes
+ * d'une même date sont réunies en une seule ligne (`rendezvousTiers`). Les autres expériences ne changent pas.
+ */
+export function collapseRendezvous<T extends { experienceId: string; startAt: string; experience: { rendezvousId?: string | null; venueTier?: VenueTier | null } & Closable }>(
+  sessions: T[],
+  now: Date,
+  closesAt: (start: Date, e: Closable) => Date,
+): (T & { rendezvousTiers?: VenueTier[] })[] {
+  const firstOpen = new Set<string>();
+  const byKey = new Map<string, T & { rendezvousTiers?: VenueTier[] }>();
+  const out: (T & { rendezvousTiers?: VenueTier[] })[] = [];
+  for (const s of sessions) {
+    const rv = s.experience.rendezvousId;
+    if (!rv) { out.push(s); continue; }
+    if (closesAt(new Date(s.startAt), s.experience).getTime() <= now.getTime() || !onRendezvousSlot(new Date(s.startAt), s.experience) || firstOpen.has(s.experienceId)) continue;
+    firstOpen.add(s.experienceId);
+    const key = `${rv}|${s.startAt}`;
+    const tier = s.experience.venueTier ?? null;
+    const row = byKey.get(key);
+    if (row) {
+      if (tier && !row.rendezvousTiers!.includes(tier)) row.rendezvousTiers!.push(tier);
+      row.rendezvousTiers!.sort((a, b) => VENUE_TIERS.indexOf(a) - VENUE_TIERS.indexOf(b));
+      continue;
+    }
+    const merged = { ...s, rendezvousTiers: tier ? [tier] : [] };
+    byKey.set(key, merged);
+    out.push(merged);
+  }
+  return out;
+}
