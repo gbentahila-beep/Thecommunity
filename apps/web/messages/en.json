@@ -98,12 +98,12 @@
     "universe": {
       "eat": {
         "tagline": "One table, new faces, a great spot",
-        "text": "Coffee, brunch, lunch or dinner: join a table of four to six people who also want to meet someone new. We put the table together and pick the place: come alone or as two.",
+        "text": "Coffee, brunch or dinner: join a table of four to six people who also want to meet new people. We put the table together and choose the place: come alone or with a friend.",
         "group": "Tables put together",
         "factLabel": "Formats",
-        "factValue": "Coffee, brunch, lunch, dinner",
+        "factValue": "Coffee, brunch, dinner",
         "cta": "See tables",
-        "formats": "Coffee · Brunch · Lunch · Dinner"
+        "formats": "Coffee · Brunch · Dinner"
       },
       "move": {
         "tagline": "Get moving with people at your level",
@@ -112,7 +112,7 @@
         "factLabel": "Level",
         "factValue": "Matched to yours",
         "cta": "See sport & wellbeing",
-        "formats": "Padel · Yoga · Running"
+        "formats": "Running · Padel · Yoga"
       },
       "create": {
         "tagline": "Learn and create, together",
@@ -121,7 +121,7 @@
         "factLabel": "Level",
         "factValue": "Beginners welcome",
         "cta": "See discoveries",
-        "formats": "Ceramics · Guided tours"
+        "formats": "Ceramics"
       },
       "discover": {
         "tagline": "Go out and meet people",
@@ -130,7 +130,7 @@
         "factLabel": "Format",
         "factValue": "Solo or as two",
         "cta": "See outings",
-        "formats": "Escape game · Quiz · Games · Afterwork · Languages"
+        "formats": "Escape game · Afterwork"
       }
     },
     "thisWeekAt": "This week in",
@@ -143,7 +143,7 @@
     "appCta": "Sign up now",
     "appScreenHome": "App home screen: your next experience and outings to book",
     "appScreenBooking": "“On the day” screen: countdown, “I'm here”, directions",
-    "appScreenDiscover": "Discover screen: this week's calendar of outings",
+    "appScreenDiscover": "Discover screen: this week's meet-ups (Wednesday dinner, Saturday activity and coffee, Sunday brunch)",
     "typewriterLabel": "With Wenzy, you can:",
     "typewriter": [
       "Make friends in your city",

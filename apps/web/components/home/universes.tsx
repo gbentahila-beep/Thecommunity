@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { MediaImage } from "@/components/media";
 import { Link } from "@/i18n/navigation";
-import { getNextSessionPerExperience } from "@/lib/data";
+import { getAllCategories, getNextSessionPerExperience } from "@/lib/data";
 import { tr } from "@/lib/i18n-text";
 import { DEFAULT_CITY } from "@/lib/site";
 
@@ -35,7 +35,14 @@ export async function Universes({ categories, title }: { categories: Category[];
 
 /** Étape Y : la grille des 4 univers, la même sur l'accueil, « Comment ça marche » et l'espace membre. */
 export async function UniverseGrid({ categories, cityId = DEFAULT_CITY, className = "" }: { categories: Category[]; cityId?: string; className?: string }) {
-  const [t, locale, week] = await Promise.all([getTranslations("home"), getLocale(), getNextSessionPerExperience({ cityId, when: "week" })]);
+  const [t, locale, week, upcoming, all] = await Promise.all([getTranslations("home"), getLocale(), getNextSessionPerExperience({ cityId, when: "week" }), getNextSessionPerExperience({ cityId }), getAllCategories()]);
+  // 24/11 : les formats affichés sont ceux qui ont vraiment des dates à venir (plus de liste figée) ; à défaut, le texte de l'univers.
+  const subName = new Map(all.map((c) => [c.id, tr(c.shortName, locale)]));
+  const order = new Map(all.map((c, i) => [c.id, i]));
+  const formatsOf = (catId: string) => {
+    const ids = [...new Set(upcoming.filter((s) => s.experience.categoryId === catId && s.experience.subcategoryId).map((s) => s.experience.subcategoryId!))];
+    return ids.sort((a, b) => (order.get(a) ?? 99) - (order.get(b) ?? 99)).map((id) => subName.get(id)).filter(Boolean).join(" · ");
+  };
   return (
     <ul className={`mx-auto grid max-w-5xl grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 ${className}`} data-testid="universes-grid">
         {categories.map((c) => {
@@ -51,7 +58,7 @@ export async function UniverseGrid({ categories, cityId = DEFAULT_CITY, classNam
                 </span>
                 <span className="flex flex-1 flex-col p-3 sm:p-4">
                   <span className="font-semibold text-ink">{name}</span>
-                  <span className="mt-0.5 line-clamp-2 text-xs text-muted sm:text-sm">{rich ? t(`universe.${rich}.formats`) : tr(c.description, locale)}</span>
+                  <span className="mt-0.5 line-clamp-2 text-xs text-muted sm:text-sm">{formatsOf(c.id) || (rich ? t(`universe.${rich}.formats`) : tr(c.description, locale))}</span>
                   <span className="mt-auto flex items-center gap-0.5 pt-2 text-sm font-semibold text-brand-700">
                     {count > 0 ? t("tileThisWeek", { count }) : t("tileSeeDates")}
                     <ChevronRight className="size-4 rtl:-scale-x-100" aria-hidden />

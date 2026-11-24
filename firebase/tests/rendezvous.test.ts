@@ -83,14 +83,12 @@ describe("rendez-vous de la semaine (lot A)", () => {
     const { reservationId } = await u.call("createReservation", { sessionId: next.id, seats: 1, tierFallback: false });
     expect((await db().doc(`reservations/${reservationId}`).get()).data()).toMatchObject({ rendezvousId: out.id, tier: "premium", tierFallback: false });
 
-    // Fermeture la veille à 20h30 : une date dont la veille 20h30 est passée n'est plus réservable.
-    const tomorrow = db().collection("sessions").doc();
+    // Une date hors du jour et de l'heure du rendez-vous (gardée pour ses inscrits) n'est pas ouverte aux nouvelles réservations.
+    const offDate = db().collection("sessions").doc();
     const start = new Date(Date.now() + 20 * 3_600_000);
-    await tomorrow.set({ ...next.data(), startAt: Timestamp.fromDate(start), endAt: Timestamp.fromDate(new Date(start.getTime() + 2 * 3_600_000)), seatsConfirmed: 0, seatsHeld: 0 });
-    const eve = zonedParts(new Date(start.getTime() - 86_400_000), MOROCCO_TIMEZONE);
-    const closed = zonedParts(new Date(), MOROCCO_TIMEZONE).hour * 60 + zonedParts(new Date(), MOROCCO_TIMEZONE).minute >= 20 * 60 + 30 || eve.day !== zonedParts(new Date(), MOROCCO_TIMEZONE).day;
+    await offDate.set({ ...next.data(), startAt: Timestamp.fromDate(start), endAt: Timestamp.fromDate(new Date(start.getTime() + 2 * 3_600_000)), seatsConfirmed: 0, seatsHeld: 0 });
     const v = await member();
-    expect(await refusal(v.call("createReservation", { sessionId: tomorrow.id, seats: 1 }))).toBe(closed ? "failed-precondition:closed" : "ok");
+    expect(await refusal(v.call("createReservation", { sessionId: offDate.id, seats: 1 }))).toMatch(/failed-precondition:(not_yet_open|closed)/);
   });
 
   it("fenêtre : une seule date ouverte, la suivante avec le Pass, jamais la troisième ; liste d'attente idem", async () => {
