@@ -284,6 +284,15 @@ async function main() {
     await db.doc("settings/showcase").set({ rotationD: Timestamp.now() }, { merge: true });
     if (rot) console.log(`✅ Activité du samedi : ${rot.created ? "créée" : "déjà là"} (${rot.cycle.length} activité(s) en rotation).`);
   }
+  // 24/11 : une fois, le site d'essai ne garde que le programme actuel. Les événements archivés ou retirés du
+  // programme sont supprimés définitivement, réservations comprises (comptes fictifs).
+  if (!(await db.doc("settings/showcase").get()).get("purgeArchivedAt")) {
+    const { purgeRetiredExperiences } = await import("../functions/src/experiences/purge");
+    const p = await purgeRetiredExperiences();
+    await db.doc("settings/showcase").set({ purgeArchivedAt: Timestamp.now() }, { merge: true });
+    console.log(`✅ Site d'essai nettoyé : ${p.experiences} événement(s) archivé(s) supprimé(s), ${p.sessions} date(s), ${p.reservations} réservation(s), ${p.payments} paiement(s), ${p.invoices} facture(s), ${p.reviews} avis.`);
+  }
+
   // Étape R : une fois, les événements créés depuis les modèles (et jamais modifiés par l'équipe) reprennent les textes
   // allégés des modèles : description et « Inclus » sans répéter ce que dit l'encadré de la fiche.
   const textsRef = db.doc("settings/showcase");
