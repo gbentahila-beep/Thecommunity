@@ -2693,9 +2693,8 @@ describe("attribution des lieux et parcours des Tables (Étape H)", () => {
     expect(optionTables).toBe(opt.needed);
     const adm = await member({ role: "admin" });
     for (const r of await requestsOf(sid)) await adm.call("adminRequestAction", { requestId: r.id, action: "confirm_phone" });
-    // Tous les lieux confirmés : les tables sont composées tout de suite (modifiables avant le dévoilement).
-    expect((await session(sid)).groupsStatus).toBe("proposed");
-    expect((await db().collection("groups").where("sessionId", "==", sid).get()).size).toBeGreaterThan(0);
+    // Lieux confirmés, réservations encore ouvertes : pas encore de tables (la liste n'est pas définitive).
+    expect((await session(sid)).groupsStatus ?? "none").toBe("none");
     // 20h30 : 6 inscrits → moins de tables ; la table en trop est libérée et le lieu prévenu.
     await runSessionAutomation(sid, t.closesAt.getTime() + 60_000);
     const fin = (await session(sid)).allocation;
@@ -2705,6 +2704,9 @@ describe("attribution des lieux et parcours des Tables (Étape H)", () => {
     expect(active.reduce((n, r) => n + Number(r.tables), 0)).toBe(fin.needed);
     expect(active.reduce((n, r) => n + Number(r.people), 0)).toBe(6);
     expect((await db().collection("mail").where("refs.sessionId", "==", sid).where("kind", "==", "venue_final").get()).size).toBeGreaterThan(0);
+    // Fermeture : liste définitive → tables composées tout de suite, modifiables jusqu'au dévoilement.
+    expect((await session(sid)).groupsStatus).toBe("proposed");
+    expect((await db().collection("groups").where("sessionId", "==", sid).get()).size).toBe(fin.needed);
     // Une seule fois.
     await runSessionAutomation(sid, t.closesAt.getTime() + 2 * 60_000);
     expect((await session(sid)).allocation.needed).toBe(fin.needed);

@@ -57,7 +57,7 @@ export function sessionTodos(d: AdminData, s: S): SessionTodo[] {
       g === "revealed" ? { tone: "green", text: "Tables dévoilées", anchor: "tables" }
       : g === "validated" ? (now < revealAt ? { tone: "gray", text: "Tables retouchées, dévoilées automatiquement", anchor: "tables" } : { tone: "amber", text: "Tables à dévoiler", anchor: "tables" })
       : g === "proposed" ? (now < revealAt ? { tone: "gray", text: "Tables composées, modifiables jusqu'au dévoilement", anchor: "tables" } : { tone: "amber", text: "Tables à dévoiler", anchor: "tables" })
-      : now < revealAt ? { tone: "gray", text: "Tables composées dès que les lieux sont confirmés", anchor: "tables" }
+      : now < revealAt ? { tone: "gray", text: "Tables composées à la fermeture (20h30)", anchor: "tables" }
       : { tone: "amber", text: "Tables pas encore dévoilées", anchor: "tables" },
     );
   }

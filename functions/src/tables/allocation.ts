@@ -331,10 +331,10 @@ export async function checkAllocation(sessionId: string): Promise<boolean> {
   if (s.groupsStatus === "revealed") {
     const { refreshRevealed } = await import("../experiences/venues");
     await refreshRevealed(sessionId, s.experienceId, e);
-  } else if (e.groupConfig && (!s.groupsStatus || s.groupsStatus === "none" || s.groupsStatus === "proposed")) {
-    // 25/11 : tous les lieux confirmés → les tables sont composées tout de suite (une table par table réservée), pour que
-    // l'équipe puisse les voir et les retoucher avant le dévoilement. Recomposées si les lieux changent, tant que
-    // l'équipe ne les a pas modifiées (une composition enregistrée à la main n'est plus jamais refaite).
+  } else if (e.groupConfig && (s.allocation.finalAt || s.allocation.phase === "final") && (!s.groupsStatus || s.groupsStatus === "none" || s.groupsStatus === "proposed")) {
+    // 25/11 : réservations fermées (20h30, liste définitive) et tous les lieux confirmés → les tables sont composées
+    // tout de suite (une table par table réservée) : l'équipe peut les retoucher jusqu'au dévoilement (21h30).
+    // Recomposées si les lieux changent, tant que l'équipe ne les a pas enregistrées à la main.
     const { proposeGroupsCore } = await import("../groups/groups");
     const count = venues.every((v) => Number(v.tables ?? 0) > 0) ? venues.reduce((n, v) => n + Number(v.tables ?? 0), 0) : undefined;
     await proposeGroupsCore(sessionId, "system", count).catch((err) => logger.warn("Composition des tables", { sessionId, error: String(err) }));

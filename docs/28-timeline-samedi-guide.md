@@ -12,8 +12,7 @@ La même pour tous les rendez-vous, et pour toutes les Tables (rendez-vous ou no
 | Veille 15h | Demande d'**option** aux restaurants, entre les deux services : inscrits du moment + **une table de marge** (au plus les places de la date) | Restaurants |
 | +1 h / +2 h | Relance, puis autre restaurant si pas de réponse (réglages d'attribution inchangés) | Restaurants |
 | Veille 18h30 | Alerte « Lieux à appeler » s'il manque des confirmations (une fois par date) | Équipe |
-| Veille 20h30 | **Fermeture** des réservations ; gamme voisine ; minimum ; **nombre final** envoyé aux lieux dont la demande change (tables en trop libérées : demandes en attente d'abord, puis les dernières confirmées ; tables manquantes demandées aussitôt) | Membres, restaurants |
-| Dès que tous les lieux ont confirmé | **Tables composées** (modifiables par l'équipe ; recomposées tant qu'elles ne sont pas retouchées) | Équipe |
+| Veille 20h30 | **Fermeture** des réservations ; **tables composées** avec la liste définitive (retouchables par l'équipe jusqu'à 21h30) ; gamme voisine ; minimum ; **nombre final** envoyé aux lieux dont la demande change (tables en trop libérées : demandes en attente d'abord, puis les dernières confirmées ; tables manquantes demandées aussitôt) | Membres, restaurants |
 | Veille 21h30 | **Lieu et tables dévoilés** (notification, e-mail, aperçu de la table) | Membres |
 | Jour J 11h (veille 21h30 si début avant 14h) | **Récapitulatif** à chaque lieu : tables, prénoms, régimes et allergies partagés | Restaurants |
 | 1 h avant | Tables remises d'accord ; **mise à jour** au lieu seulement si le récapitulatif a changé | Restaurants |
