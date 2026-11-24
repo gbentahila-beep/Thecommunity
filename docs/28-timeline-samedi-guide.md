@@ -54,3 +54,11 @@ réservations comprises. Le Programme du back-office n'affiche plus les dates an
 
 `/admin/guide` (menu « Guide ») : le principe, la semaine type, et « comment faire » pas à pas (places, nouvelle
 activité, samedi d'un partenaire, ordre de la rotation, événement, Girls only, organisateurs, alertes).
+
+## 6. Site d'essai : foule de démonstration (25/11)
+
+Une fois (`settings/showcase.demoCrowdV1At`, contenu de départ avec `--with-demo-experiences` seulement) : 300 comptes
+fictifs `participantN@demo.wenzy.test` (mot de passe `Demo2026!`, profils complets) réservent les dates des 7 prochains
+jours par le vrai circuit (réservation, paiement de test, facture) : 60 à 100 % des places, un tiers des dates
+complètes. Aucun e-mail ne part vers une adresse fictive (`.test`, `example.com`), même avec Brevo (`isFakeAddress`).
+Les créneaux des lieux d'essai sont alignés sur le brunch de 12h30 (`venueSlotsV2At`).

@@ -2,7 +2,8 @@
  * Contenu de départ d'un projet Firebase RÉEL (essai) : référentiels (villes, univers, paramètres)
  * et, en option, les expériences de démonstration (isDemo: true) pour que le site ne soit pas vide.
  * Lancé à chaque déploiement : ne réécrit JAMAIS ce que l'équipe a modifié dans le back-office.
- * N'écrit JAMAIS de comptes, réservations ou paiements fictifs.
+ * Avec --with-demo-experiences SEULEMENT (site d'essai) : une foule de comptes fictifs (adresses en .test) et
+ * leurs réservations payées en mode test, pour voir le site rempli. Jamais sans cette option.
  *
  * Usage : npx tsx scripts/seed-content.ts --project <id> [--with-demo-experiences] [--test-payments]
  * --test-payments : active l'adaptateur de paiement de TEST (settings/payment), seulement s'il n'existe
@@ -27,7 +28,9 @@ if (!project) {
   process.exit(1);
 }
 const emulator = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
-initializeApp(emulator ? { projectId: project } : { projectId: project, credential: applicationDefault() });
+// Stockage (factures de la foule de démonstration) : le seau par défaut du projet.
+const storageBucket = process.env.STORAGE_BUCKET ?? (emulator ? `${project}.appspot.com` : `${project}.firebasestorage.app`);
+initializeApp(emulator ? { projectId: project, storageBucket } : { projectId: project, credential: applicationDefault(), storageBucket });
 const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
 const ts = (iso: string) => Timestamp.fromDate(new Date(iso));
@@ -397,6 +400,29 @@ async function main() {
     }
     await textsRef.set({ extraI18nAD: Timestamp.now() }, { merge: true });
     console.log(`✅ Arabe et anglais des textes secondaires : ${done} événements, ${venuesDone} lieux.`);
+  }
+  // 25/11 : une fois, les créneaux des lieux du site d'essai suivent les horaires des rendez-vous (brunch à 12h30) ;
+  // seulement les fiches que l'équipe n'a pas modifiées.
+  if (!(await db.doc("settings/showcase").get()).get("venueSlotsV2At")) {
+    let n = 0;
+    for (const p of CASABLANCA_VENUES) {
+      const ref = db.doc(`partners/${p.id}`);
+      const snap = await ref.get();
+      if (snap.exists && snap.get("isDemo") && !snap.get("updatedBy")) {
+        await ref.update({ slots: p.slots });
+        n++;
+      }
+    }
+    await db.doc("settings/showcase").set({ venueSlotsV2At: Timestamp.now() }, { merge: true });
+    console.log(`✅ Créneaux des lieux d'essai alignés sur les rendez-vous : ${n} lieu(x).`);
+  }
+  // 25/11 : une fois, 300 participants fictifs (adresses en .test, jamais d'e-mail) remplissent les dates des
+  // 7 prochains jours par le vrai circuit (réservation, paiement de test, facture), pour voir le site rempli.
+  if (!(await db.doc("settings/showcase").get()).get("demoCrowdV1At")) {
+    const { fillWeekWithDemoCrowd } = await import("../functions/src/experiences/demo-crowd");
+    const crowd = await fillWeekWithDemoCrowd({ people: 300, days: 7 });
+    await db.doc("settings/showcase").set({ demoCrowdV1At: Timestamp.now() }, { merge: true });
+    console.log(`✅ Foule de démonstration : ${crowd.users} comptes, ${crowd.reservations} réservation(s) sur ${crowd.sessions} date(s) ; refus : ${JSON.stringify(crowd.refused)}.`);
   }
   console.log(toAdd.length ? `✅ Démonstration : ${toAdd.length} expériences ajoutées (${toAdd.map((e) => e.id).join(", ")}), ${dates} dates (isDemo).` : "ℹ️  Démonstration : rien à ajouter.");
 }

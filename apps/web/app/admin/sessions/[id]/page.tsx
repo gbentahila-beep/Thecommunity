@@ -208,15 +208,17 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
         </Card>
       )}
       <Card title={`Participants (${rows.length} réservations)`} className="mt-6 scroll-mt-16" id="participants">
-        <Table head={["Participant", "Contact", "Âge", "Langues", "Accueil", "Places", twoPart ? "En ligne" : "Montant", ...(twoPart ? ["Sur place"] : []), "Statut", ...(d.isDemo ? [] : ["Actions"])]} caption="Participants">
+        {/* Refonte UX du 25/11 : une colonne par sujet (personne, profil, accueil, paiement), lisible même à 40 inscrits. */}
+        <Table head={["Participant", "Âge · langues", "Accueil", twoPart ? "Paiement" : "Montant", "Statut", ...(d.isDemo ? [] : ["Actions"])]} caption="Participants">
           {rows.map(({ r, u }) => (
             <tr key={r.id}>
-              <td className="font-medium text-ink">
-                <Link href={`/admin/utilisateurs?q=${encodeURIComponent(u.email)}`} className="hover:text-brand-900">{u.firstName} {u.lastName}</Link>
+              <td className="min-w-52">
+                <Link href={`/admin/utilisateurs?q=${encodeURIComponent(u.email)}`} className="font-medium text-ink hover:text-brand-900">{u.firstName} {u.lastName}</Link>
+                {r.seats > 1 && <span className="ms-1.5 rounded-full bg-brand-100 px-1.5 py-0.5 text-xs font-semibold text-brand-900">+{r.seats - 1}</span>}
+                <span className="block truncate text-xs text-muted">{u.email}</span>
+                {u.phone && <span className="block text-xs tabular-nums text-muted">{u.phone}</span>}
               </td>
-              <td className="text-muted"><span className="block">{u.email}</span><span className="block tabular-nums">{u.phone}</span></td>
-              <td className="tabular-nums">{ageBand(ageOn(u.birthDate))}</td>
-              <td>{u.languages.map((l) => LANGUAGE_LABELS[l]).join(" · ")}</td>
+              <td className="text-sm"><span className="tabular-nums">{ageBand(ageOn(u.birthDate))} ans</span><span className="block text-xs text-muted">{u.languages.map((l) => LANGUAGE_LABELS[l]).join(" · ")}</span></td>
               <td className="min-w-36 text-sm">
                 {r.preferences && (r.preferences.diet !== "none" || r.preferences.allergies) ? (
                   <>
@@ -228,20 +230,14 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
                 )}
                 {r.preferences?.languages?.length ? <span className="block text-xs text-muted">Table : {r.preferences.languages.map((l) => LANGUAGE_LABELS[l]).join(" · ")}</span> : null}
               </td>
-              <td className="tabular-nums">{r.seats}{r.promoCode && <span className="block font-mono text-xs text-muted">{r.promoCode}</span>}</td>
-              <td className="tabular-nums">{dh(r.total)}</td>
-              {twoPart && (
-                <td className="tabular-nums">
-                  {r.onSite ? (
-                    <>
-                      {r.onSite.amount != null ? dh(r.onSite.amount) : "Conso."}
-                      <span className={`block text-xs ${r.onSite.status === "paid_on_site" ? "text-emerald-800" : "text-muted"}`}>{r.onSite.status === "paid_on_site" ? "Réglée" : "À régler"}</span>
-                    </>
-                  ) : (
-                    <span className="text-muted">—</span>
-                  )}
-                </td>
-              )}
+              <td className="whitespace-nowrap text-sm tabular-nums">
+                <span className="block">{dh(r.total)} en ligne{r.promoCode && <span className="ms-1 font-mono text-xs text-muted">{r.promoCode}</span>}</span>
+                {twoPart && r.onSite && (
+                  <span className={`block text-xs ${r.onSite.status === "paid_on_site" ? "text-emerald-800" : "text-muted"}`}>
+                    Sur place : {r.onSite.amount != null ? dh(r.onSite.amount) : "conso."} · {r.onSite.status === "paid_on_site" ? "réglée" : "à régler"}
+                  </span>
+                )}
+              </td>
               <td><Badge tone={RESERVATION_STATUS[r.status][1]}>{RESERVATION_STATUS[r.status][0]}</Badge></td>
               {!d.isDemo && (
                 <td className="min-w-48">

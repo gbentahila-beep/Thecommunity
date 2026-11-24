@@ -57,6 +57,12 @@ async function sendWithBrevo(msg: MailMessage, from: { fromEmail: string; fromNa
   return { ok: true, id: body.messageId };
 }
 
+/** Domaines réservés aux tests (RFC 2606) : .test, example.com/.org/.net. */
+export function isFakeAddress(to: string): boolean {
+  const domain = to.trim().toLowerCase().split("@")[1] ?? "";
+  return domain.endsWith(".test") || domain.endsWith(".example") || /^example\.(com|org|net)$/.test(domain) || domain.endsWith(".invalid");
+}
+
 /**
  * Envoie (ou range dans la boîte d'envoi de test) un e-mail, et en garde toujours une trace dans `mail`
  * — lisible par l'équipe seulement. Ne lève jamais : un e-mail raté ne doit pas casser un paiement.
@@ -66,7 +72,8 @@ export async function sendMail(msg: MailMessage): Promise<{ id: string; status: 
   try {
     const settings = await emailSettings();
     const base = { ...msg, attachments: msg.attachments ?? [], refs: msg.refs ?? {}, provider: settings.provider, from: `${settings.fromName} <${settings.fromEmail}>`, createdAt: FieldValue.serverTimestamp() };
-    if (settings.provider === "outbox") {
+    // Adresses fictives (comptes de démonstration du site d'essai, domaines réservés) : jamais envoyées.
+    if (settings.provider === "outbox" || isFakeAddress(msg.to)) {
       await ref.set({ ...base, status: "outbox" });
       return { id: ref.id, status: "outbox" };
     }
