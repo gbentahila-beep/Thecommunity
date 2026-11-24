@@ -62,7 +62,7 @@ export async function purgeRetiredExperiences(): Promise<PurgeResult> {
  * avec leurs réservations, paiements, factures, tables, demandes aux lieux et avis.
  */
 export async function purgeStaleSessions(now = new Date()): Promise<{ sessions: number; reservations: number; payments: number; invoices: number; other: number }> {
-  const { localDayKey, onRendezvousSlot, rotationDays, rotationPlan } = await import("@thecommunity/shared");
+  const { localDayKey, onRendezvousSlot, rotationDays, rotationPlan, tierRunsOn } = await import("@thecommunity/shared");
   const r = { sessions: 0, reservations: 0, payments: 0, invoices: 0, other: 0 };
   const stale = new Set((await db.collection("sessions").where("status", "==", "cancelled").get()).docs.map((d) => d.id));
   // Activité du samedi : seules les dates du planning restent.
@@ -80,11 +80,17 @@ export async function purgeStaleSessions(now = new Date()): Promise<{ sessions: 
       }
     }
   }
-  // Gammes des rendez-vous : une date hors du jour et de l'heure du rendez-vous disparaît.
-  const tiered = (await db.collection("experiences").where("closeRule", "==", "eve").get()).docs.filter((e) => e.get("rendezvousId") && e.get("rendezvousKind") !== "rotation" && e.get("rendezvousSlot"));
+  // Gammes des rendez-vous : une date hors du jour et de l'heure du rendez-vous, ou hors de la fréquence de sa gamme
+  // (Exclusive : le premier mercredi du mois seulement), disparaît.
+  const freq = new Map<string, string>();
+  for (const rv of (await db.collection("rendezvous").get()).docs) for (const t of (rv.get("tiers") ?? []) as { experienceId: string; frequency: string }[]) freq.set(t.experienceId, t.frequency);
+  const tiered = (await db.collection("experiences").where("closeRule", "==", "eve").get()).docs.filter((e) => e.get("rendezvousId") && e.get("rendezvousKind") !== "rotation");
   for (const e of tiered) {
     const future = await db.collection("sessions").where("experienceId", "==", e.id).where("startAt", ">", now).get();
-    for (const s of future.docs) if (!onRendezvousSlot(s.get("startAt").toDate(), e.data())) stale.add(s.id);
+    for (const s of future.docs) {
+      const at = s.get("startAt").toDate();
+      if (!onRendezvousSlot(at, e.data()) || !tierRunsOn((freq.get(e.id) ?? "weekly") as "weekly" | "first_of_month", at)) stale.add(s.id);
+    }
   }
   const sessionIds = [...stale];
   if (!sessionIds.length) return r;

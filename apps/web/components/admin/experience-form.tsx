@@ -345,20 +345,26 @@ export function ExperienceForm({
       );
     });
 
+  const NAV = [["informations", "Informations"], ["lieu", "Lieu"], ["format", "Format"], ["activite", isTables ? "Questionnaire" : "Activité"], ["tarification", "Prix"], ["dates", "Dates"], ["photos", "Photos"]] as const;
   return (
     <form onSubmit={submit} noValidate className="space-y-5">
+      {/* Refonte UX du 25/11 : aller directement à une partie du formulaire. */}
+      <nav aria-label="Parties du formulaire" className="sticky top-0 z-10 -mx-1 flex gap-1.5 overflow-x-auto bg-cream/95 px-1 py-2 backdrop-blur" data-testid="form-sections">
+        {NAV.map(([id, label], i) => <a key={id} href={`#${id}`} className="whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-sm font-medium text-ink/80 shadow-card hover:text-ink">{i + 1}. {label}</a>)}
+      </nav>
       {errorCount > 0 && (
         <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">
           {errorCount} champ{errorCount > 1 ? "s" : ""} à corriger.
         </p>
       )}
 
-      <Section title="1. Informations">
+      <Section id="informations" title="1. Informations">
         <div className="sm:col-span-2"><Label k="titleFr">Titre (français)</Label><input {...field("titleFr")} value={v.titleFr} onChange={(e) => set("titleFr", e.target.value)} />{err("titleFr")}</div>
         <div className="sm:col-span-2"><Label k="summaryFr" hint="Une phrase, affichée sur les cartes.">Accroche</Label><input {...field("summaryFr")} value={v.summaryFr} onChange={(e) => set("summaryFr", e.target.value)} />{err("summaryFr")}</div>
         <div className="sm:col-span-2"><Label k="descriptionFr">Description</Label><textarea {...field("descriptionFr")} rows={5} value={v.descriptionFr} onChange={(e) => set("descriptionFr", e.target.value)} />{err("descriptionFr")}</div>
-        <details className="sm:col-span-2 rounded-xl border border-line p-4" open>
-          <summary className="cursor-pointer text-sm font-semibold text-ink">Version arabe (recommandé)</summary>
+        {/* Refonte UX du 25/11 : traductions repliées (ouvertes seulement s'il faut corriger un champ). */}
+        <details className="sm:col-span-2 rounded-xl border border-line p-4" open={Object.keys(errors).some((k) => k.endsWith("Ar"))}>
+          <summary className="cursor-pointer text-sm font-semibold text-ink">Version arabe (recommandé){v.titleAr ? " · remplie" : " · à faire"}</summary>
           <p className="mt-1 text-xs text-muted">Affichée sur la version arabe du site. Champ laissé vide : le texte français s&apos;affiche à sa place.</p>
           <div className="mt-4 grid gap-4">
             <div><Label k="titleAr">Titre (arabe)</Label><input {...field("titleAr")} dir="rtl" lang="ar" value={v.titleAr ?? ""} onChange={(e) => set("titleAr", e.target.value)} />{err("titleAr")}</div>
@@ -367,7 +373,7 @@ export function ExperienceForm({
             {extraFields("ar")}
           </div>
         </details>
-        <details className="sm:col-span-2 rounded-xl border border-line p-4" open={Boolean(v.titleEn || v.summaryEn || v.descriptionEn)}>
+        <details className="sm:col-span-2 rounded-xl border border-line p-4" open={Object.keys(errors).some((k) => k.endsWith("En"))}>
           <summary className="cursor-pointer text-sm font-semibold text-ink">Version anglaise (facultatif)</summary>
           <p className="mt-1 text-xs text-muted">Sinon le texte français s&apos;affiche sur la version anglaise du site.</p>
           <div className="mt-4 grid gap-4">
@@ -402,7 +408,7 @@ export function ExperienceForm({
           {proSelf && <p className="mt-1 text-xs text-muted">L&apos;équipe Wenzy valide chaque activité, chaque modification et chaque nouvelle date avant leur mise en ligne. Pendant la relecture, la version en ligne reste inchangée.</p>}</div>
       </Section>
 
-      <Section title="2. Lieu">
+      <Section id="lieu" title="2. Lieu">
         <div className="sm:col-span-2"><Label k="revealPolicy" hint={secret ? "Nom, adresse et cuisine restent cachés jusqu'à la veille 21h30. Les lieux sont réservés automatiquement la veille à 15h (ou choisis à la main sur la page de la date)." : "Nom, adresse et carte visibles dès la fiche."}>Lieu</Label>
           <select {...field("revealPolicy")} value={v.revealPolicy} onChange={(e) => set("revealPolicy", e.target.value as "immediate" | "on_group_reveal")}>
             <option value="on_group_reveal">Secret, dévoilé la veille à 21h30</option>
@@ -429,7 +435,7 @@ export function ExperienceForm({
         </>)}
       </Section>
 
-      <Section title="3. Format et règles">
+      <Section id="format" title="3. Format et règles">
         {isTables ? (
           <p className="text-sm text-muted sm:col-span-2">Tables composées par Wenzy, heure de début seulement (chacun reste aussi longtemps qu&apos;il le souhaite).</p>
         ) : (
@@ -684,7 +690,7 @@ export function ExperienceForm({
       </Section>
       )}
 
-      <fieldset className="rounded-2xl bg-white p-4 shadow-card sm:p-5">
+      <fieldset id="photos" className="scroll-mt-24 rounded-2xl bg-white p-4 shadow-card sm:p-5">
         <legend className="float-left mb-3 w-full text-base font-semibold text-ink">7. Photos</legend>
         <div className="clear-both">
           {existingImages.length === 0 && images.length === 0 && template && (
@@ -734,7 +740,7 @@ export function ExperienceForm({
         </div>
       </fieldset>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="sticky bottom-0 z-10 -mx-1 flex flex-wrap items-center gap-3 rounded-2xl bg-cream/95 px-1 py-3 backdrop-blur" data-testid="save-bar">
         <button type="submit" disabled={saving} className="rounded-full bg-brand-900 px-6 py-3 font-semibold text-white hover:bg-brand-800 disabled:opacity-60">
           {live ? (saving ? "Enregistrement…" : "Enregistrer") : "Vérifier le formulaire"}
         </button>

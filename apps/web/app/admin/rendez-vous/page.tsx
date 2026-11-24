@@ -1,7 +1,8 @@
+import { CalendarPlus, Repeat, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { localDayKey, mergeTemplates, rotationDays, rotationDeadline, rotationPlan, rotationWindows, type RotationEntry, type RotationOverride } from "@thecommunity/shared";
 import { connection } from "next/server";
-import { RendezvousForm, WEEKDAYS, type RendezvousFormValues } from "@/components/admin/rendezvous-form";
+import { RendezvousForm, type RendezvousFormValues } from "@/components/admin/rendezvous-form";
 import { RendezvousLaunch } from "@/components/admin/rendezvous-launch";
 import { OrganizerRequestActions } from "@/components/admin/organizer-actions";
 import { RotationForm, RotationWeek, type ActivityOption, type RotationFormValues, type WeekRow } from "@/components/admin/rotation-form";
@@ -16,7 +17,17 @@ export const metadata = { title: "Rendez-vous" };
 type Rotation = { kind?: "rotation"; anchor?: string; cycle?: RotationEntry[]; overrides?: Record<string, RotationOverride>; weeksAhead?: number };
 type Rv = Rotation & { id: string; title: { fr: string; ar?: string; en?: string }; cityId: string; weekday: number; time: string; capacity: number; status: "active" | "paused"; baseExperienceId: string; tiers: { tier: "casual" | "premium" | "exclusive"; experienceId: string; frequency: "weekly" | "first_of_month" }[] };
 
-/** docs/25 — les rendez-vous de la semaine : un jour fixe, une expérience par gamme, des dates créées toutes seules. */
+const TIER = { casual: "Casual", premium: "Premium", exclusive: "Exclusive" } as const;
+// (Constante locale : une constante importée d'un composant client n'est pas lisible côté serveur.)
+const DAYS = ["dimanches", "lundis", "mardis", "mercredis", "jeudis", "vendredis", "samedis"];
+const fmt = (x: Date) => new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "Africa/Casablanca" }).format(x).replace(":", "h");
+const fmtDay = (x: Date | string) => new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short", timeZone: "Africa/Casablanca" }).format(new Date(x));
+
+/**
+ * Refonte UX du 25/11 : tout ce qui revient chaque semaine, sur une page. En haut, une carte par rendez-vous (quand,
+ * gammes, places, prochaine date et son remplissage) ; puis le planning des samedis, lisible d'un coup d'œil (état de
+ * chaque samedi : ouvert, Pass, s'ouvre le…). Les réglages rares (nouveau rendez-vous, lancement) sont en bas.
+ */
 export default async function RendezvousAdminPage() {
   await connection();
   const d = await getAdminData();
@@ -31,12 +42,11 @@ export default async function RendezvousAdminPage() {
     launchedAt = at ? new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeStyle: "short", timeZone: "Africa/Casablanca" }).format(at.toDate()) : null;
   }
   const canLaunch = FIREBASE_ENABLED && !d.isDemo && d.admin?.role === "superadmin";
-  // Lot D : l'activité du samedi (rotation) — activités possibles, programme des 8 prochains samedis.
   const rotations = list.filter((r) => r.kind === "rotation");
   const tiersList = list.filter((r) => r.kind !== "rotation");
   const tpl = new Map(mergeTemplates([]).map((t) => [t.id, t]));
+  // Seul l'univers Activités alimente l'activité du samedi (les Événements ont leurs propres dates).
   const activities: ActivityOption[] = [...d.experiences.values()]
-    // Seul l'univers Activités alimente l'activité du samedi (les Événements ont leurs propres dates).
     .filter((e) => e.status === "published" && e.categoryId === "move" && (!e.rendezvousId || e.rendezvousKind === "rotation"))
     .map((e) => {
       const t = tpl.get(String((e as { templateId?: string }).templateId ?? ""));
@@ -44,21 +54,20 @@ export default async function RendezvousAdminPage() {
     })
     .sort((a, b) => a.label.localeCompare(b.label, "fr"));
   const label = (id: string) => d.experiences.get(id)?.title.fr ?? id;
+  const now = new Date();
   const weeks = new Map<string, WeekRow[]>();
   for (const r of rotations) {
-    const plan = rotationPlan({ weekday: r.weekday, anchor: r.anchor ?? "", cycle: r.cycle ?? [], overrides: r.overrides ?? {} }, rotationDays(r.weekday, new Date(), 8));
-    const sessions = FIREBASE_ENABLED ? (await adminDb().collection("sessions").where("rendezvousId", "==", r.id).where("startAt", ">", new Date()).get()).docs.filter((x) => x.get("status") !== "cancelled") : [];
-    const windows = rotationWindows(plan, new Date());
-    const fmt = (x: Date) => new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "Africa/Casablanca" }).format(x).replace(":", "h");
+    const plan = rotationPlan({ weekday: r.weekday, anchor: r.anchor ?? "", cycle: r.cycle ?? [], overrides: r.overrides ?? {} }, rotationDays(r.weekday, now, 8));
+    const sessions = FIREBASE_ENABLED ? (await adminDb().collection("sessions").where("rendezvousId", "==", r.id).where("startAt", ">", now).get()).docs.filter((x) => x.get("status") !== "cancelled") : [];
+    const windows = rotationWindows(plan, now);
     weeks.set(r.id, plan.map((w) => {
       const win = windows.get(w.date);
       const deadline = rotationDeadline(win);
-      const opens = !w.entry ? "" : !win || win.state === "open" ? "Ouvert aux réservations" : win.state === "pass" ? `Ouvert aux abonnés Pass · à tous le ${fmt(win.opensAt!)}` : `S'ouvre le ${fmt(win.passOpensAt ?? win.opensAt!)} (Pass), le ${fmt(win.opensAt!)} pour tous`;
       const day = sessions.filter((x) => localDayKey(x.get("startAt").toDate()) === w.date);
       const mine = day.find((x) => x.get("experienceId") === w.entry?.experienceId);
       return {
         date: w.date,
-        label: new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${w.date}T12:00:00Z`)),
+        label: new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${w.date}T12:00:00Z`)),
         source: w.source,
         experienceId: w.entry?.experienceId ?? null,
         activity: w.entry ? label(w.entry.experienceId) : "Pas d'activité",
@@ -67,9 +76,11 @@ export default async function RendezvousAdminPage() {
         shift: w.shift,
         note: w.note,
         booked: Number(mine?.get("seatsConfirmed") ?? 0),
+        sessionId: mine?.id ?? null,
         conflicts: day.filter((x) => x.get("experienceId") !== w.entry?.experienceId).map((x) => `${label(String(x.get("experienceId")))} (${x.get("seatsConfirmed") ?? 0} inscrit(s))`),
-        opens,
-        deadline: deadline ? `à choisir avant le ${fmt(deadline)}` : "",
+        state: !w.entry ? "none" : !win || win.state === "open" ? "open" : win.state === "pass" ? "pass" : "later",
+        opens: !w.entry || !win || win.state === "open" ? "" : win.state === "pass" ? `à tous le ${fmt(win.opensAt!)}` : `${fmt(win.passOpensAt ?? win.opensAt!)} (Pass)`,
+        deadline: deadline ? `Modifiable librement jusqu'au ${fmt(deadline)}` : "",
       };
     }));
   }
@@ -80,50 +91,100 @@ export default async function RendezvousAdminPage() {
         .map((x) => ({ id: x.id, cityId: String(x.get("cityId") ?? ""), title: String(x.get("title") ?? ""), organizerName: String(x.get("organizerName") ?? ""), dates: (x.get("dates") ?? []) as string[], note: String(x.get("note") ?? "") }))
     : [];
   const rotationValues = (r: Rv): RotationFormValues => ({ id: r.id, titleFr: r.title.fr, titleAr: r.title.ar ?? "", titleEn: r.title.en ?? "", cityId: r.cityId, anchor: r.anchor ?? "", status: r.status, cycle: (r.cycle ?? []).map((c) => ({ experienceId: c.experienceId, time: c.time, capacity: String(c.capacity) })) });
-  const emptyRotation: RotationFormValues = { titleFr: "L'activité du samedi", titleAr: "نشاط السبت", titleEn: "Saturday Activity", cityId: "casablanca", anchor: rotationDays(6, new Date(), 1)[0]!, status: "active", cycle: [] };
+  const emptyRotation: RotationFormValues = { titleFr: "L'activité du samedi", titleAr: "نشاط السبت", titleEn: "Saturday Activity", cityId: "casablanca", anchor: rotationDays(6, now, 1)[0]!, status: "active", cycle: [] };
   const experiences = [...d.experiences.values()]
     .filter((e) => e.status !== "archived" && !(e as { rendezvousId?: string | null }).rendezvousId)
     .map((e) => ({ id: e.id, label: `${e.title.fr}${e.venueTier ? ` · ${e.venueTier}` : ""}` }))
     .sort((a, b) => a.label.localeCompare(b.label, "fr"));
   const empty: RendezvousFormValues = { titleFr: "", titleAr: "", titleEn: "", cityId: "casablanca", weekday: 3, time: "20:30", capacity: "36", baseExperienceId: "", tiers: { casual: "weekly", premium: "weekly", exclusive: "first_of_month" }, status: "active" };
   const toValues = (r: Rv): RendezvousFormValues => ({ id: r.id, titleFr: r.title.fr, titleAr: r.title.ar ?? "", titleEn: r.title.en ?? "", cityId: r.cityId, weekday: r.weekday, time: r.time, capacity: String(r.capacity), baseExperienceId: r.baseExperienceId, tiers: Object.fromEntries(r.tiers.map((t) => [t.tier, t.frequency])), status: r.status });
+  // Prochaine date de chaque gamme (la plus proche à venir), avec son remplissage.
+  const nextOf = (experienceId: string) => d.sessions.filter((s) => s.experienceId === experienceId && (s.status === "published" || s.status === "full")).sort((a, b) => a.startAt.localeCompare(b.startAt))[0];
+
   return (
     <>
-      <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-brand-900">← Événements</Link></p>
-      <PageHeader title="Rendez-vous de la semaine" subtitle="Un jour fixe, une gamme choisie à la réservation, des dates créées 6 semaines à l'avance." />
-      <Card className="mb-6" title="Calendrier de lancement">
-        <details open={!launchedAt}>
-          <summary className="cursor-pointer text-sm font-semibold text-brand-900">{launchedAt ? "Bascule faite : voir le détail" : "Passer au calendrier de lancement (docs/25)"}</summary>
-          <div className="mt-3"><RendezvousLaunch canRun={canLaunch} reason={d.isDemo || !FIREBASE_ENABLED ? "demo" : canLaunch ? null : "role"} doneAt={launchedAt} /></div>
-        </details>
-      </Card>
-      <Card className="mb-6">
-        <details open={list.length === 0}>
-          <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Nouveau rendez-vous</summary>
-          <div className="mt-4"><RendezvousForm initial={empty} experiences={experiences} live={FIREBASE_ENABLED} /></div>
-        </details>
-      </Card>
+      <PageHeader
+        title="Rendez-vous"
+        subtitle="Ce qui revient chaque semaine. Les dates se créent toutes seules, 6 semaines à l'avance ; une seule date est ouverte à la fois."
+        actions={rotations.length > 0 ? <Link href="#samedis" className="rounded-full bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">Planning des samedis</Link> : undefined}
+      />
+
+      <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4" data-testid="rendezvous-cards">
+        {tiersList.map((r) => {
+          const next = r.tiers.map((t) => ({ t, s: nextOf(t.experienceId) })).filter((x) => x.s).sort((a, b) => a.s!.startAt.localeCompare(b.s!.startAt));
+          const firstDay = next[0]?.s ? localDayKey(new Date(next[0].s.startAt)) : null;
+          const sameDay = next.filter((x) => x.s && localDayKey(new Date(x.s.startAt)) === firstDay);
+          return (
+            <Card key={r.id} className="flex flex-col">
+              <div className="flex items-start justify-between gap-2">
+                <h2 className="text-lg font-semibold leading-tight text-ink">{r.title.fr}</h2>
+                <Badge tone={r.status === "active" ? "green" : "gray"}>{r.status === "active" ? "Actif" : "En pause"}</Badge>
+              </div>
+              <p className="mt-1 text-sm text-muted">Tous les {DAYS[Number(r.weekday)] ?? ""} à {r.time.replace(":", "h")} · {r.capacity} places par gamme</p>
+              <ul className="mt-3 flex flex-wrap gap-1.5">
+                {r.tiers.map((t) => <li key={t.tier}><Badge tone={t.tier === "exclusive" ? "brand" : "gray"}>{TIER[t.tier]}{t.frequency === "first_of_month" ? " · 1er du mois" : ""}</Badge></li>)}
+              </ul>
+              <div className="mt-4 flex-1 rounded-xl bg-cream p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted">Prochaine date{firstDay ? ` · ${fmtDay(sameDay[0]!.s!.startAt)}` : ""}</p>
+                {sameDay.length === 0 ? <p className="mt-1 text-sm text-muted">Aucune date à venir.</p> : (
+                  <ul className="mt-2 space-y-1.5">
+                    {sameDay.map(({ t, s }) => (
+                      <li key={t.tier}>
+                        <Link href={`/admin/sessions/${s!.id}`} className="flex items-center justify-between gap-2 text-sm hover:text-brand-900">
+                          <span className="font-medium">{TIER[t.tier]}</span>
+                          <span className="flex items-center gap-2">
+                            <span className="h-1.5 w-16 overflow-hidden rounded-full bg-white" aria-hidden><span className="block h-full rounded-full bg-brand-700" style={{ width: `${Math.min(100, (s!.seatsConfirmed / Math.max(1, s!.capacity)) * 100)}%` }} /></span>
+                            <span className="tabular-nums text-xs text-muted">{s!.seatsConfirmed}/{s!.capacity}</span>
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <details className="mt-3">
+                <summary className="flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-brand-900"><Settings2 className="size-4" aria-hidden />Réglages (jour, heure, places, gammes)</summary>
+                <div className="mt-3"><RendezvousForm initial={toValues(r)} experiences={[...experiences, { id: r.baseExperienceId, label: d.experiences.get(r.baseExperienceId)?.title.fr ?? r.baseExperienceId }]} live={FIREBASE_ENABLED} /></div>
+              </details>
+            </Card>
+          );
+        })}
+        {rotations.map((r) => {
+          const w = (weeks.get(r.id) ?? []).find((x) => x.experienceId);
+          return (
+            <Card key={r.id} className="flex flex-col">
+              <div className="flex items-start justify-between gap-2">
+                <h2 className="text-lg font-semibold leading-tight text-ink">{r.title.fr}</h2>
+                <Badge tone={r.status === "active" ? "green" : "gray"}>{r.status === "active" ? "Actif" : "En pause"}</Badge>
+              </div>
+              <p className="mt-1 text-sm text-muted">Tous les samedis, une activité différente</p>
+              <p className="mt-3 flex flex-wrap items-center gap-1 text-sm text-ink"><Repeat className="size-4 text-emerald-700" aria-hidden />{(r.cycle ?? []).map((c) => label(c.experienceId)).join(" → ") || "Rotation vide"}</p>
+              <div className="mt-4 flex-1 rounded-xl bg-cream p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted">Prochain samedi{w ? ` · ${w.label}` : ""}</p>
+                {w ? (
+                  <p className="mt-2 flex items-center justify-between text-sm">
+                    {w.sessionId ? <Link href={`/admin/sessions/${w.sessionId}`} className="font-medium hover:text-brand-900">{w.activity} · {w.time.replace(":", "h")}</Link> : <span className="font-medium">{w.activity} · {w.time.replace(":", "h")}</span>}
+                    <span className="tabular-nums text-xs text-muted">{w.booked}/{w.capacity}</span>
+                  </p>
+                ) : <p className="mt-1 text-sm text-muted">Aucune activité prévue.</p>}
+              </div>
+              <Link href="#samedis" className="mt-3 text-sm font-semibold text-brand-900">Voir et changer le planning ↓</Link>
+            </Card>
+          );
+        })}
+      </div>
+
       {rotations.map((r) => (
-        <Card key={r.id} className="mb-4">
-          <div className="mb-3 flex flex-wrap items-center gap-2" data-testid="rotation-card">
-            <h2 className="text-lg font-semibold text-ink">{r.title.fr}</h2>
-            <Badge tone={r.status === "active" ? "green" : "gray"}>{r.status === "active" ? "Actif" : "En pause"}</Badge>
-            <span className="text-sm text-muted">{WEEKDAYS[r.weekday]} · rotation : {(r.cycle ?? []).map((c) => label(c.experienceId)).join(" → ")}</span>
+        <Card key={r.id} className="mb-6 scroll-mt-6" id="samedis">
+          <div className="mb-1 flex flex-wrap items-center justify-between gap-3" data-testid="rotation-card">
+            <h2 className="text-lg font-semibold text-ink">Planning des samedis</h2>
+            <Link href="/admin/experiences/nouvelle?univers=move" className="inline-flex items-center gap-1.5 rounded-full border border-brand-900 px-4 py-2 text-sm font-semibold text-brand-900 hover:bg-brand-50"><CalendarPlus className="size-4" aria-hidden />Nouvelle activité</Link>
           </div>
-          <p className="text-sm text-muted">Les 8 prochains samedis. Un samedi s&apos;ouvre aux réservations quand le précédent ferme (vendredi 20h30), une semaine plus tôt pour les abonnés Pass. Avant son ouverture, vous pouvez changer son activité librement ; l&apos;équipe reçoit un rappel 48 h avant.</p>
-          <details className="my-3 rounded-xl bg-cream p-3 text-sm" data-testid="saturday-howto">
-            <summary className="cursor-pointer font-semibold text-brand-900">Ajouter une nouvelle activité (ex. un cours de Pilates)</summary>
-            <ol className="mt-2 list-decimal space-y-1 ps-5">
-              <li><Link href="/admin/experiences/nouvelle" className="text-brand-900 underline">Créez l&apos;événement</Link> dans l&apos;univers <strong>Activités</strong> (modèle ou page blanche), publié. Pas de date à saisir : elle vient de ce planning.</li>
-              <li>Sur sa fiche, carte « Activité du samedi » : <strong>Ajouter à la rotation</strong> (elle revient à son tour) ou <strong>Programmer un samedi</strong> (une seule fois).</li>
-              <li>Ou ici : « Changer ce samedi » sur la ligne voulue, puis choisissez l&apos;activité, l&apos;heure et les places.</li>
-            </ol>
-            <p className="mt-2 text-muted">Un organisateur propose son activité depuis son espace : sa proposition apparaît ci-dessous, à accepter pour un samedi.</p>
-          </details>
+          <p className="mb-4 text-sm text-muted">Un samedi s&apos;ouvre aux réservations quand le précédent ferme (vendredi 20h30), une semaine plus tôt pour les abonnés Pass. Avant, vous pouvez changer son activité sans toucher à personne ; vous recevez un rappel 48 h avant.</p>
           {proposals.filter((p) => p.cityId === r.cityId).length > 0 && (
-            <div className="my-3 rounded-xl bg-brand-50 p-3" data-testid="saturday-proposals">
-              <p className="text-sm font-semibold text-brand-900">Propositions des organisateurs</p>
-              <ul className="divide-y divide-brand-100">
+            <div className="mb-4 rounded-xl border border-brand-200 bg-brand-50 p-4" data-testid="saturday-proposals">
+              <p className="text-sm font-semibold text-brand-900">Propositions des organisateurs ({proposals.filter((p) => p.cityId === r.cityId).length})</p>
+              <ul className="mt-1 divide-y divide-brand-100">
                 {proposals.filter((p) => p.cityId === r.cityId).map((p) => {
                   const rows = weeks.get(r.id) ?? [];
                   const options = [...rows.filter((w) => p.dates.includes(w.date)), ...rows.filter((w) => !p.dates.includes(w.date))].map((w) => ({ date: w.date, label: `${w.label}${p.dates.includes(w.date) ? " (souhaité)" : ""} · prévu : ${w.activity}` }));
@@ -137,36 +198,38 @@ export default async function RendezvousAdminPage() {
               </ul>
             </div>
           )}
+          <div className="hidden grid-cols-[7rem_1fr_9rem_7rem] gap-3 border-b border-line px-1 pb-2 text-xs font-semibold uppercase tracking-wide text-muted md:grid">
+            <span>Samedi</span><span>Activité</span><span>Réservations</span><span className="text-end">Action</span>
+          </div>
           <ul className="divide-y divide-line">
             {(weeks.get(r.id) ?? []).map((w) => <RotationWeek key={w.date} rotationId={r.id} row={w} activities={activities} live={FIREBASE_ENABLED} />)}
           </ul>
-          <details className="mt-3">
+          <details className="mt-4 rounded-xl bg-cream p-4">
             <summary className="cursor-pointer text-sm font-semibold text-brand-900">Modifier la rotation (ordre, heures, places)</summary>
             <div className="mt-4"><RotationForm initial={rotationValues(r)} activities={activities} live={FIREBASE_ENABLED} /></div>
           </details>
         </Card>
       ))}
-      {rotations.length === 0 && (
-        <Card className="mb-6">
-          <details>
-            <summary className="cursor-pointer text-sm font-semibold text-brand-900">+ Créer l&apos;activité du samedi (rotation)</summary>
-            <div className="mt-4"><RotationForm initial={emptyRotation} activities={activities} live={FIREBASE_ENABLED} /></div>
-          </details>
-        </Card>
-      )}
-      {tiersList.map((r) => (
-        <Card key={r.id} className="mb-4">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
-            <h2 className="text-lg font-semibold text-ink">{r.title.fr}</h2>
-            <Badge tone={r.status === "active" ? "green" : "gray"}>{r.status === "active" ? "Actif" : "En pause"}</Badge>
-            <span className="text-sm text-muted">{WEEKDAYS[r.weekday]} · {r.time} · {r.tiers.map((t) => `${t.tier}${t.frequency === "first_of_month" ? " (1er du mois)" : ""}`).join(", ")}</span>
+
+      <details className="rounded-2xl bg-white p-4 shadow-card sm:p-5">
+        <summary className="cursor-pointer text-sm font-semibold text-ink">Réglages avancés : nouveau rendez-vous, lancement</summary>
+        <div className="mt-4 space-y-6">
+          <div>
+            <h3 className="mb-2 text-sm font-semibold text-ink">+ Nouveau rendez-vous</h3>
+            <RendezvousForm initial={empty} experiences={experiences} live={FIREBASE_ENABLED} />
           </div>
-          <details>
-            <summary className="cursor-pointer text-sm font-semibold text-brand-900">Modifier</summary>
-            <div className="mt-4"><RendezvousForm initial={toValues(r)} experiences={[...experiences, { id: r.baseExperienceId, label: d.experiences.get(r.baseExperienceId)?.title.fr ?? r.baseExperienceId }]} live={FIREBASE_ENABLED} /></div>
-          </details>
-        </Card>
-      ))}
+          {rotations.length === 0 && (
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-ink">+ Créer l&apos;activité du samedi (rotation)</h3>
+              <RotationForm initial={emptyRotation} activities={activities} live={FIREBASE_ENABLED} />
+            </div>
+          )}
+          <div>
+            <h3 className="mb-2 text-sm font-semibold text-ink">Calendrier de lancement</h3>
+            <RendezvousLaunch canRun={canLaunch} reason={d.isDemo || !FIREBASE_ENABLED ? "demo" : canLaunch ? null : "role"} doneAt={launchedAt} />
+          </div>
+        </div>
+      </details>
     </>
   );
 }

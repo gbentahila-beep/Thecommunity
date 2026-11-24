@@ -103,9 +103,16 @@ export function RotationForm({ initial, activities, live }: { initial: RotationF
 export type WeekRow = {
   date: string; label: string; source: "cycle" | "override"; experienceId: string | null; activity: string; time: string; capacity: number;
   shift: boolean; note: string; booked: number; conflicts: string[];
-  /** Ouverture des réservations de ce samedi, et heure limite pour en changer l'activité. */
-  opens?: string; deadline?: string;
+  /** Ouverture des réservations : ouvert à tous, aux abonnés Pass seulement, plus tard ; heure limite pour changer. */
+  state?: "open" | "pass" | "later" | "none"; opens?: string; deadline?: string; sessionId?: string | null;
 };
+
+const STATE = {
+  open: { label: "Ouvert", cls: "bg-emerald-100 text-emerald-900" },
+  pass: { label: "Abonnés Pass", cls: "bg-brand-100 text-brand-900" },
+  later: { label: "S'ouvre le", cls: "bg-stone-200 text-stone-700" },
+  none: { label: "—", cls: "bg-stone-100 text-stone-500" },
+} as const;
 
 /** Un samedi du planning : garder la rotation, choisir une autre activité (ex. la proposition d'un partenaire) ou rien. */
 export function RotationWeek({ rotationId, row, activities, live }: { rotationId: string; row: WeekRow; activities: ActivityOption[]; live: boolean }) {
@@ -136,18 +143,22 @@ export function RotationWeek({ rotationId, row, activities, live }: { rotationId
 
   return (
     <li className="py-3" data-testid="rotation-week">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-        <span className="w-40 font-semibold text-ink">{row.label}</span>
-        <span className="min-w-48 flex-1">
-          <span className={row.experienceId ? "font-medium text-ink" : "text-muted"}>{row.activity}</span>
-          {row.experienceId && <span className="text-muted"> · {row.time.replace(":", "h")} · {row.booked} inscrit(s) / {row.capacity}</span>}
+      <div className="grid gap-x-3 gap-y-1 md:grid-cols-[7rem_1fr_9rem_7rem] md:items-center">
+        <span className="font-semibold text-ink">{row.label.charAt(0).toUpperCase() + row.label.slice(1)}</span>
+        <span className="min-w-0">
+          {row.sessionId ? <a href={`/admin/sessions/${row.sessionId}`} className="font-medium text-ink hover:text-brand-900">{row.activity}</a> : <span className={row.experienceId ? "font-medium text-ink" : "text-muted"}>{row.activity}</span>}
+          {row.experienceId && <span className="text-sm text-muted"> · {row.time.replace(":", "h")} · {row.booked}/{row.capacity} inscrits</span>}
           {row.source === "override" && <span className="ms-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">Changé{row.shift ? " · rotation décalée" : ""}</span>}
-          {row.opens && <span className="block text-xs text-muted" data-testid="rotation-opens">{row.opens}{row.deadline ? ` · ${row.deadline}` : ""}</span>}
           {row.note && <span className="block text-xs text-muted">{row.note}</span>}
           {row.conflicts.length > 0 && <span className="block text-xs font-semibold text-amber-700">Gardé car des personnes sont inscrites : {row.conflicts.join(", ")}</span>}
         </span>
-        {live && <button type="button" onClick={() => setOpen((o) => !o)} className="text-sm font-semibold text-brand-900 underline">{open ? "Fermer" : "Changer ce samedi"}</button>}
+        <span className="text-xs" data-testid="rotation-opens" title={row.deadline || undefined}>
+          {row.state && <span className={`inline-block rounded-full px-2 py-0.5 font-semibold ${STATE[row.state].cls}`}>{STATE[row.state].label}</span>}
+          {row.opens && <span className="block text-muted">{row.opens}</span>}
+        </span>
+        <span className="md:text-end">{live && <button type="button" onClick={() => setOpen((o) => !o)} className="rounded-full border border-line px-3 py-1.5 text-sm font-semibold text-brand-900 hover:border-brand-700">{open ? "Fermer" : "Changer"}</button>}</span>
       </div>
+      {open && row.deadline && <p className="mt-2 text-xs text-muted">{row.deadline}.</p>}
       {open && (
         <div className="mt-3 space-y-3 rounded-xl bg-cream p-4 text-sm">
           <div className="flex flex-wrap items-end gap-3">

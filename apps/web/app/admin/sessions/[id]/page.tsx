@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { CsvExportButton } from "@/components/admin/csv-export";
 import { SessionVenuesForm } from "@/components/admin/session-venues-form";
 import { CancelSessionButton, ReservationAdminActions } from "@/components/admin/reservation-admin-actions";
-import { DIET_LABELS, LANGUAGE_LABELS, MODE_LABELS, RESERVATION_STATUS } from "@/components/admin/labels";
+import { DIET_LABELS, LANGUAGE_LABELS, RESERVATION_STATUS } from "@/components/admin/labels";
 import { adminDate, Badge, Card, dh, PageHeader, StatTile, Table } from "@/components/admin/ui";
 import { getAdminData } from "@/lib/data/admin";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
@@ -67,7 +67,8 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
     : `Les restaurants sont réservés automatiquement la veille à 15h (${adminDate(venueOptionsAt(start).toISOString())}), d'après les fiches des lieux. ${s.venueCapacity != null ? `Capacité des lieux compatibles : ${s.venueCapacity} personnes.` : ""}`;
   // Timeline du 24/11 : le déroulé de la date, étape par étape (fait / à venir).
   const nowMs = d.now.getTime();
-  const step = (label: string, at: Date, done: boolean, detail: string) => ({ label, at: adminDate(at.toISOString()), done, late: !done && nowMs >= at.getTime(), detail });
+  // Sans inscrit, rien ne part aux lieux : une étape passée n'est pas « en retard ».
+  const step = (label: string, at: Date, done: boolean, detail: string) => ({ label, at: adminDate(at.toISOString()), done, late: !done && nowMs >= at.getTime() && s.seatsConfirmed > 0, detail });
   const timeline = secret
     ? [
         step("Options aux restaurants", venueOptionsAt(start), Boolean(alloc), "Inscrits du moment + une table de marge."),
@@ -129,21 +130,48 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
 
   return (
     <>
-      <p className="mb-2 text-sm"><Link href="/admin/programme" className="text-brand-900">← Programme</Link></p>
+      <p className="mb-2 text-sm"><Link href="/admin/programme" className="text-brand-900">← Calendrier</Link></p>
       <PageHeader
         title={sessionTitle(d, s, rvTitles)}
-        subtitle={[adminDate(s.startAt), e.district, MODE_LABELS[e.bookingMode]].filter(Boolean).join(" · ")}
+        subtitle={[adminDate(s.startAt), e.district, `${s.seatsConfirmed} / ${s.capacity} inscrits`].filter(Boolean).join(" · ")}
         actions={
           <>
             <Link href={`/admin/experiences/${e.id}`} className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">Modifier l&apos;événement</Link>
-            <CsvExportButton filename={`participants-${s.id}.csv`} rows={csv} log={d.isDemo ? undefined : { kind: "participants", targetId: s.id }} />
-            <Link href={`/admin/sessions/${s.id}/supports`} className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">Supports imprimés</Link>
-            <Link href={`/admin/sessions/${s.id}/fiche-lieu`} className="rounded-full border border-brand-900 px-4 py-2.5 text-sm font-semibold text-brand-900 hover:bg-brand-50">
-              Fiche pour le lieu
-            </Link>
+            {/* Refonte UX du 25/11 : les actions ponctuelles (export, impressions) regroupées dans un menu. */}
+            <details className="relative">
+              <summary className="cursor-pointer list-none rounded-full border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink hover:border-brand-700">Imprimer, exporter ▾</summary>
+              <div className="absolute end-0 z-20 mt-2 flex w-64 flex-col gap-2 rounded-2xl bg-white p-3 shadow-card ring-1 ring-line">
+                <CsvExportButton filename={`participants-${s.id}.csv`} rows={csv} log={d.isDemo ? undefined : { kind: "participants", targetId: s.id }} />
+                <Link href={`/admin/sessions/${s.id}/supports`} className="rounded-full border border-brand-900 px-4 py-2 text-center text-sm font-semibold text-brand-900 hover:bg-brand-50">Supports imprimés</Link>
+                <Link href={`/admin/sessions/${s.id}/fiche-lieu`} className="rounded-full border border-brand-900 px-4 py-2 text-center text-sm font-semibold text-brand-900 hover:bg-brand-50">Fiche pour le lieu</Link>
+              </div>
+            </details>
           </>
         }
       />
+      {timeline.length > 0 && !cancelled && (() => {
+        const nextIdx = timeline.findIndex((t) => !t.done);
+        return (
+          <section className="mb-4 rounded-2xl bg-white p-4 shadow-card" aria-label="Où en est cette date">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">Où en est cette date</p>
+            <ol className="grid gap-3 sm:grid-flow-col sm:auto-cols-fr" data-testid="session-timeline">
+              {timeline.map((t, i) => (
+                <li key={t.label} className="flex gap-2.5 sm:flex-col sm:gap-1.5">
+                  <span className="flex items-center gap-2">
+                    <span className={`grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold ${t.done ? "bg-emerald-600 text-white" : t.late ? "bg-amber-500 text-white" : i === nextIdx ? "bg-brand-900 text-white" : "bg-cream-deep text-muted"}`}>{t.done ? "✓" : t.late ? "!" : i + 1}</span>
+                    <span className="hidden h-0.5 flex-1 rounded bg-line sm:block" aria-hidden />
+                  </span>
+                  <span>
+                    <span className={`block text-sm font-semibold ${i === nextIdx ? "text-brand-900" : "text-ink"}`}>{t.label}</span>
+                    <span className="block text-xs tabular-nums text-muted">{t.at}</span>
+                    <span className="block text-xs text-muted">{t.late && !t.done ? "En retard : vérifiez la carte Lieux." : t.detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        );
+      })()}
       {cancelled && (
         <p role="status" className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-900">
           Date annulée : les participants ont été remboursés et prévenus.
@@ -267,17 +295,6 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
       )}
       {(secret || requests.length > 0) && (
         <Card title={secret ? "Lieux : attribution automatique" : "Lieu : confirmation"} className="mt-6 scroll-mt-16" id="lieux">
-          {timeline.length > 0 && (
-            <ol className="mb-4 grid gap-2 sm:grid-cols-5" data-testid="session-timeline">
-              {timeline.map((t) => (
-                <li key={t.label} className={`rounded-xl border p-2.5 text-xs ${t.done ? "border-emerald-200 bg-emerald-50" : t.late ? "border-amber-300 bg-amber-50" : "border-line bg-white"}`}>
-                  <p className="font-semibold text-ink">{t.done ? "✓ " : ""}{t.label}</p>
-                  <p className="tabular-nums text-muted">{t.at}</p>
-                  <p className="mt-0.5 text-muted">{t.detail}</p>
-                </li>
-              ))}
-            </ol>
-          )}
           <AllocationCard sessionId={s.id} summary={secret ? allocationSummary : "Le lieu fixe reçoit une demande la veille à 15h, le nombre final à la fermeture des réservations, puis le récapitulatif (le jour même à 11h, ou la veille au soir pour un début avant 14h)."} rows={allocationRows} live={!d.isDemo} canRun={secret && s.seatsConfirmed > 0 && alloc?.status !== "manual" && d.now.getTime() < start.getTime()} />
         </Card>
       )}

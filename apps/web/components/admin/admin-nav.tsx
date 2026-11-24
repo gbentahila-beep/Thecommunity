@@ -2,10 +2,11 @@
 
 import {
   BookOpen,
-  CalendarCheck,
+  CalendarDays,
   CreditCard,
   Handshake,
-  LayoutDashboard,
+  Home,
+  Repeat,
   Settings,
   Sparkles,
   Users,
@@ -17,17 +18,18 @@ type Tab = { href: string; label: string };
 type NavLink = { href: string; label: string; icon: typeof Settings; exact?: boolean; tabs?: Tab[]; /** Pages rangées sous cette entrée (sans onglet). */ match?: string[] };
 
 /**
- * Menu du back-office (simplifié le 24/11) : 7 entrées, plus le guide. Tout ce qui concerne une date (lieux, tables, participants,
- * demandes, liste d'attente, signalements) est sur la page de la date, ouverte depuis « À faire » ou « Programme ».
- * Seuls Partenaires, Argent et Réglages gardent quelques onglets.
+ * Menu du back-office (refonte UX du 25/11), dans l'ordre où l'on s'en sert : l'accueil (ce qui attend une action),
+ * le calendrier de la semaine, les rendez-vous qui reviennent chaque semaine (dîner, café, brunch, activité du
+ * samedi), puis les fiches des événements. Tout ce qui concerne une date est sur la page de cette date.
  */
 export const ADMIN_SECTIONS: { title: string | null; links: NavLink[] }[] = [
   {
     title: null,
     links: [
-      { href: "/admin", label: "À faire", icon: LayoutDashboard, exact: true, match: ["/admin/aujourdhui"] },
-      { href: "/admin/programme", label: "Programme", icon: CalendarCheck, match: ["/admin/sessions", "/admin/attribution", "/admin/reservations", "/admin/participations", "/admin/billets"] },
-      { href: "/admin/experiences", label: "Événements", icon: Sparkles, match: ["/admin/rendez-vous", "/admin/modeles"] },
+      { href: "/admin", label: "Accueil", icon: Home, exact: true, match: ["/admin/aujourdhui"] },
+      { href: "/admin/programme", label: "Calendrier", icon: CalendarDays, match: ["/admin/sessions", "/admin/attribution", "/admin/reservations", "/admin/participations", "/admin/billets"] },
+      { href: "/admin/rendez-vous", label: "Rendez-vous", icon: Repeat },
+      { href: "/admin/experiences", label: "Événements", icon: Sparkles, match: ["/admin/modeles"] },
     ],
   },
   {

@@ -35,7 +35,7 @@ export default function AdminGuidePage() {
             <li><strong>Événements</strong> : tout le reste, avec sa propre date : une soirée, un afterwork, un padel ponctuel un autre jour, le Girls only du mois.</li>
           </ul>
           <p>Une seule date est ouverte à la réservation à la fois pour chaque rendez-vous : la suivante s&apos;ouvre quand la précédente ferme (la veille à 20h30). Les abonnés Pass voient une date d&apos;avance.</p>
-          <p>Vous avez <strong>deux pages au quotidien</strong> : <A href="/admin">À faire</A> (ce qui attend une action) et <A href="/admin/programme">Programme</A> (toutes les dates). Tout ce qui concerne une date (lieux, tables, participants, demandes, signalements) est sur la page de cette date.</p>
+          <p>Au quotidien : l&apos;<A href="/admin">Accueil</A> (ce qui attend une action et les 7 prochains jours), le <A href="/admin/programme">Calendrier</A> (la semaine, jour par jour) et les <A href="/admin/rendez-vous">Rendez-vous</A> (dîner, café, brunch, planning des samedis). Tout ce qui concerne une date (lieux, tables, participants, demandes, signalements) est sur la page de cette date : en haut, « Où en est cette date » montre l&apos;étape en cours.</p>
         </div>
       </Card>
 
@@ -55,15 +55,15 @@ export default function AdminGuidePage() {
       <Card title="Comment faire…" className="mb-5">
         <Q id="places" title="Choisir le nombre de places">
           <ul className="list-disc space-y-1.5 ps-5">
-            <li><strong>Dîner, café, brunch</strong> : <A href="/admin/rendez-vous">Rendez-vous de la semaine</A> → le rendez-vous → « Modifier » → <em>Places par date et par gamme</em>. Le site ne vend jamais plus que ce que les restaurants compatibles peuvent accueillir.</li>
-            <li><strong>Activité du samedi</strong> : dans le planning, « Modifier la rotation » → <em>Places</em> de chaque activité ; pour un seul samedi, « Changer ce samedi » → <em>Places</em>.</li>
+            <li><strong>Dîner, café, brunch</strong> : menu <A href="/admin/rendez-vous">Rendez-vous</A> → la carte du rendez-vous → « Réglages » → <em>Places par date et par gamme</em>. Le site ne vend jamais plus que ce que les restaurants compatibles peuvent accueillir.</li>
+            <li><strong>Activité du samedi</strong> : dans le planning, « Modifier la rotation » → <em>Places</em> de chaque activité ; pour un seul samedi, « Changer » sur sa ligne → <em>Places</em>.</li>
             <li><strong>Événement</strong> : étape 6 du formulaire, <em>Capacité par date</em> (ou « + Ajouter des dates » sur sa fiche).</li>
             <li>Une date déjà créée : sa page → « Modifier l&apos;événement », ou l&apos;heure et les places suivent le planning tant que personne n&apos;est inscrit.</li>
           </ul>
         </Q>
         <Q id="nouvelle-activite" title="Ajouter une nouvelle activité au samedi (ex. un cours de Pilates)">
           <Steps>
-            <li><A href="/admin/experiences/nouvelle">+ Nouvel événement</A> → un modèle d&apos;Activités (yoga, padel…) ou une page blanche, univers <strong>Activités</strong>.</li>
+            <li><A href="/admin/experiences/nouvelle">Créer</A> → « <strong>Une activité pour le samedi</strong> » → un modèle (yoga, padel…) ou une page blanche.</li>
             <li>Remplissez la fiche (titre, lieu, prix sur place, photos), statut <strong>Publiée</strong>. À l&apos;étape 6, rien à saisir : la date vient du planning. Enregistrez.</li>
             <li>Sur la fiche, carte <strong>Activité du samedi</strong> : « <em>Ajouter à la rotation</em> » (elle revient à son tour, réglez l&apos;ordre dans le planning) ou « <em>Programmer un samedi</em> » (une fois, à la place de l&apos;activité prévue).</li>
           </Steps>
@@ -71,7 +71,7 @@ export default function AdminGuidePage() {
         <Q id="changer-samedi" title="Un partenaire propose une activité pour un samedi précis (ex. du tennis)">
           <Steps>
             <li>Créez l&apos;activité comme ci-dessus (univers Activités, publiée).</li>
-            <li><A href="/admin/rendez-vous">Planning des samedis</A> → « <em>Changer ce samedi</em> » sur la bonne ligne → choisissez l&apos;activité, l&apos;heure, les places.</li>
+            <li><A href="/admin/rendez-vous#samedis">Planning des samedis</A> → « <em>Changer</em> » sur la bonne ligne → choisissez l&apos;activité, l&apos;heure, les places.</li>
             <li>Cochez <em>Décaler la rotation</em> si l&apos;activité prévue doit passer au samedi suivant ; sinon elle saute son tour.</li>
           </Steps>
           <p className="text-muted">À faire avant l&apos;ouverture du samedi (indiquée sur chaque ligne : « s&apos;ouvre le … »). Si des personnes sont déjà inscrites, leur date est gardée.</p>
@@ -81,21 +81,21 @@ export default function AdminGuidePage() {
         </Q>
         <Q id="evenement" title="Créer un événement (soirée, afterwork, padel ponctuel…)">
           <Steps>
-            <li><A href="/admin/experiences/nouvelle">+ Nouvel événement</A> → un modèle (Afterwork, Girls only…) ou une page blanche, univers <strong>Événements</strong>.</li>
+            <li><A href="/admin/experiences/nouvelle">Créer</A> → « <strong>Un événement avec sa date</strong> » → un modèle (Afterwork, Girls only…) ou une page blanche.</li>
             <li>Étape 6 : cochez « Programmer des dates maintenant », choisissez la date, l&apos;heure, la répétition éventuelle et la <em>capacité par date</em>. Sans date, la fiche s&apos;affiche avec « Prochaines dates bientôt ».</li>
             <li>Statut <strong>Publiée</strong> : l&apos;événement apparaît dans Événements, et sur l&apos;accueil la semaine où il a lieu.</li>
           </Steps>
         </Q>
         <Q id="girls-only" title="Prévoir le Girls only du mois">
           <Steps>
-            <li><A href="/admin/experiences/nouvelle">+ Nouvel événement</A> → modèle <strong>Girls only</strong> (univers Événements, déjà réglé « réservé aux femmes » : le site le vérifie à la réservation).</li>
+            <li><A href="/admin/experiences/nouvelle">Créer</A> → « Un événement avec sa date » → modèle <strong>Girls only</strong> (univers Événements, déjà réglé « réservé aux femmes » : le site le vérifie à la réservation).</li>
             <li>Choisissez le lieu partenaire, puis à l&apos;étape 6 la date du mois (ex. un samedi à 13h) et les places.</li>
             <li>Les mois suivants : sur sa fiche, « + Ajouter des dates ». Il apparaît dans Événements et sur l&apos;accueil la semaine concernée.</li>
           </Steps>
         </Q>
         <Q id="organisateur" title="Un organisateur propose une activité">
           <ul className="list-disc space-y-1.5 ps-5">
-            <li>Sa fiche arrive dans <A href="/admin">À faire</A> : relisez, publiez ou refusez avec un message. Ses modifications ultérieures attendent aussi votre validation.</li>
+            <li>Sa fiche arrive dans « À traiter » sur l&apos;<A href="/admin">Accueil</A> : relisez, publiez ou refusez avec un message. Ses modifications ultérieures attendent aussi votre validation.</li>
             <li>Une activité proposée <strong>pour un samedi</strong> apparaît en haut du <A href="/admin/rendez-vous">planning des samedis</A> : acceptez-la pour le samedi choisi.</li>
             <li>Ses demandes d&apos;annulation d&apos;une date arrivent aussi dans À faire.</li>
           </ul>
@@ -112,9 +112,10 @@ export default function AdminGuidePage() {
 
       <Card title="Où trouver quoi">
         <ul className="grid gap-2 text-sm sm:grid-cols-2">
-          <li><A href="/admin">À faire</A> : ce qui attend une action, les 7 prochains jours.</li>
-          <li><A href="/admin/programme">Programme</A> : toutes les dates ; une date s&apos;ouvre sur sa page.</li>
-          <li><A href="/admin/experiences">Événements</A> : les fiches ; <A href="/admin/rendez-vous">Rendez-vous de la semaine</A> et planning du samedi.</li>
+          <li><A href="/admin">Accueil</A> : ce qui attend une action, les 7 prochains jours, des raccourcis.</li>
+          <li><A href="/admin/programme">Calendrier</A> : la semaine, jour par jour ; une date s&apos;ouvre sur sa page.</li>
+          <li><A href="/admin/rendez-vous">Rendez-vous</A> : dîner, café, brunch (réglages, prochaine date) et planning des samedis.</li>
+          <li><A href="/admin/experiences">Événements</A> : les fiches, rangées en Activités du samedi, Événements et Tables.</li>
           <li><A href="/admin/utilisateurs">Membres</A> : comptes, Pass, avis, signalements.</li>
           <li><A href="/admin/partenaires">Partenaires</A> : lieux (capacité, créneaux, gammes) et organisateurs.</li>
           <li><A href="/admin/paiements">Argent</A> et <A href="/admin/parametres">Réglages</A>.</li>

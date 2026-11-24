@@ -294,10 +294,11 @@ async function main() {
   }
   // 24/11 (2) : une fois, les dates annulées et celles qui ne sont plus au programme (samedi hors planning, gamme hors
   // de son jour) disparaissent, réservations comprises ; puis le planning du samedi recrée ce qui manque.
-  if (!(await db.doc("settings/showcase").get()).get("purgeCancelledAt")) {
+  // (2 bis, 25/11 : relancé une fois pour les dates Exclusive hors du premier mercredi du mois.)
+  if (!(await db.doc("settings/showcase").get()).get("purgeStaleV2At")) {
     const { purgeStaleSessions } = await import("../functions/src/experiences/purge");
     const p = await purgeStaleSessions();
-    await db.doc("settings/showcase").set({ purgeCancelledAt: Timestamp.now() }, { merge: true });
+    await db.doc("settings/showcase").set({ purgeCancelledAt: Timestamp.now(), purgeStaleV2At: Timestamp.now() }, { merge: true });
     const { ensureRotationSessions } = await import("../functions/src/rendezvous/rotation");
     for (const rv of (await db.collection("rendezvous").where("kind", "==", "rotation").get()).docs) await ensureRotationSessions(rv.id);
     console.log(`✅ Dates annulées ou hors programme supprimées : ${p.sessions} date(s), ${p.reservations} réservation(s), ${p.payments} paiement(s), ${p.invoices} facture(s).`);

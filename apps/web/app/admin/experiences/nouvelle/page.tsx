@@ -110,31 +110,39 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
           ),
         )}
         {list.length === 0 && <p className="text-sm text-muted">Aucun modèle dans cet univers pour l&apos;instant.</p>}
-        <p className="mt-6 text-sm"><Link href="/admin/experiences/nouvelle?modele=vide" className="font-semibold text-brand-900 underline">Partir de zéro</Link></p>
+        <p className="mt-6 text-sm text-muted">Rien ne correspond ? <Link href="/admin/experiences/nouvelle?modele=vide" className="font-semibold text-brand-900 underline">Partir d&apos;une page blanche</Link></p>
       </div>
     );
   }
 
-  // Étape 1 : l'univers.
+  // Étape 1 (refonte UX du 25/11) : ce que l'on veut créer, en mots simples ; l'univers en découle.
+  const INTENTS = [
+    { u: "move", title: "Une activité pour le samedi", text: "Pilates, tennis, atelier… Elle passe le samedi, dans le planning des samedis : pas de date à saisir.", tone: "border-s-emerald-600" },
+    { u: "discover", title: "Un événement avec sa date", text: "Soirée, afterwork, Girls only du mois, padel un autre jour… Vous choisissez la date et les places.", tone: "border-s-amber-500" },
+    { u: "eat", title: "Une Table spéciale", text: "Dîner, café ou brunch en tables composées. Les rendez-vous de la semaine existent déjà et créent leurs dates tout seuls.", tone: "border-s-brand-700" },
+  ] as const;
   return (
     <div className="max-w-4xl">
-      <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-brand-900">← Expériences</Link></p>
-      <PageHeader title="Nouvel événement" subtitle="Choisissez un univers, puis un modèle : tout est pré-rempli." actions={<Link href="/admin/modeles" className="text-sm font-semibold text-brand-900 underline">Gérer les modèles</Link>} />
-      <ul className="grid gap-4 sm:grid-cols-2" data-testid="universe-choice">
-        {TEMPLATE_UNIVERSES.map((u) => {
-          const list = active.filter((t) => t.values.categoryId === u);
+      <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-brand-900">← Événements</Link></p>
+      <PageHeader title="Que voulez-vous créer ?" subtitle="Choisissez, puis un modèle : tout est pré-rempli, photo comprise." actions={<Link href="/admin/modeles" className="text-sm font-semibold text-brand-900 underline">Gérer les modèles</Link>} />
+      <ul className="grid gap-4" data-testid="universe-choice">
+        {INTENTS.filter((x) => (TEMPLATE_UNIVERSES as readonly string[]).includes(x.u)).map((x) => {
+          const list = active.filter((t) => t.values.categoryId === x.u && isCalendarTemplate(t));
           return (
-            <li key={u}>
-              <Link href={`/admin/experiences/nouvelle?univers=${u}`} className={`${card} p-5`}>
-                <span className="text-lg font-semibold text-ink">{catName.get(u) ?? u}</span>
-                <span className="mt-1 text-sm text-muted">{list.filter(isCalendarTemplate).map((t) => t.name).join(" · ") || "Aucun modèle"}</span>
-                {list.some((t) => !isCalendarTemplate(t)) && <span className="mt-1 text-xs text-muted">Pour plus tard : {list.filter((t) => !isCalendarTemplate(t)).map((t) => t.name).join(" · ")}</span>}
+            <li key={x.u}>
+              <Link href={`/admin/experiences/nouvelle?univers=${x.u}`} className={`${card} border-s-4 p-5 ${x.tone}`}>
+                <span className="flex items-baseline justify-between gap-3">
+                  <span className="text-lg font-semibold text-ink">{x.title}</span>
+                  <span className="text-xs font-medium uppercase tracking-wide text-muted">{catName.get(x.u) ?? x.u}</span>
+                </span>
+                <span className="mt-1 text-sm text-ink/80">{x.text}</span>
+                {list.length > 0 && <span className="mt-2 text-xs text-muted">Modèles : {list.map((t) => t.name).join(" · ")}</span>}
               </Link>
             </li>
           );
         })}
       </ul>
-      <p className="mt-6 text-sm"><Link href="/admin/experiences/nouvelle?modele=vide" className="font-semibold text-brand-900 underline">Partir de zéro</Link></p>
+      <p className="mt-6 text-sm text-muted">Rien ne correspond ? <Link href="/admin/experiences/nouvelle?modele=vide" className="font-semibold text-brand-900 underline">Partir d&apos;une page blanche</Link></p>
     </div>
   );
 }
@@ -143,7 +151,7 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
 function Steps({ univers, template, gamme, catName }: { univers: string; template: EventTemplate | null; gamme: VenueTier | null; catName: Map<string, string> }) {
   return (
     <nav aria-label="Étapes" className="mb-3 flex flex-wrap items-center gap-1.5 text-sm text-muted" data-testid="template-steps">
-      <Link href="/admin/experiences/nouvelle" className="text-brand-900">Univers</Link>
+      <Link href="/admin/experiences/nouvelle" className="text-brand-900">Créer</Link>
       {univers && <>›<Link href={`/admin/experiences/nouvelle?univers=${univers}`} className="text-brand-900">{catName.get(univers) ?? univers}</Link></>}
       {template && <>›{template.tiers ? <Link href={`/admin/experiences/nouvelle?modele=${template.id}`} className="text-brand-900">{template.name}</Link> : <span>{template.name}</span>}</>}
       {gamme && <>›<span>{TIER_LABEL[gamme]}</span></>}

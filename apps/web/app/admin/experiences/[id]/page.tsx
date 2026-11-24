@@ -54,7 +54,7 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
   const bookedSeats = sessions.filter((s) => new Date(s.startAt).getTime() > d.now.getTime()).reduce((n, s) => n + s.seatsConfirmed, 0);
   return (
     <div className="max-w-3xl">
-      <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-brand-900">← Expériences</Link></p>
+      <p className="mb-2 text-sm"><Link href="/admin/experiences" className="text-brand-900">← Événements</Link></p>
       <PageHeader title={e.title.fr} subtitle="Modifiable même après publication : en cas de changement de date ou de lieu, les participants sont prévenus automatiquement (notification + e-mail)." />
       {e.organizerId && (
         <Card title={`Activité proposée par ${e.organizerSnapshot?.name ?? "un organisateur"}`} className="mb-5">
@@ -92,7 +92,7 @@ export default async function EditExperiencePage({ params }: PageProps<"/admin/e
       {e.categoryId === "move" && (
         <Card title="Activité du samedi" className="mb-5" actions={<Link href="/admin/rendez-vous" className="text-sm font-medium text-brand-900">Planning des samedis →</Link>}>
           <p className="mb-3 text-sm text-muted">
-            {!rotation ? "Les activités passent par le planning de l'activité du samedi (Programme → Rendez-vous de la semaine)." : cycleIndex >= 0
+            {!rotation ? "Les activités passent par le planning de l'activité du samedi (menu Rendez-vous)." : cycleIndex >= 0
               ? `Dans la rotation : position ${cycleIndex + 1} sur ${rotation.cycle.length} (${rotation.cycle[cycleIndex]!.time.replace(":", "h")}, ${rotation.cycle[cycleIndex]!.capacity} places).`
               : "Pas dans la rotation."}
             {rotation && (mine.length ? ` Prévue le ${mine.map((w) => satLabel(w.date)).join(", ")}.` : " Aucun samedi prévu dans les 8 prochaines semaines.")}

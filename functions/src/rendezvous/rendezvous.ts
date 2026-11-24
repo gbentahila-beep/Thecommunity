@@ -1,4 +1,4 @@
-import { missingTierDates, MOROCCO_TIMEZONE, rendezvousInputSchema, tierRange, zonedParts, type RendezvousFrequency, type VenueTier } from "@thecommunity/shared";
+import { missingTierDates, MOROCCO_TIMEZONE, onRendezvousSlot, rendezvousInputSchema, tierRange, tierRunsOn, zonedParts, type RendezvousFrequency, type VenueTier } from "@thecommunity/shared";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -125,7 +125,18 @@ export async function ensureSessionsFor(rvId: string, now = new Date()): Promise
     const e = eSnap.data() as DocumentData | undefined;
     if (!e || e.status === "archived") continue;
     const future = await db.collection("sessions").where("experienceId", "==", t.experienceId).where("startAt", ">", Timestamp.fromDate(now)).get();
-    const existing = future.docs.filter((d) => d.get("status") !== "cancelled").map((d) => (d.get("startAt") as Timestamp).toDate());
+    // Une date hors de la fréquence de sa gamme (ex. Exclusive un autre mercredi que le premier du mois) ou hors du jour
+    // et de l'heure du rendez-vous disparaît si personne n'y est inscrit (gardée sinon, pour ses inscrits).
+    const kept = [];
+    for (const d of future.docs.filter((x) => x.get("status") !== "cancelled")) {
+      const at = (d.get("startAt") as Timestamp).toDate();
+      if (tierRunsOn(t.frequency, at) && onRendezvousSlot(at, e)) { kept.push(d); continue; }
+      const people = Number(d.get("seatsConfirmed") ?? 0) + Number(d.get("seatsHeld") ?? 0) + Number(d.get("waitlistCount") ?? 0);
+      const any = people > 0 ? null : await db.collection("reservations").where("sessionId", "==", d.id).limit(1).get();
+      if (any?.empty) await db.recursiveDelete(d.ref);
+      else kept.push(d);
+    }
+    const existing = kept.map((d) => (d.get("startAt") as Timestamp).toDate());
     const missing = missingTierDates({ weekday: Number(rv.weekday), time: String(rv.time), weeksAhead: Number(rv.weeksAhead ?? 6) }, t, existing, now);
     const current = (e.nextSessionAt as Timestamp | null | undefined)?.toMillis();
     const all = [...missing, ...existing].map((d) => d.getTime());
