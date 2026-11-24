@@ -5,7 +5,7 @@
  */
 import { DEMO_DINNER_EXPERIENCES, DEMO_DINNER_SCHEDULE } from "./demo-dinners";
 import { DEMO_MORE_EXPERIENCES, DEMO_MORE_REVIEWS, DEMO_MORE_SCHEDULE } from "./demo-more";
-import {
+import { launchUniverse,
   DEFAULT_OFFERS,
   DEFAULT_CANCELLATION_POLICY,
   MOROCCO_TIMEZONE,
@@ -58,16 +58,16 @@ export const DEMO_CITIES: City[] = [
 ];
 
 export const DEMO_CATEGORIES: Category[] = [
-  // docs/22, décision 36 : 4 univers. Identifiants inchangés (adresses du site) : eat = Tables, move = Bouger,
-  // discover = Sortir (Jeux, Sorties et Vie sociale réunis), create = Découvrir (Ateliers et Culture réunis).
+  // docs/25 (24/11) : 3 univers. Identifiants inchangés (adresses du site) : eat = Tables, move = Activités (Bouger et
+  // Découvrir réunis : le rendez-vous du samedi), discover = Événements (éditions spéciales) ; create n'est plus proposé.
   {
     id: "eat",
     name: { fr: "Tables", ar: "موائد", en: "Tables" },
     shortName: { fr: "Tables", ar: "موائد", en: "Tables" },
     description: {
-      fr: "Café, brunch, déjeuner ou dîner, à une table composée pour vous.",
-      ar: "قهوة، فطور متأخر، غداء أو عشاء، على مائدة نُكوّنها لك.",
-      en: "Coffee, brunch, lunch or dinner, at a table put together for you.",
+      fr: "Café, brunch, dîner : chaque semaine, une table composée pour vous.",
+      ar: "قهوة، فطور متأخر، عشاء: كل أسبوع، مائدة نُكوّنها لك.",
+      en: "Coffee, brunch, dinner: every week, a table put together for you.",
     },
     order: 1,
     isActive: true,
@@ -75,12 +75,12 @@ export const DEMO_CATEGORIES: Category[] = [
   },
   {
     id: "move",
-    name: { fr: "Bouger", ar: "حركة", en: "Move" },
-    shortName: { fr: "Bouger", ar: "حركة", en: "Move" },
+    name: { fr: "Activités", ar: "أنشطة", en: "Activities" },
+    shortName: { fr: "Activités", ar: "أنشطة", en: "Activities" },
     description: {
-      fr: "Running, padel, yoga, randonnée : du sport en petit groupe, à votre niveau.",
-      ar: "جري، بادل، يوغا، مشي: رياضة في مجموعات صغيرة، حسب مستواك.",
-      en: "Running, padel, yoga, hiking: sport in small groups, at your level.",
+      fr: "Le rendez-vous du samedi : running, céramique, padel, yoga, escape game, à tour de rôle, en petit groupe.",
+      ar: "موعد السبت: جري، خزف، بادل، يوغا، لعبة الهروب، بالتناوب، في مجموعات صغيرة.",
+      en: "The Saturday meet-up: running, ceramics, padel, yoga, escape game, in turn, in small groups.",
     },
     order: 2,
     isActive: true,
@@ -88,12 +88,12 @@ export const DEMO_CATEGORIES: Category[] = [
   },
   {
     id: "discover",
-    name: { fr: "Sortir", ar: "خرجات", en: "Go out" },
-    shortName: { fr: "Sortir", ar: "خرجات", en: "Go out" },
+    name: { fr: "Événements", ar: "فعاليات", en: "Events" },
+    shortName: { fr: "Événements", ar: "فعاليات", en: "Events" },
     description: {
-      fr: "Escape game, soirée jeux, quiz, afterwork, échange de langues : des sorties pour rencontrer du monde.",
-      ar: "ألعاب الهروب، أمسيات ألعاب، مسابقات، لقاءات بعد العمل، تبادل اللغات: خرجات للتعرّف على الناس.",
-      en: "Escape games, game nights, quizzes, afterworks, language exchanges: outings to meet people.",
+      fr: "Les éditions spéciales, de temps en temps : dîner Girls only, afterwork Exclusive, soirées.",
+      ar: "النسخ الخاصة، من حين لآخر: عشاء للنساء فقط، أمسية Exclusive بعد العمل، حفلات.",
+      en: "Special editions, now and then: Girls only dinner, Exclusive afterwork, parties.",
     },
     order: 3,
     isActive: true,
@@ -104,12 +104,12 @@ export const DEMO_CATEGORIES: Category[] = [
     name: { fr: "Découvrir", ar: "اكتشاف", en: "Discover" },
     shortName: { fr: "Découvrir", ar: "اكتشاف", en: "Discover" },
     description: {
-      fr: "Ateliers, visites guidées et culture : apprendre et créer, à plusieurs.",
-      ar: "ورشات، جولات إرشادية وثقافة: نتعلّم ونبدع معًا.",
-      en: "Workshops, guided tours and culture: learn and create, together.",
+      fr: "Réuni dans Activités (24/11).",
+      ar: "ضمن الأنشطة.",
+      en: "Now part of Activities.",
     },
     order: 4,
-    isActive: true,
+    isActive: false,
     defaultBookingMode: "individual",
   },
   // Formats des Tables (sous-catégories) : ils fixent le budget de chaque gamme (docs/22 § 6).
@@ -124,7 +124,8 @@ export const DEMO_CATEGORIES: Category[] = [
     shortName: { fr, ar, en },
     description: { fr: `${fr} à une table composée pour vous.`, ar: `${ar} على مائدة نُكوّنها لك.`, en: `${en} at a table put together for you.` },
     order: i + 1,
-    isActive: true,
+    // docs/25 : pas de déjeuner au lancement (le brunch du dimanche et le café du samedi couvrent la journée).
+    isActive: id !== "dejeuner",
     defaultBookingMode: "social_dinner",
     icon,
     parentId: "eat",
@@ -145,6 +146,24 @@ export const DEMO_CATEGORIES: Category[] = [
     icon: "dumbbell",
     parentId: "move",
   },
+  // docs/25 : formats des Activités (rotation du samedi) et des Événements.
+  ...([
+    ["running", "Running", "جري", "Running", "dumbbell", "move", 2],
+    ["ceramique", "Céramique", "خزف", "Ceramics", "palette", "move", 3],
+    ["yoga", "Yoga", "يوغا", "Yoga", "dumbbell", "move", 4],
+    ["escape-game", "Escape game", "لعبة الهروب", "Escape game", "ticket", "move", 5],
+    ["afterwork", "Afterwork", "بعد العمل", "Afterwork", "music", "discover", 1],
+  ] as const).map(([id, fr, ar, en, icon, parentId, order]): Category => ({
+    id,
+    name: { fr, ar, en },
+    shortName: { fr, ar, en },
+    description: { fr: `${fr}, en petit groupe.`, ar: `${ar}، في مجموعة صغيرة.`, en: `${en}, in a small group.` },
+    order,
+    isActive: true,
+    defaultBookingMode: "individual",
+    icon,
+    parentId,
+  })),
 ];
 
 const policy = DEFAULT_CANCELLATION_POLICY.id;
@@ -545,7 +564,8 @@ export const DEMO_HIGHLIGHTS: Record<string, NonNullable<Experience["highlight"]
   "exp-gnaoua": "special",
   "exp-quiz": "popular",
 };
-export const DEMO_EXPERIENCES: Experience[] = DEMO_EXPERIENCE_LIST.map((e) => (DEMO_HIGHLIGHTS[e.id] ? { ...e, highlight: DEMO_HIGHLIGHTS[e.id] } : e));
+// docs/25 : 3 univers (Découvrir réuni dans Activités, l'escape game passe dans Activités).
+export const DEMO_EXPERIENCES: Experience[] = DEMO_EXPERIENCE_LIST.map((e) => ({ ...e, ...launchUniverse(e) } as Experience)).map((e) => (DEMO_HIGHLIGHTS[e.id] ? { ...e, highlight: DEMO_HIGHLIGHTS[e.id] } : e));
 
 /** Planning type : jour de semaine (0 = dimanche), heure locale, capacité, places prises par occurrence. */
 const SCHEDULE: Record<string, { weekday: number; hour: number; minute: number; capacity: number; taken: number[]; featured?: boolean }> = {

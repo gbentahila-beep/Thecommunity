@@ -56,18 +56,18 @@
   "home": {
     "heroTitle1": "Your people",
     "heroTitle2": "are out there.",
-    "heroSubtitle": "Sortez de votre routine. Rencontrez de nouvelles personnes. Dites oui à quelque chose de différent.",
+    "heroSubtitle": "Chaque semaine, la communauté Wenzy se retrouve. Le mercredi on dîne, le samedi on bouge, le dimanche on brunche. Vous réservez votre place, on s'occupe du reste.",
     "heroCta": "Découvrir les expériences",
     "heroImageAlt": "Des amis rient ensemble sur un toit-terrasse au coucher du soleil, guirlandes lumineuses et palmiers en arrière-plan",
     "thisWeek": "Cette semaine à {city}",
     "seeAll": "Voir toutes les expériences",
     "howTitle": "Comment ça marche",
-    "how1Title": "Choisissez votre rendez-vous",
+    "how1Title": "Choisissez votre rendez-vous de la semaine",
     "how1Text": "Chaque semaine, les mêmes rendez-vous : le dîner du mercredi, l'activité et le café du samedi, le brunch du dimanche. Venez seul·e ou à deux.",
-    "how2Title": "Réservez la date de la semaine",
+    "how2Title": "Choisissez votre gamme et réservez",
     "how2Text": "Choisissez votre gamme, puis 35 DH en ligne (ou votre pass) ; le reste se règle sur place. Pour les Tables, le lieu est révélé quelques heures avant.",
-    "how3Title": "Rencontrez votre groupe",
-    "how3Text": "Une table, une équipe ou un petit groupe, composé selon l'activité ; à votre check-in, vous découvrez votre groupe et les prénoms.",
+    "how3Title": "On compose votre groupe, on se retrouve",
+    "how3Text": "Une table ou un petit groupe composé pour vous. À votre check-in, vous découvrez votre groupe et les prénoms : la communauté vous attend.",
     "universesTitle": "Des univers pour sortir de sa routine",
     "reviewsTitle": "Pourquoi venir",
     "trust1": "Venez seul·e : tout le monde est là pour rencontrer du monde",
@@ -106,13 +106,13 @@
         "formats": "Café · Brunch · Dîner"
       },
       "move": {
-        "tagline": "Bougez avec des personnes de votre niveau",
-        "text": "Envie d'un padel, d'un yoga ou d'une course, mais personne pour suivre ? Rejoignez un petit groupe qui veut faire la même chose. Le terrain ou le studio est réservé : il ne reste qu'à venir.",
+        "tagline": "Le rendez-vous du samedi",
+        "text": "Chaque samedi, une activité différente à tour de rôle : running, céramique, padel, yoga, escape game. Venez seul·e, on forme le groupe.",
         "group": "Petits groupes",
-        "factLabel": "Niveau",
-        "factValue": "Selon le vôtre",
-        "cta": "Voir le sport & bien-être",
-        "formats": "Running · Padel · Yoga"
+        "factLabel": "Rythme",
+        "factValue": "Chaque samedi",
+        "cta": "Voir les activités",
+        "formats": "Running · Céramique · Padel · Yoga · Escape game"
       },
       "create": {
         "tagline": "Apprenez et créez, à plusieurs",
@@ -124,13 +124,13 @@
         "formats": "Céramique"
       },
       "discover": {
-        "tagline": "Sortez et rencontrez du monde",
-        "text": "Escape game, soirée jeux, quiz, afterwork, échange de langues : des sorties pensées pour croiser de nouvelles têtes, en équipe ou autour d'un verre.",
-        "group": "En équipe ou ouvert à tous",
-        "factLabel": "Format",
-        "factValue": "Seul·e ou à deux",
-        "cta": "Voir les sorties",
-        "formats": "Escape game · Afterwork"
+        "tagline": "Les éditions spéciales",
+        "text": "De temps en temps, un rendez-vous à part : dîner Girls only, afterwork Exclusive, soirées. À ne pas manquer.",
+        "group": "Places limitées",
+        "factLabel": "Rythme",
+        "factValue": "De temps en temps",
+        "cta": "Voir les événements",
+        "formats": "Girls only · Afterwork · Soirées"
       }
     },
     "thisWeekAt": "Cette semaine à",
@@ -171,7 +171,14 @@
         "name": "Lina M.",
         "text": "J'ai enfin osé parler anglais, et j'ai appris trois expressions en darija. Ambiance super bienveillante."
       }
-    }
+    },
+    "weekRvEyebrow": "Les rendez-vous de la communauté",
+    "weekRvTitle": "Votre semaine Wenzy",
+    "weekRvText": "Les mêmes rendez-vous chaque semaine : choisissez le vôtre, réservez la date de la semaine, retrouvez la communauté.",
+    "weekRvWhen": "Un rendez-vous Wenzy, chaque {day} à {time}",
+    "weekRvOpenUntil": "Ouvert jusqu'au {day} à {time}",
+    "weekRvFull": "Complet cette semaine · liste d'attente",
+    "weekRvSoon": "La date de la semaine ouvre bientôt"
   },
   "card": {
     "people": "{count} pers.",
@@ -319,7 +326,7 @@
     "onSiteFixed": "En ligne, puis {amount} sur place.",
     "onSiteConsumption": "En ligne, puis votre consommation sur place.",
     "onSiteNothing": "En ligne. Rien à régler sur place.",
-    "rvWeekly": "Chaque {day} à {time}",
+    "rvWeekly": "Un rendez-vous Wenzy, chaque {day} à {time}",
     "rvTiersTitle": "Choisissez votre gamme",
     "rvMonthly": "1 fois par mois",
     "rvOpensAt": "Ouvre le {day} à {time}",

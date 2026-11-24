@@ -5,8 +5,8 @@ import { Typewriter } from "./typewriter";
 
 /** Écrans de l'application, en trois téléphones qui s'entrecroisent (façon fiche App Store), sous l'accroche de l'accueil. */
 const SCREENS = [
-  { src: "/images/app/ecran-decouvrir-2026-11c.webp", key: "appScreenDiscover", pos: "z-10 -rotate-[8deg] translate-y-6 -me-14 sm:-me-20" },
-  { src: "/images/app/ecran-accueil-2026-11c.webp", key: "appScreenHome", pos: "z-20" },
+  { src: "/images/app/ecran-decouvrir-2026-11d.webp", key: "appScreenDiscover", pos: "z-10 -rotate-[8deg] translate-y-6 -me-14 sm:-me-20" },
+  { src: "/images/app/ecran-accueil-2026-11d.webp", key: "appScreenHome", pos: "z-20" },
   { src: "/images/app/ecran-jour-j-2026-11b.webp", key: "appScreenBooking", pos: "z-10 rotate-[8deg] translate-y-6 -ms-14 sm:-ms-20" },
 ] as const;
 

@@ -56,18 +56,18 @@
   "home": {
     "heroTitle1": "Your people",
     "heroTitle2": "are out there.",
-    "heroSubtitle": "Step out of your routine. Meet new people. Say yes to something different.",
+    "heroSubtitle": "Every week, the Wenzy community gets together. Wednesday we dine, Saturday we move, Sunday we brunch. You book your spot, we take care of the rest.",
     "heroCta": "Discover the experiences",
     "heroImageAlt": "Friends laughing together on a rooftop terrace at sunset, string lights and palm trees in the background",
     "thisWeek": "This week in {city}",
     "seeAll": "See all experiences",
     "howTitle": "How it works",
-    "how1Title": "Choose your meet-up",
+    "how1Title": "Choose your weekly meet-up",
     "how1Text": "Every week, the same meet-ups: Wednesday dinner, Saturday's activity and coffee, Sunday brunch. Come alone or with a friend.",
-    "how2Title": "Book this week's date",
+    "how2Title": "Choose your range and book",
     "how2Text": "Choose your range, then 35 DH online (or your pass); the rest is paid on site. For Tables, the venue is revealed a few hours before.",
-    "how3Title": "Meet your group",
-    "how3Text": "A table, a team or a small group, put together for the activity; when you check in, you meet your group and see first names.",
+    "how3Title": "We put your group together, we meet",
+    "how3Text": "A table or a small group put together for you. At check-in, you meet your group and first names: the community is waiting for you.",
     "universesTitle": "Many ways to break your routine",
     "reviewsTitle": "Why come along",
     "trust1": "Come on your own: everyone is here to meet people",
@@ -106,13 +106,13 @@
         "formats": "Coffee · Brunch · Dinner"
       },
       "move": {
-        "tagline": "Get moving with people at your level",
-        "text": "Fancy padel, yoga or a run, but nobody to come along? Join a small group that wants to do the same thing. The court or studio is booked: all you have to do is show up.",
+        "tagline": "The Saturday meet-up",
+        "text": "Every Saturday, a different activity in turn: running, ceramics, padel, yoga, escape game. Come alone, we form the group.",
         "group": "Small groups",
-        "factLabel": "Level",
-        "factValue": "Matched to yours",
-        "cta": "See sport & wellbeing",
-        "formats": "Running · Padel · Yoga"
+        "factLabel": "Rhythm",
+        "factValue": "Every Saturday",
+        "cta": "See the activities",
+        "formats": "Running · Ceramics · Padel · Yoga · Escape game"
       },
       "create": {
         "tagline": "Learn and create, together",
@@ -124,13 +124,13 @@
         "formats": "Ceramics"
       },
       "discover": {
-        "tagline": "Go out and meet people",
-        "text": "Escape games, game nights, quizzes, afterworks, language exchanges: outings designed to cross paths with new faces, as a team or over a drink.",
-        "group": "As a team or open to all",
-        "factLabel": "Format",
-        "factValue": "Solo or as two",
-        "cta": "See outings",
-        "formats": "Escape game · Afterwork"
+        "tagline": "Special editions",
+        "text": "Now and then, a one-off meet-up: Girls only dinner, Exclusive afterwork, parties. Not to be missed.",
+        "group": "Limited spots",
+        "factLabel": "Rhythm",
+        "factValue": "Now and then",
+        "cta": "See the events",
+        "formats": "Girls only · Afterwork · Parties"
       }
     },
     "thisWeekAt": "This week in",
@@ -171,7 +171,14 @@
         "name": "Lina M.",
         "text": "I finally dared to speak English, and I learned three expressions in darija. Such a kind atmosphere."
       }
-    }
+    },
+    "weekRvEyebrow": "The community's meet-ups",
+    "weekRvTitle": "Your Wenzy week",
+    "weekRvText": "The same meet-ups every week: pick yours, book this week's date, meet the community.",
+    "weekRvWhen": "A Wenzy meet-up, every {day} at {time}",
+    "weekRvOpenUntil": "Open until {day} at {time}",
+    "weekRvFull": "Full this week · waiting list",
+    "weekRvSoon": "This week's date opens soon"
   },
   "card": {
     "people": "{count} people",
@@ -319,7 +326,7 @@
     "onSiteFixed": "Online, then {amount} on site.",
     "onSiteConsumption": "Online, then what you order on site.",
     "onSiteNothing": "Online. Nothing to pay on site.",
-    "rvWeekly": "Every {day} at {time}",
+    "rvWeekly": "A Wenzy meet-up, every {day} at {time}",
     "rvTiersTitle": "Choose your range",
     "rvMonthly": "once a month",
     "rvOpensAt": "Opens {day} at {time}",

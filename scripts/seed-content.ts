@@ -11,7 +11,7 @@
  */
 import { applicationDefault, initializeApp } from "firebase-admin/app";
 import { FieldValue, getFirestore, Timestamp } from "firebase-admin/firestore";
-import { DEFAULT_CANCELLATION_POLICY } from "@thecommunity/shared";
+import { DEFAULT_CANCELLATION_POLICY, launchUniverse } from "@thecommunity/shared";
 import { buildDemoSessions, DEMO_CATEGORIES, DEMO_CITIES, DEMO_EXPERIENCES, DEMO_REVIEWS } from "../apps/web/lib/data/demo";
 import { DEMO_ECONOMICS, DEMO_PARTNERS } from "../apps/web/lib/data/demo-admin";
 import { CASABLANCA_VENUES } from "../apps/web/lib/data/casablanca-venues";
@@ -106,6 +106,33 @@ async function main() {
     }
     await resetRef.set({ universesResetAt: Timestamp.now() }, { merge: true });
     console.log(`✅ Univers remis à jour : ${DEMO_CATEGORIES.length} catégories (Tables, Bouger, Sortir, Découvrir et formats).`);
+  }
+
+  // docs/25 (24/11) : une fois, 3 univers — Tables, Activités (Bouger et Découvrir réunis), Événements. Noms, textes,
+  // ordre et formats repris (la photo choisie est gardée) ; « Découvrir » et le Déjeuner ne sont plus proposés ; les
+  // événements et leurs dates rejoignent leur nouvel univers (l'escape game passe dans Activités).
+  if (!(await resetRef.get()).get("universes3At")) {
+    for (const c of DEMO_CATEGORIES) {
+      const { imagePath: _img, ...rest } = c as typeof c & { imagePath?: string };
+      void _img;
+      await db.doc(`categories/${c.id}`).set({ ...rest, parentId: c.parentId ?? null }, { merge: true });
+    }
+    const subs = await db.collection("categories").where("parentId", "in", ["create", "discover"]).get();
+    for (const d of subs.docs) {
+      if (d.get("parentId") === "create" || d.id === "escape-game") await d.ref.update({ parentId: "move" });
+    }
+    let moved = 0;
+    const exps = await db.collection("experiences").get();
+    for (const d of exps.docs) {
+      const next = launchUniverse({ id: d.id, slug: d.get("slug"), categoryId: String(d.get("categoryId") ?? ""), subcategoryId: d.get("subcategoryId") ?? null, templateId: d.get("templateId") ?? null });
+      if (next.categoryId === d.get("categoryId") && next.subcategoryId === (d.get("subcategoryId") ?? null)) continue;
+      await d.ref.update(next);
+      const sessions = await db.collection("sessions").where("experienceId", "==", d.id).get();
+      for (const x of sessions.docs) await x.ref.update({ categoryId: next.categoryId, "experienceSnapshot.categoryId": next.categoryId });
+      moved++;
+    }
+    await resetRef.set({ universes3At: Timestamp.now() }, { merge: true });
+    console.log(`✅ 3 univers (Tables, Activités, Événements) : ${moved} événement(s) déplacé(s).`);
   }
 
   // Formule d'abonnement proposée, NON active : l'équipe règle le prix et l'active dans le back-office.

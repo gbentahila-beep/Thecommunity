@@ -98,3 +98,15 @@ describe("audit 23/11 — CMI", () => {
     expect(cmiApproved({ ProcReturnCode: "05", Response: "Declined" })).toBe(false);
   });
 });
+
+import { launchUniverse } from "./index";
+
+describe("docs/25 — 3 univers", () => {
+  it("Découvrir et l'escape game rejoignent Activités ; le reste ne bouge pas", () => {
+    expect(launchUniverse({ id: "exp-ceramique", categoryId: "create" })).toEqual({ categoryId: "move", subcategoryId: "ceramique" });
+    expect(launchUniverse({ id: "exp-escape-game", categoryId: "discover" })).toEqual({ categoryId: "move", subcategoryId: "escape-game" });
+    expect(launchUniverse({ id: "exp-running-corniche", categoryId: "move" })).toEqual({ categoryId: "move", subcategoryId: "running" });
+    expect(launchUniverse({ id: "exp-quiz", categoryId: "discover" })).toEqual({ categoryId: "discover", subcategoryId: null });
+    expect(launchUniverse({ id: "exp-diner", categoryId: "eat", subcategoryId: "diner" })).toEqual({ categoryId: "eat", subcategoryId: "diner" });
+  });
+});

@@ -60,6 +60,9 @@ describe("rendez-vous de la semaine (lot A)", () => {
     for (const t of tiers) {
       const e = (await db().doc(`experiences/${t.experienceId}`).get()).data()!;
       expect(e).toMatchObject({ rendezvousId: out.id, closeRule: "eve", venueTier: t.tier, status: "published" });
+      // Tables : chacun règle sa consommation, budget de la gamme affiché (Dîner : Casual 150–250 DH, etc.).
+      expect(e.pricing).toMatchObject({ model: "variable_consumption" });
+      expect(e.budgetRange.min).toBeGreaterThan(0);
       const s = await db().collection("sessions").where("experienceId", "==", t.experienceId).get();
       const days = s.docs.map((d) => zonedParts((d.get("startAt") as Timestamp).toDate(), MOROCCO_TIMEZONE));
       expect(days.every((z) => z.weekday === 3 && z.hour === 20 && z.minute === 30)).toBe(true);

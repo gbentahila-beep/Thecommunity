@@ -21,7 +21,13 @@ const slugify = (s: string) =>
 export async function tierExperience(rvId: string, base: FirebaseFirestore.DocumentSnapshot, tier: VenueTier, used: Set<string>, slot?: { weekday: number; time: string }): Promise<string> {
   const existing = await db.collection("experiences").where("rendezvousId", "==", rvId).where("venueTier", "==", tier).limit(1).get();
   const range = tierRange(tier, base.get("subcategoryId") as string | undefined);
+  // 24/11 : une Table de rendez-vous = chacun règle sa consommation au restaurant (budget de la gamme affiché) ;
+  // seuls les 35 DH Wenzy se paient en ligne.
+  const tablesPricing = base.get("categoryId") === "eat"
+    ? { pricing: { model: "variable_consumption", currency: "MAD", partner: { name: "", paymentMode: "on_site", pricingType: "consumption", price: null, description: "" } } }
+    : {};
   const tierFields = {
+    ...tablesPricing,
     rendezvousId: rvId,
     closeRule: "eve",
     ...(slot ? { rendezvousSlot: slot } : {}),
