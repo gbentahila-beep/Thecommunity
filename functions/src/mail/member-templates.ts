@@ -82,7 +82,7 @@ export function waitlistOfferMail(o: { locale: string; firstName: string; title:
 export function arrivalCheckMail(o: { locale: string; firstName: string; title: string; until: string; reservationId: string }): Out {
   const l = lang(o.locale);
   const t = {
-    fr: { subject: `Vous êtes arrivé·e ? ${o.title}`, heading: `${o.firstName ? `${o.firstName}, v` : "V"}ous êtes arrivé·e ?`, p: [`« ${o.title} » commence maintenant.`, `Indiquez votre arrivée depuis votre réservation (jusqu'à ${o.until}) : vous retrouvez votre groupe et le chat, et votre place n'est pas notée comme une absence.`], cta: "Je suis arrivé·e" },
+    fr: { subject: `Vous êtes sur place ? ${o.title}`, heading: `${o.firstName ? `${o.firstName}, v` : "V"}ous êtes sur place ?`, p: [`« ${o.title} » commence maintenant.`, `Indiquez votre arrivée depuis votre réservation (jusqu'à ${o.until}) : vous retrouvez votre groupe et le chat, et votre place n'est pas notée comme une absence.`], cta: "Je suis là" },
     en: { subject: `Have you arrived? ${o.title}`, heading: `${o.firstName ? `${o.firstName}, h` : "H"}ave you arrived?`, p: [`“${o.title}” is starting now.`, `Check in from your booking (until ${o.until}): you'll find your group and the chat, and your spot won't be counted as a no-show.`], cta: "I've arrived" },
     ar: { subject: `هل وصلت؟ ${o.title}`, heading: "هل وصلت؟", p: [`« ${o.title} » يبدأ الآن.`, `سجّل وصولك من صفحة حجزك (حتى ${o.until}): ستجد مجموعتك والمحادثة، ولن يُحتسب مكانك غيابًا.`], cta: "وصلت" },
   }[l];

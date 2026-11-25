@@ -54,7 +54,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(rows > 0 && games > 0 && games <= rows && (await week.getByTestId('compact-row').allTextContents()).every((t) => t.includes('Sortir')), `pastilles : filtre sur place (${games} sur ${rows})`);
   // Alertes : une ligne qui ouvre une fenêtre (ville + e-mail ; démonstration : rien n'est envoyé)
   const alerts = d.getByTestId('home-alerts');
-  await alerts.getByRole('button', { name: 'Soyez prévenu·e des nouvelles tables et activités' }).click();
+  await alerts.getByRole('button', { name: 'Recevez une alerte pour les nouvelles tables et activités' }).click();
   const sheet = d.getByTestId('alerts-sheet');
   assert(await visible(sheet) && await sheet.getByRole('combobox', { name: 'Ville' }).isVisible(), 'accueil : la ligne d\'alerte ouvre une fenêtre avec la ville');
   await sheet.getByRole('textbox', { name: 'Votre adresse e-mail' }).fill('test@example.com');
@@ -62,9 +62,9 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(await visible(sheet.getByRole('status').filter({ hasText: 'Démonstration' })), 'alertes : démonstration, rien n\'est envoyé');
   await d.keyboard.press('Escape');
   assert(!(await sheet.count()), 'Échap ferme la fenêtre');
-  const cardsBox = d.getByTestId('audience-cards');
-  assert(await cardsBox.getByRole('heading', { name: 'Travaillons ensemble' }).isVisible(), '« Travaillons ensemble »');
-  assert((await cardsBox.getByRole('link', { name: /Devenir lieu partenaire/ }).getAttribute('href')) === '/devenir-partenaire' && (await cardsBox.getByRole('link', { name: /Devenir organisateur/ }).getAttribute('href')) === '/devenir-organisateur' && !(await cardsBox.getByRole('link', { name: /Proposer une sortie/ }).count()), 'deux encadrés : lieux partenaires, organisateurs (plus de membres de confiance)');
+  // Audit du 25/11 : « Travaillons ensemble » quitte l'accueil (pied de page, centre d'aide et pages dédiées) ; l'app est annoncée « bientôt ».
+  assert(!(await d.getByTestId('audience-cards').count()), 'accueil : plus de bloc « Travaillons ensemble »');
+  assert(await d.getByTestId('app-soon').isVisible() && !(await d.getByTestId('home-app').getByRole('link').count()), 'accueil : application annoncée « bientôt », sans lien');
   await d.goto(`${base}/devenir-organisateur`);
   assert(await d.getByRole('heading', { level: 1, name: 'Devenir organisateur' }).isVisible() && (await d.getByTestId('organizer-cta').getAttribute('href')) === '/pro/inscription' && await d.getByRole('heading', { name: 'Qui fait quoi ?' }).isVisible(), 'page « Devenir organisateur » : étapes, qui fait quoi, lien vers l\'espace organisateur');
   await d.goto(`${base}/`);

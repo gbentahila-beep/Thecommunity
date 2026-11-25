@@ -17,7 +17,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await p.goto(base + '/', { waitUntil: 'load' });
   assert(await p.getByRole('heading', { level: 1 }).textContent() === 'Your peopleare out there.', '28 : accroche inchangée');
   const trust = p.getByTestId('home-trust');
-  assert(await trust.getByText('Venez seul·e : tout le monde est là pour rencontrer du monde').isVisible(), '28 : repère « venez seul·e »');
+  assert(await trust.getByText('Venez en solo : tout le monde est là pour rencontrer du monde').isVisible(), '28 : repère « venez seul·e »');
   assert(await trust.getByText('Nous composons les groupes pour faciliter les échanges').isVisible(), '28 : repère « groupes composés »');
   const order = await p.evaluate(() => { const t = document.querySelector('[data-testid=home-trust]'); const h = [...document.querySelectorAll('h2')].find((x) => x.textContent.startsWith('Cette semaine')); return t && h ? t.compareDocumentPosition(h) & Node.DOCUMENT_POSITION_FOLLOWING : 0; });
   assert(order > 0, '28 : repères avant « Cette semaine »');
@@ -77,7 +77,7 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   await karim.getByRole('button', { name: "J'aimerais revoir Karim" }).click();
   assert(await visible(karim.getByRole('status').filter({ hasText: 'Démonstration' })) && await karim.getByRole('button', { name: /Vous aimeriez revoir Karim/ }).getAttribute('aria-pressed') === 'true', '31 : « J\'aimerais revoir » (démonstration)');
   const yassine = group.getByTestId('meet-member').filter({ hasText: 'Yassine' });
-  await yassine.getByRole('button', { name: 'Ne plus être réuni·e avec Yassine' }).click();
+  await yassine.getByRole('button', { name: 'Ne plus me placer avec Yassine' }).click();
   await yassine.getByRole('button', { name: 'Confirmer' }).click();
   assert(await visible(yassine.getByTestId('meet-avoided')), '31 : « Ne plus être réuni·e » avec confirmation');
   // docs/22, décision 30 : plus de propositions de sorties ; à la place, signaler une personne (décision 48).
@@ -88,11 +88,11 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   // ——— 30 ———
   await p.goto(base + '/espace/profil', { waitUntil: 'load' });
   const prof = await p.locator('main').textContent();
-  assert(prof.includes('Maârif') && prof.includes('Tables') && prof.includes('Débutant·e') && prof.includes("Peu importe l'âge"), '30 : profil — quartier, univers préférés, niveau, âge');
+  assert(prof.includes('Maârif') && prof.includes('Tables') && prof.includes('Premiers pas') && prof.includes("Peu importe l'âge"), '30 : profil — quartier, univers préférés, niveau, âge');
   await p.goto(base + '/bienvenue?edition=1&etape=district', { waitUntil: 'load' });
   assert(await visible(p.locator('#f-district')) && await p.locator('#f-district').inputValue() === 'Maârif', '30 : questionnaire — quartier pré-rempli (ouvert depuis le profil)');
   await p.goto(base + '/bienvenue?edition=1&etape=sport', { waitUntil: 'load' });
-  assert(await p.getByRole('radio', { name: 'Débutant·e' }).getAttribute('aria-checked') === 'true', '30 : questionnaire — niveau sportif');
+  assert(await p.getByRole('radio', { name: 'Premiers pas' }).getAttribute('aria-checked') === 'true', '30 : questionnaire — niveau sportif');
   await p.goto(base + '/bienvenue?edition=1&etape=age', { waitUntil: 'load' });
   assert(await p.getByRole('radio', { name: 'Des personnes de mon âge (si possible)' }).isVisible(), '30 : questionnaire — préférence d\'âge');
   await p.goto(base + '/espace', { waitUntil: 'load' });

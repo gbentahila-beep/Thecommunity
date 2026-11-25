@@ -1,7 +1,7 @@
 import { HeartHandshake, ShieldCheck, Users } from "lucide-react";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { AudienceCards, ClosingCta } from "@/components/audience-cards";
+import { ClosingCta } from "@/components/audience-cards";
 import { CompactRow } from "@/components/compact-row";
 import { ThisWeek } from "@/components/home/this-week";
 import { AppPreview } from "@/components/home/app-preview";
@@ -112,9 +112,6 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     faq: (
       <PageShell key="faq">
         <HomeFaq />
-        <div className="mx-auto max-w-6xl pt-6">
-          <AudienceCards withTitle />
-        </div>
         <ClosingCta />
       </PageShell>
     ),
@@ -164,7 +161,6 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           </div>
         </div>
       </section>
-      <AppPreview />
       {trustOn && (
         <PageShell className="mt-14 lg:mt-16">
           <ul className="grid gap-3 rounded-3xl bg-cream-deep p-5 sm:grid-cols-3 sm:gap-6 sm:px-7 [animation-delay:300ms] animate-fade-up" data-testid="home-trust">
@@ -189,7 +185,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       {/* « Cette semaine » vient toujours juste après l'accroche ; les autres sections suivent l'ordre du back-office. */}
       {home.sections.some((x) => x.id === "thisWeek" && x.enabled) && sectionsById.thisWeek}
-      {home.sections.filter((x) => x.enabled && x.id !== "thisWeek").map((x) => sectionsById[x.id])}
+      {/* L'application (bientôt sur les stores) vient juste avant les questions : on présente d'abord le service, pas l'app. */}
+      {home.sections.filter((x) => x.enabled && x.id !== "thisWeek").map((x) => (x.id === "faq" ? [<AppPreview key="app" />, sectionsById.faq] : sectionsById[x.id]))}
     </>
   );
 }

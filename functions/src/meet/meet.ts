@@ -39,7 +39,7 @@ export const setMeetAgain = onCall({ region: REGION }, async (req) => {
   const { groupId, otherUid, wish } = parsed.data;
   const { g, s, endAt } = await sharedGroup(groupId, uid, otherUid);
   if (!meetWindowOpen(endAt, new Date())) refuse("meet_window", "Il est trop tôt ou trop tard pour cette rencontre.");
-  if ((await avoidsOf(uid)).includes(otherUid)) refuse("avoided", "Vous avez demandé à ne plus être réuni·e avec cette personne.");
+  if ((await avoidsOf(uid)).includes(otherUid)) refuse("avoided", "Vous avez demandé à ne plus croiser cette personne.");
   const mineRef = db.doc(`meetWishes/${uid}_${otherUid}`);
   const theirsRef = db.doc(`meetWishes/${otherUid}_${uid}`);
   const connRef = db.doc(`connections/${connId(uid, otherUid)}`);

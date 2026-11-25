@@ -183,7 +183,7 @@ const DEMO_EXPERIENCE_LIST: Experience[] = [
       ar: "تعرّف على أشخاص جدد حول عشاء لذيذ.",
     },
     description: {
-      fr: "Chaque jeudi, nous réunissons des personnes qui ne se connaissent pas autour de tables de six, dans un restaurant sélectionné de Gauthier. Vous réservez seul, nous composons les tables pour que la conversation prenne naturellement. Le nom du restaurant et votre table vous sont révélés la veille à 21h30.",
+      fr: "Chaque mercredi, nous réunissons des personnes qui ne se connaissent pas autour d'une même table, dans un restaurant sélectionné de Gauthier. Vous réservez en solo, nous composons les tables pour que la conversation prenne naturellement. Le nom du restaurant et votre table vous sont révélés la veille à 21h30.",
     },
     categoryId: "eat",
     subcategoryId: "diner",
@@ -205,7 +205,7 @@ const DEMO_EXPERIENCE_LIST: Experience[] = [
     requestMessageRequired: false,
     languages: ["fr", "darija"],
     alcoholServed: false,
-    included: [{ fr: "Menu entrée, plat, dessert" }, { fr: "Boissons sans alcool" }, { fr: "Table composée par notre équipe" }],
+    included: [{ fr: "Une table composée par notre équipe" }, { fr: "Une adresse choisie et réservée pour vous" }, { fr: "Le repas se règle sur place, à vos frais" }],
     practicalInfo: { fr: "Arrivez 10 minutes avant. Tenue décontractée. Expérience réservée aux 18 ans et plus." },
     cancellationPolicyId: policy,
     status: "published",

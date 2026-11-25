@@ -12,7 +12,7 @@ async function call(name: string, data: unknown) {
   return (await httpsCallable(firebase().functions, name)(data)).data as { matched?: boolean };
 }
 
-/** Étape 31 — « J'aimerais revoir » (privé) et « Ne plus être réuni·e » pour une personne d'un ancien groupe. */
+/** Étape 31 — « J'aimerais revoir » (privé) et « Ne plus me placer avec » pour une personne d'un ancien groupe. */
 export function MeetActions({ groupId, otherUid, firstName, wished, avoided, matched, windowOpen, live }: {
   groupId: string; otherUid: string; firstName: string; wished: boolean; avoided: boolean; matched: boolean; windowOpen: boolean; live: boolean;
 }) {

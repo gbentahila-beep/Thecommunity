@@ -82,7 +82,7 @@ async function login(page, who, suite) {
   assert(await m.getByText('Prochaines dates bientôt').first().isVisible(), 'carte : « Prochaines dates bientôt »');
   await login(m, nora, '/experiences/atelier-tapis-berbere-casablanca');
   await m.getByRole('button', { name: 'Me prévenir des prochaines dates' }).first().click();
-  assert(await visible(m.getByRole('button', { name: 'Vous serez prévenu·e' })), 'alerte « prochaines dates » activée');
+  assert(await visible(m.getByRole('button', { name: 'Alerte activée' })), 'alerte « prochaines dates » activée');
   assert(await fsGet(`experienceAlerts/${expId}_${nora.uid}`), 'Firestore : alerte enregistrée');
 
   // 3. L'admin repropose une date → Nora est prévenue

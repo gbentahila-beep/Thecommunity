@@ -102,7 +102,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   const [dl] = await Promise.all([page.waitForEvent('download'), page.getByRole('link', { name: 'Ajouter à mon agenda' }).click()]);
   const fs = require('fs'); const ics = fs.readFileSync(await dl.path(), 'utf8');
   assert(ics.includes('BEGIN:VEVENT') && ics.includes('Pilates'), 'fichier agenda .ics valide');
-  assert(await page.getByText(/remboursé(·e)? de 35/).isVisible() || await page.getByText(/plus remboursée/).isVisible(), 'montant de remboursement affiché');
+  assert(await page.getByText(/(remboursé(·e)? de|remboursons) 35/).isVisible() || await page.getByText(/plus remboursée/).isVisible(), 'montant de remboursement affiché');
 
   // Groupe révélé
   await page.goto(base + '/espace/reservations/res-demo-escape', { waitUntil: 'load' });
@@ -146,7 +146,7 @@ const assert = (c, m) => { if (!c) throw new Error('ÉCHEC: ' + m); console.log(
   await page.getByRole('button', { name: '20 min' }).click();
   assert(/Retard annoncé : 20 min/.test(await page.getByTestId('late-done').innerText()), 'Z : retard annoncé');
   await page.goto(base + '/espace/reservations/res-demo-now', { waitUntil: 'load' });
-  assert(/En retard \(20 min\)/.test(await page.getByTestId('day-of-table').innerText()) && /Arrivé·e/.test(await page.getByTestId('day-of-table').innerText()), 'Z : à la table, arrivés et retards');
+  assert(/En retard \(20 min\)/.test(await page.getByTestId('day-of-table').innerText()) && /Check-in fait/.test(await page.getByTestId('day-of-table').innerText()), 'Z : à la table, arrivés et retards');
   await page.getByTestId('day-of-chat').click();
   await page.waitForURL('**/espace/rencontres/table/grp-demo-now');
   assert(await page.getByTestId('chat-members').getByRole('listitem').count() === 6, 'Z : chat ouvert dès l’arrivée, avec la table');

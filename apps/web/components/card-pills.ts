@@ -1,15 +1,16 @@
 import type { ExperienceBadge, VenueTier } from "@thecommunity/shared";
 
 /**
- * Étape O : repères visibles dès la carte. Chaque badge a sa couleur (on ne voit plus « Nouveau » partout),
- * chaque gamme son style (Exclusive se remarque), et « Réservé aux femmes » est toujours affiché.
+ * Badges des cartes (audit du 25/11) : une seule apparence, encre sur photo, pour tous les repères ; seul « Dernières
+ * places » prend le corail, parce qu'il appelle à agir. Quatre couleurs différentes rendaient la liste bruyante.
  */
+const BADGE_BASE = "bg-ink text-white";
 export const BADGE_TONE: Record<ExperienceBadge, string> = {
-  featured: "bg-gradient-to-r from-[#f2705a] to-brand-500 text-white",
-  popular: "bg-amber-400 text-ink",
-  new: "bg-emerald-700 text-white",
-  almostFull: "bg-rose-600 text-white",
-  special: "bg-sky-600 text-white",
+  featured: BADGE_BASE,
+  popular: BADGE_BASE,
+  new: BADGE_BASE,
+  almostFull: "bg-coral text-ink",
+  special: BADGE_BASE,
 };
 
 export const TIER_TONE: Record<VenueTier, string> = {

@@ -46,18 +46,25 @@ export async function SiteFooter() {
       ],
     },
   ];
+  const pairs = (items: [string, string | null][]) => items.filter(([, v]) => v).map(([k, v]) => `${k}${sep}${v}`).join(" · ");
+  const legalLines = [
+    pairs([[t("publisher"), LEGAL_INFO.publisher], [t("address"), LEGAL_INFO.address], ["ICE", LEGAL_INFO.ice]]),
+    pairs([[t("support"), LEGAL_INFO.supportEmail], [t("privacyContact"), LEGAL_INFO.privacyEmail], [t("safetyContact"), LEGAL_INFO.safetyEmail]]),
+  ].filter(Boolean);
   return (
     <footer className="mt-24 border-t border-line bg-cream-deep pb-24 lg:pb-0">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
-        <div className="space-y-4">
+      {/* Mobile : logo sur toute la largeur, puis les colonnes de liens deux par deux (le pied de page restait sur près de deux écrans). */}
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
+        <div className="col-span-2 space-y-4 md:col-span-1">
           <Logo />
           <p className="max-w-xs text-sm text-muted">{t("tagline")}</p>
           <LanguageSwitch className="-ms-3" />
         </div>
-        {columns.map((col) => (
-          <div key={col.title}>
+        {columns.map((col, i) => (
+          // Mobile : les liens juridiques, plus longs, prennent toute la largeur sur deux colonnes.
+          <div key={col.title} className={i === columns.length - 1 ? "col-span-2 md:col-span-1" : ""}>
             <h2 className="text-sm font-semibold text-ink">{col.title}</h2>
-            <ul className="mt-4 space-y-2.5">
+            <ul className={`mt-4 space-y-2.5 ${i === columns.length - 1 ? "grid grid-cols-2 gap-x-6 space-y-0 gap-y-2.5 md:block md:space-y-2.5" : ""}`}>
               {col.links.map((l) => (
                 <li key={l.href}>
                   {l.href === "/pro" ? (
@@ -76,14 +83,14 @@ export async function SiteFooter() {
       </div>
       <div className="border-t border-line">
         <div className="mx-auto max-w-7xl space-y-2 px-4 py-6 text-xs text-muted sm:px-6 lg:px-8">
-          <p className="font-semibold text-ink/80">{t("legalInfoTitle")}</p>
-          <p>
-            {t("publisher")}{sep}{LEGAL_INFO.publisher ?? t("toComplete")} · {t("address")}{sep}{LEGAL_INFO.address ?? t("toComplete")} · ICE{sep}{LEGAL_INFO.ice ?? t("toComplete")}
-          </p>
-          <p>
-            {t("support")}{sep}{LEGAL_INFO.supportEmail ?? t("toComplete")} · {t("privacyContact")}{sep}{LEGAL_INFO.privacyEmail ?? t("toComplete")} · {t("safetyContact")}{sep}{LEGAL_INFO.safetyEmail ?? t("toComplete")}
-          </p>
-          <p>{t("dataStatement", { email: LEGAL_INFO.privacyEmail ?? t("toComplete") })}</p>
+          {/* Les informations légales ne s'affichent que renseignées : jamais de « à compléter » visible par le public. */}
+          {legalLines.length > 0 && (
+            <>
+              <p className="font-semibold text-ink/80">{t("legalInfoTitle")}</p>
+              {legalLines.map((line) => <p key={line}>{line}</p>)}
+            </>
+          )}
+          {LEGAL_INFO.privacyEmail && <p>{t("dataStatement", { email: LEGAL_INFO.privacyEmail })}</p>}
           <p>{t("rights", { year: new Date().getFullYear() })}</p>
         </div>
       </div>

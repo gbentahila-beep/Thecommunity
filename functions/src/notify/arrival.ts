@@ -33,7 +33,7 @@ export async function sendArrivalChecks(sessionId: string, s: DocumentData, e: D
     const title = String(r.sessionSnapshot?.title?.[p.locale] ?? r.sessionSnapshot?.title?.fr ?? "");
     await db.collection(`users/${r.userId}/notifications`).add({
       type: "arrival_check",
-      title: { fr: "Vous êtes arrivé·e ?", ar: "هل وصلت؟", en: "Have you arrived?" },
+      title: { fr: "Vous êtes sur place ?", ar: "هل وصلت؟", en: "Have you arrived?" },
       body: { fr: `Indiquez votre arrivée avant ${timeFor(until, "fr")} : votre groupe et le chat s'ouvrent, et votre place n'est pas notée comme une absence.`, ar: `سجّل وصولك قبل ${timeFor(until, "ar")}.`, en: `Check in before ${timeFor(until, "en")}: your group and chat open, and your spot isn't counted as a no-show.` },
       link: `/espace/reservations/${d.id}#arrivee`,
       createdAt: FieldValue.serverTimestamp(),

@@ -17,7 +17,7 @@ type Prefs = { email: boolean; push: boolean; marketingEmail: boolean; newExperi
 type State = { kind: "loading" } | { kind: "visitor" } | { kind: "member"; uid: string; prefs: Prefs };
 
 /**
- * Accueil, sous « Voir toutes les expériences » : une seule ligne « Soyez prévenu·e des nouvelles tables et
+ * Accueil, sous « Voir toutes les expériences » : une seule ligne « Recevez une alerte pour les nouvelles tables et
  * activités » qui ouvre une fenêtre. Membre connecté : un interrupteur (notificationPrefs.newExperiences).
  * Visiteur : ville + e-mail, avec double confirmation par e-mail (subscribeNewExperienceAlerts).
  * Démonstration : rien n'est envoyé.

@@ -24,7 +24,7 @@ const avg = (xs: number[]) => (xs.length ? Math.round((xs.reduce((a, b) => a + b
 
 function StarsRow({ value, size = "size-4" }: { value: number; size?: string }) {
   return (
-    <span className="inline-flex text-[#e3a32e]" aria-hidden>
+    <span className="inline-flex text-brand-700" aria-hidden>
       {[1, 2, 3, 4, 5].map((n) => <Star key={n} className={`${size} ${n <= Math.round(value) ? "fill-current" : "text-ink/15"}`} />)}
     </span>
   );
@@ -92,9 +92,9 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
               <ul className="mt-5 space-y-2" aria-label={t("distribution")}>
                 {dist.map((d) => (
                   <li key={d.n} className="flex items-center gap-3 text-sm">
-                    <span className="flex w-8 items-center gap-1 font-semibold text-ink">{d.n}<Star className="size-3.5 fill-[#e3a32e] text-[#e3a32e]" aria-hidden /></span>
+                    <span className="flex w-8 items-center gap-1 font-semibold text-ink">{d.n}<Star className="size-3.5 fill-brand-700 text-brand-700" aria-hidden /></span>
                     <span className="h-2.5 flex-1 overflow-hidden rounded-full bg-white/70">
-                      <span className="block h-full rounded-full bg-[#e3a32e]" style={{ width: `${total ? (d.count / total) * 100 : 0}%` }} />
+                      <span className="block h-full rounded-full bg-brand-700" style={{ width: `${total ? (d.count / total) * 100 : 0}%` }} />
                     </span>
                     <span className="w-8 text-end text-ink/75">{d.count}</span>
                   </li>

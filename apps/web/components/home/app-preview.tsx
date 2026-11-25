@@ -1,7 +1,5 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { Typewriter } from "./typewriter";
 
 /** Écrans de l'application, en trois téléphones qui s'entrecroisent (façon fiche App Store), sous l'accroche de l'accueil. */
 const SCREENS = [
@@ -22,7 +20,6 @@ function Phone({ src, alt, className }: { src: string; alt: string; className: s
 
 export async function AppPreview() {
   const t = await getTranslations("home");
-  const phrases = t.raw("typewriter") as string[];
   return (
     <section aria-labelledby="app-preview-title" className="mx-auto max-w-5xl px-4 pt-14 text-center sm:px-6 lg:pt-20" data-testid="home-app">
       <h2 id="app-preview-title" className="section-title">{t("appTitle")}</h2>
@@ -32,8 +29,16 @@ export async function AppPreview() {
           <Phone key={s.src} src={s.src} alt={t(s.key)} className={s.pos} />
         ))}
       </div>
-      <Link href="/inscription" className="btn btn-primary mt-14 px-10">{t("appCta")}</Link>
-      <Typewriter phrases={phrases} label={t("typewriterLabel")} />
+      {/* Pas encore d'application dans les stores : on l'annonce, sans lien. */}
+      <p className="mt-12 text-sm font-semibold text-ink" data-testid="app-soon">{t("appSoon")}</p>
+      <ul className="mt-3 flex flex-wrap justify-center gap-3" aria-label={t("appSoon")}>
+        {["App Store", "Google Play"].map((store) => (
+          <li key={store} className="inline-flex items-center gap-2 rounded-xl bg-ink px-4 py-2.5 text-sm font-semibold text-white opacity-90">
+            {store}
+            <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-medium">{t("appSoonBadge")}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

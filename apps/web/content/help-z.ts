@@ -13,7 +13,7 @@ export type HelpArticleZ = { slug: string; category: HelpCategoryKey; title: T3;
 
 /** Rubriques : public, titre et description (les autres restent celles de help.ts). */
 export const HELP_CATEGORIES_Z: { key: HelpCategoryKey; audience: HelpAudience; title: T3; description: T3 }[] = [
-  { key: "start", audience: "clients", title: { fr: "Bien démarrer", en: "Getting started", ar: "البداية" }, description: { fr: "Le principe, votre compte, venir seul·e.", en: "How it works, your account, coming alone.", ar: "المبدأ، حسابك، المجيء بمفردك." } },
+  { key: "start", audience: "clients", title: { fr: "Bien démarrer", en: "Getting started", ar: "البداية" }, description: { fr: "Le principe, votre compte, venir en solo.", en: "How it works, your account, coming alone.", ar: "المبدأ، حسابك، المجيء بمفردك." } },
   { key: "bookings", audience: "clients", title: { fr: "Réserver et payer", en: "Booking and paying", ar: "الحجز والدفع" }, description: { fr: "Réserver, payer, gammes, annuler, liste d'attente.", en: "Booking, paying, tiers, cancelling, waiting list.", ar: "الحجز، الدفع، الفئات، الإلغاء، قائمة الانتظار." } },
   { key: "day-of", audience: "clients", title: { fr: "Le jour J et après", en: "On the day and after", ar: "يوم الموعد وما بعده" }, description: { fr: "Le lieu, le check-in, votre table, le chat, revoir quelqu'un, les avis.", en: "The venue, check-in, your table, the chat, meeting again, reviews.", ar: "المكان، تسجيل الوصول، طاولتك، الدردشة، اللقاء من جديد، الآراء." } },
   { key: "membership", audience: "clients", title: { fr: "Carnet et Pass", en: "Pack and Pass", ar: "الدفتر والباس" }, description: { fr: "Carnet et Pass, absences.", en: "Pack and Pass, no-shows.", ar: "الدفتر والباس، الغياب." } },
@@ -61,7 +61,7 @@ export const HELP_ARTICLES_Z: HelpArticleZ[] = [
     body: {
       fr: [
         "Pour les Tables, le restaurant est réservé la veille dans l'après-midi parmi nos lieux partenaires de la gamme choisie, puis reçoit le nombre final à la fermeture des réservations (20h30).",
-        ["Il vous est dévoilé la veille à 21h30, par notification et e-mail, pour tous les rendez-vous (dîner, café, brunch).", "Dans votre réservation, la carte du lieu affiche son nom, l'adresse exacte, la carte et le bouton « Itinéraire ».", "Plusieurs restaurants peuvent accueillir les tables d'une même date.", "S'il change, vous êtes prévenu·e aussitôt."],
+        ["Il vous est dévoilé la veille à 21h30, par notification et e-mail, pour tous les rendez-vous (dîner, café, brunch).", "Dans votre réservation, la carte du lieu affiche son nom, l'adresse exacte, la carte et le bouton « Itinéraire ».", "Plusieurs restaurants peuvent accueillir les tables d'une même date.", "S'il change, nous vous prévenons aussitôt."],
         "Pour les autres activités, le lieu est indiqué dès la fiche, avec la même carte et l'itinéraire.",
       ],
       en: [
@@ -153,7 +153,7 @@ export const HELP_ARTICLES_Z: HelpArticleZ[] = [
     body: {
       fr: [
         "Après la rencontre, ouvrez [Mon groupe](/espace/rencontres).",
-        ["Appuyez sur « J'aimerais revoir… » à côté d'un prénom, jusqu'à 60 jours après l'expérience.", "La personne ne le sait que si elle a fait le même choix : vous apparaissez alors l'un pour l'autre dans « Envie partagée de se revoir ».", "Vous pouvez ensuite vous inviter à une prochaine expérience.", "« Ne plus être réuni·e » : vous ne serez plus placé·e dans le même groupe, sans que la personne le sache."],
+        ["Appuyez sur « J'aimerais revoir… » à côté d'un prénom, jusqu'à 60 jours après l'expérience.", "La personne ne le sait que si elle a fait le même choix : vous apparaissez alors l'un pour l'autre dans « Envie partagée de se revoir ».", "Vous pouvez ensuite vous inviter à une prochaine expérience.", "« Ne plus me placer avec » : vous ne serez plus placé·e dans le même groupe, sans que la personne le sache."],
       ],
       en: [
         "After the meet-up, open [My group](/espace/rencontres).",

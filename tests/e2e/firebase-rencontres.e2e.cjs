@@ -118,7 +118,7 @@ const put = (path, fields) => fetch(doc(path), { method: 'PATCH', headers: { ...
   await login(pc, chama.email, chama.password, '/espace/rencontres');
   await pc.waitForURL('**/espace/rencontres', { timeout: 25000 });
   const ma = pc.getByTestId('meet-member').filter({ hasText: 'Amal' });
-  await ma.getByRole('button', { name: 'Ne plus être réuni·e avec Amal' }).click();
+  await ma.getByRole('button', { name: 'Ne plus me placer avec Amal' }).click();
   await ma.getByRole('button', { name: 'Confirmer' }).click();
   assert(await visible(ma.getByTestId('meet-avoided'), 20000), 'Chama : « ne plus être réunie »');
   assert(await until(async () => (await fsGet(`avoids/${chama.uid}`))?.fields?.uids?.arrayValue?.values?.[0]?.stringValue === amal.uid), 'Firestore : demande privée enregistrée');

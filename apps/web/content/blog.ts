@@ -754,7 +754,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         { h: "Le prix et le paiement" },
         "En ligne, vous ne payez que Wenzy : 35 DH par place. Avec le Pass, votre place est incluse ; avec le Carnet, vous utilisez un crédit (une sortie offerte sur trois). Le reste se règle toujours sur place : votre consommation au restaurant, ou le prix de l'activité affiché sur la fiche. Vous recevez votre facture dès la confirmation.",
         { h: "Les groupes" },
-        "Vous venez seul·e ou avec des amis (ils restent avec vous). Nous composons les tables et les équipes selon les langues, les âges, l'équilibre du groupe et les centres d'intérêt, en évitant de remettre ensemble les mêmes personnes, et notre équipe relit toujours la composition. Pour en savoir plus : [comment nous composons les groupes](/blog/comment-nous-composons-les-tables).",
+        "Vous venez en solo ou avec des amis (ils restent avec vous). Nous composons les tables et les équipes selon les langues, les âges, l'équilibre du groupe et les centres d'intérêt, en évitant de remettre ensemble les mêmes personnes, et notre équipe relit toujours la composition. Pour en savoir plus : [comment nous composons les groupes](/blog/comment-nous-composons-les-tables).",
         { h: "Le jour J" },
         "Pour les Tables, le lieu vous est dévoilé la veille à 21h30, une heure après la fermeture des réservations (il est indiqué dès la réservation pour les activités). Un rappel arrive le jour même. Sur place, vous indiquez votre arrivée dans l'appli : votre table s'affiche et le chat de votre groupe s'ouvre. Après, vous laissez un avis.",
         { h: "Le Pass et le Carnet" },
@@ -886,7 +886,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
     cover: "/images/photos/comment-groupe-1.webp",
     body: {
       fr: [
-        { summary: ["Huit étapes, du choix de votre rendez-vous à l'avis après l'expérience.", "Une seule date est ouverte à la fois : celle de la semaine, jusqu'à la veille 20h30.", "35 DH en ligne (rien avec le Pass), le repas ou l'activité réglé sur place.", "Pour une première, venez seul·e : c'est fait pour ça."] },
+        { summary: ["Huit étapes, du choix de votre rendez-vous à l'avis après l'expérience.", "Une seule date est ouverte à la fois : celle de la semaine, jusqu'à la veille 20h30.", "35 DH en ligne (rien avec le Pass), le repas ou l'activité réglé sur place.", "Pour une première, venez en solo : c'est fait pour ça."] },
         "Première fois ? Voici exactement ce qui va se passer, pour arriver serein. Comptez cinq minutes pour réserver, et rien d'autre à organiser.",
         { ol: [
           "Choisissez votre rendez-vous de la semaine. Le Dîner du mercredi, l'activité du samedi, le Café du samedi, le Brunch du dimanche, ou une édition spéciale : l'accueil les présente dans « Votre semaine Wenzy ».",
@@ -899,7 +899,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
           "Après. Laissez un avis : il nous aide à composer les prochaines tables et les prochains groupes.",
         ] },
         { h: "Trois conseils pour une première" },
-        ["Venez seul·e : nos rendez-vous sont pensés pour ça, et c'est ce qui rend la rencontre facile.", "Préparez une ou deux questions : notre article sur [les questions pour lancer une conversation](/blog/questions-pour-lancer-une-conversation) peut aider.", "Ne cherchez pas à tout réussir : une bonne soirée, c'est déjà beaucoup. Et la semaine prochaine, il y a un autre rendez-vous."],
+        ["Venez en solo : nos rendez-vous sont pensés pour ça, et c'est ce qui rend la rencontre facile.", "Préparez une ou deux questions : notre article sur [les questions pour lancer une conversation](/blog/questions-pour-lancer-une-conversation) peut aider.", "Ne cherchez pas à tout réussir : une bonne soirée, c'est déjà beaucoup. Et la semaine prochaine, il y a un autre rendez-vous."],
         { h: "Et si j'ai un empêchement ?" },
         "Vous pouvez annuler depuis votre réservation, selon les conditions affichées sur la fiche (le plus souvent, remboursement intégral jusqu'à 48 heures avant). Vous pouvez aussi changer de date tant que les réservations sont ouvertes. Libérer votre place permet à quelqu'un de la liste d'attente d'en profiter.",
         { tip: "Prêt ? [Voir les rendez-vous de la semaine](/experiences)." },
@@ -1103,7 +1103,7 @@ const BLOG_ARTICLES_RAW: BlogArticleRaw[] = [
         {"h": "Les bons réflexes"},
         ["Arrivez un peu en avance : l'échauffement est le meilleur moment pour faire connaissance.", "Venez avec ce qui est indiqué (baskets, eau, tenue) ; le reste du matériel est souvent fourni.", "Allez à votre rythme, arrêtez-vous si quelque chose ne va pas et suivez les consignes de l'encadrant.", "Après l'effort, restez pour le verre ou le goûter : c'est souvent là que naissent les amitiés."],
         {"h": "Avec Wenzy : l'activité du samedi"},
-        "Chaque samedi, la communauté Wenzy se retrouve autour d'une activité différente, en rotation : running, padel, yoga, céramique, escape game. Vous venez seul·e, nous composons des groupes de même niveau quand il le faut, et vous repartez avec de nouveaux partenaires de jeu.",
+        "Chaque samedi, la communauté Wenzy se retrouve autour d'une activité différente, en rotation : running, padel, yoga, céramique, escape game. Vous venez en solo, nous composons des groupes de même niveau quand il le faut, et vous repartez avec de nouveaux partenaires de jeu.",
         {"tip": "Prêt à bouger ? [Voir l'activité du samedi](/experiences). Et pour la sécurité : nos [conseils](/securite)."},
       ],
       en: [

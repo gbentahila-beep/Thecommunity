@@ -138,24 +138,11 @@
     "howMoreUniverses": "+ {count, plural, one {# more category} other {# more categories}}",
     "tileThisWeek": "{count} this week",
     "tileSeeDates": "See dates",
-    "appTitle": "All your outings in your pocket",
-    "appText": "Book an outing, meet your group, see what's on this week.",
-    "appCta": "Sign up now",
+    "appTitle": "Your group, the address and the time, in your pocket",
+    "appText": "The address revealed the evening before, your group chat, check-in on the spot: it will all be in the app.",
     "appScreenHome": "App home screen: your next experience and outings to book",
     "appScreenBooking": "“On the day” screen: countdown, “I'm here”, directions",
     "appScreenDiscover": "Discover screen: this week's meet-ups (Wednesday dinner, Saturday activity and coffee, Sunday brunch)",
-    "typewriterLabel": "With Wenzy, you can:",
-    "typewriter": [
-      "Make friends in your city",
-      "Find a padel partner",
-      "Find people for brunch",
-      "Run the Corniche together",
-      "Have dinner with new faces",
-      "Find people to play games with",
-      "Meet your future crew",
-      "Find hiking buddies",
-      "Never go out alone again"
-    ],
     "allQuestions": "All questions",
     "citiesLine": "Coming soon to {list}.",
     "featuredReviews": {
@@ -195,7 +182,9 @@
       "text": "Work fills the days, friends move away, evenings all look the same."
     },
     "howTimelineLink": "See the full timeline",
-    "weekAt": "in"
+    "weekAt": "in",
+    "appSoon": "The Wenzy app is coming soon to the App Store and Google Play.",
+    "appSoonBadge": "Soon"
   },
   "card": {
     "people": "{count} people",
