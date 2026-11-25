@@ -10,7 +10,7 @@ import { DEFAULT_CITY } from "@/lib/site";
 import { WeekList } from "./week-list";
 
 /**
- * « Cette semaine à Casablanca ▾ » (accueil visiteur et accueil membre) : le chevron ouvre la liste des villes,
+ * Accueil (intro) : « Votre semaine Wenzy », « à Casablanca ▾ », le principe, puis la liste. Ailleurs : « Cette semaine à Casablanca ▾ » (accueil visiteur et accueil membre) : le chevron ouvre la liste des villes,
  * les pastilles filtrent sur place, puis les lignes compactes, « Voir toutes les expériences » et la ligne d'alerte.
  * Si la semaine est calme, la liste est complétée par les prochaines dates.
  */
@@ -41,11 +41,12 @@ export async function ThisWeek({ limit, cityId = DEFAULT_CITY, intro = false }: 
           <div className="text-center" data-testid="week-intro">
             <p className="eyebrow">{t("weekRvEyebrow")}</p>
             <h2 id="this-week-title" className="section-title mt-2">{t("weekRvTitle")}</h2>
-            <p className="mx-auto mt-2 max-w-xl text-ink/75">{t("weekRvText")}</p>
+            {/* Le choix de la ville, juste sous le titre (« à Casablanca ▾ ») : remplace « Cette semaine à… », redondant. */}
+            <p className="relative mt-1 flex flex-wrap items-baseline justify-center gap-x-2 font-display text-2xl font-semibold text-ink sm:text-3xl">
+              {t("weekAt")} <CityMenu variant="title" align="start" currentCityId={cityId} />
+            </p>
+            <p className="mx-auto mt-3 max-w-xl text-ink/75">{t("weekRvText")}</p>
           </div>
-          <h3 className="relative flex flex-wrap items-baseline justify-center gap-x-2 pt-2 font-display text-2xl font-semibold text-ink sm:text-3xl">
-            {t("thisWeekAt")} <CityMenu variant="title" align="start" currentCityId={cityId} />
-          </h3>
         </>
       ) : (
         <h2 id="this-week-title" className="section-title relative flex flex-wrap items-baseline justify-center gap-x-2">

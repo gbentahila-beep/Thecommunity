@@ -193,7 +193,8 @@
       "closing": "You pick the day.",
       "closingAccent": "We handle the rest."
     },
-    "howTimelineLink": "See the full timeline"
+    "howTimelineLink": "See the full timeline",
+    "weekAt": "in"
   },
   "card": {
     "people": "{count} people",

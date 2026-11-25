@@ -193,7 +193,8 @@
       "closing": "أنت تختار اليوم.",
       "closingAccent": "ونحن نتكفل بالباقي."
     },
-    "howTimelineLink": "عرض المراحل كاملة"
+    "howTimelineLink": "عرض المراحل كاملة",
+    "weekAt": "في"
   },
   "card": {
     "people": "{count} أشخاص",

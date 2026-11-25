@@ -193,7 +193,8 @@
       "closing": "Vous choisissez le jour.",
       "closingAccent": "On s'occupe du reste."
     },
-    "howTimelineLink": "Voir le déroulé complet"
+    "howTimelineLink": "Voir le déroulé complet",
+    "weekAt": "à"
   },
   "card": {
     "people": "{count} pers.",
