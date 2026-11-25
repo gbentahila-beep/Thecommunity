@@ -42,6 +42,8 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
   const note = typeof sp.note === "string" && /^[1-5]$/.test(sp.note) ? Number(sp.note) : undefined;
   const sort: Sort = typeof sp.tri === "string" && (SORTS as readonly string[]).includes(sp.tri) ? (sp.tri as Sort) : "recent";
   const showAll = sp.tout === "1";
+  // Étape 4 : « Voir les N avis » depuis une fiche (?rdv=<slug>) : seulement les avis de ce rendez-vous.
+  const rdvExp = typeof sp.rdv === "string" ? experiences.find((e) => e.slug === sp.rdv) : undefined;
 
   const total = all.length;
   const overall = avg(all.map((r) => r.rating)) ?? 0;
@@ -53,12 +55,12 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
 
   const catOf = (r: Review) => expById.get(r.experienceId)?.categoryId;
   const filtered = all
-    .filter((r) => (!category || catOf(r) === category) && (!note || r.rating === note))
+    .filter((r) => (!rdvExp || r.experienceId === rdvExp.id) && (!category || catOf(r) === category) && (!note || r.rating === note))
     .sort((a, b) => (sort === "best" ? b.rating - a.rating : sort === "worst" ? a.rating - b.rating : 0) || b.createdAt.localeCompare(a.createdAt));
   const shown = showAll ? filtered : filtered.slice(0, PAGE);
   const href = (change: Record<string, string | undefined>) => {
     const q = new URLSearchParams();
-    const next = { univers: category, note: note ? String(note) : undefined, tri: sort === "recent" ? undefined : sort, ...change };
+    const next = { rdv: rdvExp?.slug, univers: category, note: note ? String(note) : undefined, tri: sort === "recent" ? undefined : sort, ...change };
     for (const [k, v] of Object.entries(next)) if (v) q.set(k, v);
     const s = q.toString();
     return `/avis${s ? `?${s}` : ""}`;
@@ -118,6 +120,15 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
 
           <section aria-labelledby="all-title" className="space-y-5">
             <h2 id="all-title" className="section-title text-center">{t("allTitle")}</h2>
+            {rdvExp && (
+              <p className="flex justify-center" data-testid="reviews-rdv-filter">
+                <Link href={href({ rdv: undefined, tout: undefined })} className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-white">
+                  {t("filterExperience", { title: tr(rdvExp.title, loc) })}
+                  <span aria-hidden>×</span>
+                  <span className="sr-only">{t("clearExperience")}</span>
+                </Link>
+              </p>
+            )}
             {/* Une seule barre de filtres : univers (s'il y en a plusieurs), note, puis tri à droite. */}
             <div className="flex flex-wrap items-center justify-center gap-2">
               {usedCats.length > 1 && (

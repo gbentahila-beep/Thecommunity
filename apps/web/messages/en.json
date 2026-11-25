@@ -358,7 +358,26 @@
     "rvMonthly": "once a month",
     "rvOpensAt": "Opens {day} at {time}",
     "rvPassEarly": "Bookable now with the Pass",
-    "rvRotation": "{name}: a different activity every {day}"
+    "rvRotation": "{name}: a different activity every {day}",
+    "flowTitle": "How it works",
+    "flow1When": "Now",
+    "flow1TitleRv": "You book",
+    "flow1Rv": "Until 8:30 pm the day before. Your spot is confirmed right away: 35 DH online, or included with the Pass.",
+    "flow1Request": "You send a request: the team reviews it and lets you know in your notifications.",
+    "flow1Open": "Your spot is confirmed right away.",
+    "flow2WhenSecret": "The day before, 9:30 pm",
+    "flow2When": "The day before",
+    "flow2Title": "You get the address",
+    "flow2Secret": "We reveal the place and a glimpse of your group.",
+    "flow2Open": "A reminder with the address and directions.",
+    "flow3When": "On the day",
+    "flow3Title": "You meet the group",
+    "flow3Composed": "At check-in, tap “I'm here” and see your group's first names.",
+    "flow3Open": "At check-in, tap “I'm here” and meet the group and the team.",
+    "flowMore": "See the full timeline",
+    "allReviews": "{count, plural, one {See the review} other {See all # reviews}}",
+    "barSeats": "{count, plural, one {# spot left} other {# spots left}}",
+    "barFull": "Full · waitlist"
   },
   "booking": {
     "title": "Book my spot",
@@ -1980,7 +1999,9 @@
     "saidYes": "said yes",
     "ctaTitle": "Been to an experience?",
     "ctaText": "Leave a review from your bookings: it helps other members and helps us put better groups together.",
-    "ctaButton": "Leave a review"
+    "ctaButton": "Leave a review",
+    "filterExperience": "Reviews of “{title}”",
+    "clearExperience": "All reviews"
   },
   "audiences": {
     "partnersEyebrow": "Partner venues",

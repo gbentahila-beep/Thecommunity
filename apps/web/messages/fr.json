@@ -358,7 +358,26 @@
     "rvMonthly": "1 fois par mois",
     "rvOpensAt": "Ouvre le {day} à {time}",
     "rvPassEarly": "Réservable dès maintenant avec le Pass",
-    "rvRotation": "{name} : une activité différente chaque {day}"
+    "rvRotation": "{name} : une activité différente chaque {day}",
+    "flowTitle": "Comment ça se passe",
+    "flow1When": "Maintenant",
+    "flow1TitleRv": "Vous réservez",
+    "flow1Rv": "Jusqu'à la veille 20h30. Votre place est confirmée tout de suite : 35 DH en ligne, ou inclus avec le Pass.",
+    "flow1Request": "Vous envoyez une demande : l'équipe l'étudie et vous prévient dans vos notifications.",
+    "flow1Open": "Votre place est confirmée tout de suite.",
+    "flow2WhenSecret": "La veille, 21h30",
+    "flow2When": "La veille",
+    "flow2Title": "Vous recevez l'adresse",
+    "flow2Secret": "On vous dévoile le lieu et un aperçu de votre groupe.",
+    "flow2Open": "Un rappel avec l'adresse et l'itinéraire.",
+    "flow3When": "Le jour J",
+    "flow3Title": "Vous retrouvez le groupe",
+    "flow3Composed": "Au check-in « Je suis là », vous découvrez les prénoms de votre groupe.",
+    "flow3Open": "Au check-in « Je suis là », vous retrouvez le groupe et l'équipe.",
+    "flowMore": "Voir le déroulé complet",
+    "allReviews": "{count, plural, one {Voir l'avis} other {Voir les # avis}}",
+    "barSeats": "{count, plural, one {# place libre} other {# places libres}}",
+    "barFull": "Complet · liste d'attente"
   },
   "booking": {
     "title": "Réserver ma place",
@@ -1980,7 +1999,9 @@
     "saidYes": "oui",
     "ctaTitle": "Vous avez vécu une expérience ?",
     "ctaText": "Donnez votre avis depuis vos réservations : il aide les autres membres et nous aide à composer de meilleurs groupes.",
-    "ctaButton": "Donner mon avis"
+    "ctaButton": "Donner mon avis",
+    "filterExperience": "Avis sur « {title} »",
+    "clearExperience": "Tous les avis"
   },
   "audiences": {
     "partnersEyebrow": "Lieux partenaires",

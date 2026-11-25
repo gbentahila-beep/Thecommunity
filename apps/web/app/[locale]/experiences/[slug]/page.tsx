@@ -249,10 +249,11 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-10">
             <header>
-              <span className="inline-block rounded-full bg-badge px-3 py-1 text-xs font-medium text-brand-900">
+              {/* Étape 4 (docs/29) : en-tête aligné à gauche, format en sur-titre, note cliquable vers les avis. */}
+              <p className="eyebrow">
                 {category ? tr(category.shortName, locale) : ""}
                 {subcategory ? ` · ${tr(subcategory.shortName, locale)}` : ""}
-              </span>
+              </p>
               <h1 className="page-title mt-3">{rv && !rotation ? tr(rv.title as never, locale) : tr(exp.title, locale)}</h1>
               {rv && (
                 <p className="mt-2 text-sm font-semibold text-brand-700" data-testid="rv-weekly">
@@ -263,11 +264,11 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               )}
               <p className="mt-3 text-lg text-ink/80">{tr(exp.summary, locale)}</p>
               {exp.ratingCount > 0 && (
-                <p className="mt-3 flex items-center justify-center gap-2 text-sm text-muted">
+                <a href="#avis" className="mt-3 inline-flex items-center gap-2 text-sm text-muted hover:text-ink">
                   <Stars value={exp.ratingAvg} />
                   <span className="font-semibold text-ink">{exp.ratingAvg.toFixed(1)}</span>
-                  <span>· {t("reviewsCount", { count: exp.ratingCount })}</span>
-                </p>
+                  <span className="underline underline-offset-4">{t("reviewsCount", { count: exp.ratingCount })}</span>
+                </a>
               )}
             </header>
 
@@ -275,6 +276,32 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
             <EventEssentials items={essentials}>
               {!surprise && exp.venue.geo && <div className="mt-4"><VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} /></div>}
             </EventEssentials>
+
+            {/* Étape 4 : ce qui se passe après la réservation, en trois moments. */}
+            <Section title={t("flowTitle")}>
+              <ol className="space-y-0" data-testid="experience-flow">
+                {[
+                  { when: t("flow1When"), title: t("flow1TitleRv"), text: exp.admission === "on_request" ? t("flow1Request") : rv ? t("flow1Rv") : t("flow1Open") },
+                  { when: surprise ? t("flow2WhenSecret") : t("flow2When"), title: t("flow2Title"), text: surprise ? t("flow2Secret") : t("flow2Open") },
+                  { when: t("flow3When"), title: t("flow3Title"), text: composed ? t("flow3Composed") : t("flow3Open") },
+                ].map((step, i, all) => (
+                  <li key={step.title} className="relative flex gap-4 pb-6 last:pb-0">
+                    {i < all.length - 1 && <span aria-hidden className="absolute start-[11px] top-7 bottom-0 w-px bg-line" />}
+                    <span aria-hidden className={`relative mt-1 grid size-6 shrink-0 place-items-center rounded-full ${i === 0 ? "bg-brand-900" : "bg-white ring-2 ring-line"}`}>
+                      {i === 0 && <span className="size-2 rounded-full bg-white" />}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-xs font-semibold tracking-[0.12em] text-brand-700 uppercase">{step.when}</span>
+                      <span className="mt-0.5 block font-semibold text-ink">{step.title}</span>
+                      <span className="mt-0.5 block text-[15px] leading-relaxed text-ink/75">{step.text}</span>
+                    </span>
+                  </li>
+                ))}
+              </ol>
+              <Link href="/comment-ca-marche#deroule" className="mt-5 inline-flex text-sm font-semibold text-brand-900 underline underline-offset-4">
+                {t("flowMore")}
+              </Link>
+            </Section>
 
             <Section title={t("about")}>
               <p className="leading-relaxed text-ink/85">{tr(exp.description, locale)}</p>
@@ -328,11 +355,17 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
 
             <Section title={t("reviews")}>
               {reviews.length > 0 ? (
-                <ul className="space-y-4" id="avis">
-                  {reviews.map((r) => (
-                    <ReviewItem key={r.id} review={r} locale={locale} />
-                  ))}
-                </ul>
+                <>
+                  <ul className="space-y-4" id="avis">
+                    {reviews.slice(0, 3).map((r) => (
+                      <ReviewItem key={r.id} review={r} locale={locale} />
+                    ))}
+                  </ul>
+                  {/* Étape 4 : tous les avis de ce rendez-vous sur la page Avis, déjà filtrée. */}
+                  <Link href={`/avis?rdv=${exp.slug}`} className="btn btn-secondary mt-5" data-testid="all-reviews-link">
+                    {t("allReviews", { count: Math.max(reviews.length, exp.ratingCount) })}
+                  </Link>
+                </>
               ) : (
                 <p className="text-ink/70" id="avis">{t("noReviewsYet")}</p>
               )}
@@ -444,7 +477,13 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
           <div className="mx-auto flex max-w-md items-center justify-between gap-3 max-[359px]:flex-col max-[359px]:items-stretch max-[359px]:gap-2">
             <div className="min-w-0 flex-1">
               <p className="leading-tight"><PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} pricing={twoPart} t2={t2} detail={false} budget={budget} /></p>
-              <p className="text-xs text-muted">{formatShortSlot(next.startAt, locale)}</p>
+              {/* Étape 4 : le prix, la date et les places libres, puis un seul bouton. */}
+              <p className="text-xs text-muted">
+                {formatShortSlot(next.startAt, locale)} ·{" "}
+                <span className={seatsAvailable(next) > 0 && seatsAvailable(next) <= LOW_SEATS_THRESHOLD ? "font-semibold text-[#b8381f]" : ""}>
+                  {seatsAvailable(next) > 0 ? t("barSeats", { count: seatsAvailable(next) }) : t("barFull")}
+                </span>
+              </p>
             </div>
             <Link href={`/reserver/${next.id}`} className="btn btn-primary h-12 shrink-0 whitespace-nowrap">
               {exp.admission === "on_request" ? t("requestCta") : t("bookCta")}
@@ -472,10 +511,11 @@ function formatLabel(exp: Experience, t: (key: string, values?: Record<string, s
   }
 }
 
+/** Sections de la fiche, séparées par un filet fin (étape 4, docs/29). */
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section>
-      <h2 className="mb-3 card-title">{title}</h2>
+    <section className="border-t border-line pt-10">
+      <h2 className="mb-4 card-title">{title}</h2>
       {children}
     </section>
   );

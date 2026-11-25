@@ -23,7 +23,11 @@ env:
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
     value: 1:308285799109:web:352a4ff2a640761d314eac
     availability: [BUILD, RUNTIME]
-  # Bandeau « version de démonstration » conservé pendant les tests.
+  # Bandeau « version de démonstration » retiré (25/11) : le site d'essai affiche les vrais rendez-vous.
   - variable: NEXT_PUBLIC_DEMO_BANNER
+    value: "false"
+    availability: [BUILD, RUNTIME]
+  # Site d'essai : jamais indexé par les moteurs de recherche (indépendant du bandeau).
+  - variable: NEXT_PUBLIC_NOINDEX
     value: "true"
     availability: [BUILD, RUNTIME]

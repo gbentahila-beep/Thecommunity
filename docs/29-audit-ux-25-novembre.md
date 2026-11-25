@@ -82,6 +82,19 @@ Réponses de Hamza : ordre validé, réglé par l'équipe dans le back-office ; 
 - **Prix** : « Sur Wenzy, en ligne : 35 DH » et « Sur place : votre addition » (ou le prix de l'activité, annoncé ou en fourchette selon la gamme) ; lien vers le Pass. Même formulation dans « Comment ça marche ».
 - Fonds : blanc et crème en alternance, la sécurité en bande encre.
 
+## Étape 4 — fiche d'un rendez-vous et Découvrir (25 novembre)
+
+Réponses de Hamza : bandeau « DÉMO » retiré ; haut de fiche « de manière pro », pas en billet ; bloc « Comment ça se passe » (oui) ; barre mobile prix · places · un bouton (oui) ; lien vers tous les avis (oui).
+
+- **Bandeau « DÉMO »** retiré du site d'essai (`NEXT_PUBLIC_DEMO_BANNER=false`). Le site d'essai reste **non indexé** par les moteurs de recherche grâce à une variable séparée (`NEXT_PUBLIC_NOINDEX=true`, lue par `robots.ts`).
+- **En-tête de la fiche** : format en sur-titre (plus de pastille), titre et note alignés à gauche, note cliquable vers les avis.
+- **L'essentiel** : plus d'encadré ; grille aérée sous un filet, une icône dans un rond par information (date, lieu, groupe, gamme ou niveau, langues, public).
+- **« Comment ça se passe »** : trois moments (vous réservez, la veille / la veille 21h30 si le lieu est secret, le jour J), textes adaptés au rendez-vous (sur demande, lieu secret, groupe composé), lien vers le déroulé complet.
+- **Sections** séparées par un filet fin, titres en Inter.
+- **Avis** : les 3 derniers sur la fiche, puis « Voir les N avis » vers la page Avis filtrée sur ce rendez-vous (`/avis?rdv=<slug>`, filtre effaçable).
+- **Barre mobile** : prix, date, places libres (corail sous 4), un seul bouton.
+- **Découvrir** : déjà traité aux étapes 1 bis et 2 (titre et filtres, carte unique).
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.

@@ -10,11 +10,14 @@ export type EssentialItem = { icon: LucideIcon; label: string; value?: string; l
  */
 export function EventEssentials({ items, children }: { items: EssentialItem[]; children?: React.ReactNode }) {
   return (
-    <section aria-label="L'essentiel" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="meeting">
-      <ul className="grid gap-4 sm:grid-cols-2">
+    // Étape 4 (docs/29) : l'essentiel sans encadré, en grille aérée sous un filet, une icône dans un rond par ligne.
+    <section aria-label="L'essentiel" className="border-t border-line pt-8" data-testid="meeting">
+      <ul className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         {items.map(({ icon: Icon, label, value, link }) => (
-          <li key={label} className="flex items-start gap-3">
-            <Icon className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
+          <li key={label} className="flex items-start gap-3.5">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-cream text-brand-900">
+              <Icon className="size-5" aria-hidden />
+            </span>
             <span>
               <span className="block font-medium text-ink">{label}</span>
               {value && <span className="text-sm text-muted">{value}</span>}
