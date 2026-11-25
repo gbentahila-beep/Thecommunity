@@ -369,7 +369,7 @@
     "flow2When": "La veille",
     "flow2Title": "Vous recevez l'adresse",
     "flow2Secret": "On vous dévoile le lieu et un aperçu de votre groupe.",
-    "flow2Open": "Un rappel avec l'adresse et l'itinéraire.",
+    "flow2Open": "Avec l'heure, l'adresse et l'itinéraire, pour arriver sans stress.",
     "flow3When": "Le jour J",
     "flow3Title": "Vous retrouvez le groupe",
     "flow3Composed": "Au check-in « Je suis là », vous découvrez les prénoms de votre groupe.",
@@ -377,7 +377,8 @@
     "flowMore": "Voir le déroulé complet",
     "allReviews": "{count, plural, one {Voir l'avis} other {Voir les # avis}}",
     "barSeats": "{count, plural, one {# place libre} other {# places libres}}",
-    "barFull": "Complet · liste d'attente"
+    "barFull": "Complet · liste d'attente",
+    "flow2TitleOpen": "Un rappel"
   },
   "booking": {
     "title": "Réserver ma place",
@@ -625,7 +626,7 @@
     "stepsIntro": "L'exemple d'un Dîner du mercredi à 20h30. Pour le café et le brunch, c'est le même déroulé, aux heures du rendez-vous.",
     "tl1When": "Aujourd'hui",
     "tl1Title": "Vous réservez votre place",
-    "tl1Text": "Votre profil se remplit une fois, en une minute. Choisissez votre rendez-vous et votre gamme (Casual, Premium ou Exclusive, qui fixe le budget sur place), puis réglez 35 DH : rien avec le Pass, un crédit avec le Carnet. Votre place est confirmée aussitôt. C'est complet ? Rejoignez la liste d'attente.",
+    "tl1Text": "Choisissez votre rendez-vous et votre gamme (Casual, Premium ou Exclusive, qui fixe le budget sur place). 35 DH en ligne, ou inclus avec le Pass : votre place est confirmée aussitôt. Complet ? Rejoignez la liste d'attente.",
     "tl2When": "Jusqu'à la veille, 20h30",
     "tl2Title": "Les inscriptions restent ouvertes",
     "tl2Text": "D'autres personnes vous rejoignent. Un imprévu ? Déplacez votre place sur une autre date ou annulez, selon les conditions. À 20h30, les inscriptions ferment et nous composons les tables.",
@@ -875,7 +876,7 @@
     "tabCancelled": "Annulées",
     "emptyTab": "Rien ici pour le moment.",
     "seats": "{count, plural, one {# place} other {# places}}",
-    "navMembership": "Carnet et Pass",
+    "navMembership": "Abonnement",
     "navInvoices": "Mes factures",
     "navPropose": "Proposer une sortie",
     "memberSuggestTitle": "Vous avez aimé ? Devenez membre",
@@ -1555,7 +1556,7 @@
     "heroTitleB": "amis demain",
     "startHere": "Commencer ici",
     "mostRead": "Les plus lus",
-    "browse": "Parcourir les articles",
+    "browse": "Tous les articles",
     "sortLabel": "Trier les articles",
     "sortPopular": "Plus lus",
     "sortRecent": "Récents",
@@ -2119,9 +2120,9 @@
     "how4": "Sur place, faites votre check-in : vous découvrez votre table et les prénoms."
   },
   "pass": {
-    "metaTitle": "Carnet et Pass",
+    "metaTitle": "Abonnement",
     "metaDescription": "Le Pass inclut vos places, le Carnet vous fait une sortie offerte sur trois. Sans engagement.",
-    "title": "Carnet et Pass",
+    "title": "Abonnement",
     "soon": "Le carnet et le pass arrivent bientôt.",
     "heroTitle": "Sortez plus souvent, sans compter",
     "heroText": "Chaque place coûte {price} en ligne. Avec le Pass, votre place est incluse ; avec le Carnet, vous avez une sortie offerte sur trois. Le reste se règle toujours sur place.",

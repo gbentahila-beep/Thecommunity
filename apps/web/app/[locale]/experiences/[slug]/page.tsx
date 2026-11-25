@@ -13,7 +13,7 @@ import {
   bookingWindow,
   type VenueTier,
 } from "@thecommunity/shared";
-import { Backpack, CalendarDays, Gem, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, UsersRound, Sparkles } from "lucide-react";
+import { Backpack, Check, CalendarDays, Gem, CloudSun, Gauge, HeartPulse, Languages, Leaf, MapPin, Shirt, UserCheck, Users, UsersRound, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
@@ -246,8 +246,8 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
           <FavoriteButton experienceId={exp.id} className="absolute end-4 top-4" />
         </ExperienceGallery>
 
-        <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
-          <div className="space-y-10">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-x-12">
+          <div className="space-y-8 lg:col-start-1">
             <header>
               {/* Étape 4 (docs/29) : en-tête aligné à gauche, format en sur-titre, note cliquable vers les avis. */}
               <p className="eyebrow">
@@ -277,103 +277,10 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               {!surprise && exp.venue.geo && <div className="mt-4"><VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} /></div>}
             </EventEssentials>
 
-            {/* Étape 4 : ce qui se passe après la réservation, en trois moments. */}
-            <Section title={t("flowTitle")}>
-              <ol className="space-y-0" data-testid="experience-flow">
-                {[
-                  { when: t("flow1When"), title: t("flow1TitleRv"), text: exp.admission === "on_request" ? t("flow1Request") : rv ? t("flow1Rv") : t("flow1Open") },
-                  { when: surprise ? t("flow2WhenSecret") : t("flow2When"), title: t("flow2Title"), text: surprise ? t("flow2Secret") : t("flow2Open") },
-                  { when: t("flow3When"), title: t("flow3Title"), text: composed ? t("flow3Composed") : t("flow3Open") },
-                ].map((step, i, all) => (
-                  <li key={step.title} className="relative flex gap-4 pb-6 last:pb-0">
-                    {i < all.length - 1 && <span aria-hidden className="absolute start-[11px] top-7 bottom-0 w-px bg-line" />}
-                    <span aria-hidden className={`relative mt-1 grid size-6 shrink-0 place-items-center rounded-full ${i === 0 ? "bg-brand-900" : "bg-white ring-2 ring-line"}`}>
-                      {i === 0 && <span className="size-2 rounded-full bg-white" />}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-xs font-semibold tracking-[0.12em] text-brand-700 uppercase">{step.when}</span>
-                      <span className="mt-0.5 block font-semibold text-ink">{step.title}</span>
-                      <span className="mt-0.5 block text-[15px] leading-relaxed text-ink/75">{step.text}</span>
-                    </span>
-                  </li>
-                ))}
-              </ol>
-              <Link href="/comment-ca-marche#deroule" className="mt-5 inline-flex text-sm font-semibold text-brand-900 underline underline-offset-4">
-                {t("flowMore")}
-              </Link>
-            </Section>
-
-            <Section title={t("about")}>
-              <p className="leading-relaxed text-ink/85">{tr(exp.description, locale)}</p>
-              {exp.included.length > 0 && (
-                <>
-                  <h3 className="mt-5 text-sm font-semibold uppercase tracking-wide text-muted">{t("included")}</h3>
-                  <ul className="mt-2 grid gap-2 sm:grid-cols-2">
-                    {exp.included.map((item) => (
-                      <li key={item.fr} className="flex items-start gap-2.5 text-ink/85">
-                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-brand-700" aria-hidden />
-                        {tr(item, locale)}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </Section>
-
-            {/* Tout le reste en une seule liste : à apporter, tenue, plein air, âge, alcool, infos pratiques, annulation. */}
-            <Section title={t("goodToKnow")}>
-              <ul className="space-y-3" data-testid="activity-details">
-                {exp.equipmentProvided && !includedText.includes(exp.equipmentProvided.trim().toLowerCase()) && <Detail icon={Backpack} label={t("equipmentProvided")} text={extraText(exp, "equipmentProvided", exp.equipmentProvided, locale)} />}
-                {exp.whatToBring && <Detail icon={Backpack} label={t("whatToBring")} text={extraText(exp, "whatToBring", exp.whatToBring, locale)} />}
-                {exp.dressCode && <Detail icon={Shirt} label={t("dressCode")} text={extraText(exp, "dressCode", exp.dressCode, locale)} />}
-                {exp.outdoor && <Detail icon={CloudSun} label={t("outdoorTitle")} text={t("outdoorText")} />}
-                {exp.physicalActivity && <Detail icon={HeartPulse} label={t("physicalTitle")} text={richText(t.raw("physicalText") as string, "")} />}
-                {exp.alcoholServed === false && <Detail icon={Leaf} label={t("alcoholFree")} text="" />}
-                {tr(exp.practicalInfo, locale) && <Detail icon={Sparkles} label={t("practical")} text={tr(exp.practicalInfo, locale)} />}
-                <Detail icon={CalendarDays} label={t("cancellation")} text={`${tr(policy.label, locale)}.`} />
-              </ul>
-            </Section>
-
-            {organizer && (
-              <Section title={t("organizedBy")}>
-                <div className="flex items-center gap-4 rounded-[var(--radius-card)] bg-white p-4 shadow-card" data-testid="organizer-block">
-                  <div className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-brand-50 font-display text-2xl text-brand-900">
-                    {publicLogo(organizer.logoPath) ? <Image src={publicLogo(organizer.logoPath)!} alt="" fill sizes="64px" className="object-cover" /> : organizer.name.slice(0, 1)}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-semibold text-ink">{organizer.name}</p>
-                    {organizer.ratingCount > 0 && (
-                      <p className="flex items-center gap-1.5 text-sm text-muted">
-                        <Stars value={organizer.ratingAvg} /> {organizer.ratingAvg.toFixed(1)} · {t("reviewsCount", { count: organizer.ratingCount })}
-                      </p>
-                    )}
-                    <Link href={`/organisateurs/${organizer.slug}`} className="text-sm font-semibold text-brand-900 underline underline-offset-4">{t("organizerPage")}</Link>
-                  </div>
-                </div>
-              </Section>
-            )}
-
-            <Section title={t("reviews")}>
-              {reviews.length > 0 ? (
-                <>
-                  <ul className="space-y-4" id="avis">
-                    {reviews.slice(0, 3).map((r) => (
-                      <ReviewItem key={r.id} review={r} locale={locale} />
-                    ))}
-                  </ul>
-                  {/* Étape 4 : tous les avis de ce rendez-vous sur la page Avis, déjà filtrée. */}
-                  <Link href={`/avis?rdv=${exp.slug}`} className="btn btn-secondary mt-5" data-testid="all-reviews-link">
-                    {t("allReviews", { count: Math.max(reviews.length, exp.ratingCount) })}
-                  </Link>
-                </>
-              ) : (
-                <p className="text-ink/70" id="avis">{t("noReviewsYet")}</p>
-              )}
-            </Section>
           </div>
 
-          {/* Colonne réservation */}
-          <aside id="dates" className="lg:sticky lg:top-28 lg:self-start">
+          {/* Colonne réservation : à droite sur ordinateur ; sur téléphone, juste sous l'essentiel (fiche plus courte à parcourir). */}
+          <aside id="dates" className="self-start lg:sticky lg:top-28 lg:col-start-2 lg:row-span-2 lg:row-start-1">
             <div className="relative rounded-[var(--radius-card)] bg-white p-5 shadow-float">
               <Bab name={babForCategory(exp.categoryId)} tilt={-6} className="pointer-events-none absolute -top-[54px] end-5 w-16" />
               <p className="flex flex-wrap items-baseline gap-2">
@@ -468,6 +375,105 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
               )}
             </div>
           </aside>
+
+          <div className="space-y-8 lg:col-start-1">
+            {/* Étape 4 : ce qui se passe après la réservation, en trois moments. */}
+            <Section title={t("flowTitle")}>
+              <ol className="grid gap-3 sm:grid-cols-3" data-testid="experience-flow">
+                {[
+                  { when: t("flow1When"), title: t("flow1TitleRv"), text: exp.admission === "on_request" ? t("flow1Request") : rv ? t("flow1Rv") : t("flow1Open") },
+                  // Adresse déjà connue (lieu affiché sur la fiche) : un rappel la veille, pas de « dévoilement ».
+                  surprise
+                    ? { when: t("flow2WhenSecret"), title: t("flow2Title"), text: t("flow2Secret") }
+                    : { when: t("flow2When"), title: t("flow2TitleOpen"), text: t("flow2Open") },
+                  { when: t("flow3When"), title: t("flow3Title"), text: composed ? t("flow3Composed") : t("flow3Open") },
+                ].map((step, i) => (
+                  <li key={step.title} className="flex flex-col rounded-3xl bg-white p-5 ring-1 ring-line/70">
+                    <span className="flex items-center gap-2">
+                      <span aria-hidden className={`grid size-6 shrink-0 place-items-center rounded-full text-xs font-semibold ${i === 0 ? "bg-brand-900 text-white" : "bg-cream text-brand-900"}`}>{i + 1}</span>
+                      <span className="text-xs font-semibold tracking-[0.12em] text-brand-700 uppercase">{step.when}</span>
+                    </span>
+                    <span className="mt-3 block font-display text-[1.35rem] leading-tight font-semibold text-brand-900">{step.title}</span>
+                    <span className="mt-1.5 block text-[14px] leading-relaxed text-ink/75">{step.text}</span>
+                  </li>
+                ))}
+              </ol>
+              <Link href="/comment-ca-marche#deroule" className="mt-5 inline-flex text-sm font-semibold text-brand-900 underline underline-offset-4">
+                {t("flowMore")}
+              </Link>
+            </Section>
+
+            <Section title={t("about")}>
+              <p className="leading-relaxed text-ink/85">{tr(exp.description, locale)}</p>
+              {exp.included.length > 0 && (
+                <>
+                  <h3 className="eyebrow mt-6">{t("included")}</h3>
+                  <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                    {exp.included.map((item) => (
+                      <li key={item.fr} className="flex items-start gap-2.5 text-[15px] text-ink/85">
+                        <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand-900 text-white" aria-hidden>
+                          <Check className="size-3" strokeWidth={3} />
+                        </span>
+                        {tr(item, locale)}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </Section>
+
+            {/* Tout le reste en une seule liste : à apporter, tenue, plein air, âge, alcool, infos pratiques, annulation. */}
+            <Section title={t("goodToKnow")}>
+              <ul className="grid gap-x-8 gap-y-5 sm:grid-cols-2" data-testid="activity-details">
+                {exp.equipmentProvided && !includedText.includes(exp.equipmentProvided.trim().toLowerCase()) && <Detail icon={Backpack} label={t("equipmentProvided")} text={extraText(exp, "equipmentProvided", exp.equipmentProvided, locale)} />}
+                {exp.whatToBring && <Detail icon={Backpack} label={t("whatToBring")} text={extraText(exp, "whatToBring", exp.whatToBring, locale)} />}
+                {exp.dressCode && <Detail icon={Shirt} label={t("dressCode")} text={extraText(exp, "dressCode", exp.dressCode, locale)} />}
+                {exp.outdoor && <Detail icon={CloudSun} label={t("outdoorTitle")} text={t("outdoorText")} />}
+                {exp.physicalActivity && <Detail icon={HeartPulse} label={t("physicalTitle")} text={richText(t.raw("physicalText") as string, "")} />}
+                {exp.alcoholServed === false && <Detail icon={Leaf} label={t("alcoholFree")} text="" />}
+                {tr(exp.practicalInfo, locale) && <Detail icon={Sparkles} label={t("practical")} text={tr(exp.practicalInfo, locale)} />}
+                <Detail icon={CalendarDays} label={t("cancellation")} text={`${tr(policy.label, locale)}.`} />
+              </ul>
+            </Section>
+
+            {organizer && (
+              <Section title={t("organizedBy")}>
+                <div className="flex items-center gap-4 rounded-[var(--radius-card)] bg-white p-4 shadow-card" data-testid="organizer-block">
+                  <div className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-brand-50 font-display text-2xl text-brand-900">
+                    {publicLogo(organizer.logoPath) ? <Image src={publicLogo(organizer.logoPath)!} alt="" fill sizes="64px" className="object-cover" /> : organizer.name.slice(0, 1)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-ink">{organizer.name}</p>
+                    {organizer.ratingCount > 0 && (
+                      <p className="flex items-center gap-1.5 text-sm text-muted">
+                        <Stars value={organizer.ratingAvg} /> {organizer.ratingAvg.toFixed(1)} · {t("reviewsCount", { count: organizer.ratingCount })}
+                      </p>
+                    )}
+                    <Link href={`/organisateurs/${organizer.slug}`} className="text-sm font-semibold text-brand-900 underline underline-offset-4">{t("organizerPage")}</Link>
+                  </div>
+                </div>
+              </Section>
+            )}
+
+            <Section title={t("reviews")}>
+              {reviews.length > 0 ? (
+                <>
+                  <ul className="space-y-4" id="avis">
+                    {reviews.slice(0, 3).map((r) => (
+                      <ReviewItem key={r.id} review={r} locale={locale} />
+                    ))}
+                  </ul>
+                  {/* Étape 4 : tous les avis de ce rendez-vous sur la page Avis, déjà filtrée. */}
+                  <Link href={`/avis?rdv=${exp.slug}`} className="btn btn-secondary mt-5" data-testid="all-reviews-link">
+                    {t("allReviews", { count: Math.max(reviews.length, exp.ratingCount) })}
+                  </Link>
+                </>
+              ) : (
+                <p className="text-ink/70" id="avis">{t("noReviewsYet")}</p>
+              )}
+            </Section>
+          </div>
+
         </div>
       </PageShell>
 
@@ -514,8 +520,8 @@ function formatLabel(exp: Experience, t: (key: string, values?: Record<string, s
 /** Sections de la fiche, séparées par un filet fin (étape 4, docs/29). */
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="border-t border-line pt-10">
-      <h2 className="mb-4 card-title">{title}</h2>
+    <section className="border-t border-line pt-8">
+      <h2 className="mb-5 card-title">{title}</h2>
       {children}
     </section>
   );
@@ -524,10 +530,12 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Detail({ icon: Icon, label, text }: { icon: typeof Backpack; label: string; text: React.ReactNode }) {
   return (
     <li className="flex items-start gap-3">
-      <Icon className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
-      <span>
-        <span className="block font-medium text-ink">{label}</span>
-        <span className="text-ink/80">{text}</span>
+      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white text-brand-900 ring-1 ring-line/70">
+        <Icon className="size-[18px]" aria-hidden />
+      </span>
+      <span className="min-w-0 pt-1">
+        <span className="block font-semibold text-ink">{label}</span>
+        <span className="text-[14px] text-ink/75">{text}</span>
       </span>
     </li>
   );

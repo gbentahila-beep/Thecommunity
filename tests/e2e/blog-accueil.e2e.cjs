@@ -98,11 +98,10 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   const featured = d.getByRole('link', { name: "Wenzy, le guide complet" }).first();
   assert(await featured.getAttribute('href') === '/blog/wenzy-guide-complet', 'article « Commencer ici » mis en avant : le guide complet (toutes les activités)');
   assert(await d.getByText('Commencer ici').first().isVisible(), 'mention « Commencer ici »');
-  const mostRead = d.locator('section[aria-labelledby="most-read"]');
-  assert(await mostRead.getByRole('heading', { name: 'Les plus lus' }).isVisible() && await mostRead.getByRole('link').count() === 6, '« Les plus lus » : 6 articles en liste compacte');
-  assert(await mostRead.locator('img').count() === 6, 'liste compacte avec vignettes');
+  // Étape 6 (25/11) : plus de « Les plus lus » en double ; une seule grille « Tous les articles » avec image.
+  assert(!(await d.locator('section[aria-labelledby="most-read"]').count()), 'plus de liste « Les plus lus » en double');
   const browse = d.locator('section[aria-labelledby="browse"]');
-  assert(await browse.getByRole('link').count() === 22, '« Parcourir les articles » : 22 articles (article des propositions de sorties retiré)');
+  assert(await browse.getByRole('link').count() === 22 && await browse.locator('img').count() === 22, '« Tous les articles » : 22 articles avec image');
   const popular = browse.getByRole('button', { name: 'Plus lus' });
   const recent = browse.getByRole('button', { name: 'Récents' });
   assert(await popular.getAttribute('aria-pressed') === 'true', 'tri « Plus lus » par défaut');
@@ -196,14 +195,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   assert(imgBox.x < textBox.x, 'notre histoire : photo à gauche, texte à droite');
   assert(await d.getByText('Aya').count() === 0, 'À propos : plus de mention de la fondatrice');
   assert(await d.getByRole('heading', { name: 'Ce qui compte pour nous' }).isVisible(), 'ce qui compte pour nous');
-  const tools = d.locator('section[aria-labelledby="tools-title"]');
-  assert(await tools.getByRole('heading', { name: 'Nos outils pour créer du lien' }).isVisible() && await tools.locator('li').count() === 8, 'outils : 8 cartes');
-  const prevT = tools.getByRole('button', { name: 'Outil précédent' }).first(), nextT = tools.getByRole('button', { name: 'Outil suivant' }).first();
-  assert(await prevT.isDisabled() && await nextT.isEnabled(), 'outils : au départ, seulement « suivant »');
-  await nextT.click();
-  await d.waitForFunction(() => document.querySelector('section[aria-labelledby="tools-title"] ul').scrollLeft > 50);
-  await d.waitForTimeout(600);
-  assert(await prevT.isEnabled(), 'outils : puis les deux sens');
+  assert(!(await d.locator('section[aria-labelledby="tools-title"]').count()), 'À propos : plus de carrousel « Nos outils » (étape 6)');
   const gallery = d.locator('section[aria-labelledby="gallery"]');
   assert(await gallery.getByRole('heading', { name: 'Des rencontres qui valent mille images' }).isVisible() && await gallery.locator('img').count() === 8, 'galerie : 8 photos');
 

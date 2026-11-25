@@ -11,16 +11,17 @@ export type EssentialItem = { icon: LucideIcon; label: string; value?: string; l
 export function EventEssentials({ items, children }: { items: EssentialItem[]; children?: React.ReactNode }) {
   return (
     // Étape 4 (docs/29) : l'essentiel sans encadré, en grille aérée sous un filet, une icône dans un rond par ligne.
-    <section aria-label="L'essentiel" className="border-t border-line pt-8" data-testid="meeting">
-      <ul className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+    <section aria-label="L'essentiel" className="rounded-3xl bg-white p-5 ring-1 ring-line/70 sm:p-6" data-testid="meeting">
+      {/* Deux colonnes dès le téléphone (trois sur ordinateur) : l'essentiel tient en un coup d'œil. */}
+      <ul className="grid grid-cols-2 gap-x-4 gap-y-5 sm:gap-x-6 lg:grid-cols-3">
         {items.map(({ icon: Icon, label, value, link }) => (
-          <li key={label} className="flex items-start gap-3.5">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-cream text-brand-900">
-              <Icon className="size-5" aria-hidden />
+          <li key={label} className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
+            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-cream text-brand-900">
+              <Icon className="size-[18px]" aria-hidden />
             </span>
-            <span>
-              <span className="block font-medium text-ink">{label}</span>
-              {value && <span className="text-sm text-muted">{value}</span>}
+            <span className="min-w-0">
+              <span className="block text-[15px] leading-snug font-semibold text-ink">{label}</span>
+              {value && <span className="block text-[13px] leading-snug text-muted">{value}</span>}
               {link && <Link href={link.href} className="mt-0.5 block text-xs font-semibold text-brand-900 underline underline-offset-2">{link.label}</Link>}
             </span>
           </li>

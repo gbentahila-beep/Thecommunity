@@ -369,7 +369,7 @@
     "flow2When": "The day before",
     "flow2Title": "You get the address",
     "flow2Secret": "We reveal the place and a glimpse of your group.",
-    "flow2Open": "A reminder with the address and directions.",
+    "flow2Open": "With the time, the address and directions, so you arrive stress-free.",
     "flow3When": "On the day",
     "flow3Title": "You meet the group",
     "flow3Composed": "At check-in, tap “I'm here” and see your group's first names.",
@@ -377,7 +377,8 @@
     "flowMore": "See the full timeline",
     "allReviews": "{count, plural, one {See the review} other {See all # reviews}}",
     "barSeats": "{count, plural, one {# spot left} other {# spots left}}",
-    "barFull": "Full · waitlist"
+    "barFull": "Full · waitlist",
+    "flow2TitleOpen": "A reminder"
   },
   "booking": {
     "title": "Book my spot",
@@ -625,7 +626,7 @@
     "stepsIntro": "Example: a Wednesday Dinner at 8:30 pm. Coffee and brunch follow the same timeline, at their own times.",
     "tl1When": "Today",
     "tl1Title": "You book your seat",
-    "tl1Text": "Your profile takes a minute, once. Pick your gathering and your tier (Casual, Premium or Exclusive, which sets the budget on site), then pay 35 DH: nothing with the Pass, one credit with the Pack. Your seat is confirmed right away. Sold out? Join the waiting list.",
+    "tl1Text": "Pick your meet-up and your tier (Casual, Premium or Exclusive, which sets the budget on site). 35 DH online, or included with the Pass: your spot is confirmed right away. Full? Join the waitlist.",
     "tl2When": "Until 8:30 pm the day before",
     "tl2Title": "Bookings stay open",
     "tl2Text": "Others join in. Something came up? Move to another date or cancel, as per the terms. At 8:30 pm, bookings close and we put the tables together.",
@@ -875,7 +876,7 @@
     "tabCancelled": "Cancelled",
     "emptyTab": "Nothing here for now.",
     "seats": "{count, plural, one {# spot} other {# spots}}",
-    "navMembership": "Pack and Pass",
+    "navMembership": "Membership",
     "navInvoices": "My invoices",
     "navPropose": "Propose an outing",
     "memberSuggestTitle": "Enjoyed it? Become a member",
@@ -1555,7 +1556,7 @@
     "heroTitleB": "Friends Tomorrow",
     "startHere": "Start here",
     "mostRead": "Most read",
-    "browse": "Browse the articles",
+    "browse": "All articles",
     "sortLabel": "Sort articles",
     "sortPopular": "Most read",
     "sortRecent": "Newest",
@@ -2119,9 +2120,9 @@
     "how4": "On site, check in: you'll meet your table and see first names."
   },
   "pass": {
-    "metaTitle": "Pack and Pass",
+    "metaTitle": "Membership",
     "metaDescription": "The Pass includes your seats, the Pack gives you one outing free in three. No commitment.",
-    "title": "Pack and Pass",
+    "title": "Membership",
     "soon": "The pack and pass are coming soon.",
     "heroTitle": "Go out more, without counting",
     "heroText": "Each seat costs {price} online. With the Pass, your seat is included; with the Pack, one outing in three is free. The rest is always paid on site.",

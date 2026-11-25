@@ -22,7 +22,7 @@ export type HelpCategory = { key: HelpCategoryKey; audience: HelpAudience; title
 const HELP_CATEGORIES_RAW: HelpCategoryRaw[] = [
   { key: "start", audience: "clients", title: { fr: "Bien démarrer", en: "Getting started" }, description: { fr: "Le principe, votre compte, votre première expérience.", en: "How it works, your account, your first experience." } },
   { key: "bookings", audience: "clients", title: { fr: "Expériences et réservations", en: "Experiences and bookings" }, description: { fr: "Réserver, payer, annuler, liste d'attente, avis.", en: "Booking, paying, cancelling, waiting list, reviews." } },
-  { key: "membership", audience: "clients", title: { fr: "Carnet et Pass", en: "Pack and Pass" }, description: { fr: "Carnet et Pass, absences.", en: "Pack and Pass, no-shows." } },
+  { key: "membership", audience: "clients", title: { fr: "Abonnement", en: "Membership" }, description: { fr: "Carnet et Pass, absences.", en: "Pack and Pass, no-shows." } },
   { key: "account", audience: "clients", title: { fr: "Mon compte", en: "My account" }, description: { fr: "Connexion, notifications, langue, données personnelles.", en: "Signing in, notifications, language, personal data." } },
   { key: "safety", audience: "clients", title: { fr: "Sécurité", en: "Safety" }, description: { fr: "Se sentir bien pendant une expérience, signaler un problème.", en: "Feeling at ease during an experience, reporting a problem." } },
   { key: "partner-join", audience: "partners", title: { fr: "Devenir partenaire", en: "Becoming a partner" }, description: { fr: "Qui peut nous rejoindre, nos critères, comment ça se passe.", en: "Who can join, our criteria, how it works." } },

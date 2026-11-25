@@ -2,11 +2,9 @@ import { ArrowRight, HeartHandshake, Shapes, Sprout, UsersRound } from "lucide-r
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ToolsCarousel } from "@/components/about/tools-carousel";
 import { WhyWenzy } from "@/components/home/why-wenzy";
 import { Section } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { getPaymentMethod } from "@/lib/data";
 
 // Étape 28 : le texte de paiement suit le réglage du site (relu au plus toutes les heures, et à chaque changement dans le back-office).
 export const revalidate = 3600;
@@ -39,9 +37,6 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
     { icon: Shapes, title: ta("value3Title"), text: ta("value3") },
     { icon: Sprout, title: ta("value4Title"), text: ta("value4") },
   ];
-  // Étape 28 : le texte de paiement suit le moyen réellement ouvert (plus de « bientôt par carte » écrit en dur).
-  const method = await getPaymentMethod();
-  const tools = [1, 2, 3, 4, 5, 6, 7, 8].map((i) => ({ title: ta(`tool${i}Title`), text: i === 2 ? ta(`tool2_${method}`) : ta(`tool${i}`) }));
   return (
     <>
       {/* Même découpage que l'accueil (docs/29) : sections pleine largeur, fonds crème et blanc en alternance. */}
@@ -109,17 +104,14 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
 
       </Section>
 
-      {/* 4. Pourquoi on fait ça (le même bloc que sur l'accueil), puis nos outils pour créer du lien (défilant) */}
+      {/* 4. Pourquoi on fait ça (le même bloc que sur l'accueil) */}
       <Section tone="white">
         <WhyWenzy className="" />
       </Section>
-      <Section>
-      <ToolsCarousel tools={tools} eyebrow={ta("toolsEyebrow")} title={ta("toolsTitle")} text={ta("toolsText")} prevLabel={ta("toolsPrev")} nextLabel={ta("toolsNext")} />
-
-      </Section>
+      {/* Étape 6 : plus de carrousel « Nos outils » (son contenu est dans « Comment ça se passe » et Comment ça marche). */}
 
       {/* 5. Galerie */}
-      <Section tone="white">
+      <Section>
       <section aria-labelledby="gallery">
         <div className="mx-auto max-w-2xl text-center">
           <h2 id="gallery" className="section-title">{ta("galleryTitle")}</h2>

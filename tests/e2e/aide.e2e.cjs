@@ -17,7 +17,7 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   // Accueil du centre d'aide
   await page.goto(`${base}/aide`);
   assert(await page.getByRole('heading', { level: 1, name: 'Comment pouvons-nous vous aider ?' }).isVisible(), 'titre du centre d\'aide');
-  for (const c of ['Bien démarrer', 'Réserver et payer', 'Le jour J et après', 'Carnet et Pass', 'Mon compte', 'Sécurité']) {
+  for (const c of ['Bien démarrer', 'Réserver et payer', 'Le jour J et après', 'Abonnement', 'Mon compte', 'Sécurité']) {
     assert(await page.getByRole('heading', { level: 2, name: c, exact: true }).isVisible(), `catégorie « ${c} »`);
   }
   assert(await page.getByRole('link', { name: 'Participants', exact: true }).getAttribute('aria-current') === 'page', 'onglet Participants actif');
@@ -33,7 +33,7 @@ const shot = async (page, name) => { if (process.env.SHOTS_DIR) await page.scree
   await search.fill('zzzz introuvable');
   assert(await page.getByText('Aucun résultat').isVisible(), 'recherche sans résultat annoncée');
   await page.getByRole('button', { name: 'Effacer la recherche' }).click();
-  assert(await page.getByRole('heading', { level: 2, name: 'Carnet et Pass', exact: true }).isVisible(), 'recherche effacée → catégories');
+  assert(await page.getByRole('heading', { level: 2, name: 'Abonnement', exact: true }).isVisible(), 'recherche effacée → catégories');
 
   // Article
   await page.getByRole('link', { name: /Annuler ou déplacer une réservation/ }).click();

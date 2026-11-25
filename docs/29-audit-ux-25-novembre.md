@@ -95,6 +95,19 @@ Réponses de Hamza : bandeau « DÉMO » retiré ; haut de fiche « de manière 
 - **Barre mobile** : prix, date, places libres (corail sous 4), un seul bouton.
 - **Découvrir** : déjà traité aux étapes 1 bis et 2 (titre et filtres, carte unique).
 
+## Étape 6 — pages secondaires, et retouches de la fiche (25 novembre)
+
+L'étape 5 (une page par rendez-vous fixe) est laissée de côté : la fiche d'un rendez-vous de la semaine joue déjà ce rôle.
+
+Réponses de Hamza : cartes inclinées retirées (oui) ; photos de l'équipe : plus tard ; carrousel « Nos outils » retiré (oui) ; nom de la page : « Abonnement » ; blog en une seule grille (oui). Remarques : la frise de la fiche annonçait l'adresse « la veille » même quand elle est déjà connue ; la fiche était trop longue et manquait de style.
+
+- **Fiche** : adresse déjà connue → « La veille : un rappel avec l'heure, l'adresse et l'itinéraire » (le « dévoilement » reste pour les lieux secrets) ; sur téléphone, le choix des dates remonte juste sous l'essentiel ; l'essentiel dans une carte, sur deux colonnes (trois sur ordinateur) ; « Comment ça se passe » en trois cartes, le moment en grand ; « Inclus » en liste cochée ; « Bon à savoir » sur deux colonnes, icônes dans des ronds.
+- **Comment ça marche** (composant de l'accueil et de la page) : cartes droites, plus d'inclinaison ni de photos penchées, numéros lisibles.
+- **Page Comment ça marche** : la frise est l'élément principal, le moment en grand à gauche (Aujourd'hui, Jusqu'à la veille 20h30, La veille 21h30…), le détail à droite ; premier texte raccourci.
+- **À propos** : plus de carrousel « Nos outils ».
+- **Abonnement** : la page et l'onglet de l'espace membre s'appellent « Abonnement » (les produits restent le Pass et le Carnet).
+- **Blog** : plus de « Les plus lus » en double ; une seule grille « Tous les articles » avec image, tri et recherche ; lignes compactes sur téléphone.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.

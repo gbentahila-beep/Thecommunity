@@ -17,22 +17,24 @@ export async function BookingTimeline({ id = "deroule" }: { id?: string }) {
     { icon: Heart, k: "tl6" },
   ] as const;
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="mx-auto max-w-3xl scroll-mt-24">
+    <section id={id} aria-labelledby={`${id}-title`} className="mx-auto max-w-4xl scroll-mt-24">
       <div className="section-head text-center">
         <h2 id={`${id}-title`} className="section-title">{t("stepsTitle")}</h2>
         <p className="lead mx-auto mt-3 max-w-xl">{t("stepsIntro")}</p>
       </div>
-      <ol data-testid="booking-steps">
+      {/* Étape 6 (docs/29) : le moment en grand, à gauche sur ordinateur ; le détail à droite, sans carte. */}
+      <ol data-testid="booking-steps" className="border-t border-line">
         {steps.map(({ icon: Icon, k }, i) => (
-          <li key={k} className="relative flex gap-4 pb-8 last:pb-0 sm:gap-6">
-            {i < steps.length - 1 && <span aria-hidden className="absolute start-6 top-12 bottom-0 w-0.5 -translate-x-1/2 bg-brand-200 rtl:translate-x-1/2" />}
-            <span className={`relative grid size-12 shrink-0 place-items-center rounded-full shadow-card ${i === 0 ? "bg-brand-700 text-white" : "bg-white text-brand-700 ring-2 ring-brand-200"}`}>
-              <Icon className="size-5" aria-hidden />
-            </span>
-            <div className="min-w-0 flex-1 rounded-3xl bg-white p-5 shadow-card">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{t(`${k}When`)}</p>
-              <h3 className="mt-1 text-lg font-semibold text-ink">{t(`${k}Title`)}</h3>
-              <p className="mt-1.5 text-[15px] leading-relaxed text-muted">{t(`${k}Text`)}</p>
+          <li key={k} className="grid gap-2 border-b border-line py-6 sm:grid-cols-[13rem_1fr] sm:gap-8 sm:py-8">
+            <p className="flex items-center gap-3 sm:items-start">
+              <span aria-hidden className={`grid size-9 shrink-0 place-items-center rounded-full ${i === 0 ? "bg-brand-900 text-white" : "bg-white text-brand-900 ring-1 ring-line"}`}>
+                <Icon className="size-[18px]" />
+              </span>
+              <span className="font-display text-[1.35rem] leading-tight font-semibold text-brand-900 sm:text-2xl">{t(`${k}When`)}</span>
+            </p>
+            <div className="min-w-0">
+              <h3 className="text-lg font-semibold text-ink">{t(`${k}Title`)}</h3>
+              <p className="mt-1.5 text-[15px] leading-relaxed text-ink/75">{t(`${k}Text`)}</p>
             </div>
           </li>
         ))}

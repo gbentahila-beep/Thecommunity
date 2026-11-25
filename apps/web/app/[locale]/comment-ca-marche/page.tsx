@@ -2,7 +2,6 @@ import { Flag, MapPinCheck, ScrollText, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BookingTimeline } from "@/components/home/booking-timeline";
-import { HowItWorks } from "@/components/home/how-it-works";
 import { Universes } from "@/components/home/universes";
 import { PageHeader, PrimaryLink, Section } from "@/components/ui";
 import { getCategories } from "@/lib/data";
@@ -21,12 +20,8 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
   return (
     <>
       {/* Même découpage que l'accueil (docs/29) : en-tête et étapes sur crème, puis fonds alternés. */}
-      <PageHeader centered title={t("howTitle")} intro={t("howIntro")}>
-        <div className="mt-12 lg:mt-16">
-          <HowItWorks categories={categories} showTitle={false} />
-        </div>
-      </PageHeader>
-      {/* Ce qui se passe après la réservation : la frise, de la réservation au lendemain. */}
+      {/* Étape 6 (docs/29) : la frise horaire est l'élément principal de la page (plus de cartes en tête). */}
+      <PageHeader centered title={t("howTitle")} intro={t("howIntro")} />
       <Section tone="white">
         <BookingTimeline />
       </Section>
