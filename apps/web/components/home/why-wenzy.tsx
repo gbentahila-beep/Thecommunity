@@ -1,11 +1,13 @@
 import { CalendarDays, MapPin, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Bab } from "@/components/brand/bab";
 
 /**
- * « Pourquoi on fait ça » (accueil, sous les univers, et page À propos) : le constat en grand, la réponse en gras,
- * les trois choses dont on s'occupe, puis ce qu'il reste à faire au membre, dans un encadré.
+ * « Pourquoi on fait ça » (accueil, sous les univers, et page À propos), au style des autres sections : surtitre et
+ * titre centrés, le constat en texte d'accompagnement, trois cartes blanches (ce dont on s'occupe), puis la phrase de
+ * fin en grand, la seconde moitié au dégradé de la marque, avec la mascotte.
  */
-export async function WhyWenzy({ className = "py-16" }: { className?: string }) {
+export async function WhyWenzy({ className = "py-12" }: { className?: string }) {
   const t = await getTranslations("home.why");
   const rows = [
     { icon: Users, k: "r1" },
@@ -14,28 +16,31 @@ export async function WhyWenzy({ className = "py-16" }: { className?: string }) 
   ] as const;
   return (
     <section aria-labelledby="why-title" className={className} data-testid="why-wenzy">
-      <div className="mx-auto max-w-3xl">
-        <span className="inline-flex rounded-full bg-brand-100 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-brand-900">{t("eyebrow")}</span>
-        <h2 id="why-title" className="mt-5 font-display text-2xl leading-snug text-ink/45 sm:text-[2rem] sm:leading-tight">
-          {t("lead")} <span className="text-ink">{t("punch")}</span>
-        </h2>
-        <ul className="mt-10 space-y-3">
-          {rows.map(({ icon: Icon, k }) => (
-            <li key={k} className="flex items-center gap-4 rounded-3xl bg-gradient-to-r from-brand-50 via-brand-50/60 to-transparent p-4 sm:gap-5 sm:p-5 rtl:bg-gradient-to-l">
-              <span className="grid size-12 shrink-0 place-items-center rounded-full bg-brand-700 text-white shadow-card sm:size-14">
-                <Icon className="size-5 sm:size-6" aria-hidden />
-              </span>
-              <span>
-                <span className="block text-lg font-semibold text-ink">{t(`${k}Title`)}</span>
-                <span className="mt-0.5 block text-[15px] leading-relaxed text-muted">{t(k)}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-        <p className="mt-6 rounded-3xl border-2 border-brand-200 bg-white px-6 py-6 text-center text-xl font-semibold leading-snug text-ink shadow-card sm:text-2xl">
-          {t("closing")} <span className="font-display italic text-brand-700">{t("closingAccent")}</span>
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="eyebrow">{t("eyebrow")}</p>
+        <h2 id="why-title" className="section-title mt-2">{t("title")}</h2>
+        <p className="mx-auto mt-3 max-w-xl text-ink/75">
+          {t("text")} <strong className="font-semibold text-ink">{t("punch")}</strong>
         </p>
       </div>
+      <ul className="mx-auto mt-8 grid max-w-4xl gap-3 sm:gap-4 md:grid-cols-3">
+        {rows.map(({ icon: Icon, k }) => (
+          <li key={k} className="card flex items-start gap-4 p-5 md:flex-col md:items-center md:p-6 md:text-center">
+            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-900">
+              <Icon className="size-5" aria-hidden />
+            </span>
+            <span>
+              <span className="block text-lg font-semibold text-ink">{t(`${k}Title`)}</span>
+              <span className="mt-1 block text-[15px] leading-relaxed text-muted">{t(k)}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-2 text-center font-display text-2xl font-semibold tracking-[-0.01em] text-brand-900 sm:text-[1.9rem]">
+        <span>{t("closing")}</span>
+        <span className="bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] bg-clip-text text-transparent">{t("closingAccent")}</span>
+        <Bab name="wen" mood="party" className="inline-block w-11" />
+      </p>
     </section>
   );
 }

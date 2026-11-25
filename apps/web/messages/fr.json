@@ -182,7 +182,6 @@
     "weekRvActivity": "Une activité différente chaque {day} · cette semaine : {name} à {time}",
     "why": {
       "eyebrow": "Pourquoi on fait ça",
-      "lead": "Après les études, on ne rencontre plus grand monde par hasard. Le travail prend les journées, les amis partent, les soirées se ressemblent.",
       "punch": "Alors on organise les rencontres.",
       "r1Title": "On compose votre table",
       "r1": "4 à 6 personnes qui ont de quoi se parler : langues, âges, centres d'intérêt.",
@@ -191,7 +190,9 @@
       "r3Title": "On fixe les rendez-vous",
       "r3": "Le dîner du mercredi, l'activité et le café du samedi, le brunch du dimanche.",
       "closing": "Vous choisissez le jour.",
-      "closingAccent": "On s'occupe du reste."
+      "closingAccent": "On s'occupe du reste.",
+      "title": "Après les études, on ne rencontre plus grand monde par hasard.",
+      "text": "Le travail prend les journées, les amis partent, les soirées se ressemblent."
     },
     "howTimelineLink": "Voir le déroulé complet",
     "weekAt": "à"

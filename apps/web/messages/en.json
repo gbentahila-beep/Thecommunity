@@ -182,7 +182,6 @@
     "weekRvActivity": "A different activity every {day} · this week: {name} at {time}",
     "why": {
       "eyebrow": "Why we do this",
-      "lead": "After university, you rarely meet anyone by chance. Work fills the days, friends move away, evenings all look the same.",
       "punch": "So we organise the meeting.",
       "r1Title": "We put your table together",
       "r1": "4 to 6 people with plenty to talk about: languages, ages, interests.",
@@ -191,7 +190,9 @@
       "r3Title": "We set the dates",
       "r3": "Wednesday dinner, the Saturday activity and coffee, Sunday brunch.",
       "closing": "You pick the day.",
-      "closingAccent": "We handle the rest."
+      "closingAccent": "We handle the rest.",
+      "title": "After university, you rarely meet anyone by chance.",
+      "text": "Work fills the days, friends move away, evenings all look the same."
     },
     "howTimelineLink": "See the full timeline",
     "weekAt": "in"

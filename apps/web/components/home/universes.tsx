@@ -44,7 +44,7 @@ export async function UniverseGrid({ categories, cityId = DEFAULT_CITY, classNam
     return ids.sort((a, b) => (order.get(a) ?? 99) - (order.get(b) ?? 99)).map((id) => subName.get(id)).filter(Boolean).join(" · ");
   };
   return (
-    <ul className={`mx-auto grid max-w-5xl grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 ${className}`} data-testid="universes-grid">
+    <ul className={`mx-auto grid grid-cols-2 gap-3 sm:gap-4 ${categories.length <= 3 ? "max-w-4xl lg:grid-cols-3" : "max-w-5xl lg:grid-cols-4"} ${className}`} data-testid="universes-grid">
         {categories.map((c) => {
           const name = tr(c.name, locale);
           const rich = (RICH as readonly string[]).includes(c.id) ? c.id : null;
