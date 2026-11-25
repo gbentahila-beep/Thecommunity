@@ -1,6 +1,7 @@
 import { Flag, MapPinCheck, ScrollText, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { BookingTimeline } from "@/components/home/booking-timeline";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { Universes } from "@/components/home/universes";
 import { PageShell, PrimaryLink } from "@/components/ui";
@@ -12,7 +13,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/comment-
   return { title: t("howTitle"), description: t("howIntro") };
 }
 
-/** Étape AB : les 3 cartes de l'accueil, la sortie en 6 étapes (jusqu'au jour J), les formats, puis la sécurité en 4 points (fond clair). */
+/** Étape AB : les 3 cartes de l'accueil, la frise « après votre réservation », les formats, puis la sécurité en 4 points (fond clair). */
 export default async function HowPage({ params }: PageProps<"/[locale]/comment-ca-marche">) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -26,21 +27,8 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
       <div className="mt-6">
         <HowItWorks categories={categories} showTitle={false} />
       </div>
-      {/* Le parcours en 6 étapes, du choix au jour J. */}
-      <section aria-labelledby="steps-title" className="mx-auto max-w-4xl pb-14">
-        <h2 id="steps-title" className="section-title">{t("stepsTitle")}</h2>
-        <ol className="mt-8 space-y-4" data-testid="booking-steps">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <li key={i} className="flex gap-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-100 font-display text-lg font-semibold text-brand-900" aria-hidden>{i}</span>
-              <span>
-                <span className="block text-lg font-semibold text-ink">{t(`step${i}Title`)}</span>
-                <span className="mt-1 block text-[15px] text-muted">{t(`step${i}Text`)}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-      </section>
+      {/* Ce qui se passe après la réservation : la frise, de la réservation au lendemain. */}
+      <BookingTimeline />
       <Universes categories={categories} title={t("formatsTitle")} />
       <div className="mx-auto mt-6 max-w-4xl space-y-12">
         <section aria-labelledby="safety" data-testid="safety">

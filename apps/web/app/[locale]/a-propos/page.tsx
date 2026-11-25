@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ToolsCarousel } from "@/components/about/tools-carousel";
+import { WhyWenzy } from "@/components/home/why-wenzy";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getPaymentMethod } from "@/lib/data";
@@ -95,7 +96,8 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
         </ul>
       </section>
 
-      {/* 4. Nos outils pour créer du lien (défilant) */}
+      {/* 4. Pourquoi on fait ça (le même bloc que sur l'accueil), puis nos outils pour créer du lien (défilant) */}
+      <WhyWenzy className="pt-16" />
       <ToolsCarousel tools={tools} eyebrow={ta("toolsEyebrow")} title={ta("toolsTitle")} text={ta("toolsText")} prevLabel={ta("toolsPrev")} nextLabel={ta("toolsNext")} />
 
       {/* 5. Galerie */}
