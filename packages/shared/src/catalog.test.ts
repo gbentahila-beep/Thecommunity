@@ -119,8 +119,16 @@ describe("réglages de l'accueil (23)", () => {
   });
   it("complète des réglages anciens ou incomplets", () => {
     const n = normalizeHomeSettings({ sections: [{ id: "faq", enabled: true }, { id: "faq", enabled: false }, { id: "inconnu" as "faq", enabled: true }] });
-    expect(n.sections[0]).toEqual({ id: "faq", enabled: true });
+    expect(n.sections.find((s) => s.id === "faq")).toEqual({ id: "faq", enabled: true });
     expect(n.sections.map((s) => s.id).sort()).toEqual([...HOME_SECTIONS].sort());
     expect(normalizeHomeSettings(null)).toEqual(DEFAULT_HOME_SETTINGS);
+  });
+  it("place une section nouvelle à sa position par défaut, sans toucher à l'ordre choisi (25/11)", () => {
+    const old = ["trust", "featured", "thisWeek", "cities", "weekend", "new", "popular", "universes", "how", "reviews", "faq"] as const;
+    const n = normalizeHomeSettings({ sections: old.map((id) => ({ id, enabled: true })) });
+    const ids = n.sections.map((s) => s.id);
+    expect(ids.filter((id) => (old as readonly string[]).includes(id))).toEqual([...old]);
+    expect(ids[0]).toBe("manifesto");
+    expect(ids.slice(-3)).toEqual(["price", "app", "faq"]);
   });
 });

@@ -19,8 +19,8 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   const trust = p.getByTestId('home-trust');
   assert(await trust.getByText('Venez en solo : tout le monde est là pour rencontrer du monde').isVisible(), '28 : repère « venez seul·e »');
   assert(await trust.getByText('Nous composons les groupes pour faciliter les échanges').isVisible(), '28 : repère « groupes composés »');
-  const order = await p.evaluate(() => { const t = document.querySelector('[data-testid=home-trust]'); const h = [...document.querySelectorAll('h2')].find((x) => x.textContent.startsWith('Cette semaine')); return t && h ? t.compareDocumentPosition(h) & Node.DOCUMENT_POSITION_FOLLOWING : 0; });
-  assert(order > 0, '28 : repères avant « Cette semaine »');
+  // Étape 3 (25/11) : la sécurité est la bande sombre de l'accueil, après les avis ; la prochaine date est dans l'accroche.
+  assert(await p.getByTestId('home-next').isVisible() && await p.getByTestId('home-manifesto').isVisible(), '28 : prochaine date dans l\'accroche, phrase manifeste');
   await p.goto(base + '/experiences/padel-entre-inconnus-anfa', { waitUntil: 'load' });
   assert(await p.locator('aside').getByText('150 DH').first().isVisible() && await p.locator('aside').getByTestId('member-price').count() === 0, 'docs/22 : un seul prix affiché, plus de prix membre');
   assert(!(await p.locator('s').count()) && !(await p.getByRole('link', { name: 'Devenir membre' }).count()), '28 : ni prix barré ni « Devenir membre » sur une expérience ouverte à tous');

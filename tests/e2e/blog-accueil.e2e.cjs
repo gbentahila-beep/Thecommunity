@@ -42,7 +42,7 @@ const visible = (locator, ms = 15000) => locator.first().waitFor({ state: 'visib
   await d.goto(`${base}/`);
   // Alertes « nouvelles tables et activités », sous « Voir toutes les expériences » (démonstration : rien n'est envoyé)
   // Accueil : accroche → encadré de confiance → « Cette semaine à Casablanca ▾ » → pastilles + liste compacte.
-  assert(await d.getByTestId('home-trust').isVisible(), 'encadré de confiance sous « Découvrir les expériences »');
+  assert(await d.getByTestId('home-trust').count() === 1 && await d.getByTestId('home-price').count() === 1, 'bande sécurité et bloc « Combien ça coûte » (étape 3)');
   const week = d.getByTestId('home-thisWeek');
   assert(await week.getByTestId('city-select').isVisible() && /Casablanca/.test(await week.getByTestId('city-select').textContent()), '« Cette semaine à Casablanca ▾ »');
   await week.getByTestId('city-select').click();

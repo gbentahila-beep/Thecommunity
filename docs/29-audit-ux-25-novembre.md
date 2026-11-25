@@ -71,6 +71,17 @@ Réponses de Hamza : carte entière cliquable sans bouton (oui) ; deux badges se
 - **Téléphone** : vignette de 72 px, repère au-dessus du titre (plus d'étiquette qui déborde sur le texte), titre sur deux lignes, heure, quartier · taille du groupe, public et gamme, puis l'état des places : plus aucun texte coupé.
 - **Ordinateur** (grille dès 3 rendez-vous) : repère sur la photo, état des places aligné en bas de chaque carte.
 
+## Étape 3 — accueil : ordre des blocs et textes (25 novembre)
+
+Réponses de Hamza : ordre validé, réglé par l'équipe dans le back-office ; accroche reformulée autour des trois formats (Tables : dîner, café, brunch, parfois déjeuner ; une Activité par semaine, parfois des dates en plus ; un Événement de temps en temps) ; prochaine date dans l'accroche (oui) ; manifeste validé ; prix : toujours 35 DH en ligne, le reste sur place (prix annoncé avec le lieu, ou fourchette selon la gamme), sans parler de « repas ».
+
+- **Nouveaux blocs réglables** (back-office → Accueil) : « Phrase manifeste » (avec les Babs), « Combien ça coûte », « Application ». Le bloc « trust » devient la **bande sombre Sécurité**.
+- **Ordre par défaut** : manifeste, Comment ça marche, Votre semaine, univers, avis, sécurité, prix, application, questions, puis la phrase de clôture (toujours en dernier). « Votre semaine » n'est plus imposée juste sous l'accroche : tout suit l'ordre du back-office.
+- **Réglages déjà enregistrés** : une section nouvelle se place seule à un endroit sensé (manifeste en tête, prix et application avant les questions) ; l'équipe ajuste ensuite l'ordre dans le back-office.
+- **Accroche** : nouveau texte, bouton « Voir les dates », carte « Prochain rendez-vous » (la date la plus proche qui a encore de la place, places libres), mise à jour toute seule.
+- **Prix** : « Sur Wenzy, en ligne : 35 DH » et « Sur place : votre addition » (ou le prix de l'activité, annoncé ou en fourchette selon la gamme) ; lien vers le Pass. Même formulation dans « Comment ça marche ».
+- Fonds : blanc et crème en alternance, la sécurité en bande encre.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.

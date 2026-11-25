@@ -7,19 +7,22 @@ import type { LocalizedText } from "./types";
  * Le haut de page (accroche et photo) ne bouge pas : c'est l'identité du site.
  */
 
-export const HOME_SECTIONS = ["featured", "thisWeek", "weekend", "new", "popular", "trust", "how", "universes", "reviews", "cities", "faq"] as const;
+export const HOME_SECTIONS = ["manifesto", "featured", "thisWeek", "weekend", "new", "popular", "trust", "how", "universes", "reviews", "price", "app", "cities", "faq"] as const;
 export type HomeSectionId = (typeof HOME_SECTIONS)[number];
 
 export const HOME_SECTION_LABELS: Record<HomeSectionId, string> = {
+  manifesto: "Phrase manifeste (« On compose le groupe… ») et les Babs",
   featured: "Coups de cœur de l'équipe (activités choisies ci-dessous)",
   thisWeek: "Cette semaine à Casablanca",
   weekend: "Ce week-end (automatique)",
   new: "Nouveautés (automatique : publiées depuis moins de 30 jours)",
   popular: "Populaires (automatique : très bien notées ou presque complètes)",
-  trust: "Venir seul·e (3 repères : rencontres, groupes composés, lieux vérifiés)",
+  trust: "Sécurité, bande sombre (3 repères : venir en solo, groupes composés, lieux vérifiés)",
   how: "Comment ça marche",
   universes: "Univers",
   reviews: "Pourquoi venir (avis)",
+  price: "Combien ça coûte (35 DH en ligne, le reste sur place)",
+  app: "Application (bientôt sur les stores)",
   cities: "Villes",
   faq: "Questions fréquentes",
 };
@@ -38,18 +41,21 @@ export type HomeSettings = {
 export const DEFAULT_HOME_SETTINGS: HomeSettings = {
   banner: null,
   sections: [
-    // Étape V : Cette semaine (et la ligne des villes), Univers, Comment ça marche, Avis, Questions fréquentes
-    // (suivies de « Travaillons ensemble » et de la phrase de fin).
-    { id: "trust", enabled: true },
-    { id: "featured", enabled: true },
+    // Audit du 25/11 (étape 3, docs/29) : manifeste, Comment ça marche, Votre semaine, univers, avis, sécurité,
+    // prix, application, questions ; la phrase de clôture suit toujours.
+    { id: "manifesto", enabled: true },
+    { id: "how", enabled: true },
     { id: "thisWeek", enabled: true },
-    { id: "cities", enabled: true },
+    { id: "featured", enabled: false },
     { id: "weekend", enabled: false },
     { id: "new", enabled: false },
     { id: "popular", enabled: false },
     { id: "universes", enabled: true },
-    { id: "how", enabled: true },
     { id: "reviews", enabled: true },
+    { id: "trust", enabled: true },
+    { id: "price", enabled: true },
+    { id: "app", enabled: true },
+    { id: "cities", enabled: false },
     { id: "faq", enabled: true },
   ],
   featuredExperienceIds: [],
@@ -97,10 +103,18 @@ export function homeSettingsFromInput(v: z.output<typeof homeSettingsInputSchema
 export function normalizeHomeSettings(raw: Partial<HomeSettings> | null | undefined): HomeSettings {
   if (!raw) return DEFAULT_HOME_SETTINGS;
   const known = (raw.sections ?? []).filter((s, i, all) => HOME_SECTIONS.includes(s.id) && all.findIndex((x) => x.id === s.id) === i);
-  const missing = DEFAULT_HOME_SETTINGS.sections.filter((d) => !known.some((s) => s.id === d.id));
+  // Une section ajoutée depuis le dernier enregistrement prend une place sensée (et non tout en bas de la page) :
+  // le manifeste en tête, le prix et l'application juste avant les questions, les autres à la fin.
+  const sections = known.map((s) => ({ id: s.id, enabled: s.enabled === true }));
+  for (const d of DEFAULT_HOME_SETTINGS.sections) {
+    if (sections.some((s) => s.id === d.id)) continue;
+    const faq = sections.findIndex((s) => s.id === "faq");
+    const at = d.id === "manifesto" ? 0 : (d.id === "price" || d.id === "app") && faq >= 0 ? faq : sections.length;
+    sections.splice(at, 0, { ...d });
+  }
   return {
     banner: raw.banner?.text?.fr ? { enabled: raw.banner.enabled === true, text: raw.banner.text, href: raw.banner.href ?? "", linkLabel: raw.banner.linkLabel ?? null } : null,
-    sections: [...known.map((s) => ({ id: s.id, enabled: s.enabled === true })), ...missing],
+    sections,
     featuredExperienceIds: (raw.featuredExperienceIds ?? []).filter((id) => ID.test(id)).slice(0, HOME_FEATURED_MAX),
   };
 }
