@@ -1,4 +1,4 @@
-import { ageBand, ageOn, bookingClosesAt, partnerUnitsAt, pricingOf, recapAtFor, refundAmountFor, revealAtFor, seatsAvailable, unitWord, venueCallAt, venueOptionsAt, venueRequestText, whatsappMobileUrl, whatsappWebUrl } from "@thecommunity/shared";
+import { ageBand, ageOn, baseFormatId, bookingClosesAt, partnerUnitsAt, pricingOf, recapAtFor, refundAmountFor, revealAtFor, seatsAvailable, unitWord, venueCallAt, venueOptionsAt, venueRequestText, whatsappMobileUrl, whatsappWebUrl } from "@thecommunity/shared";
 import { AllocationCard, RiskCard } from "@/components/admin/allocation-card";
 import { SITE_URL } from "@/lib/site";
 import Link from "next/link";
@@ -61,7 +61,7 @@ export default async function SessionDetailPage({ params }: PageProps<"/admin/se
   });
   // Autres lieux possibles (aucun lieu compatible restant, ou accord au téléphone) : ceux qui servent ce format dans
   // la ville, avec la raison pour laquelle le calcul automatique ne les a pas proposés.
-  const format = String((e as { templateId?: string }).templateId || e.subcategoryId || "").replace(/^girls-only-/, "");
+  const format = baseFormatId((e as { templateId?: string }).templateId || e.subcategoryId || "");
   const slotStart = start.getTime();
   const usedBy = (pid: string) => d.venueRequests.filter((r) => r.partnerId === pid && r.sessionId !== s.id && (r.status === "sent" || r.status === "confirmed") && Math.abs(new Date(r.startAt).getTime() - slotStart) < 3 * 3_600_000).reduce((n, r) => n + r.tables, 0);
   const askedHere = new Map(requests.map((r) => [r.partnerId, r.status]));

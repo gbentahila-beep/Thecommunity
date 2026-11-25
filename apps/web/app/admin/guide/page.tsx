@@ -31,7 +31,7 @@ export default function AdminGuidePage() {
         <div className="space-y-3 text-sm">
           <p>Wenzy, ce sont <strong>des rendez-vous qui reviennent chaque semaine</strong>, rangés en 3 univers :</p>
           <ul className="list-disc space-y-1.5 ps-5">
-            <li><strong>Tables</strong> : le Dîner du mercredi (20h30), le Café du samedi (16h), le Brunch du dimanche (12h30). Chaque rendez-vous a ses gammes : Casual et Premium chaque semaine, <strong>Exclusive en plus</strong> le premier mercredi du mois (ce jour-là, il y a donc 3 dîners en parallèle : Casual, Premium et Exclusive). Le restaurant est secret, choisi et réservé par le site. Et de temps en temps, une <strong>Table Girls only</strong> que vous créez à la main.</li>
+            <li><strong>Tables</strong> : le Dîner du mercredi (20h30), le Café du samedi (16h), le Brunch du dimanche (12h30). Chaque rendez-vous a ses gammes : Casual et Premium chaque semaine, <strong>Exclusive en plus</strong> le premier mercredi du mois (ce jour-là, il y a donc 3 dîners en parallèle : Casual, Premium et Exclusive). Le restaurant est secret, choisi et réservé par le site. Et de temps en temps, une <strong>édition spéciale</strong> (Girls only, Expats, New in town) que vous créez à la main.</li>
             <li><strong>Activités</strong> : <em>l&apos;activité du samedi</em>, une seule par samedi, qui tourne (céramique, padel, yoga, escape game…). Une activité de cet univers n&apos;a pas de date à elle : elle passe le samedi, via le planning.</li>
             <li><strong>Événements</strong> : tout le reste, avec sa propre date : une soirée, un afterwork, un padel ponctuel un autre jour.</li>
           </ul>
@@ -101,13 +101,18 @@ export default function AdminGuidePage() {
             <li>Statut <strong>Publiée</strong> : l&apos;événement apparaît dans Événements, et sur l&apos;accueil la semaine où il a lieu.</li>
           </Steps>
         </Q>
-        <Q id="girls-only" title="Créer une Table Girls only (café, brunch, déjeuner, dîner)">
-          <p>Rien n&apos;est automatique : chaque édition Girls only se crée à la main, quand vous le décidez.</p>
+        <Q id="editions" title="Créer une édition spéciale (Girls only, Expats, New in town)">
+          <p>Rien n&apos;est automatique : chaque édition spéciale se crée à la main, quand vous le décidez. Chacune existe pour les 4 formats : café, brunch, déjeuner, dîner.</p>
+          <ul className="list-disc space-y-1 ps-5">
+            <li><strong>Girls only</strong> : réservée aux femmes (le site le vérifie à la réservation).</li>
+            <li><strong>Expats</strong> : pour les expatriés installés à Casablanca et les Casablancais ouverts sur le monde (souvent en français et en anglais).</li>
+            <li><strong>New in town</strong> : pour les nouveaux arrivants à Casablanca.</li>
+          </ul>
           <Steps>
-            <li><A href="/admin/experiences/nouvelle">Créer</A> → « <strong>Une Table spéciale (dont Girls only)</strong> » → section <em>Éditions spéciales Girls only</em> → Café, Brunch, Déjeuner ou Dîner Girls only.</li>
+            <li><A href="/admin/experiences/nouvelle">Créer</A> → « <strong>Une Table spéciale</strong> » → section <em>Éditions spéciales</em> → l&apos;édition et le format voulus (ex. « Brunch Expats »).</li>
             <li>Choisissez la gamme (Casual, Premium, Exclusive) : elle fixe le type de restaurant et le budget.</li>
-            <li>Étape 6 : la date, l&apos;heure et les places. Le modèle est déjà réglé « réservé aux femmes » (le site le vérifie à la réservation).</li>
-            <li>Statut <strong>Publiée</strong> : elle apparaît dans Tables et sur l&apos;accueil la semaine concernée. Ensuite, tout suit le même déroulé qu&apos;une Table : restaurants réservés la veille à 15h, lieu dévoilé à 21h30, récapitulatif le jour J.</li>
+            <li>Étape 6 : la date, l&apos;heure et les places.</li>
+            <li>Statut <strong>Publiée</strong> : elle apparaît dans Tables et sur l&apos;accueil la semaine concernée. Ensuite, même déroulé qu&apos;une Table : restaurants demandés la veille à 15h (les mêmes que pour son format), tables à 20h30, dévoilement à 21h30, récapitulatif le jour J.</li>
           </Steps>
           <p className="text-muted">Pour refaire la même édition un autre jour : sur sa fiche, « + Ajouter des dates ».</p>
         </Q>
@@ -157,7 +162,7 @@ export default function AdminGuidePage() {
           <li><A href="/admin">Accueil</A> : ce qui attend une action, les 7 prochains jours, des raccourcis.</li>
           <li><A href="/admin/programme">Calendrier</A> : la semaine, jour par jour ; une date s&apos;ouvre sur sa page.</li>
           <li><A href="/admin/rendez-vous">Rendez-vous</A> : dîner, café, brunch (réglages, prochaine date) et planning des samedis.</li>
-          <li><A href="/admin/experiences">Événements</A> : les fiches, rangées en Activités du samedi, Événements et Tables (dont Girls only).</li>
+          <li><A href="/admin/experiences">Événements</A> : les fiches, rangées en Activités du samedi, Événements et Tables (dont les éditions spéciales).</li>
           <li><A href="/admin/utilisateurs">Membres</A> : comptes, Pass, avis, signalements.</li>
           <li><A href="/admin/partenaires">Partenaires</A> : lieux (capacité, créneaux, gammes) et organisateurs.</li>
           <li><A href="/admin/paiements">Argent</A> : paiements, remboursements, virements, codes promo, statistiques.</li>

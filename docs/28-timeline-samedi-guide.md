@@ -38,13 +38,13 @@ La même pour tous les rendez-vous, et pour toutes les Tables (rendez-vous ou no
 - **48 h avant** l'ouverture d'un samedi, l'équipe reçoit l'activité prévue, à confirmer ou à changer
   (`rotationOpeningAlerts`, une fois par samedi, marquée sur `rendezvous/{id}.alerts`).
 
-## 3. Exclusive et Girls only
+## 3. Exclusive et éditions spéciales
 
 - Exclusive : **en plus** de Casual et Premium, le premier mercredi du mois (3 dîners en parallèle ce jour-là).
-- Girls only (révisé le 25/11) : dans les **Tables**, 4 modèles « Café / Brunch / Déjeuner / Dîner Girls only »
-  (`girls-only-*`, réservés aux femmes, vérifié à la réservation, mêmes lieux que leur format). **Rien
-  d'automatique** : l'équipe crée chaque édition à la main (gamme, date, places). Section « Éditions spéciales Girls
-  only » dans « Créer ».
+- Éditions spéciales (révisé le 25/11) : dans les **Tables**, 3 éditions × 4 formats (café, brunch, déjeuner, dîner) :
+  **Girls only** (réservée aux femmes, vérifié à la réservation), **Expats**, **New in town** ; modèles
+  `<édition>-<format>` (`special-editions.ts`), mêmes restaurants que leur format. **Rien d'automatique** : l'équipe
+  crée chaque édition à la main (gamme, date, places). Section « Éditions spéciales » dans « Créer ».
 
 ## 4. Site d'essai : nettoyage
 

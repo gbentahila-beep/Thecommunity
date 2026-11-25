@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_EVENT_TEMPLATES, isCalendarTemplate, mergeTemplates, nextWeekdayDate, scheduleFor, templateInputSchema, templateSlug } from "./event-templates";
 
 describe("modèles d'événements (docs/22, étape F)", () => {
-  it("les 18 modèles du lancement (dont 4 Girls only), tous valides", () => {
-    expect(DEFAULT_EVENT_TEMPLATES).toHaveLength(18);
+  it("les 26 modèles du lancement (dont 12 éditions spéciales), tous valides", () => {
+    expect(DEFAULT_EVENT_TEMPLATES).toHaveLength(26);
     for (const t of DEFAULT_EVENT_TEMPLATES) {
       const { builtIn: _b, ...doc } = t;
       const r = templateInputSchema.safeParse(doc);
@@ -12,13 +12,16 @@ describe("modèles d'événements (docs/22, étape F)", () => {
   });
   it("Tables : 4 formats, 3 gammes, lieu secret, sans questionnaire ; réglages communs", () => {
     const tables = DEFAULT_EVENT_TEMPLATES.filter((t) => t.values.categoryId === "eat");
-    expect(tables.map((t) => t.id)).toEqual(["cafe", "brunch", "dejeuner", "diner", "girls-only-cafe", "girls-only-brunch", "girls-only-dejeuner", "girls-only-diner"]);
+    const ed = (x: string) => ["cafe", "brunch", "dejeuner", "diner"].map((f) => `${x}-${f}`);
+    expect(tables.map((t) => t.id)).toEqual(["cafe", "brunch", "dejeuner", "diner", ...ed("girls-only"), ...ed("expats"), ...ed("new-in-town")]);
     for (const t of tables) {
       expect(Object.keys(t.tiers ?? {})).toEqual(["casual", "premium", "exclusive"]);
       expect(t.values).toMatchObject({ revealPolicy: "on_group_reveal", groupMin: 4, groupMax: 6, questionnaire: [] });
     }
     for (const t of DEFAULT_EVENT_TEMPLATES) expect(t.values).toMatchObject({ maxSeatsPerBooking: 1, alcoholServed: false, audience: t.id.startsWith("girls-only-") ? "women" : "all", membersOnly: false, cancellationPolicyId: "standard-48h" });
     expect(DEFAULT_EVENT_TEMPLATES.find((t) => t.id === "girls-only-diner")).toMatchObject({ name: "Dîner Girls only", values: { categoryId: "eat", audience: "women", titleFr: "Dîner Girls only" } });
+    expect(DEFAULT_EVENT_TEMPLATES.find((t) => t.id === "expats-brunch")).toMatchObject({ name: "Brunch Expats", values: { categoryId: "eat", audience: "all", titleFr: "Brunch Expats", languages: ["fr", "en"] } });
+    expect(DEFAULT_EVENT_TEMPLATES.find((t) => t.id === "new-in-town-cafe")).toMatchObject({ name: "Café New in town", values: { audience: "all", titleEn: "New in town coffee" } });
     expect(DEFAULT_EVENT_TEMPLATES.find((t) => t.id === "diner")!.tiers!.exclusive!.practicalInfo).toBe("Tenue soignée.");
     expect(DEFAULT_EVENT_TEMPLATES.find((t) => t.id === "yoga")!.values.included).toBe("Le cours");
   });
@@ -26,7 +29,7 @@ describe("modèles d'événements (docs/22, étape F)", () => {
     const edited = { ...DEFAULT_EVENT_TEMPLATES[0]!, name: "Café du samedi", builtIn: undefined };
     const custom = { ...DEFAULT_EVENT_TEMPLATES[4]!, id: "karaoke", name: "Karaoké", builtIn: undefined, values: { ...DEFAULT_EVENT_TEMPLATES[4]!.values, categoryId: "discover" } };
     const all = mergeTemplates([edited, custom]);
-    expect(all).toHaveLength(19);
+    expect(all).toHaveLength(27);
     expect(all.find((t) => t.id === "cafe")).toMatchObject({ name: "Café du samedi", builtIn: true });
     expect(all.find((t) => t.id === "karaoke")?.builtIn).toBe(false);
     expect(all[0]!.values.categoryId).toBe("eat");

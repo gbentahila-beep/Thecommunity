@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { specialEditionOf, type SpecialEdition } from "./special-editions";
 import { BOOKING_MODES, CATEGORY_ID_PATTERN } from "./constants";
 import { ACTIVITY_LEVELS } from "./activity";
 import { SPOKEN_LANGUAGES } from "./profile";
@@ -371,38 +372,65 @@ const BASE_TEMPLATES: EventTemplate[] = [
 ];
 
 /**
- * 25/11 : éditions spéciales « Girls only », dans les Tables (café, brunch, déjeuner, dîner), réservées aux femmes
- * (vérifié par le serveur à la réservation). Rien d'automatique : l'équipe crée chaque édition à la main depuis ces
- * modèles (date, gamme, places), aucune date ni rendez-vous n'est créé tout seul.
+ * 25/11 : éditions spéciales des Tables, pour chaque format (café, brunch, déjeuner, dîner) : Girls only (réservée aux
+ * femmes, vérifié par le serveur à la réservation), Expats, New in town. Rien d'automatique : l'équipe crée chaque
+ * édition à la main depuis ces modèles (date, gamme, places).
  */
-const GIRLS_ONLY: { id: string; fr: [string, string, string]; ar: [string, string, string]; en: [string, string, string] }[] = [
-  { id: "cafe", fr: ["Café Girls only", "Un café entre femmes, pour élargir son cercle.", "Une édition spéciale réservée aux femmes : un café choisi par notre équipe, à une table de 4 à 6, pour rencontrer d'autres femmes de Casablanca."], ar: ["قهوة للنساء فقط", "قهوة بين النساء لتوسيع دائرتك.", "إصدار خاص مخصص للنساء: مقهى يختاره فريقنا، على طاولة من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء."], en: ["Girls only coffee", "A women-only coffee, to widen your circle.", "A special edition for women only: a café chosen by our team, at a table of 4 to 6, to meet other women in Casablanca."] },
-  { id: "brunch", fr: ["Brunch Girls only", "Un brunch entre femmes, pour élargir son cercle.", "Une édition spéciale réservée aux femmes : un brunch dans un restaurant choisi par notre équipe, à une table de 4 à 6, pour rencontrer d'autres femmes de Casablanca."], ar: ["برانش للنساء فقط", "برانش بين النساء لتوسيع دائرتك.", "إصدار خاص مخصص للنساء: برانش في مطعم يختاره فريقنا، على طاولة من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء."], en: ["Girls only brunch", "A women-only brunch, to widen your circle.", "A special edition for women only: a brunch in a restaurant chosen by our team, at a table of 4 to 6, to meet other women in Casablanca."] },
-  { id: "dejeuner", fr: ["Déjeuner Girls only", "Un déjeuner entre femmes, pour élargir son cercle.", "Une édition spéciale réservée aux femmes : un déjeuner dans un restaurant choisi par notre équipe, à une table de 4 à 6, pour rencontrer d'autres femmes de Casablanca."], ar: ["غداء للنساء فقط", "غداء بين النساء لتوسيع دائرتك.", "إصدار خاص مخصص للنساء: غداء في مطعم يختاره فريقنا، على طاولة من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء."], en: ["Girls only lunch", "A women-only lunch, to widen your circle.", "A special edition for women only: lunch in a restaurant chosen by our team, at a table of 4 to 6, to meet other women in Casablanca."] },
-  { id: "diner", fr: ["Dîner Girls only", "Un dîner entre femmes, pour élargir son cercle.", "Une édition spéciale réservée aux femmes : un dîner dans un restaurant choisi par notre équipe, à une table de 4 à 6, pour rencontrer d'autres femmes de Casablanca."], ar: ["عشاء للنساء فقط", "عشاء بين النساء لتوسيع دائرتك.", "إصدار خاص مخصص للنساء: عشاء في مطعم يختاره فريقنا، على طاولة من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء."], en: ["Girls only dinner", "A women-only dinner, to widen your circle.", "A special edition for women only: dinner in a restaurant chosen by our team, at a table of 4 to 6, to meet other women in Casablanca."] },
+const FORMAT_WORDS: Record<string, { fr: string; place: string; ar: string; placeAr: string; en: string }> = {
+  cafe: { fr: "café", place: "dans un café choisi par notre équipe", ar: "قهوة", placeAr: "في مقهى يختاره فريقنا", en: "coffee" },
+  brunch: { fr: "brunch", place: "dans un restaurant choisi par notre équipe", ar: "برانش", placeAr: "في مطعم يختاره فريقنا", en: "brunch" },
+  dejeuner: { fr: "déjeuner", place: "dans un restaurant choisi par notre équipe", ar: "غداء", placeAr: "في مطعم يختاره فريقنا", en: "lunch" },
+  diner: { fr: "dîner", place: "dans un restaurant choisi par notre équipe", ar: "عشاء", placeAr: "في مطعم يختاره فريقنا", en: "dinner" },
+};
+const cap = (x: string) => x.charAt(0).toUpperCase() + x.slice(1);
+const EDITIONS: { id: SpecialEdition; name: string; audience: "all" | "women"; languages?: SpokenLanguage[]; text: (f: (typeof FORMAT_WORDS)[string], formatName: string) => { fr: [string, string, string]; ar: [string, string, string]; en: [string, string, string] } }[] = [
+  {
+    id: "girls-only", name: "Girls only", audience: "women",
+    text: (f, n) => ({
+      fr: [`${n} Girls only`, `Un ${f.fr} entre femmes, pour élargir son cercle.`, `Une édition spéciale réservée aux femmes : un ${f.fr} ${f.place}, à une table de 4 à 6, pour rencontrer d'autres femmes de Casablanca.`],
+      ar: [`${f.ar} للنساء فقط`, `${f.ar} بين النساء لتوسيع دائرتك.`, `إصدار خاص مخصص للنساء: ${f.ar} ${f.placeAr}، على طاولة من 4 إلى 6، للتعرف على نساء أخريات من الدار البيضاء.`],
+      en: [`Girls only ${f.en}`, `A women-only ${f.en}, to widen your circle.`, `A special edition for women only: ${f.en} at a place chosen by our team, at a table of 4 to 6, to meet other women in Casablanca.`],
+    }),
+  },
+  {
+    id: "expats", name: "Expats", audience: "all", languages: ["fr", "en"],
+    text: (f, n) => ({
+      fr: [`${n} Expats`, `Un ${f.fr} entre expatriés et Casablancais ouverts sur le monde.`, `Une édition spéciale pour les expatriés installés à Casablanca : un ${f.fr} ${f.place}, à une table de 4 à 6, pour échanger avec d'autres expats et des Casablancais curieux du monde. On y parle souvent français et anglais.`],
+      ar: [`${f.ar} للمغتربين`, `${f.ar} بين المغتربين وأهل الدار البيضاء المنفتحين على العالم.`, `إصدار خاص للمغتربين المقيمين في الدار البيضاء: ${f.ar} ${f.placeAr}، على طاولة من 4 إلى 6، للتبادل مع مغتربين آخرين ومع أهل المدينة المنفتحين. غالباً ما نتحدث الفرنسية والإنجليزية.`],
+      en: [`Expats ${f.en}`, `A ${f.en} for expats and Casablancans open to the world.`, `A special edition for expats living in Casablanca: ${f.en} at a place chosen by our team, at a table of 4 to 6, to connect with other expats and locals curious about the world. French and English are often spoken.`],
+    }),
+  },
+  {
+    id: "new-in-town", name: "New in town", audience: "all",
+    text: (f, n) => ({
+      fr: [`${n} New in town`, `Nouveau ou nouvelle à Casablanca ? Un ${f.fr} pour vos premiers contacts.`, `Une édition spéciale pour celles et ceux qui viennent d'arriver à Casablanca : un ${f.fr} ${f.place}, à une table de 4 à 6, avec d'autres nouveaux arrivants et des habitants prêts à partager leurs bonnes adresses.`],
+      ar: [`${f.ar} للقادمين الجدد`, `وصلت حديثاً إلى الدار البيضاء؟ ${f.ar} لتكوين أولى علاقاتك.`, `إصدار خاص لمن وصلوا حديثاً إلى الدار البيضاء: ${f.ar} ${f.placeAr}، على طاولة من 4 إلى 6، مع قادمين جدد آخرين وسكان مستعدين لمشاركة عناوينهم المفضلة.`],
+      en: [`New in town ${f.en}`, `New to Casablanca? A ${f.en} to make your first connections.`, `A special edition for newcomers to Casablanca: ${f.en} at a place chosen by our team, at a table of 4 to 6, with other newcomers and locals happy to share their favourite spots.`],
+    }),
+  },
 ];
 
-/** Préfixe des modèles « Girls only » (éditions spéciales, créées à la main à chaque fois). */
-export const SPECIAL_TEMPLATE_PREFIX = "girls-only-";
-export const isSpecialTemplate = (t: Pick<EventTemplate, "id">) => t.id.startsWith(SPECIAL_TEMPLATE_PREFIX);
+/** Les modèles d'éditions spéciales (édition × format). */
+export const isSpecialTemplate = (t: Pick<EventTemplate, "id">) => specialEditionOf(t.id) !== null;
 
 export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
   ...BASE_TEMPLATES,
-  ...GIRLS_ONLY.map((g, i): EventTemplate => {
-    const base = BASE_TEMPLATES.find((t) => t.id === g.id)!;
+  ...EDITIONS.flatMap((ed, j) => ["cafe", "brunch", "dejeuner", "diner"].map((fid, i): EventTemplate => {
+    const base = BASE_TEMPLATES.find((t) => t.id === fid)!;
+    const tx = ed.text(FORMAT_WORDS[fid]!, cap(base.name));
     return {
       ...base,
-      id: `${SPECIAL_TEMPLATE_PREFIX}${g.id}`,
-      name: `${base.name} Girls only`,
-      order: 10 + i,
+      id: `${ed.id}-${fid}`,
+      name: `${base.name} ${ed.name}`,
+      order: 10 + j * 10 + i,
       values: {
-        ...base.values, audience: "women",
-        titleFr: g.fr[0], summaryFr: g.fr[1], descriptionFr: g.fr[2],
-        titleAr: g.ar[0], summaryAr: g.ar[1], descriptionAr: g.ar[2],
-        titleEn: g.en[0], summaryEn: g.en[1], descriptionEn: g.en[2],
+        ...base.values, audience: ed.audience, ...(ed.languages ? { languages: ed.languages } : {}),
+        titleFr: tx.fr[0], summaryFr: tx.fr[1], descriptionFr: tx.fr[2],
+        titleAr: tx.ar[0], summaryAr: tx.ar[1], descriptionAr: tx.ar[2],
+        titleEn: tx.en[0], summaryEn: tx.en[1], descriptionEn: tx.en[2],
       },
     };
-  }),
+  })),
 ];
 
 /** Univers où ranger un modèle, dans l'ordre d'affichage : Tables, Activités, Événements (docs/25). */

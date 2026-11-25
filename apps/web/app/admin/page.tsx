@@ -15,7 +15,7 @@ export const metadata = { title: "Accueil" };
 const HOUR = 3_600_000;
 
 const SHORTCUTS = [
-  { href: "/admin/experiences/nouvelle", label: "Créer un événement", hint: "Soirée, Table Girls only, nouvelle activité…", icon: CalendarPlus },
+  { href: "/admin/experiences/nouvelle", label: "Créer un événement", hint: "Soirée, édition spéciale, nouvelle activité…", icon: CalendarPlus },
   { href: "/admin/rendez-vous#samedis", label: "Planning des samedis", hint: "Choisir ou changer l'activité", icon: Repeat },
   { href: "/admin/programme", label: "Calendrier", hint: "Toutes les dates, semaine par semaine", icon: CalendarDays },
   { href: "/admin/guide", label: "Guide", hint: "Comment faire, pas à pas", icon: BookOpen },

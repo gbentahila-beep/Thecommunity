@@ -37,3 +37,4 @@ export * from "./cmi";
 export * from "./rendezvous";
 export * from "./launch-universes";
 export * from "./rotation";
+export * from "./special-editions";

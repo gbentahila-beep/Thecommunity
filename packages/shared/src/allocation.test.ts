@@ -69,9 +69,11 @@ describe("attribution des lieux (docs/22, décisions 41 à 45)", () => {
     expect(allocationSettingsOf({ remindAfterMinutes: 90, expireAfterMinutes: 60 })).toEqual({ remindAfterMinutes: 60, expireAfterMinutes: 120 });
   });
 
-  it("Girls only : mêmes lieux que le format d'origine", () => {
+  it("éditions spéciales : mêmes lieux que le format d'origine", () => {
     const p = { id: "p", name: "Lieu", status: "active", cityId: "casablanca", formats: ["diner"], tiers: ["premium"] } as never;
     expect(partnerMatches(p, { templateId: "girls-only-diner", venueTier: "premium", cityId: "casablanca" })).toBe(true);
     expect(partnerMatches(p, { templateId: "girls-only-brunch", venueTier: "premium", cityId: "casablanca" })).toBe(false);
+    expect(partnerMatches(p, { templateId: "expats-diner", venueTier: "premium", cityId: "casablanca" })).toBe(true);
+    expect(partnerMatches(p, { templateId: "new-in-town-diner", venueTier: "premium", cityId: "casablanca" })).toBe(true);
   });
 });

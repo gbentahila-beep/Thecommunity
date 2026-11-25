@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { baseFormatId } from "./special-editions";
 import { MOROCCO_TIMEZONE } from "./constants";
 import { zonedParts } from "./time";
 import { VENUE_TIERS } from "./two-part";
@@ -63,8 +64,8 @@ export function partnerMatches(p: HostPartner, e: { templateId?: string | null; 
   if (p.status && p.status !== "active") return false;
   if (e.cityId && p.cityId && p.cityId !== e.cityId) return false;
   const formats = p.formats ?? [];
-  // Une édition Girls only (modèle « girls-only-diner ») va dans les mêmes lieux que son format (« diner »).
-  const format = (e.templateId || e.subcategoryId || "").replace(/^girls-only-/, "");
+  // Une édition spéciale (modèle « girls-only-diner », « expats-brunch »…) va dans les mêmes lieux que son format.
+  const format = baseFormatId(e.templateId || e.subcategoryId || "");
   if (!format || !formats.includes(format)) return false;
   if (e.venueTier && !(p.tiers ?? []).includes(e.venueTier as never)) return false;
   return true;

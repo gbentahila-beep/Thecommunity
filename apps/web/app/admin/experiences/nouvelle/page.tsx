@@ -1,4 +1,4 @@
-import { isCalendarTemplate, isSpecialTemplate, TEMPLATE_UNIVERSES, tierRange, VENUE_TIERS, type EventTemplate, type VenueTier } from "@thecommunity/shared";
+import { isCalendarTemplate, isSpecialTemplate, specialEditionOf, TEMPLATE_UNIVERSES, tierRange, VENUE_TIERS, type EventTemplate, type VenueTier } from "@thecommunity/shared";
 import Link from "next/link";
 import { ExperienceForm } from "@/components/admin/experience-form";
 import { PageHeader } from "@/components/admin/ui";
@@ -91,13 +91,34 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
         <Steps univers={univers} template={null} gamme={null} catName={catName} />
         <PageHeader title={`${catName.get(univers) ?? "Univers"} : quel modèle ?`} subtitle="Tout sera pré-rempli, photo comprise. Vous pourrez tout modifier." />
         {/* docs/25 : les modèles du calendrier d'abord, ceux « pour plus tard » ensuite. */}
-        {/* 25/11 : les éditions Girls only à part — créées à la main, une à une (rien d'automatique). */}
+        {/* 25/11 : les éditions spéciales à part (Girls only, Expats, New in town) — créées à la main, une à une. */}
         {([["calendar", list.filter((t) => isCalendarTemplate(t) && !isSpecialTemplate(t))], ["special", list.filter(isSpecialTemplate)], ["later", list.filter((t) => !isCalendarTemplate(t))]] as const).map(([k, items]) =>
-          items.length === 0 ? null : (
+          items.length === 0 ? null : k === "special" ? (
+            <section key={k} className="mt-8" data-testid="special-editions">
+              <h2 className="mb-1 text-sm font-semibold tracking-wide text-muted uppercase">Éditions spéciales</h2>
+              <p className="mb-4 text-sm text-muted">Rien d&apos;automatique : vous créez chaque édition ici, avec sa date, sa gamme et ses places. Elle va dans les mêmes restaurants que son format.</p>
+              {([["girls-only", "Girls only", "Réservée aux femmes (vérifié à la réservation)."], ["expats", "Expats", "Pour les expatriés installés à Casablanca, et les Casablancais ouverts sur le monde."], ["new-in-town", "New in town", "Pour les nouveaux arrivants à Casablanca."]] as const).map(([ed, title, hint]) => {
+                const group = items.filter((t) => specialEditionOf(t.id) === ed);
+                return group.length === 0 ? null : (
+                  <div key={ed} className="mb-6">
+                    <h3 className="text-base font-semibold text-ink">{title} <span className="text-sm font-normal text-muted">· {hint}</span></h3>
+                    <ul className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                      {group.map((t) => (
+                        <li key={t.id}>
+                          <Link href={`/admin/experiences/nouvelle?modele=${t.id}`} className={`${card} p-4`}>
+                            <span className="font-semibold text-ink">{t.name}</span>
+                            <span className="text-xs text-muted">Casual · Premium · Exclusive</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </section>
+          ) : (
             <section key={k} className={k !== "calendar" ? "mt-8" : ""}>
-              <h2 className="mb-1 text-sm font-semibold tracking-wide text-muted uppercase">{k === "calendar" ? "Au calendrier" : k === "special" ? "Éditions spéciales Girls only" : "Pour plus tard"}</h2>
-              {k === "special" && <p className="mb-3 text-sm text-muted">Réservées aux femmes (vérifié à la réservation). Rien d&apos;automatique : vous créez chaque édition ici, avec sa date, sa gamme et ses places.</p>}
-              {k !== "special" && <div className="mb-2" />}
+              <h2 className="mb-3 text-sm font-semibold tracking-wide text-muted uppercase">{k === "calendar" ? "Au calendrier" : "Pour plus tard"}</h2>
               <ul className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ${k === "later" ? "opacity-80" : ""}`} data-testid="template-choice">
                 {items.map((t) => (
                   <li key={t.id}>
@@ -122,7 +143,7 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
   const INTENTS = [
     { u: "move", title: "Une activité pour le samedi", text: "Pilates, tennis, atelier… Elle passe le samedi, dans le planning des samedis : pas de date à saisir.", tone: "border-s-emerald-600" },
     { u: "discover", title: "Un événement avec sa date", text: "Soirée, afterwork, padel un autre jour… Vous choisissez la date et les places.", tone: "border-s-amber-500" },
-    { u: "eat", title: "Une Table spéciale (dont Girls only)", text: "Café, brunch, déjeuner ou dîner en tables composées, par exemple une édition Girls only. Les rendez-vous de la semaine existent déjà et créent leurs dates tout seuls.", tone: "border-s-brand-700" },
+    { u: "eat", title: "Une Table spéciale", text: "Café, brunch, déjeuner ou dîner en tables composées, par exemple une édition spéciale : Girls only, Expats, New in town. Les rendez-vous de la semaine existent déjà et créent leurs dates tout seuls.", tone: "border-s-brand-700" },
   ] as const;
   return (
     <div className="max-w-4xl">
@@ -139,7 +160,7 @@ export default async function NewExperiencePage({ searchParams }: PageProps<"/ad
                   <span className="text-xs font-medium uppercase tracking-wide text-muted">{catName.get(x.u) ?? x.u}</span>
                 </span>
                 <span className="mt-1 text-sm text-ink/80">{x.text}</span>
-                {list.length > 0 && <span className="mt-2 text-xs text-muted">Modèles : {list.map((t) => t.name).join(" · ")}{x.u === "eat" ? " · éditions Girls only" : ""}</span>}
+                {list.length > 0 && <span className="mt-2 text-xs text-muted">Modèles : {list.map((t) => t.name).join(" · ")}{x.u === "eat" ? " · éditions spéciales (Girls only, Expats, New in town)" : ""}</span>}
               </Link>
             </li>
           );
