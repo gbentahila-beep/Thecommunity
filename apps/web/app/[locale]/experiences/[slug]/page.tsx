@@ -31,7 +31,7 @@ import { FIREBASE_ENABLED } from "@/lib/firebase/config";
 import { ExperienceAlertButton } from "@/components/experience-alert-button";
 import { budgetText, memberAmountFor, PriceTag } from "@/components/price-tag";
 import { getCancellationPolicies, policyOf } from "@/lib/data/policies";
-import { getArchivedExperience, getCategory, getCity, getExperienceBySlug, getMembershipPlan, getPublicOrganizer, getPublishedExperiences, getRendezvousList, getReviews, getSessionCrowd, getUpcomingSessions, publicLogo } from "@/lib/data";
+import { getArchivedExperience, getCategory, getCity, getExperienceBySlug, getMembershipPlan, getPublicOrganizer, getPublishedExperiences, getRendezvousList, getReviews, getUpcomingSessions, publicLogo } from "@/lib/data";
 import { formatLongDate, formatShortSlot, formatTime, formatTimeRange } from "@/lib/format";
 import { tr } from "@/lib/i18n-text";
 import { richText } from "@/lib/rich-text";
@@ -114,7 +114,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     if (!retired) notFound();
     return <RetiredExperience title={tr(retired.title, locale)} categoryId={retired.categoryId} cityId={retired.cityId} />;
   }
-  const [t, tCard, t2, category, subcategory, sessions, reviews, plan, policies, organizer, tm, tInt, city] = await Promise.all([
+  const [t, tCard, t2, category, subcategory, sessions, reviews, plan, policies, organizer, tm, city] = await Promise.all([
     getTranslations("experience"),
     getTranslations("card"),
     getTranslations("twoPart"),
@@ -126,7 +126,6 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
     getCancellationPolicies(),
     getPublicOrganizer(exp.organizerId),
     getTranslations("meeting"),
-    getTranslations("labels.interests"),
     getCity(exp.cityId),
   ]);
   const cityName = city ? tr(city.name, locale) : "Casablanca";
@@ -155,7 +154,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
   const shownSessions = win ? sessions.filter((s) => win.has(s.id) && win.get(s.id)!.state !== "off").slice(0, 4) : sessions;
   const next = win ? sessions.find((s) => win.get(s.id)?.state === "open") : sessions.find((s) => seatsAvailable(s) > 0) ?? sessions[0];
   // Étape 29 : « Qui allez-vous rencontrer ? » (chiffres globaux sur les inscrits de la prochaine date, à partir de 4).
-  const meeting = meetingSummary(exp, next ?? null, await getSessionCrowd(next?.id));
+  const meeting = meetingSummary(exp, next ?? null, null);
 
   // Étape P : l'essentiel, sans répétition (lieu une fois, taille du groupe une fois).
   const g = exp.groupConfig;
@@ -193,13 +192,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         ? { icon: UserCheck, label: t("targetAge", { min: meeting.targetAge.min ?? minAge, max: meeting.targetAge.max ?? 99 }), value: minAge > 18 ? `${t("targetAgeNote")} · ${t("fromAge", { age: minAge })}` : t("targetAgeNote") }
         : { icon: UserCheck, label: t("openToAll"), value: t("fromAge", { age: minAge }) },
   ];
-  const crowd = meeting.crowd
-    ? [
-        tm("crowd", { count: meeting.crowd.count }),
-        meeting.crowd.ageMin != null ? tm("crowdAge", { min: meeting.crowd.ageMin, max: meeting.crowd.ageMax ?? meeting.crowd.ageMin + 5 }) : "",
-        meeting.crowd.topInterests.length ? tm("crowdInterests", { list: meeting.crowd.topInterests.map((i) => tInt(i)).join(", ") }) : "",
-      ].filter(Boolean).join(" · ")
-    : undefined;
+  // 26/11 : plus d'aperçu des inscrits (nombre, âges, centres d'intérêt) avant de réserver.
   const onSiteLine =
     twoPart?.model === "fixed_partner" && twoPart.partner?.price
       ? t("onSiteFixed", { amount: formatMoney(twoPart.partner.price, lang) })
@@ -279,7 +272,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
             </header>
 
             {/* Étape P : l'essentiel en un seul encadré, chaque information une seule fois. */}
-            <EventEssentials items={essentials} crowd={crowd}>
+            <EventEssentials items={essentials}>
               {!surprise && exp.venue.geo && <div className="mt-4"><VenueMap lat={exp.venue.geo.lat} lng={exp.venue.geo.lng} place={exp.venue.name} /></div>}
             </EventEssentials>
 

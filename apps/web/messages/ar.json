@@ -275,7 +275,7 @@
     "socialDinnerFormat": "طاولات من {size} أشخاص يكوّنها فريقنا",
     "groupFormat": "فرق من {min} إلى {max} أشخاص",
     "individualFormat": "{capacity} مقعداً، حجز فردي",
-    "openFormat": "تعال وحدك أو حتى {max} أشخاص",
+    "openFormat": "{max, plural, =1 {تعال وحدك} other {تعال وحدك أو حتى # أشخاص}}",
     "privateFormat": "حجز خاص لمجموعتك",
     "requestCta": "اطلب",
     "onRequestNote": "بطلب: يوافق الفريق على طلبك، ثم تدفع.",

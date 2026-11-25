@@ -6,9 +6,9 @@ export type EssentialItem = { icon: LucideIcon; label: string; value?: string; l
 /**
  * L'essentiel d'un événement, en un seul encadré (étape P) : quand, où, en quel format, combien de temps, niveau,
  * langues, âge visé, public. Chaque information une seule fois ; plus de phrases d'explication répétées.
- * Les chiffres sur les inscrits n'apparaissent qu'à partir de 4 personnes (âge arrondi, intérêts partagés seulement).
+ * Aucun aperçu des inscrits (nombre, âges, centres d'intérêt) avant de réserver (26/11).
  */
-export function EventEssentials({ items, crowd, children }: { items: EssentialItem[]; crowd?: string; children?: React.ReactNode }) {
+export function EventEssentials({ items, children }: { items: EssentialItem[]; children?: React.ReactNode }) {
   return (
     <section aria-label="L'essentiel" className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="meeting">
       <ul className="grid gap-4 sm:grid-cols-2">
@@ -23,11 +23,6 @@ export function EventEssentials({ items, crowd, children }: { items: EssentialIt
           </li>
         ))}
       </ul>
-      {crowd && (
-        <p className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-ink/85" data-testid="meeting-crowd">
-          {crowd}
-        </p>
-      )}
       {children}
     </section>
   );

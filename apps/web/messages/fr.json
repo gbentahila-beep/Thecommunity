@@ -272,7 +272,7 @@
     "socialDinnerFormat": "Tables de {size} personnes composées par notre équipe",
     "groupFormat": "Équipes de {min} à {max} personnes",
     "individualFormat": "{capacity} places, réservation individuelle",
-    "openFormat": "Venez seul·e ou jusqu'à {max} personnes",
+    "openFormat": "{max, plural, =1 {Venez seul·e} other {Venez seul·e ou jusqu'à # personnes}}",
     "privateFormat": "Privatisation pour votre groupe",
     "durationHours": "{hours} h",
     "durationHoursMinutes": "{hours} h {minutes}",

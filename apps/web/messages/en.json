@@ -272,7 +272,7 @@
     "socialDinnerFormat": "Tables of {size} put together by our team",
     "groupFormat": "Teams of {min} to {max} people",
     "individualFormat": "{capacity} spots, individual booking",
-    "openFormat": "Come alone or with up to {max} people",
+    "openFormat": "{max, plural, =1 {Come alone} other {Come alone or with up to # people}}",
     "privateFormat": "Private booking for your group",
     "durationHours": "{hours} h",
     "durationHoursMinutes": "{hours} h {minutes}",
