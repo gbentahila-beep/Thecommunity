@@ -9,7 +9,6 @@ import { HomeFaq } from "@/components/home/home-faq";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { ReviewsShowcase } from "@/components/home/reviews-showcase";
 import { Universes } from "@/components/home/universes";
-import { WhyWenzy } from "@/components/home/why-wenzy";
 import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { BabLineup } from "@/components/brand/bab-lineup";
@@ -93,7 +92,6 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     universes: (
       <PageShell key="universes">
         <Universes categories={categories} />
-        <WhyWenzy />
       </PageShell>
     ),
     // Avis de l'accueil : choisis une fois pour toutes (24/11), ils ne changent pas avec les nouveaux avis.

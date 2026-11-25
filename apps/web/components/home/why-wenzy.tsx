@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Bab } from "@/components/brand/bab";
 
 /**
- * « Pourquoi on fait ça » (accueil, sous les univers, et page À propos), au style des autres sections : surtitre et
+ * « Pourquoi on fait ça » (page À propos ; retiré de l'accueil le 25/11), au style des autres sections : surtitre et
  * titre centrés, le constat en texte d'accompagnement, trois cartes blanches (ce dont on s'occupe), puis la phrase de
  * fin en grand, la seconde moitié au dégradé de la marque, avec la mascotte.
  */
