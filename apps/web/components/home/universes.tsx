@@ -25,10 +25,12 @@ export const RICH = ["eat", "move", "create", "discover"] as const;
 export async function Universes({ categories, title }: { categories: Category[]; title?: string }) {
   const t = await getTranslations("home");
   return (
-    <section aria-labelledby="universes-title" className="py-12">
-      <p className="eyebrow text-center">{t("universesEyebrow")}</p>
-      <h2 id="universes-title" className="section-title mt-2 text-center">{title ?? t("universesTitle")}</h2>
-      <UniverseGrid categories={categories} className="mt-8" />
+    <section aria-labelledby="universes-title">
+      <div className="section-head container-text">
+        <p className="eyebrow">{t("universesEyebrow")}</p>
+        <h2 id="universes-title" className="section-title mt-3">{title ?? t("universesTitle")}</h2>
+      </div>
+      <UniverseGrid categories={categories} />
     </section>
   );
 }
@@ -44,7 +46,7 @@ export async function UniverseGrid({ categories, cityId = DEFAULT_CITY, classNam
     return ids.sort((a, b) => (order.get(a) ?? 99) - (order.get(b) ?? 99)).map((id) => subName.get(id)).filter(Boolean).join(" · ");
   };
   return (
-    <ul className={`mx-auto grid grid-cols-2 gap-3 sm:gap-4 ${categories.length <= 3 ? "max-w-4xl lg:grid-cols-3" : "max-w-5xl lg:grid-cols-4"} ${className}`} data-testid="universes-grid">
+    <ul className={`grid grid-cols-2 gap-4 lg:gap-6 ${categories.length <= 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"} ${className}`} data-testid="universes-grid">
         {categories.map((c) => {
           const name = tr(c.name, locale);
           const rich = (RICH as readonly string[]).includes(c.id) ? c.id : null;

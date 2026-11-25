@@ -33,7 +33,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
   return (
     <div className="space-y-12" data-testid="member-home">
       <header>
-        <h1 className="page-title text-center">{t("hello", { name: space.profile.firstName })}</h1>
+        <h1 className="page-title">{t("hello", { name: space.profile.firstName })}</h1>
 
       </header>
 

@@ -74,7 +74,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
     return (
       <PageShell className="max-w-2xl py-12">
         <h1 className="page-title">{t("title")}</h1>
-        <p className="mt-4 text-center text-muted">{t("soon")}</p>
+        <p className="mt-4 text-muted">{t("soon")}</p>
       </PageShell>
     );
   }

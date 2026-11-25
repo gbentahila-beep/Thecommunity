@@ -20,20 +20,25 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
   const [t, th, categories] = await Promise.all([getTranslations("pages"), getTranslations("home"), getCategories()]);
   return (
     <PageShell className="py-10 sm:py-14">
-      <header className="mx-auto max-w-2xl text-center">
+      <header className="max-w-2xl">
         <h1 className="page-title">{t("howTitle")}</h1>
         <p className="mt-4 text-lg leading-relaxed text-ink/80">{t("howIntro")}</p>
       </header>
-      <div className="mt-6">
+      {/* Même rythme que l'accueil (docs/29) : 72 px entre les blocs sur téléphone, 120 px sur ordinateur. */}
+      <div className="mt-12 lg:mt-16">
         <HowItWorks categories={categories} showTitle={false} />
       </div>
       {/* Ce qui se passe après la réservation : la frise, de la réservation au lendemain. */}
-      <BookingTimeline />
-      <Universes categories={categories} title={t("formatsTitle")} />
-      <div className="mx-auto mt-6 max-w-4xl space-y-12">
+      <div className="mt-18 lg:mt-30">
+        <BookingTimeline />
+      </div>
+      <div className="mt-18 lg:mt-30">
+        <Universes categories={categories} title={t("formatsTitle")} />
+      </div>
+      <div className="mt-18 space-y-12 lg:mt-30">
         <section aria-labelledby="safety" data-testid="safety">
-          <h2 id="safety" className="section-title">{t("safetyTitle")}</h2>
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+          <h2 id="safety" className="section-title section-head">{t("safetyTitle")}</h2>
+          <ul className="grid gap-4 sm:grid-cols-2">
             {[
               { icon: MapPinCheck, k: "safety1" },
               { icon: ScrollText, k: "safety2" },

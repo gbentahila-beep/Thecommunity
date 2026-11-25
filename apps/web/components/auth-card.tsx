@@ -28,7 +28,7 @@ export function AuthCard({
       </div>
       <div className="mx-auto w-full max-w-md">
         <h1 className="page-title">{title}</h1>
-        <p className="mt-2 text-center text-muted">{subtitle}</p>
+        <p className="mt-2 text-muted">{subtitle}</p>
         <div className="mt-8 space-y-4">{children}</div>
         {notice && (
           <p role="note" className="mt-5 flex gap-2.5 rounded-2xl bg-brand-50 p-3.5 text-sm text-brand-900">

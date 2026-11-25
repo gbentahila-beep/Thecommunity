@@ -21,10 +21,12 @@ function Phone({ src, alt, className }: { src: string; alt: string; className: s
 export async function AppPreview() {
   const t = await getTranslations("home");
   return (
-    <section aria-labelledby="app-preview-title" className="mx-auto max-w-5xl px-4 pt-14 text-center sm:px-6 lg:pt-20" data-testid="home-app">
-      <h2 id="app-preview-title" className="section-title">{t("appTitle")}</h2>
-      <p className="lead mx-auto mt-3 max-w-xl">{t("appText")}</p>
-      <div className="mt-10 flex items-start justify-center" aria-hidden={false}>
+    <section aria-labelledby="app-preview-title" className="mx-auto max-w-5xl text-center" data-testid="home-app">
+      <div className="section-head container-text mx-auto">
+        <h2 id="app-preview-title" className="section-title">{t("appTitle")}</h2>
+        <p className="lead mt-3">{t("appText")}</p>
+      </div>
+      <div className="flex items-start justify-center" aria-hidden={false}>
         {SCREENS.map((s) => (
           <Phone key={s.src} src={s.src} alt={t(s.key)} className={s.pos} />
         ))}

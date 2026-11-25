@@ -16,12 +16,12 @@ export async function HowItWorks({ categories, showTitle = true }: { categories:
   const [t, locale] = await Promise.all([getTranslations("home"), getLocale()]);
   const card = "relative rounded-3xl p-6 text-center shadow-float transition duration-300 hover:rotate-0 sm:p-7";
   return (
-    <section aria-labelledby={showTitle ? "how-title" : undefined} aria-label={showTitle ? undefined : t("howTitle")} className={showTitle ? "py-16" : "pb-16"}>
-      <h2 id="how-title" hidden={!showTitle} className="section-title text-center">
+    <section aria-labelledby={showTitle ? "how-title" : undefined} aria-label={showTitle ? undefined : t("howTitle")}>
+      <h2 id="how-title" hidden={!showTitle} className="section-title section-head">
         {t("howTitle")}
         <Bab name="wen" className="ms-2 inline-block w-12 align-[-8px]" />
       </h2>
-      <ol className="mx-auto mt-10 grid max-w-6xl gap-8 px-2 md:grid-cols-3 md:gap-6 md:pt-6">
+      <ol className="grid gap-8 px-2 md:grid-cols-3 md:gap-6">
         <li className={`${card} -rotate-2 bg-white md:translate-y-6`}>
           <span className="font-display text-5xl text-brand-100">1</span>
           <h3 className="mt-1 text-xl font-semibold text-ink">{t("how1Title")}</h3>
@@ -71,7 +71,7 @@ export async function HowItWorks({ categories, showTitle = true }: { categories:
         </li>
       </ol>
       {showTitle && (
-        <p className="mt-12 text-center md:mt-16">
+        <p className="mt-12 md:mt-16">
           <Link href="/comment-ca-marche#deroule" className="inline-flex items-center gap-1.5 font-semibold text-brand-700 underline-offset-4 hover:underline">
             {t("howTimelineLink")}
             <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />

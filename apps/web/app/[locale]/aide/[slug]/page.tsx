@@ -50,7 +50,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
       </nav>
       <article className="mt-6">
         <h1 className="page-title">{a.title[lang]}</h1>
-        <p className="mx-auto mt-4 max-w-2xl text-center text-lg leading-relaxed text-ink/80">{a.summary[lang]}</p>
+        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink/80">{a.summary[lang]}</p>
         <div className="mt-8 space-y-5">
           {forPaymentMethod(a.body[lang], await getPaymentMethod()).map((b, i) =>
             Array.isArray(b) ? (

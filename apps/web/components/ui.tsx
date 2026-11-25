@@ -2,20 +2,38 @@ import { ArrowRight, Star } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 
+/**
+ * En-tête de section (audit du 25/11) : sur-titre facultatif, titre, une phrase d'introduction, et le lien « Voir tout »
+ * à droite sur ordinateur. Aligné à gauche ; `centered` pour les grandes phrases (avis, appel final).
+ */
 export function SectionHeading({
   title,
+  eyebrow,
+  intro,
   action,
   as: Tag = "h2",
+  id,
+  centered = false,
+  className = "",
 }: {
   title: ReactNode;
+  eyebrow?: ReactNode;
+  intro?: ReactNode;
   action?: { href: string; label: string };
   as?: "h1" | "h2";
+  id?: string;
+  centered?: boolean;
+  className?: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-2 text-center">
-      <Tag className="section-title">{title}</Tag>
+    <div className={`section-head flex flex-col gap-4 ${centered ? "items-center text-center" : "sm:flex-row sm:items-end sm:justify-between"} ${className}`}>
+      <div className={`container-text ${centered ? "mx-auto" : ""}`}>
+        {eyebrow && <p className="eyebrow mb-3">{eyebrow}</p>}
+        <Tag id={id} className={Tag === "h1" ? "page-title" : "section-title"}>{title}</Tag>
+        {intro && <p className="lead mt-3">{intro}</p>}
+      </div>
       {action && (
-        <Link href={action.href} className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-brand-900 sm:flex">
+        <Link href={action.href} className="group hidden shrink-0 items-center gap-1.5 pb-1 text-sm font-semibold text-brand-900 sm:inline-flex">
           {action.label}
           <ArrowRight className="size-4 transition group-hover:translate-x-0.5 rtl:-scale-x-100" aria-hidden />
         </Link>
@@ -51,5 +69,29 @@ export function Stars({ value, className = "" }: { value: number; className?: st
 }
 
 export function PageShell({ children, className = "", ...rest }: { children: ReactNode; className?: string; "data-testid"?: string }) {
-  return <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`} {...rest}>{children}</div>;
+  return <div className={`container-page ${className}`} {...rest}>{children}</div>;
+}
+
+/** Section pleine largeur : fond (crème, blanc ou encre), espacement vertical fixe, contenu dans la largeur commune. */
+export function Section({
+  children,
+  tone = "cream",
+  className = "",
+  innerClassName = "",
+  ...rest
+}: {
+  children: ReactNode;
+  tone?: "cream" | "white" | "night";
+  className?: string;
+  innerClassName?: string;
+  id?: string;
+  "aria-labelledby"?: string;
+  "data-testid"?: string;
+}) {
+  const bg = tone === "white" ? "section-white" : tone === "night" ? "section-night" : "";
+  return (
+    <section className={`section ${bg} ${className}`} {...rest}>
+      <div className={`container-page ${innerClassName}`}>{children}</div>
+    </section>
+  );
 }

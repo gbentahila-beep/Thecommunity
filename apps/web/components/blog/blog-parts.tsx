@@ -12,7 +12,7 @@ export async function BlogHero({ as = "h1" }: { as?: "h1" | "p" }) {
   const t = await getTranslations("blog");
   const Title = as;
   return (
-    <header className="mx-auto max-w-3xl text-center">
+    <header className="mx-auto max-w-3xl">
       <p className="eyebrow text-brand-700">{t("title")}</p>
       <Title className="page-title mt-3">
         {t("heroTitleA")} <span className="text-brand-700 italic rtl:not-italic">{t("heroTitleB")}</span>

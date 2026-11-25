@@ -35,21 +35,21 @@ export async function ThisWeek({ limit, cityId = DEFAULT_CITY, intro = false }: 
     })),
   );
   return (
-    <section aria-labelledby="this-week-title" className="space-y-5" data-testid="home-thisWeek">
+    <section aria-labelledby="this-week-title" className="space-y-6" data-testid="home-thisWeek">
       {intro ? (
         <>
-          <div className="text-center" data-testid="week-intro">
+          <div className="container-text" data-testid="week-intro">
             <p className="eyebrow">{t("weekRvEyebrow")}</p>
-            <h2 id="this-week-title" className="section-title mt-2">{t("weekRvTitle")}</h2>
+            <h2 id="this-week-title" className="section-title mt-3">{t("weekRvTitle")}</h2>
             {/* Le choix de la ville, juste sous le titre (« à Casablanca ▾ ») : remplace « Cette semaine à… », redondant. */}
-            <p className="relative mt-1 flex flex-wrap items-baseline justify-center gap-x-2 font-display text-2xl font-semibold text-ink sm:text-3xl">
+            <p className="relative mt-1 flex flex-wrap items-baseline gap-x-2 font-display text-2xl font-semibold text-ink sm:text-3xl">
               {t("weekAt")} <CityMenu variant="title" align="start" currentCityId={cityId} />
             </p>
-            <p className="mx-auto mt-3 max-w-xl text-ink/75">{t("weekRvText")}</p>
+            <p className="lead mt-3">{t("weekRvText")}</p>
           </div>
         </>
       ) : (
-        <h2 id="this-week-title" className="section-title relative flex flex-wrap items-baseline justify-center gap-x-2">
+        <h2 id="this-week-title" className="section-title relative flex flex-wrap items-baseline gap-x-2">
           {t("thisWeekAt")} <CityMenu variant="title" align="start" currentCityId={cityId} />
         </h2>
       )}

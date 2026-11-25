@@ -47,8 +47,8 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
           </ol>
         </nav>
         <h1 className="page-title mt-6">{c.title[lang]}</h1>
-        <p className="mx-auto mt-4 max-w-2xl text-center text-lg leading-relaxed text-ink/75">{c.description[lang]}</p>
-        <p className="mt-4 text-center text-[15px] text-muted">
+        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink/75">{c.description[lang]}</p>
+        <p className="mt-4 text-[15px] text-muted">
           {t("count", { count: articles.length })} · {t("updatedOn", { date: formatCalendarDate(lastUpdate(articles), locale) })}
         </p>
         {c.key === "city-guide" && <CityCard />}

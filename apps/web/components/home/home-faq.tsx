@@ -10,12 +10,20 @@ const KEYS = [1, 2, 3, 6, 4] as const;
 export async function HomeFaq() {
   const [t, tf] = await Promise.all([getTranslations("home"), getTranslations("faq")]);
   return (
-    <section aria-labelledby="home-faq" className="mx-auto max-w-3xl pt-16 pb-5">
-      <h2 id="home-faq" className="section-title text-center">
-        {t("faqTitle")}
-        <Bab name="memo" mood="surprised" className="ms-2 inline-block w-12 align-[-8px]" />
-      </h2>
-      <div className="mt-8 divide-y divide-line card">
+    <section aria-labelledby="home-faq" className="grid gap-6 lg:grid-cols-[1fr_1.7fr] lg:gap-16">
+      {/* Ordinateur : le titre à gauche, les questions à droite (comme les centres d'aide des sites de référence). */}
+      <div>
+        <h2 id="home-faq" className="section-title">
+          {t("faqTitle")}
+          <Bab name="memo" mood="surprised" className="ms-2 inline-block w-12 align-[-8px]" />
+        </h2>
+        <Link href="/aide" className="btn btn-secondary mt-6 hidden items-center gap-2 lg:inline-flex">
+          <LifeBuoy className="size-4" aria-hidden />
+          {t("allQuestions")}
+        </Link>
+      </div>
+      <div>
+      <div className="divide-y divide-line card">
         {KEYS.map((k) => (
           <details key={k} className="group p-5">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink [&::-webkit-details-marker]:hidden">
@@ -26,11 +34,12 @@ export async function HomeFaq() {
           </details>
         ))}
       </div>
-      <div className="mt-6 flex justify-center">
+      <div className="mt-6 flex lg:hidden">
         <Link href="/aide" className="btn btn-secondary inline-flex items-center gap-2">
           <LifeBuoy className="size-4" aria-hidden />
           {t("allQuestions")}
         </Link>
+      </div>
       </div>
     </section>
   );

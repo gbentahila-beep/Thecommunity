@@ -26,7 +26,7 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
   const P = PRESS;
   return (
     <PageShell className="py-10 sm:py-14">
-      <header className="mx-auto max-w-2xl text-center">
+      <header className="max-w-2xl">
         <h1 className="page-title">{P.title[l]}</h1>
         <p className="mt-4 text-lg leading-relaxed text-ink/80">{P.intro[l]}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">

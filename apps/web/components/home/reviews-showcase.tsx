@@ -27,10 +27,12 @@ export function ReviewsShowcase({ reviews, title, subtitle, photoAlt, prevLabel,
     el.scrollBy({ left: dir * (rtl ? -1 : 1) * el.clientWidth * 0.85, behavior: "smooth" });
   };
   return (
-    <section aria-labelledby="reviews-title" className="py-16">
-      <h2 id="reviews-title" className="section-title text-center">{title}</h2>
-      <p className="mx-auto mt-2 max-w-xl text-center text-ink/75">{subtitle}</p>
-      <div className="relative mt-8">
+    <section aria-labelledby="reviews-title">
+      <div className="section-head container-text mx-auto text-center">
+        <h2 id="reviews-title" className="section-title">{title}</h2>
+        <p className="lead mt-3">{subtitle}</p>
+      </div>
+      <div className="relative">
         <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-card sm:aspect-[16/9] lg:aspect-[21/9]">
           <Image src="/images/photos/pourquoi-venir.webp" alt={photoAlt} fill sizes="100vw" className="object-cover object-[50%_30%]" />
         </div>

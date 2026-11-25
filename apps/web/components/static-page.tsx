@@ -5,7 +5,7 @@ export function StaticPage({ title, intro, children }: { title: string; intro?: 
   return (
     <PageShell className="max-w-3xl py-12">
       <h1 className="page-title">{title}</h1>
-      {intro && <p className="mx-auto mt-4 max-w-2xl text-center text-lg leading-relaxed text-ink/80">{intro}</p>}
+      {intro && <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink/80">{intro}</p>}
       {children && <div className="mt-10 space-y-8">{children}</div>}
     </PageShell>
   );

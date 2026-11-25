@@ -9,7 +9,7 @@ import { HomeFaq } from "@/components/home/home-faq";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { ReviewsShowcase } from "@/components/home/reviews-showcase";
 import { Universes } from "@/components/home/universes";
-import { PageShell, PrimaryLink, SectionHeading } from "@/components/ui";
+import { PageShell, PrimaryLink, Section, SectionHeading } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { BabLineup } from "@/components/brand/bab-lineup";
 import { experienceBadge, NEW_EXPERIENCE_DAYS, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
@@ -57,7 +57,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     const dated = items.filter((x): x is { experience: Experience; session: Session } => Boolean(x.session));
     return (
       dated.length > 0 && (
-        <PageShell key={id} className="max-w-3xl space-y-5 py-8 lg:max-w-6xl" data-testid={`home-${id}`}>
+        <div key={id} data-testid={`home-${id}`}>
           <SectionHeading title={title} action={{ href: "/experiences", label: t("seeAll") }} />
           <ul className={`event-list ${dated.length < 3 ? "is-few" : ""}`}>
             {dated.map((x) => (
@@ -66,7 +66,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
               </li>
             ))}
           </ul>
-        </PageShell>
+        </div>
       )
     );
   };
@@ -77,27 +77,15 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     weekend: cards("weekend", t("weekendTitle", { city: cityName }), weekend.slice(0, 4).map((x) => ({ experience: x.experience, session: x }))),
     new: cards("new", t("newTitle"), fresh),
     popular: cards("popular", t("popularTitle"), popular),
-    thisWeek: (
-      <PageShell key="thisWeek" className="max-w-3xl space-y-10 py-8 lg:max-w-6xl">
-        <ThisWeek limit={6} intro />
-      </PageShell>
-    ),
+    thisWeek: <ThisWeek key="thisWeek" limit={6} intro />,
     // L'encadré de confiance est affiché sous le bouton « Découvrir les expériences » (voir plus bas).
     trust: null,
-    how: (
-      <PageShell key="how">
-        <HowItWorks categories={categories} />
-      </PageShell>
-    ),
-    universes: (
-      <PageShell key="universes">
-        <Universes categories={categories} />
-      </PageShell>
-    ),
+    how: <HowItWorks key="how" categories={categories} />,
+    universes: <Universes key="universes" categories={categories} />,
     // Avis de l'accueil : choisis une fois pour toutes (24/11), ils ne changent pas avec les nouveaux avis.
     reviews: (
-        <PageShell key="reviews">
           <ReviewsShowcase
+            key="reviews"
             reviews={(["r1", "r2", "r3"] as const).map((k) => ({ id: k, rating: 5, comment: t(`featuredReviews.${k}.text`), publicName: t(`featuredReviews.${k}.name`) }))}
             title={t("reviewsTitle")}
             subtitle={t("reviewsSubtitle")}
@@ -105,16 +93,10 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             prevLabel={t("reviewsPrev")}
             nextLabel={t("reviewsNext")}
           />
-        </PageShell>
       ),
     // Étape W : plus de section villes sur l'accueil (le choix de la ville reste dans « Cette semaine »).
     cities: null,
-    faq: (
-      <PageShell key="faq">
-        <HomeFaq />
-        <ClosingCta />
-      </PageShell>
-    ),
+    faq: <HomeFaq key="faq" />,
   };
 
   return (
@@ -161,8 +143,9 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           </div>
         </div>
       </section>
+      {/* Les sections se suivent sur des fonds alternés (blanc, crème), avec le même espace partout (docs/29). */}
       {trustOn && (
-        <PageShell className="mt-14 lg:mt-16">
+        <PageShell className="pt-14 lg:pt-16">
           <ul className="grid gap-3 rounded-3xl bg-cream-deep p-5 sm:grid-cols-3 sm:gap-6 sm:px-7 [animation-delay:300ms] animate-fade-up" data-testid="home-trust">
             {[
               { icon: Users, label: t("trust1") },
@@ -178,15 +161,24 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </PageShell>
       )}
 
-      {/* Lignée de Babs avec une place libre : sépare l'accroche de « Cette semaine ». */}
-      <PageShell className="mt-16 sm:mt-20">
+      {/* Lignée de Babs avec une place libre : fait la transition entre l'accroche et « Cette semaine ». */}
+      <PageShell className="pt-16 pb-18 sm:pt-20 lg:pb-24">
         <BabLineup seatLabel={tb("seat")} caption={tb("caption")} />
       </PageShell>
 
-      {/* « Cette semaine » vient toujours juste après l'accroche ; les autres sections suivent l'ordre du back-office. */}
-      {home.sections.some((x) => x.id === "thisWeek" && x.enabled) && sectionsById.thisWeek}
-      {/* L'application (bientôt sur les stores) vient juste avant les questions : on présente d'abord le service, pas l'app. */}
-      {home.sections.filter((x) => x.enabled && x.id !== "thisWeek").map((x) => (x.id === "faq" ? [<AppPreview key="app" />, sectionsById.faq] : sectionsById[x.id]))}
+      {/* « Cette semaine » vient toujours juste après l'accroche ; les autres sections suivent l'ordre du back-office,
+          l'application (bientôt sur les stores) juste avant les questions, puis la phrase de clôture. */}
+      {[
+        home.sections.some((x) => x.id === "thisWeek" && x.enabled) ? sectionsById.thisWeek : null,
+        ...home.sections.filter((x) => x.enabled && x.id !== "thisWeek").flatMap((x) => (x.id === "faq" ? [<AppPreview key="app" />, sectionsById.faq] : [sectionsById[x.id]])),
+        <ClosingCta key="closing" />,
+      ]
+        .filter(Boolean)
+        .map((node, i) => (
+          <Section key={(node as React.ReactElement).key ?? i} tone={i % 2 === 0 ? "white" : "cream"}>
+            {node}
+          </Section>
+        ))}
     </>
   );
 }

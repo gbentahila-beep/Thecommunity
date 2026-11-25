@@ -68,12 +68,12 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
 
   return (
     <PageShell className="max-w-5xl space-y-10 py-10 lg:max-w-6xl">
-      <header className="text-center">
+      <header>
         <p className="eyebrow text-brand-700">{t("eyebrow")}</p>
         <h1 className="page-title mt-2">
           {t("titleA")} <em className="text-brand-700">{t("titleB")}</em>
         </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-[17px] text-muted">{t("intro")}</p>
+        <p className="mt-4 max-w-2xl text-[17px] text-muted">{t("intro")}</p>
       </header>
 
       {total === 0 ? (
@@ -215,7 +215,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
 
           <section aria-labelledby="questions-title" className="space-y-4">
             <h2 id="questions-title" className="section-title">{t("questionsTitle")}</h2>
-            <p className="text-center text-muted">{t("questionsIntro")}</p>
+            <p className="text-muted">{t("questionsIntro")}</p>
             <div className="grid gap-4 md:grid-cols-3">
               {[
                 { title: t("qExperience"), rows: [{ label: t("qGroup"), value: detailAvg.group }, { label: t("qOrganisation"), value: detailAvg.organisation }] },

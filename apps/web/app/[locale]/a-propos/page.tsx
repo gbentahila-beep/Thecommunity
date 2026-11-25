@@ -46,13 +46,13 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
     <PageShell className="py-8 sm:py-12">
       {/* 1. En-tête : accroche à gauche, grande photo à droite */}
       <section className="grid items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
-        <div className="order-2 text-center lg:order-1">
+        <div className="order-2 lg:order-1">
           <p className="eyebrow">{ta("heroEyebrow")}</p>
           <h1 className="page-title mt-4">
             {ta("heroLine1")}
             <span className="block text-brand-700 italic rtl:not-italic">{ta("heroLine2")}</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-ink/80">{t("aboutText")}</p>
+          <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink/80">{t("aboutText")}</p>
           <Link href="/experiences" className="btn btn-primary mt-7">
             {th("heroCta")}
             <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
@@ -69,9 +69,9 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
           <Image src="/images/photos/comment-groupe-2.webp" alt={ta("storyPhotoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
         </div>
         <div>
-          <p className="eyebrow text-center">{ta("storyEyebrow")}</p>
+          <p className="eyebrow">{ta("storyEyebrow")}</p>
           <h2 id="story" className="section-title mt-2">{ta("storyTitle")}</h2>
-          <p className="mt-1 text-center text-muted">{ta("storySubtitle")}</p>
+          <p className="mt-1 text-muted">{ta("storySubtitle")}</p>
           <div className="mt-6 space-y-4 text-[17px] leading-relaxed text-ink/85">
             <p>{ta("storyP1")}</p>
             <p>{ta("storyP2")}</p>
@@ -82,7 +82,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
 
       {/* 3. Ce qui compte pour nous */}
       <section aria-labelledby="values" className="mt-20">
-        <p className="eyebrow text-center">{ta("valuesEyebrow")}</p>
+        <p className="eyebrow">{ta("valuesEyebrow")}</p>
         <h2 id="values" className="section-title mt-2">{ta("valuesTitle")}</h2>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {values.map(({ icon: Icon, title, text }) => (
@@ -103,7 +103,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
 
       {/* 5. Galerie */}
       <section aria-labelledby="gallery" className="py-8">
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="max-w-2xl">
           <h2 id="gallery" className="section-title">{ta("galleryTitle")}</h2>
           <p className="mt-4 text-lg leading-relaxed text-ink/75">{ta("galleryText")}</p>
         </div>

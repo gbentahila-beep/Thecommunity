@@ -248,7 +248,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
 
         <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-10">
-            <header className="text-center">
+            <header>
               <span className="inline-block rounded-full bg-badge px-3 py-1 text-xs font-medium text-brand-900">
                 {category ? tr(category.shortName, locale) : ""}
                 {subcategory ? ` · ${tr(subcategory.shortName, locale)}` : ""}

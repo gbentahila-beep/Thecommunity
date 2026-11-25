@@ -26,6 +26,17 @@ Les autres questions de l'audit restent ouvertes ; en attendant, on suit les rec
 
 Laissé en l'état : la double navigation mobile (☰ en haut + barre du bas), que Socials utilise aussi ; les « à compléter » dans le texte des CGU et de la confidentialité (phase 4, pages de confiance).
 
+## Étape 1 — titres et espacements (25 novembre)
+
+Réponses de Hamza : écart fixe entre les blocs (oui), fonds alternés crème / blanc (oui), serif pour les grands titres seulement (oui), largeur unique de 1 200 px (oui).
+
+- **Échelle de titres** (`globals.css`) : `page-title` 38 / 56 px, `section-title` 30 / 40 px en serif ; `card-title` passe en Inter 18 / 20 px. Les titres n'imposent plus le centrage : ils suivent leur bloc.
+- **Alignement** : titres et introductions à gauche (accueil, Comment ça marche, À propos, fiche, Avis, Presse, pages de texte, aide, blog, connexion) ; centrés seulement pour les avis, l'application, la phrase de clôture, les encadrés d'action et la fiche organisateur.
+- **Rythme** : classe `section` (72 px téléphone / 120 px ordinateur), `section-white` et `section-night`, `section-head` (24 / 40 px sous un titre).
+- **Largeurs** : `container-page` 1 200 px (utilisé par `PageShell`), `container-text` 680 px.
+- **Composants** : `Section` (fond + espace + largeur) et `SectionHeading` (sur-titre, titre, intro, « Voir tout » à droite).
+- **Accueil** : chaque bloc est une section, fonds blanc et crème en alternance ; FAQ sur deux colonnes sur ordinateur ; univers, liste et « Comment ça marche » sur toute la largeur.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.
