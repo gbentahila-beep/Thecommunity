@@ -85,7 +85,7 @@ async function member(tag, firstName) {
     assert(await visible(v.getByTestId('home-banner').getByText('New in Casablanca: the street art walk')), 'accueil anglais : bannière traduite');
     await v.goto(base + '/experiences', { waitUntil: 'load' });
     const first = v.getByTestId('catalog-results').locator('article').filter({ has: v.getByRole('link', { name: 'Balade street art au centre-ville' }) }).first();
-    assert(await first.isVisible() && await first.getByTestId('card-badge').textContent() === 'Coup de cœur', 'catalogue (vue agenda) : badge coup de cœur sur la balade street art');
+    assert(await first.isVisible() && !(await first.getByTestId('card-badge').filter({ hasText: 'Coup de cœur' }).count()), 'catalogue (vue agenda) : le coup de cœur sert aux sections de l\'accueil, plus aux cartes (étape 2)');
 
     // 3. « Non inclus » et position du lieu saisis dans le formulaire
     globalThis.__page = admin;

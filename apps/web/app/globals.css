@@ -324,6 +324,22 @@
   .event-list:not(.is-few) .ev-chevron {
     @apply hidden;
   }
+  /* Carte unique (étape 2) : sur la grille, le repère passe sur la photo et l'état des places en bas de la carte. */
+  .event-list:not(.is-few) .ev-badge-inline {
+    display: none;
+  }
+  .event-list:not(.is-few) .ev-photo-badge {
+    display: inline-flex;
+  }
+  .event-list:not(.is-few) .ev-text {
+    @apply flex flex-col pb-4;
+  }
+  .event-list:not(.is-few) .ev-status-wrap {
+    @apply mt-auto pt-3;
+  }
+  .event-list:not(.is-few) .ev-row:hover {
+    @apply bg-white;
+  }
   /* Découvrir : les jours fondus en une seule grille (titres des jours masqués, le jour écrit sur chaque carte). */
   .event-agenda:not(.is-few) {
     display: grid;

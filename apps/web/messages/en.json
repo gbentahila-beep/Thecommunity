@@ -204,8 +204,11 @@
     "badge_new": "New",
     "badge_popular": "Popular",
     "women": "Women only",
-    "badge_almostFull": "Almost full",
-    "badge_special": "Special edition"
+    "badge_almostFull": "Last spots",
+    "badge_special": "Special edition",
+    "seats": "{count, plural, one {# spot left} other {# spots left}}",
+    "fullWaitlist": "Full · waitlist",
+    "onRequest": "On request"
   },
   "filters": {
     "all": "All",

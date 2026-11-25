@@ -74,8 +74,9 @@ const visible = (locator, ms = 10000) => locator.first().waitFor({ state: 'visib
   // 4. Badges
   await d.goto(base + '/experiences', { waitUntil: 'load' });
   const badges = await d.getByTestId('card-badge').allTextContents();
-  assert(new Set(badges).size >= 4 && badges.includes('Coup de cœur') && badges.includes('Populaire') && badges.includes('Édition spéciale'), `badges variés : ${[...new Set(badges)].join(', ')}`);
-  assert(badges.filter((b) => b === 'Nouveau').length <= 3, 'badge « Nouveau » pas partout');
+  // Étape 2 (audit du 25/11) : deux repères seulement sur les cartes, et l'état des places à la place du bouton.
+  assert(badges.length > 0 && badges.every((b) => /^(Nouveau|Dernières places)$/i.test(b.trim())), `badges limités à Nouveau / Dernières places : ${[...new Set(badges)].join(', ')}`);
+  assert(!(await d.getByTestId('catalog-row').getByRole('link', { name: /^(Réserver|Demander) :/ }).count()) && await d.getByTestId('card-status').count() === await d.getByTestId('catalog-row').count(), 'carte entière cliquable, état des places sur chaque carte');
   assert(await d.getByTestId('card-tier').filter({ hasText: 'Premium' }).count() >= 1 && await d.getByTestId('card-tier').filter({ hasText: 'Exclusive' }).count() >= 1, 'gamme visible sur les cartes (Premium, Exclusive)');
 
   // 5. Fiche : galerie plein écran, « Non inclus », carte sur clic, organisateur

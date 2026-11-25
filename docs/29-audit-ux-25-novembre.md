@@ -61,6 +61,16 @@ Plus de mélange sur une même page :
 - **Pages de contenu, tout à gauche** : Découvrir, fiche, FAQ et aide, blog, pages légales, espace membre.
 - Exceptions : un bloc « photo + texte » côte à côte garde son texte à gauche (accroche et histoire d'À propos) ; les titres à l'intérieur des cartes suivent la carte.
 
+## Étape 2 — une seule carte « rendez-vous » (25 novembre)
+
+Réponses de Hamza : carte entière cliquable sans bouton (oui) ; deux badges seulement (oui) ; lignes sur mobile sans texte coupé (oui) ; illustrations gardées jusqu'aux nouvelles photos (oui).
+
+- **`EventCard`** (`components/event-card.tsx`) : une seule carte pour l'accueil, Découvrir, l'espace membre, « Dans le même esprit » et la page organisateur (`CompactRow` et `ExperienceRow` l'appellent).
+- **Plus de bouton** « Réserver / Demander / Liste d'attente » : toute la carte ouvre la fiche ; à la place, l'état des places : « 7 places libres », « Plus que 3 places » (corail), « Sur demande », « Complet · liste d'attente » (carte grisée, photo en noir et blanc).
+- **Repères** : « Nouveau » (moins de 30 jours ou choisi dans le back-office) et « Dernières places » seulement. Coup de cœur, Populaire et Édition spéciale ne s'affichent plus sur les cartes ; ils servent toujours aux sections de l'accueil.
+- **Téléphone** : vignette de 72 px, repère au-dessus du titre (plus d'étiquette qui déborde sur le texte), titre sur deux lignes, heure, quartier · taille du groupe, public et gamme, puis l'état des places : plus aucun texte coupé.
+- **Ordinateur** (grille dès 3 rendez-vous) : repère sur la photo, état des places aligné en bas de chaque carte.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.

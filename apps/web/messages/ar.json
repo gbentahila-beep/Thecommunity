@@ -204,8 +204,11 @@
     "badge_new": "جديد",
     "badge_popular": "رائج",
     "women": "للنساء فقط",
-    "badge_almostFull": "قارب على الاكتمال",
-    "badge_special": "نسخة خاصة"
+    "badge_almostFull": "آخر الأماكن",
+    "badge_special": "نسخة خاصة",
+    "seats": "{count, plural, one {مكان واحد} two {مكانان} few {# أماكن} many {# مكانًا} other {# مكان}}",
+    "fullWaitlist": "مكتمل · قائمة الانتظار",
+    "onRequest": "عند الطلب"
   },
   "filters": {
     "all": "الكل",
