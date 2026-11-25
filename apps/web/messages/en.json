@@ -182,16 +182,16 @@
     "weekRvActivity": "A different activity every {day} · this week: {name} at {time}",
     "why": {
       "eyebrow": "Why we do this",
-      "lead": "Making new friends as an adult is hard. Work takes up all the room, friends move away, and walking up to a stranger feels awkward.",
-      "punch": "So we take care of the hard part.",
+      "lead": "After university, you rarely meet anyone by chance. Work fills the days, friends move away, evenings all look the same.",
+      "punch": "So we organise the meeting.",
       "r1Title": "We put your table together",
       "r1": "4 to 6 people with plenty to talk about: languages, ages, interests.",
       "r2Title": "We book the venue",
       "r2": "A restaurant or café in your tier, picked and booked by our team.",
       "r3Title": "We set the dates",
       "r3": "Wednesday dinner, the Saturday activity and coffee, Sunday brunch.",
-      "closing": "All you do is pick your gathering, and turn up",
-      "closingAccent": "with an open mind."
+      "closing": "You pick the day.",
+      "closingAccent": "We handle the rest."
     },
     "howTimelineLink": "See the full timeline"
   },
