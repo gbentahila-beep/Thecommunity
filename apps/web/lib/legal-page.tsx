@@ -22,7 +22,7 @@ export function legalPage(key: LegalKey) {
     return (
       <StaticPage title={doc.title} intro={richText(doc.intro, missing)}>
         <p className="text-sm text-muted">{doc.updated}</p>
-        <nav aria-label={t("toc")} className="rounded-[var(--radius-card)] bg-white/70 p-5">
+        <nav aria-label={t("toc")} className="rounded-[var(--radius-card)] bg-cream p-5">
           <ol className="space-y-1 text-sm">
             {doc.sections.map((s, i) => (
               <li key={i}>
@@ -33,7 +33,7 @@ export function legalPage(key: LegalKey) {
         </nav>
         {doc.sections.map((s, i) => (
           <section key={i} id={`s${i + 1}`} className="scroll-mt-28 space-y-3">
-            <h2 className="font-display text-2xl font-medium text-brand-900">{s.title}</h2>
+            <h2 className="font-display text-2xl font-semibold text-brand-900">{s.title}</h2>
             {s.body.map((b, j) =>
               typeof b === "string" ? (
                 <p key={j} className="leading-relaxed text-ink/85">{richText(b, missing)}</p>

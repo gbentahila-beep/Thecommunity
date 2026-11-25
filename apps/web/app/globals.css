@@ -169,6 +169,10 @@
   .section-night .page-title {
     @apply text-white;
   }
+  /* En-tête de page (bande crème) : un peu moins d'air qu'une section, le contenu suit dans une section blanche. */
+  .page-header {
+    @apply pt-12 pb-12 lg:pt-20 lg:pb-16;
+  }
   /* Largeurs : 1 200 px pour les grilles et les listes, 680 px pour les blocs de texte. */
   .container-page {
     @apply mx-auto w-full max-w-[75rem] px-4 sm:px-6 lg:px-8;
@@ -218,8 +222,9 @@
     @apply overflow-hidden rounded-3xl bg-white shadow-card divide-y divide-line/70;
   }
   /* Grille d'ordinateur : voir la fin du fichier (hors couche, pour passer devant les classes utilitaires). */
+  /* Encadré (plus de fond beige, docs/29) : blanc et filet fin, lisible sur les fonds crème comme blancs. */
   .info-box {
-    @apply rounded-3xl bg-cream-deep px-6 py-8 text-center sm:px-10;
+    @apply rounded-3xl bg-white px-6 py-8 text-center ring-1 ring-line sm:px-10;
   }
   .chip {
     @apply inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium text-ink ring-1 ring-line transition hover:ring-brand-200;
@@ -339,4 +344,10 @@
   .event-agenda:not(.is-few) .ev-when-long {
     display: inline;
   }
+}
+
+/* Une page qui se termine par une section pleine largeur touche le pied de page, sans bande vide entre les deux. */
+main:has(> .section:last-child) + footer,
+main:has(> :last-child > .section:last-child) + footer {
+  margin-top: 0;
 }

@@ -17,7 +17,7 @@ export async function BookingTimeline({ id = "deroule" }: { id?: string }) {
     { icon: Heart, k: "tl6" },
   ] as const;
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="mx-auto max-w-3xl scroll-mt-24 pb-14">
+    <section id={id} aria-labelledby={`${id}-title`} className="max-w-3xl scroll-mt-24">
       <h2 id={`${id}-title`} className="section-title">{t("stepsTitle")}</h2>
       <p className="mt-3 text-[15px] text-muted">{t("stepsIntro")}</p>
       <ol className="mt-8" data-testid="booking-steps">

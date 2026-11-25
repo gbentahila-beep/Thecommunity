@@ -40,7 +40,8 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
   const relatedSlugs = a.related?.length ? a.related : HELP_ARTICLES.filter((x) => x.category === a.category && x.slug !== a.slug).map((x) => x.slug);
   const related = relatedSlugs.flatMap((s) => (articleBySlug(s) ? [articleBySlug(s)!] : []));
   return (
-    <PageShell className="max-w-3xl py-10">
+    <PageShell className="page-header">
+      <div className="max-w-3xl">
       <nav aria-label={t("breadcrumb")} className="text-sm text-muted">
         <ol className="flex flex-wrap items-center gap-1.5">
           <li><Link href={hub} className="hover:text-brand-900 hover:underline">{t("title")}</Link></li>
@@ -84,6 +85,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
         </section>
       )}
       <HelpContactCards />
+    </div>
     </PageShell>
   );
 }

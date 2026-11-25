@@ -44,7 +44,7 @@ export function ToolsCarousel({ tools, prevLabel, nextLabel, title, text, eyebro
   };
   const arrow = "grid size-11 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-brand-700 disabled:cursor-default disabled:opacity-35 disabled:hover:border-line";
   return (
-    <section aria-labelledby="tools-title" className="py-16">
+    <section aria-labelledby="tools-title">
       <div className="flex flex-col items-center gap-5 text-center">
         <div>
           <p className="eyebrow">{eyebrow}</p>

@@ -72,10 +72,12 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   const offers = planOffers(plan).filter((o) => !(method === "bank_transfer" && o.kind === "pass" && o.days < 30));
   if (!plan || offers.length === 0) {
     return (
-      <PageShell className="max-w-2xl py-12">
+      <PageShell className="page-header">
+      <div className="max-w-2xl">
         <h1 className="page-title">{t("title")}</h1>
         <p className="mt-4 text-muted">{t("soon")}</p>
-      </PageShell>
+      </div>
+    </PageShell>
     );
   }
   const now = new Date();
@@ -107,7 +109,8 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   const date = (x: string) => formatLongDate(x, locale);
 
   return (
-    <PageShell className="max-w-5xl space-y-6 py-8 sm:py-10">
+    <PageShell className="page-header">
+      <div className="max-w-5xl space-y-6">
       {sp.depuis === "profil" && (
         <Link href="/espace/compte" className="-ms-1 inline-flex items-center gap-1 rounded-full py-1 pe-3 text-sm font-semibold text-brand-900 hover:bg-white" data-testid="account-back">
           <ChevronLeft className="size-4 rtl:-scale-x-100" aria-hidden />
@@ -192,7 +195,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
 
       <section className="info-box">
         <p className="text-[16px] text-ink">{t("notReady", { price: money(unit) })}</p>
-        <Link href="/experiences" className="mt-4 inline-flex rounded-full border border-emerald-800/30 bg-white px-6 py-3 font-semibold text-emerald-900 hover:border-emerald-800">{t("notReadyCta")}</Link>
+        <Link href="/experiences" className="btn btn-secondary mt-4">{t("notReadyCta")}</Link>
       </section>
 
       <details className="rounded-[var(--radius-card)] bg-white px-5 py-4 shadow-card">
@@ -202,6 +205,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
         </ul>
         <Link href="/cgv" className="mt-3 inline-block text-sm font-semibold text-brand-900 underline underline-offset-4">{t("termsLink")}</Link>
       </details>
+    </div>
     </PageShell>
   );
 }

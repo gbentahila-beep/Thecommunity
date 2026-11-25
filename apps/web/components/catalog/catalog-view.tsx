@@ -110,9 +110,9 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
   }
 
   return (
-    <PageShell className="space-y-5 py-6 sm:py-10">
-      <form action={`${prefix}${pathOf(state)}`} method="get" className="flex flex-col items-center gap-2" data-testid="catalog-form">
-        <SectionHeading as="h1" title={filters.q ? tf("resultsFor", { q: filters.q }) : shownCategory ? tr(shownCategory.name, locale) : tc("discover")} />
+    <PageShell className="space-y-5 pt-8 pb-18 sm:pt-12 lg:pb-24">
+      <form action={`${prefix}${pathOf(state)}`} method="get" className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between" data-testid="catalog-form">
+        <SectionHeading as="h1" className="mb-0 lg:mb-0" title={filters.q ? tf("resultsFor", { q: filters.q }) : shownCategory ? tr(shownCategory.name, locale) : tc("discover")} />
         {when !== "all" && <input type="hidden" name="quand" value={when} />}
         {filters.q && <input type="hidden" name="q" value={filters.q} />}
         <div className="flex shrink-0 items-center gap-1">
@@ -176,7 +176,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
       </form>
 
       <nav aria-label={tc("tabsLabel")} className="-mx-4 border-b border-line sm:mx-auto sm:max-w-4xl lg:max-w-6xl" data-testid="catalog-tabs">
-        <ActiveTabScroller className="flex gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:justify-center sm:px-0">
+        <ActiveTabScroller className="flex gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:px-0">
           {[{ id: undefined as string | undefined, label: t("all"), icon: undefined as string | undefined }, ...categories.map((c) => ({ id: c.id, label: tr(c.shortName, locale), icon: c.icon }))].map((it) => {
             const on = it.id === category;
             return (
@@ -197,7 +197,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
 
       {subcategories.length > 0 && (
         <nav aria-label={tcity("subcategories")} className="mx-auto max-w-4xl lg:max-w-6xl">
-          <ul className="flex flex-wrap justify-center gap-2">
+          <ul className="flex flex-wrap gap-2">
             {[{ id: undefined as string | undefined, label: t("all") }, ...subcategories.map((c) => ({ id: c.id as string | undefined, label: tr(c.shortName, locale) }))].map((it) => (
               <li key={it.id ?? "all"}>
                 <Link
@@ -232,7 +232,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
 
       {total > 0 && (
         <nav aria-label={tc("calendarLabel")} className="sticky top-[4.5rem] z-20 -mx-4 bg-cream/95 px-4 py-2 backdrop-blur-sm sm:mx-auto sm:max-w-4xl sm:rounded-2xl sm:px-0 lg:top-20 lg:max-w-6xl" data-testid="catalog-calendar">
-          <ul className="flex gap-1 overflow-x-auto [scrollbar-width:none] md:justify-center">
+          <ul className="flex gap-1 overflow-x-auto [scrollbar-width:none]">
             {calendar.map((d) => {
               const cell = formatDayCell(`${d.key}T12:00:00Z`, locale);
               const inner = (

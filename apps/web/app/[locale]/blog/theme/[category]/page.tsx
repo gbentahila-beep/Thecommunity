@@ -37,8 +37,9 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
     ? { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q[lang], acceptedAnswer: { "@type": "Answer", text: plainText(f.a[lang]) } })) }
     : null;
   return (
-    <PageShell className="py-10 sm:py-14">
-      <div className="mx-auto max-w-4xl">
+    <PageShell className="page-header">
+      <div className="">
+      <div className="max-w-4xl">
         <nav aria-label={t("breadcrumb")} className="text-[15px]">
           <ol className="flex flex-wrap items-center gap-2">
             <li><Link href="/blog" className="font-semibold text-ink hover:underline">{t("title")}</Link></li>
@@ -76,6 +77,7 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
         <UsefulAlso articles={others} locale={locale} />
       </div>
       <BlogCta />
+    </div>
     </PageShell>
   );
 }

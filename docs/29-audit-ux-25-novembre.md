@@ -37,6 +37,23 @@ Réponses de Hamza : écart fixe entre les blocs (oui), fonds alternés crème /
 - **Composants** : `Section` (fond + espace + largeur) et `SectionHeading` (sur-titre, titre, intro, « Voir tout » à droite).
 - **Accueil** : chaque bloc est une section, fonds blanc et crème en alternance ; FAQ sur deux colonnes sur ordinateur ; univers, liste et « Comment ça marche » sur toute la largeur.
 
+## Étape 1 bis — même mise en page sur toutes les pages (25 novembre)
+
+Remarque de Hamza : l'étape 1 n'avait vraiment changé que l'accueil. Étape 1 bis : le même cadre partout, sans toucher aux textes.
+
+- **`PageHeader`** (bande d'en-tête : sur-titre, titre, intro à gauche) et classe `page-header` (48 / 80 px en haut).
+- **Pages de texte** (`StaticPage` : FAQ, Contact, Devenir partenaire, Devenir organisateur, toutes les pages légales) : en-tête crème, contenu sur fond blanc dans une colonne alignée sur le titre.
+- **Comment ça marche** et **À propos** : découpés en sections pleine largeur, fonds crème et blanc en alternance.
+- **Pass, Avis, Blog (accueil, thèmes, articles), Presse, article d'aide** : même espace en haut et en bas, titres et colonnes alignés à gauche.
+- **Centre d'aide** : bandeau lilas remplacé par la bande blanche commune.
+- **Découvrir et pages univers** : titre à gauche, ville et filtres à droite, onglets et calendrier alignés sur le titre.
+- **Encadrés** : plus de fond beige ni lilas (`info-box`, appels du blog, de la presse, des avis) : blanc avec un filet fin.
+- Le pied de page touche la dernière section (plus de bande vide entre les deux).
+
+Pas touché dans cette étape : la fiche d'un rendez-vous et la connexion (mise en page déjà spécifique, revues aux étapes 4 et 8), l'espace membre.
+
+Les captures locales utilisent d'anciennes données de démonstration ; les contrôles se font sur le site d'essai, avec les vrais rendez-vous.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.

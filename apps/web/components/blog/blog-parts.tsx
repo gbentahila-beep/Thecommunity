@@ -12,13 +12,13 @@ export async function BlogHero({ as = "h1" }: { as?: "h1" | "p" }) {
   const t = await getTranslations("blog");
   const Title = as;
   return (
-    <header className="mx-auto max-w-3xl">
+    <header className="max-w-3xl">
       <p className="eyebrow text-brand-700">{t("title")}</p>
       <Title className="page-title mt-3">
         {t("heroTitleA")} <span className="text-brand-700 italic rtl:not-italic">{t("heroTitleB")}</span>
       </Title>
-      <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink/80">{t("heroText")}</p>
-      <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{t("intro")}</p>
+      <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink/80">{t("heroText")}</p>
+      <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{t("intro")}</p>
     </header>
   );
 }
@@ -182,7 +182,7 @@ export function ArticleBody({ blocks, summaryLabel }: { blocks: BlogBlock[]; sum
 export async function BlogCta() {
   const t = await getTranslations("blog");
   return (
-    <section className="mt-16 overflow-hidden rounded-3xl bg-brand-50 px-6 py-10 text-center ring-1 ring-brand-100 sm:px-10">
+    <section className="mt-16 overflow-hidden rounded-3xl bg-white px-6 py-10 text-center ring-1 ring-line sm:px-10 lg:mt-24">
       <h2 className="section-title">{t("ctaTitle")}</h2>
       <p className="mx-auto mt-3 max-w-xl text-muted">{t("ctaText")}</p>
       <Link href="/experiences" className="btn btn-primary mt-6 min-h-11">

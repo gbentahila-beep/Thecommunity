@@ -25,7 +25,8 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
   const l = lang(locale);
   const P = PRESS;
   return (
-    <PageShell className="py-10 sm:py-14">
+    <PageShell className="page-header">
+      <div className="">
       <header className="max-w-2xl">
         <h1 className="page-title">{P.title[l]}</h1>
         <p className="mt-4 text-lg leading-relaxed text-ink/80">{P.intro[l]}</p>
@@ -41,7 +42,7 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
         </div>
       </header>
 
-      <div className="mx-auto mt-12 max-w-4xl space-y-14">
+      <div className="mt-12 max-w-4xl space-y-14 lg:mt-16">
         <section aria-labelledby="bref">
           <h2 id="bref" className={h2}>{P.aboutTitle[l]}</h2>
           <p className="mt-1 text-sm text-muted">{P.aboutHint[l]}</p>
@@ -170,7 +171,7 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
           <p className="mt-3 text-sm text-muted">{P.photosNote[l]}</p>
         </section>
 
-        <section aria-labelledby="contact-presse" className="overflow-hidden rounded-3xl bg-brand-50 p-6 text-center ring-1 ring-brand-100 sm:p-10">
+        <section aria-labelledby="contact-presse" className="overflow-hidden rounded-3xl bg-white p-6 text-center ring-1 ring-line sm:p-10">
           <h2 id="contact-presse" className="section-title">{P.contactTitle[l]}</h2>
           <p className="mx-auto mt-3 max-w-2xl leading-relaxed text-muted">{P.contactText[l]}</p>
           <Link href="/contact" className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-900 px-5 py-3 text-sm font-semibold text-white hover:bg-brand-800">
@@ -179,6 +180,7 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
           </Link>
         </section>
       </div>
+    </div>
     </PageShell>
   );
 }

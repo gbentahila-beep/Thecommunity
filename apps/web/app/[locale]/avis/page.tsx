@@ -67,7 +67,8 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
   const usedCats = categories.filter((c) => all.some((r) => catOf(r) === c.id));
 
   return (
-    <PageShell className="max-w-5xl space-y-10 py-10 lg:max-w-6xl">
+    <PageShell className="page-header">
+      <div className="space-y-10">
       <header>
         <p className="eyebrow text-brand-700">{t("eyebrow")}</p>
         <h1 className="page-title mt-2">
@@ -241,11 +242,12 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
         </>
       )}
 
-      <section className="rounded-3xl bg-cream-deep p-6 text-center sm:p-8">
+      <section className="rounded-3xl bg-white p-6 text-center ring-1 ring-line sm:p-10">
         <h2 className="section-title">{t("ctaTitle")}</h2>
         <p className="mt-2 text-muted">{t("ctaText")}</p>
         <Link href="/espace/reservations" className="mt-5 inline-flex rounded-full border-2 border-ink px-6 py-3 font-semibold text-ink hover:bg-ink hover:text-white">{t("ctaButton")}</Link>
       </section>
+    </div>
     </PageShell>
   );
 }

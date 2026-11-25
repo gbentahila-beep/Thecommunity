@@ -1,12 +1,17 @@
 import type { ReactNode } from "react";
-import { PageShell } from "./ui";
+import { PageHeader, Section } from "./ui";
 
+/** Pages de texte (FAQ, contact, partenaires, pages légales…) : en-tête crème, puis le contenu sur fond blanc. */
 export function StaticPage({ title, intro, children }: { title: string; intro?: ReactNode; children?: ReactNode }) {
   return (
-    <PageShell className="max-w-3xl py-12">
-      <h1 className="page-title">{title}</h1>
-      {intro && <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink/80">{intro}</p>}
-      {children && <div className="mt-10 space-y-8">{children}</div>}
-    </PageShell>
+    <>
+      <PageHeader title={title} intro={intro} />
+      {children && (
+        <Section tone="white">
+          {/* Colonne de lecture alignée sur le titre (pas centrée), comme les pages de texte de référence. */}
+          <div className="max-w-3xl space-y-8">{children}</div>
+        </Section>
+      )}
+    </>
   );
 }

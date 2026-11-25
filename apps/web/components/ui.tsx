@@ -95,3 +95,36 @@ export function Section({
     </section>
   );
 }
+
+/**
+ * En-tête de page commun (audit du 25/11) : bande crème, sur-titre, titre, introduction, aligné à gauche
+ * (`centered` pour les pages d'accueil de rubrique comme le centre d'aide). Le contenu suit dans une `Section`.
+ */
+export function PageHeader({
+  title,
+  eyebrow,
+  intro,
+  children,
+  centered = false,
+  tone = "cream",
+}: {
+  title: ReactNode;
+  eyebrow?: ReactNode;
+  intro?: ReactNode;
+  children?: ReactNode;
+  centered?: boolean;
+  tone?: "cream" | "white";
+}) {
+  return (
+    <header className={`page-header ${tone === "white" ? "section-white" : ""}`}>
+      <div className={`container-page ${centered ? "text-center" : ""}`}>
+        <div className={`container-text ${centered ? "mx-auto" : ""}`}>
+          {eyebrow && <p className="eyebrow mb-3">{eyebrow}</p>}
+          <h1 className="page-title">{title}</h1>
+          {intro && <p className="lead mt-4">{intro}</p>}
+        </div>
+        {children}
+      </div>
+    </header>
+  );
+}

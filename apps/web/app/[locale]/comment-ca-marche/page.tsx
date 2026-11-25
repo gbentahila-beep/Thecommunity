@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BookingTimeline } from "@/components/home/booking-timeline";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { Universes } from "@/components/home/universes";
-import { PageShell, PrimaryLink } from "@/components/ui";
+import { PageHeader, PrimaryLink, Section } from "@/components/ui";
 import { getCategories } from "@/lib/data";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/comment-ca-marche">): Promise<Metadata> {
@@ -19,24 +19,22 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
   setRequestLocale(locale);
   const [t, th, categories] = await Promise.all([getTranslations("pages"), getTranslations("home"), getCategories()]);
   return (
-    <PageShell className="py-10 sm:py-14">
-      <header className="max-w-2xl">
-        <h1 className="page-title">{t("howTitle")}</h1>
-        <p className="mt-4 text-lg leading-relaxed text-ink/80">{t("howIntro")}</p>
-      </header>
-      {/* Même rythme que l'accueil (docs/29) : 72 px entre les blocs sur téléphone, 120 px sur ordinateur. */}
-      <div className="mt-12 lg:mt-16">
-        <HowItWorks categories={categories} showTitle={false} />
-      </div>
+    <>
+      {/* Même découpage que l'accueil (docs/29) : en-tête et étapes sur crème, puis fonds alternés. */}
+      <PageHeader title={t("howTitle")} intro={t("howIntro")}>
+        <div className="mt-12 lg:mt-16">
+          <HowItWorks categories={categories} showTitle={false} />
+        </div>
+      </PageHeader>
       {/* Ce qui se passe après la réservation : la frise, de la réservation au lendemain. */}
-      <div className="mt-18 lg:mt-30">
+      <Section tone="white">
         <BookingTimeline />
-      </div>
-      <div className="mt-18 lg:mt-30">
+      </Section>
+      <Section>
         <Universes categories={categories} title={t("formatsTitle")} />
-      </div>
-      <div className="mt-18 space-y-12 lg:mt-30">
-        <section aria-labelledby="safety" data-testid="safety">
+      </Section>
+      <Section tone="white">
+        <section aria-labelledby="safety" data-testid="safety" className="max-w-4xl">
           <h2 id="safety" className="section-title section-head">{t("safetyTitle")}</h2>
           <ul className="grid gap-4 sm:grid-cols-2">
             {[
@@ -45,8 +43,8 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
               { icon: UserRound, k: "safety3" },
               { icon: Flag, k: "safety4" },
             ].map(({ icon: Icon, k }) => (
-              <li key={k} className="flex gap-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-                <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-900">
+              <li key={k} className="flex gap-4 rounded-[var(--radius-card)] bg-cream p-5">
+                <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-brand-900">
                   <Icon className="size-5" aria-hidden />
                 </span>
                 <span>
@@ -57,10 +55,10 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
             ))}
           </ul>
         </section>
-        <div className="flex justify-center">
+        <div className="mt-12">
           <PrimaryLink href="/experiences">{th("heroCta")}</PrimaryLink>
         </div>
-      </div>
-    </PageShell>
+      </Section>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ToolsCarousel } from "@/components/about/tools-carousel";
 import { WhyWenzy } from "@/components/home/why-wenzy";
-import { PageShell } from "@/components/ui";
+import { Section } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getPaymentMethod } from "@/lib/data";
 
@@ -43,8 +43,10 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
   const method = await getPaymentMethod();
   const tools = [1, 2, 3, 4, 5, 6, 7, 8].map((i) => ({ title: ta(`tool${i}Title`), text: i === 2 ? ta(`tool2_${method}`) : ta(`tool${i}`) }));
   return (
-    <PageShell className="py-8 sm:py-12">
+    <>
+      {/* Même découpage que l'accueil (docs/29) : sections pleine largeur, fonds crème et blanc en alternance. */}
       {/* 1. En-tête : accroche à gauche, grande photo à droite */}
+      <div className="page-header"><div className="container-page">
       <section className="grid items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
         <div className="order-2 lg:order-1">
           <p className="eyebrow">{ta("heroEyebrow")}</p>
@@ -63,8 +65,11 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
         </div>
       </section>
 
+      </div></div>
+
       {/* 2. Notre histoire : photo à gauche, texte à droite (au nom de l'équipe) */}
-      <section aria-labelledby="story" className="mt-20 grid items-center gap-8 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
+      <Section tone="white">
+      <section aria-labelledby="story" className="grid items-center gap-8 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
         <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-3xl shadow-card">
           <Image src="/images/photos/comment-groupe-2.webp" alt={ta("storyPhotoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
         </div>
@@ -80,11 +85,16 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
         </div>
       </section>
 
+      </Section>
+
       {/* 3. Ce qui compte pour nous */}
-      <section aria-labelledby="values" className="mt-20">
-        <p className="eyebrow">{ta("valuesEyebrow")}</p>
-        <h2 id="values" className="section-title mt-2">{ta("valuesTitle")}</h2>
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <Section>
+      <section aria-labelledby="values">
+        <div className="section-head">
+          <p className="eyebrow">{ta("valuesEyebrow")}</p>
+          <h2 id="values" className="section-title mt-3">{ta("valuesTitle")}</h2>
+        </div>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {values.map(({ icon: Icon, title, text }) => (
             <li key={title} className="card p-6 text-center">
               <span className="mx-auto grid size-11 place-items-center rounded-full bg-brand-50 text-brand-900">
@@ -97,12 +107,20 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
         </ul>
       </section>
 
+      </Section>
+
       {/* 4. Pourquoi on fait ça (le même bloc que sur l'accueil), puis nos outils pour créer du lien (défilant) */}
-      <WhyWenzy className="pt-16" />
+      <Section tone="white">
+        <WhyWenzy className="" />
+      </Section>
+      <Section>
       <ToolsCarousel tools={tools} eyebrow={ta("toolsEyebrow")} title={ta("toolsTitle")} text={ta("toolsText")} prevLabel={ta("toolsPrev")} nextLabel={ta("toolsNext")} />
 
+      </Section>
+
       {/* 5. Galerie */}
-      <section aria-labelledby="gallery" className="py-8">
+      <Section tone="white">
+      <section aria-labelledby="gallery">
         <div className="max-w-2xl">
           <h2 id="gallery" className="section-title">{ta("galleryTitle")}</h2>
           <p className="mt-4 text-lg leading-relaxed text-ink/75">{ta("galleryText")}</p>
@@ -116,12 +134,13 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
         </ul>
       </section>
 
-      <div className="mt-10 flex justify-center">
+      <div className="mt-12 flex justify-center">
         <Link href="/experiences" className="btn btn-primary">
           {th("heroCta")}
           <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
         </Link>
       </div>
-    </PageShell>
+      </Section>
+    </>
   );
 }

@@ -37,11 +37,11 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
     `rounded-full px-3 py-2 text-[13px] font-semibold transition sm:px-5 sm:py-2.5 sm:text-sm ${active ? "bg-brand-900 text-white" : "text-brand-900 hover:bg-white"}`;
   return (
     <>
-      <section className="bg-brand-50 pb-16 pt-12">
+      <section className="page-header section-white">
         <PageShell className="max-w-4xl text-center">
-          <p className="text-sm font-medium uppercase tracking-[0.2em] text-brand-700">{t("title")}</p>
+          <p className="eyebrow">{t("title")}</p>
           <h1 className="page-title mt-3">{t("heroTitle")}</h1>
-          <p className="mx-auto mt-4 max-w-xl text-muted">{t("heroText")}</p>
+          <p className="lead mx-auto mt-4 max-w-xl">{t("heroText")}</p>
         </PageShell>
       </section>
       <PageShell className="max-w-5xl">

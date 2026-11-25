@@ -52,7 +52,8 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
     publisher: { "@type": "Organization", name: "Wenzy" },
   };
   return (
-    <PageShell className="py-10 sm:py-14">
+    <PageShell className="page-header">
+      <div className="">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-3xl">
         <nav aria-label={t("breadcrumb")} className="text-sm text-muted">
@@ -64,7 +65,7 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
         </nav>
         <article className="mt-6">
           <h1 className="page-title">{a.title[lang]}</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-center text-lg leading-relaxed text-ink/80">{a.excerpt[lang]}</p>
+          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink/80">{a.excerpt[lang]}</p>
           <p className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-muted">
             <span className="inline-flex items-center gap-1.5"><Clock className="size-4" aria-hidden />{t("readTime", { minutes: a.minutes })}</span>
             <time dateTime={a.date}>{formatCalendarDate(a.date, locale)}</time>
@@ -81,6 +82,7 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
         <UsefulAlso articles={related} locale={locale} title={t("related")} />
       </div>
       <BlogCta />
+    </div>
     </PageShell>
   );
 }
