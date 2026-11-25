@@ -150,7 +150,9 @@ export async function proposeGroupsCore(sessionId: string, actorUid: string, cou
   const byUid = new Map(participants.map((p) => [p.uid, p]));
   const prefix = labelPrefix(e);
   await writeGroups(sessRef.id, s.experienceId, groups.map((m, i) => ({ label: `${prefix} ${i + 1}`, memberIds: m })), "proposed", byUid, actorUid);
-  await sessRef.update({ groupsStatus: "proposed", groupsNeedReview: false, updatedAt: FieldValue.serverTimestamp() });
+  // Le restaurant de chaque table est fixé dès la composition (ce que l'équipe voit est ce qui sera dévoilé).
+  await relabelForVenues(sessRef.id, e, uids).catch(() => undefined);
+  await sessRef.update({ groupsStatus: "proposed", groupsNeedReview: false, groupsEditedBy: FieldValue.delete(), updatedAt: FieldValue.serverTimestamp() });
   return groups.length;
 }
 
@@ -241,7 +243,7 @@ export const adminSaveGroups = onCall({ region: REGION }, async (req) => {
     if (e.venue?.revealPolicy === "on_group_reveal") await refreshRevealed(sessRef.id, s.experienceId, e);
     if (tablesFlow) await refreshSummaries(sessRef.id);
   }
-  await sessRef.update({ groupsStatus: revealed ? "revealed" : "validated", groupsNeedReview: false, updatedAt: FieldValue.serverTimestamp() });
+  await sessRef.update({ groupsStatus: revealed ? "revealed" : "validated", groupsNeedReview: false, groupsEditedBy: "team", updatedAt: FieldValue.serverTimestamp() });
   await audit({ actorUid: actor.uid, actorRole: roleOf(req), action: "groups.save", targetType: "session", targetId: sessRef.id, after: { groups: groups.map((g) => ({ label: g.label, size: g.memberIds.length })) } });
   return { ok: true, status: revealed ? "revealed" : "validated" };
 });
@@ -300,6 +302,34 @@ function summaryText(t: TableSummary | undefined, locale: string): string | null
 
 const hhmm = (d: Date, locale: string) => new Intl.DateTimeFormat(locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR", { timeZone: "Africa/Casablanca", hour: "2-digit", minute: "2-digit", hourCycle: "h23", numberingSystem: "latn" }).format(d);
 
+/**
+ * Lot C (docs/25) : plusieurs restaurants → chaque table va dans celui que ses membres connaissent le moins. Les tables
+ * sont renumérotées en conséquence (les lieux suivent l'ordre des tables partout : révélation, récapitulatif aux lieux).
+ * Renvoie le nom de chaque table (identifiant → libellé).
+ */
+export async function relabelForVenues(sessionId: string, e: DocumentData, uids: string[]): Promise<Map<string, string>> {
+  const groups = await db.collection("groups").where("sessionId", "==", sessionId).get();
+  const labels = new Map(groups.docs.map((g) => [g.id, String(g.data().label ?? "")]));
+  if (e.venue?.revealPolicy !== "on_group_reveal" || groups.size < 2) return labels;
+  const s = (await db.doc(`sessions/${sessionId}`).get()).data() ?? {};
+  const found = await sessionVenues(sessionId, String(s.experienceId ?? ""), e);
+  if (found.venues.length < 2) return labels;
+  const sorted = [...groups.docs].sort((a, b) => byTableLabel(String(a.data().label ?? ""), String(b.data().label ?? "")));
+  const visited = await visitedVenueKeys(uids, sessionId);
+  const slots = assignGroupsToVenues(sorted.length, found.venues);
+  const seen = sorted.map((g) => found.venues.map((v) => seenCount(visited, (g.data().memberIds as string[]) ?? [], v)));
+  const place = assignTablesAvoidingRepeats(slots, seen);
+  const prefix = labelPrefix(e);
+  const relabel = db.batch();
+  sorted.forEach((g, i) => {
+    const next = `${prefix} ${place[i]! + 1}`;
+    if (next !== labels.get(g.id)) relabel.update(g.ref, { label: next });
+    labels.set(g.id, next);
+  });
+  await relabel.commit();
+  return labels;
+}
+
 export async function revealGroupsCore(sessionId: string, actorUid: string): Promise<{ participants: number; groups: number }> {
   const { sessRef, s, e, participants } = await loadSession(sessionId);
   if (s.groupsStatus !== "validated") refuse("not_validated", "Enregistrez d'abord la composition.");
@@ -313,22 +343,9 @@ export async function revealGroupsCore(sessionId: string, actorUid: string): Pro
   if (found && (found.venues.length === 0 || found.venues.some((v) => !v.name || !v.address))) refuse("venue_missing", "Renseignez le lieu avant de le révéler.");
   // Lot C (docs/25) : plusieurs restaurants → chaque table va dans celui que ses membres connaissent le moins. Les tables
   // sont renumérotées en conséquence (les lieux suivent l'ordre des tables partout : révélation, récapitulatif aux lieux).
-  const labels = new Map(groups.docs.map((g) => [g.id, String(g.data().label ?? "")]));
-  if (found && found.venues.length > 1 && groups.size > 1) {
-    const sorted = [...groups.docs].sort((a, b) => byTableLabel(String(a.data().label ?? ""), String(b.data().label ?? "")));
-    const visited = await visitedVenueKeys(participants.map((p) => p.uid), sessRef.id);
-    const slots = assignGroupsToVenues(sorted.length, found.venues);
-    const seen = sorted.map((g) => found.venues.map((v) => seenCount(visited, (g.data().memberIds as string[]) ?? [], v)));
-    const place = assignTablesAvoidingRepeats(slots, seen);
-    const prefix = labelPrefix(e);
-    const relabel = db.batch();
-    sorted.forEach((g, i) => {
-      const next = `${prefix} ${place[i]! + 1}`;
-      if (next !== labels.get(g.id)) relabel.update(g.ref, { label: next });
-      labels.set(g.id, next);
-    });
-    await relabel.commit();
-  }
+  // 25/11 : déjà fait à la composition ; une composition enregistrée par l'équipe n'est jamais réarrangée (le
+  // restaurant de chaque table est celui qu'elle a vu dans le back-office).
+  const labels = s.groupsEditedBy === "team" ? new Map(groups.docs.map((g) => [g.id, String(g.data().label ?? "")])) : await relabelForVenues(sessRef.id, e, participants.map((p) => p.uid));
   const venueOf = found ? venueByGroup(groups.docs.map((g) => ({ id: g.id, label: labels.get(g.id) ?? "" })), found.venues, found.cuisine, found.cuisineI18n) : null;
   const tablesFlow = isTablesFlow(e);
   const sums = tablesFlow ? summariesOf(participants, groupOf) : null;

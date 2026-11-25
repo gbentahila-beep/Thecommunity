@@ -130,7 +130,12 @@ export async function ensureSessionsFor(rvId: string, now = new Date()): Promise
     const kept = [];
     for (const d of future.docs.filter((x) => x.get("status") !== "cancelled")) {
       const at = (d.get("startAt") as Timestamp).toDate();
-      if (tierRunsOn(t.frequency, at) && onRendezvousSlot(at, e)) { kept.push(d); continue; }
+      if (tierRunsOn(t.frequency, at) && onRendezvousSlot(at, e)) {
+        // Date créée avant le rattachement au rendez-vous : on lui donne son identifiant (gamme voisine, listes).
+        if (d.get("rendezvousId") !== rvId) await d.ref.update({ rendezvousId: rvId });
+        kept.push(d);
+        continue;
+      }
       const people = Number(d.get("seatsConfirmed") ?? 0) + Number(d.get("seatsHeld") ?? 0) + Number(d.get("waitlistCount") ?? 0);
       const any = people > 0 ? null : await db.collection("reservations").where("sessionId", "==", d.id).limit(1).get();
       if (any?.empty) await db.recursiveDelete(d.ref);

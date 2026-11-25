@@ -2827,13 +2827,15 @@ describe("attribution des lieux et parcours des Tables (Étape H)", () => {
     expect((await db().doc(`sessions/${sid}/waitlist/${w.uid}`).get()).data()!.answers).toEqual(answers);
   });
 
-  it("lieu fixe (activité) : demande de confirmation au lieu la veille", async () => {
+  it("lieu fixe (activité) : demande de confirmation au lieu la veille à 15h", async () => {
     const sid = await makeSession({ startInHours: 20 });
     const s = await session(sid);
     const pid = await partner("Fixe", (s.startAt as Timestamp).toDate(), 2, { formats: ["padel"], unit: "court" });
     await db().doc(`experiences/${s.experienceId}/private/economics`).set({ partnerId: pid, model: "own" });
     await paidReservation(await member(), sid);
-    await runSessionAutomation(sid, Date.now());
+    // Timeline du 24/11 : la demande au lieu fixe part la veille à 15h.
+    const optionsAt = tablesTimeline((s.startAt as Timestamp).toDate()).optionsAt.getTime();
+    await runSessionAutomation(sid, Math.max(Date.now(), optionsAt + 60_000));
     const [req] = await requestsOf(sid);
     expect(req).toMatchObject({ fixed: true, status: "sent", people: 1, partnerId: pid });
   });

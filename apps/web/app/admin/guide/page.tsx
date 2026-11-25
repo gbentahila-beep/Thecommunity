@@ -111,6 +111,15 @@ export default function AdminGuidePage() {
           </Steps>
           <p className="text-muted">Pour refaire la même édition un autre jour : sur sa fiche, « + Ajouter des dates ».</p>
         </Q>
+        <Q id="tables" title="Retoucher les tables (entre 20h30 et 21h30)">
+          <Steps>
+            <li>Page de la date → carte <strong>Tables</strong> → « Voir et retoucher les tables ». Chaque table indique son <strong>restaurant</strong>, sa taille, les âges, femmes / hommes, la langue commune et les intérêts partagés, avec des alertes (table trop petite ou trop grande, personnes qui se sont déjà rencontrées, niveaux très différents).</li>
+            <li>Cliquez sur une personne : son <strong>profil complet</strong> s&apos;ouvre à droite (âge, langues, métier, centres d&apos;intérêt, envies, ambiance et style de conversation, valeurs, budget, régime et allergies, sorties déjà faites, absences, personnes déjà rencontrées).</li>
+            <li>Déplacez-la en la glissant vers une autre table, ou avec « Changer de table » dans son profil (le restaurant de chaque table y est indiqué).</li>
+            <li>« <strong>Enregistrer la composition</strong> » : elle sera dévoilée telle quelle à 21h30, et n&apos;est plus jamais recomposée automatiquement (seulement mise à jour si quelqu&apos;un annule).</li>
+          </Steps>
+          <p className="text-muted">Repères sur chaque personne : « 1re sortie », « déjà vu·e » (a déjà rencontré quelqu&apos;un de sa table), « allergie » ou « régime ».</p>
+        </Q>
         <Q id="participants" title="Voir qui vient, déplacer ou annuler une réservation">
           <ul className="list-disc space-y-1.5 ps-5">
             <li>Ouvrez la date (Calendrier ou Accueil) : partie <strong>Participants</strong>. Pour chacun : âge, langues, régime et allergies, paiement en ligne et sur place.</li>
