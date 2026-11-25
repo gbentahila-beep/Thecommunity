@@ -1428,7 +1428,7 @@
     "value4Title": "A genuine connection",
     "value4": "A good gathering is one where you leave with someone you'll want to see again, outside our events.",
     "storyPhotoAlt": "A group of participants laughing together around a table",
-    "heroEyebrow": "Why we do what we do",
+    "heroEyebrow": "Who we are",
     "heroLine1": "Strangers when you arrive.",
     "heroLine2": "Friends on the way out.",
     "heroPhotoAlt": "Participants laughing together around a table",
@@ -1457,7 +1457,8 @@
     "galleryAlt": "A shared moment at a Wenzy experience ({n})",
     "tool2_card": "Choose this week's gathering and your tier, pay by card on a secure payment page: your seat is confirmed straight away.",
     "tool2_bank_transfer": "Choose this week's gathering and your tier, pay by bank transfer with your unique reference: your seat is confirmed as soon as the payment arrives.",
-    "tool2_none": "Choose this week's gathering and your tier, book your seat: it's confirmed straight away."
+    "tool2_none": "Choose this week's gathering and your tier, book your seat: it's confirmed straight away.",
+    "valuesEyebrow": "Our values"
   },
   "invoices": {
     "title": "My invoices",

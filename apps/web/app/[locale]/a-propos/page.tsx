@@ -47,7 +47,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
       {/* 1. En-tête : accroche à gauche, grande photo à droite */}
       <section className="grid items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
         <div className="order-2 text-center lg:order-1">
-          <p className="eyebrow text-brand-700">{ta("heroEyebrow")}</p>
+          <p className="eyebrow">{ta("heroEyebrow")}</p>
           <h1 className="page-title mt-4">
             {ta("heroLine1")}
             <span className="block text-brand-700 italic rtl:not-italic">{ta("heroLine2")}</span>
@@ -69,8 +69,8 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
           <Image src="/images/photos/comment-groupe-2.webp" alt={ta("storyPhotoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
         </div>
         <div>
-          <p className="text-center text-sm font-semibold tracking-[0.2em] text-brand-700 uppercase">{ta("storyEyebrow")}</p>
-          <h2 id="story" className="section-title mt-3">{ta("storyTitle")}</h2>
+          <p className="eyebrow text-center">{ta("storyEyebrow")}</p>
+          <h2 id="story" className="section-title mt-2">{ta("storyTitle")}</h2>
           <p className="mt-1 text-center text-muted">{ta("storySubtitle")}</p>
           <div className="mt-6 space-y-4 text-[17px] leading-relaxed text-ink/85">
             <p>{ta("storyP1")}</p>
@@ -82,15 +82,16 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
 
       {/* 3. Ce qui compte pour nous */}
       <section aria-labelledby="values" className="mt-20">
-        <h2 id="values" className="section-title">{ta("valuesTitle")}</h2>
+        <p className="eyebrow text-center">{ta("valuesEyebrow")}</p>
+        <h2 id="values" className="section-title mt-2">{ta("valuesTitle")}</h2>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {values.map(({ icon: Icon, title, text }) => (
-            <li key={title} className="rounded-[var(--radius-card)] bg-white p-6 text-center shadow-card">
+            <li key={title} className="card p-6 text-center">
               <span className="mx-auto grid size-11 place-items-center rounded-full bg-brand-50 text-brand-900">
                 <Icon className="size-5" aria-hidden />
               </span>
               <p className="mt-4 text-lg font-semibold text-ink">{title}</p>
-              <p className="mt-2 leading-relaxed text-ink/75">{text}</p>
+              <p className="mt-1 text-[15px] leading-relaxed text-muted">{text}</p>
             </li>
           ))}
         </ul>

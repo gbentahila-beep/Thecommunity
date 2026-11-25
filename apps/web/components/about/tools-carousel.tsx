@@ -47,9 +47,9 @@ export function ToolsCarousel({ tools, prevLabel, nextLabel, title, text, eyebro
     <section aria-labelledby="tools-title" className="py-16">
       <div className="flex flex-col items-center gap-5 text-center">
         <div>
-          <span className="inline-flex rounded-full bg-brand-100 px-4 py-1.5 text-sm font-semibold text-brand-900">{eyebrow}</span>
-          <h2 id="tools-title" className="section-title mt-4">{title}</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-lg text-ink/75">{text}</p>
+          <p className="eyebrow">{eyebrow}</p>
+          <h2 id="tools-title" className="section-title mt-2">{title}</h2>
+          <p className="mx-auto mt-3 max-w-xl text-ink/75">{text}</p>
         </div>
         <div className="hidden shrink-0 gap-2 sm:flex">
           <button type="button" onClick={() => scroll(-1)} disabled={edges.start} aria-label={prevLabel} className={arrow}>
@@ -60,14 +60,14 @@ export function ToolsCarousel({ tools, prevLabel, nextLabel, title, text, eyebro
           </button>
         </div>
       </div>
-      <ul ref={list} className="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:px-0">
+      <ul ref={list} className="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pt-1 pb-5 [scrollbar-width:none] sm:mx-0 sm:px-0">
         {tools.map((tool, i) => (
-          <li key={tool.title} className="w-[82%] shrink-0 snap-start rounded-[var(--radius-card)] border border-line bg-cream p-6 sm:w-[46%] sm:p-7 lg:w-[31%] text-center">
+          <li key={tool.title} className="w-[82%] shrink-0 snap-start card p-6 text-center sm:w-[46%] sm:p-7 lg:w-[31%]">
             <p className="flex flex-col items-center gap-1">
-              <span aria-hidden className="font-display text-4xl text-brand-500">{String(i + 1).padStart(2, "0")}</span>
+              <span aria-hidden className="font-display text-4xl text-brand-700">{String(i + 1).padStart(2, "0")}</span>
               <span className="text-lg font-semibold text-ink">{tool.title}</span>
             </p>
-            <p className="mt-4 leading-relaxed text-ink/75">{tool.text}</p>
+            <p className="mt-3 text-[15px] leading-relaxed text-muted">{tool.text}</p>
           </li>
         ))}
       </ul>

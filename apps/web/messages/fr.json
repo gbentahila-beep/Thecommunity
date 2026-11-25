@@ -1428,7 +1428,7 @@
     "value4Title": "Un vrai lien",
     "value4": "Une rencontre réussie, c'est repartir avec quelqu'un qu'on aura envie de revoir, en dehors de nos expériences.",
     "storyPhotoAlt": "Un groupe de participants qui rient ensemble autour d'une table",
-    "heroEyebrow": "Pourquoi nous faisons ce que nous faisons",
+    "heroEyebrow": "Qui sommes-nous",
     "heroLine1": "Des inconnus en arrivant.",
     "heroLine2": "Des amis en repartant.",
     "heroPhotoAlt": "Des participants rient ensemble autour d'une table",
@@ -1457,7 +1457,8 @@
     "galleryAlt": "Moment partagé lors d'une expérience Wenzy ({n})",
     "tool2_card": "Choisissez votre rendez-vous de la semaine et votre gamme, réglez par carte sur une page de paiement sécurisée : votre place est confirmée aussitôt.",
     "tool2_bank_transfer": "Choisissez votre rendez-vous de la semaine et votre gamme, réglez par virement avec votre référence unique : votre place est confirmée dès réception du paiement.",
-    "tool2_none": "Choisissez votre rendez-vous de la semaine et votre gamme, réservez votre place : elle est confirmée aussitôt."
+    "tool2_none": "Choisissez votre rendez-vous de la semaine et votre gamme, réservez votre place : elle est confirmée aussitôt.",
+    "valuesEyebrow": "Nos valeurs"
   },
   "invoices": {
     "title": "Mes factures",
