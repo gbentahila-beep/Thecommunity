@@ -54,6 +54,13 @@ Pas touché dans cette étape : la fiche d'un rendez-vous et la connexion (mise 
 
 Les captures locales utilisent d'anciennes données de démonstration ; les contrôles se font sur le site d'essai, avec les vrais rendez-vous.
 
+## Règle d'alignement (25 novembre, validée par Hamza)
+
+Plus de mélange sur une même page :
+- **Pages vitrine, titres centrés** : accueil, Comment ça marche, À propos, Pass, Avis. Introduction de 2 lignes au plus sous un titre centré ; « Voir tout » sous la liste.
+- **Pages de contenu, tout à gauche** : Découvrir, fiche, FAQ et aide, blog, pages légales, espace membre.
+- Exceptions : un bloc « photo + texte » côte à côte garde son texte à gauche (accroche et histoire d'À propos) ; les titres à l'intérieur des cartes suivent la carte.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.

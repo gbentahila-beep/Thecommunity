@@ -17,7 +17,7 @@ export async function HowItWorks({ categories, showTitle = true }: { categories:
   const card = "relative rounded-3xl p-6 text-center shadow-float transition duration-300 hover:rotate-0 sm:p-7";
   return (
     <section aria-labelledby={showTitle ? "how-title" : undefined} aria-label={showTitle ? undefined : t("howTitle")}>
-      <h2 id="how-title" hidden={!showTitle} className="section-title section-head">
+      <h2 id="how-title" hidden={!showTitle} className="section-title section-head text-center">
         {t("howTitle")}
         <Bab name="wen" className="ms-2 inline-block w-12 align-[-8px]" />
       </h2>
@@ -71,7 +71,7 @@ export async function HowItWorks({ categories, showTitle = true }: { categories:
         </li>
       </ol>
       {showTitle && (
-        <p className="mt-12 md:mt-16">
+        <p className="mt-12 text-center md:mt-16">
           <Link href="/comment-ca-marche#deroule" className="inline-flex items-center gap-1.5 font-semibold text-brand-700 underline-offset-4 hover:underline">
             {t("howTimelineLink")}
             <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />

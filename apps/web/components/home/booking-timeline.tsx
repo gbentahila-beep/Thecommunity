@@ -17,10 +17,12 @@ export async function BookingTimeline({ id = "deroule" }: { id?: string }) {
     { icon: Heart, k: "tl6" },
   ] as const;
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="max-w-3xl scroll-mt-24">
-      <h2 id={`${id}-title`} className="section-title">{t("stepsTitle")}</h2>
-      <p className="mt-3 text-[15px] text-muted">{t("stepsIntro")}</p>
-      <ol className="mt-8" data-testid="booking-steps">
+    <section id={id} aria-labelledby={`${id}-title`} className="mx-auto max-w-3xl scroll-mt-24">
+      <div className="section-head text-center">
+        <h2 id={`${id}-title`} className="section-title">{t("stepsTitle")}</h2>
+        <p className="lead mx-auto mt-3 max-w-xl">{t("stepsIntro")}</p>
+      </div>
+      <ol data-testid="booking-steps">
         {steps.map(({ icon: Icon, k }, i) => (
           <li key={k} className="relative flex gap-4 pb-8 last:pb-0 sm:gap-6">
             {i < steps.length - 1 && <span aria-hidden className="absolute start-6 top-12 bottom-0 w-0.5 -translate-x-1/2 bg-brand-200 rtl:translate-x-1/2" />}

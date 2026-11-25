@@ -90,7 +90,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
       {/* 3. Ce qui compte pour nous */}
       <Section>
       <section aria-labelledby="values">
-        <div className="section-head">
+        <div className="section-head text-center">
           <p className="eyebrow">{ta("valuesEyebrow")}</p>
           <h2 id="values" className="section-title mt-3">{ta("valuesTitle")}</h2>
         </div>
@@ -121,7 +121,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
       {/* 5. Galerie */}
       <Section tone="white">
       <section aria-labelledby="gallery">
-        <div className="max-w-2xl">
+        <div className="mx-auto max-w-2xl text-center">
           <h2 id="gallery" className="section-title">{ta("galleryTitle")}</h2>
           <p className="mt-4 text-lg leading-relaxed text-ink/75">{ta("galleryText")}</p>
         </div>

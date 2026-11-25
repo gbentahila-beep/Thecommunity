@@ -58,7 +58,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     return (
       dated.length > 0 && (
         <div key={id} data-testid={`home-${id}`}>
-          <SectionHeading title={title} action={{ href: "/experiences", label: t("seeAll") }} />
+          <SectionHeading centered title={title} action={{ href: "/experiences", label: t("seeAll") }} />
           <ul className={`event-list ${dated.length < 3 ? "is-few" : ""}`}>
             {dated.map((x) => (
               <li key={x.experience.id}>

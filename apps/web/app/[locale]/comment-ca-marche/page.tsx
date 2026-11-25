@@ -21,7 +21,7 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
   return (
     <>
       {/* Même découpage que l'accueil (docs/29) : en-tête et étapes sur crème, puis fonds alternés. */}
-      <PageHeader title={t("howTitle")} intro={t("howIntro")}>
+      <PageHeader centered title={t("howTitle")} intro={t("howIntro")}>
         <div className="mt-12 lg:mt-16">
           <HowItWorks categories={categories} showTitle={false} />
         </div>
@@ -34,8 +34,8 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
         <Universes categories={categories} title={t("formatsTitle")} />
       </Section>
       <Section tone="white">
-        <section aria-labelledby="safety" data-testid="safety" className="max-w-4xl">
-          <h2 id="safety" className="section-title section-head">{t("safetyTitle")}</h2>
+        <section aria-labelledby="safety" data-testid="safety" className="mx-auto max-w-4xl">
+          <h2 id="safety" className="section-title section-head text-center">{t("safetyTitle")}</h2>
           <ul className="grid gap-4 sm:grid-cols-2">
             {[
               { icon: MapPinCheck, k: "safety1" },
@@ -55,7 +55,7 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
             ))}
           </ul>
         </section>
-        <div className="mt-12">
+        <div className="mt-12 flex justify-center">
           <PrimaryLink href="/experiences">{th("heroCta")}</PrimaryLink>
         </div>
       </Section>

@@ -73,9 +73,9 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   if (!plan || offers.length === 0) {
     return (
       <PageShell className="page-header">
-      <div className="max-w-2xl">
-        <h1 className="page-title">{t("title")}</h1>
-        <p className="mt-4 text-muted">{t("soon")}</p>
+      <div className="mx-auto max-w-2xl">
+        <h1 className="page-title text-center">{t("title")}</h1>
+        <p className="mt-4 text-center text-muted">{t("soon")}</p>
       </div>
     </PageShell>
     );
@@ -110,7 +110,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
 
   return (
     <PageShell className="page-header">
-      <div className="max-w-5xl space-y-6">
+      <div className="mx-auto max-w-5xl space-y-6">
       {sp.depuis === "profil" && (
         <Link href="/espace/compte" className="-ms-1 inline-flex items-center gap-1 rounded-full py-1 pe-3 text-sm font-semibold text-brand-900 hover:bg-white" data-testid="account-back">
           <ChevronLeft className="size-4 rtl:-scale-x-100" aria-hidden />
@@ -120,7 +120,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
       {sp.paiement === "accepte" && (passOn || credits > 0) && <p role="status" className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900">{t("welcome")}</p>}
       {sp.paiement === "refuse" && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">{t("paymentFailed")}</p>}
 
-      <h1 className="page-title">{t("title")}</h1>
+      <h1 className="page-title text-center">{t("title")}</h1>
 
       <section className="card p-6 text-center sm:p-10" aria-labelledby="pass-hero">
         <Sparkles className="mx-auto size-7 text-brand-800" aria-hidden />
@@ -163,7 +163,7 @@ export default async function MembershipPage({ params, searchParams }: PageProps
 
       {!me?.transfer && (
         <section aria-labelledby="offers-title">
-          <h2 id="offers-title" className="section-title mb-5">{t("choose")}</h2>
+          <h2 id="offers-title" className="section-title section-head text-center">{t("choose")}</h2>
           <OfferPicker
             offers={views}
             initialId={initial}

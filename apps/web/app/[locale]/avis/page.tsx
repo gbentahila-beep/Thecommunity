@@ -69,12 +69,12 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
   return (
     <PageShell className="page-header">
       <div className="space-y-10">
-      <header>
+      <header className="text-center">
         <p className="eyebrow text-brand-700">{t("eyebrow")}</p>
         <h1 className="page-title mt-2">
           {t("titleA")} <em className="text-brand-700">{t("titleB")}</em>
         </h1>
-        <p className="mt-4 max-w-2xl text-[17px] text-muted">{t("intro")}</p>
+        <p className="mx-auto mt-4 max-w-2xl text-[17px] text-muted">{t("intro")}</p>
       </header>
 
       {total === 0 ? (
@@ -117,9 +117,9 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
           </section>
 
           <section aria-labelledby="all-title" className="space-y-5">
-            <h2 id="all-title" className="section-title">{t("allTitle")}</h2>
+            <h2 id="all-title" className="section-title text-center">{t("allTitle")}</h2>
             {/* Une seule barre de filtres : univers (s'il y en a plusieurs), note, puis tri à droite. */}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center gap-2">
               {usedCats.length > 1 && (
                 <span className="flex flex-wrap items-center gap-2 border-line pe-2 sm:border-e" role="group" aria-label={t("filterUniverse")}>
                   <Link href={href({ univers: undefined, tout: undefined })} className={`${chip(!category)} px-3 py-1.5`} aria-current={!category ? "true" : undefined}>{t("all")} <span className="opacity-70">{total}</span></Link>
@@ -215,8 +215,8 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
           </section>
 
           <section aria-labelledby="questions-title" className="space-y-4">
-            <h2 id="questions-title" className="section-title">{t("questionsTitle")}</h2>
-            <p className="text-muted">{t("questionsIntro")}</p>
+            <h2 id="questions-title" className="section-title text-center">{t("questionsTitle")}</h2>
+            <p className="text-center text-muted">{t("questionsIntro")}</p>
             <div className="grid gap-4 md:grid-cols-3">
               {[
                 { title: t("qExperience"), rows: [{ label: t("qGroup"), value: detailAvg.group }, { label: t("qOrganisation"), value: detailAvg.organisation }] },

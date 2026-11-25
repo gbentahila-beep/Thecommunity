@@ -26,7 +26,7 @@ export async function Universes({ categories, title }: { categories: Category[];
   const t = await getTranslations("home");
   return (
     <section aria-labelledby="universes-title">
-      <div className="section-head container-text">
+      <div className="section-head container-text mx-auto text-center">
         <p className="eyebrow">{t("universesEyebrow")}</p>
         <h2 id="universes-title" className="section-title mt-3">{title ?? t("universesTitle")}</h2>
       </div>
