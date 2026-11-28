@@ -27,3 +27,6 @@ export function categoryTone(c: { id: string; color?: string | null }): Category
   if (known && !c.color) return known;
   return { text: "text-(--cat)", bg: "bg-(--cat)/10", dot: "bg-(--cat)", style: { "--cat": c.color || DEFAULT_CATEGORY_COLOR } as CSSProperties };
 }
+
+/** Compte Instagram de Wenzy (identifiant à venir, docs/29) : vide, la pastille s'affiche sans lien. Ex. : "wenzy.ma". */
+export const INSTAGRAM_HANDLE = "";

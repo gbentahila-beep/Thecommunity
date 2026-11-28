@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { CategoryIcon } from "@/components/category-icon";
+import { InstagramLink } from "@/components/brand/instagram-link";
 import { LanguageSwitch } from "@/components/language-switch";
 import { MenuAuth, MenuProfile } from "@/components/menu-auth";
 import { PageShell } from "@/components/ui";
@@ -96,7 +97,8 @@ export default async function MenuPage({ params }: PageProps<"/[locale]/menu">) 
         ]}
       />
 
-      <div className="flex justify-center py-2">
+      <div className="flex flex-col items-center gap-4 py-2">
+        <InstagramLink />
         <LanguageSwitch />
       </div>
       <MenuAuth />

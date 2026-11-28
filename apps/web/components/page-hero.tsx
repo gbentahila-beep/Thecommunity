@@ -17,6 +17,7 @@ export function PageHero({
   photo,
   photoAlt,
   position = "50% 40%",
+  compact = false,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
@@ -27,6 +28,8 @@ export function PageHero({
   photo: string;
   photoAlt: string;
   position?: string;
+  /** Plus court (Abonnement, Avis) : le contenu utile arrive plus vite. */
+  compact?: boolean;
 }) {
   return (
     <section
@@ -40,14 +43,14 @@ export function PageHero({
         </div>
         <Sparks className="absolute start-[5%] top-32 w-14" />
       </div>
-      <div className="relative h-[330px] lg:hidden">
+      <div className={`relative lg:hidden ${compact ? "h-[260px]" : "h-[330px]"}`}>
         <div className="absolute inset-0 [clip-path:url(#shape-hero-m)]">
           <Image src={photo} alt={photoAlt} fill priority sizes="100vw" className="object-cover" style={{ objectPosition: position }} />
         </div>
         <Sparks className="absolute end-5 bottom-12 w-11" />
       </div>
-      <div className="container-page relative z-10 lg:flex lg:min-h-[600px] lg:items-center">
-        <div className="pt-2 pb-14 text-center lg:max-w-[500px] lg:pt-32 lg:pb-24 lg:text-start">
+      <div className={`container-page relative z-10 lg:flex lg:items-center ${compact ? "lg:min-h-[520px]" : "lg:min-h-[600px]"}`}>
+        <div className={`pt-2 text-center lg:max-w-[500px] lg:pt-32 lg:text-start ${compact ? "pb-10 lg:pb-20" : "pb-14 lg:pb-24"}`}>
           {eyebrow && <p className="eyebrow mb-3">{eyebrow}</p>}
           <h1 className="page-title">
             {title}

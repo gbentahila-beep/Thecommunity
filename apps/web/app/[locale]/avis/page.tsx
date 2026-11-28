@@ -5,7 +5,8 @@ import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { MediaImage as Image } from "@/components/media";
 import { EmptyState } from "@/components/empty-state";
 import { Sparks } from "@/components/brand/doodles";
-import { PageShell } from "@/components/ui";
+import { PageHero } from "@/components/page-hero";
+import { Section } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAllReviews, getCategories, getPublishedExperiences } from "@/lib/data";
 import { formatCalendarDate } from "@/lib/format";
@@ -71,18 +72,11 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
   const usedCats = categories.filter((c) => all.some((r) => catOf(r) === c.id));
 
   return (
-    <div className="relative bg-[radial-gradient(560px_340px_at_100%_0%,var(--color-lilac),transparent_65%),radial-gradient(520px_320px_at_0%_0%,var(--color-peach),transparent_60%)] bg-no-repeat">
-    <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
-    <PageShell className="page-header relative">
+    <>
+    {/* Étape 7c (docs/29, piste A) : en-tête photo des pages vitrines, puis les avis. */}
+    <PageHero compact eyebrow={t("eyebrow")} title={t("titleA")} accent={t("titleB")} intro={t("intro")} photo="/images/photos/comment-groupe-1.webp" photoAlt="" position="50% 40%" />
+    <Section className="!pt-10 sm:!pt-14">
       <div className="space-y-10">
-      <header className="text-center">
-        <p className="eyebrow text-brand-700">{t("eyebrow")}</p>
-        <h1 className="page-title mt-2">
-          {t("titleA")} <em className="text-gradient">{t("titleB")}</em>
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-[17px] text-muted">{t("intro")}</p>
-      </header>
-
       {total === 0 ? (
         <EmptyState bab="toast" prop="stars" titleAs="h2" className="rounded-[1.75rem]" title={te("reviewsTitle")} text={t("empty")} />
       ) : (
@@ -264,7 +258,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
         <Link href="/espace/reservations" className="btn btn-secondary mt-6">{t("ctaButton")}</Link>
       </section>
     </div>
-    </PageShell>
-    </div>
+    </Section>
+    </>
   );
 }

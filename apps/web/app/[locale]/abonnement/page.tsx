@@ -1,13 +1,14 @@
 import { carnetCredits, countedAbsences, DEFAULT_WENZY_PRICE, formatMoney, isMemberActive, isSuspended, MEMBERSHIP_WITHDRAWAL_DAYS, offerEconomics, offerLabel, PASS_MAX_UPCOMING, planOffers, SUSPENSION_DAYS, withdrawalRefusal } from "@thecommunity/shared";
-import { BadgeCheck, Check, ChevronDown, ChevronLeft, Sparkles, Ticket } from "lucide-react";
+import { BadgeCheck, Check, ChevronDown, ChevronLeft, Ticket } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { VerifyEmailBanner } from "@/components/auth/verify-email-banner";
 import { OfferPicker, type OfferView } from "@/components/membership/offer-picker";
 import { WithdrawButton } from "@/components/membership/withdraw-button";
-import { Sparks } from "@/components/brand/doodles";
-import { PageShell } from "@/components/ui";
+import { ClosingCta } from "@/components/audience-cards";
+import { PageHero } from "@/components/page-hero";
+import { PageShell, Section } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAccountState, getSessionUser } from "@/lib/auth/session";
 import { getMembershipPlan, getPaymentMethod } from "@/lib/data";
@@ -109,12 +110,20 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   const ctaClass = "btn btn-primary w-full shadow-float";
   const date = (x: string) => formatLongDate(x, locale);
 
-  // Étape 7c (docs/29, piste A) : halos pêche et lilas en haut, accroche en bandeau dégradé, offres et avantages en cartes arrondies.
+  // Étape 7c (docs/29, piste A) : en-tête photo des pages vitrines (accroche dedans), offres et avantages en cartes
+  // arrondies, puis le bandeau de clôture.
   const check = <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-gradient-brand text-white" aria-hidden><Check className="size-3" strokeWidth={3} /></span>;
   return (
-    <div className="relative bg-[radial-gradient(560px_340px_at_100%_0%,var(--color-lilac),transparent_65%),radial-gradient(520px_320px_at_0%_0%,var(--color-peach),transparent_60%)] bg-no-repeat">
-    <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
-    <PageShell className="page-header relative">
+    <>
+    <PageHero compact title={t("title")} photo="/images/accueil-table-casablanca.webp" photoAlt="" position="50% 45%"
+      intro={
+        <section aria-labelledby="pass-hero">
+          <h2 id="pass-hero" className="font-display text-[1.6rem] leading-tight font-semibold text-brand-900 sm:text-[1.9rem]">{t("heroTitle")}</h2>
+          <p className="mt-3">{t("heroText", { price: money(unit) })}</p>
+        </section>
+      }
+    />
+    <Section className="!pt-10 sm:!pt-14">
       <div className="mx-auto max-w-5xl space-y-6">
       {sp.depuis === "profil" && (
         <Link href="/espace/compte" className="-ms-1 inline-flex items-center gap-1 rounded-full py-1 pe-3 text-sm font-semibold text-brand-900 hover:bg-white" data-testid="account-back">
@@ -124,14 +133,6 @@ export default async function MembershipPage({ params, searchParams }: PageProps
       )}
       {sp.paiement === "accepte" && (passOn || credits > 0) && <p role="status" className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900">{t("welcome")}</p>}
       {sp.paiement === "refuse" && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">{t("paymentFailed")}</p>}
-
-      <h1 className="page-title text-center">{t("title")}</h1>
-
-      <section className="rounded-[2rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] p-6 text-center sm:p-10" aria-labelledby="pass-hero">
-        <span className="mx-auto grid size-13 place-items-center rounded-full bg-white shadow-card"><Sparkles className="size-6 text-brand-700" strokeWidth={1.7} aria-hidden /></span>
-        <h2 id="pass-hero" className="section-title mx-auto mt-3 max-w-xl">{t("heroTitle")}</h2>
-        <p className="mx-auto mt-4 max-w-xl text-[15px] text-ink/80">{t("heroText", { price: money(unit) })}</p>
-      </section>
 
       {(passOn || suspended || credits > 0) && (
         <section className="grid gap-3 sm:grid-cols-2" data-testid="my-subscription">
@@ -211,7 +212,10 @@ export default async function MembershipPage({ params, searchParams }: PageProps
         <Link href="/cgv" className="mt-3 inline-block text-sm font-semibold text-brand-900 underline underline-offset-4">{t("termsLink")}</Link>
       </details>
     </div>
-    </PageShell>
-    </div>
+    </Section>
+    <Section tone="white" className="!pt-10 sm:!pt-16">
+      <ClosingCta />
+    </Section>
+    </>
   );
 }
