@@ -1,11 +1,12 @@
 import { carnetCredits, countedAbsences, DEFAULT_WENZY_PRICE, formatMoney, isMemberActive, isSuspended, MEMBERSHIP_WITHDRAWAL_DAYS, offerEconomics, offerLabel, PASS_MAX_UPCOMING, planOffers, SUSPENSION_DAYS, withdrawalRefusal } from "@thecommunity/shared";
-import { BadgeCheck, Check, ChevronLeft, Sparkles, Ticket } from "lucide-react";
+import { BadgeCheck, Check, ChevronDown, ChevronLeft, Sparkles, Ticket } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { VerifyEmailBanner } from "@/components/auth/verify-email-banner";
 import { OfferPicker, type OfferView } from "@/components/membership/offer-picker";
 import { WithdrawButton } from "@/components/membership/withdraw-button";
+import { Sparks } from "@/components/brand/doodles";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAccountState, getSessionUser } from "@/lib/auth/session";
@@ -108,8 +109,12 @@ export default async function MembershipPage({ params, searchParams }: PageProps
   const ctaClass = "btn btn-primary w-full shadow-float";
   const date = (x: string) => formatLongDate(x, locale);
 
+  // Étape 7c (docs/29, piste A) : halos pêche et lilas en haut, accroche en bandeau dégradé, offres et avantages en cartes arrondies.
+  const check = <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-gradient-brand text-white" aria-hidden><Check className="size-3" strokeWidth={3} /></span>;
   return (
-    <PageShell className="page-header">
+    <div className="relative bg-[radial-gradient(560px_340px_at_100%_0%,var(--color-lilac),transparent_65%),radial-gradient(520px_320px_at_0%_0%,var(--color-peach),transparent_60%)] bg-no-repeat">
+    <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
+    <PageShell className="page-header relative">
       <div className="mx-auto max-w-5xl space-y-6">
       {sp.depuis === "profil" && (
         <Link href="/espace/compte" className="-ms-1 inline-flex items-center gap-1 rounded-full py-1 pe-3 text-sm font-semibold text-brand-900 hover:bg-white" data-testid="account-back">
@@ -122,8 +127,8 @@ export default async function MembershipPage({ params, searchParams }: PageProps
 
       <h1 className="page-title text-center">{t("title")}</h1>
 
-      <section className="card p-6 text-center sm:p-10" aria-labelledby="pass-hero">
-        <Sparkles className="mx-auto size-7 text-brand-800" aria-hidden />
+      <section className="rounded-[2rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] p-6 text-center sm:p-10" aria-labelledby="pass-hero">
+        <span className="mx-auto grid size-13 place-items-center rounded-full bg-white shadow-card"><Sparkles className="size-6 text-brand-700" strokeWidth={1.7} aria-hidden /></span>
         <h2 id="pass-hero" className="section-title mx-auto mt-3 max-w-xl">{t("heroTitle")}</h2>
         <p className="mx-auto mt-4 max-w-xl text-[15px] text-ink/80">{t("heroText", { price: money(unit) })}</p>
       </section>
@@ -179,27 +184,27 @@ export default async function MembershipPage({ params, searchParams }: PageProps
       )}
 
       <section className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-[var(--radius-card)] bg-white p-5 shadow-card" data-testid="pass-benefits">
-          <h2 className="card-title">{t("passTitle")}</h2>
+        <div className="rounded-[1.75rem] bg-white p-6 shadow-card" data-testid="pass-benefits">
+          <h2 className="flex items-center gap-3 font-display text-2xl font-semibold text-brand-900"><span className="bub-lilac grid size-11 place-items-center rounded-full"><BadgeCheck className="size-5 text-ink" strokeWidth={1.7} aria-hidden /></span>{t("passTitle")}</h2>
           <ul className="mt-4 space-y-2.5">
-            {(["pass1", "pass2", "pass3", "pass4"] as const).map((k) => <li key={k} className="flex gap-2.5 text-ink/85"><Check className="mt-0.5 size-5 shrink-0 text-emerald-700" aria-hidden />{t(k, { max: PASS_MAX_UPCOMING })}</li>)}
+            {(["pass1", "pass2", "pass3", "pass4"] as const).map((k) => <li key={k} className="flex gap-2.5 text-[15px] text-ink/85">{check}{t(k, { max: PASS_MAX_UPCOMING })}</li>)}
           </ul>
         </div>
-        <div className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
-          <h2 className="card-title">{t("carnetTitle")}</h2>
+        <div className="rounded-[1.75rem] bg-white p-6 shadow-card">
+          <h2 className="flex items-center gap-3 font-display text-2xl font-semibold text-brand-900"><span className="bub-peach grid size-11 place-items-center rounded-full"><Ticket className="size-5 text-ink" strokeWidth={1.7} aria-hidden /></span>{t("carnetTitle")}</h2>
           <ul className="mt-4 space-y-2.5">
-            {(["carnet1", "carnet2", "carnet3"] as const).map((k) => <li key={k} className="flex gap-2.5 text-ink/85"><Check className="mt-0.5 size-5 shrink-0 text-emerald-700" aria-hidden />{t(k)}</li>)}
+            {(["carnet1", "carnet2", "carnet3"] as const).map((k) => <li key={k} className="flex gap-2.5 text-[15px] text-ink/85">{check}{t(k)}</li>)}
           </ul>
         </div>
       </section>
 
-      <section className="info-box">
+      <section className="info-box rounded-[1.75rem]">
         <p className="text-[16px] text-ink">{t("notReady", { price: money(unit) })}</p>
         <Link href="/experiences" className="btn btn-secondary mt-4">{t("notReadyCta")}</Link>
       </section>
 
-      <details className="rounded-[var(--radius-card)] bg-white px-5 py-4 shadow-card">
-        <summary className="cursor-pointer font-semibold text-ink">{t("termsTitle")}</summary>
+      <details className="group rounded-[1.5rem] bg-white px-6 py-4 shadow-card">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold text-ink [&::-webkit-details-marker]:hidden">{t("termsTitle")}<ChevronDown className="size-5 text-ink/50 transition group-open:rotate-180" aria-hidden /></summary>
         <ul className="mt-3 list-disc space-y-1.5 ps-5 text-sm text-ink/80">
           {(["terms1", "terms2", "terms3", "terms4"] as const).map((k) => <li key={k}>{t(k, { max: PASS_MAX_UPCOMING, days: SUSPENSION_DAYS })}</li>)}
         </ul>
@@ -207,5 +212,6 @@ export default async function MembershipPage({ params, searchParams }: PageProps
       </details>
     </div>
     </PageShell>
+    </div>
   );
 }

@@ -2,7 +2,10 @@ import { ArrowRight, HeartHandshake, Shapes, Sprout, UsersRound } from "lucide-r
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ClosingCta } from "@/components/audience-cards";
+import { Sparks } from "@/components/brand/doodles";
 import { WhyWenzy } from "@/components/home/why-wenzy";
+import { PageHero } from "@/components/page-hero";
 import { Section } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 
@@ -39,34 +42,31 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
   ];
   return (
     <>
-      {/* Même découpage que l'accueil (docs/29) : sections pleine largeur, fonds crème et blanc en alternance. */}
-      {/* 1. En-tête : accroche à gauche, grande photo à droite */}
-      <div className="page-header"><div className="container-page">
-      <section className="grid items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
-        <div className="order-2 lg:order-1">
-          <p className="eyebrow">{ta("heroEyebrow")}</p>
-          <h1 className="page-title mt-4">
-            {ta("heroLine1")}
-            <span className="block text-brand-700 italic rtl:not-italic">{ta("heroLine2")}</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink/80">{t("aboutText")}</p>
-          <Link href="/experiences" className="btn btn-primary mt-7">
-            {th("heroCta")}
-            <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
-          </Link>
-        </div>
-        <div className="relative order-1 aspect-[4/3] overflow-hidden rounded-3xl shadow-card lg:order-2 lg:aspect-[5/4]">
-          <Image src="/images/photos/a-propos-hero.webp" alt={ta("heroPhotoAlt")} fill priority sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover object-[50%_35%]" />
-        </div>
-      </section>
-
-      </div></div>
+      {/* Étape 7c (docs/29, piste A) : en-tête photo comme l'accueil, puis sections en alternance crème et blanc. */}
+      <PageHero
+        eyebrow={ta("heroEyebrow")}
+        title={ta("heroLine1")}
+        accent={ta("heroLine2")}
+        intro={t("aboutText")}
+        photo="/images/photos/a-propos-hero.webp"
+        photoAlt={ta("heroPhotoAlt")}
+        position="50% 35%"
+      >
+        <Link href="/experiences" className="btn btn-primary mt-7">
+          {th("heroCta")}
+          <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
+        </Link>
+      </PageHero>
 
       {/* 2. Notre histoire : photo à gauche, texte à droite (au nom de l'équipe) */}
       <Section tone="white">
       <section aria-labelledby="story" className="grid items-center gap-8 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
-        <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-3xl shadow-card">
-          <Image src="/images/photos/comment-groupe-2.webp" alt={ta("storyPhotoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
+        <div className="relative mx-auto w-full max-w-md">
+          <div aria-hidden className="bub-peach absolute -inset-1.5 -rotate-2 rounded-[3rem] sm:-inset-5 sm:-rotate-3" />
+          <div className="relative aspect-square overflow-hidden rounded-[2.5rem] shadow-card">
+            <Image src="/images/photos/comment-groupe-2.webp" alt={ta("storyPhotoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
+          </div>
+          <Sparks className="absolute end-1 -top-9 w-12 rotate-12 sm:-end-3 sm:w-14" />
         </div>
         <div>
           <p className="eyebrow">{ta("storyEyebrow")}</p>
@@ -90,13 +90,13 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
           <h2 id="values" className="section-title mt-3">{ta("valuesTitle")}</h2>
         </div>
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {values.map(({ icon: Icon, title, text }) => (
-            <li key={title} className="card p-6 text-center">
-              <span className="mx-auto grid size-11 place-items-center rounded-full bg-brand-50 text-brand-900">
-                <Icon className="size-5" aria-hidden />
+          {values.map(({ icon: Icon, title, text }, i) => (
+            <li key={title} className="rounded-[1.75rem] bg-white p-6 text-center shadow-card">
+              <span className={`${i % 2 ? "bub-lilac" : "bub-peach"} mx-auto grid size-13 place-items-center rounded-full text-ink`}>
+                <Icon className="size-6" strokeWidth={1.6} aria-hidden />
               </span>
-              <p className="mt-4 text-lg font-semibold text-ink">{title}</p>
-              <p className="mt-1 text-[15px] leading-relaxed text-muted">{text}</p>
+              <p className="mt-4 font-display text-[1.35rem] leading-tight font-semibold text-brand-900">{title}</p>
+              <p className="mt-2 text-[15px] leading-relaxed text-muted">{text}</p>
             </li>
           ))}
         </ul>
@@ -113,13 +113,14 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
       {/* 5. Galerie */}
       <Section>
       <section aria-labelledby="gallery">
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="relative mx-auto max-w-2xl text-center">
+          <Sparks className="absolute -top-10 end-0 w-12 rotate-12 sm:-end-10" />
           <h2 id="gallery" className="section-title">{ta("galleryTitle")}</h2>
           <p className="mt-4 text-lg leading-relaxed text-ink/75">{ta("galleryText")}</p>
         </div>
         <ul className="mt-10 columns-2 gap-3 sm:gap-5 md:columns-3">
           {GALLERY.map(({ src, w, h }, i) => (
-            <li key={src} className="mb-3 break-inside-avoid overflow-hidden rounded-3xl shadow-card sm:mb-5 sm:rounded-3xl">
+            <li key={src} className="mb-3 break-inside-avoid overflow-hidden rounded-[1.5rem] shadow-card sm:mb-5 sm:rounded-[2rem]">
               <Image src={src} alt={ta("galleryAlt", { n: i + 1 })} width={w} height={h} sizes="(min-width: 768px) 32vw, 48vw" className="h-auto w-full transition duration-500 hover:scale-[1.03]" />
             </li>
           ))}
@@ -132,6 +133,9 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
           <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
         </Link>
       </div>
+      </Section>
+      <Section tone="white" className="!pt-10 sm:!pt-16">
+        <ClosingCta />
       </Section>
     </>
   );

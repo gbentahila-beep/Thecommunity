@@ -11,7 +11,7 @@ import { HowItWorks } from "@/components/home/how-it-works";
 import { ReviewsShowcase } from "@/components/home/reviews-showcase";
 import { Universes } from "@/components/home/universes";
 import { PageShell, PrimaryLink, Section, SectionHeading } from "@/components/ui";
-import { PhotoShapes, Sparks, Swash } from "@/components/brand/doodles";
+import { Sparks, Swash } from "@/components/brand/doodles";
 import { Link } from "@/i18n/navigation";
 import { experienceBadge, NEW_EXPERIENCE_DAYS, seatsAvailable, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
 import { getCategories, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences } from "@/lib/data";
@@ -128,7 +128,6 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         data-hero-bleed
         className={`relative overflow-hidden bg-[radial-gradient(520px_420px_at_0%_0%,#fff_0%,transparent_70%),radial-gradient(620px_460px_at_8%_100%,var(--color-peach)_0%,transparent_62%)] bg-cream-light ${banner ? "mt-3" : "-mt-16 lg:-mt-20"}`}
       >
-        <PhotoShapes />
         <div className="absolute inset-y-0 end-0 hidden w-[54%] lg:block">
           <div className="absolute inset-0 [clip-path:url(#shape-hero)]">
             <Image src="/images/accueil-rooftop-casablanca.webp" alt={t("heroImageAlt")} fill priority sizes="55vw" className="object-cover object-[52%_35%]" />

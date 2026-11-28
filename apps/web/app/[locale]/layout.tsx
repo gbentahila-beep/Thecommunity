@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { PhotoShapes } from "@/components/brand/doodles";
 import { DemoBanner } from "@/components/demo-banner";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { SiteFooter } from "@/components/site-footer";
@@ -63,6 +64,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
     >
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider>
+          {/* Formes de photo (accueil, en-têtes des pages vitrines, bandeau de clôture) : une seule fois par page. */}
+          <PhotoShapes />
           <DemoBanner />
           <SiteHeader />
           <main className="flex-1">{children}</main>

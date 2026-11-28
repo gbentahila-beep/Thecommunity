@@ -59,7 +59,7 @@ export function FiltersPanel({
         onClick={() => setOpen(true)}
         aria-expanded={open}
         aria-label={count > 0 ? `${labels.open} (${count})` : labels.open}
-        className="relative grid size-10 place-items-center rounded-full text-brand-900 transition hover:bg-white"
+        className="relative grid size-10 place-items-center rounded-full bg-white text-brand-900 ring-1 ring-line transition hover:ring-brand-200"
         data-testid="filters-open"
       >
         <SlidersHorizontal className="size-5" aria-hidden />

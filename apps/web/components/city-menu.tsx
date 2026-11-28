@@ -29,7 +29,7 @@ export async function CityMenu({ currentCityId = DEFAULT_CITY, variant = "pill",
         </summary>
       ) : (
         <summary
-          className={`inline-flex cursor-pointer list-none items-center gap-1 rounded-lg transition [&::-webkit-details-marker]:hidden ${variant === "title" ? "text-brand-900 underline decoration-brand-200 decoration-2 underline-offset-[6px] hover:decoration-brand-700" : "text-[15px] font-semibold text-brand-900 hover:text-brand-700"}`}
+          className={`inline-flex cursor-pointer list-none items-center gap-1 transition [&::-webkit-details-marker]:hidden ${variant === "title" ? "rounded-lg text-brand-900 underline decoration-brand-200 decoration-2 underline-offset-[6px] hover:decoration-brand-700" : "rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-900 ring-1 ring-line hover:ring-brand-200"}`}
           aria-label={`${t("chooseCity")} : ${current ? tr(current.name, locale) : ""}`}
           data-testid="city-select"
         >

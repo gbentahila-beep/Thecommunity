@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { MediaImage as Image } from "@/components/media";
 import { EmptyState } from "@/components/empty-state";
+import { Sparks } from "@/components/brand/doodles";
 import { PageShell } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { getAllReviews, getCategories, getPublishedExperiences } from "@/lib/data";
@@ -19,7 +20,8 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/avis">):
 const SORTS = ["recent", "best", "worst"] as const;
 type Sort = (typeof SORTS)[number];
 const PAGE = 12;
-const AVATARS = ["bg-[#f7e1d7] text-[#8a3b22]", "bg-[#dfe8f7] text-[#2f3e5c]", "bg-[#e3efe0] text-[#3f5f3e]", "bg-[#f3e2ea] text-[#7a2f45]", "bg-[#f4ebd6] text-[#7a5a17]"];
+// Étape 7c (docs/29, piste A) : initiales dans les ronds pêche et lilas.
+const AVATARS = ["bub-peach text-[#8a3b22]", "bub-lilac text-[#5b2a78]"];
 const avg = (xs: number[]) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : null);
 
 function StarsRow({ value, size = "size-4" }: { value: number; size?: string }) {
@@ -65,26 +67,28 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
     const s = q.toString();
     return `/avis${s ? `?${s}` : ""}`;
   };
-  const chip = (on: boolean) => `inline-flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition ${on ? "bg-ink text-white" : "bg-white text-ink ring-1 ring-line hover:ring-brand-200"}`;
+  const chip = (on: boolean) => (on ? "chip chip-on" : "chip");
   const usedCats = categories.filter((c) => all.some((r) => catOf(r) === c.id));
 
   return (
-    <PageShell className="page-header">
+    <div className="relative bg-[radial-gradient(560px_340px_at_100%_0%,var(--color-lilac),transparent_65%),radial-gradient(520px_320px_at_0%_0%,var(--color-peach),transparent_60%)] bg-no-repeat">
+    <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
+    <PageShell className="page-header relative">
       <div className="space-y-10">
       <header className="text-center">
         <p className="eyebrow text-brand-700">{t("eyebrow")}</p>
         <h1 className="page-title mt-2">
-          {t("titleA")} <em className="text-brand-700">{t("titleB")}</em>
+          {t("titleA")} <em className="text-gradient">{t("titleB")}</em>
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-[17px] text-muted">{t("intro")}</p>
       </header>
 
       {total === 0 ? (
-        <EmptyState bab="toast" prop="stars" titleAs="h2" title={te("reviewsTitle")} text={t("empty")} />
+        <EmptyState bab="toast" prop="stars" titleAs="h2" className="rounded-[1.75rem]" title={te("reviewsTitle")} text={t("empty")} />
       ) : (
         <>
           <section aria-labelledby="overall-title" className={photos.length > 0 ? "grid gap-4 md:grid-cols-[1.1fr_1fr]" : "mx-auto w-full max-w-xl"}>
-            <div className="card flex flex-col justify-center p-6 sm:p-8" data-testid="reviews-overall">
+            <div className="flex flex-col justify-center rounded-[1.75rem] bg-white p-6 shadow-card sm:p-8" data-testid="reviews-overall">
               <h2 id="overall-title" className="sr-only">{t("overallTitle")}</h2>
               <div className="flex items-end gap-4">
                 <span className="font-display text-7xl leading-none font-medium text-ink">{overall.toFixed(1)}</span>
@@ -96,8 +100,8 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
                 {dist.map((d) => (
                   <li key={d.n} className="flex items-center gap-3 text-sm">
                     <span className="flex w-8 items-center gap-1 font-semibold text-ink">{d.n}<Star className="size-3.5 fill-brand-700 text-brand-700" aria-hidden /></span>
-                    <span className="h-2.5 flex-1 overflow-hidden rounded-full bg-white/70">
-                      <span className="block h-full rounded-full bg-brand-700" style={{ width: `${total ? (d.count / total) * 100 : 0}%` }} />
+                    <span className="h-2.5 flex-1 overflow-hidden rounded-full bg-cream">
+                      <span className="block h-full rounded-full bg-gradient-brand" style={{ width: `${total ? (d.count / total) * 100 : 0}%` }} />
                     </span>
                     <span className="w-8 text-end text-ink/75">{d.count}</span>
                   </li>
@@ -105,7 +109,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
               </ul>
             </div>
             {photos.length > 0 && (
-              <div className="rounded-3xl bg-white p-5 shadow-card" data-testid="reviews-photos">
+              <div className="rounded-[1.75rem] bg-white p-5 shadow-card" data-testid="reviews-photos">
                 <h2 className="card-title">{t("photosTitle")}</h2>
                 <ul className="mt-4 grid grid-cols-2 gap-2">
                   {photos.slice(0, 4).map((r) => (
@@ -171,7 +175,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
                   const cat = exp ? catById.get(exp.categoryId) : undefined;
                   const long = r.comment.length > 200;
                   return (
-                    <li key={r.id} className="flex min-w-0 flex-col rounded-3xl bg-white p-5 shadow-card ring-1 ring-line/60" data-testid="review-card">
+                    <li key={r.id} className="flex min-w-0 flex-col rounded-[1.75rem] bg-white p-5 shadow-card" data-testid="review-card">
                       <div className="flex items-start gap-3">
                         <span className={`grid size-11 shrink-0 place-items-center rounded-full text-lg font-semibold ${AVATARS[i % AVATARS.length]}`} aria-hidden>{r.publicName.charAt(0)}</span>
                         <div className="min-w-0 flex-1">
@@ -221,7 +225,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
               </ul>
             )}
             {!showAll && filtered.length > PAGE && (
-              <Link href={href({ tout: "1" })} className="block w-full rounded-full border-2 border-ink px-6 py-3.5 text-center font-semibold text-ink hover:bg-ink hover:text-white">{t("showAll", { count: filtered.length })}</Link>
+              <Link href={href({ tout: "1" })} className="btn btn-secondary w-full">{t("showAll", { count: filtered.length })}</Link>
             )}
           </section>
 
@@ -234,7 +238,7 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
                 { title: t("qVenue"), rows: [{ label: t("qVenueItself"), value: detailAvg.venue }] },
                 { title: t("qOverall"), rows: [{ label: t("qComeAgain"), value: againPct, pct: true }, { label: t("qOverallRating"), value: overall }] },
               ].map((card) => (
-                <div key={card.title} className="card p-6" data-testid="reviews-question-card">
+                <div key={card.title} className="rounded-[1.75rem] bg-white p-6 shadow-card" data-testid="reviews-question-card">
                   <h3 className="card-title">{card.title}</h3>
                   <dl className="mt-3 divide-y divide-ink/10">
                     {card.rows.map((row) => (
@@ -253,12 +257,14 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
         </>
       )}
 
-      <section className="rounded-3xl bg-white p-6 text-center ring-1 ring-line sm:p-10">
+      <section className="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] p-6 text-center sm:p-12">
+        <Sparks className="absolute start-6 top-5 w-11 -rotate-12" />
         <h2 className="section-title">{t("ctaTitle")}</h2>
-        <p className="mt-2 text-muted">{t("ctaText")}</p>
-        <Link href="/espace/reservations" className="mt-5 inline-flex rounded-full border-2 border-ink px-6 py-3 font-semibold text-ink hover:bg-ink hover:text-white">{t("ctaButton")}</Link>
+        <p className="mx-auto mt-3 max-w-xl text-ink/75">{t("ctaText")}</p>
+        <Link href="/espace/reservations" className="btn btn-secondary mt-6">{t("ctaButton")}</Link>
       </section>
     </div>
     </PageShell>
+    </div>
   );
 }

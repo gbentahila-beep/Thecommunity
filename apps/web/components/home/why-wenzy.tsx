@@ -25,9 +25,9 @@ export async function WhyWenzy({ className = "py-12" }: { className?: string }) 
       </div>
       <ul className="mx-auto mt-8 grid max-w-4xl gap-3 sm:gap-4 md:grid-cols-3">
         {rows.map(({ icon: Icon, k }) => (
-          <li key={k} className="card flex items-start gap-4 p-5 md:flex-col md:items-center md:p-6 md:text-center">
-            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-900">
-              <Icon className="size-5" aria-hidden />
+          <li key={k} className="flex items-start gap-4 rounded-[1.75rem] bg-white p-5 shadow-card md:flex-col md:items-center md:p-6 md:text-center">
+            <span className="bub-lilac grid size-12 shrink-0 place-items-center rounded-full text-ink">
+              <Icon className="size-5" strokeWidth={1.7} aria-hidden />
             </span>
             <span>
               <span className="block text-lg font-semibold text-ink">{t(`${k}Title`)}</span>

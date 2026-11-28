@@ -119,7 +119,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
         <SectionHeading as="h1" className="mb-0 lg:mb-0" title={filters.q ? tf("resultsFor", { q: filters.q }) : shownCategory ? tr(shownCategory.name, locale) : tc("discover")} />
         {when !== "all" && <input type="hidden" name="quand" value={when} />}
         {filters.q && <input type="hidden" name="q" value={filters.q} />}
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-2">
           <CityMenu variant="label" />
           <FiltersPanel
             count={n}
