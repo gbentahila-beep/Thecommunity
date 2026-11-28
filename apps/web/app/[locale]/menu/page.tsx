@@ -23,11 +23,11 @@ function Group({ title, rows }: { title?: string; rows: Row[] }) {
   return (
     <section>
       {title && <h2 className="mb-2 px-2 text-sm font-medium text-muted">{title}</h2>}
-      <ul className="overflow-hidden rounded-3xl bg-white shadow-card">
+      <ul className="overflow-hidden rounded-[1.5rem] bg-white shadow-card">
         {rows.map((r, i) => (
           <li key={r.href}>
             <Link href={r.href} className="flex min-h-14 items-center gap-4 ps-5 transition hover:bg-cream">
-              <span className="grid size-6 shrink-0 place-items-center text-ink/80">{r.icon}</span>
+              <span className="bub-lilac grid size-9 shrink-0 place-items-center rounded-full text-ink">{r.icon}</span>
               <span className={`flex min-h-14 flex-1 items-center justify-between gap-3 pe-4 ${i > 0 ? "border-t border-line" : ""}`}>
                 <span className="text-[16px] font-medium text-ink">{r.label}</span>
                 <span className="flex items-center gap-2 text-sm text-muted">
@@ -43,7 +43,7 @@ function Group({ title, rows }: { title?: string; rows: Row[] }) {
   );
 }
 
-const ico = (Icon: LucideIcon) => <Icon className="size-[22px]" strokeWidth={1.6} aria-hidden />;
+const ico = (Icon: LucideIcon) => <Icon className="size-[18px]" strokeWidth={1.7} aria-hidden />;
 
 /** Onglet « Menu » de la barre du bas (téléphone) : tout le site en listes, comme une application. */
 export default async function MenuPage({ params }: PageProps<"/[locale]/menu">) {
@@ -60,7 +60,7 @@ export default async function MenuPage({ params }: PageProps<"/[locale]/menu">) 
       <Group
         rows={[
           { href: "/experiences", label: t("allExperiences"), icon: ico(CalendarRange) },
-          ...categories.map((c) => ({ href: `/casablanca/${c.id}`, label: tr(c.name, loc), icon: <CategoryIcon category={c.id} icon={c.icon} className="size-[22px]" /> })),
+          ...categories.map((c) => ({ href: `/casablanca/${c.id}`, label: tr(c.name, loc), icon: <CategoryIcon category={c.id} icon={c.icon} className="size-[18px]" /> })),
         ]}
       />
       <Group
