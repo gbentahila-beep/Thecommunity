@@ -202,7 +202,8 @@
     "priceOnSiteTitle": "في المكان",
     "priceOnSiteAmount": "فاتورتك",
     "priceOnSiteText": "ما تستهلكه، أو سعر النشاط، يُدفع مباشرة للمكان الشريك. يُعلن عنه في كل موعد، أو كنطاق حسب الفئة (Casual وPremium وExclusive).",
-    "priceLink": "اكتشف الباس"
+    "priceLink": "اكتشف الباس",
+    "appSoonOn": "قريبًا على"
   },
   "card": {
     "people": "{count} أشخاص",

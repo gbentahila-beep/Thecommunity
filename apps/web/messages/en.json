@@ -202,7 +202,8 @@
     "priceOnSiteTitle": "On site",
     "priceOnSiteAmount": "Your bill",
     "priceOnSiteText": "What you order, or the price of the activity, is paid directly to the partner venue. It is shown on each meet-up, or as a range by tier (Casual, Premium, Exclusive).",
-    "priceLink": "Discover the Pass"
+    "priceLink": "Discover the Pass",
+    "appSoonOn": "Coming soon on"
   },
   "card": {
     "people": "{count} people",

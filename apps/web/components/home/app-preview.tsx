@@ -18,6 +18,28 @@ function Phone({ src, alt, className }: { src: string; alt: string; className: s
   );
 }
 
+const STORES = [
+  {
+    name: "App Store",
+    logo: (
+      <svg viewBox="0 0 24 24" className="size-6 fill-white sm:size-7" aria-hidden>
+        <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" />
+      </svg>
+    ),
+  },
+  {
+    name: "Google Play",
+    logo: (
+      <svg viewBox="0 0 24 24" className="size-6 sm:size-7" aria-hidden>
+        <path fill="#00C3FF" d="M3.6 1.8c-.3.3-.5.8-.5 1.4v17.6c0 .6.2 1.1.5 1.4l.1.1 9.9-9.9v-.2L3.7 1.7z" />
+        <path fill="#FFC400" d="M16.9 15.6l-3.3-3.3v-.2l3.3-3.3.1.1 3.9 2.2c1.1.6 1.1 1.7 0 2.3l-3.9 2.2z" />
+        <path fill="#FF3A44" d="M17 15.5L13.6 12 3.6 22c.4.4 1 .4 1.7.1L17 15.5" />
+        <path fill="#00D865" d="M17 8.5L5.3 1.9c-.7-.4-1.3-.3-1.7.1L13.6 12 17 8.5" />
+      </svg>
+    ),
+  },
+] as const;
+
 export async function AppPreview() {
   const t = await getTranslations("home");
   return (
@@ -33,11 +55,15 @@ export async function AppPreview() {
       </div>
       {/* Pas encore d'application dans les stores : on l'annonce, sans lien. */}
       <p className="mt-12 text-sm font-semibold text-ink" data-testid="app-soon">{t("appSoon")}</p>
-      <ul className="mt-3 flex flex-wrap justify-center gap-3" aria-label={t("appSoon")}>
-        {["App Store", "Google Play"].map((store) => (
-          <li key={store} className="inline-flex items-center gap-2 rounded-xl bg-ink px-4 py-2.5 text-sm font-semibold text-white opacity-90">
-            {store}
-            <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-medium">{t("appSoonBadge")}</span>
+      {/* 28/11 : badges au dessin des stores (logo + nom), sans lien tant que l'application n'est pas publiée. */}
+      <ul className="mt-4 flex flex-wrap justify-center gap-2.5 sm:gap-3" aria-label={t("appSoon")}>
+        {STORES.map(({ name, logo }) => (
+          <li key={name} className="inline-flex h-12 items-center gap-2 rounded-[0.8rem] bg-black ps-3 pe-4 text-start text-white ring-1 ring-white/20 sm:h-14 sm:gap-3 sm:rounded-[0.9rem] sm:ps-4 sm:pe-5">
+            {logo}
+            <span className="leading-none">
+              <span className="block text-[10px] font-medium tracking-wide text-white/80 sm:text-[11px]">{t("appSoonOn")}</span>
+              <span className="mt-0.5 block text-[1.1rem] font-semibold tracking-[-0.01em] sm:mt-1 sm:text-[1.35rem]">{name}</span>
+            </span>
           </li>
         ))}
       </ul>

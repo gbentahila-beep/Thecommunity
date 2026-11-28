@@ -202,7 +202,8 @@
     "priceOnSiteTitle": "Sur place",
     "priceOnSiteAmount": "Votre addition",
     "priceOnSiteText": "Ce que vous consommez, ou le prix de l'activité, se règle directement au lieu partenaire. Il est annoncé sur chaque rendez-vous, ou en fourchette selon la gamme (Casual, Premium, Exclusive).",
-    "priceLink": "Découvrir le Pass"
+    "priceLink": "Découvrir le Pass",
+    "appSoonOn": "Bientôt sur"
   },
   "card": {
     "people": "{count} pers.",
