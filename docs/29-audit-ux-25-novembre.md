@@ -123,6 +123,14 @@ Déroulé prévu :
 2. Proposer 2 ou 3 pistes en écrans (accueil, carte rendez-vous, fiche ; mobile et ordinateur).
 3. Après validation : décliner la piste retenue sur tous les écrans, puis l'appliquer au site par étapes, chacune poussée et vérifiée en ligne.
 
+### Décisions du 28 novembre
+
+- **Piste A « Soleil de Casa »** retenue (piste B « Ciel de 19 h » écartée).
+- **Rien n'est retiré ni réécrit** : seul le style change ; toutes les sections, textes, liens et règles restent ceux du site.
+- **Photo du haut** : forme libre partant du coin haut droit, derrière le menu ; **photo du bas** : bandeau arrondi d'où la photo de groupe (mosquée Hassan II) dépasse en haut à droite, sur la phrase de clôture.
+- **Pied de page** : Instagram seul pour l'instant (identifiant à venir), signature manuscrite « Your people are out there. ».
+- Écrans de la piste A (accueil, Découvrir, fiche ; ordinateur et téléphone) présentés le 28/11 ; application au site après validation.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.
