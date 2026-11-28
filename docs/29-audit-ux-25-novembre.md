@@ -144,6 +144,12 @@ Déroulé prévu :
 - **Pied de page** : léger dégradé, Instagram (lien à venir), signature « Your people are out there. ».
 - Textes, sections et ordre inchangés ; boutons : texte encre sur le dégradé.
 
+### Étape 7b — Découvrir et la fiche (28 novembre)
+
+- **Découvrir** : halos pêche et lilas et traits corail en haut de page ; onglets Tout / Tables / Activités / Événements en pastilles ; calendrier en pastilles (blanc cerclé quand il y a des dates, point en dégradé, encre pour le jour choisi) ; jours en serif.
+- **Fiche** : halo lilas en haut, traits corail près des photos, photos plus arrondies ; l'essentiel avec des ronds pêche ; carte de réservation plus arrondie et plus en relief, gamme choisie cerclée de violet ; déroulé en cartes à ombre douce, numéros en dégradé, lilas et pêche ; « Inclus » coché en dégradé ; « Bon à savoir » avec ronds lilas.
+- Textes, contenus et règles de réservation inchangés.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.

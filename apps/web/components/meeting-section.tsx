@@ -16,7 +16,7 @@ export function EventEssentials({ items, children }: { items: EssentialItem[]; c
       <ul className="grid grid-cols-2 gap-x-4 gap-y-5 sm:gap-x-6 lg:grid-cols-3">
         {items.map(({ icon: Icon, label, value, link }) => (
           <li key={label} className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-cream text-brand-900">
+            <span className="bub-peach grid size-10 shrink-0 place-items-center rounded-full text-ink">
               <Icon className="size-[18px]" aria-hidden />
             </span>
             <span className="min-w-0">

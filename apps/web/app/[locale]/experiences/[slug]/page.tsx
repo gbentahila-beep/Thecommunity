@@ -19,6 +19,7 @@ import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
 import { VenueMap } from "@/components/venue-map";
 import { ReviewItem } from "@/components/reviews/review-item";
+import { Sparks } from "@/components/brand/doodles";
 import { EventEssentials, type EssentialItem } from "@/components/meeting-section";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -227,6 +228,8 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      {/* Direction artistique (docs/29, étape 7b) : halo lilas en haut de la fiche, traits corail près des photos. */}
+      <div className="bg-[radial-gradient(620px_380px_at_100%_0%,var(--color-lilac),transparent_65%)] bg-no-repeat">
       <PageShell className="pt-4 pb-32 lg:pt-8 lg:pb-12">
         <nav aria-label="Fil d'Ariane" className="mb-4 text-sm text-muted">
           <Link href="/" className="hover:text-brand-900">{t("breadcrumbHome")}</Link>
@@ -242,9 +245,12 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
           )}
         </nav>
 
+        <div className="relative">
+        <Sparks className="pointer-events-none absolute -end-3 -top-9 z-10 w-12 rotate-12 sm:w-14" />
         <ExperienceGallery photos={exp.images.map((i) => ({ src: i.path, alt: tr(i.alt, locale) }))}>
           <FavoriteButton experienceId={exp.id} className="absolute end-4 top-4" />
         </ExperienceGallery>
+        </div>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-x-12">
           <div className="space-y-8 lg:col-start-1">
@@ -281,7 +287,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
 
           {/* Colonne réservation : à droite sur ordinateur ; sur téléphone, juste sous l'essentiel (fiche plus courte à parcourir). */}
           <aside id="dates" className="self-start lg:sticky lg:top-28 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-            <div className="relative rounded-[var(--radius-card)] bg-white p-5 shadow-float">
+            <div className="relative rounded-[1.75rem] bg-white p-6 shadow-[0_30px_60px_-30px_rgb(20_20_20/0.4)]">
               <Bab name={babForCategory(exp.categoryId)} tilt={-6} className="pointer-events-none absolute -top-[54px] end-5 w-16" />
               <p className="flex flex-wrap items-baseline gap-2">
                 <PriceTag price={exp.price} memberAmount={memberAmount} lang={lang} memberLabel={tCard("memberShort")} size="lg" pricing={null} t2={t2} budget={null} />
@@ -305,7 +311,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                       const on = x.experience!.id === exp.id;
                       const b = restaurantBudget(x.experience!);
                       return (
-                        <Link key={x.tier} role="listitem" href={`/experiences/${x.experience!.slug}#dates`} aria-current={on ? "true" : undefined} className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-2.5 text-sm ${on ? "border-brand-700 bg-brand-50" : "border-line hover:border-brand-700"}`}>
+                        <Link key={x.tier} role="listitem" href={`/experiences/${x.experience!.slug}#dates`} aria-current={on ? "true" : undefined} className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-2.5 text-sm ${on ? "border-violet bg-[#faf2fe] ring-1 ring-violet" : "border-line hover:border-brand-700"}`}>
                           <span className="font-semibold text-ink">{t2(`tier_${x.tier}`)}{x.monthly && <span className="ms-1 font-normal text-muted">· {t("rvMonthly")}</span>}</span>
                           {b && <span className="text-muted">{budgetText(b, lang)}</span>}
                         </Link>
@@ -388,9 +394,9 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                     : { when: t("flow2When"), title: t("flow2TitleOpen"), text: t("flow2Open") },
                   { when: t("flow3When"), title: t("flow3Title"), text: composed ? t("flow3Composed") : t("flow3Open") },
                 ].map((step, i) => (
-                  <li key={step.title} className="flex flex-col rounded-3xl bg-white p-5 ring-1 ring-line/70">
+                  <li key={step.title} className="flex flex-col rounded-3xl bg-white p-5 shadow-card">
                     <span className="flex items-center gap-2">
-                      <span aria-hidden className={`grid size-6 shrink-0 place-items-center rounded-full text-xs font-semibold ${i === 0 ? "bg-brand-900 text-white" : "bg-cream text-brand-900"}`}>{i + 1}</span>
+                      <span aria-hidden className={`grid size-6 shrink-0 place-items-center rounded-full text-xs font-bold ${i === 0 ? "bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] text-white" : i === 1 ? "bg-lilac text-brand-700" : "bg-peach text-[#b8381f]"}`}>{i + 1}</span>
                       <span className="text-xs font-semibold tracking-[0.12em] text-brand-700 uppercase">{step.when}</span>
                     </span>
                     <span className="mt-3 block font-display text-[1.35rem] leading-tight font-semibold text-brand-900">{step.title}</span>
@@ -411,7 +417,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
                   <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
                     {exp.included.map((item) => (
                       <li key={item.fr} className="flex items-start gap-2.5 text-[15px] text-ink/85">
-                        <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand-900 text-white" aria-hidden>
+                        <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] text-white" aria-hidden>
                           <Check className="size-3" strokeWidth={3} />
                         </span>
                         {tr(item, locale)}
@@ -476,6 +482,7 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
 
         </div>
       </PageShell>
+      </div>
 
       {/* Barre de réservation collante sur mobile */}
       {next && (
@@ -530,7 +537,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Detail({ icon: Icon, label, text }: { icon: typeof Backpack; label: string; text: React.ReactNode }) {
   return (
     <li className="flex items-start gap-3">
-      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white text-brand-900 ring-1 ring-line/70">
+      <span className="bub-lilac grid size-9 shrink-0 place-items-center rounded-full text-ink">
         <Icon className="size-[18px]" aria-hidden />
       </span>
       <span className="min-w-0 pt-1">

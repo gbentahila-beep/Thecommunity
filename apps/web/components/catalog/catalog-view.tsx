@@ -10,6 +10,7 @@ import { ExperienceRow } from "@/components/experience-row";
 import { ActiveTabScroller } from "./active-tab-scroller";
 import { ForYou } from "@/components/for-you";
 import { PageShell, SectionHeading } from "@/components/ui";
+import { Sparks } from "@/components/brand/doodles";
 import { Link } from "@/i18n/navigation";
 import { getCatalog, getCategories, getPublishedExperiences, getSubcategories, type WhenFilter } from "@/lib/data";
 import { dayKey, formatDayCell, formatDayHeading, formatLongDate } from "@/lib/format";
@@ -110,7 +111,10 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
   }
 
   return (
-    <PageShell className="space-y-5 pt-8 pb-18 sm:pt-12 lg:pb-24">
+    // Direction artistique « Soleil de Casa » (docs/29, étape 7b) : halos pêche et lilas en haut de page, traits corail.
+    <div className="relative bg-[radial-gradient(560px_340px_at_100%_0%,var(--color-lilac),transparent_65%),radial-gradient(520px_320px_at_0%_0%,var(--color-peach),transparent_60%)] bg-no-repeat">
+    <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
+    <PageShell className="relative space-y-5 pt-8 pb-18 sm:pt-12 lg:pb-24">
       <form action={`${prefix}${pathOf(state)}`} method="get" className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between" data-testid="catalog-form">
         <SectionHeading as="h1" className="mb-0 lg:mb-0" title={filters.q ? tf("resultsFor", { q: filters.q }) : shownCategory ? tr(shownCategory.name, locale) : tc("discover")} />
         {when !== "all" && <input type="hidden" name="quand" value={when} />}
@@ -175,8 +179,8 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
         </div>
       </form>
 
-      <nav aria-label={tc("tabsLabel")} className="-mx-4 border-b border-line sm:mx-auto sm:max-w-4xl lg:max-w-6xl" data-testid="catalog-tabs">
-        <ActiveTabScroller className="flex gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:px-0">
+      <nav aria-label={tc("tabsLabel")} className="-mx-4 sm:mx-auto sm:max-w-4xl lg:max-w-6xl" data-testid="catalog-tabs">
+        <ActiveTabScroller className="flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:px-0">
           {[{ id: undefined as string | undefined, label: t("all"), icon: undefined as string | undefined }, ...categories.map((c) => ({ id: c.id, label: tr(c.shortName, locale), icon: c.icon }))].map((it) => {
             const on = it.id === category;
             return (
@@ -184,7 +188,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                 <Link
                   href={hrefOf(state, { category: it.id })}
                   aria-current={on ? "page" : undefined}
-                  className={`relative flex items-center gap-2 px-3 pt-2 pb-3 text-[15px] transition after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:rounded-full ${on ? "font-semibold text-ink after:bg-brand-700" : "text-muted hover:text-ink after:bg-transparent"}`}
+                  className={`chip ${on ? "chip-on" : ""}`}
                 >
                   {it.id && <CategoryIcon category={it.id} icon={it.icon} className="size-4" />}
                   {it.label}
@@ -232,17 +236,18 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
 
       {total > 0 && (
         <nav aria-label={tc("calendarLabel")} className="sticky top-[4.5rem] z-20 -mx-4 bg-cream/95 px-4 py-2 backdrop-blur-sm sm:mx-auto sm:max-w-4xl sm:rounded-2xl sm:px-0 lg:top-20 lg:max-w-6xl" data-testid="catalog-calendar">
-          <ul className="flex gap-1 overflow-x-auto [scrollbar-width:none]">
+          <ul className="flex gap-2 overflow-x-auto p-0.5 [scrollbar-width:none]">
             {calendar.map((d) => {
               const cell = formatDayCell(`${d.key}T12:00:00Z`, locale);
               const inner = (
                 <>
                   <span className="text-[11px] font-semibold tracking-wide uppercase">{cell.weekday}</span>
                   <span className="text-xl leading-none font-semibold">{cell.day}</span>
-                  <span className={`size-1.5 rounded-full ${d.count ? "bg-brand-700" : "bg-transparent"}`} aria-hidden />
+                  <span className={`size-1.5 rounded-full ${d.count ? "bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))]" : "bg-transparent"}`} aria-hidden />
                 </>
               );
-              const base = "flex w-12 flex-col items-center gap-1 rounded-2xl py-2";
+              // Jours en pastilles : blanc cerclé quand il y a des dates (point en dégradé), estompé sinon, encre si choisi.
+              const base = "flex w-13 flex-col items-center gap-1 rounded-2xl py-2";
               return (
                 <li key={d.key} className="shrink-0">
                   {d.count ? (
@@ -250,12 +255,12 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                       href={filters.date ? `${prefix}${hrefOf(state, { filters: { date: d.key } })}` : `#jour-${d.key}`}
                       aria-current={filters.date === d.key ? "date" : undefined}
                       aria-label={`${formatLongDate(`${d.key}T12:00:00Z`, locale)} : ${t("results", { count: d.count })}`}
-                      className={`${base} ${filters.date === d.key ? "bg-brand-700 text-white" : "text-ink hover:bg-white"}`}
+                      className={`${base} ${filters.date === d.key ? "bg-ink text-white" : "bg-white text-ink ring-1 ring-line hover:ring-ink"}`}
                     >
                       {inner}
                     </a>
                   ) : (
-                    <span className={`${base} text-ink/30`} aria-hidden>{inner}</span>
+                    <span className={`${base} text-ink/30 ring-1 ring-line/60`} aria-hidden>{inner}</span>
                   )}
                 </li>
               );
@@ -275,7 +280,7 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
                 return (
                   <section key={d.key} aria-labelledby={`jour-${d.key}-title`} className="ev-day">
                     <h2 id={`jour-${d.key}-title`} className="ev-day-title flex items-baseline gap-2.5">
-                      <span className="card-title sm:text-[1.75rem]">{h.weekday}</span>
+                      <span className="font-display text-2xl font-semibold text-brand-900 sm:text-[1.75rem]">{h.weekday}</span>
                       <span className="text-[15px] text-muted">{h.date}</span>
                     </h2>
                     <div className={`event-list ev-day-list mt-3 ${results.dated.length < 3 ? "is-few" : ""}`}>
@@ -322,5 +327,6 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
         </section>
       )}
     </PageShell>
+    </div>
   );
 }

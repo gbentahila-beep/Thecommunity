@@ -41,12 +41,13 @@ export function ExperienceGallery({ photos, children }: { photos: Photo[]; child
 
   if (!cover) return null;
   const current = photos[index] ?? cover;
-  const thumb = "relative block w-full overflow-hidden rounded-[var(--radius-card)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-200";
+  // Direction artistique (docs/29) : photos plus arrondies.
+  const thumb = "relative block w-full overflow-hidden rounded-[1.75rem] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-200";
 
   return (
     <>
       <div className={`grid gap-3 ${rest.length ? "lg:grid-cols-[2fr_1fr]" : ""}`}>
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] sm:aspect-[16/9] lg:aspect-auto lg:h-[460px]">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] sm:aspect-[16/9] lg:aspect-auto lg:h-[460px]">
           <button type="button" onClick={() => open(0)} aria-label={t("open", { n: 1, total })} className={`${thumb} h-full cursor-zoom-in`}>
             <Image src={cover.src} alt={cover.alt} fill priority sizes="(min-width: 1024px) 66vw, 100vw" className="object-cover" />
           </button>
