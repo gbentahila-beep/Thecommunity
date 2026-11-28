@@ -108,6 +108,21 @@ Réponses de Hamza : cartes inclinées retirées (oui) ; photos de l'équipe : p
 - **Abonnement** : la page et l'onglet de l'espace membre s'appellent « Abonnement » (les produits restent le Pass et le Carnet).
 - **Blog** : plus de « Les plus lus » en double ; une seule grille « Tous les articles » avec image, tri et recherche ; lignes compactes sur téléphone.
 
+## Étape 7 — direction artistique (demandée le 28 novembre, à valider avant tout code)
+
+Demande de Hamza : faire évoluer Wenzy vers un design plus premium, moderne et immédiatement identifiable, en gardant le côté chaleureux et convivial. Wenzy doit donner envie de sortir et de rencontrer des gens, pas ressembler à une application de réservation classique.
+
+Règles :
+- La maquette de référence envoyée par Hamza est une **direction visuelle** : pas une source de textes, de données, de polices ni d'espacements. On garde les vrais textes, les fonctionnalités, les liens, les règles de réservation et les réglages déjà validés (échelle de titres, espacements, largeurs, alignements, carte unique).
+- Là où il manque une photo, on utilise les photos déjà en stock ; elles seront remplacées plus tard.
+- **Propositions en images d'abord** (mobile et ordinateur), validées par Hamza avant toute modification du site.
+- Tout le site reste **homogène** : une même direction appliquée à toutes les pages, pas seulement à l'accueil.
+
+Déroulé prévu :
+1. Recevoir la maquette de référence ; en tirer les principes (ambiance, place de la photo, couleurs, formes, mouvement), sans copier.
+2. Proposer 2 ou 3 pistes en écrans (accueil, carte rendez-vous, fiche ; mobile et ordinateur).
+3. Après validation : décliner la piste retenue sur tous les écrans, puis l'appliquer au site par étapes, chacune poussée et vérifiée en ligne.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.
