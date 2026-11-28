@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { FavoritesList } from "@/components/account/favorites-list";
@@ -39,7 +40,7 @@ export default async function HistoryPage({ params }: PageProps<"/[locale]/espac
   ];
   return (
     <div className="space-y-10" data-testid="history">
-      <h1 className="page-title">{t("title")}</h1>
+      <h1 className="page-title"><TitleSparks text={t("title")} /></h1>
       <section className="space-y-3">
         <h2 className="section-title">
           {t("past")}

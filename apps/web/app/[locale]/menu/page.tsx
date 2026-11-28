@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { Bell, BookOpen, CalendarHeart, Star, CalendarRange, ChevronRight, CircleHelp, HandHeart, Info, Mail, MessageCircle, Newspaper, Award, Settings2, ShieldCheck, Sparkles, UserRound, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
@@ -53,7 +54,7 @@ export default async function MenuPage({ params }: PageProps<"/[locale]/menu">) 
     // Piste A (docs/29) : halos en haut, comme l'espace membre.
     <div className="halo-top">
     <PageShell className="max-w-2xl space-y-6 py-8">
-      <h1 className="page-title">{t("menu")}</h1>
+      <h1 className="page-title"><TitleSparks text={t("menu")} /></h1>
       <MenuProfile />
 
       <Group

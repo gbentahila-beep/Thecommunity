@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { EmptyState } from "@/components/empty-state";
@@ -32,7 +33,7 @@ export default async function ReservationsPage({ params, searchParams }: PagePro
 
   return (
     <div className="space-y-6">
-      <h1 className="page-title">{t("navBookings")}</h1>
+      <h1 className="page-title"><TitleSparks text={t("navBookings")} /></h1>
       {space.openRequests.length > 0 && (
         <section aria-labelledby="requests-title" className="space-y-3">
           <h2 id="requests-title" className="font-semibold text-ink">{tq("listTitle")}</h2>

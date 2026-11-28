@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { ageOn } from "@thecommunity/shared";
 import { MemberAvatar } from "@/components/member-avatar";
 import { Eye, Pencil } from "lucide-react";
@@ -54,7 +55,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/espac
       <header className="flex flex-col items-center gap-3 text-center">
         <MemberAvatar uid={p.uid} photoPath={p.photoPath} size={80} />
         <div>
-          <h1 className="page-title">{p.firstName} {p.lastName}</h1>
+          <h1 className="page-title"><TitleSparks text={`${p.firstName} ${p.lastName}`} /></h1>
           <p className="text-sm text-muted">{t("memberSince", { date: formatLongDate(p.createdAt, locale) })}</p>
         </div>
         <Link href="/bienvenue?edition=1" className="btn btn-primary btn-sm">

@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { ArrowRight, Star, Users } from "lucide-react";
 import { MediaImage as Image } from "@/components/media";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
@@ -33,7 +34,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/esp
   return (
     <div className="space-y-12" data-testid="member-home">
       <header>
-        <h1 className="page-title">{t("hello", { name: space.profile.firstName })}</h1>
+        <h1 className="page-title"><TitleSparks text={t("hello", { name: space.profile.firstName })} /></h1>
 
       </header>
 

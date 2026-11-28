@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { InvoiceList } from "@/components/account/invoice-list";
@@ -17,8 +18,8 @@ export default async function InvoicesPage({ params }: PageProps<"/[locale]/espa
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="page-title">{t("title")}</h1>
-        <p className="mx-auto mt-2 max-w-2xl text-center text-ink/75">{t("intro")}</p>
+        <h1 className="page-title"><TitleSparks text={t("title")} /></h1>
+        <p className="mt-2 max-w-2xl text-ink/75">{t("intro")}</p>
       </div>
       {isDemo ? (
         <p className="rounded-2xl bg-brand-50 p-4 text-sm text-brand-900">{t("demo")}</p>

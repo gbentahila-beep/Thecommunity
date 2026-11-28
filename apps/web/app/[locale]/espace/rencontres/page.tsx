@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { otherOf } from "@thecommunity/shared";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { InviteForm, MeetActions } from "@/components/account/meet-actions";
@@ -21,8 +22,8 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
   return (
     <div className="space-y-10">
       <header>
-        <h1 className="page-title">{t("title")}</h1>
-        <p className="mx-auto mt-2 max-w-2xl text-center text-muted">{t("intro")}</p>
+        <h1 className="page-title"><TitleSparks text={t("title")} /></h1>
+        <p className="mt-2 max-w-2xl text-muted">{t("intro")}</p>
       </header>
 
       <section aria-labelledby="contacts-title" className="space-y-3">
@@ -50,7 +51,7 @@ export default async function MeetPage({ params }: PageProps<"/[locale]/espace/r
 
       <section aria-labelledby="groups-title" className="space-y-3">
         <h2 id="groups-title" className="section-title">{t("groups")}</h2>
-        <p className="text-center text-sm text-muted">{t("groupsIntro")}</p>
+        <p className="text-sm text-muted">{t("groupsIntro")}</p>
         {data.groups.length === 0 ? (
           <p className="rounded-[var(--radius-card)] border border-dashed border-line bg-white/60 p-5 text-sm text-muted">
             {t("noGroups")} <Link href="/experiences" className="font-semibold text-brand-900 underline underline-offset-4">{t("discover")}</Link>

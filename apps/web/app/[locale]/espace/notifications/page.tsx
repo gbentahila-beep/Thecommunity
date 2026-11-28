@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { NotificationsList } from "@/components/account/notifications-list";
@@ -15,7 +16,7 @@ export default async function NotificationsPage({ params }: PageProps<"/[locale]
   const sorted = [...space.notifications].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   return (
     <div className="space-y-2">
-      <h1 className="page-title">{t("title")}</h1>
+      <h1 className="page-title"><TitleSparks text={t("title")} /></h1>
       <NotificationsList initial={sorted} nowIso={space.now.toISOString()} uid={space.session?.uid} />
     </div>
   );

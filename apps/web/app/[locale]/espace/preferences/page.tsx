@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { Trash2 } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -19,7 +20,7 @@ export default async function PreferencesPage({ params }: PageProps<"/[locale]/e
   const { profile, reservations, notifications } = space;
   return (
     <div className="space-y-6">
-      <h1 className="page-title">{t("title")}</h1>
+      <h1 className="page-title"><TitleSparks text={t("title")} /></h1>
       <section className="rounded-[var(--radius-card)] bg-white p-5 shadow-card">
         <h2 className="card-title">{t("notifications")}</h2>
         <PreferencesForm initial={profile.notificationPrefs} uid={space.session?.uid} />

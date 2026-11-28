@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { carnetCredits, isMemberActive } from "@thecommunity/shared";
 import { MemberAvatar } from "@/components/member-avatar";
 import { BadgeCheck, Bell, ChevronRight, History, ReceiptText, SlidersHorizontal, type LucideIcon } from "lucide-react";
@@ -52,7 +53,7 @@ export default async function AccountHubPage({ params }: PageProps<"/[locale]/es
   const since = p.createdAt ? new Intl.DateTimeFormat(locale === "ar" ? "ar-MA" : locale === "en" ? "en-GB" : "fr-FR", { month: "long", year: "numeric" }).format(new Date(p.createdAt)) : null;
   return (
     <div className="space-y-6" data-testid="account-hub">
-      <h1 className="page-title">{tn("myProfile")}</h1>
+      <h1 className="page-title"><TitleSparks text={tn("myProfile")} /></h1>
       <Link href="/espace/profil" className="flex items-center gap-4 rounded-[1.75rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] p-5 shadow-card transition hover:shadow-float">
         <MemberAvatar uid={p.uid} photoPath={p.photoPath} size={64} />
         <span className="min-w-0 flex-1">

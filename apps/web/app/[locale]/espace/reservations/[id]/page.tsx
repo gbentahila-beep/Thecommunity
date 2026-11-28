@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { DayOfCard } from "@/components/account/day-of-card";
 import { VenueCard } from "@/components/account/venue-card";
 import { MemberAvatar } from "@/components/member-avatar";
@@ -219,7 +220,7 @@ export default async function ReservationDetailPage({ params, searchParams }: Pa
         </div>
         <div className="space-y-4 p-5">
           <StatusBadge status={r.status} />
-          <h1 className="page-title text-start">{title}</h1>
+          <h1 className="page-title text-start"><TitleSparks text={title} /></h1>
           <dl className="space-y-3">
             <div className="flex gap-3">
               <CalendarDays className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden />
