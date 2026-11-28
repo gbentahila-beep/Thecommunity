@@ -1,3 +1,4 @@
+import { Sparks } from "@/components/brand/doodles";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -37,7 +38,10 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
     ? { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q[lang], acceptedAnswer: { "@type": "Answer", text: plainText(f.a[lang]) } })) }
     : null;
   return (
-    <PageShell className="page-header">
+    // Étape 7c (docs/29, piste A) : halos pêche et lilas, petits traits corail, comme l'accueil du blog.
+    <div className="halo-top relative">
+    <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
+    <PageShell className="page-header relative">
       <div className="">
       <div className="max-w-4xl">
         <nav aria-label={t("breadcrumb")} className="text-[15px]">
@@ -61,12 +65,14 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
           <section aria-labelledby="blog-faq" className="mt-16">
             {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />}
             <h2 id="blog-faq" className="section-title">{t("faqTitle")}</h2>
-            <div className="mt-8 divide-y divide-line rounded-[var(--radius-card)] bg-white shadow-card">
+            <div className="mt-8 space-y-3">
               {faq.map((f) => (
-                <details key={f.q.fr} className="group p-5">
+                <details key={f.q.fr} className="group rounded-[1.5rem] bg-white p-5 shadow-card ring-1 ring-line/60 open:ring-violet/40 sm:px-6">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink [&::-webkit-details-marker]:hidden">
                     {f.q[lang]}
-                    <ChevronDown className="size-5 shrink-0 text-brand-700 transition group-open:rotate-180" aria-hidden />
+                    <span aria-hidden className="bub-lilac grid size-9 shrink-0 place-items-center rounded-full transition group-open:rotate-180">
+                      <ChevronDown className="size-4 text-ink" />
+                    </span>
                   </summary>
                   <p className="mt-3 leading-relaxed text-ink/80">{richText(f.a[lang], "")}</p>
                 </details>
@@ -79,5 +85,6 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
       <BlogCta />
     </div>
     </PageShell>
+    </div>
   );
 }

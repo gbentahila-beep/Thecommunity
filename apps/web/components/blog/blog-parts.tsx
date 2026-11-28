@@ -5,6 +5,7 @@ import { BLOG_CATEGORIES, blogLang, type BlogArticle, type BlogBlock, type BlogC
 import { Link } from "@/i18n/navigation";
 import { richText } from "@/lib/rich-text";
 import { Sparks } from "@/components/brand/doodles";
+import { ActiveTabScroll } from "./active-tab-scroll";
 
 const catTitle = (key: BlogCategoryKey, locale: string) => BLOG_CATEGORIES.find((c) => c.key === key)!.title[blogLang(locale)];
 
@@ -30,7 +31,7 @@ export async function BlogTabs({ active, locale }: { active: BlogCategoryKey | "
   const lang = blogLang(locale);
   const tabs = [{ href: "/blog", key: "all" as const, label: t("all") }, ...BLOG_CATEGORIES.map((c) => ({ href: `/blog/theme/${c.key}`, key: c.key, label: c.title[lang] }))];
   return (
-    <nav aria-label={t("tabs")} className="-mx-4 mt-8 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
+    <ActiveTabScroll label={t("tabs")} className="-mx-4 mt-8 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
       <ul className="flex w-max gap-2 sm:w-auto sm:flex-wrap">
         {tabs.map((tab) => {
           const on = tab.key === active;
@@ -47,7 +48,7 @@ export async function BlogTabs({ active, locale }: { active: BlogCategoryKey | "
           );
         })}
       </ul>
-    </nav>
+    </ActiveTabScroll>
   );
 }
 
@@ -85,11 +86,12 @@ export async function CompactList({ articles, locale, showTheme = true }: { arti
   const t = await getTranslations("blog");
   const lang = blogLang(locale);
   return (
-    <ul className="divide-y divide-line border-y border-line">
+    // Étape 7c (docs/29) : une carte blanche arrondie par article, comme les cartes du blog.
+    <ul className="space-y-3 sm:space-y-4">
       {articles.map((a) => (
         <li key={a.slug}>
-          <Link href={`/blog/${a.slug}`} className="group flex items-center gap-4 py-4 sm:gap-6 sm:py-5">
-            <span className="relative size-24 shrink-0 overflow-hidden rounded-2xl sm:size-28">
+          <Link href={`/blog/${a.slug}`} className="group flex items-center gap-4 rounded-[1.5rem] bg-white p-3 shadow-card transition hover:shadow-float sm:gap-6 sm:p-3.5">
+            <span className="relative size-24 shrink-0 overflow-hidden rounded-[1.1rem] sm:size-28">
               <Image src={a.cover} alt="" fill sizes="112px" className={`object-cover transition duration-500 group-hover:scale-105 ${a.coverPosition ?? ""}`} />
             </span>
             <span className="min-w-0">
@@ -137,8 +139,9 @@ export async function UsefulAlso({ articles, locale, title }: { articles: BlogAr
 export async function CityCard() {
   const t = await getTranslations("blog");
   return (
-    <aside className="mt-8 rounded-[1.75rem] bg-white p-6 shadow-card sm:p-8">
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-cream-deep px-3 py-1.5 text-sm font-semibold text-ink">
+    <aside className="relative mt-8 overflow-hidden rounded-[2rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] p-6 sm:p-10">
+      <Sparks className="absolute end-6 top-5 w-11 rotate-12" />
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-ink shadow-card">
         <MapPin className="size-4" aria-hidden /> Casablanca
       </span>
       <h2 className="section-title mt-4 text-start">{t("cityCardTitle")}</h2>
@@ -147,7 +150,7 @@ export async function CityCard() {
         <Link href="/experiences" className="btn btn-primary">
           {t("findGroup")}
         </Link>
-        <Link href="/#villes" className="inline-flex min-h-12 items-center justify-center rounded-full border border-line bg-white px-6 font-semibold text-ink transition hover:border-brand-700">
+        <Link href="/#villes" className="btn btn-secondary">
           {t("otherCity")}
         </Link>
       </div>
