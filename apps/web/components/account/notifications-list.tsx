@@ -68,7 +68,7 @@ export function NotificationsList({ initial, nowIso, uid }: { initial: AppNotifi
           const Icon = ICONS[n.type] ?? Bell;
           const content = (
             <>
-              <span className={`grid size-10 shrink-0 place-items-center rounded-full ${n.readAt ? "bg-cream text-muted" : "bg-brand-50 text-brand-900"}`}>
+              <span className={`grid size-10 shrink-0 place-items-center rounded-full ${n.readAt ? "bg-cream text-muted" : "bub-lilac text-ink"}`}>
                 <Icon className="size-5" strokeWidth={1.8} aria-hidden />
               </span>
               <span className="min-w-0 flex-1">

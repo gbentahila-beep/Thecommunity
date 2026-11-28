@@ -92,7 +92,7 @@ export function Section({
   const bg = tone === "white" ? "section-white" : tone === "night" ? "section-night" : "";
   return (
     <section className={`section ${bg} ${className}`} {...rest}>
-      <div className={`container-page ${innerClassName}`}>{children}</div>
+      <div className={`container-page reveal ${innerClassName}`}>{children}</div>
     </section>
   );
 }

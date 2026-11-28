@@ -18,7 +18,7 @@ function Toggle({ label, hint, checked, disabled, onChange }: { label: string; h
       </span>
       <span className="relative mt-1 inline-flex shrink-0">
         <input type="checkbox" role="switch" className="peer sr-only" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} />
-        <span className="h-7 w-12 rounded-full bg-line transition peer-checked:bg-brand-900 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700" />
+        <span className="h-7 w-12 rounded-full bg-line transition peer-checked:bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700" />
         <span className="absolute start-1 top-1 size-5 rounded-full bg-white shadow transition peer-checked:translate-x-5 rtl:peer-checked:-translate-x-5" />
       </span>
     </label>
