@@ -1,3 +1,4 @@
+import { Sparks } from "@/components/brand/doodles";
 import { ArrowRight, BadgeCheck, CalendarCheck, CalendarCog, Compass, Handshake, MapPinCheck, MessageCircle, ShieldCheck, Store, UserRound, Utensils } from "lucide-react";
 import { AudienceCards } from "@/components/audience-cards";
 import { getTranslations } from "next-intl/server";
@@ -37,8 +38,10 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
     `rounded-full px-3 py-2 text-[13px] font-semibold transition sm:px-5 sm:py-2.5 sm:text-sm ${active ? "bg-brand-900 text-white" : "text-brand-900 hover:bg-white"}`;
   return (
     <>
-      <section className="page-header section-white">
-        <PageShell className="max-w-4xl text-center">
+      {/* Étape 7c (docs/29, piste A) : halos pêche et lilas, petits traits corail. */}
+      <section className="page-header section-white halo-top relative">
+        <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
+        <PageShell className="relative max-w-4xl text-center">
           <p className="eyebrow">{t("title")}</p>
           <h1 className="page-title mt-3">{t("heroTitle")}</h1>
           <p className="lead mx-auto mt-4 max-w-xl">{t("heroText")}</p>
@@ -56,14 +59,14 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
             </div>
           </nav>
           <div className="mt-10 grid gap-5 md:grid-cols-2">
-            {categories.map((c) => {
+            {categories.map((c, i) => {
               const Icon = ICONS[c.key];
               const articles = HELP_ARTICLES.filter((a) => a.category === c.key);
               return (
-                <section key={c.key} id={c.key} aria-labelledby={`cat-${c.key}`} className="scroll-mt-28 rounded-[var(--radius-card)] bg-white p-6 shadow-card">
+                <section key={c.key} id={c.key} aria-labelledby={`cat-${c.key}`} className="scroll-mt-28 rounded-[1.75rem] bg-white p-6 shadow-card">
                   <div className="flex items-start gap-4">
-                    <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-900">
-                      <Icon className="size-5" aria-hidden />
+                    <span className={`${i % 2 ? "bub-lilac" : "bub-peach"} grid size-12 shrink-0 place-items-center rounded-full text-ink`}>
+                      <Icon className="size-5" strokeWidth={1.7} aria-hidden />
                     </span>
                     <div>
                       <h2 id={`cat-${c.key}`} className="card-title">{c.title[lang]}</h2>
@@ -96,8 +99,9 @@ export async function HelpContactCards() {
   const t = await getTranslations("help");
   return (
     <div className="mt-12 space-y-5" data-testid="help-contact-cards">
-      <div className="info-box flex flex-col items-center">
-        <MessageCircle className="size-7 text-brand-900" aria-hidden />
+      <div className="relative flex flex-col items-center overflow-hidden rounded-[2rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] px-6 py-10 text-center sm:px-10">
+        <Sparks className="absolute start-6 top-5 w-10 -rotate-12" />
+        <span className="grid size-13 place-items-center rounded-full bg-white shadow-card"><MessageCircle className="size-6 text-brand-700" strokeWidth={1.7} aria-hidden /></span>
         <h2 className="mt-3 card-title">{t("contactTitle")}</h2>
         <p className="mt-2 text-ink/80">{t("contactText")}</p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">

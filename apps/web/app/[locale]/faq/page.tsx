@@ -26,18 +26,21 @@ export default async function FaqPage({ params }: PageProps<"/[locale]/faq">) {
   return (
     <StaticPage title={t("faqTitle")}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-      <div className="divide-y divide-line rounded-[var(--radius-card)] bg-white shadow-card">
+      {/* Étape 7c (docs/29, piste A) : une carte arrondie par question, flèche dans un rond lilas. */}
+      <div className="space-y-3">
         {items.map((i) => (
-          <details key={i.q} className="group p-5">
+          <details key={i.q} className="group rounded-[1.5rem] bg-white p-5 shadow-card ring-1 ring-line/60 open:ring-violet/40 sm:px-6">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink [&::-webkit-details-marker]:hidden">
               {i.q}
-              <ChevronDown className="size-5 shrink-0 text-brand-700 transition group-open:rotate-180" aria-hidden />
+              <span aria-hidden className="bub-lilac grid size-9 shrink-0 place-items-center rounded-full transition group-open:rotate-180">
+                <ChevronDown className="size-4 text-ink" />
+              </span>
             </summary>
             <p className="mt-3 leading-relaxed text-ink/80">{i.a}</p>
           </details>
         ))}
       </div>
-      <Link href="/aide" className="inline-flex items-center gap-2 font-semibold text-brand-900 underline-offset-4 hover:underline">
+      <Link href="/aide" className="btn btn-secondary">
         {t("faqMore")}
         <ArrowRight className="size-4 rtl:rotate-180" aria-hidden />
       </Link>

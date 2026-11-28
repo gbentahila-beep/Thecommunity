@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { StaticPage } from "@/components/static-page";
@@ -19,18 +20,37 @@ export function legalPage(key: LegalKey) {
     const t = await getTranslations("legal");
     const doc = docFor(locale, key);
     const missing = t("missing");
+    const toc = (
+      <ol className="space-y-0.5 text-sm">
+        {doc.sections.map((s, i) => (
+          <li key={i}>
+            <a href={`#s${i + 1}`} className="block rounded-lg px-2 py-1.5 text-ink/80 transition hover:bg-cream hover:text-brand-900">{s.title}</a>
+          </li>
+        ))}
+      </ol>
+    );
     return (
-      <StaticPage title={doc.title} intro={richText(doc.intro, missing)}>
-        <p className="text-sm text-muted">{doc.updated}</p>
-        <nav aria-label={t("toc")} className="rounded-[var(--radius-card)] bg-cream p-5">
-          <ol className="space-y-1 text-sm">
-            {doc.sections.map((s, i) => (
-              <li key={i}>
-                <a href={`#s${i + 1}`} className="text-brand-900 underline-offset-4 hover:underline">{s.title}</a>
-              </li>
-            ))}
-          </ol>
-        </nav>
+      // Étape 7c (docs/29, piste A) : sommaire collant à gauche sur ordinateur, repliable sur téléphone.
+      <StaticPage
+        title={doc.title}
+        intro={richText(doc.intro, missing)}
+        aside={
+          <>
+            <details className="group rounded-[1.5rem] bg-white p-4 ring-1 ring-line lg:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between px-2 font-semibold text-ink [&::-webkit-details-marker]:hidden">
+                {t("toc")}
+                <span aria-hidden className="bub-lilac grid size-8 place-items-center rounded-full text-ink transition group-open:rotate-180"><ChevronDown className="size-4" /></span>
+              </summary>
+              <nav aria-label={t("toc")} className="mt-3">{toc}</nav>
+            </details>
+            <nav aria-label={t("toc")} className="hidden rounded-[1.5rem] bg-white p-4 shadow-card ring-1 ring-line/60 lg:block">
+              <p className="eyebrow mb-2 px-2">{t("toc")}</p>
+              {toc}
+            </nav>
+          </>
+        }
+      >
+        <p className="inline-flex rounded-full bg-cream px-3 py-1 text-xs text-muted">{doc.updated}</p>
         {doc.sections.map((s, i) => (
           <section key={i} id={`s${i + 1}`} className="scroll-mt-28 space-y-3">
             <h2 className="font-display text-2xl font-semibold text-brand-900">{s.title}</h2>

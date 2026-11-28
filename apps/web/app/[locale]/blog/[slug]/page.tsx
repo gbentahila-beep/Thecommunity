@@ -52,7 +52,9 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
     publisher: { "@type": "Organization", name: "Wenzy" },
   };
   return (
-    <PageShell className="page-header">
+    // Étape 7c (docs/29, piste A) : halos en haut, photo de couverture « emboîtée » sur un fond lilas.
+    <div className="halo-top relative">
+    <PageShell className="page-header relative">
       <div className="">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-3xl">
@@ -66,14 +68,17 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
         <article className="mt-6">
           <h1 className="page-title">{a.title[lang]}</h1>
           <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink/80">{a.excerpt[lang]}</p>
-          <p className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-muted">
+          <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
             <span className="inline-flex items-center gap-1.5"><Clock className="size-4" aria-hidden />{t("readTime", { minutes: a.minutes })}</span>
             <time dateTime={a.date}>{formatCalendarDate(a.date, locale)}</time>
           </p>
-          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-3xl shadow-card">
-            <Image src={a.cover} alt="" fill priority sizes="(min-width: 768px) 768px, 100vw" className={`object-cover ${a.coverPosition ?? ""}`} />
+          <div className="relative mx-2 mt-10 sm:mx-0">
+            <div aria-hidden className="absolute -inset-2.5 rotate-[1.5deg] rounded-[2.2rem] bg-lilac" />
+            <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem] shadow-card">
+              <Image src={a.cover} alt="" fill priority sizes="(min-width: 768px) 768px, 100vw" className={`object-cover ${a.coverPosition ?? ""}`} />
+            </div>
           </div>
-          <div className="mt-8">
+          <div className="mt-10">
             <ArticleBody blocks={a.body[lang]} summaryLabel={t("keyPoints")} />
           </div>
         </article>
@@ -84,5 +89,6 @@ export default async function BlogArticlePage({ params }: PageProps<"/[locale]/b
       <BlogCta />
     </div>
     </PageShell>
+    </div>
   );
 }

@@ -60,12 +60,12 @@ export function BlogBrowser({ popular, recent }: { popular: BrowseEntry[]; recen
         <ul className="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {shown.map((e) => (
             <li key={e.slug}>
-              <Link href={`/blog/${e.slug}`} className="group flex h-full items-center gap-4 overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-line/70 transition hover:shadow-float sm:flex-col sm:items-stretch sm:gap-0 sm:rounded-3xl sm:p-0">
+              <Link href={`/blog/${e.slug}`} className="group flex h-full items-center gap-4 overflow-hidden rounded-[1.25rem] bg-white p-3 shadow-card transition hover:shadow-float sm:flex-col sm:items-stretch sm:gap-0 sm:rounded-[1.75rem] sm:p-2.5">
                 {/* Téléphone : ligne compacte, vignette à gauche ; à partir de 640 px : carte avec grande image. */}
-                <span className="relative block size-20 shrink-0 overflow-hidden rounded-xl bg-cream-deep sm:aspect-[16/10] sm:size-auto sm:w-full sm:rounded-none">
+                <span className="relative block size-20 shrink-0 overflow-hidden rounded-xl bg-cream-deep sm:aspect-[16/10] sm:size-auto sm:w-full sm:rounded-[1.25rem]">
                   <Image src={e.cover} alt="" fill sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw" className={`object-cover transition duration-500 group-hover:scale-[1.03] ${e.coverPosition ?? ""}`} />
                 </span>
-                <span className="flex min-w-0 flex-1 flex-col sm:p-5">
+                <span className="flex min-w-0 flex-1 flex-col sm:px-3 sm:pt-4 sm:pb-3">
                   <span className="text-[11px] font-semibold tracking-[0.12em] text-brand-700 uppercase sm:text-xs">{e.theme} · {t("readTime", { minutes: e.minutes })}</span>
                   <span className="mt-1 block text-[15px] leading-snug font-semibold text-ink group-hover:text-brand-900 sm:mt-2 sm:text-lg">{e.title}</span>
                   <span className="mt-2 line-clamp-2 hidden text-[15px] leading-relaxed text-muted sm:block">{e.excerpt}</span>

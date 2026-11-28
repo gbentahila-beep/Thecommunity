@@ -17,19 +17,23 @@ export default async function ContactPage({ params }: PageProps<"/[locale]/conta
   setRequestLocale(locale);
   const t = await getTranslations("pages");
   return (
-    <StaticPage title={t("contactTitle")} intro={t("contactText")}>
-      <a
-        href={`mailto:${CONTACT_EMAIL}`}
-        className="flex items-center gap-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card transition hover:shadow-float"
-      >
-        <span className="grid size-12 place-items-center rounded-full bg-brand-50 text-brand-900">
-          <Mail className="size-5" aria-hidden />
-        </span>
-        <span>
-          <span className="block text-sm text-muted">{t("contactEmailLabel")}</span>
-          <span className="font-semibold text-ink" dir="ltr">{CONTACT_EMAIL}</span>
-        </span>
-      </a>
+    // Étape 7c (docs/29, piste A) : l'adresse e-mail à gauche (au-dessus sur téléphone), le formulaire à droite.
+    <StaticPage
+      title={t("contactTitle")}
+      intro={t("contactText")}
+      wideAside
+      aside={
+        <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-4 rounded-[1.5rem] bg-white p-5 shadow-card ring-1 ring-line/60 transition hover:shadow-float">
+          <span className="bub-peach grid size-12 shrink-0 place-items-center rounded-full text-ink">
+            <Mail className="size-5" strokeWidth={1.7} aria-hidden />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-sm text-muted">{t("contactEmailLabel")}</span>
+            <span className="block font-semibold break-all text-ink" dir="ltr">{CONTACT_EMAIL}</span>
+          </span>
+        </a>
+      }
+    >
       {FIREBASE_ENABLED ? <ContactForm /> : <p className="text-sm text-muted">{t("contactDemo")}</p>}
     </StaticPage>
   );

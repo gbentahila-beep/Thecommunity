@@ -40,7 +40,9 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
   const relatedSlugs = a.related?.length ? a.related : HELP_ARTICLES.filter((x) => x.category === a.category && x.slug !== a.slug).map((x) => x.slug);
   const related = relatedSlugs.flatMap((s) => (articleBySlug(s) ? [articleBySlug(s)!] : []));
   return (
-    <PageShell className="page-header">
+    // Étape 7c (docs/29, piste A) : halos en haut de page.
+    <div className="halo-top relative">
+    <PageShell className="page-header relative">
       <div className="max-w-3xl">
       <nav aria-label={t("breadcrumb")} className="text-sm text-muted">
         <ol className="flex flex-wrap items-center gap-1.5">
@@ -72,7 +74,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
       {related.length > 0 && (
         <section className="mt-12" aria-labelledby="related">
           <h2 id="related" className="section-title">{t("related")}</h2>
-          <ul className="mt-4 divide-y divide-line rounded-[var(--radius-card)] bg-white shadow-card">
+          <ul className="mt-4 divide-y divide-line overflow-hidden rounded-[1.75rem] bg-white shadow-card">
             {related.map((r) => (
               <li key={r.slug}>
                 <Link href={`/aide/${r.slug}`} className="block p-5 transition hover:bg-cream">
@@ -87,5 +89,6 @@ export default async function HelpArticlePage({ params }: PageProps<"/[locale]/a
       <HelpContactCards />
     </div>
     </PageShell>
+    </div>
   );
 }

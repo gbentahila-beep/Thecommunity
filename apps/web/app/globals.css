@@ -257,6 +257,11 @@
     @apply inline-grid size-7 shrink-0 place-items-center rounded-full text-sm font-bold text-white;
     background: linear-gradient(100deg, var(--color-coral), var(--color-violet));
   }
+  /* Halos pêche et lilas en haut de page (piste A, docs/29). */
+  .halo-top {
+    background-image: radial-gradient(560px 340px at 100% 0%, var(--color-lilac), transparent 65%), radial-gradient(520px 320px at 0% 0%, var(--color-peach), transparent 60%);
+    background-repeat: no-repeat;
+  }
   .chip-on {
     @apply bg-brand-900 text-white ring-brand-900 hover:ring-brand-900;
   }

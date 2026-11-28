@@ -13,8 +13,8 @@ export async function ReservationCard({ reservation }: { reservation: Reservatio
   const questionnaireTodo = Boolean(reservation.questionnaireNotifiedAt) && !reservation.questionnaire && ["confirmed", "pending_payment"].includes(reservation.status) && isAfterNow(reservation.sessionSnapshot.startAt);
   const s = reservation.sessionSnapshot;
   return (
-    <article className="relative flex gap-4 rounded-[var(--radius-card)] bg-white p-3 shadow-card transition hover:shadow-float">
-      <div className="relative size-24 shrink-0 overflow-hidden rounded-2xl sm:size-28">
+    <article className="relative flex gap-4 rounded-[1.5rem] bg-white p-3 shadow-card transition hover:shadow-float">
+      <div className="relative size-24 shrink-0 overflow-hidden rounded-[1.1rem] sm:size-28">
         <Image src={s.coverImagePath} alt="" fill sizes="112px" className="object-cover" />
       </div>
       <div className="min-w-0 flex-1 space-y-1.5 py-1">

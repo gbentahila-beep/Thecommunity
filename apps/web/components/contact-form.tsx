@@ -14,7 +14,7 @@ export function ContactForm() {
   const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[16px] outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-100";
   return (
     <form
-      className="relative space-y-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card"
+      className="relative space-y-4 rounded-[1.75rem] bg-white p-6 shadow-card ring-1 ring-line/60 sm:p-8"
       onSubmit={async (e) => {
         e.preventDefault();
         const f = new FormData(e.currentTarget);

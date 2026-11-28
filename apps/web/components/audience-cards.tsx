@@ -26,9 +26,9 @@ export async function AudienceCards({ headingLevel = "h3", withTitle = false }: 
       )}
       <div className="mx-auto grid max-w-4xl gap-5 md:grid-cols-2">
         {cards.map(({ key, icon: Icon, href }) => (
-          <div key={key} className="info-box flex flex-col items-center text-center">
-            <span className="grid size-11 place-items-center rounded-full bg-white text-brand-900 shadow-card">
-              <Icon className="size-5" aria-hidden />
+          <div key={key} className="flex flex-col items-center rounded-[1.75rem] bg-white px-6 py-8 text-center shadow-card sm:px-8">
+            <span className={`${key === "partners" ? "bub-peach" : "bub-lilac"} grid size-13 place-items-center rounded-full text-ink`}>
+              <Icon className="size-6" strokeWidth={1.6} aria-hidden />
             </span>
             <p className="eyebrow mt-5">{t(`${key}Eyebrow`)}</p>
             <H className="mt-1.5 card-title">{t(`${key}Title`)}</H>

@@ -20,11 +20,11 @@ function Group({ title, rows }: { title?: string; rows: Row[] }) {
   return (
     <section>
       {title && <h2 className="mb-2 px-2 text-sm font-medium text-muted">{title}</h2>}
-      <ul className="card overflow-hidden">
+      <ul className="overflow-hidden rounded-[1.5rem] bg-white shadow-card">
         {rows.map(({ href, label, icon: Icon, hint }, i) => (
           <li key={href}>
             <Link href={href} className="flex min-h-14 items-center gap-4 ps-5 transition hover:bg-cream">
-              <Icon className="size-[22px] shrink-0 text-ink/80" strokeWidth={1.6} aria-hidden />
+              <span className="bub-lilac grid size-9 shrink-0 place-items-center rounded-full"><Icon className="size-[18px] text-ink" strokeWidth={1.7} aria-hidden /></span>
               <span className={`flex min-h-14 flex-1 items-center justify-between gap-3 pe-4 ${i > 0 ? "border-t border-line" : ""}`}>
                 <span className="text-[16px] font-medium text-ink">{label}</span>
                 <span className="flex items-center gap-2 text-sm text-muted">
@@ -53,7 +53,7 @@ export default async function AccountHubPage({ params }: PageProps<"/[locale]/es
   return (
     <div className="space-y-6" data-testid="account-hub">
       <h1 className="page-title">{tn("myProfile")}</h1>
-      <Link href="/espace/profil" className="card flex items-center gap-4 p-5 transition hover:shadow-float">
+      <Link href="/espace/profil" className="flex items-center gap-4 rounded-[1.75rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] p-5 shadow-card transition hover:shadow-float">
         <MemberAvatar uid={p.uid} photoPath={p.photoPath} size={64} />
         <span className="min-w-0 flex-1">
           <span className="block truncate card-title">{p.firstName}</span>
