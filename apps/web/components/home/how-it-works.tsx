@@ -69,17 +69,9 @@ export async function HowItWorks({ categories, showTitle = true }: { categories:
           {head(3, Wine, "peach")}
           <h3 className="mt-5 font-display text-2xl leading-tight font-semibold text-ink">{t("how3Title")}</h3>
           <p className="mt-2 text-[15px] text-muted">{t("how3Text")}</p>
-          {/* Trois bandeaux (dîner, sport, jeux) légèrement inclinés et superposés : photos panoramiques, visages entiers. */}
-          <div className="mt-5 space-y-2" role="img" aria-label={t("howPhotosAlt")}>
-            {[
-              { src: "/images/photos/rencontre-groupe-diner.webp", cls: "" },
-              { src: "/images/photos/rencontre-groupe-sport.webp", cls: "" },
-              { src: "/images/photos/rencontre-groupe-jeux.webp", cls: "" },
-            ].map((p) => (
-              <div key={p.src} className={`relative aspect-[3/1] overflow-hidden rounded-2xl ${p.cls}`}>
-                <Image src={p.src} alt="" fill sizes="(min-width: 768px) 22vw, 85vw" className="object-cover" />
-              </div>
-            ))}
+          {/* 28/11 : une seule photo (à changer plus tard) au lieu des trois bandeaux superposés. */}
+          <div className="relative mt-5 aspect-[4/3] overflow-hidden rounded-[1.5rem]">
+            <Image src="/images/photos/galerie-01.webp" alt={t("howPhotosAlt")} fill sizes="(min-width: 768px) 24vw, 85vw" className="object-cover object-[50%_40%]" />
           </div>
         </li>
       </ol>
