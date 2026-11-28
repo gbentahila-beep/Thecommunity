@@ -150,6 +150,16 @@ Déroulé prévu :
 - **Fiche** : halo lilas en haut, traits corail près des photos, photos plus arrondies ; l'essentiel avec des ronds pêche ; carte de réservation plus arrondie et plus en relief, gamme choisie cerclée de violet ; déroulé en cartes à ombre douce, numéros en dégradé, lilas et pêche ; « Inclus » coché en dégradé ; « Bon à savoir » avec ronds lilas.
 - Textes, contenus et règles de réservation inchangés.
 
+### Étape 7c — pages vitrines, lot 1 (28 novembre)
+
+- **En-tête photo commun** (`components/page-hero.tsx`) : le dessin de l'accueil en plus court (forme libre derrière le menu sur ordinateur, bord ondulé sur téléphone, trait sous le titre) ; version courte (`compact`) pour Abonnement et Avis. `PhotoShapes` est posé une fois dans la mise en page.
+- **Comment ça marche** : frise reliée par un fil en dégradé, détails en cartes ; sécurité en panneau encre arrondi ; bandeau de clôture.
+- **À propos** : « Des amis en repartant. » en dégradé ; photo de l'histoire posée sur un rond pêche ; valeurs et « Pourquoi on fait ça » avec ronds pêche et lilas ; galerie plus arrondie ; le bouton « Voir les dates » sous la galerie est gardé ; bandeau de clôture.
+- **Abonnement** : accroche dans l'en-tête photo ; offre choisie surlignée en violet doux, prix en serif ; coches en dégradé ; bandeau de clôture.
+- **Avis** : en-tête photo ; barres en dégradé ; filtres en pastilles ; initiales dans les ronds ; bloc final pêche-lilas.
+- **Découvrir** : ville et filtres en pastilles blanches.
+- **Instagram** : pastille « Suivez-nous sur Instagram » sous le logo du pied de page et dans le Menu du téléphone ; l'identifiant se renseigne dans `lib/site.ts` (`INSTAGRAM_HANDLE`).
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.
