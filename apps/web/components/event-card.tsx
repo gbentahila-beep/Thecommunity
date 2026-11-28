@@ -1,5 +1,5 @@
 import { experienceBadge, LOW_SEATS_THRESHOLD, NEW_EXPERIENCE_DAYS, seatsAvailable, type Experience, type Session } from "@thecommunity/shared";
-import { Gem } from "lucide-react";
+import { ArrowRight, CalendarDays, Gem, MapPin } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { MediaImage as Image } from "@/components/media";
 import { Link } from "@/i18n/navigation";
@@ -77,7 +77,7 @@ export async function EventCard({
     >
       {/* Téléphone : vignette de 72 px ; ordinateur (grille) : photo en haut de la carte, repère posé dessus. */}
       <div className="ev-thumb-wrap relative shrink-0">
-        <div className="ev-thumb relative size-18 overflow-hidden rounded-xl bg-cream-deep">
+        <div className="ev-thumb relative size-18 overflow-hidden rounded-2xl bg-cream-deep">
           {cover && (
             <Image
               src={cover.path}
@@ -90,7 +90,7 @@ export async function EventCard({
           )}
         </div>
         {badge && (
-          <span aria-hidden className={`ev-photo-badge pointer-events-none absolute start-3 top-3 z-10 hidden rounded-md px-2 py-1 text-[11px] font-bold tracking-[0.05em] uppercase ${BADGE_TONE[badge]}`}>
+          <span aria-hidden className={`ev-photo-badge pointer-events-none absolute start-3 top-3 z-10 hidden rounded-full px-2.5 py-1 text-[11px] font-bold tracking-[0.05em] uppercase ${BADGE_TONE[badge]}`}>
             {t(`badge_${badge}`)}
           </span>
         )}
@@ -98,7 +98,7 @@ export async function EventCard({
 
       <div className="ev-text min-w-0 flex-1">
         {badge && (
-          <span className={`ev-badge-inline mb-1 inline-flex whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] leading-none font-bold tracking-[0.05em] uppercase ${BADGE_TONE[badge]}`} data-testid="card-badge">
+          <span className={`ev-badge-inline mb-1 inline-flex whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] leading-none font-bold tracking-[0.05em] uppercase ${BADGE_TONE[badge]}`} data-testid="card-badge">
             {t(`badge_${badge}`)}
           </span>
         )}
@@ -111,7 +111,9 @@ export async function EventCard({
           </Link>
         </h3>
         {session && (
-          <p className="mt-1 text-[13px] text-ink/80">
+          <p className="mt-1 flex items-center gap-1.5 text-[13px] text-ink/80">
+            {/* Direction artistique (docs/29) : une petite icône violette devant la date et le lieu. */}
+            <CalendarDays className="size-3.5 shrink-0 text-brand-700" aria-hidden />
             {when === "time" ? (
               <>
                 {/* Découvrir : l'heure seule sous le titre du jour ; le jour aussi dans la grille d'ordinateur. */}
@@ -125,7 +127,12 @@ export async function EventCard({
             )}
           </p>
         )}
-        {place && <p className="text-[13px] text-muted">{place}</p>}
+        {place && (
+          <p className="mt-0.5 flex items-start gap-1.5 text-[13px] text-muted">
+            <MapPin className="mt-0.5 size-3.5 shrink-0 text-brand-700" aria-hidden />
+            {place}
+          </p>
+        )}
         {(experience.audience === "women" || tiers.length > 0) && (
           <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-[13px] text-muted">
             {experience.audience === "women" && (
@@ -143,7 +150,7 @@ export async function EventCard({
           </p>
         )}
         {/* À la place du bouton : l'état des places, sous le texte (rien n'est écrasé sur téléphone), en bas de la carte sur la grille. */}
-        <div className="ev-status-wrap mt-2">
+        <div className="ev-status-wrap mt-2 flex items-center justify-between gap-2">
           <span
             className={`inline-flex rounded-full px-2.5 py-1 text-[12px] font-semibold whitespace-nowrap ${
               full ? "bg-cream-deep text-muted" : low ? "bg-coral/15 text-[#b8381f]" : "bg-cream text-ink"
@@ -151,6 +158,9 @@ export async function EventCard({
             data-testid="card-status"
           >
             {status}
+          </span>
+          <span aria-hidden className="ev-arrow hidden size-8 shrink-0 place-items-center rounded-full text-ink ring-[1.5px] ring-line transition group-hover:ring-ink">
+            <ArrowRight className="size-4 rtl:-scale-x-100" />
           </span>
         </div>
       </div>

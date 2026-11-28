@@ -10,7 +10,8 @@ import { HomeFaq } from "@/components/home/home-faq";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { ReviewsShowcase } from "@/components/home/reviews-showcase";
 import { Universes } from "@/components/home/universes";
-import { PrimaryLink, Section, SectionHeading } from "@/components/ui";
+import { PageShell, PrimaryLink, Section, SectionHeading } from "@/components/ui";
+import { PhotoShapes, Sparks, Swash } from "@/components/brand/doodles";
 import { Link } from "@/i18n/navigation";
 import { experienceBadge, NEW_EXPERIENCE_DAYS, seatsAvailable, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
 import { getCategories, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences } from "@/lib/data";
@@ -121,51 +122,60 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           </p>
         </div>
       )}
-      {/* HERO : sur téléphone, la photo entière en haut et une carte crème posée sur son bas (option 2) ;
-          sur ordinateur, la photo plein cadre avec le titre en blanc sur un voile sombre à gauche (option 1). */}
-      <section className={`relative ${banner ? "mt-3" : "-mt-16"} lg:mt-0 lg:flex lg:h-[min(80vh,720px)] lg:min-h-[560px] lg:items-center`}>
-        <div className="relative h-[50vh] min-h-[330px] max-h-[560px] lg:absolute lg:inset-0 lg:h-full lg:max-h-none">
-          <Image
-            src="/images/accueil-rooftop-casablanca.webp"
-            alt={t("heroImageAlt")}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[45%_30%] lg:object-[60%_35%]"
-          />
-          <div className="absolute inset-0 hidden bg-gradient-to-r from-ink/80 via-ink/40 to-transparent lg:block rtl:bg-gradient-to-l" />
+      {/* HERO (direction artistique « Soleil de Casa », docs/29) : sur ordinateur, la photo en forme libre part du coin
+          haut droit et passe derrière le menu ; sur téléphone, la photo occupe le haut avec un bord ondulé, le texte dessous. */}
+      <section
+        data-hero-bleed
+        className={`relative overflow-hidden bg-[radial-gradient(520px_420px_at_0%_0%,#fff_0%,transparent_70%),radial-gradient(620px_460px_at_8%_100%,var(--color-peach)_0%,transparent_62%)] bg-cream-light ${banner ? "mt-3" : "-mt-16 lg:-mt-20"}`}
+      >
+        <PhotoShapes />
+        <div className="absolute inset-y-0 end-0 hidden w-[54%] lg:block">
+          <div className="absolute inset-0 [clip-path:url(#shape-hero)]">
+            <Image src="/images/accueil-rooftop-casablanca.webp" alt={t("heroImageAlt")} fill priority sizes="55vw" className="object-cover object-[52%_35%]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-ink/20 to-transparent to-25%" />
+          </div>
+          <Sparks className="absolute start-[6%] top-36 w-16" />
         </div>
-        <div className="relative z-10 mx-3 -mt-24 rounded-[1.75rem] bg-cream p-5 shadow-float sm:mx-6 sm:p-7 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-7xl lg:rounded-none lg:bg-transparent lg:px-8 lg:py-0 lg:shadow-none">
-          <div className="text-center lg:max-w-xl lg:text-start">
-            <h1 className="animate-fade-up font-display text-[2.3rem] leading-[1] font-semibold tracking-[-0.025em] text-brand-900 sm:text-6xl lg:text-[4.5rem] lg:text-white">
+        <div className="relative h-[400px] lg:hidden">
+          <div className="absolute inset-0 [clip-path:url(#shape-hero-m)]">
+            <Image src="/images/accueil-rooftop-casablanca.webp" alt={t("heroImageAlt")} fill priority sizes="100vw" className="object-cover object-[45%_30%]" />
+          </div>
+          <Sparks className="absolute end-5 bottom-16 w-12" />
+        </div>
+        <PageShell className="relative z-10 lg:flex lg:min-h-[min(88vh,780px)] lg:items-center">
+          <div className="pt-2 pb-16 text-center lg:max-w-[480px] lg:pt-28 lg:pb-28 lg:text-start">
+            <h1 className="animate-fade-up font-display text-[2.75rem] leading-[1] font-semibold tracking-[-0.03em] text-brand-900 sm:text-6xl lg:text-[4.5rem]">
               {t("heroTitle1")}
               <br />
-              <span className="text-gradient lg:bg-[linear-gradient(100deg,#ff8a6b,#d98bf0)]">{t("heroTitle2")}</span>
+              <span className="text-gradient">{t("heroTitle2")}</span>
             </h1>
-            <p className="mx-auto mt-3 max-w-md text-[15px] lg:mx-0 leading-relaxed text-ink/75 [animation-delay:120ms] animate-fade-up lg:mt-5 lg:text-lg lg:text-white/85">{t("heroSubtitle")}</p>
-            <div className="mt-5 [animation-delay:220ms] animate-fade-up lg:mt-8">
-              <PrimaryLink href="/experiences" className="w-full lg:w-auto">{t("heroCta")}</PrimaryLink>
+            <Swash className="mx-auto mt-1 block h-4 w-52 lg:ms-36 lg:me-0 lg:w-72" />
+            <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-ink/75 [animation-delay:120ms] animate-fade-up lg:mx-0 lg:mt-5 lg:text-lg">{t("heroSubtitle")}</p>
+            <div className="mt-6 [animation-delay:220ms] animate-fade-up lg:mt-8">
+              <PrimaryLink href="/experiences" className="w-full lg:w-auto lg:px-8 lg:py-4 lg:text-base">{t("heroCta")}</PrimaryLink>
             </div>
             {/* La prochaine date, mise à jour toute seule : du concret dès le premier écran. */}
             {next && (
               <Link
                 href={`/experiences/${next.experience.slug}`}
-                className="group mt-4 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-start ring-1 ring-line transition [animation-delay:300ms] animate-fade-up hover:ring-brand-200 lg:mt-6 lg:max-w-md lg:bg-white/10 lg:ring-white/25 lg:backdrop-blur-md lg:hover:bg-white/15"
+                className="group mt-5 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-start shadow-card transition [animation-delay:300ms] animate-fade-up hover:shadow-float lg:max-w-md"
                 data-testid="home-next"
               >
-                <CalendarDays className="size-5 shrink-0 text-brand-700 lg:text-white" aria-hidden />
+                <span className="bub-peach grid size-10 shrink-0 place-items-center rounded-full">
+                  <CalendarDays className="size-5 text-[#b8381f]" aria-hidden />
+                </span>
                 <span className="min-w-0 flex-1 text-sm leading-snug">
-                  <span className="block text-xs font-semibold tracking-[0.12em] text-muted uppercase lg:text-white/70">{t("nextLabel")}</span>
-                  <span className="block font-semibold text-ink lg:text-white">
+                  <span className="block text-xs font-semibold tracking-[0.12em] text-muted uppercase">{t("nextLabel")}</span>
+                  <span className="block font-semibold text-ink">
                     {next.rendezvousTitle ? tr(next.rendezvousTitle, locale) : tr(next.experience.title, locale)} · {formatDaySlot(next.startAt, locale)}
                   </span>
-                  <span className="block text-ink/70 lg:text-white/80">{nextLeft > 0 ? t("nextSeats", { count: nextLeft }) : t("nextFull")}</span>
+                  <span className="block text-ink/70">{nextLeft > 0 ? t("nextSeats", { count: nextLeft }) : t("nextFull")}</span>
                 </span>
-                <ChevronRight className="size-5 shrink-0 text-ink/40 transition group-hover:translate-x-0.5 lg:text-white/70 rtl:-scale-x-100" aria-hidden />
+                <ChevronRight className="size-5 shrink-0 text-ink/40 transition group-hover:translate-x-0.5 rtl:-scale-x-100" aria-hidden />
               </Link>
             )}
           </div>
-        </div>
+        </PageShell>
       </section>
       {/* Les sections suivent l'ordre du back-office (Accueil), sur des fonds alternés blanc et crème, avec le même
           espace partout (docs/29) ; la sécurité est la bande sombre de la page ; la phrase de clôture vient toujours à la fin. */}
@@ -175,13 +185,16 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           { id: "closing", node: <ClosingCta key="closing" /> },
         ].filter((x) => Boolean(x.node));
         let light = 0;
-        return nodes.map(({ id, node }) =>
-          id === "trust" ? (
-            <Section key={id} tone="night">{node}</Section>
-          ) : (
-            <Section key={id} tone={light++ % 2 === 0 ? "white" : "cream"}>{node}</Section>
-          ),
-        );
+        // Direction artistique (docs/29) : la sécurité est un panneau sombre arrondi posé sur la section ; halo lilas derrière l'application.
+        return nodes.map(({ id, node }) => (
+          <Section
+            key={id}
+            tone={light++ % 2 === 0 ? "white" : "cream"}
+            className={id === "app" ? "bg-[radial-gradient(600px_360px_at_50%_70%,var(--color-lilac),transparent_70%)]" : id === "closing" ? "!pt-10 sm:!pt-16" : ""}
+          >
+            {node}
+          </Section>
+        ));
       })()}
     </>
   );

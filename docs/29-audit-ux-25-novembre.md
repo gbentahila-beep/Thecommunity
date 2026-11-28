@@ -131,6 +131,19 @@ Déroulé prévu :
 - **Pied de page** : Instagram seul pour l'instant (identifiant à venir), signature manuscrite « Your people are out there. ».
 - Écrans de la piste A (accueil, Découvrir, fiche ; ordinateur et téléphone) présentés le 28/11 ; application au site après validation.
 
+### Étape 7a — briques communes et accueil (28 novembre)
+
+- **Briques** : police manuscrite Caveat (`font-hand`), couleurs `peach`, `lilac`, `cream-light`, ronds doux `bub-peach` / `bub-lilac`, numéro d'étape `step-num`, ombre des cartes plus douce et plus profonde, bouton secondaire à contour encre, touches dessinées (`Sparks`, `Swash`) et formes de photo (`PhotoShapes`, `components/brand/doodles.tsx`).
+- **Accueil** : photo de l'accroche en forme libre, qui passe derrière le menu sur ordinateur (menu transparent tant qu'on n'a pas fait défiler, `HeaderScrollState`) ; bord ondulé sur téléphone ; texte encre, « are out there. » en dégradé avec un trait dessiné ; carte « Prochain rendez-vous » avec rond pêche.
+- **Comment ça marche** : ronds pastel avec icône, numéros en dégradé, flèches dessinées entre les cartes.
+- **Babs** : légende en écriture manuscrite. **Alerte** : rond lilas.
+- **Sécurité** : panneau encre arrondi posé sur la section, icônes dans des ronds en dégradé.
+- **Prix** : ronds doux ; **application** : halo lilas ; **avis** : photo plus arrondie.
+- **Clôture** : bandeau pêche-lilas, la photo de groupe face à la mosquée Hassan II (`groupe-hassan-ii.webp`) dépasse en haut à droite (au-dessus sur téléphone).
+- **Carte rendez-vous** : icônes date et lieu, badge en pastille, flèche ronde sur la grille d'ordinateur.
+- **Pied de page** : léger dégradé, Instagram (lien à venir), signature « Your people are out there. ».
+- Textes, sections et ordre inchangés ; boutons : texte encre sur le dégradé.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.

@@ -54,10 +54,10 @@ export function NewExperienceAlerts({ cities, defaultCity }: { cities: AlertCity
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        className="group mx-auto flex w-full max-w-xl items-center gap-3 rounded-full bg-white px-4 py-3 text-start shadow-card ring-1 ring-line transition hover:ring-brand-200"
+        className="group mx-auto flex w-full max-w-xl items-center gap-3 rounded-full bg-white px-4 py-3 text-start ring-1 ring-line transition hover:shadow-card hover:ring-brand-200"
         data-testid="home-alerts-open"
       >
-        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-900">
+        <span className="bub-lilac grid size-9 shrink-0 place-items-center rounded-full text-brand-700">
           <Bell className="size-[18px]" aria-hidden />
         </span>
         <span className="min-w-0 flex-1 text-[15px] font-medium text-ink">{t("title")}</span>

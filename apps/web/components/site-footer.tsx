@@ -52,7 +52,7 @@ export async function SiteFooter() {
     pairs([[t("support"), LEGAL_INFO.supportEmail], [t("privacyContact"), LEGAL_INFO.privacyEmail], [t("safetyContact"), LEGAL_INFO.safetyEmail]]),
   ].filter(Boolean);
   return (
-    <footer className="mt-24 border-t border-line bg-cream-deep pb-24 lg:pb-0">
+    <footer className="mt-24 border-t border-line bg-[linear-gradient(180deg,#fff_0%,#fbf3f6_60%,#f5eefb_100%)] pb-24 lg:pb-0">
       {/* Mobile : logo sur toute la largeur, puis les colonnes de liens deux par deux (le pied de page restait sur près de deux écrans). */}
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
         <div className="col-span-2 space-y-4 md:col-span-1">
@@ -91,7 +91,14 @@ export async function SiteFooter() {
             </>
           )}
           {LEGAL_INFO.privacyEmail && <p>{t("dataStatement", { email: LEGAL_INFO.privacyEmail })}</p>}
-          <p>{t("rights", { year: new Date().getFullYear() })}</p>
+          {/* Direction artistique (docs/29) : Instagram (lien à venir) et la signature manuscrite de la marque. */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-2">
+            <p className="me-auto">{t("rights", { year: new Date().getFullYear() })}</p>
+            <span className="grid size-10 place-items-center rounded-full bg-white text-ink ring-1 ring-line" aria-label="Instagram" title="Instagram" data-testid="footer-instagram">
+              <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" /></svg>
+            </span>
+            <span className="text-gradient font-hand text-[1.75rem] leading-none font-bold" lang="en">Your people are out there.</span>
+          </div>
         </div>
       </div>
     </footer>

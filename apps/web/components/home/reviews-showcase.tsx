@@ -33,7 +33,7 @@ export function ReviewsShowcase({ reviews, title, subtitle, photoAlt, prevLabel,
         <p className="lead mt-3">{subtitle}</p>
       </div>
       <div className="relative">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-card sm:aspect-[16/9] lg:aspect-[21/9]">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-[2.25rem] shadow-card sm:aspect-[16/9] lg:aspect-[21/9]">
           <Image src="/images/photos/pourquoi-venir.webp" alt={photoAlt} fill sizes="100vw" className="object-cover object-[50%_30%]" />
         </div>
         <ul

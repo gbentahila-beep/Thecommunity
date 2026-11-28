@@ -57,7 +57,7 @@ export function BabLineup({ seatLabel, caption, className = "" }: { seatLabel: s
         {RIGHT.map((b, i) => bab(b, i + 3))}
       </div>
       <div className="mt-1 h-px bg-[linear-gradient(90deg,transparent,var(--color-line)_15%,var(--color-line)_85%,transparent)]" />
-      {caption && <p className="mt-3 text-center text-sm text-muted">{caption}</p>}
+      {caption && <p className="mt-3 text-center font-hand text-[1.75rem] leading-tight font-bold text-brand-700">{caption}</p>}
     </div>
   );
 }

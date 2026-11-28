@@ -23,6 +23,10 @@
   --color-ink: #141414;
   --color-muted: #66625c;
   --color-badge: #ffe1d8;
+  /* Direction artistique « Soleil de Casa » (docs/29, étape 7) : halos pêche et lilas, crème plus clair. */
+  --color-peach: #ffe3d8;
+  --color-lilac: #efe1fb;
+  --color-cream-light: #fbf7f2;
 
   --color-cat-eat: #e2553a;
   --color-cat-move: #2f8a5a;
@@ -32,9 +36,10 @@
 
   --font-sans: var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display-serif), var(--font-arabic-display), ui-serif, Georgia, serif;
+  --font-hand: var(--font-caveat), var(--font-arabic), cursive;
 
   --radius-card: 1.5rem;
-  --shadow-card: 0 1px 2px rgb(20 20 20 / 0.04), 0 8px 24px -12px rgb(20 20 20 / 0.16);
+  --shadow-card: 0 1px 2px rgb(20 20 20 / 0.03), 0 18px 40px -26px rgb(20 20 20 / 0.38);
   --shadow-float: 0 12px 40px -12px rgb(20 20 20 / 0.32);
 
   --animate-fade-up: fade-up 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -204,7 +209,7 @@
     @apply bg-brand-900 text-white hover:bg-brand-800;
   }
   .btn-secondary {
-    @apply bg-white text-brand-900 ring-1 ring-line hover:ring-brand-200;
+    @apply bg-white text-brand-900 ring-[1.5px] ring-ink hover:bg-cream;
   }
   .btn-ghost {
     @apply text-brand-900 hover:bg-brand-50;
@@ -239,6 +244,18 @@
   /* Section sombre : fond encre uni, filet en dégradé en haut (brand book : « crème sur encre »). */
   .bg-night {
     background: linear-gradient(100deg, var(--color-coral), var(--color-violet)) top / 100% 5px no-repeat, var(--color-brand-900);
+  }
+  /* Ronds doux (icônes) : pêche ou lilas, lumière en haut à gauche. */
+  .bub-peach {
+    background: radial-gradient(circle at 30% 30%, #fff, var(--color-peach));
+  }
+  .bub-lilac {
+    background: radial-gradient(circle at 30% 30%, #fff, var(--color-lilac));
+  }
+  /* Numéro d'étape en dégradé. */
+  .step-num {
+    @apply inline-grid size-7 shrink-0 place-items-center rounded-full text-sm font-bold text-white;
+    background: linear-gradient(100deg, var(--color-coral), var(--color-violet));
   }
   .chip-on {
     @apply bg-brand-900 text-white ring-brand-900 hover:ring-brand-900;
@@ -337,6 +354,9 @@
   .event-list:not(.is-few) .ev-status-wrap {
     @apply mt-auto pt-3;
   }
+  .event-list:not(.is-few) .ev-arrow {
+    display: grid;
+  }
   .event-list:not(.is-few) .ev-row:hover {
     @apply bg-white;
   }
@@ -366,4 +386,16 @@
 main:has(> .section:last-child) + footer,
 main:has(> :last-child > .section:last-child) + footer {
   margin-top: 0;
+}
+
+/*
+ * Accueil (direction artistique, docs/29) : sur ordinateur, la photo de l'accroche passe derrière le menu ;
+ * le menu reste transparent tant qu'on n'a pas fait défiler la page (HeaderScrollState pose data-scrolled).
+ */
+@media (width >= 64rem) {
+  html:not([data-scrolled]) body:has([data-hero-bleed]) .site-header {
+    background: transparent;
+    border-color: transparent;
+    backdrop-filter: none;
+  }
 }
