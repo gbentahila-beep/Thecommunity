@@ -83,7 +83,8 @@
     -webkit-tap-highlight-color: transparent;
   }
   body {
-    background-color: var(--color-cream);
+    /* Fonds harmonisés (docs/29, 28/11, option A) : une seule base, le crème clair de l'accroche. */
+    background-color: var(--color-cream-light);
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -163,8 +164,9 @@
   .section {
     @apply py-18 lg:py-30;
   }
+  /* Une section sur deux : voile pêche puis lilas, en fondu en haut et en bas (plus de ligne de coupure). */
   .section-white {
-    @apply bg-white;
+    background: linear-gradient(180deg, var(--color-cream-light) 0%, #fbece9 28%, #f4ecfb 72%, var(--color-cream-light) 100%);
   }
   .section-night {
     @apply text-white;

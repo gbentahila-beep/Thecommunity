@@ -31,23 +31,23 @@ export async function SafetyBand() {
     { icon: ShieldCheck, label: t("trust3") },
   ];
   return (
-    // Direction artistique (docs/29) : la bande sombre devient un grand panneau arrondi, posé sur le crème.
-    <section aria-labelledby="safety-band-title" className="relative overflow-hidden rounded-[2.5rem] bg-ink px-5 py-12 text-center text-white sm:px-12 sm:py-20" data-testid="home-trust">
+    // Fonds harmonisés (docs/29, 28/11) : panneau clair lilas-pêche au lieu du noir, cartes blanches.
+    <section aria-labelledby="safety-band-title" className="relative overflow-hidden rounded-[2.5rem] bg-[linear-gradient(150deg,#f3e8fd_0%,#fbeaf2_55%,#ffeee6_100%)] px-5 py-12 text-center sm:px-12 sm:py-20" data-testid="home-trust">
       <div className="section-head mx-auto max-w-2xl">
-        <p className="eyebrow text-white/60">{t("safetyEyebrow")}</p>
-        <h2 id="safety-band-title" className="section-title mt-3 text-white">{t("safetyTitle")}</h2>
+        <p className="eyebrow">{t("safetyEyebrow")}</p>
+        <h2 id="safety-band-title" className="section-title mt-3">{t("safetyTitle")}</h2>
       </div>
       <ul className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-3 sm:gap-6">
         {points.map(({ icon: Icon, label }) => (
-          <li key={label} className="flex flex-col items-center gap-4 rounded-3xl bg-white/[0.06] px-6 py-8 ring-1 ring-white/10">
+          <li key={label} className="flex flex-col items-center gap-4 rounded-[1.75rem] bg-white px-6 py-8 shadow-card">
             <span className="grid size-12 place-items-center rounded-full bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))]">
               <Icon className="size-6 text-white" strokeWidth={1.8} aria-hidden />
             </span>
-            <span className="text-[16px] leading-snug text-white/90">{label}</span>
+            <span className="text-[16px] leading-snug text-ink/85">{label}</span>
           </li>
         ))}
       </ul>
-      <Link href="/securite" className="group mt-10 inline-flex items-center gap-1.5 font-semibold text-white underline-offset-4 hover:underline">
+      <Link href="/securite" className="group mt-10 inline-flex items-center gap-1.5 font-semibold text-brand-900 underline-offset-4 hover:underline">
         {t("safetyLink")}
         <ArrowRight className="size-4 transition group-hover:translate-x-0.5 rtl:-scale-x-100" aria-hidden />
       </Link>

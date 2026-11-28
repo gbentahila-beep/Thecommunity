@@ -32,8 +32,8 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
         <Universes categories={categories} title={t("formatsTitle")} />
       </Section>
       <Section>
-        <section aria-labelledby="safety" data-testid="safety" className="relative overflow-hidden rounded-[2.5rem] bg-ink px-5 py-12 text-white sm:px-12 sm:py-20">
-          <h2 id="safety" className="section-title section-head text-center text-white">{t("safetyTitle")}</h2>
+        <section aria-labelledby="safety" data-testid="safety" className="relative overflow-hidden rounded-[2.5rem] bg-[linear-gradient(150deg,#f3e8fd_0%,#fbeaf2_55%,#ffeee6_100%)] px-5 py-12 sm:px-12 sm:py-20">
+          <h2 id="safety" className="section-title section-head text-center">{t("safetyTitle")}</h2>
           <ul className="mx-auto grid max-w-4xl gap-4 sm:grid-cols-2">
             {[
               { icon: MapPinCheck, k: "safety1" },
@@ -41,13 +41,13 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
               { icon: UserRound, k: "safety3" },
               { icon: Flag, k: "safety4" },
             ].map(({ icon: Icon, k }) => (
-              <li key={k} className="flex gap-4 rounded-3xl bg-white/[0.06] p-5 ring-1 ring-white/10 sm:p-6">
+              <li key={k} className="flex gap-4 rounded-[1.75rem] bg-white p-5 shadow-card sm:p-6">
                 <span className="grid size-11 shrink-0 place-items-center rounded-full bg-gradient-brand">
                   <Icon className="size-5 text-white" strokeWidth={1.8} aria-hidden />
                 </span>
                 <span>
-                  <span className="block font-semibold text-white">{t(`${k}Title`)}</span>
-                  <span className="mt-1 block text-[15px] leading-relaxed text-white/75">{t(k)}</span>
+                  <span className="block font-semibold text-ink">{t(`${k}Title`)}</span>
+                  <span className="mt-1 block text-[15px] leading-relaxed text-ink/70">{t(k)}</span>
                 </span>
               </li>
             ))}

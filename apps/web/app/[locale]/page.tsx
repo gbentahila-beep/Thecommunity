@@ -126,7 +126,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
           haut droit et passe derrière le menu ; sur téléphone, la photo occupe le haut avec un bord ondulé, le texte dessous. */}
       <section
         data-hero-bleed
-        className={`relative overflow-hidden bg-[radial-gradient(520px_420px_at_0%_0%,#fff_0%,transparent_70%),radial-gradient(620px_460px_at_8%_100%,var(--color-peach)_0%,transparent_62%)] bg-cream-light ${banner ? "mt-3" : "-mt-16 lg:-mt-20"}`}
+        className={`relative overflow-hidden bg-[radial-gradient(520px_420px_at_0%_0%,#fff_0%,transparent_70%),radial-gradient(560px_340px_at_10%_62%,var(--color-peach)_0%,transparent_68%)] bg-cream-light ${banner ? "mt-3" : "-mt-16 lg:-mt-20"}`}
       >
         <div className="absolute inset-y-0 end-0 hidden w-[54%] lg:block">
           <div className="absolute inset-0 [clip-path:url(#shape-hero)]">

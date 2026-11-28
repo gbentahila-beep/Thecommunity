@@ -39,7 +39,7 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
   return (
     <>
       {/* Étape 7c (docs/29, piste A) : halos pêche et lilas, petits traits corail. */}
-      <section className="page-header section-white halo-top relative">
+      <section className="page-header halo-top relative">
         <PageShell className="relative max-w-4xl text-center">
           <p className="eyebrow">{t("title")}</p>
           <h1 className="page-title mt-3"><TitleSparks text={t("heroTitle")} /></h1>

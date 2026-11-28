@@ -186,6 +186,13 @@ Déroulé prévu :
 - **Espace membre** : interrupteurs en dégradé ; ronds lilas (notifications) et pêche (factures).
 - **Homogénéité** : Kit presse (halos, boutons alignés sur le texte), Devenir partenaire / organisateur (ronds pêche et lilas), connexion et inscription (halos, photo emboîtée), Menu (halos).
 
+### Fonds harmonisés (option A, validée le 28 novembre)
+
+- **Une seule base** : le crème clair de l'accroche (`cream-light`) sur tout le site, en-têtes compris ; le menu sur ordinateur et le pied de page partent du même ton (plus de blanc pur ni de beige).
+- **Alternance** : une section sur deux (`.section-white`) reçoit un voile pêche puis lilas, en long fondu en haut et en bas : plus de ligne de coupure entre les sections. Les pages de texte restent sur la base seule.
+- **Accroches** : la lueur pêche est remontée pour s'éteindre dans la bande (elle était coupée par le bas de l'accroche).
+- **Panneau sécurité** (accueil, Comment ça marche) : clair lilas-pêche avec cartes blanches et ronds en dégradé, au lieu du noir.
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.

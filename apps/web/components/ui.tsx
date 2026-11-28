@@ -107,18 +107,18 @@ export function PageHeader({
   intro,
   children,
   centered = false,
-  tone = "cream",
 }: {
   title: ReactNode;
   eyebrow?: ReactNode;
   intro?: ReactNode;
   children?: ReactNode;
   centered?: boolean;
+  /** Ignoré depuis l'harmonisation des fonds (28/11) : un seul fond pour tous les en-têtes. */
   tone?: "cream" | "white";
 }) {
   return (
     // Piste A (docs/29, étape 7c) : halos pêche et lilas, petits traits corail.
-    <header className={`page-header halo-top relative ${tone === "white" ? "section-white" : ""}`}>
+    <header className="page-header halo-top relative">
       <div className={`container-page relative ${centered ? "text-center" : ""}`}>
         <div className={`container-text ${centered ? "mx-auto" : ""}`}>
           {eyebrow && <p className="eyebrow mb-3">{eyebrow}</p>}

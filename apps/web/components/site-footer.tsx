@@ -53,7 +53,7 @@ export async function SiteFooter() {
     pairs([[t("support"), LEGAL_INFO.supportEmail], [t("privacyContact"), LEGAL_INFO.privacyEmail], [t("safetyContact"), LEGAL_INFO.safetyEmail]]),
   ].filter(Boolean);
   return (
-    <footer className="mt-24 border-t border-line bg-[linear-gradient(180deg,#fff_0%,#fbf3f6_60%,#f5eefb_100%)] pb-24 lg:pb-0">
+    <footer className="mt-24 bg-[linear-gradient(180deg,var(--color-cream-light)_0%,#f8eef4_60%,#f3ecfb_100%)] pb-24 lg:pb-0">
       {/* Mobile : logo sur toute la largeur, puis les colonnes de liens deux par deux (le pied de page restait sur près de deux écrans). */}
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
         <div className="col-span-2 space-y-4 md:col-span-1">

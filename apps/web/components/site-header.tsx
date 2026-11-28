@@ -37,7 +37,7 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
   ];
   const cityItems = cities.map((c) => ({ id: c.id, name: tr(c.name, locale), active: c.isActive }));
   return (
-    <header className="site-header sticky top-0 z-30 px-3 pt-2 transition-colors lg:border-b lg:border-line/60 lg:bg-cream/90 lg:px-0 lg:pt-0 lg:backdrop-blur-md">
+    <header className="site-header sticky top-0 z-30 px-3 pt-2 transition-colors lg:border-b lg:border-line/60 lg:bg-cream-light/90 lg:px-0 lg:pt-0 lg:backdrop-blur-md">
       <HeaderScrollState />
       {/* Mobile : barre flottante (logo, S'inscrire, menu) ; ordinateur : barre pleine largeur. */}
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 rounded-full border border-line/60 bg-white/95 ps-5 pe-2 max-[379px]:gap-2 max-[379px]:ps-4 shadow-card backdrop-blur-md lg:h-20 lg:gap-2 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-6 xl:gap-4 xl:px-8 lg:shadow-none lg:backdrop-blur-none">

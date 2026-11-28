@@ -10,7 +10,7 @@ export function StaticPage({ title, intro, children, aside, wideAside = false }:
     <>
       <PageHeader title={title} intro={intro} />
       {children && (
-        <Section tone="white" className="!pt-12 sm:!pt-16">
+        <Section className="!pt-12 sm:!pt-16">
           {aside ? (
             <div className={`grid gap-8 lg:gap-14 ${wideAside ? "lg:grid-cols-[21rem_minmax(0,1fr)]" : "lg:grid-cols-[16rem_minmax(0,1fr)]"}`}>
               <aside className="lg:sticky lg:top-28 lg:self-start">{aside}</aside>
