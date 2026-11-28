@@ -4,7 +4,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BookingTimeline } from "@/components/home/booking-timeline";
 import { Universes } from "@/components/home/universes";
 import { ClosingCta } from "@/components/audience-cards";
-import { Sparks } from "@/components/brand/doodles";
 import { PageHero } from "@/components/page-hero";
 import { Section } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
@@ -34,7 +33,6 @@ export default async function HowPage({ params }: PageProps<"/[locale]/comment-c
       </Section>
       <Section>
         <section aria-labelledby="safety" data-testid="safety" className="relative overflow-hidden rounded-[2.5rem] bg-ink px-5 py-12 text-white sm:px-12 sm:py-20">
-          <Sparks className="absolute start-8 top-7 w-14" />
           <h2 id="safety" className="section-title section-head text-center text-white">{t("safetyTitle")}</h2>
           <ul className="mx-auto grid max-w-4xl gap-4 sm:grid-cols-2">
             {[

@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { activeFilterCount, VENUE_TIERS, CATALOG_FORMATS, CATALOG_SORTS, catalogParams, DAY_MOMENTS, formatParam, momentParam, MOROCCO_TIMEZONE, parseCatalogParams, sortParam, zonedParts, type CatalogFilters } from "@thecommunity/shared";
 import { X } from "lucide-react";
 import type { Category } from "@thecommunity/shared";
@@ -10,7 +11,6 @@ import { ExperienceRow } from "@/components/experience-row";
 import { ActiveTabScroller } from "./active-tab-scroller";
 import { ForYou } from "@/components/for-you";
 import { PageShell, SectionHeading } from "@/components/ui";
-import { Sparks } from "@/components/brand/doodles";
 import { Link } from "@/i18n/navigation";
 import { getCatalog, getCategories, getPublishedExperiences, getSubcategories, type WhenFilter } from "@/lib/data";
 import { dayKey, formatDayCell, formatDayHeading, formatLongDate } from "@/lib/format";
@@ -113,10 +113,9 @@ export async function CatalogView({ locale, sp, routeCategory }: { locale: strin
   return (
     // Direction artistique « Soleil de Casa » (docs/29, étape 7b) : halos pêche et lilas en haut de page, traits corail.
     <div className="relative bg-[radial-gradient(560px_340px_at_100%_0%,var(--color-lilac),transparent_65%),radial-gradient(520px_320px_at_0%_0%,var(--color-peach),transparent_60%)] bg-no-repeat">
-    <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
     <PageShell className="relative space-y-5 pt-8 pb-18 sm:pt-12 lg:pb-24">
       <form action={`${prefix}${pathOf(state)}`} method="get" className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between" data-testid="catalog-form">
-        <SectionHeading as="h1" className="mb-0 lg:mb-0" title={filters.q ? tf("resultsFor", { q: filters.q }) : shownCategory ? tr(shownCategory.name, locale) : tc("discover")} />
+        <SectionHeading as="h1" className="mb-0 lg:mb-0" title={<TitleSparks text={filters.q ? tf("resultsFor", { q: filters.q }) : shownCategory ? tr(shownCategory.name, locale) : tc("discover")} />} />
         {when !== "all" && <input type="hidden" name="quand" value={when} />}
         {filters.q && <input type="hidden" name="q" value={filters.q} />}
         <div className="flex shrink-0 items-center gap-2">

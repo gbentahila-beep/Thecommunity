@@ -1,5 +1,4 @@
 import { ArrowRight, HeartHandshake, Receipt, ShieldCheck, Users, Wallet } from "lucide-react";
-import { Sparks } from "@/components/brand/doodles";
 import { getTranslations } from "next-intl/server";
 import { BabLineup } from "@/components/brand/bab-lineup";
 import { Link } from "@/i18n/navigation";
@@ -34,7 +33,6 @@ export async function SafetyBand() {
   return (
     // Direction artistique (docs/29) : la bande sombre devient un grand panneau arrondi, posé sur le crème.
     <section aria-labelledby="safety-band-title" className="relative overflow-hidden rounded-[2.5rem] bg-ink px-5 py-12 text-center text-white sm:px-12 sm:py-20" data-testid="home-trust">
-      <Sparks className="absolute start-8 top-7 w-14" />
       <div className="section-head mx-auto max-w-2xl">
         <p className="eyebrow text-white/60">{t("safetyEyebrow")}</p>
         <h2 id="safety-band-title" className="section-title mt-3 text-white">{t("safetyTitle")}</h2>

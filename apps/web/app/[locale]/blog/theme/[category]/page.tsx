@@ -1,4 +1,4 @@
-import { Sparks } from "@/components/brand/doodles";
+import { TitleSparks } from "@/components/brand/doodles";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -40,7 +40,6 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
   return (
     // Étape 7c (docs/29, piste A) : halos pêche et lilas, petits traits corail, comme l'accueil du blog.
     <div className="halo-top relative">
-    <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
     <PageShell className="page-header relative">
       <div className="">
       <div className="max-w-4xl">
@@ -51,7 +50,7 @@ export default async function BlogCategoryPage({ params }: PageProps<"/[locale]/
             <li className="text-muted" aria-current="page">{c.title[lang]}</li>
           </ol>
         </nav>
-        <h1 className="page-title mt-6">{c.title[lang]}</h1>
+        <h1 className="page-title mt-6"><TitleSparks text={c.title[lang]} /></h1>
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink/75">{c.description[lang]}</p>
         <p className="mt-4 text-[15px] text-muted">
           {t("count", { count: articles.length })} · {t("updatedOn", { date: formatCalendarDate(lastUpdate(articles), locale) })}

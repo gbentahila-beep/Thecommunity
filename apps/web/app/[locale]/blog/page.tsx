@@ -1,4 +1,3 @@
-import { Sparks } from "@/components/brand/doodles";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BlogBrowser, type BrowseEntry } from "@/components/blog/blog-browser";
@@ -30,7 +29,6 @@ export default async function BlogPage({ params }: PageProps<"/[locale]/blog">) 
   return (
     // Étape 7c (docs/29, piste A) : halos pêche et lilas, petits traits corail.
     <div className="halo-top relative">
-    <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
     <PageShell className="page-header relative">
       <div className="">
       <BlogHero />

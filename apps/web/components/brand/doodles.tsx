@@ -12,6 +12,27 @@ export function Sparks({ className = "" }: { className?: string }) {
   );
 }
 
+/**
+ * Règle des étincelles (docs/29, 28/11) : une seule par page, toujours collée au dernier mot du titre principal,
+ * en haut à droite, comme un éclat. Elle suit le texte (jamais sur une photo ni dans le vide) et ne passe jamais
+ * seule à la ligne.
+ */
+export function TitleSparks({ text }: { text: string }) {
+  const trimmed = text.trimEnd();
+  const i = trimmed.lastIndexOf(" ");
+  const head = i >= 0 ? trimmed.slice(0, i + 1) : "";
+  const last = i >= 0 ? trimmed.slice(i + 1) : trimmed;
+  return (
+    <>
+      {head}
+      <span className="whitespace-nowrap">
+        {last}
+        <Sparks className="ms-[0.1em] inline-block w-[0.5em] -translate-y-[0.2em] rotate-[18deg] align-top rtl:-scale-x-100" />
+      </span>
+    </>
+  );
+}
+
 export function Swash({ className = "" }: { className?: string }) {
   const id = "sw" + useId().replace(/[^a-zA-Z0-9_-]/g, "");
   return (

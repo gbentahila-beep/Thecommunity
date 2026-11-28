@@ -1,4 +1,4 @@
-import { Sparks } from "@/components/brand/doodles";
+import { TitleSparks } from "@/components/brand/doodles";
 import { ArrowRight, BadgeCheck, CalendarCheck, CalendarCog, Compass, Handshake, MapPinCheck, MessageCircle, ShieldCheck, Store, UserRound, Utensils } from "lucide-react";
 import { AudienceCards } from "@/components/audience-cards";
 import { getTranslations } from "next-intl/server";
@@ -40,10 +40,9 @@ export async function HelpHub({ audience, locale }: { audience: HelpAudience; lo
     <>
       {/* Étape 7c (docs/29, piste A) : halos pêche et lilas, petits traits corail. */}
       <section className="page-header section-white halo-top relative">
-        <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
         <PageShell className="relative max-w-4xl text-center">
           <p className="eyebrow">{t("title")}</p>
-          <h1 className="page-title mt-3">{t("heroTitle")}</h1>
+          <h1 className="page-title mt-3"><TitleSparks text={t("heroTitle")} /></h1>
           <p className="lead mx-auto mt-4 max-w-xl">{t("heroText")}</p>
         </PageShell>
       </section>
@@ -100,7 +99,6 @@ export async function HelpContactCards() {
   return (
     <div className="mt-12 space-y-5" data-testid="help-contact-cards">
       <div className="relative flex flex-col items-center overflow-hidden rounded-[2rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] px-6 py-10 text-center sm:px-10">
-        <Sparks className="absolute start-6 top-5 w-10 -rotate-12" />
         <span className="grid size-13 place-items-center rounded-full bg-white shadow-card"><MessageCircle className="size-6 text-brand-700" strokeWidth={1.7} aria-hidden /></span>
         <h2 className="mt-3 card-title">{t("contactTitle")}</h2>
         <p className="mt-2 text-ink/80">{t("contactText")}</p>

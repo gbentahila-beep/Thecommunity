@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { MediaImage as Image } from "@/components/media";
 import { EmptyState } from "@/components/empty-state";
-import { Sparks } from "@/components/brand/doodles";
 import { PageHero } from "@/components/page-hero";
 import { Section } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
@@ -252,7 +251,6 @@ export default async function ReviewsPage({ params, searchParams }: PageProps<"/
       )}
 
       <section className="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] p-6 text-center sm:p-12">
-        <Sparks className="absolute start-6 top-5 w-11 -rotate-12" />
         <h2 className="section-title">{t("ctaTitle")}</h2>
         <p className="mx-auto mt-3 max-w-xl text-ink/75">{t("ctaText")}</p>
         <Link href="/espace/reservations" className="btn btn-secondary mt-6">{t("ctaButton")}</Link>

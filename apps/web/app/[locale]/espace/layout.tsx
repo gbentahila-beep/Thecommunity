@@ -1,4 +1,3 @@
-import { Sparks } from "@/components/brand/doodles";
 import { Info } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -20,7 +19,6 @@ export default async function AccountLayout({ children }: LayoutProps<"/[locale]
   return (
     // Étape 7c (docs/29, piste A) : halos pêche et lilas en haut de l'espace membre.
     <div className="halo-top relative">
-    <Sparks className="pointer-events-none absolute end-6 top-6 hidden w-12 sm:end-[8%] sm:top-10 sm:block sm:w-14" />
     <PageShell className="relative max-w-3xl py-6 lg:py-10">
       {space.isDemo && (
         <p role="note" className="mb-6 flex items-start gap-2.5 rounded-2xl bg-white/80 px-4 py-3 text-sm text-brand-900 ring-1 ring-line/60">

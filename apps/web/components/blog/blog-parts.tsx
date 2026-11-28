@@ -1,10 +1,10 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { ArrowRight, ChevronRight, Lightbulb, MapPin } from "lucide-react";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { BLOG_CATEGORIES, blogLang, type BlogArticle, type BlogBlock, type BlogCategoryKey } from "@/content/blog";
 import { Link } from "@/i18n/navigation";
 import { richText } from "@/lib/rich-text";
-import { Sparks } from "@/components/brand/doodles";
 import { ActiveTabScroll } from "./active-tab-scroll";
 
 const catTitle = (key: BlogCategoryKey, locale: string) => BLOG_CATEGORIES.find((c) => c.key === key)!.title[blogLang(locale)];
@@ -17,7 +17,7 @@ export async function BlogHero({ as = "h1" }: { as?: "h1" | "p" }) {
     <header className="max-w-3xl">
       <p className="eyebrow text-brand-700">{t("title")}</p>
       <Title className="page-title mt-3">
-        {t("heroTitleA")} <span className="text-gradient">{t("heroTitleB")}</span>
+        {t("heroTitleA")} <span className="text-gradient"><TitleSparks text={t("heroTitleB")} /></span>
       </Title>
       <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink/80">{t("heroText")}</p>
       <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{t("intro")}</p>
@@ -140,7 +140,6 @@ export async function CityCard() {
   const t = await getTranslations("blog");
   return (
     <aside className="relative mt-8 overflow-hidden rounded-[2rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] p-6 sm:p-10">
-      <Sparks className="absolute end-6 top-5 w-11 rotate-12" />
       <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-ink shadow-card">
         <MapPin className="size-4" aria-hidden /> Casablanca
       </span>
@@ -191,7 +190,6 @@ export async function BlogCta() {
   const t = await getTranslations("blog");
   return (
     <section className="relative mt-16 overflow-hidden rounded-[2rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] px-6 py-12 text-center sm:px-10 lg:mt-24">
-      <Sparks className="absolute start-6 top-5 w-11 -rotate-12" />
       <h2 className="section-title">{t("ctaTitle")}</h2>
       <p className="mx-auto mt-3 max-w-xl text-muted">{t("ctaText")}</p>
       <Link href="/experiences" className="btn btn-primary mt-6 min-h-11">

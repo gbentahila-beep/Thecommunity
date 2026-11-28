@@ -19,7 +19,6 @@ import { MediaImage as Image } from "@/components/media";
 import { ExperienceGallery } from "@/components/experience-gallery";
 import { VenueMap } from "@/components/venue-map";
 import { ReviewItem } from "@/components/reviews/review-item";
-import { Sparks } from "@/components/brand/doodles";
 import { EventEssentials, type EssentialItem } from "@/components/meeting-section";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -246,7 +245,6 @@ export default async function ExperiencePage({ params }: PageProps<"/[locale]/ex
         </nav>
 
         <div className="relative">
-        <Sparks className="pointer-events-none absolute -end-3 -top-9 z-10 w-12 rotate-12 sm:w-14" />
         <ExperienceGallery photos={exp.images.map((i) => ({ src: i.path, alt: tr(i.alt, locale) }))}>
           <FavoriteButton experienceId={exp.id} className="absolute end-4 top-4" />
         </ExperienceGallery>

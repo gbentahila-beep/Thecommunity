@@ -1,6 +1,5 @@
 import { ArrowRight, CalendarHeart, Coffee } from "lucide-react";
 import Image from "next/image";
-import { Sparks } from "@/components/brand/doodles";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
@@ -70,7 +69,6 @@ export async function ClosingCta({ signedIn = false }: { signedIn?: boolean }) {
           />
         </div>
         <div className="relative z-10 px-6 pt-1 pb-8 sm:px-10 lg:max-w-[48%] lg:p-14">
-          <Sparks className="absolute end-6 -top-2 w-11 rotate-12 lg:start-5 lg:end-auto lg:-top-9 lg:-rotate-12" />
           <h2 id="closing-title" className="font-display text-[2rem] leading-[1.06] font-semibold tracking-[-0.025em] text-balance text-brand-900 sm:text-5xl">
             {t("closingTitle1")} <em className="text-brand-700">{t("closingTitle2")}</em>
           </h2>

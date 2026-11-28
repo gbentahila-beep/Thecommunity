@@ -11,7 +11,7 @@ import { HowItWorks } from "@/components/home/how-it-works";
 import { ReviewsShowcase } from "@/components/home/reviews-showcase";
 import { Universes } from "@/components/home/universes";
 import { PageShell, PrimaryLink, Section, SectionHeading } from "@/components/ui";
-import { Sparks, Swash } from "@/components/brand/doodles";
+import { Swash, TitleSparks } from "@/components/brand/doodles";
 import { Link } from "@/i18n/navigation";
 import { experienceBadge, NEW_EXPERIENCE_DAYS, seatsAvailable, type Experience, type HomeSectionId, type Session } from "@thecommunity/shared";
 import { getCategories, getCity, getExperiencesWithoutUpcoming, getHomeSettings, getNextSessionPerExperience, getPublishedExperiences } from "@/lib/data";
@@ -133,20 +133,18 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             <Image src="/images/accueil-rooftop-casablanca.webp" alt={t("heroImageAlt")} fill priority sizes="55vw" className="object-cover object-[52%_35%]" />
             <div className="absolute inset-0 bg-gradient-to-b from-ink/20 to-transparent to-25%" />
           </div>
-          <Sparks className="absolute start-[6%] top-36 w-16" />
         </div>
         <div className="relative h-[400px] lg:hidden">
           <div className="absolute inset-0 [clip-path:url(#shape-hero-m)]">
             <Image src="/images/accueil-rooftop-casablanca.webp" alt={t("heroImageAlt")} fill priority sizes="100vw" className="object-cover object-[45%_30%]" />
           </div>
-          <Sparks className="absolute end-5 bottom-16 w-12" />
         </div>
         <PageShell className="relative z-10 lg:flex lg:min-h-[min(88vh,780px)] lg:items-center">
           <div className="pt-2 pb-16 text-center lg:max-w-[480px] lg:pt-28 lg:pb-28 lg:text-start">
             <h1 className="animate-fade-up font-display text-[2.75rem] leading-[1] font-semibold tracking-[-0.03em] text-brand-900 sm:text-6xl lg:text-[4.5rem]">
               {t("heroTitle1")}
               <br />
-              <span className="text-gradient">{t("heroTitle2")}</span>
+              <span className="text-gradient"><TitleSparks text={t("heroTitle2")} /></span>
             </h1>
             <Swash className="mx-auto mt-1 block h-4 w-52 lg:ms-36 lg:me-0 lg:w-72" />
             <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-ink/75 [animation-delay:120ms] animate-fade-up lg:mx-0 lg:mt-5 lg:text-lg">{t("heroSubtitle")}</p>

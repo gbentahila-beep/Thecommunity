@@ -1,4 +1,4 @@
-import { Sparks } from "@/components/brand/doodles";
+import { TitleSparks } from "@/components/brand/doodles";
 import { ArrowRight, Star } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
@@ -119,11 +119,10 @@ export function PageHeader({
   return (
     // Piste A (docs/29, étape 7c) : halos pêche et lilas, petits traits corail.
     <header className={`page-header halo-top relative ${tone === "white" ? "section-white" : ""}`}>
-      <Sparks className="pointer-events-none absolute end-6 top-6 w-12 sm:end-[8%] sm:top-10 sm:w-14" />
       <div className={`container-page relative ${centered ? "text-center" : ""}`}>
         <div className={`container-text ${centered ? "mx-auto" : ""}`}>
           {eyebrow && <p className="eyebrow mb-3">{eyebrow}</p>}
-          <h1 className="page-title">{title}</h1>
+          <h1 className="page-title">{typeof title === "string" ? <TitleSparks text={title} /> : title}</h1>
           {intro && <p className="lead mt-4">{intro}</p>}
         </div>
         {children}

@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ClosingCta } from "@/components/audience-cards";
-import { Sparks } from "@/components/brand/doodles";
 import { WhyWenzy } from "@/components/home/why-wenzy";
 import { PageHero } from "@/components/page-hero";
 import { Section } from "@/components/ui";
@@ -66,7 +65,6 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
           <div className="relative aspect-square overflow-hidden rounded-[2.5rem] shadow-card">
             <Image src="/images/photos/comment-groupe-2.webp" alt={ta("storyPhotoAlt")} fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
           </div>
-          <Sparks className="absolute end-1 -top-9 w-12 rotate-12 sm:-end-3 sm:w-14" />
         </div>
         <div>
           <p className="eyebrow">{ta("storyEyebrow")}</p>
@@ -114,7 +112,6 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/a-propo
       <Section>
       <section aria-labelledby="gallery">
         <div className="relative mx-auto max-w-2xl text-center">
-          <Sparks className="absolute -top-10 end-0 w-12 rotate-12 sm:-end-10" />
           <h2 id="gallery" className="section-title">{ta("galleryTitle")}</h2>
           <p className="mt-4 text-lg leading-relaxed text-ink/75">{ta("galleryText")}</p>
         </div>
