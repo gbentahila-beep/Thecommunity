@@ -17,7 +17,7 @@ export async function SiteHeader({ cityId = DEFAULT_CITY }: { cityId?: string })
   const [t, locale, categories, cities] = await Promise.all([getTranslations("nav"), getLocale(), getCategories(), getCities()]);
   const discover = [
     { href: "/experiences", label: t("allExperiences") },
-    ...categories.map((c) => ({ href: `/${cityId}/${c.id}`, label: tr(c.name, locale), sub: true })),
+    ...categories.map((c) => ({ href: `/${cityId}/${c.id}`, label: tr(c.name, locale), sub: true, category: c.id, icon: c.icon })),
   ];
   // Menu du haut : Découvrir · À propos · Comment ça marche · Blog · Abonnement · Questions-réponses · Avis.
   const links = [

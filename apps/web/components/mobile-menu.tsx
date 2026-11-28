@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Menu, X } from "lucide-react";
+import { Award, CalendarDays, CalendarHeart, CalendarRange, ChevronRight, CircleHelp, HandHeart, HeartHandshake, House, Info, MapPin, Menu, MessageCircle, Newspaper, Sparkles, Star, X, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -9,10 +9,33 @@ import { logout } from "@/lib/auth/client";
 import { useMember } from "@/lib/use-member";
 import { LanguageSwitch } from "./language-switch";
 import { Logo } from "./logo";
+import { CategoryIcon } from "./category-icon";
 import { ProfileCard } from "./profile-card";
 
 /** `sub` : un univers, affiché en retrait sous « Toutes les expériences » (pas de pastille de couleur). */
-type Item = { href: string; label: string; sub?: boolean };
+type Item = { href: string; label: string; sub?: boolean; category?: string; icon?: string | null };
+
+/** Icône de chaque ligne (même style que l'onglet Menu : rond lilas). */
+const ICONS: Record<string, LucideIcon> = {
+  "/": House,
+  "/espace/reservations": CalendarDays,
+  "/espace/rencontres": HeartHandshake,
+  "/experiences": CalendarRange,
+  "/a-propos": Info,
+  "/comment-ca-marche": Sparkles,
+  "/blog": Newspaper,
+  "/abonnement": Award,
+  "/avis": Star,
+  "/devenir-partenaire": HandHeart,
+  "/devenir-organisateur": CalendarHeart,
+  "/faq": CircleHelp,
+  "/aide": MessageCircle,
+};
+const bubble = (node: React.ReactNode) => <span className="bub-lilac grid size-9 shrink-0 place-items-center rounded-full text-ink">{node}</span>;
+const iconFor = (href: string) => {
+  const Icon = ICONS[href];
+  return Icon ? bubble(<Icon className="size-[18px]" strokeWidth={1.7} aria-hidden />) : null;
+};
 type City = { id: string; name: string; active: boolean };
 
 /** Rubrique du menu : petit titre, puis une carte de lignes. */
@@ -20,15 +43,16 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
   return (
     <section>
       <h3 className="mb-2 px-1 text-sm font-medium text-muted">{title}</h3>
-      <ul className="divide-y divide-line/70 overflow-hidden rounded-2xl bg-white shadow-card">{children}</ul>
+      <ul className="divide-y divide-line/70 overflow-hidden rounded-[1.5rem] bg-white shadow-card">{children}</ul>
     </section>
   );
 }
 
-function Row({ href, onClick, current = false, children }: { href: string; onClick: () => void; current?: boolean; children: React.ReactNode }) {
+function Row({ href, onClick, current = false, icon, children }: { href: string; onClick: () => void; current?: boolean; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
     <li>
-      <Link href={href} onClick={onClick} aria-current={current ? "page" : undefined} className="flex min-h-12 items-center gap-3 px-4 py-2.5 text-[16px] font-medium text-ink transition hover:bg-cream">
+      <Link href={href} onClick={onClick} aria-current={current ? "page" : undefined} className="flex min-h-14 items-center gap-3 px-4 py-2.5 text-[16px] font-medium text-ink transition hover:bg-cream">
+        {icon ?? iconFor(href)}
         {children}
         <ChevronRight className="ms-auto size-4 shrink-0 text-muted rtl:-scale-x-100" aria-hidden />
       </Link>
@@ -123,7 +147,7 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="absolute inset-x-3 top-2 max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain rounded-3xl border border-line/60 bg-cream px-4 pt-4 pb-6 shadow-float motion-safe:animate-[menu-in_180ms_ease-out]"
+            className="halo-top absolute inset-x-3 top-2 max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain rounded-[1.75rem] border border-line/60 bg-cream-light px-4 pt-4 pb-6 shadow-float motion-safe:animate-[menu-in_180ms_ease-out]"
           >
             <h2 id={titleId} className="sr-only">{t("menuTitle")}</h2>
             <div className="flex h-12 items-center justify-between px-2">
@@ -156,8 +180,8 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
               )}
               <Group title={t("discover")}>
                 {discover.map((it, i) => (
-                  <Row key={it.href} href={it.href} onClick={close} current={pathname === it.href}>
-                    <span className={it.sub ? "ps-4 text-[15px] text-ink/75" : i === 0 ? "font-semibold text-brand-900" : ""}>{it.label}</span>
+                  <Row key={it.href} href={it.href} onClick={close} current={pathname === it.href} icon={it.category ? bubble(<CategoryIcon category={it.category} icon={it.icon} className="size-[18px]" />) : undefined}>
+                    <span className={i === 0 ? "font-semibold text-brand-900" : ""}>{it.label}</span>
                   </Row>
                 ))}
               </Group>
@@ -179,10 +203,11 @@ export function MobileMenu({ discover, links, cities }: { discover: Item[]; link
               <Group title={t("cities")}>
                 {cities.map((c) =>
                   c.active ? (
-                    <Row key={c.id} href={`/${c.id}`} onClick={close}>{c.name}</Row>
+                    <Row key={c.id} href={`/${c.id}`} onClick={close} icon={bubble(<MapPin className="size-[18px]" strokeWidth={1.7} aria-hidden />)}>{c.name}</Row>
                   ) : (
-                    <li key={c.id} className="flex min-h-12 items-center justify-between px-4 text-[15px] text-muted">
-                      {c.name}
+                    <li key={c.id} className="flex min-h-14 items-center gap-3 px-4 text-[15px] text-muted">
+                      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-cream"><MapPin className="size-[18px]" strokeWidth={1.7} aria-hidden /></span>
+                      <span className="me-auto">{c.name}</span>
                       <span className="rounded-full bg-cream px-2 py-0.5 text-[11px] font-medium">{t("comingSoon")}</span>
                     </li>
                   ),
