@@ -28,10 +28,10 @@ export default async function BecomeOrganizerPage({ params }: PageProps<"/[local
   return (
     <StaticPage title={t("title")} intro={t("intro")}>
       <ul className="grid gap-4 sm:grid-cols-3">
-        {why.map(({ icon: Icon, title, text }) => (
-          <li key={title} className="card p-5">
-            <Icon className="size-6 text-brand-900" aria-hidden />
-            <p className="mt-3 font-semibold text-ink">{title}</p>
+        {why.map(({ icon: Icon, title, text }, i) => (
+          <li key={title} className="rounded-[1.75rem] bg-white p-6 shadow-card">
+            <span className={`${i % 2 ? "bub-lilac" : "bub-peach"} grid size-12 place-items-center rounded-full text-ink`}><Icon className="size-5" strokeWidth={1.7} aria-hidden /></span>
+            <p className="mt-4 font-semibold text-ink">{title}</p>
             <p className="mt-1 text-sm text-ink/75">{text}</p>
           </li>
         ))}

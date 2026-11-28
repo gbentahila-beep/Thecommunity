@@ -177,6 +177,15 @@ Déroulé prévu :
 - **Espace membre** : carte de profil en bandeau pêche-lilas, rubriques arrondies avec ronds lilas ; réservations plus arrondies, onglets dans une barre blanche.
 - **« Découvrez votre table »** (accueil) : une seule photo au lieu des trois bandeaux (à changer plus tard).
 
+### Étape 7d — finitions (validé le 28 novembre)
+
+- **Animation** : à l'apparition, les blocs des sections montent en fondu au rythme du défilement (`.reveal` sur `Section`, CSS lié au défilement) ; rien n'est caché si l'appareil demande moins d'animations ou si le navigateur ne la gère pas.
+- **Étincelles** (règle du 28/11) : une seule par page, collée au dernier mot du titre principal (`TitleSparks`) ; jamais sur une photo, dans un coin vide ou dans un panneau.
+- **Blog, pages de thème** : halos, articles en cartes, encadré Casablanca en bandeau pêche-lilas, questions en cartes ; la rangée des thèmes défile jusqu'au thème actif sur téléphone.
+- **Badges des stores** (accueil) : logo Apple / Google Play et « Bientôt sur », sans lien jusqu'à la publication de l'application.
+- **Espace membre** : interrupteurs en dégradé ; ronds lilas (notifications) et pêche (factures).
+- **Homogénéité** : Kit presse (halos, boutons alignés sur le texte), Devenir partenaire / organisateur (ronds pêche et lilas), connexion et inscription (halos, photo emboîtée), Menu (halos).
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.

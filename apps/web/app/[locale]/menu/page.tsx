@@ -50,6 +50,8 @@ export default async function MenuPage({ params }: PageProps<"/[locale]/menu">) 
   setRequestLocale(locale);
   const [t, tf, tm, categories, loc] = await Promise.all([getTranslations("nav"), getTranslations("footer"), getTranslations("menuPage"), getCategories(), getLocale()]);
   return (
+    // Piste A (docs/29) : halos en haut, comme l'espace membre.
+    <div className="halo-top">
     <PageShell className="max-w-2xl space-y-6 py-8">
       <h1 className="page-title">{t("menu")}</h1>
       <MenuProfile />
@@ -103,5 +105,6 @@ export default async function MenuPage({ params }: PageProps<"/[locale]/menu">) 
       </div>
       <MenuAuth />
     </PageShell>
+    </div>
   );
 }

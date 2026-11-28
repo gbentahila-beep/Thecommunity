@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { Info } from "lucide-react";
 import Image from "next/image";
 import type { ReactNode } from "react";
@@ -21,23 +22,28 @@ export function AuthCard({
   children: ReactNode;
 }) {
   return (
+    // Piste A (docs/29) : halos en haut ; photo seule « emboîtée » sur un fond pêche tourné.
+    <div className="halo-top">
     <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:items-center lg:px-8 lg:py-16">
-      <div className="relative hidden h-[560px] overflow-hidden rounded-3xl lg:block">
-        <Image src="/demo/diner-inconnus.webp" alt="" fill sizes="50vw" className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-900/60 to-transparent" />
+      <div className="relative hidden h-[540px] lg:block">
+        <div aria-hidden className="absolute -inset-3 -rotate-2 rounded-[2.4rem] bg-peach" />
+        <div className="relative h-full overflow-hidden rounded-[2.2rem] shadow-card">
+          <Image src="/demo/diner-inconnus.webp" alt="" fill sizes="50vw" className="object-cover" />
+        </div>
       </div>
       <div className="mx-auto w-full max-w-md">
-        <h1 className="page-title">{title}</h1>
+        <h1 className="page-title"><TitleSparks text={title} /></h1>
         <p className="mt-2 text-muted">{subtitle}</p>
         <div className="mt-8 space-y-4">{children}</div>
         {notice && (
-          <p role="note" className="mt-5 flex gap-2.5 rounded-2xl bg-brand-50 p-3.5 text-sm text-brand-900">
+          <p role="note" className="mt-5 flex gap-2.5 rounded-2xl bg-white/80 p-3.5 text-sm text-brand-900 ring-1 ring-line/60">
             <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
             {notice}
           </p>
         )}
         <div className="mt-6 text-center text-sm text-muted">{footer}</div>
       </div>
+    </div>
     </div>
   );
 }

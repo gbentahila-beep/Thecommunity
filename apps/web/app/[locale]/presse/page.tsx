@@ -1,3 +1,4 @@
+import { TitleSparks } from "@/components/brand/doodles";
 import { Download, Mail } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -25,12 +26,14 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
   const l = lang(locale);
   const P = PRESS;
   return (
+    // Piste A (docs/29) : halos en haut, étincelle sur le titre, boutons alignés sur le texte.
+    <div className="halo-top">
     <PageShell className="page-header">
       <div className="">
       <header className="max-w-2xl">
-        <h1 className="page-title">{P.title[l]}</h1>
+        <h1 className="page-title"><TitleSparks text={P.title[l]} /></h1>
         <p className="mt-4 text-lg leading-relaxed text-ink/80">{P.intro[l]}</p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <a href="#logos" className="btn btn-primary btn-sm">
             <Download className="size-4" aria-hidden />
             {P.ctaLogos[l]}
@@ -182,5 +185,6 @@ export default async function PressPage({ params }: PageProps<"/[locale]/presse"
       </div>
     </div>
     </PageShell>
+    </div>
   );
 }
