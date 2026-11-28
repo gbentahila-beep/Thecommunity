@@ -51,13 +51,26 @@ export async function AudienceCards({ headingLevel = "h3", withTitle = false }: 
 export async function ClosingCta({ signedIn = false }: { signedIn?: boolean }) {
   const t = await getTranslations("audiences");
   return (
-    <section aria-labelledby="closing-title" className="relative pt-36 lg:pt-16" data-testid="home-closing">
-      <div className="relative rounded-[1.75rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] lg:grid lg:min-h-[340px] lg:grid-cols-[1fr_1.15fr] lg:items-center lg:rounded-[2.5rem]">
-        <div className="absolute start-0 end-0 -top-36 h-56 [clip-path:url(#shape-band-m)] lg:start-auto lg:-top-16 lg:bottom-0 lg:h-auto lg:w-[58%] lg:[clip-path:url(#shape-band)]">
-          <Image src="/images/photos/groupe-hassan-ii.webp" alt="" fill sizes="(min-width: 1024px) 60vw, 100vw" className="object-cover object-[60%_40%] [mask-image:linear-gradient(0deg,transparent_0,#000_35%)] lg:[mask-image:linear-gradient(90deg,transparent_0,#000_18%)] rtl:lg:[mask-image:linear-gradient(270deg,transparent_0,#000_18%)]" />
+    // Étape 7c (docs/29) : la photo de groupe est détourée (ciel retiré) et posée sur le bandeau pêche-lilas ;
+    // la mosquée et les têtes dépassent du bord haut sur téléphone, le groupe s'appuie au coin bas droit sur ordinateur.
+    <section aria-labelledby="closing-title" className="relative pt-16 lg:pt-6" data-testid="home-closing">
+      <div className="relative flow-root rounded-[1.75rem] bg-[linear-gradient(105deg,#fff4ee_0%,#fbeef6_45%,#efe5ff_100%)] lg:min-h-[340px] lg:rounded-[2.5rem]">
+        {/* Téléphone : la photo, recadrée sur le groupe et la mosquée, dépasse du bord haut et se fond dans le bandeau. */}
+        <div className="pointer-events-none relative -mt-14 h-52 [mask-image:linear-gradient(0deg,transparent_0,#000_30%)] lg:hidden">
+          <Image src="/images/photos/groupe-hassan-ii-detoure.webp" alt="" fill sizes="100vw" className="object-cover object-[78%_100%]" />
         </div>
-        <div className="relative z-10 px-6 pt-24 pb-8 sm:px-10 lg:p-14">
-          <Sparks className="absolute start-6 top-14 w-12 -rotate-12 lg:start-5 lg:-top-9" />
+        <div className="pointer-events-none absolute end-0 bottom-0 hidden w-[66%] lg:block">
+          <Image
+            src="/images/photos/groupe-hassan-ii-detoure.webp"
+            alt=""
+            width={1467}
+            height={533}
+            sizes="50rem"
+            className="h-auto w-full rounded-ee-[2.5rem] [mask-image:linear-gradient(90deg,transparent_0,#000_24%)] rtl:[mask-image:linear-gradient(270deg,transparent_0,#000_24%)]"
+          />
+        </div>
+        <div className="relative z-10 px-6 pt-1 pb-8 sm:px-10 lg:max-w-[48%] lg:p-14">
+          <Sparks className="absolute end-6 -top-2 w-11 rotate-12 lg:start-5 lg:end-auto lg:-top-9 lg:-rotate-12" />
           <h2 id="closing-title" className="font-display text-[2rem] leading-[1.06] font-semibold tracking-[-0.025em] text-balance text-brand-900 sm:text-5xl">
             {t("closingTitle1")} <em className="text-brand-700">{t("closingTitle2")}</em>
           </h2>

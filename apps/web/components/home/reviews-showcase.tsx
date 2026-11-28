@@ -33,6 +33,8 @@ export function ReviewsShowcase({ reviews, title, subtitle, photoAlt, prevLabel,
         <p className="lead mt-3">{subtitle}</p>
       </div>
       <div className="relative">
+        {/* Étape 7c (docs/29) : photo « emboîtée » sur un fond lilas légèrement tourné, comme sur À propos et les formats. */}
+        <div aria-hidden className="absolute inset-x-0 top-0 aspect-[4/3] -rotate-2 scale-[1.03] rounded-[2.6rem] bg-lilac sm:aspect-[16/9] sm:-rotate-1 lg:aspect-[21/9]" />
         <div className="relative aspect-[4/3] overflow-hidden rounded-[2.25rem] shadow-card sm:aspect-[16/9] lg:aspect-[21/9]">
           <Image src="/images/photos/pourquoi-venir.webp" alt={photoAlt} fill sizes="100vw" className="object-cover object-[50%_30%]" />
         </div>
