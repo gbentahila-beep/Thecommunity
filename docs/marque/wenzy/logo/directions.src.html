@@ -1,0 +1,232 @@
+<title>Wenzy, trois directions</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Caveat:wght@700&family=Outfit:wght@500;600;700&family=Young+Serif&family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout : planche de présentation ; pour chaque direction, l'identité à gauche et le site en situation sur téléphone à droite. */
+:root {
+  --bg: #f3f1ed; --panel: #ffffff; --fg: #141414; --muted: #66625c; --line: #e4e0d8;
+  --ui: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #121212; --panel: #1c1c1c; --fg: #f1efea; --muted: #a8a49c; --line: #2e2e2e; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #121212; --panel: #1c1c1c; --fg: #f1efea; --muted: #a8a49c; --line: #2e2e2e; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 400 16px/1.6 var(--ui);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem }
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 3rem }
+h1, h2, h3 { margin: 0; text-wrap: balance; line-height: 1.05 }
+p { margin: 0 }
+.eyebrow { font: 600 .75rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; color: var(--muted) }
+header.top { padding-top: 3rem; display: grid; gap: 1rem }
+header.top h1 { font: 400 clamp(2.6rem, 7vw, 4.6rem)/1 "Instrument Serif", Georgia, serif; letter-spacing: -.01em }
+header.top h1 em { font-style: italic }
+.lede { max-width: 66ch; color: var(--muted); font-size: 1.05rem }
+.learn { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem }
+.learn div { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 1.1rem 1.2rem; display: grid; gap: .3rem; align-content: start }
+.learn b { font-size: .95rem }
+.learn span { color: var(--muted); font-size: .9rem }
+
+/* ---------- Direction ---------- */
+.dir { border-radius: 28px; overflow: hidden; display: grid; grid-template-columns: 1fr 360px; background: var(--d-bg); color: var(--d-fg) }
+@media (max-width: 900px) { .dir { grid-template-columns: 1fr } }
+.id { padding: clamp(1.4rem, 4vw, 2.6rem); display: grid; gap: 1.6rem; align-content: start; min-width: 0 }
+.id .tag { font: 600 .72rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; opacity: .65 }
+.id h2 { font: 400 clamp(2rem, 4.5vw, 2.8rem)/1 var(--d-head); }
+.id .pitch { max-width: 52ch; opacity: .8 }
+.logo-stage { background: var(--d-card); border-radius: 20px; padding: clamp(1.6rem, 5vw, 3rem) 1.2rem; display: grid; place-items: center; gap: 1.2rem }
+.lrow { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center }
+.icon { width: 76px; height: 76px; border-radius: 19px; display: grid; place-items: center; position: relative; overflow: hidden; flex: none }
+.chips { display: flex; flex-wrap: wrap; gap: .5rem }
+.chip { display: flex; align-items: center; gap: .5rem; background: var(--d-card); border-radius: 999px; padding: .3rem .8rem .3rem .3rem; font-size: .8rem }
+.chip i { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .1) }
+.chip span { opacity: .6; font-variant-numeric: tabular-nums }
+.type { display: grid; gap: .3rem; font-size: .85rem; opacity: .75 }
+.why { font-size: .9rem; opacity: .8; border-top: 1px solid var(--d-rule); padding-top: 1rem; max-width: 60ch }
+
+/* téléphone */
+.stage { padding: 1.6rem; display: grid; place-items: center; background: var(--d-stage) }
+.phone { width: 100%; max-width: 310px; background: #0d0d0d; border-radius: 42px; padding: 9px; box-shadow: 0 30px 60px -30px rgb(0 0 0 / .5) }
+.screen { border-radius: 34px; overflow: hidden; background: var(--p-bg); color: var(--p-fg); position: relative }
+.hero { position: relative; height: 430px }
+.hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover }
+.nav { position: absolute; top: 14px; left: 10px; right: 10px; background: #fff; border-radius: 999px; display: flex; align-items: center; justify-content: space-between; padding: .45rem .5rem .45rem 1rem; box-shadow: 0 6px 20px -8px rgb(0 0 0 / .3) }
+.nav .burger { width: 18px; height: 10px; border-top: 2px solid #141414; border-bottom: 2px solid #141414; margin: 0 .35rem 0 .5rem }
+.nav .r { display: flex; align-items: center }
+.cta-s { font: 600 .78rem/1 var(--ui); padding: .55rem .9rem; border-radius: 999px; color: var(--p-cta-fg); background: var(--p-grad) }
+.card { position: absolute; left: 10px; right: 10px; bottom: 12px; background: var(--p-bg); border-radius: 24px; padding: 1.1rem 1.1rem 1.2rem; display: grid; gap: .7rem }
+.city { font: 600 .78rem/1 var(--ui); display: flex; gap: .35rem; align-items: center }
+.city::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--p-accent) }
+.h { font: 400 2rem/.98 var(--p-head); letter-spacing: var(--p-ls, -.01em) }
+.h .hl { background: var(--p-grad); -webkit-background-clip: text; background-clip: text; color: transparent }
+.cta { text-align: center; font: 600 .9rem/1 var(--ui); padding: .9rem; border-radius: 999px; color: var(--p-cta-fg); background: var(--p-grad) }
+.list { padding: 1rem 1.1rem 1.3rem; display: grid; gap: .8rem; background: var(--p-bg) }
+.list .lt { font: 400 1.35rem/1 var(--p-head) }
+.item { display: grid; grid-template-columns: 52px 1fr auto; gap: .7rem; align-items: center; border-top: 1px solid var(--p-rule); padding-top: .8rem }
+.item img { width: 52px; height: 52px; border-radius: 12px; object-fit: cover }
+.item b { font-size: .9rem; display: block }
+.item small { font-size: .74rem; opacity: .65; display: block; line-height: 1.35 }
+.pill { display: inline-block; font: 600 .66rem/1 var(--ui); padding: .28rem .5rem; border-radius: 999px; background: var(--p-soft); color: var(--p-soft-fg); margin: .2rem 0 }
+.book { font: 600 .75rem/1 var(--ui); padding: .5rem .8rem; border-radius: 999px; border: 1.5px solid var(--p-fg) }
+.faces { display: flex }
+.faces i { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--p-bg); margin-left: -6px; background-size: cover; background-position: center }
+.faces i:first-child { margin-left: 0 }
+
+/* ---------- D1 Coucher de soleil ---------- */
+#d1 { --d-bg: #F6F1EA; --d-fg: #141414; --d-card: #ffffff; --d-rule: #e6ddd0; --d-stage: #EFE6DA; --d-head: "Instrument Serif", Georgia, serif;
+  --p-bg: #F6F1EA; --p-fg: #141414; --p-rule: #e6ddd0; --p-head: "Instrument Serif", Georgia, serif; --p-accent: #FF6A4D;
+  --p-grad: linear-gradient(100deg, #FF6A4D 0%, #C25BE8 100%); --p-cta-fg: #fff; --p-soft: #F7DCD3; --p-soft-fg: #A83A22 }
+.w1 { font: 700 4.2rem/1 "Outfit", sans-serif; letter-spacing: -.045em; color: #141414; display: inline-flex; align-items: baseline }
+.w1 .zy { font: 700 1.55em/1.1 "Caveat", cursive; margin-block: -.4em; letter-spacing: -.02em; background: linear-gradient(100deg, #FF6A4D, #C25BE8); -webkit-background-clip: text; background-clip: text; color: transparent; transform: rotate(-6deg) translateY(.02em); display: inline-block; padding: 0 .08em 0 .04em; margin-left: -.06em }
+.w1.sm { font-size: 1.45rem } .w1.inv { color: #F6F1EA }
+#d1 .icon { background: linear-gradient(135deg, #FF6A4D, #C25BE8) }
+#d1 .icon b { font: 700 2.7rem/1 "Caveat", cursive; color: #fff; transform: rotate(-6deg) }
+
+/* ---------- D2 Menthe ---------- */
+#d2 { --d-bg: #0E3B2E; --d-fg: #F3F1E7; --d-card: #134A3A; --d-rule: #1f5a48; --d-stage: #0B2F25; --d-head: "Young Serif", Georgia, serif;
+  --p-bg: #F3F1E7; --p-fg: #10201A; --p-rule: #dfdccd; --p-head: "Young Serif", Georgia, serif; --p-accent: #0E6B4F; --p-ls: -.02em;
+  --p-grad: linear-gradient(100deg, #0E6B4F 0%, #2FA36B 100%); --p-cta-fg: #F3F1E7; --p-soft: #DDF0B0; --p-soft-fg: #2D4A10 }
+#d2 .h .hl { background: none; color: #0E6B4F; font-style: normal; box-shadow: inset 0 -.32em 0 #D6F06A }
+.w2 { display: inline-flex; align-items: center; gap: .35em; font: 400 3.9rem/1 "Young Serif", serif; letter-spacing: -.03em; color: #F3F1E7 }
+.w2.sm { font-size: 1.35rem; color: #10201A } .w2.dk { color: #10201A }
+.tab { width: .82em; height: .82em; position: relative; flex: none }
+.tab i { position: absolute; width: 26%; height: 26%; border-radius: 50%; background: currentColor; left: 37%; top: 37% }
+.tab i:nth-child(1) { transform: translate(0, -135%); background: #D6F06A }
+.tab i:nth-child(2) { transform: translate(117%, -68%) } .tab i:nth-child(3) { transform: translate(117%, 68%) }
+.tab i:nth-child(4) { transform: translate(0, 135%) } .tab i:nth-child(5) { transform: translate(-117%, 68%) } .tab i:nth-child(6) { transform: translate(-117%, -68%) }
+#d2 .icon { background: #D6F06A; color: #0E3B2E; font-size: 3.6rem }
+#d2 .icon .tab i:nth-child(1) { background: #0E6B4F }
+#d2 .cta-s { color: #F3F1E7 }
+
+/* ---------- D3 Électrique ---------- */
+#d3 { --d-bg: #F6F6FB; --d-fg: #0E0F1A; --d-card: #ffffff; --d-rule: #e1e2ee; --d-stage: #E9EAF6; --d-head: "Sora", sans-serif;
+  --p-bg: #FFFFFF; --p-fg: #0E0F1A; --p-rule: #ececf4; --p-head: "Sora", sans-serif; --p-accent: #3D5AFE; --p-ls: -.045em;
+  --p-grad: linear-gradient(100deg, #3D5AFE 0%, #A98BFF 100%); --p-cta-fg: #fff; --p-soft: #E6E9FF; --p-soft-fg: #2A3FCC }
+#d3 .id h2 { font-weight: 700; letter-spacing: -.04em }
+#d3 .h { font-weight: 700; font-size: 1.8rem }
+#d3 .list .lt { font-weight: 700; letter-spacing: -.03em }
+.w3 { display: inline-flex; align-items: center; gap: .28em; font: 800 3.8rem/1 "Sora", sans-serif; letter-spacing: -.06em; color: #0E0F1A }
+.w3.sm { font-size: 1.3rem }
+.grp { display: inline-flex; flex: none }
+.grp i { width: .5em; height: .5em; border-radius: 50%; margin-left: -.16em; box-shadow: 0 0 0 .06em #F6F6FB }
+.grp i:first-child { margin-left: 0; background: #3D5AFE } .grp i:nth-child(2) { background: #7B73FF } .grp i:nth-child(3) { background: #A98BFF }
+.sm .grp i { box-shadow: 0 0 0 .06em #fff }
+#d3 .icon { background: #0E0F1A; font-size: 2.6rem }
+#d3 .icon .grp i { box-shadow: 0 0 0 .06em #0E0F1A }
+
+.reco { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 1.6rem 1.8rem; display: grid; gap: .7rem; max-width: 800px }
+.reco h2 { font: 400 2.1rem/1 "Instrument Serif", serif }
+.reco p { color: var(--muted) }
+.reco strong { color: var(--fg) }
+</style>
+
+<div class="wrap">
+<header class="top">
+  <p class="eyebrow">Wenzy · brand book · étape 2 · le niveau des références</p>
+  <h1>Trois directions, <em>prêtes à vivre</em></h1>
+  <p class="lede">D'après vos exemples (Timeleft, Socials, Sahbi), le niveau tient moins au logo seul qu'à un ensemble cohérent : un fond clair, du noir, une seule couleur forte, de grands titres élégants avec un mot mis en valeur, des boutons arrondis et de vraies photos. Voici trois directions complètes pour Wenzy, chacune montrée sur l'écran d'accueil du site.</p>
+  <div class="learn">
+    <div><b>Ce qu'on reprend du niveau</b><span>Fond crème ou blanc, texte presque noir, un dégradé unique, titres en grand, menu flottant, photos de vrais gens.</span></div>
+    <div><b>Ce qu'on évite</b><span>Orange-rose (Timeleft), rouge-magenta (Socials), rose poudré (Sahbi, déjà au Maroc), bleu + jaune (Marjane).</span></div>
+    <div><b>La rencontre dans le logo</b><span>Deux écritures qui se rencontrent, six points autour d'une table, ou un groupe de trois cercles.</span></div>
+  </div>
+</header>
+
+<!-- D1 -->
+<article class="dir" id="d1" aria-labelledby="d1t">
+  <div class="id">
+    <p class="tag">Direction 1</p>
+    <h2 id="d1t">Coucher de soleil</h2>
+    <p class="pitch">Le nom réunit deux écritures : « wen » net et solide, « zy » écrit à la main dans un dégradé corail-violet, comme le ciel de Casablanca à 19 h. Deux personnalités qui se rencontrent dans un seul mot. Titres en grande serif élégante.</p>
+    <div class="logo-stage"><span class="w1">wen<span class="zy">zy</span></span></div>
+    <div class="lrow">
+      <div class="icon"><b>zy</b></div>
+      <div class="logo-stage" style="background:#141414;padding:1.1rem 1.6rem"><span class="w1 inv" style="font-size:2.2rem">wen<span class="zy">zy</span></span></div>
+    </div>
+    <div class="chips">
+      <span class="chip"><i style="background:#F6F1EA"></i>Crème<span>#F6F1EA</span></span>
+      <span class="chip"><i style="background:#141414"></i>Encre<span>#141414</span></span>
+      <span class="chip"><i style="background:#FF6A4D"></i>Corail<span>#FF6A4D</span></span>
+      <span class="chip"><i style="background:#C25BE8"></i>Violet<span>#C25BE8</span></span>
+    </div>
+    <p class="type">Titres : Instrument Serif · Texte : Inter · Logo : Outfit + Caveat (redessinés ensuite)</p>
+    <p class="why"><b>Le plus « appli sociale internationale ».</b> Chaleureux le soir, chic sans être froid. Le dégradé violet le distingue des oranges et des roses des concurrents.</p>
+  </div>
+  <div class="stage"><div class="phone"><div class="screen">
+    <div class="hero"><img src="{{IMG1}}" alt="">
+      <div class="nav"><span class="w1 sm">wen<span class="zy">zy</span></span><span class="r"><span class="cta-s">S'inscrire</span><span class="burger"></span></span></div>
+      <div class="card"><span class="city">Casablanca</span><p class="h">Your people are <span class="hl">out there.</span></p><span class="cta">Réserver ma place</span></div>
+    </div>
+    <div class="list"><p class="lt">Cette semaine</p>
+      <div class="item"><img src="{{IMG2}}" alt=""><div><b>Dîner entre inconnus</b><span class="pill">Table de 6</span><small>Jeu. 20 h · Maarif</small></div><span class="book">Réserver</span></div>
+    </div>
+  </div></div></div>
+</article>
+
+<!-- D2 -->
+<article class="dir" id="d2" aria-labelledby="d2t">
+  <div class="id">
+    <p class="tag">Direction 2</p>
+    <h2 id="d2t">Menthe</h2>
+    <p class="pitch">Vert profond et citron vert : frais, rassurant, et un clin d'œil au thé à la menthe qu'on partage. Le symbole, six points autour d'une table, dit exactement ce que fait Wenzy. Une serif généreuse et amicale pour les titres, et le mot clé surligné au feutre citron.</p>
+    <div class="logo-stage"><span class="w2"><span class="tab"><i></i><i></i><i></i><i></i><i></i><i></i></span>wenzy</span></div>
+    <div class="lrow">
+      <div class="icon"><span class="tab"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="logo-stage" style="background:#F3F1E7;padding:1.1rem 1.6rem"><span class="w2 dk" style="font-size:2rem"><span class="tab"><i></i><i></i><i></i><i></i><i></i><i></i></span>wenzy</span></div>
+    </div>
+    <div class="chips">
+      <span class="chip"><i style="background:#0E3B2E"></i>Cèdre<span>#0E3B2E</span></span>
+      <span class="chip"><i style="background:#0E6B4F"></i>Menthe<span>#0E6B4F</span></span>
+      <span class="chip"><i style="background:#D6F06A"></i>Citron vert<span>#D6F06A</span></span>
+      <span class="chip"><i style="background:#F3F1E7"></i>Lin<span>#F3F1E7</span></span>
+    </div>
+    <p class="type">Titres et logo : Young Serif · Texte : Inter</p>
+    <p class="why"><b>Le plus singulier.</b> Aucun concurrent n'est en vert. Le symbole devient un outil (les places qui se remplissent) et se reconnaît en tout petit.</p>
+  </div>
+  <div class="stage"><div class="phone"><div class="screen">
+    <div class="hero"><img src="{{IMG3}}" alt="">
+      <div class="nav"><span class="w2 sm"><span class="tab"><i></i><i></i><i></i><i></i><i></i><i></i></span>wenzy</span><span class="r"><span class="cta-s">S'inscrire</span><span class="burger"></span></span></div>
+      <div class="card"><span class="city">Casablanca</span><p class="h">Your people are <span class="hl">out there.</span></p><span class="cta">Réserver ma place</span></div>
+    </div>
+    <div class="list"><p class="lt">Cette semaine</p>
+      <div class="item"><img src="{{IMG2}}" alt=""><div><b>Dîner entre inconnus</b><span class="pill">4 / 6 places prises</span><small>Jeu. 20 h · Maarif</small></div><span class="book">Réserver</span></div>
+    </div>
+  </div></div></div>
+</article>
+
+<!-- D3 -->
+<article class="dir" id="d3" aria-labelledby="d3t">
+  <div class="id">
+    <p class="tag">Direction 3</p>
+    <h2 id="d3t">Électrique</h2>
+    <p class="pitch">Bleu électrique et lilas sur blanc : moderne, net, très « application ». Le symbole est un petit groupe de trois cercles qui se chevauchent, comme les photos de profil d'un groupe qui se forme. Tout est en sans-serif serrée, très graphique.</p>
+    <div class="logo-stage"><span class="w3"><span class="grp"><i></i><i></i><i></i></span>wenzy</span></div>
+    <div class="lrow">
+      <div class="icon"><span class="grp"><i></i><i></i><i></i></span></div>
+      <div class="logo-stage" style="background:#0E0F1A;padding:1.1rem 1.6rem"><span class="w3" style="font-size:2rem;color:#fff"><span class="grp"><i style="box-shadow:0 0 0 .06em #0E0F1A"></i><i style="box-shadow:0 0 0 .06em #0E0F1A"></i><i style="box-shadow:0 0 0 .06em #0E0F1A"></i></span>wenzy</span></div>
+    </div>
+    <div class="chips">
+      <span class="chip"><i style="background:#FFFFFF"></i>Blanc<span>#FFFFFF</span></span>
+      <span class="chip"><i style="background:#0E0F1A"></i>Nuit<span>#0E0F1A</span></span>
+      <span class="chip"><i style="background:#3D5AFE"></i>Électrique<span>#3D5AFE</span></span>
+      <span class="chip"><i style="background:#A98BFF"></i>Lilas<span>#A98BFF</span></span>
+    </div>
+    <p class="type">Titres et logo : Sora · Texte : Inter</p>
+    <p class="why"><b>Le plus « tech ».</b> Très propre et très lisible ; à réchauffer par les photos, sinon il peut paraître froid pour des dîners.</p>
+  </div>
+  <div class="stage"><div class="phone"><div class="screen">
+    <div class="hero"><img src="{{IMG4}}" alt="">
+      <div class="nav"><span class="w3 sm"><span class="grp"><i></i><i></i><i></i></span>wenzy</span><span class="r"><span class="cta-s">S'inscrire</span><span class="burger"></span></span></div>
+      <div class="card"><span class="city">Casablanca</span><p class="h">Your people are <span class="hl">out there.</span></p><span class="cta">Réserver ma place</span></div>
+    </div>
+    <div class="list"><p class="lt">Cette semaine</p>
+      <div class="item"><img src="{{IMG2}}" alt=""><div><b>Dîner entre inconnus</b><span class="pill">Table de 6</span><small>Jeu. 20 h · Maarif</small></div><span class="book">Réserver</span></div>
+    </div>
+  </div></div></div>
+</article>
+
+<section class="reco" aria-labelledby="reco">
+  <p class="eyebrow">Ma recommandation</p>
+  <h2 id="reco">Direction 1, ou la 2 pour se démarquer</h2>
+  <p><strong>Coucher de soleil</strong> a le niveau et l'énergie de vos références, et le logo à deux écritures raconte la rencontre. <strong>Menthe</strong> est la plus originale sur le marché marocain : personne n'est en vert, et la tablée est un symbole qui travaille pour le site.</p>
+  <p>Ce sont des maquettes : une fois la direction choisie, je redessine le logo en vectoriel, au détail près, puis je décline tout le brand book.</p>
+</section>
+</div>

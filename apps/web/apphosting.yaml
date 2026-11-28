@@ -1,0 +1,33 @@
+# Configuration Firebase App Hosting — projet d'ESSAI (the-community-36766).
+# Ces valeurs sont publiques (configuration web Firebase), pas des secrets.
+runConfig:
+  minInstances: 0
+  maxInstances: 2
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyCRSgTFS8WYpVUX2lVhxL_-ALpQo3AeyJM
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: the-community-36766.firebaseapp.com
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: the-community-36766
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: the-community-36766.firebasestorage.app
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:308285799109:web:352a4ff2a640761d314eac
+    availability: [BUILD, RUNTIME]
+  # Bandeau « version de démonstration » retiré (25/11) : le site d'essai affiche les vrais rendez-vous.
+  - variable: NEXT_PUBLIC_DEMO_BANNER
+    value: "false"
+    availability: [BUILD, RUNTIME]
+  # Site d'essai : jamais indexé par les moteurs de recherche (indépendant du bandeau).
+  - variable: NEXT_PUBLIC_NOINDEX
+    value: "true"
+    availability: [BUILD, RUNTIME]

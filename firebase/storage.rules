@@ -1,0 +1,76 @@
+rules_version = '2';
+
+// Wenzy — règles Cloud Storage. Tout est refusé par défaut.
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() { return signedIn() && request.auth.token.get('role', 'user') in ['admin', 'superadmin']; }
+    function isImage(maxMb) {
+      return request.resource.size <= maxMb * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+    }
+
+    // Photos d'expériences, villes, catégories, visuels : lecture publique, écriture admin.
+    match /experiences/{experienceId}/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && isImage(8);
+      allow delete: if isAdmin();
+    }
+    match /{folder}/{fileName} {
+      allow read: if folder in ['cities', 'categories', 'promo'];
+      allow write: if folder in ['cities', 'categories', 'promo'] && isAdmin() && isImage(8);
+      allow delete: if folder in ['cities', 'categories', 'promo'] && isAdmin();
+    }
+
+    // Photo de profil : visible des membres connectés (groupes), modifiable par son propriétaire.
+    match /users/{uid}/avatar/{fileName} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.auth.uid == uid && isImage(3);
+      allow delete: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Documents partenaires : admin uniquement.
+    match /partners/{partnerId}/documents/{fileName} {
+      allow read, delete: if isAdmin();
+      allow write: if isAdmin() && request.resource.size <= 10 * 1024 * 1024
+        && request.resource.contentType.matches('application/pdf|image/(jpeg|png|webp)');
+    }
+
+    // Étape 19-20 : candidature organisateur. Pièces (registre de commerce, assurance…) et logo envoyés AVANT la
+    // validation, dans le dossier de la personne : lisibles par elle et l'équipe, jamais publics.
+    match /organizer-uploads/{uid}/{kind}/{fileName} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow write: if signedIn() && request.auth.uid == uid && kind in ['documents', 'logo']
+        && request.resource.size <= 10 * 1024 * 1024
+        && request.resource.contentType.matches(kind == 'logo' ? 'image/(jpeg|png|webp)' : 'application/pdf|image/(jpeg|png|webp)');
+      allow delete: if (signedIn() && request.auth.uid == uid) || isAdmin();
+    }
+    // Organisateur validé : logo et photos de SES activités (publics), écrits par ses membres (claim orgId) et l'équipe.
+    match /organizers/{orgId}/public/{fileName} {
+      allow read: if true;
+      allow write: if (isAdmin() || (signedIn() && request.auth.token.get('role', 'user') == 'organizer' && request.auth.token.get('orgId', '') == orgId)) && isImage(8);
+      allow delete: if isAdmin() || (signedIn() && request.auth.token.get('role', 'user') == 'organizer' && request.auth.token.get('orgId', '') == orgId);
+    }
+
+    // Étape 24 : photo d'un avis. Envoyée dans le dossier privé de la personne (lisible par elle et l'équipe) ;
+    // publiée par le serveur dans reviews/{id}/ seulement après vérification par l'équipe.
+    match /review-uploads/{uid}/{fileName} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow write: if signedIn() && request.auth.uid == uid && isImage(5);
+      allow delete: if (signedIn() && request.auth.uid == uid) || isAdmin();
+    }
+    match /reviews/{reviewId}/{fileName} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Exports : générés par le serveur, distribués par URL signée temporaire.
+    // Factures PDF : jamais lues directement par le navigateur (téléchargement via le site, après contrôle).
+    match /invoices/{all=**} {
+      allow read, write: if false;
+    }
+    match /exports/{all=**} {
+      allow read, write: if false;
+    }
+  }
+}

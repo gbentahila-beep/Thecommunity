@@ -1,0 +1,78 @@
+"use client";
+
+import type { UserProfile } from "@thecommunity/shared";
+import { useTranslations } from "next-intl";
+import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { firebase } from "@/lib/firebase/client";
+
+type Prefs = UserProfile["notificationPrefs"];
+const KEY = "tc:demo-preferences";
+
+function Toggle({ label, hint, checked, disabled, onChange }: { label: string; hint: string; checked: boolean; disabled?: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className={`flex items-start justify-between gap-6 py-4 ${disabled ? "opacity-60" : "cursor-pointer"}`}>
+      <span>
+        <span className="block font-medium text-ink">{label}</span>
+        <span className="text-sm text-muted">{hint}</span>
+      </span>
+      <span className="relative mt-1 inline-flex shrink-0">
+        <input type="checkbox" role="switch" className="peer sr-only" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} />
+        <span className="h-7 w-12 rounded-full bg-line transition peer-checked:bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700" />
+        <span className="absolute start-1 top-1 size-5 rounded-full bg-white shadow transition peer-checked:translate-x-5 rtl:peer-checked:-translate-x-5" />
+      </span>
+    </label>
+  );
+}
+
+/** Préférences de notification. Phase 2 : enregistrées sur l'appareil ; phase 3 : dans users/{uid}.notificationPrefs. */
+export function PreferencesForm({ initial, uid }: { initial: Prefs; uid?: string }) {
+  const t = useTranslations("preferences");
+  const [prefs, setPrefs] = useState<Prefs>(initial);
+  const [status, setStatus] = useState<"" | "saved" | "error">("");
+
+  useEffect(() => {
+    if (uid) return; // mode Firebase : la valeur initiale vient du compte
+    try {
+      const saved = window.localStorage.getItem(KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- lecture unique d'une valeur stockée côté navigateur
+      if (saved) setPrefs({ ...initial, ...JSON.parse(saved) });
+    } catch {
+      /* ignore */
+    }
+  }, [initial, uid]);
+
+  const update = async (patch: Partial<Prefs>) => {
+    const next = { ...prefs, ...patch };
+    setPrefs(next);
+    if (uid) {
+      try {
+        await updateDoc(doc(firebase().db, "users", uid), { notificationPrefs: next, updatedAt: serverTimestamp() });
+        setStatus("saved");
+      } catch {
+        setPrefs(prefs);
+        setStatus("error");
+      }
+      return;
+    }
+    try {
+      window.localStorage.setItem(KEY, JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+  };
+
+  return (
+    <div>
+      <div className="divide-y divide-line">
+        <Toggle label={t("emailNotif")} hint={t("emailNotifHint")} checked={prefs.email} onChange={(v) => update({ email: v })} />
+        <Toggle label={t("pushNotif")} hint={t("pushNotifHint")} checked={false} disabled onChange={() => {}} />
+        <Toggle label={t("marketing")} hint={t("marketingHint")} checked={prefs.marketingEmail} onChange={(v) => update({ marketingEmail: v })} />
+        <Toggle label={t("newExperiences")} hint={t("newExperiencesHint")} checked={Boolean(prefs.newExperiences)} onChange={(v) => update({ newExperiences: v })} />
+      </div>
+      <p className="mt-2 text-xs text-muted" role="status" aria-live="polite">
+        {uid ? (status === "saved" ? t("saved") : status === "error" ? t("saveError") : t("savedAccount")) : t("savedLocally")}
+      </p>
+    </div>
+  );
+}

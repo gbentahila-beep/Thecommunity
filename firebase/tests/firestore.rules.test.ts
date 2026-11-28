@@ -1,0 +1,416 @@
+import { assertFails, assertSucceeds, initializeTestEnvironment, type RulesTestEnvironment } from "@firebase/rules-unit-testing";
+import { readFileSync } from "node:fs";
+import { collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where, addDoc, type Firestore } from "firebase/firestore";
+import { afterAll, beforeAll, beforeEach, describe, it } from "vitest";
+
+let env: RulesTestEnvironment;
+
+const anon = () => env.unauthenticatedContext().firestore() as unknown as Firestore;
+const as = (uid: string, role?: string) =>
+  env.authenticatedContext(uid, role ? { role, email_verified: true } : { email_verified: true }).firestore() as unknown as Firestore;
+const salma = () => as("salma");
+const karim = () => as("karim");
+const admin = () => as("ada", "admin");
+const superadmin = () => as("sam", "superadmin");
+
+beforeAll(async () => {
+  env = await initializeTestEnvironment({
+    projectId: "demo-thecommunity",
+    firestore: { rules: readFileSync("firebase/firestore.rules", "utf8") },
+  });
+});
+afterAll(async () => env.cleanup());
+
+beforeEach(async () => {
+  await env.clearFirestore();
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    const db = ctx.firestore();
+    await setDoc(doc(db, "users/salma"), { email: "salma@example.com", role: "user", status: "active", firstName: "Salma", notificationPrefs: { email: true, push: false, marketingEmail: false } });
+    await setDoc(doc(db, "users/salma/notifications/n1"), { title: { fr: "Bienvenue" }, createdAt: new Date() });
+    await setDoc(doc(db, "experiences/pub"), { status: "published", title: { fr: "Dîner" } });
+    await setDoc(doc(db, "experiences/draft"), { status: "draft", title: { fr: "Secret" } });
+    await setDoc(doc(db, "experiences/pub/private/economics"), { costPerSeat: 9500 });
+    await setDoc(doc(db, "sessions/s1"), { status: "published", capacity: 30, seatsConfirmed: 3 });
+    await setDoc(doc(db, "sessions/s2"), { status: "draft", capacity: 10, seatsConfirmed: 0 });
+    await setDoc(doc(db, "sessions/s1/waitlist/salma"), { status: "waiting" });
+    await setDoc(doc(db, "reservations/r1"), { userId: "salma", sessionId: "s1", status: "confirmed" });
+    await setDoc(doc(db, "reservations/r2"), { userId: "karim", sessionId: "s1", status: "confirmed" });
+    await setDoc(doc(db, "payments/p1"), { userId: "salma", amount: 16900 });
+    await setDoc(doc(db, "bookingRequests/s1_salma"), { userId: "salma", sessionId: "s1", status: "pending", message: "Bonjour" });
+    await setDoc(doc(db, "groups/g1"), { memberIds: ["salma", "karim"], status: "revealed" });
+    await setDoc(doc(db, "groups/g2"), { memberIds: ["salma"], status: "validated" });
+    await setDoc(doc(db, "groups/g3"), { memberIds: ["salma", "karim"], status: "revealed", namesAtCheckIn: true, arrivedUids: ["karim"] });
+    await setDoc(doc(db, "groups/g3/messages/m1"), { uid: "karim", text: "Merci !" });
+    await setDoc(doc(db, "venueRequests/r1"), { token: "secret", partnerId: "p1" });
+    await setDoc(doc(db, "promoCodes/BIENVENUE20"), { value: 20 });
+    await setDoc(doc(db, "settings/public"), { locales: ["fr", "ar"] });
+    await setDoc(doc(db, "settings/booking"), { holdMinutes: 15 });
+    await setDoc(doc(db, "auditLogs/a1"), { action: "x" });
+    await setDoc(doc(db, "cities/casablanca"), { isActive: true });
+    await setDoc(doc(db, "outingProposals/op1"), { userId: "salma", title: "Padel du samedi", status: "pending" });
+  });
+});
+
+describe("profils (users)", () => {
+  it("chacun lit son profil ; personne d'autre sauf l'équipe", async () => {
+    await assertSucceeds(getDoc(doc(salma(), "users/salma")));
+    await assertFails(getDoc(doc(karim(), "users/salma")));
+    await assertFails(getDoc(doc(anon(), "users/salma")));
+    await assertSucceeds(getDoc(doc(admin(), "users/salma")));
+  });
+  it("le navigateur ne crée ni ne supprime de profil", async () => {
+    await assertFails(setDoc(doc(as("nouveau"), "users/nouveau"), { role: "user" }));
+    await assertFails(deleteDoc(doc(salma(), "users/salma")));
+  });
+  it("on ne peut pas s'attribuer un rôle ni changer son statut", async () => {
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { role: "admin" }));
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { status: "active", role: "superadmin" }));
+    await assertFails(updateDoc(doc(admin(), "users/salma"), { role: "superadmin" }));
+  });
+  it("le questionnaire passe par le serveur, pas par une écriture directe", async () => {
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { firstName: "Hack" }));
+  });
+  it("préférences et langue modifiables avec les bons types", async () => {
+    await assertSucceeds(updateDoc(doc(salma(), "users/salma"), { notificationPrefs: { email: false, push: false, marketingEmail: true }, updatedAt: serverTimestamp() }));
+    await assertSucceeds(updateDoc(doc(salma(), "users/salma"), { locale: "ar" }));
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { locale: "xx" }));
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { notificationPrefs: { email: "oui", push: false, marketingEmail: true } }));
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { notificationPrefs: { email: true, push: false, marketingEmail: true, admin: true } }));
+    // Alerte « nouvelles expériences » (accueil, préférences) : booléen facultatif.
+    await assertSucceeds(updateDoc(doc(salma(), "users/salma"), { notificationPrefs: { email: true, push: false, marketingEmail: false, newExperiences: true }, updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { notificationPrefs: { email: true, push: false, marketingEmail: false, newExperiences: "oui" } }));
+  });
+  it("la photo de profil doit être dans son propre dossier", async () => {
+    await assertSucceeds(updateDoc(doc(salma(), "users/salma"), { photoPath: "users/salma/avatar/photo.webp" }));
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { photoPath: "users/karim/avatar/photo.webp" }));
+  });
+  it("notifications : lecture et « lu » uniquement par le propriétaire", async () => {
+    await assertSucceeds(getDoc(doc(salma(), "users/salma/notifications/n1")));
+    await assertFails(getDoc(doc(karim(), "users/salma/notifications/n1")));
+    await assertSucceeds(updateDoc(doc(salma(), "users/salma/notifications/n1"), { readAt: serverTimestamp() }));
+    await assertFails(updateDoc(doc(salma(), "users/salma/notifications/n1"), { title: { fr: "Modifié" } }));
+    await assertFails(setDoc(doc(salma(), "users/salma/notifications/n2"), { title: { fr: "Faux" } }));
+  });
+  it("favoris : propriétaire uniquement, format strict", async () => {
+    await assertSucceeds(setDoc(doc(salma(), "users/salma/favorites/pub"), { createdAt: serverTimestamp() }));
+    await assertFails(setDoc(doc(salma(), "users/salma/favorites/pub2"), { createdAt: serverTimestamp(), note: "x" }));
+    await assertFails(setDoc(doc(karim(), "users/salma/favorites/pub"), { createdAt: serverTimestamp() }));
+  });
+  it("données de matching : jamais lisibles par un membre", async () => {
+    await assertFails(getDoc(doc(salma(), "userMatching/salma")));
+    await assertSucceeds(getDoc(doc(admin(), "userMatching/salma")));
+  });
+});
+
+describe("catalogue", () => {
+  it("expérience publiée visible de tous, brouillon réservé à l'équipe", async () => {
+    await assertSucceeds(getDoc(doc(anon(), "experiences/pub")));
+    await assertFails(getDoc(doc(salma(), "experiences/draft")));
+    await assertSucceeds(getDoc(doc(admin(), "experiences/draft")));
+  });
+  it("le modèle économique n'est jamais public", async () => {
+    await assertFails(getDoc(doc(anon(), "experiences/pub/private/economics")));
+    await assertFails(getDoc(doc(salma(), "experiences/pub/private/economics")));
+    await assertSucceeds(getDoc(doc(admin(), "experiences/pub/private/economics")));
+  });
+  it("aucune écriture directe sur expériences et sessions (même admin) : passage par le serveur", async () => {
+    await assertFails(updateDoc(doc(admin(), "experiences/pub"), { title: { fr: "x" } }));
+    await assertFails(updateDoc(doc(salma(), "sessions/s1"), { seatsConfirmed: 0 }));
+    await assertFails(updateDoc(doc(admin(), "sessions/s1"), { capacity: 2 }));
+  });
+  it("sessions : publiées visibles, brouillons cachés, liste d'attente personnelle", async () => {
+    await assertSucceeds(getDoc(doc(anon(), "sessions/s1")));
+    await assertFails(getDoc(doc(anon(), "sessions/s2")));
+    await assertSucceeds(getDoc(doc(salma(), "sessions/s1/waitlist/salma")));
+    await assertFails(getDoc(doc(karim(), "sessions/s1/waitlist/salma")));
+  });
+  it("villes : lecture publique, modification super-admin", async () => {
+    await assertSucceeds(getDoc(doc(anon(), "cities/casablanca")));
+    await assertFails(setDoc(doc(admin(), "cities/rabat"), { isActive: true }));
+    await assertFails(setDoc(doc(superadmin(), "cities/rabat"), { isActive: false })); // uniquement via le back-office (journalisé)
+  });
+});
+
+describe("réservations, paiements, groupes", () => {
+  it("chacun ne voit que ses réservations", async () => {
+    await assertSucceeds(getDoc(doc(salma(), "reservations/r1")));
+    await assertFails(getDoc(doc(salma(), "reservations/r2")));
+    await assertSucceeds(getDocs(query(collection(salma(), "reservations"), where("userId", "==", "salma"))));
+    await assertFails(getDocs(collection(salma(), "reservations")));
+    await assertSucceeds(getDocs(collection(admin(), "reservations")));
+  });
+  it("impossible de créer ou confirmer une réservation, ou de valider un paiement, depuis le navigateur", async () => {
+    await assertFails(setDoc(doc(salma(), "reservations/r3"), { userId: "salma", status: "confirmed" }));
+    await assertFails(updateDoc(doc(salma(), "reservations/r1"), { status: "refunded" }));
+    await assertFails(setDoc(doc(salma(), "payments/p2"), { userId: "salma", status: "succeeded" }));
+    await assertSucceeds(getDoc(doc(salma(), "payments/p1")));
+    await assertFails(getDoc(doc(karim(), "payments/p1")));
+  });
+  it("demande de participation : visible par son auteur et l'équipe, jamais écrite par le navigateur", async () => {
+    await assertSucceeds(getDoc(doc(salma(), "bookingRequests/s1_salma")));
+    await assertFails(getDoc(doc(karim(), "bookingRequests/s1_salma")));
+    await assertSucceeds(getDoc(doc(admin(), "bookingRequests/s1_salma")));
+    await assertFails(setDoc(doc(salma(), "bookingRequests/s1_salma2"), { userId: "salma", status: "pending" }));
+    await assertFails(updateDoc(doc(salma(), "bookingRequests/s1_salma"), { status: "accepted" }));
+    await assertFails(updateDoc(doc(admin(), "bookingRequests/s1_salma"), { status: "accepted" }));
+  });
+  it("groupe visible par ses membres seulement une fois révélé", async () => {
+    await assertSucceeds(getDoc(doc(karim(), "groups/g1")));
+    await assertFails(getDoc(doc(salma(), "groups/g2")));
+    await assertFails(getDoc(doc(as("inconnu"), "groups/g1")));
+    await assertSucceeds(getDoc(doc(admin(), "groups/g2")));
+  });
+  it("Tables : prénoms et messages seulement après son check-in ; demandes aux lieux réservées à l'équipe", async () => {
+    await assertSucceeds(getDoc(doc(karim(), "groups/g3")));
+    await assertFails(getDoc(doc(salma(), "groups/g3")));
+    await assertSucceeds(getDoc(doc(karim(), "groups/g3/messages/m1")));
+    await assertFails(getDoc(doc(salma(), "groups/g3/messages/m1")));
+    await assertFails(getDoc(doc(salma(), "venueRequests/r1")));
+    await assertSucceeds(getDoc(doc(admin(), "venueRequests/r1")));
+  });
+});
+
+describe("administration", () => {
+  it("codes promo, journaux et paramètres internes réservés à l'équipe", async () => {
+    await assertFails(getDoc(doc(salma(), "promoCodes/BIENVENUE20")));
+    await assertSucceeds(getDoc(doc(admin(), "promoCodes/BIENVENUE20")));
+    await assertFails(setDoc(doc(admin(), "promoCodes/GRATUIT"), { value: 100 }));
+    await assertFails(getDoc(doc(salma(), "auditLogs/a1")));
+    await assertSucceeds(getDoc(doc(admin(), "auditLogs/a1")));
+    await assertFails(addDoc(collection(admin(), "auditLogs"), { action: "faux" }));
+    await assertSucceeds(getDoc(doc(anon(), "settings/public")));
+    await assertFails(getDoc(doc(salma(), "settings/booking")));
+  });
+  it("tout ce qui n'est pas prévu est refusé", async () => {
+    await assertFails(setDoc(doc(admin(), "nimporte/quoi"), { a: 1 }));
+    await assertFails(getDoc(doc(superadmin(), "nimporte/quoi")));
+  });
+});
+
+describe("factures et e-mails (5c)", () => {
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, "invoices/inv_p1"), { userId: "salma", number: "TEST-FA-2026-000001", kind: "invoice" });
+      await setDoc(doc(db, "counters/TEST-FA-2026"), { last: 1 });
+      await setDoc(doc(db, "mail/m1"), { to: "salma@example.com", subject: "C'est réservé" });
+    });
+  });
+  it("chacun lit ses factures, personne ne les écrit", async () => {
+    await assertSucceeds(getDoc(doc(salma(), "invoices/inv_p1")));
+    await assertFails(getDoc(doc(karim(), "invoices/inv_p1")));
+    await assertSucceeds(getDocs(query(collection(salma(), "invoices"), where("userId", "==", "salma"))));
+    await assertFails(getDocs(collection(salma(), "invoices")));
+    await assertSucceeds(getDoc(doc(admin(), "invoices/inv_p1")));
+    await assertFails(setDoc(doc(salma(), "invoices/inv_x"), { userId: "salma", number: "FA-2026-000001" }));
+    await assertFails(updateDoc(doc(admin(), "invoices/inv_p1"), { number: "FA-2026-000999" }));
+  });
+  it("compteurs inaccessibles ; boîte d'envoi lue par l'équipe seulement", async () => {
+    await assertFails(getDoc(doc(admin(), "counters/TEST-FA-2026")));
+    await assertFails(setDoc(doc(superadmin(), "counters/FA-2026"), { last: 0 }));
+    await assertFails(getDoc(doc(salma(), "mail/m1")));
+    await assertSucceeds(getDoc(doc(admin(), "mail/m1")));
+    await assertFails(setDoc(doc(admin(), "mail/m2"), { to: "x@example.com" }));
+  });
+});
+
+describe("formulaires publics", () => {
+  const msg = { name: "Rita", email: "rita@example.com", message: "Bonjour, une question sur les dîners.", createdAt: serverTimestamp() };
+  it("message de contact : jamais écrit directement (serveur seulement), jamais relu par le public", async () => {
+    await assertFails(addDoc(collection(anon(), "contactMessages"), msg));
+    await assertFails(addDoc(collection(salma(), "contactMessages"), msg));
+    await assertFails(getDocs(collection(anon(), "contactMessages")));
+  });
+  it("centre d'aide : avis sur un article, anonyme et au bon format", async () => {
+    const fb = { article: "annuler-une-reservation", helpful: true, locale: "fr", createdAt: serverTimestamp() };
+    await assertSucceeds(addDoc(collection(anon(), "helpFeedback"), fb));
+    await assertFails(addDoc(collection(anon(), "helpFeedback"), { ...fb, helpful: "oui" }));
+    await assertFails(addDoc(collection(anon(), "helpFeedback"), { ...fb, article: "<script>" }));
+    await assertFails(addDoc(collection(anon(), "helpFeedback"), { ...fb, email: "x@example.com" }));
+    await assertFails(getDocs(collection(salma(), "helpFeedback")));
+    await assertSucceeds(getDocs(collection(admin(), "helpFeedback")));
+  });
+  it("candidature partenaire : écrite par le serveur seulement, lue par l'équipe seulement", async () => {
+    const app = {
+      contactName: "Yasmine", businessName: "Studio Lumière", type: "studio", city: "Casablanca", email: "contact@studio.ma",
+      phone: "", link: "", message: "Nous proposons des cours de yoga en petit groupe à Maarif.", locale: "fr", createdAt: serverTimestamp(),
+    };
+    await assertFails(addDoc(collection(anon(), "partnerApplications"), app));
+    await assertFails(getDocs(collection(anon(), "partnerApplications")));
+    await assertSucceeds(getDocs(collection(admin(), "partnerApplications")));
+  });
+  it("propositions de sorties (18d) : lues par leur auteur et l'équipe, jamais écrites par le navigateur", async () => {
+    await assertSucceeds(getDoc(doc(salma(), "outingProposals/op1")));
+    await assertFails(getDoc(doc(karim(), "outingProposals/op1")));
+    await assertFails(getDoc(doc(anon(), "outingProposals/op1")));
+    await assertSucceeds(getDocs(collection(admin(), "outingProposals")));
+    await assertSucceeds(getDocs(query(collection(salma(), "outingProposals"), where("userId", "==", "salma"))));
+    await assertFails(addDoc(collection(salma(), "outingProposals"), { userId: "salma", title: "X", status: "pending" }));
+    await assertFails(updateDoc(doc(salma(), "outingProposals/op1"), { status: "accepted" }));
+  });
+  it("profil : impossible de se donner soi-même le statut de membre de confiance", async () => {
+    await assertFails(updateDoc(doc(salma(), "users/salma"), { trustedHost: true }));
+  });
+  it("demande d'export / suppression : seulement pour soi", async () => {
+    await assertSucceeds(addDoc(collection(salma(), "dataRequests"), { userId: "salma", type: "deletion", createdAt: serverTimestamp() }));
+    await assertFails(addDoc(collection(salma(), "dataRequests"), { userId: "karim", type: "deletion", createdAt: serverTimestamp() }));
+  });
+});
+
+describe("organisateurs : cloisonnement (19)", () => {
+  const orgA = () => env.authenticatedContext("olive", { role: "organizer", orgId: "orgA", email_verified: true }).firestore() as unknown as Firestore;
+  const orgB = () => env.authenticatedContext("omar", { role: "organizer", orgId: "orgB", email_verified: true }).firestore() as unknown as Firestore;
+  // Claim orgId sans le rôle (ex. compte redevenu membre) : aucun accès.
+  const exOrg = () => env.authenticatedContext("ex", { orgId: "orgA", email_verified: true }).firestore() as unknown as Firestore;
+  // Rôle sans structure : aucun accès.
+  const orphan = () => env.authenticatedContext("orph", { role: "organizer", email_verified: true }).firestore() as unknown as Firestore;
+
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, "organizers/orgA"), { name: "Atelier A", slug: "atelier-a", status: "approved" });
+      await setDoc(doc(db, "organizers/orgA/private/details"), { contactEmail: "a@example.com", memberUids: ["olive"] });
+      await setDoc(doc(db, "organizers/orgB"), { name: "Club B", slug: "club-b", status: "pending" });
+      await setDoc(doc(db, "organizers/orgB/private/details"), { contactEmail: "b@example.com", memberUids: ["omar"] });
+      await setDoc(doc(db, "experiences/expA"), { status: "draft", organizerId: "orgA", title: { fr: "Brouillon A" } });
+      await setDoc(doc(db, "experiences/expB"), { status: "pending_review", organizerId: "orgB", title: { fr: "En relecture B" } });
+      await setDoc(doc(db, "experiences/expA/private/economics"), { commissionPercent: 15 });
+      await setDoc(doc(db, "sessions/sA"), { status: "draft", organizerId: "orgA", capacity: 10 });
+      await setDoc(doc(db, "sessions/sB"), { status: "draft", organizerId: "orgB", capacity: 10 });
+      await setDoc(doc(db, "reservations/rA"), { userId: "salma", organizerId: "orgA", status: "confirmed" });
+      await setDoc(doc(db, "reservations/rB"), { userId: "karim", organizerId: "orgB", status: "confirmed" });
+      await setDoc(doc(db, "reservations/rA/private/payment"), { last4: "0000" });
+      await setDoc(doc(db, "bookingRequests/sA_karim"), { userId: "karim", organizerId: "orgA", status: "pending" });
+      await setDoc(doc(db, "bookingRequests/sB_salma"), { userId: "salma", organizerId: "orgB", status: "pending" });
+    });
+  });
+
+  it("profil public : visible de tous une fois validé ; en attente, seulement l'organisateur et l'équipe", async () => {
+    await assertSucceeds(getDoc(doc(anon(), "organizers/orgA")));
+    await assertFails(getDoc(doc(anon(), "organizers/orgB")));
+    await assertFails(getDoc(doc(orgA(), "organizers/orgB")));
+    await assertSucceeds(getDoc(doc(orgB(), "organizers/orgB")));
+    await assertSucceeds(getDoc(doc(admin(), "organizers/orgB")));
+  });
+  it("détails privés : l'organisateur et l'équipe seulement", async () => {
+    await assertSucceeds(getDoc(doc(orgA(), "organizers/orgA/private/details")));
+    await assertFails(getDoc(doc(orgB(), "organizers/orgA/private/details")));
+    await assertFails(getDoc(doc(salma(), "organizers/orgA/private/details")));
+    await assertFails(getDoc(doc(anon(), "organizers/orgA/private/details")));
+    await assertFails(getDoc(doc(exOrg(), "organizers/orgA/private/details")));
+    await assertSucceeds(getDoc(doc(admin(), "organizers/orgA/private/details")));
+  });
+  it("aucune écriture directe, même par l'organisateur (statut, nom, détails)", async () => {
+    await assertFails(updateDoc(doc(orgA(), "organizers/orgA"), { name: "Autre nom" }));
+    await assertFails(updateDoc(doc(orgB(), "organizers/orgB"), { status: "approved" }));
+    await assertFails(setDoc(doc(orgA(), "organizers/orgA/private/details"), { iban: "x" }));
+    await assertFails(setDoc(doc(salma(), "organizers/neuf"), { name: "Moi", status: "approved" }));
+    await assertFails(updateDoc(doc(admin(), "organizers/orgB"), { status: "approved" }));
+  });
+  it("activités et dates non publiées : seulement celles de SON organisation", async () => {
+    await assertSucceeds(getDoc(doc(orgA(), "experiences/expA")));
+    await assertFails(getDoc(doc(orgA(), "experiences/expB")));
+    await assertFails(getDoc(doc(orgB(), "experiences/expA")));
+    await assertFails(getDoc(doc(orgA(), "experiences/draft"))); // brouillon de Wenzy
+    await assertFails(getDoc(doc(orgA(), "experiences/expA/private/economics")));
+    await assertSucceeds(getDoc(doc(orgA(), "sessions/sA")));
+    await assertFails(getDoc(doc(orgA(), "sessions/sB")));
+    await assertFails(getDoc(doc(orgA(), "sessions/s2")));
+    await assertFails(updateDoc(doc(orgA(), "experiences/expA"), { status: "published" }));
+    await assertFails(updateDoc(doc(orgA(), "sessions/sA"), { capacity: 99 }));
+  });
+  it("réservations et demandes : seulement celles de ses activités, jamais celles des autres ni de Wenzy", async () => {
+    await assertSucceeds(getDoc(doc(orgA(), "reservations/rA")));
+    await assertFails(getDoc(doc(orgA(), "reservations/rB")));
+    await assertFails(getDoc(doc(orgA(), "reservations/r1"))); // réservation Wenzy (pas d'organisateur)
+    await assertFails(getDoc(doc(orgA(), "reservations/rA/private/payment")));
+    await assertSucceeds(getDocs(query(collection(orgA(), "reservations"), where("organizerId", "==", "orgA"))));
+    await assertFails(getDocs(query(collection(orgA(), "reservations"), where("organizerId", "==", "orgB"))));
+    await assertFails(getDocs(collection(orgA(), "reservations")));
+    await assertSucceeds(getDoc(doc(orgA(), "bookingRequests/sA_karim")));
+    await assertFails(getDoc(doc(orgA(), "bookingRequests/sB_salma")));
+    await assertFails(updateDoc(doc(orgA(), "reservations/rA"), { status: "cancelled" }));
+    await assertFails(updateDoc(doc(orgA(), "bookingRequests/sA_karim"), { status: "accepted" }));
+  });
+  it("sans structure (rôle seul) ou sans rôle (claim seul) : aucun accès organisateur", async () => {
+    await assertFails(getDoc(doc(orphan(), "reservations/rA")));
+    await assertFails(getDoc(doc(exOrg(), "reservations/rA")));
+    await assertFails(getDoc(doc(exOrg(), "experiences/expA")));
+    await assertFails(getDoc(doc(orphan(), "organizers/orgB")));
+  });
+  it("commissions (21) : registre et reversements de SON organisation seulement ; règles réservées à l'équipe ; aucune écriture", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, "commissionRules/r1"), { scope: "global", ratePercent: 15 });
+      await setDoc(doc(db, "commissionLedger/sale_rA"), { organizerId: "orgA", gross: 20000, commission: 3000, payable: 17000 });
+      await setDoc(doc(db, "commissionLedger/sale_rB"), { organizerId: "orgB", gross: 10000, commission: 1500, payable: 8500 });
+      await setDoc(doc(db, "payouts/pA"), { organizerId: "orgA", amount: 17000, status: "paid" });
+    });
+    await assertSucceeds(getDoc(doc(orgA(), "commissionLedger/sale_rA")));
+    await assertFails(getDoc(doc(orgA(), "commissionLedger/sale_rB")));
+    await assertSucceeds(getDocs(query(collection(orgA(), "commissionLedger"), where("organizerId", "==", "orgA"))));
+    await assertFails(getDocs(collection(orgA(), "commissionLedger")));
+    await assertSucceeds(getDoc(doc(orgA(), "payouts/pA")));
+    await assertFails(getDoc(doc(orgB(), "payouts/pA")));
+    await assertFails(getDoc(doc(orgA(), "commissionRules/r1")));
+    await assertFails(getDoc(doc(salma(), "commissionLedger/sale_rA")));
+    await assertSucceeds(getDoc(doc(admin(), "commissionRules/r1")));
+    await assertFails(updateDoc(doc(orgA(), "commissionLedger/sale_rA"), { payable: 20000 }));
+    await assertFails(setDoc(doc(orgA(), "payouts/pX"), { organizerId: "orgA", amount: 1 }));
+    await assertFails(setDoc(doc(admin(), "commissionRules/r2"), { scope: "global", ratePercent: 1 }));
+  });
+  it("demandes de remboursement (22) : le participant, l'organisateur concerné et l'équipe ; aucune écriture", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "refundRequests/rA"), { userId: "salma", organizerId: "orgA", status: "pending", paidAmount: 20000 });
+    });
+    await assertSucceeds(getDoc(doc(salma(), "refundRequests/rA")));
+    await assertSucceeds(getDoc(doc(orgA(), "refundRequests/rA")));
+    await assertSucceeds(getDoc(doc(admin(), "refundRequests/rA")));
+    await assertFails(getDoc(doc(karim(), "refundRequests/rA")));
+    await assertFails(getDoc(doc(orgB(), "refundRequests/rA")));
+    await assertFails(setDoc(doc(salma(), "refundRequests/rX"), { userId: "salma", status: "pending" }));
+    await assertFails(updateDoc(doc(salma(), "refundRequests/rA"), { status: "refunded" }));
+    await assertFails(updateDoc(doc(admin(), "refundRequests/rA"), { status: "refunded" }));
+  });
+  it("avis (24) : signalements et historique lus par l'équipe seulement ; réponse et signalement par le serveur seulement", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, "reviews/rvA"), { userId: "salma", experienceId: "expA", organizerId: "orgA", status: "published", rating: 5, comment: "Super" });
+      await setDoc(doc(db, "reviews/rvA/reports/karim"), { uid: "karim", reason: "spam", status: "open" });
+      await setDoc(doc(db, "reviews/rvA/private/history"), { events: [{ action: "created" }] });
+    });
+    await assertSucceeds(getDoc(doc(anon(), "reviews/rvA")));
+    await assertSucceeds(getDoc(doc(admin(), "reviews/rvA/reports/karim")));
+    await assertSucceeds(getDoc(doc(admin(), "reviews/rvA/private/history")));
+    for (const who of [karim(), salma(), orgA()]) {
+      await assertFails(getDoc(doc(who, "reviews/rvA/reports/karim")));
+      await assertFails(getDoc(doc(who, "reviews/rvA/private/history")));
+    }
+    await assertFails(setDoc(doc(karim(), "reviews/rvA/reports/karim"), { uid: "karim", reason: "spam" }));
+    await assertFails(updateDoc(doc(orgA(), "reviews/rvA"), { reply: { text: "Merci" } }));
+    await assertFails(updateDoc(doc(salma(), "reviews/rvA"), { photo: { path: "x", status: "approved" } }));
+  });
+  it("« Mes rencontres » (31) : souhaits et « ne plus être réuni » privés ; connexion lue par les deux seulement", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, "meetWishes/salma_karim"), { from: "salma", to: "karim" });
+      await setDoc(doc(db, "avoids/salma"), { uids: ["omar"] });
+      await setDoc(doc(db, "connections/karim_salma"), { uids: ["karim", "salma"], names: { karim: "Karim", salma: "Salma" } });
+    });
+    for (const who of [salma(), karim(), admin()]) {
+      await assertFails(getDoc(doc(who, "meetWishes/salma_karim")));
+      await assertFails(getDoc(doc(who, "avoids/salma")));
+    }
+    await assertSucceeds(getDoc(doc(salma(), "connections/karim_salma")));
+    await assertSucceeds(getDoc(doc(karim(), "connections/karim_salma")));
+    await assertFails(getDoc(doc(orgA(), "connections/karim_salma")));
+    await assertFails(setDoc(doc(salma(), "meetWishes/salma_omar"), { from: "salma", to: "omar" }));
+    await assertFails(setDoc(doc(salma(), "connections/omar_salma"), { uids: ["omar", "salma"] }));
+  });
+  it("un organisateur ne lit ni les profils des clients, ni les paiements, ni le journal", async () => {
+    await assertFails(getDoc(doc(orgA(), "users/salma")));
+    await assertFails(getDoc(doc(orgA(), "payments/p1")));
+    await assertFails(getDoc(doc(orgA(), "auditLogs/a1")));
+    await assertFails(getDocs(collection(orgA(), "users")));
+  });
+});

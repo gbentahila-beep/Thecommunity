@@ -1,0 +1,207 @@
+"use client";
+
+import { answerIssues, REQUEST_MESSAGE_MAX, type BookingPreferences, type QuestionDef, type QuestionnaireAnswers } from "@thecommunity/shared";
+import { httpsCallable } from "firebase/functions";
+import { Minus, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { QuestionnaireFields } from "@/components/account/questionnaire-fields";
+import { PhysicalTermsCheckbox } from "@/components/booking/physical-terms";
+import { useState } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
+import { authReady, bookingErrorOf, type BookingError } from "@/lib/booking-client";
+import { firebase } from "@/lib/firebase/client";
+import { EMPTY_PREFERENCES, needsConsent, PreferencesFields, welcomeTitleKeys, type WelcomeNeeds } from "./preferences-fields";
+
+/** Demande de participation (expérience « sur demande ») : rien n'est payé ni bloqué à ce stade. */
+export function RequestForm({ sessionId, maxSeats, messageRequired, instagramRequired = false, defaultLanguages = [], physical = false, questions = [], needs = { food: true, languages: true } }: { sessionId: string; maxSeats: number; messageRequired: boolean; instagramRequired?: boolean; defaultLanguages?: BookingPreferences["languages"]; physical?: boolean; questions?: QuestionDef[]; needs?: WelcomeNeeds }) {
+  const t = useTranslations("request");
+  const tb = useTranslations("booking");
+  const router = useRouter();
+  const [seats, setSeats] = useState(1);
+  const [message, setMessage] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const tp = useTranslations("prefs");
+  const [prefs, setPrefs] = useState<BookingPreferences>({ ...EMPTY_PREFERENCES, languages: defaultLanguages });
+  const [consentError, setConsentError] = useState(false);
+  const [physicalOk, setPhysicalOk] = useState(false);
+  const [physicalError, setPhysicalError] = useState(false);
+  const tq = useTranslations("questionnaire");
+  const [answers, setAnswers] = useState<QuestionnaireAnswers>({});
+  const [missingAnswers, setMissingAnswers] = useState<string[]>([]);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const missing = {
+      ...(messageRequired && !message.trim() ? { message: t("messageRequired") } : {}),
+      ...(instagramRequired && !instagram.trim() ? { instagram: t("instagramRequired") } : {}),
+    };
+    if (Object.keys(missing).length) return setFieldErrors(missing);
+    // Questionnaire avec la demande, avant tout paiement (docs/22).
+    const issues = answerIssues(questions, answers);
+    if (issues.length) {
+      setMissingAnswers(issues.map((i) => i.id));
+      requestAnimationFrame(() => document.getElementById(`rq-${issues[0]!.id}`)?.focus());
+      return;
+    }
+    if (needsConsent(prefs) && !prefs.consent) return setConsentError(true);
+    setConsentError(false);
+    if (physical && !physicalOk) return setPhysicalError(true);
+    const shared = prefs.diet !== "none" || prefs.allergies.trim() || prefs.languages.length;
+    setBusy(true);
+    setError(null);
+    setFieldErrors({});
+    try {
+      await authReady();
+      const user = firebase().auth.currentUser;
+      if (user && !user.emailVerified) {
+        await user.reload();
+        if (user.emailVerified) await user.getIdToken(true);
+      }
+      await httpsCallable(firebase().functions, "requestBooking")({
+        sessionId, seats, message: message.trim(), instagram: instagram.trim(),
+        ...(shared ? { preferences: { ...prefs, allergies: prefs.allergies.trim() } } : {}),
+        ...(physical ? { physicalTermsAccepted: true } : {}),
+        ...(questions.length ? { answers } : {}),
+      });
+      router.refresh();
+    } catch (err) {
+      const issues = (err as { details?: { issues?: { path: string; message: string }[] } }).details?.issues ?? [];
+      if (issues.length) {
+        setFieldErrors(Object.fromEntries(issues.map((i) => [i.path, i.path === "instagram" ? (i.message === "required" ? t("instagramRequired") : t("instagramInvalid")) : i.path === "message" && i.message === "required" ? t("messageRequired") : t("tooLong")])));
+      } else {
+        const reason = (err as { details?: { reason?: string } }).details?.reason;
+        setError(reason === "already_requested" || reason === "request_declined" ? t(`errors.${reason}`) : tb(`errors.${bookingErrorOf(err) as BookingError}`));
+      }
+      setBusy(false);
+    }
+  };
+
+  const input = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-[15px] focus:border-brand-700 focus:outline-none";
+  return (
+    <form onSubmit={submit} className="mt-6 space-y-4 rounded-[var(--radius-card)] bg-white p-5 shadow-card" noValidate>
+      {maxSeats > 1 && (
+        <div className="flex items-center justify-between">
+          <span id="req-seats" className="font-medium text-ink">{tb("seatsLabel")}</span>
+          <div className="flex items-center gap-3" role="group" aria-labelledby="req-seats">
+            <button type="button" onClick={() => setSeats((n) => Math.max(1, n - 1))} disabled={seats <= 1 || busy} aria-label={tb("fewer")} className="grid size-10 place-items-center rounded-full border border-line disabled:opacity-40">
+              <Minus className="size-4" aria-hidden />
+            </button>
+            <output aria-live="polite" className="w-6 text-center text-lg font-semibold">{seats}</output>
+            <button type="button" onClick={() => setSeats((n) => Math.min(maxSeats, n + 1))} disabled={seats >= maxSeats || busy} aria-label={tb("more")} className="grid size-10 place-items-center rounded-full border border-line disabled:opacity-40">
+              <Plus className="size-4" aria-hidden />
+            </button>
+          </div>
+        </div>
+      )}
+      <div>
+        <label htmlFor="req-message" className="mb-1 block text-sm font-medium text-ink">
+          {t("messageLabel")} {!messageRequired && <span className="font-normal text-muted">({t("optional")})</span>}
+        </label>
+        <textarea
+          id="req-message"
+          rows={4}
+          maxLength={REQUEST_MESSAGE_MAX}
+          value={message}
+          onChange={(e) => { setMessage(e.target.value); setFieldErrors((f) => ({ ...f, message: "" })); }}
+          placeholder={t("messagePlaceholder")}
+          aria-invalid={Boolean(fieldErrors.message)}
+          className={input}
+        />
+        <p className="mt-1 text-end text-xs text-muted">{message.length}/{REQUEST_MESSAGE_MAX}</p>
+        {fieldErrors.message && <p className="text-sm text-red-800">{fieldErrors.message}</p>}
+      </div>
+      <div>
+        <label htmlFor="req-instagram" className="mb-1 block text-sm font-medium text-ink">
+          {t("instagramLabel")} {!instagramRequired && <span className="font-normal text-muted">({t("optional")})</span>}
+        </label>
+        <input id="req-instagram" dir="ltr" value={instagram} onChange={(e) => { setInstagram(e.target.value); setFieldErrors((f) => ({ ...f, instagram: "" })); }} placeholder="@pseudo" autoComplete="off" aria-invalid={Boolean(fieldErrors.instagram)} className={input} />
+        <p className="mt-1 text-xs text-muted">{t("instagramHint")}</p>
+        {fieldErrors.instagram && <p className="text-sm text-red-800">{fieldErrors.instagram}</p>}
+      </div>
+      {questions.length > 0 && (
+        <section aria-labelledby="request-questions" className="space-y-5" data-testid="request-questionnaire">
+          <div>
+            <h2 id="request-questions" className="font-medium text-ink">{tq("bookingTitle")}</h2>
+            <p className="mt-0.5 text-xs text-muted">{tq("bookingIntro")}</p>
+          </div>
+          <QuestionnaireFields idPrefix="rq" questions={questions} answers={answers} missing={missingAnswers} disabled={busy} onChange={(next, id) => { setAnswers(next); setMissingAnswers((m) => m.filter((x) => x !== id)); }} />
+        </section>
+      )}
+      {(needs.food || needs.languages) && (
+      <details className="rounded-2xl border border-line p-4">
+        <summary className="cursor-pointer list-none font-medium text-ink [&::-webkit-details-marker]:hidden">
+          {tp(welcomeTitleKeys(needs).title)}
+          <span className="mt-0.5 block text-xs font-normal text-muted">{tp(welcomeTitleKeys(needs).intro)}</span>
+        </summary>
+        <div className="mt-4">
+          <PreferencesFields idPrefix="req-pref" value={prefs} onChange={(v) => { setPrefs(v); setConsentError(false); }} disabled={busy} consentError={consentError} needs={needs} />
+        </div>
+      </details>
+      )}
+      {consentError && <p role="alert" className="text-sm text-red-800">{tp("consentRequired")}</p>}
+      {physical && <PhysicalTermsCheckbox checked={physicalOk} onChange={(v) => { setPhysicalOk(v); setPhysicalError(false); }} error={physicalError} disabled={busy} />}
+      {error && (
+        <div role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-900">
+          <p>{error}</p>
+          {error === tb("errors.signin") && (
+            <Link href={`/connexion?suite=${encodeURIComponent(`/reserver/${sessionId}`)}`} className="mt-1 inline-block font-semibold underline">{tb("signInCta")}</Link>
+          )}
+        </div>
+      )}
+      <button type="submit" disabled={busy} className="btn btn-primary w-full">
+        {busy ? tb("working") : t("submit")}
+      </button>
+      <p className="text-center text-xs text-muted">{t("noPaymentYet")}</p>
+    </form>
+  );
+}
+
+/** Retirer sa demande tant que l'équipe ne l'a pas traitée (confirmation dans la page, sans fenêtre système). */
+export function CancelRequestButton({ requestId }: { requestId: string }) {
+  const t = useTranslations("request");
+  const tb = useTranslations("booking");
+  const router = useRouter();
+  const [asking, setAsking] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  if (!asking) {
+    return (
+      <button type="button" onClick={() => setAsking(true)} className="rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink hover:bg-cream">
+        {t("cancel")}
+      </button>
+    );
+  }
+  return (
+    <div role="alertdialog" aria-label={t("cancelConfirm")} className="space-y-3 rounded-2xl border border-line bg-cream/70 p-4">
+      <p className="text-sm font-medium text-ink">{t("cancelConfirm")}</p>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            setFailed(false);
+            try {
+              await authReady();
+              await httpsCallable(firebase().functions, "cancelBookingRequest")({ requestId });
+            } catch {
+              setFailed(true);
+            }
+            setBusy(false);
+            router.refresh();
+          }}
+          className="btn btn-primary btn-sm"
+        >
+          {busy ? tb("working") : t("cancelYes")}
+        </button>
+        <button type="button" disabled={busy} onClick={() => setAsking(false)} className="rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink disabled:opacity-60">
+          {tb("confirmKeepRequest")}
+        </button>
+      </div>
+      {failed && <p role="alert" className="text-sm text-red-800">{tb("errors.generic")}</p>}
+    </div>
+  );
+}

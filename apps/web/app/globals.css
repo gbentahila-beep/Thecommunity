@@ -1,0 +1,425 @@
+@import "tailwindcss";
+
+/*
+ * Charte Wenzy, direction « Coucher de soleil » (docs/marque/wenzy/brand-book.html).
+ * Crème et encre, une seule couleur forte : le dégradé corail → violet. Titres en Newsreader (gras pour les grands titres), texte en Inter.
+ * L'échelle « brand » : 900 = encre (texte fort, fonds sombres), 700 = violet profond lisible sur crème (liens, accents),
+ * 500 = violet de la marque (décor), 50 à 200 = lilas clairs (surfaces, survols).
+ */
+@theme {
+  --color-cream: #f6f1ea;
+  --color-cream-deep: #ede4d8;
+  --color-sand: #e9decf;
+  --color-line: #e3d9cb;
+  --color-brand-50: #f8f0fc;
+  --color-brand-100: #f0def9;
+  --color-brand-200: #e2c3f2;
+  --color-brand-500: #c25be8;
+  --color-brand-700: #8a35b5;
+  --color-brand-800: #2b2b2b;
+  --color-brand-900: #141414;
+  --color-coral: #ff6a4d;
+  --color-violet: #c25be8;
+  --color-ink: #141414;
+  --color-muted: #66625c;
+  --color-badge: #ffe1d8;
+  /* Direction artistique « Soleil de Casa » (docs/29, étape 7) : halos pêche et lilas, crème plus clair. */
+  --color-peach: #ffe3d8;
+  --color-lilac: #efe1fb;
+  --color-cream-light: #fbf7f2;
+
+  --color-cat-eat: #e2553a;
+  --color-cat-move: #2f8a5a;
+  --color-cat-play: #c07a14;
+  --color-cat-create: #b04a9a;
+  --color-cat-discover: #4650c8;
+
+  --font-sans: var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-serif), var(--font-arabic-display), ui-serif, Georgia, serif;
+  --font-hand: var(--font-caveat), var(--font-arabic), cursive;
+
+  --radius-card: 1.5rem;
+  --shadow-card: 0 1px 2px rgb(20 20 20 / 0.03), 0 18px 40px -26px rgb(20 20 20 / 0.38);
+  --shadow-float: 0 12px 40px -12px rgb(20 20 20 / 0.32);
+
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  /* iPhone (Safari) : un champ date garde sa largeur « naturelle » et déborde à droite ; on le force dans sa colonne. */
+  input[type="date"],
+  input[type="time"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 3rem;
+  }
+  input[type="date"]::-webkit-date-and-time-value,
+  input[type="time"]::-webkit-date-and-time-value {
+    text-align: start;
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    /* Fonds harmonisés (docs/29, 28/11, option A) : une seule base, le crème clair de l'accroche. */
+    background-color: var(--color-cream-light);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* En arabe, la serif latine n'a pas de glyphes : on bascule toute la typo sur la police arabe. */
+  :lang(ar) {
+    --font-display: var(--font-arabic-display), var(--font-arabic), ui-serif, serif;
+    --font-sans: var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-700);
+    outline-offset: 2px;
+  }
+  .font-display {
+    font-optical-sizing: auto;
+  }
+  ::selection {
+    background: var(--color-brand-100);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Fiche expérience sur mobile : la barre de réservation s'ajoute au menu du bas,
+   le pied de page garde assez de marge pour ne pas passer dessous. */
+@media (max-width: 1023px) {
+  body:has([data-testid="mobile-book-bar"]) footer {
+    padding-bottom: calc(15rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Accueil, « Des univers pour sortir de sa routine » : cartes empilées teintées par la couleur de l'univers (--cat). */
+.universe-card {
+  background:
+    radial-gradient(120% 80% at 100% 0%, color-mix(in oklab, var(--cat) 22%, transparent) 0%, transparent 60%),
+    linear-gradient(160deg, color-mix(in oklab, var(--cat) 14%, #fff) 0%, color-mix(in oklab, var(--cat) 8%, var(--color-cream)) 100%);
+}
+.universe-accent {
+  color: color-mix(in oklab, var(--cat) 78%, #000);
+}
+.universe-badge {
+  color: var(--cat);
+}
+
+/*
+ * Briques communes (docs/16, phase 1) : une seule façon d'écrire un titre, un bouton, une carte, un encadré.
+ * Toute nouvelle page les utilise ; pas de tailles, rayons ou couleurs de bouton « à la main ».
+ */
+@layer components {
+  /*
+   * Échelle de titres (audit du 25/11, docs/29) : 5 niveaux, pas un de plus.
+   * Serif seulement pour H1 (page-title) et H2 (section-title) ; tout le reste en Inter.
+   * Alignement : les titres suivent leur bloc. Contenu (listes, questions, pages de texte) à gauche ;
+   * accroche, avis, appel final et encadrés d'action centrés par leur parent (text-center).
+   */
+  .page-title {
+    @apply font-display text-[2.375rem] leading-[1.04] font-semibold tracking-[-0.025em] text-balance text-brand-900 sm:text-[3.5rem];
+  }
+  .section-title {
+    @apply font-display text-[1.875rem] leading-[1.08] font-semibold tracking-[-0.02em] text-balance text-brand-900 sm:text-[2.5rem];
+  }
+  /* Titre d'une carte ou d'un encadré (Reçu, Votre table, Préférences…) : Inter, aligné avec son contenu. */
+  .card-title {
+    @apply font-sans text-lg leading-snug font-semibold tracking-[-0.01em] text-ink sm:text-xl;
+  }
+  /*
+   * Rythme des pages : une section = un fond plein largeur + le même espace en haut et en bas
+   * (72 px sur téléphone, 120 px sur ordinateur). Les sections alternent crème et blanc ; une bande encre au plus par page.
+   */
+  .section {
+    @apply py-18 lg:py-30;
+  }
+  /* Une section sur deux : voile pêche puis lilas, en fondu en haut et en bas (plus de ligne de coupure). */
+  .section-white {
+    background: linear-gradient(180deg, var(--color-cream-light) 0%, #fbece9 28%, #f4ecfb 72%, var(--color-cream-light) 100%);
+  }
+  .section-night {
+    @apply text-white;
+    background: var(--color-brand-900);
+  }
+  .section-night .section-title,
+  .section-night .page-title {
+    @apply text-white;
+  }
+  /* En-tête de page (bande crème) : un peu moins d'air qu'une section, le contenu suit dans une section blanche. */
+  .page-header {
+    @apply pt-12 pb-12 lg:pt-20 lg:pb-16;
+  }
+  /* Largeurs : 1 200 px pour les grilles et les listes, 680 px pour les blocs de texte. */
+  .container-page {
+    @apply mx-auto w-full max-w-[75rem] px-4 sm:px-6 lg:px-8;
+  }
+  .container-text {
+    @apply max-w-[42.5rem];
+  }
+  /* Entre le titre d'une section et son contenu : 24 px sur téléphone, 40 px sur ordinateur. */
+  .section-head {
+    @apply mb-6 lg:mb-10;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.16em] text-muted uppercase;
+  }
+  .lead {
+    @apply text-[16px] leading-relaxed text-muted sm:text-[17px];
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-[15px] font-semibold transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+  /* Action principale : le dégradé de la marque, texte en encre (lisible de bout en bout, règle d'or n° 3). */
+  .btn-primary {
+    @apply bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] text-ink shadow-[0_8px_20px_-10px_rgb(194_91_232/0.6)] hover:brightness-105;
+  }
+  .btn-dark {
+    @apply bg-brand-900 text-white hover:bg-brand-800;
+  }
+  .btn-secondary {
+    @apply bg-white text-brand-900 ring-[1.5px] ring-ink hover:bg-cream;
+  }
+  .btn-ghost {
+    @apply text-brand-900 hover:bg-brand-50;
+  }
+  .card {
+    @apply rounded-3xl bg-white shadow-card;
+  }
+  /*
+   * Listes d'événements (docs/22) : sur téléphone, une carte blanche avec une ligne par événement. Sur ordinateur
+   * (≥ 1024 px), une grille de cartes photo comme Kitchi ou Airbnb, dès 3 événements ; avec 1 ou 2 (« is-few »),
+   * les lignes restent, dans une colonne centrée (une carte seule au milieu d'un grand vide ne ressemble à rien).
+   * Les lignes portent ev-row, ev-thumb-wrap, ev-thumb, ev-img, ev-body, ev-text, ev-cta, ev-ribbon, ev-chevron.
+   */
+  .event-list {
+    @apply overflow-hidden rounded-3xl bg-white shadow-card divide-y divide-line/70;
+  }
+  /* Grille d'ordinateur : voir la fin du fichier (hors couche, pour passer devant les classes utilitaires). */
+  /* Encadré (plus de fond beige, docs/29) : blanc et filet fin, lisible sur les fonds crème comme blancs. */
+  .info-box {
+    @apply rounded-3xl bg-white px-6 py-8 text-center ring-1 ring-line sm:px-10;
+  }
+  .chip {
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium text-ink ring-1 ring-line transition hover:ring-brand-200;
+  }
+  /* Un mot mis en valeur dans un titre (au-dessus de 28 px seulement). */
+  .text-gradient {
+    @apply bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))] bg-clip-text pe-[0.06em] text-transparent;
+  }
+  .bg-gradient-brand {
+    @apply bg-[linear-gradient(100deg,var(--color-coral),var(--color-violet))];
+  }
+  /* Section sombre : fond encre uni, filet en dégradé en haut (brand book : « crème sur encre »). */
+  .bg-night {
+    background: linear-gradient(100deg, var(--color-coral), var(--color-violet)) top / 100% 5px no-repeat, var(--color-brand-900);
+  }
+  /* Ronds doux (icônes) : pêche ou lilas, lumière en haut à gauche. */
+  .bub-peach {
+    background: radial-gradient(circle at 30% 30%, #fff, var(--color-peach));
+  }
+  .bub-lilac {
+    background: radial-gradient(circle at 30% 30%, #fff, var(--color-lilac));
+  }
+  /* Numéro d'étape en dégradé. */
+  .step-num {
+    @apply inline-grid size-7 shrink-0 place-items-center rounded-full text-sm font-bold text-white;
+    background: linear-gradient(100deg, var(--color-coral), var(--color-violet));
+  }
+  /* Halos pêche et lilas en haut de page (piste A, docs/29). */
+  .halo-top {
+    background-image: radial-gradient(560px 340px at 100% 0%, var(--color-lilac), transparent 65%), radial-gradient(520px 320px at 0% 0%, var(--color-peach), transparent 60%);
+    background-repeat: no-repeat;
+  }
+  .chip-on {
+    @apply bg-brand-900 text-white ring-brand-900 hover:ring-brand-900;
+  }
+}
+
+/* Babs (docs/22-babs.md) : lignée animée avec une place libre. Immobile si l'appareil demande moins d'animations. */
+@keyframes bab-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes bab-hop {
+  0%, 76%, 100% { transform: translateY(0); }
+  83% { transform: translateY(-14px); }
+  89% { transform: translateY(0); }
+  93% { transform: translateY(-4px); }
+}
+@keyframes bab-march {
+  to { stroke-dashoffset: -32; }
+}
+@keyframes bab-chip {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.bab-bob { animation: bab-bob 3.4s ease-in-out infinite; }
+.bab-hop { animation: bab-hop 5.5s ease-in-out infinite; }
+.bab-march { animation: bab-march 1.4s linear infinite; }
+.bab-chip { animation: bab-chip 2.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .bab-bob, .bab-hop, .bab-march, .bab-chip { animation: none; }
+}
+
+/*
+ * Listes d'événements sur ordinateur (grille de cartes dès 3 événements) : règles hors couche, prioritaires sur les
+ * classes utilitaires des lignes (size-16, flex…), qui décrivent la version téléphone.
+ */
+@media (width >= 64rem) {
+  .event-list.is-few {
+    @apply mx-auto max-w-3xl;
+  }
+  .event-list:not(.is-few) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1.25rem;
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .event-list:not(.is-few) > * {
+    border-top-width: 0 !important;
+  }
+  .event-list:not(.is-few) .ev-row {
+    @apply h-full flex-col items-stretch gap-0 rounded-3xl bg-white p-0 shadow-card transition;
+  }
+  .event-list:not(.is-few) .ev-row:hover {
+    @apply bg-white shadow-float;
+  }
+  .event-list:not(.is-few) .ev-thumb-wrap {
+    @apply w-full;
+  }
+  .event-list:not(.is-few) .ev-thumb {
+    @apply aspect-[4/3] size-auto w-full rounded-none rounded-t-3xl;
+  }
+  .event-list:not(.is-few) .ev-row:hover .ev-img {
+    transform: scale(1.04);
+  }
+  .event-list:not(.is-few) .ev-body {
+    @apply flex-1 flex-col items-stretch p-4;
+  }
+  .event-list:not(.is-few) .ev-text {
+    @apply flex-1 px-4 pt-4;
+  }
+  .event-list:not(.is-few) .ev-cta {
+    @apply m-4 mt-3 justify-center self-stretch py-2.5;
+  }
+  .event-list:not(.is-few) .ev-body .ev-cta {
+    @apply m-0 mt-auto;
+  }
+  .event-list:not(.is-few) .ev-ribbon {
+    @apply start-3 top-3 bottom-auto translate-x-0 -rotate-6 px-2.5 py-1.5 text-[11px] tracking-[0.05em];
+  }
+  .event-list:not(.is-few) .ev-chevron {
+    @apply hidden;
+  }
+  /* Carte unique (étape 2) : sur la grille, le repère passe sur la photo et l'état des places en bas de la carte. */
+  .event-list:not(.is-few) .ev-badge-inline {
+    display: none;
+  }
+  .event-list:not(.is-few) .ev-photo-badge {
+    display: inline-flex;
+  }
+  .event-list:not(.is-few) .ev-text {
+    @apply flex flex-col pb-4;
+  }
+  .event-list:not(.is-few) .ev-status-wrap {
+    @apply mt-auto pt-3;
+  }
+  .event-list:not(.is-few) .ev-arrow {
+    display: grid;
+  }
+  .event-list:not(.is-few) .ev-row:hover {
+    @apply bg-white;
+  }
+  /* Découvrir : les jours fondus en une seule grille (titres des jours masqués, le jour écrit sur chaque carte). */
+  .event-agenda:not(.is-few) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1.25rem;
+  }
+  .event-agenda:not(.is-few) > * {
+    margin-top: 0 !important;
+  }
+  .event-agenda:not(.is-few) .ev-day,
+  .event-agenda:not(.is-few) .ev-day-list {
+    display: contents;
+  }
+  .event-agenda:not(.is-few) .ev-day-title,
+  .event-agenda:not(.is-few) .ev-when-short {
+    display: none;
+  }
+  .event-agenda:not(.is-few) .ev-when-long {
+    display: inline;
+  }
+}
+
+/* Une page qui se termine par une section pleine largeur touche le pied de page, sans bande vide entre les deux. */
+main:has(> .section:last-child) + footer,
+main:has(> :last-child > .section:last-child) + footer {
+  margin-top: 0;
+}
+
+/*
+ * Accueil (direction artistique, docs/29) : sur ordinateur, la photo de l'accroche passe derrière le menu ;
+ * le menu reste transparent tant qu'on n'a pas fait défiler la page (HeaderScrollState pose data-scrolled).
+ */
+@media (width >= 64rem) {
+  html:not([data-scrolled]) body:has([data-hero-bleed]) .site-header {
+    background: transparent;
+    border-color: transparent;
+    backdrop-filter: none;
+  }
+}
+
+/* Étape 7d (docs/29) : à l'apparition, chaque bloc d'une section monte doucement en fondu, au rythme du défilement.
+   CSS seul (animation liée au défilement) : sans prise en charge, ou si l'appareil demande moins d'animations,
+   tout est simplement visible. */
+@keyframes reveal-up {
+  from { opacity: 0; translate: 0 28px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal > * {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}

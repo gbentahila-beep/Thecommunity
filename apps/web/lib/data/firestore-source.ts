@@ -1,0 +1,262 @@
+import "server-only";
+import type {
+  AppNotification,
+  BookingRequest,
+  WaitlistEntry,
+  Category,
+  CategoryKey,
+  City,
+  Experience,
+  Group,
+  Reservation,
+  Review,
+  Session,
+  UserProfile,
+} from "@thecommunity/shared";
+import { crowdSummary, MEETING_MIN_PARTICIPANTS, MEMBERSHIP_PLAN_ID, normalizeHomeSettings, publicExperience, type Crowd, type Interest, type HomeSettings, type Carnet, type Membership, type MembershipPlan, type Organizer } from "@thecommunity/shared";
+import { Timestamp, type DocumentSnapshot } from "firebase-admin/firestore";
+import { unstable_cache } from "next/cache";
+import { adminDb } from "@/lib/firebase/admin";
+
+/** Convertit les Timestamp Firestore en chaînes ISO (format utilisé par toute l'interface). */
+function plain<T>(value: unknown): T {
+  if (value instanceof Timestamp) return value.toDate().toISOString() as T;
+  if (Array.isArray(value)) return value.map((v) => plain(v)) as T;
+  if (value && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype) {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, plain(v)])) as T;
+  }
+  return value as T;
+}
+const withId = <T>(snap: DocumentSnapshot) => plain<T>({ id: snap.id, ...snap.data() });
+/** Expérience publique : lieu, quartier et partenaire retirés quand le lieu est secret (docs/22). */
+const expOf = (snap: DocumentSnapshot) => publicExperience(withId<Experience>(snap));
+
+/**
+ * Données publiques du catalogue mises en cache 5 minutes (étiquette « catalog ») pour limiter
+ * les lectures Firestore ; le back-office vide ce cache à chaque modification (/api/admin/revalidate).
+ * Les données personnelles (espace membre) et le back-office ne sont JAMAIS mis en cache.
+ */
+export const CATALOG_TAG = "catalog";
+const cached = <A extends unknown[], R>(fn: (...args: A) => Promise<R>, key: string) =>
+  unstable_cache(fn, [key], { tags: [CATALOG_TAG], revalidate: 300 });
+
+async function fsCitiesRaw(): Promise<City[]> {
+  const snap = await adminDb().collection("cities").orderBy("order").get();
+  return snap.docs.map((d) => withId<City>(d));
+}
+
+async function fsCategoriesRaw(): Promise<Category[]> {
+  // Tri en mémoire (5 documents) : évite un index composite inutile.
+  const snap = await adminDb().collection("categories").orderBy("order").get();
+  return snap.docs.map((d) => withId<Category>(d)).filter((c) => c.isActive);
+}
+
+async function fsPublishedExperiencesRaw(): Promise<Experience[]> {
+  const snap = await adminDb().collection("experiences").where("status", "==", "published").get();
+  return snap.docs.map((d) => expOf(d));
+}
+
+async function fsExperienceBySlugRaw(slug: string): Promise<Experience | null> {
+  const snap = await adminDb().collection("experiences").where("slug", "==", slug).where("status", "==", "published").limit(1).get();
+  return snap.docs[0] ? expOf(snap.docs[0]) : null;
+}
+
+/** Expérience archivée (fiche « n'est plus proposée ») : seulement le titre et l'univers. */
+async function fsArchivedExperienceBySlugRaw(slug: string): Promise<{ title: Experience["title"]; categoryId: Experience["categoryId"]; cityId: string } | null> {
+  const snap = await adminDb().collection("experiences").where("slug", "==", slug).where("status", "==", "archived").limit(1).get();
+  const d = snap.docs[0]?.data();
+  return d ? { title: d.title, categoryId: d.categoryId, cityId: String(d.cityId ?? "casablanca") } : null;
+}
+export const fsArchivedExperienceBySlug = cached(fsArchivedExperienceBySlugRaw, "fsArchivedExperienceBySlug");
+
+/** Expériences archivées (favoris de l'espace membre : affichées en dernier, « n'est plus proposée »). */
+async function fsArchivedExperiencesRaw(): Promise<Experience[]> {
+  const snap = await adminDb().collection("experiences").where("status", "==", "archived").get();
+  return snap.docs.map((d) => expOf(d));
+}
+export const fsArchivedExperiences = cached(fsArchivedExperiencesRaw, "fsArchivedExperiences");
+
+async function fsExperiencesListRaw(sortedIds: string[]): Promise<Experience[]> {
+  if (sortedIds.length === 0) return [];
+  const db = adminDb();
+  const snaps = await db.getAll(...sortedIds.map((id) => db.doc(`experiences/${id}`)));
+  return snaps.filter((s) => s.exists && s.data()?.status === "published").map((s) => expOf(s));
+}
+const fsExperiencesList = cached(fsExperiencesListRaw, "fsExperiencesList");
+
+export async function fsExperiencesByIds(ids: string[]): Promise<Map<string, Experience>> {
+  const list = await fsExperiencesList([...new Set(ids)].sort());
+  return new Map(list.map((e) => [e.id, e]));
+}
+
+async function fsUpcomingSessionsRaw(f: { cityId?: string; categoryId?: CategoryKey; experienceId?: string; rendezvousId?: string; from: number; to: number }): Promise<Session[]> {
+  let q = adminDb().collection("sessions").where("status", "in", ["published", "full"]) as FirebaseFirestore.Query;
+  if (f.experienceId) q = q.where("experienceId", "==", f.experienceId);
+  else if (f.rendezvousId) q = q.where("rendezvousId", "==", f.rendezvousId);
+  else {
+    if (f.cityId) q = q.where("cityId", "==", f.cityId);
+    if (f.categoryId) q = q.where("categoryId", "==", f.categoryId);
+  }
+  q = q.where("startAt", ">=", Timestamp.fromMillis(f.from));
+  if (Number.isFinite(f.to)) q = q.where("startAt", "<", Timestamp.fromMillis(f.to));
+  const snap = await q.orderBy("startAt").limit(200).get();
+  return snap.docs.map((d) => withId<Session>(d));
+}
+
+async function fsSessionRaw(id: string): Promise<Session | null> {
+  const snap = await adminDb().doc(`sessions/${id}`).get();
+  if (!snap.exists || !["published", "full"].includes(snap.data()?.status)) return null;
+  return withId<Session>(snap);
+}
+
+/**
+ * Dernières dates passées d'une expérience (« éditions passées »), hors dates annulées.
+ * Section secondaire : en cas d'erreur (ex. index en cours de construction), la fiche s'affiche sans elle.
+ */
+async function fsPastSessionsRaw(experienceId: string, now: number): Promise<Session[]> {
+  try {
+    const snap = await adminDb()
+      .collection("sessions")
+      .where("experienceId", "==", experienceId)
+      .where("startAt", "<", Timestamp.fromMillis(now))
+      .orderBy("startAt", "desc")
+      .limit(24)
+      .get();
+    return snap.docs.map((d) => withId<Session>(d)).filter((x) => ["published", "full", "completed"].includes(x.status));
+  } catch (e) {
+    console.error("Éditions passées indisponibles", experienceId, e);
+    return [];
+  }
+}
+
+async function fsMembershipPlanRaw(): Promise<MembershipPlan | null> {
+  const snap = await adminDb().doc(`membershipPlans/${MEMBERSHIP_PLAN_ID}`).get();
+  const p = snap.data();
+  if (p?.isActive !== true) return null;
+  return { id: snap.id, name: p.name, offers: Array.isArray(p.offers) ? p.offers : undefined, earlyAccessHours: p.earlyAccessHours ?? 0, benefits: p.benefits ?? [], isActive: true };
+}
+
+async function fsReviewsRaw(experienceId?: string): Promise<Review[]> {
+  let q = adminDb().collection("reviews").where("status", "==", "published") as FirebaseFirestore.Query;
+  if (experienceId) q = q.where("experienceId", "==", experienceId);
+  const snap = await q.orderBy("createdAt", "desc").limit(20).get();
+  return snap.docs.map((d) => withId<Review>(d));
+}
+
+/** Données de l'espace membre — lues par le serveur pour l'utilisateur authentifié uniquement. */
+export async function fsMemberData(uid: string) {
+  const db = adminDb();
+  const [profileSnap, resSnap, notifSnap, reqSnap] = await Promise.all([
+    db.doc(`users/${uid}`).get(),
+    db.collection("reservations").where("userId", "==", uid).orderBy("createdAt", "desc").limit(100).get(),
+    db.collection(`users/${uid}/notifications`).orderBy("createdAt", "desc").limit(50).get(),
+    db.collection("bookingRequests").where("userId", "==", uid).orderBy("createdAt", "desc").limit(50).get(),
+  ]);
+  const [waitSnap, myReviewsSnap, memSnap, carSnap] = await Promise.all([
+    db.collectionGroup("waitlist").where("userId", "==", uid).limit(50).get(),
+    db.collection("reviews").where("userId", "==", uid).limit(100).get(),
+    db.doc(`memberships/${uid}`).get(),
+    db.doc(`carnets/${uid}`).get(),
+  ]);
+  const membership = memSnap.exists ? withId<Membership>(memSnap) : null;
+  // docs/22 § 17.I : crédits du carnet.
+  const carnet = carSnap.exists ? withId<Carnet>(carSnap) : null;
+  const myReviews = myReviewsSnap.docs.map((d) => withId<Review>(d));
+  const waitlists = waitSnap.docs.map((d) => withId<WaitlistEntry>(d));
+  const requests = reqSnap.docs.map((d) => withId<BookingRequest>(d));
+  const reservations = resSnap.docs.map((d) => withId<Reservation>(d));
+  const groupIds = [...new Set(reservations.map((r) => r.groupId).filter((g): g is string => Boolean(g)))];
+  const groupSnaps = groupIds.length ? await db.getAll(...groupIds.map((g) => db.doc(`groups/${g}`))) : [];
+  const groups = groupSnaps
+    .filter((s) => s.exists && s.data()?.status === "revealed" && (s.data()?.memberIds as string[]).includes(uid))
+    .map((s) => withId<Group>(s));
+  const p = plain<Record<string, unknown>>(profileSnap.data() ?? {});
+  const profile = {
+    uid,
+    firstName: "",
+    lastName: "",
+    email: "",
+    birthDate: "",
+    cityId: "casablanca",
+    languages: [],
+    interests: [],
+    socialGoals: [],
+    locale: "fr",
+    onboardingCompleted: false,
+    notificationPrefs: { email: true, push: false, marketingEmail: false },
+    createdAt: new Date().toISOString(),
+    ...p,
+  } as UserProfile;
+  const notifications = notifSnap.docs.map((d) => withId<AppNotification>(d));
+  return { profile, reservations, groups, notifications, requests, waitlists, myReviews, membership, carnet };
+}
+
+export const fsCities = cached(fsCitiesRaw, "fsCities");
+export const fsCategories = cached(fsCategoriesRaw, "fsCategories");
+export const fsPublishedExperiences = cached(fsPublishedExperiencesRaw, "fsPublishedExperiences");
+export const fsExperienceBySlug = cached(fsExperienceBySlugRaw, "fsExperienceBySlug");
+export const fsUpcomingSessions = cached(fsUpcomingSessionsRaw, "fsUpcomingSessions");
+export const fsSession = cached(fsSessionRaw, "fsSession");
+/** Lecture SANS cache : places restantes exactes pour le tunnel de réservation. */
+export const fsSessionFresh = fsSessionRaw;
+export const fsReviews = cached(fsReviewsRaw, "fsReviews");
+
+/** Page « Avis » : les avis publiés les plus récents (300 au plus). */
+async function fsAllReviewsRaw(): Promise<Review[]> {
+  const snap = await adminDb().collection("reviews").where("status", "==", "published").orderBy("createdAt", "desc").limit(300).get();
+  return snap.docs.map((d) => withId<Review>(d));
+}
+export const fsAllReviews = cached(fsAllReviewsRaw, "fsAllReviews");
+export const fsPastSessions = cached(fsPastSessionsRaw, "fsPastSessions");
+export const fsMembershipPlan = cached(fsMembershipPlanRaw, "fsMembershipPlan");
+
+/* ——— Étape 23 : accueil modifiable, organisateurs publics ——— */
+
+async function fsHomeSettingsRaw(): Promise<HomeSettings> {
+  const snap = await adminDb().doc("settings/home").get();
+  return normalizeHomeSettings(snap.exists ? plain<Partial<HomeSettings>>(snap.data()) : null);
+}
+/** Organisateurs validés (profil public seulement : jamais les coordonnées privées). */
+async function fsPublicOrganizersRaw(): Promise<Organizer[]> {
+  const snap = await adminDb().collection("organizers").where("status", "==", "approved").get();
+  return snap.docs.map((d) => withId<Organizer>(d)).sort((a, b) => a.name.localeCompare(b.name, "fr"));
+}
+export const fsHomeSettings = cached(fsHomeSettingsRaw, "fsHomeSettings");
+export const fsPublicOrganizers = cached(fsPublicOrganizersRaw, "fsPublicOrganizers");
+/** Back-office : réglages de l'accueil relus sans cache. */
+export const fsHomeSettingsFresh = fsHomeSettingsRaw;
+
+/* ——— Étape 28 : moyen de paiement ouvert (textes cohérents partout) ——— */
+async function fsPaymentMethodRaw(): Promise<"card" | "bank_transfer" | "none"> {
+  const provider = (await adminDb().doc("settings/payment").get()).get("provider") as string | undefined;
+  if (provider === "bank_transfer") return "bank_transfer";
+  if (provider && provider !== "none") return "card"; // « sandbox » (test) ou prestataire de carte
+  return "none";
+}
+export const fsPaymentMethod = cached(fsPaymentMethodRaw, "fsPaymentMethod");
+
+/* ——— Étape 29 : chiffres globaux sur les inscrits d'une date (jamais de donnée individuelle) ——— */
+async function fsSessionCrowdRaw(sessionId: string): Promise<Crowd | null> {
+  const db = adminDb();
+  const res = await db.collection("reservations").where("sessionId", "==", sessionId).get();
+  const uids = [...new Set(res.docs.filter((d) => ["confirmed", "attended"].includes(String(d.get("status")))).map((d) => String(d.get("userId"))))];
+  if (uids.length < MEETING_MIN_PARTICIPANTS) return null;
+  const users = await db.getAll(...uids.map((u) => db.doc(`users/${u}`)));
+  return crowdSummary(users.map((u) => ({ birthDate: u.get("birthDate") ?? null, interests: (u.get("interests") as Interest[] | undefined) ?? [] })), new Date());
+}
+export const fsSessionCrowd = cached(fsSessionCrowdRaw, "fsSessionCrowd");
+
+/* ——— docs/25 : rendez-vous de la semaine (actifs) ——— */
+async function fsRendezvousRaw(): Promise<{ id: string; kind: "tiers" | "rotation"; title: Record<string, string>; weekday: number; time: string; tiers: { tier: string; experienceId: string; frequency: string }[]; cycleIds: string[] }[]> {
+  const snap = await adminDb().collection("rendezvous").where("status", "==", "active").get();
+  return snap.docs.map((d) => ({
+    id: d.id,
+    kind: d.get("kind") === "rotation" ? "rotation" : "tiers",
+    title: d.get("title") ?? {},
+    weekday: Number(d.get("weekday")),
+    time: String(d.get("time") ?? ""),
+    tiers: d.get("tiers") ?? [],
+    cycleIds: ((d.get("cycle") ?? []) as { experienceId: string }[]).map((c) => c.experienceId),
+  }));
+}
+export const fsRendezvous = cached(fsRendezvousRaw, "fsRendezvous");
