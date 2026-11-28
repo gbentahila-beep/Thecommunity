@@ -160,6 +160,12 @@ Déroulé prévu :
 - **Découvrir** : ville et filtres en pastilles blanches.
 - **Instagram** : pastille « Suivez-nous sur Instagram » sous le logo du pied de page et dans le Menu du téléphone ; l'identifiant se renseigne dans `lib/site.ts` (`INSTAGRAM_HANDLE`).
 
+### Étape 7c — retouches validées le 28 novembre
+
+- **Bandeau de clôture** : photo de groupe détourée (`groupe-hassan-ii-detoure.webp`, ciel retiré) posée sur le fond pêche-lilas ; sur ordinateur au coin bas droit, fondue sous le texte ; sur téléphone recadrée sur le groupe et la mosquée, le minaret dépasse du bord haut.
+- **Formats** (`UniverseGrid`, accueil, Comment ça marche, Mon espace) : cartes photo en hauteur, nom en serif blanc, pastille « N cette semaine » ; fond pêche ou lilas légèrement tourné (« photo emboîtée ») ; défilement horizontal sur téléphone.
+- **Photos emboîtées** : réservées aux photos seules (histoire d'À propos, formats, « Pourquoi venir », plus tard blog et aide) ; jamais sur la photo du haut, les cartes rendez-vous, Découvrir, la galerie ni le bandeau. La forme de chaque photo est gardée (pas de carré imposé).
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.
