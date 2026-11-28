@@ -166,6 +166,17 @@ Déroulé prévu :
 - **Formats** (`UniverseGrid`, accueil, Comment ça marche, Mon espace) : cartes photo en hauteur, nom en serif blanc, pastille « N cette semaine » ; fond pêche ou lilas légèrement tourné (« photo emboîtée ») ; défilement horizontal sur téléphone.
 - **Photos emboîtées** : réservées aux photos seules (histoire d'À propos, formats, « Pourquoi venir », plus tard blog et aide) ; jamais sur la photo du haut, les cartes rendez-vous, Découvrir, la galerie ni le bandeau. La forme de chaque photo est gardée (pas de carré imposé).
 
+### Étape 7c — lot 2, pages de contenu (validé le 28 novembre)
+
+- **En-têtes** : halos pêche et lilas (`.halo-top`) et traits corail sur `PageHeader` (pages de texte), le blog, l'aide et l'espace membre.
+- **Pages légales et Sécurité** (`lib/legal-page.tsx`, `StaticPage` avec `aside`) : sommaire collant à gauche sur ordinateur, repliable (« Sommaire ») sur téléphone ; date de mise à jour en pastille.
+- **FAQ** : une carte arrondie par question, flèche dans un rond lilas ; lien vers l'aide en bouton.
+- **Contact** : e-mail à gauche (rond pêche), formulaire à droite sur ordinateur.
+- **Blog** : « amis demain » en dégradé ; guide mis en avant avec photo emboîtée (fond pêche) ; cartes d'articles plus arrondies ; article : couverture emboîtée (fond lilas), « L'essentiel » et bloc final en bandeau pêche-lilas, intertitres en serif, conseils avec rond pêche.
+- **Aide** : rubriques avec ronds pêche et lilas ; « Vous ne trouvez pas votre réponse ? » en bandeau pêche-lilas ; encadrés partenaires et organisateurs en cartes blanches.
+- **Espace membre** : carte de profil en bandeau pêche-lilas, rubriques arrondies avec ronds lilas ; réservations plus arrondies, onglets dans une barre blanche.
+- **« Découvrez votre table »** (accueil) : une seule photo au lieu des trois bandeaux (à changer plus tard).
+
 ## Suite
 
 Phase 1 (fondations : échelle de titres, espaces, deux largeurs, composants Section et Carte, lexique), puis accueil, Découvrir et fiche, pages secondaires, animations — voir l'audit.
